@@ -53,6 +53,11 @@ public class NodeEvents
         return event( NODE_PUSHED_EVENT, pushNodeEntries, targetBranch ).build();
     }
 
+    public static Event pushed( final Node node )
+    {
+        return event( NODE_PUSHED_EVENT, node );
+    }
+
     public static Event deleted( final NodeBranchEntries deletedNodes )
     {
         return event( NODE_DELETED_EVENT, deletedNodes ).build();
@@ -106,14 +111,28 @@ public class NodeEvents
     {
         if ( node != null )
         {
-            return event( type, Nodes.from( node ) ).build();
+            return event( type, Nodes.from( node ), ContextAccessor.current().getBranch() ).build();
         }
         return null;
     }
 
-    private static Event.Builder event( String type, Nodes nodes )
+//    private static Event event( String type, Node node, Branch branch )
+//    {
+//        if ( node != null )
+//        {
+//            return event( type, Nodes.from( node ), branch ).build();
+//        }
+//        return null;
+//    }
+
+//    private static Event.Builder event( String type, Nodes nodes )
+//    {
+//        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
+//    }
+
+    private static Event.Builder event( String type, Nodes nodes, Branch branch )
     {
-        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
+        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes, branch ) );
     }
 
     private static Event.Builder event( String type, NodeBranchEntries nodes )
@@ -126,9 +145,14 @@ public class NodeEvents
         return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes, targetBranch ) );
     }
 
-    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes )
+//    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes )
+//    {
+//        return nodes.stream().map( NodeEvents::nodeToMap ).collect( ImmutableList.toImmutableList() );
+//    }
+
+    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes, final Branch branch )
     {
-        return nodes.stream().map( NodeEvents::nodeToMap ).collect( ImmutableList.toImmutableList() );
+        return nodes.stream().map( node -> NodeEvents.nodeToMap( node, branch ) ).collect( ImmutableList.toImmutableList() );
     }
 
     private static ImmutableList<ImmutableMap<String, String>> nodesToList( final NodeBranchEntries nodes )
@@ -159,12 +183,16 @@ public class NodeEvents
         return map.build();
     }
 
-    private static ImmutableMap<String, String> nodeToMap( final Node node )
+//    private static ImmutableMap<String, String> nodeToMap( final Node node )
+//    {
+//        return nodeToMap( node, ContextAccessor.current().getBranch() );
+//    }
+
+    private static ImmutableMap<String, String> nodeToMap( final Node node, final Branch branch )
     {
         final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
             .put( "id", node.id().toString() )
-            .put( "path", node.path().toString() )
-            .put( "branch", ContextAccessor.current().getBranch().getValue() );
+            .put( "path", node.path().toString() ).put( "branch", branch.getValue() );
 
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         if ( repositoryId != null )
