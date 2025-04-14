@@ -506,6 +506,11 @@ public class NodeServiceImpl
 
         for ( PatchNodeResult.BranchResult br : result.getResults() )
         {
+            if ( br.node() == null )
+            {
+                continue;
+            }
+
             ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build().runWith( () -> {
                 if ( ( br.branch().equals( mainBranch ) ) || !br.node().getNodeVersionId().equals( mainBranchVersion ) )
                 {
@@ -901,6 +906,11 @@ public class NodeServiceImpl
 
             for ( ApplyNodePermissionsResult.BranchResult br : branchResults )
             {
+                if ( br.getNode() == null )
+                {
+                    continue;
+                }
+
                 ContextBuilder.from( ContextAccessor.current() ).branch( br.getBranch() ).build().runWith( () -> {
                     if ( ( mainBranchResult != null && mainBranchResult.getBranch().equals( br.getBranch() ) ) ||
                         !br.getNode().getNodeVersionId().equals( mainBranchVersion ) )

@@ -163,7 +163,7 @@ public class PatchNodeCommandTest
         } ).count() );
 
         assertEquals( 1, capturedEvents.stream().filter( event -> {
-            if ( !NodeEvents.NODE_UPDATED_EVENT.equals( event.getType() ) )
+            if ( !NodeEvents.NODE_PUSHED_EVENT.equals( event.getType() ) )
             {
                 return false;
             }
