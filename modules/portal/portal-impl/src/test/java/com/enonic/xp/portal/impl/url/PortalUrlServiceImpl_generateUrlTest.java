@@ -5,7 +5,6 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,8 +75,5 @@ public class PortalUrlServiceImpl_generateUrlTest
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/admin" );
         url = this.service.generateUrl( params );
         assertEquals( "http://localhost/?a=3", url );
-
-        //Post treatment
-        ServletRequestHolder.setRequest( null );
     }
 }

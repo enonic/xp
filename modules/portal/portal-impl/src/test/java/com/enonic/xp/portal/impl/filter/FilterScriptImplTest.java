@@ -10,8 +10,6 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -31,7 +29,6 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.handler.WebHandlerChain;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,9 +89,6 @@ public class FilterScriptImplTest
         scriptService.initialize();
 
         this.factory = new FilterScriptFactoryImpl( scriptService );
-
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( req );
     }
 
     @Test

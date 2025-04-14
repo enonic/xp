@@ -45,7 +45,7 @@ class PortalRequestAdapter
         result.setPort( req.getServerPort() );
         result.setRemoteAddress( req.getRemoteAddr() );
         result.setRawPath( req.getPathInfo() );
-        result.setPath( ServletRequestUrlHelper.getPath( req ) );
+        result.setPath( ServletRequestUrlHelper.createUri( req, req.getRequestURI() ) );
         result.setUrl( ServletRequestUrlHelper.getFullUrl( req ) );
         result.setContentType( req.getContentType() );
         result.getLocales().addAll( Collections.list( req.getLocales() ) );

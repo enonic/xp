@@ -9,8 +9,6 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -27,7 +25,6 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -87,9 +84,6 @@ public class MacroProcessorScriptTest
         scriptService.initialize();
 
         this.factory = new MacroProcessorFactoryImpl( scriptService );
-
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( req );
     }
 
     private PortalResponse execute( final String scriptKey )

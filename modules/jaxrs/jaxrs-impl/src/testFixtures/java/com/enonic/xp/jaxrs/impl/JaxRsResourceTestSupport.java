@@ -29,7 +29,6 @@ import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.web.multipart.MultipartService;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 public abstract class JaxRsResourceTestSupport
 {
@@ -94,7 +93,6 @@ public abstract class JaxRsResourceTestSupport
         Mockito.when( req.getServerName() ).thenReturn( "localhost" );
         Mockito.when( req.getLocalPort() ).thenReturn( 80 );
         Mockito.when( req.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.ENGLISH ) ) );
-        ServletRequestHolder.setRequest( req );
     }
 
     protected abstract Object getResourceInstance();

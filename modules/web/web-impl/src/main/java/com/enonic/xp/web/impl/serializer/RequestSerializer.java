@@ -30,7 +30,7 @@ public final class RequestSerializer
         webRequest.setPort( request.getServerPort() );
         webRequest.setRemoteAddress( request.getRemoteAddr() );
         webRequest.setRawPath( request.getPathInfo() );
-        webRequest.setPath( ServletRequestUrlHelper.getPath( request ) );
+        webRequest.setPath( ServletRequestUrlHelper.createUri( request, request.getRequestURI() ) );
         webRequest.setUrl( ServletRequestUrlHelper.getFullUrl( request ) );
         webRequest.setContentType( request.getContentType() );
         webRequest.setEndpointPath( findEndpointPath( request.getPathInfo() ) );

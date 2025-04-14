@@ -23,7 +23,6 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -92,15 +91,7 @@ public class GetListAllowedWidgetsHandlerTest
 
         final WebResponse response;
         when( webRequest.getRawRequest() ).thenReturn( httpServletRequest );
-        try
-        {
-            ServletRequestHolder.setRequest( httpServletRequest );
-            response = instance.handle( webRequest );
-        }
-        finally
-        {
-            ServletRequestHolder.setRequest( null );
-        }
+        response = instance.handle( webRequest );
 
         assertNotNull( response );
 

@@ -163,7 +163,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
 
         UrlBuilderHelper.appendParams( str, params.entries() );
         final String uri = str.toString();
-        return ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), uri ).getRewrittenUri();
+        return ServletRequestUrlHelper.createUri( portalRequest.getRawRequest(), uri );
     }
 
     @Override

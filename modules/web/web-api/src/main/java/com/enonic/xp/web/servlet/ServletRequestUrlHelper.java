@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import com.google.common.base.Splitter;
-import com.google.common.net.HostAndPort;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -21,92 +20,9 @@ public final class ServletRequestUrlHelper
     private static final int[] RFC_8187_ATTR_CHAR =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$&+-.^_`|~".chars().sorted().toArray();
 
-    @Deprecated
-    public static String createUri( final String path )
-    {
-        return createUri( ServletRequestHolder.getRequest(), path );
-    }
-
     public static String createUri( final HttpServletRequest req, final String path )
     {
-        return rewriteUri( req, path.startsWith( "/" ) ? path : "/" + path ).getRewrittenUri();
-    }
-
-    @Deprecated
-    public static String getScheme()
-    {
-        return getScheme( ServletRequestHolder.getRequest() );
-    }
-
-    @Deprecated
-    public static String getScheme( final HttpServletRequest req )
-    {
-        return req.getScheme();
-    }
-
-    @Deprecated
-    public static String getHost()
-    {
-        return getHost( ServletRequestHolder.getRequest() );
-    }
-
-    @Deprecated
-    public static String getHost( final HttpServletRequest req )
-    {
-        return req.getServerName();
-    }
-
-    @Deprecated
-    public static int getPort()
-    {
-        return getPort( ServletRequestHolder.getRequest() );
-    }
-
-    @Deprecated
-    public static int getPort( final HttpServletRequest req )
-    {
-        return req.getServerPort();
-    }
-
-    @Deprecated
-    public static HostAndPort getHostAndPort()
-    {
-        return getHostAndPort( ServletRequestHolder.getRequest() );
-    }
-
-    @Deprecated
-    public static HostAndPort getHostAndPort( final HttpServletRequest req )
-    {
-        return HostAndPort.fromParts( req.getServerName(), req.getServerPort() );
-    }
-
-    @Deprecated
-    public static String getRemoteAddress( final HttpServletRequest req )
-    {
-        return req.getRemoteAddr();
-    }
-
-    @Deprecated
-    public static String getPath()
-    {
-        return getPath( ServletRequestHolder.getRequest() );
-    }
-
-    public static String getPath( final HttpServletRequest req )
-    {
-        return rewriteUri( req, req.getRequestURI() ).getRewrittenUri();
-    }
-
-    @Deprecated
-    private static String getQueryString( final HttpServletRequest req )
-    {
-        return req.getQueryString();
-    }
-
-    @Deprecated
-    public static String getServerUrl()
-    {
-        return getServerUrl( ServletRequestHolder.getRequest() );
+        return rewriteUri( req, path ).getRewrittenUri();
     }
 
     public static String getServerUrl( final HttpServletRequest req )
@@ -128,12 +44,6 @@ public final class ServletRequestUrlHelper
         }
 
         return str.toString();
-    }
-
-    @Deprecated
-    public static String getFullUrl()
-    {
-        return getFullUrl( ServletRequestHolder.getRequest() );
     }
 
     public static String getFullUrl( final HttpServletRequest req )
@@ -160,12 +70,6 @@ public final class ServletRequestUrlHelper
         final boolean isHttpOrWs = ( "http".equals( scheme ) || "ws".equals( scheme ) ) && 80 == port;
         final boolean isHttpsOrWss = ( "https".equals( scheme ) || "wss".equals( scheme ) ) && 443 == port;
         return !( isUndefined || isHttpOrWs || isHttpsOrWss );
-    }
-
-    @Deprecated
-    public static UriRewritingResult rewriteUri( final String uri )
-    {
-        return rewriteUri( ServletRequestHolder.getRequest(), uri );
     }
 
     public static UriRewritingResult rewriteUri( final HttpServletRequest req, final String uri )

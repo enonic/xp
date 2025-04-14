@@ -20,7 +20,6 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.DispatchServlet;
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 @Component(factory = "dispatchServlet", service = DispatchServlet.class)
 public final class DispatchServletImpl
@@ -46,15 +45,7 @@ public final class DispatchServletImpl
     {
         req.setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, connector );
 
-        ServletRequestHolder.setRequest( req );
-        try
-        {
-            this.filterPipeline.filter( req, res, this.servletPipeline );
-        }
-        finally
-        {
-            ServletRequestHolder.setRequest( null );
-        }
+        this.filterPipeline.filter( req, res, this.servletPipeline );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

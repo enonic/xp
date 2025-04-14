@@ -11,7 +11,6 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
@@ -25,9 +24,10 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 
 final class PageHandlerWorker
-    extends PortalHandlerWorker<PortalRequest>
 {
     private static final String SHORTCUT_TARGET_PROPERTY = "target";
+
+    private final PortalRequest request;
 
     RendererDelegate rendererDelegate;
 
@@ -41,12 +41,10 @@ final class PageHandlerWorker
 
     PageHandlerWorker( final PortalRequest request )
     {
-        super( request );
+        this.request = request;
     }
 
-    @Override
     public PortalResponse execute()
-        throws Exception
     {
         final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
 

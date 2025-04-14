@@ -27,12 +27,6 @@ public class ServletRequestUrlHelperTest
     @Test
     public void createUri()
     {
-        final String uri2 = ServletRequestUrlHelper.createUri( req, "" );
-        assertEquals( "/", uri2 );
-
-        final String uri3 = ServletRequestUrlHelper.createUri( req, "a/b" );
-        assertEquals( "/a/b", uri3 );
-
         final String uri4 = ServletRequestUrlHelper.createUri( req, "/a/b" );
         assertEquals( "/a/b", uri4 );
     }
@@ -69,11 +63,11 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void rewriteUri_no_vhost()
+    public void createUri_no_vhost()
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
 
-        final String uri = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" ).getRewrittenUri();
+        final String uri = ServletRequestUrlHelper.createUri( req, "/path/to/page" );
         assertEquals( "/path/to/page", uri );
     }
 
@@ -173,7 +167,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    void rewriteUri_admin_queryString()
+    void createUri_admin_queryString()
     {
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
@@ -181,20 +175,20 @@ public class ServletRequestUrlHelperTest
         when( vhost.getTarget() ).thenReturn( "/xp/admin" );
         when( vhost.getSource() ).thenReturn( "/admin" );
 
-        UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/xp/admin/rest?a=b" );
-        assertEquals( "/admin/rest?a=b", rewritingResult.getRewrittenUri() );
+        String rewritingResult = ServletRequestUrlHelper.createUri( req, "/xp/admin/rest?a=b" );
+        assertEquals( "/admin/rest?a=b", rewritingResult );
     }
 
     @Test
-    void rewriteUri_queryString()
+    void createUri_queryString()
     {
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
 
         when( vhost.getSource() ).thenReturn( "/studio" );
         when( vhost.getTarget() ).thenReturn( "/admin" );
-        final UriRewritingResult uriRewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/admin?a=3" );
+        final String uriRewritingResult = ServletRequestUrlHelper.createUri( req, "/admin?a=3" );
 
-        assertEquals( "/studio?a=3", uriRewritingResult.getRewrittenUri() );
+        assertEquals( "/studio?a=3", uriRewritingResult );
     }
 }

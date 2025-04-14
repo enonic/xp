@@ -13,8 +13,6 @@ import org.osgi.framework.BundleContext;
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -32,7 +30,6 @@ import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,9 +78,6 @@ class ResponseProcessorExecutorTest
         final PortalScriptServiceImpl portalScriptService = new PortalScriptServiceImpl( runtimeFactory );
         portalScriptService.initialize();
         scriptService = portalScriptService;
-
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( req );
     }
 
     @Test

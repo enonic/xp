@@ -6,7 +6,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.condition.Condition;
 
-import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
@@ -62,12 +61,6 @@ public class ApplicationDeployerManager
     }
 
     //TODO Temporary fix. See issue xp#7003
-    @Reference
-    public void setAdminToolDescriptorService( final AdminToolDescriptorService adminToolDescriptorService )
-    {
-        //Needed to ensure startup-order
-    }
-
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
