@@ -3,5 +3,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Core - I18N' )
+    bundle {
+       bnd( 'Bundle-Name': 'Enonic XP Core - I18N' )
+    }
 }

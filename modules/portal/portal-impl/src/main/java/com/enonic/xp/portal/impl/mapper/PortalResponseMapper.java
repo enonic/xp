@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import javax.servlet.http.Cookie;
-
 import com.google.common.collect.ImmutableList;
+
+import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -73,10 +73,6 @@ public final class PortalResponseMapper
             {
                 gen.value( "domain", cookie.getDomain() );
             }
-            if ( cookie.getComment() != null )
-            {
-                gen.value( "comment", cookie.getComment() );
-            }
             if ( cookie.getMaxAge() >= 0 )
             {
                 gen.value( "maxAge", cookie.getMaxAge() );
@@ -88,6 +84,10 @@ public final class PortalResponseMapper
             if ( cookie.isHttpOnly() )
             {
                 gen.value( "httpOnly", cookie.isHttpOnly() );
+            }
+            if ( cookie.getAttribute("SameSite") != null )
+            {
+                gen.value( "sameSite", cookie.getAttribute("SameSite") );
             }
             gen.end();
         }

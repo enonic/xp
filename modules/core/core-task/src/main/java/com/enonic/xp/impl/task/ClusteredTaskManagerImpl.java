@@ -16,13 +16,13 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.hazelcast.cluster.Member;
+import com.hazelcast.cluster.MemberSelector;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IExecutorService;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.MemberSelector;
-import com.hazelcast.util.ExceptionUtil;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.Exceptions;
 import com.enonic.xp.impl.task.distributed.AllTasksReporter;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.OffloadedTaskCallable;
@@ -116,9 +116,14 @@ public final class ClusteredTaskManagerImpl
                 resultsFromMembers.values().forEach( f -> f.cancel( true ) );
                 throw new RuntimeException( e );
             }
-            catch ( InterruptedException | ExecutionException e )
+            catch ( InterruptedException e )
             {
-                throw ExceptionUtil.rethrow( e );
+                Thread.currentThread().interrupt();
+                throw new RuntimeException( e );
+            }
+            catch ( ExecutionException e )
+            {
+                throw Exceptions.throwCause( e );
             }
         }
         return taskInfoBuilder;
@@ -129,20 +134,25 @@ public final class ClusteredTaskManagerImpl
     {
         try
         {
-            executorService.submit( new OffloadedTaskCallable( task ), new TaskMemberSelector( task ) ).
-                get( outboundTimeoutNs, TimeUnit.NANOSECONDS );
+            executorService.submit( new OffloadedTaskCallable( task ), new TaskMemberSelector( task ) )
+                .get( outboundTimeoutNs, TimeUnit.NANOSECONDS );
         }
         catch ( TimeoutException e )
         {
             throw new RuntimeException( e );
         }
-        catch ( InterruptedException | ExecutionException e )
+        catch ( InterruptedException e )
         {
-            throw ExceptionUtil.rethrow( e );
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( e );
+        }
+        catch ( ExecutionException e )
+        {
+            throw Exceptions.throwCause( e );
         }
     }
 
-    private static class TaskMemberSelector
+    private class TaskMemberSelector
         implements MemberSelector
     {
         final DescribedTask task;
@@ -155,11 +165,12 @@ public final class ClusteredTaskManagerImpl
         @Override
         public boolean select( final Member member )
         {
-            return Boolean.TRUE.equals( member.getBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
+            final Map<String, String> attributes = memberAttributesApplier.getAttributesReplicatedMap().get( member.getUuid() );
+            return Boolean.TRUE.toString().equals( attributes.get( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_KEY ) ) &&
                 ( !SYSTEM_APPLICATION_KEY.equals( task.getApplicationKey() ) ||
-                    Boolean.TRUE.equals( member.getBooleanAttribute( MemberAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) ) &&
-                Boolean.TRUE.equals(
-                    member.getBooleanAttribute( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
+                    Boolean.TRUE.toString().equals( attributes.get( MemberAttributesApplier.SYSTEM_TASKS_ENABLED_ATTRIBUTE_KEY ) ) ) &&
+                Boolean.TRUE.toString()
+                    .equals( attributes.get( MemberAttributesApplier.TASKS_ENABLED_ATTRIBUTE_PREFIX + task.getApplicationKey() ) );
         }
     }
 }

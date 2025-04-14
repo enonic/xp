@@ -2,9 +2,12 @@ dependencies {
     api project( ':web:web-api' )
     api libs.jakarta.jaxrs
     api libs.jakarta.annotation
+    api libs.jackson.annotations
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP JaxRs - Api',
-         'Export-Package': 'com.enonic.xp.jaxrs.*' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP JaxRs - Api',
+             'Export-Package': 'com.enonic.xp.jaxrs.*' )
+    }
 }

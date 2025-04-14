@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.security;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PrincipalKeyNodeTranslatorTest
 {
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
     @Test
     public void toNodeName()
         throws Exception
@@ -35,7 +29,7 @@ public class PrincipalKeyNodeTranslatorTest
             email( "rmy@enonic.com" ).
             login( "rmy" ).
             displayName( "Runar Myklebust" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
         String nodeName = PrincipalKeyNodeTranslator.toNodeName( user.getKey() ).toString();

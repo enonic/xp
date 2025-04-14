@@ -1,7 +1,7 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.server.RunMode;
@@ -16,7 +16,7 @@ class ErrorHandlerConfiguratorTest
     {
         final Server server = new Server();
         new ErrorHandlerConfigurator().configure( RunMode.PROD, server );
-        final ErrorHandler errorHandler = server.getErrorHandler();
+        final Request.Handler errorHandler = server.getErrorHandler();
         assertThat( errorHandler ).isInstanceOf( LastResortErrorHandler.class );
 
     }

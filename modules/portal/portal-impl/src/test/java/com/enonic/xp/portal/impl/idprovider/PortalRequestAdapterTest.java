@@ -2,14 +2,15 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpMethod;
@@ -35,6 +36,7 @@ public class PortalRequestAdapterTest
     public void adaptTest()
     {
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
         when( mockHttpServletRequest.getContentType() ).thenReturn( "text/html" );
         when( mockHttpServletRequest.getScheme() ).thenReturn( "http" );
         when( mockHttpServletRequest.getServerName() ).thenReturn( "localhost" );
@@ -75,6 +77,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -87,6 +90,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test/draft" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -99,6 +103,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -111,6 +116,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/_/idprovider/system/login" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -123,6 +129,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/app/tool" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -135,6 +142,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/app/anything" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -147,6 +155,7 @@ public class PortalRequestAdapterTest
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/test" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
 
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
@@ -158,6 +167,7 @@ public class PortalRequestAdapterTest
     void adaptSlashApiTest()
     {
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
+        when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton(Locale.US) ) );
 
         // use case 1
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/api/app:api?k=v" );

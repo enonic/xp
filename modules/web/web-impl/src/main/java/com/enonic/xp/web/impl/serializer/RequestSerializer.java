@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
@@ -34,7 +34,7 @@ public final class RequestSerializer
         webRequest.setUrl( ServletRequestUrlHelper.getFullUrl( request ) );
         webRequest.setContentType( request.getContentType() );
         webRequest.setEndpointPath( findEndpointPath( request.getPathInfo() ) );
-
+        webRequest.getLocales().addAll( Collections.list( request.getLocales() ) );
         setParameters( request, webRequest );
         setHeaders( request, webRequest );
         setCookies( request, webRequest );

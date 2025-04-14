@@ -1063,7 +1063,7 @@ public class ApplicationServiceImplTest
     private Bundle deployAppBundle( final String key, final VersionRange systemVersionRange )
         throws Exception
     {
-        final InputStream in = newBundle( key, true ).set( ApplicationManifestConstants.X_SYSTEM_VERSION,
+        final InputStream in = newBundle( key, true ).setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION,
                                                            systemVersionRange != null ? systemVersionRange.toString() : null ).build();
 
         return deploy( key, in );
@@ -1072,7 +1072,7 @@ public class ApplicationServiceImplTest
     private Bundle deploySystemAppBundle( final String key )
         throws Exception
     {
-        final InputStream in = newBundle( key, true ).set( ApplicationManifestConstants.X_BUNDLE_TYPE, "system" ).build();
+        final InputStream in = newBundle( key, true ).setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "system" ).build();
 
         return deploy( key, in );
     }

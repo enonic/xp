@@ -4,9 +4,9 @@ import java.net.URI;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.websocket.Session;
-
 import org.junit.jupiter.api.Test;
+
+import jakarta.websocket.Session;
 
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.security.User;

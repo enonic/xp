@@ -15,6 +15,7 @@ import com.enonic.xp.launcher.impl.env.SystemProperties;
 import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleActor;
 import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleService;
 import com.enonic.xp.launcher.impl.framework.FrameworkService;
+import com.enonic.xp.launcher.impl.log.Activator;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
 
@@ -93,7 +94,8 @@ public final class LauncherImpl
 
     private void addLoggingActivator()
     {
-        this.framework.activator( new org.apache.felix.log.extension.Activator() );
+        this.framework.activator( new org.apache.felix.log.Activator() );
+        this.framework.activator( new Activator() );
     }
 
     private void setupLifecycleService()

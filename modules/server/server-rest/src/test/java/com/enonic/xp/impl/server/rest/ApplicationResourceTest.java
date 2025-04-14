@@ -3,14 +3,14 @@ package com.enonic.xp.impl.server.rest;
 import java.net.URL;
 import java.time.Instant;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.osgi.framework.Version;
 
 import com.google.common.io.ByteSource;
+
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;

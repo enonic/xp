@@ -1,18 +1,18 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import com.enonic.xp.impl.server.rest.model.DeleteSnapshotRequestJson;
 import com.enonic.xp.impl.server.rest.model.DeleteSnapshotsResultJson;
@@ -50,7 +50,7 @@ public final class SnapshotResource
 
     private static DateTimeFormatter getDateTimeFormatter()
     {
-        return DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH-mm-ss.SSS'z'" ).withZone( ZoneId.of( "UTC" ) );
+        return DateTimeFormatter.ofPattern( "yyyy-MM-dd'T'HH-mm-ss.SSS'z'" ).withZone( ZoneOffset.UTC );
     }
 
     @POST

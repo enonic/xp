@@ -22,7 +22,8 @@ exports.get = function (req) {
                 comment: 'Some cookie comments',
                 maxAge: 1000,
                 secure: true,
-                httpOnly: true
+                httpOnly: true,
+                sameSite: 'Strict'
             },
             'empty': null
         }

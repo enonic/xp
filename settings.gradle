@@ -1,7 +1,7 @@
 pluginManagement {
     plugins {
-        id 'com.gradle.enterprise' version '3.19.2'
-        id 'biz.aQute.bnd.builder' version '6.4.0'
+        id 'com.gradle.develocity' version '3.19.2'
+        id 'biz.aQute.bnd.builder' version '7.1.0'
         id 'com.github.jk1.dependency-license-report' version '2.9'
         id 'com.github.ben-manes.versions' version '0.52.0'
         id 'com.github.node-gradle.node' version '7.1.0'
@@ -9,19 +9,26 @@ pluginManagement {
 }
 
 plugins {
-    id 'com.gradle.enterprise'
+    id 'com.gradle.develocity'
 }
 
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
+        maven {
+            url = uri( 'https://repo.jenkins-ci.org/releases/' )
+            content {
+                includeGroup( 'org.jvnet.mock-javamail' )
+            }
+        }
     }
 }
 
-gradleEnterprise {
+develocity {
     buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
+        publishing.onlyIf { false }
+        termsOfUseUrl = 'https://gradle.com/terms-of-service'
+        termsOfUseAgree = 'yes'
     }
 }
 
@@ -59,6 +66,7 @@ include 'server:server-status'
 include 'server:server-udc'
 include 'server:server-rest'
 include 'server:server-trace'
+include 'server:server-metrics'
 
 include 'script:script-api'
 include 'script:script-impl'

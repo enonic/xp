@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
@@ -160,10 +160,10 @@ public class ApplicationServiceTest
         throws IOException
     {
         return ByteSource.wrap( ByteStreams.toByteArray( TinyBundles.bundle()
-                                                             .set( Constants.BUNDLE_SYMBOLICNAME, "appName" )
-                                                             .set( Constants.BUNDLE_VERSION, appVersion )
-                                                             .set( "X-Bundle-Type", "application" )
-                                                             .add( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) )
+                                                             .setHeader( Constants.BUNDLE_SYMBOLICNAME, "appName" )
+                                                             .setHeader( Constants.BUNDLE_VERSION, appVersion )
+                                                             .setHeader( "X-Bundle-Type", "application" )
+                                                             .addResource( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) )
                                                              .build() ) );
     }
 

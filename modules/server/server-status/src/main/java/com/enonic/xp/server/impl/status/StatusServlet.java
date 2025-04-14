@@ -8,13 +8,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -25,6 +18,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.status.StatusReporter;
@@ -65,12 +65,6 @@ public final class StatusServlet
     private void reportFromReporter( final HttpServletRequest req, final HttpServletResponse res, String name )
         throws IOException
     {
-        //TODO Backward compatibility fix. Remove in 7.0
-        if ( "cluster".equals( name ) )
-        {
-            name = "cluster.elasticsearch";
-        }
-        
         final StatusReporter reporter = this.reporters.get( name );
         if ( reporter == null )
         {

@@ -1,8 +1,6 @@
 package com.enonic.xp.security.auth;
 
-import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,11 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuthenticationInfoTest
 {
-
-    private static final Instant NOW = Instant.ofEpochSecond( 0 );
-
-    private static final Clock clock = Clock.fixed( NOW, ZoneId.of( "UTC" ) );
-
     @Test
     public void testWithoutPrincipals()
     {
@@ -33,7 +26,7 @@ public class AuthenticationInfoTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
         final AuthenticationInfo info = AuthenticationInfo.create().user( user ).build();
@@ -54,7 +47,7 @@ public class AuthenticationInfoTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
         final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
@@ -89,7 +82,7 @@ public class AuthenticationInfoTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
         final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
@@ -117,7 +110,7 @@ public class AuthenticationInfoTest
             key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
             description( "description" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             build();
 
         final IdProviderKey idProvider = IdProviderKey.from( "myStore" );
@@ -152,7 +145,7 @@ public class AuthenticationInfoTest
             displayName( "my user" ).
             key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
             email( "user@email" ).
-            modifiedTime( Instant.now( clock ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
             profile( userProfile ).
             build();
 

@@ -10,12 +10,11 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.Meter;
-
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.util.Metrics;
+import com.enonic.xp.metrics.Counter;
+import com.enonic.xp.metrics.Metrics;
 
 @Component(immediate = true)
 public final class EventPublisherImpl
@@ -23,7 +22,7 @@ public final class EventPublisherImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( EventPublisherImpl.class );
 
-    private static final Meter EVENT_METRIC = Metrics.meter( EventPublisher.class, "event" );
+    private static final Counter EVENT_METRIC = Metrics.counter( EventPublisher.class.getName() +  ".event" );
 
     private final EventMulticaster multicaster = new EventMulticaster();
 
@@ -41,7 +40,7 @@ public final class EventPublisherImpl
         if ( event != null )
         {
             LOG.debug( "Publishing event: {}", event );
-            EVENT_METRIC.mark();
+            EVENT_METRIC.increment();
 
             dispatchEvent( event );
         }

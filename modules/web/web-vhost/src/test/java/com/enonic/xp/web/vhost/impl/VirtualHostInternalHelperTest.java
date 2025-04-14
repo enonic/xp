@@ -1,8 +1,8 @@
 package com.enonic.xp.web.vhost.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.Test;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;

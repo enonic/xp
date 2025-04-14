@@ -1,9 +1,9 @@
 package com.enonic.xp.jaxrs.impl;
 
-import javax.ws.rs.core.FeatureContext;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.ws.rs.core.FeatureContext;
 
 import com.enonic.xp.web.multipart.MultipartService;
 

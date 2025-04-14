@@ -4,12 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.osgi.framework.ServiceReference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -17,23 +12,21 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.status.StatusReporter;
-import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
+import com.enonic.xp.web.impl.dispatch.pipeline.ResourcePipeline;
 
-public abstract class ResourceStatusReporter<T extends ResourceDefinition>
+public abstract class ResourceStatusReporter
     implements StatusReporter
 {
     private final String name;
 
-    private final Map<Object, T> map = new ConcurrentHashMap<>();
+    private final ResourcePipeline<?> resourcePipeline;
 
-    private final AtomicSortedList<T> list = new AtomicSortedList<>( Comparator.comparingInt( T::getOrder ) );
-
-    ResourceStatusReporter( final String name )
+    ResourceStatusReporter( final String name, final ResourcePipeline<?> resourcePipeline )
     {
         this.name = name;
+        this.resourcePipeline = resourcePipeline;
     }
 
     @Override
@@ -58,7 +51,7 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
     private JsonNode getReport()
     {
         final ArrayNode json = JsonNodeFactory.instance.arrayNode();
-        for ( final ResourceDefinition<?> def : this.list.snapshot() )
+        for ( final ResourceDefinition<?> def : this.resourcePipeline.list() )
         {
             final ObjectNode node = json.addObject();
             node.put( "order", def.getOrder() );
@@ -70,23 +63,6 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
         }
 
         return json;
-    }
-
-    void add( final T def )
-    {
-        this.map.put( def.getResource(), def );
-        this.list.add( def );
-    }
-
-    void remove( final Object key )
-    {
-        final T def = this.map.remove( key );
-        if ( def == null )
-        {
-            return;
-        }
-
-        this.list.remove( def );
     }
 
     private ArrayNode getArrayNode( final Collection<String> values )
@@ -109,14 +85,5 @@ public abstract class ResourceStatusReporter<T extends ResourceDefinition>
         }
 
         return json;
-    }
-
-    protected List<String> getConnectorsFromProperty( ServiceReference<?> serviceReference )
-    {
-        final Object connectorProperty = serviceReference.getProperty( DispatchConstants.CONNECTOR_PROPERTY );
-
-        return connectorProperty == null
-            ? List.of()
-            : connectorProperty instanceof String[] ? List.of( (String[]) connectorProperty ) : List.of( (String) connectorProperty );
     }
 }

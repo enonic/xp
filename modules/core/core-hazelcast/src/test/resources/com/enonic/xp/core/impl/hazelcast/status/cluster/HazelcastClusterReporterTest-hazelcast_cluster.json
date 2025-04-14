@@ -4,14 +4,14 @@
   "clusterVersion": "0.0",
   "members": [
     {
-      "uuid": "member1-uuid",
+      "uuid": "fcb2e135-1f61-4100-af3a-95449c7e6e26",
       "address": "127.0.0.1",
       "port": 5701,
       "liteMember": false,
       "version": "0.0.0"
     },
     {
-      "uuid": "member2-uuid",
+      "uuid": "98c640ab-66e5-48c6-8e64-e5aeb352dfaf",
       "address": "127.0.0.2",
       "port": 5702,
       "liteMember": true,

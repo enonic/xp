@@ -5,9 +5,6 @@ import java.util.Set;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.portal.url.IdentityUrlParams;
-import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class LoginUrlHandler
     extends AbstractUrlHandler
@@ -21,7 +18,6 @@ public final class LoginUrlHandler
         final IdentityUrlParams params = new IdentityUrlParams().
             portalRequest( request ).
             idProviderFunction( "login" ).
-            idProviderKey( retrieveIdProviderKey() ).
             setAsMap( map );
         return this.urlService.identityUrl( params );
     }
@@ -30,15 +26,5 @@ public final class LoginUrlHandler
     protected boolean isValidParam( final String param )
     {
         return VALID_URL_PROPERTY_KEYS.contains( param );
-    }
-
-    private IdProviderKey retrieveIdProviderKey()
-    {
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
-        if ( virtualHost != null )
-        {
-            return virtualHost.getDefaultIdProviderKey();
-        }
-        return null;
     }
 }

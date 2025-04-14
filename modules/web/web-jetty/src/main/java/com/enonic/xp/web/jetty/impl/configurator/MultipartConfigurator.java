@@ -1,10 +1,11 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import javax.servlet.MultipartConfigElement;
-
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 
 import com.google.common.base.StandardSystemProperty;
+
+import jakarta.servlet.MultipartConfigElement;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class MultipartConfigurator

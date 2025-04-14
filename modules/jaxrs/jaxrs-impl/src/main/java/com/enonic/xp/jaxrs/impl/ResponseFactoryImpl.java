@@ -1,12 +1,12 @@
 package com.enonic.xp.jaxrs.impl;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jboss.resteasy.core.SynchronousDispatcher;
 import org.jboss.resteasy.plugins.server.servlet.HttpResponseFactory;
 import org.jboss.resteasy.plugins.server.servlet.HttpServletResponseWrapper;
 import org.jboss.resteasy.spi.HttpResponse;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 final class ResponseFactoryImpl
     implements HttpResponseFactory

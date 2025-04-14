@@ -1,6 +1,5 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -21,7 +20,6 @@ public abstract class ConnectorConfigurator
 
     protected final void doConfigure( final HttpConnectionFactory factory )
     {
-        factory.setHttpCompliance( HttpCompliance.valueOf( this.config.http_compliance() ) );
         factory.getHttpConfiguration().addCustomizer( new ForwardedRequestCustomizer() );
 
         final HttpConfiguration config = factory.getHttpConfiguration();

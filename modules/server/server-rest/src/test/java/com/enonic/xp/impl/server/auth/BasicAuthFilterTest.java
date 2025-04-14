@@ -2,16 +2,16 @@ package com.enonic.xp.impl.server.auth;
 
 import java.util.Base64;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.net.HttpHeaders;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.IdProvider;

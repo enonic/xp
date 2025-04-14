@@ -1,12 +1,12 @@
 package com.enonic.xp.server.impl.status;
 
-import javax.servlet.Servlet;
-import javax.servlet.annotation.WebServlet;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.server.impl.status.check.OSGIStateCheck;

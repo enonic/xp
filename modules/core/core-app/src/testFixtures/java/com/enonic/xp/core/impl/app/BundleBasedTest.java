@@ -10,8 +10,8 @@ import org.apache.felix.framework.Felix;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
-import org.ops4j.pax.tinybundles.core.TinyBundles;
+import org.ops4j.pax.tinybundles.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -88,12 +88,13 @@ public abstract class BundleBasedTest
 
     private TinyBundle doCreateNewBundle( final String name, final boolean isApp, final String version )
     {
-        final TinyBundle bundle = TinyBundles.bundle().set( Constants.BUNDLE_SYMBOLICNAME, name ).set( Constants.BUNDLE_VERSION, version );
+        final TinyBundle bundle =
+            TinyBundles.bundle().setHeader( Constants.BUNDLE_SYMBOLICNAME, name ).setHeader( Constants.BUNDLE_VERSION, version );
 
         if ( isApp )
         {
-            bundle.set( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
-            bundle.add( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) );
+            bundle.setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
+            bundle.addResource( "site/site.xml", getClass().getResource( "/myapp/site/site.xml" ) );
         }
 
         return bundle;

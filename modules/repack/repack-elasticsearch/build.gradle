@@ -12,7 +12,8 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Elasticsearch Library',
+    bundle {
+        bnd( 'Bundle-Name': 'Elasticsearch Library',
          'Export-Package':
              'org.elasticsearch.*;-split-package:=merge-first' + ',' +
              'org.apache.lucene.*;-split-package:=merge-first' + ',' +
@@ -32,4 +33,5 @@ jar {
              'org.yaml.snakeyaml.*' + ',' +
              'com.twitter.jsr166e.*'
     )
+    }
 }

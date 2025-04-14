@@ -1,7 +1,7 @@
 package com.enonic.xp.web.handler;
 
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.web.WebRequest;

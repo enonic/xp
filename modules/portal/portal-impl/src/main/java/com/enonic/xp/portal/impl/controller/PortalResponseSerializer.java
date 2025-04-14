@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.servlet.http.Cookie;
-
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.http.Cookie;
 
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -189,7 +189,6 @@ public final class PortalResponseSerializer
         if ( value.isObject() )
         {
             final Cookie cookie = new Cookie( key, "" );
-            final StringBuilder comment = new StringBuilder();
             for ( final String subKey : value.getKeys() )
             {
                 if ( "value".equals( subKey ) )
@@ -203,14 +202,6 @@ public final class PortalResponseSerializer
                 else if ( "domain".equals( subKey ) )
                 {
                     cookie.setDomain( value.getMember( subKey ).getValue( String.class ) );
-                }
-                else if ( "comment".equals( subKey ) )
-                {
-                    final String commentValue = value.getMember( subKey ).getValue( String.class );
-                    if ( commentValue != null )
-                    {
-                        comment.append( commentValue );
-                    }
                 }
                 else if ( "maxAge".equals( subKey ) )
                 {
@@ -226,10 +217,9 @@ public final class PortalResponseSerializer
                 }
                 else if ( "sameSite".equals( subKey ) )
                 {
-                    comment.append( SameSiteCommentHelper.convert( value.getMember( subKey ).getValue( String.class ) ) );
+                    cookie.setAttribute( "SameSite", value.getMember( subKey ).getValue( String.class ) );
                 }
             }
-            cookie.setComment( comment.toString() );
             builder.cookie( cookie );
         }
         else

@@ -7,5 +7,7 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Enonic XP Web - Impl' )
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Web - Impl' )
+    }
 }

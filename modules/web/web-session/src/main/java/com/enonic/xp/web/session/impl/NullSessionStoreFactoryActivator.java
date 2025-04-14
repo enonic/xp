@@ -1,8 +1,8 @@
 package com.enonic.xp.web.session.impl;
 
-import org.eclipse.jetty.server.session.DefaultSessionCache;
-import org.eclipse.jetty.server.session.DefaultSessionCacheFactory;
-import org.eclipse.jetty.server.session.NullSessionDataStoreFactory;
+import org.eclipse.jetty.session.DefaultSessionCache;
+import org.eclipse.jetty.session.DefaultSessionCacheFactory;
+import org.eclipse.jetty.session.NullSessionDataStoreFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

@@ -3,13 +3,13 @@ package com.enonic.xp.portal.impl.macro;
 import java.net.URL;
 import java.util.Hashtable;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
@@ -103,7 +103,7 @@ public class MacroProcessorScriptTest
     {
         final PortalResponse response = execute( "myapplication:/macro/macro.js" );
         assertEquals(
-            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{\"port\":0,\"mode\":\"live\",\"webSocket\":false,\"branch\":\"draft\",\"params\":{},\"headers\":{},\"cookies\":{}},\"document\":\"<h1>document</h1>\"}",
+            "Macro context: {\"name\":\"macroName\",\"body\":\"body\",\"params\":{\"firstParam\":\"firstParamValue\",\"secondParam\":\"secondParamValue\"},\"request\":{\"port\":0,\"mode\":\"live\",\"webSocket\":false,\"branch\":\"draft\",\"params\":{},\"headers\":{},\"cookies\":{},\"locales\":[]},\"document\":\"<h1>document</h1>\"}",
             response.getBody() );
         assertEquals( 1, response.getContributions( HtmlTag.HEAD_END ).size() );
         assertEquals( 1, response.getContributions( HtmlTag.BODY_END ).size() );

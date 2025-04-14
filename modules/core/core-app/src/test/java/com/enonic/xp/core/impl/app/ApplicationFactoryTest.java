@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.app;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.ops4j.pax.tinybundles.core.TinyBundle;
+import org.ops4j.pax.tinybundles.TinyBundle;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.Application;
@@ -182,11 +182,11 @@ public class ApplicationFactoryTest
     private TinyBundle createBundleWithSourcePath( final String name, final boolean isApp )
     {
         final TinyBundle tinyBundle = newBundle( name, isApp );
-        tinyBundle.set( ApplicationManifestConstants.X_SOURCE_PATHS, "my/source/path" );
+        tinyBundle.setHeader( ApplicationManifestConstants.X_SOURCE_PATHS, "my/source/path" );
 
         if ( isApp )
         {
-            tinyBundle.set( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
+            tinyBundle.setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "application" );
         }
 
         return tinyBundle;

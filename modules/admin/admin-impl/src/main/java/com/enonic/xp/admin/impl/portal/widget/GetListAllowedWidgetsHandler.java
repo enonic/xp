@@ -2,7 +2,6 @@ package com.enonic.xp.admin.impl.portal.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -66,8 +65,7 @@ public class GetListAllowedWidgetsHandler
         if ( widgetDescriptors.isNotEmpty() )
         {
             final PortalRequest portalRequest = (PortalRequest) webRequest;
-            final List<Locale> preferredLocales = Collections.list( portalRequest.getRawRequest().getLocales() );
-            widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, preferredLocales ) ) );
+            widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, portalRequest.getLocales() ) ) );
         }
 
         return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( result ).build();

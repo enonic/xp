@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.handler;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;

@@ -3,7 +3,7 @@ package com.enonic.xp.server.impl.status;
 import java.io.OutputStream;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.status.StatusContext;
 

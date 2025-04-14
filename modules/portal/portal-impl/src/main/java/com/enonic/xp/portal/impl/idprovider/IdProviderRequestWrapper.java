@@ -2,8 +2,8 @@ package com.enonic.xp.portal.impl.idprovider;
 
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.auth.AuthenticationInfo;

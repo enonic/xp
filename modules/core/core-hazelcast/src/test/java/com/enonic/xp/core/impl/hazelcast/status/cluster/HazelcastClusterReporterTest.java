@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.hazelcast.status.cluster;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,11 +12,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.google.common.net.MediaType;
+import com.hazelcast.cluster.Address;
+import com.hazelcast.cluster.Cluster;
 import com.hazelcast.cluster.ClusterState;
-import com.hazelcast.core.Cluster;
+import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
-import com.hazelcast.nio.Address;
 import com.hazelcast.version.MemberVersion;
 import com.hazelcast.version.Version;
 
@@ -62,13 +63,13 @@ class HazelcastClusterReporterTest
         when( member1.isLiteMember() ).thenReturn( false );
         when( member1.getAddress() ).thenReturn( new Address( "127.0.0.1", 5701 ) );
         when( member1.getVersion() ).thenReturn( MemberVersion.UNKNOWN );
-        when( member1.getUuid() ).thenReturn( "member1-uuid" );
+        when( member1.getUuid() ).thenReturn( UUID.fromString( "fcb2e135-1f61-4100-af3a-95449c7e6e26" ) );
 
         final Member member2 = mock( Member.class );
         when( member2.isLiteMember() ).thenReturn( true );
         when( member2.getAddress() ).thenReturn( new Address( "127.0.0.2", 5702 ) );
         when( member2.getVersion() ).thenReturn( MemberVersion.UNKNOWN );
-        when( member2.getUuid() ).thenReturn( "member2-uuid" );
+        when( member2.getUuid() ).thenReturn( UUID.fromString( "98c640ab-66e5-48c6-8e64-e5aeb352dfaf" ) );
 
         when( cluster.getMembers() ).thenReturn(
             new LinkedHashSet<>( List.of( member1, member2 ) ) ); //hazelcast always returns master first

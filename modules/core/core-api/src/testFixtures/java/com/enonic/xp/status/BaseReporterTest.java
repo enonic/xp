@@ -1,4 +1,4 @@
-package com.enonic.xp.server.impl.status;
+package com.enonic.xp.status;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -12,15 +12,13 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.status.StatusContext;
-import com.enonic.xp.status.StatusReporter;
 import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseReporterTest<T extends StatusReporter>
 {
-    final JsonTestHelper helper;
+    protected final JsonTestHelper helper;
 
     private final String name;
 
@@ -28,9 +26,9 @@ public abstract class BaseReporterTest<T extends StatusReporter>
 
     protected T reporter;
 
-    Map<String, String> params;
+    protected Map<String, String> params;
 
-    BaseReporterTest( final String name, final MediaType mediaType )
+    public BaseReporterTest( final String name, final MediaType mediaType )
     {
         this.name = name;
         this.mediaType = mediaType;

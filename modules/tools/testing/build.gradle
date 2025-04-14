@@ -1,12 +1,10 @@
 dependencies {
     api project( ':portal:portal-api' )
-    api libs.junit.junit4
+    api libs.jackson.databind
     implementation project( ':core:core-app' )
     implementation project( ':core:core-internal' )
     implementation testFixtures( project( ':script:script-impl' ) )
     implementation libs.junit.jupiter.api
     implementation libs.mockito.core
     implementation libs.slf4j.simple
-
-    testRuntimeOnly libs.junit.jupiter.vintage
 }

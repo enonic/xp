@@ -1,7 +1,7 @@
 package com.enonic.xp.web.session.impl;
 
 import org.eclipse.jetty.hazelcast.session.HazelcastSessionDataStoreFactory;
-import org.eclipse.jetty.server.session.NullSessionCacheFactory;
+import org.eclipse.jetty.session.NullSessionCacheFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

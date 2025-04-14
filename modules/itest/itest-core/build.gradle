@@ -61,5 +61,5 @@ check.dependsOn integrationTest
 
 jacocoTestReport {
     dependsOn integrationTest
-    executionData.from = fileTree(buildDir).include("/jacoco/*.exec")
+    executionData.from = fileTree(layout.buildDirectory).include("/jacoco/*.exec")
 }

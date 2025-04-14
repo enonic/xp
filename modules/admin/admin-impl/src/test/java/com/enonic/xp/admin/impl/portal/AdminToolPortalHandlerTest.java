@@ -1,11 +1,11 @@
 package com.enonic.xp.admin.impl.portal;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.net.HttpHeaders;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;

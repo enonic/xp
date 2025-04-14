@@ -9,6 +9,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
+import com.enonic.xp.status.BaseReporterTest;
 
 public class ServerReporterTest
     extends BaseReporterTest<ServerReporter>
