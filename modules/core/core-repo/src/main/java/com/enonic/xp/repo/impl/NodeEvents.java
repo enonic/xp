@@ -39,6 +39,7 @@ public class NodeEvents
 
     public static final String NODE_MANUAL_ORDER_EVENT = "node.manualOrderUpdated";
 
+    @Deprecated
     public static final String NODE_STATE_UPDATED_EVENT = "node.stateUpdated";
 
     public static final String NODE_PERMISSIONS_UPDATED = "node.permissionsUpdated";
@@ -116,20 +117,6 @@ public class NodeEvents
         return null;
     }
 
-//    private static Event event( String type, Node node, Branch branch )
-//    {
-//        if ( node != null )
-//        {
-//            return event( type, Nodes.from( node ), branch ).build();
-//        }
-//        return null;
-//    }
-
-//    private static Event.Builder event( String type, Nodes nodes )
-//    {
-//        return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes ) );
-//    }
-
     private static Event.Builder event( String type, Nodes nodes, Branch branch )
     {
         return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes, branch ) );
@@ -144,11 +131,6 @@ public class NodeEvents
     {
         return Event.create( type ).distributed( true ).value( "nodes", nodesToList( nodes, targetBranch ) );
     }
-
-//    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes )
-//    {
-//        return nodes.stream().map( NodeEvents::nodeToMap ).collect( ImmutableList.toImmutableList() );
-//    }
 
     private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes, final Branch branch )
     {
@@ -182,11 +164,6 @@ public class NodeEvents
         }
         return map.build();
     }
-
-//    private static ImmutableMap<String, String> nodeToMap( final Node node )
-//    {
-//        return nodeToMap( node, ContextAccessor.current().getBranch() );
-//    }
 
     private static ImmutableMap<String, String> nodeToMap( final Node node, final Branch branch )
     {
