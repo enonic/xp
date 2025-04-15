@@ -18,13 +18,6 @@ public final class AggregatedNodeDataProcessor
     }
 
     @Override
-    public PropertyTree process( final PropertyTree originalData )
-    {
-        processors.forEach( processor -> processor.process( originalData ) );
-        return originalData;
-    }
-
-    @Override
     public PropertyTree process( PropertyTree originalData, NodePath nodePath )
     {
         processors.forEach( processor -> processor.process( originalData, nodePath ) );

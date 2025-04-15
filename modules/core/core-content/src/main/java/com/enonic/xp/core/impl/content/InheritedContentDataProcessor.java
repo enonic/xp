@@ -8,12 +8,13 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
+import com.enonic.xp.node.NodePath;
 
 public abstract class InheritedContentDataProcessor
     implements NodeDataProcessor
 {
     @Override
-    public PropertyTree process( final PropertyTree originalData )
+    public PropertyTree process( final PropertyTree originalData, final NodePath path )
     {
         final PropertyTree data = originalData.copy();
 

@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.AggregatedNodeDataProcessor;
 import com.enonic.xp.node.Node;
@@ -21,7 +20,6 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 
@@ -73,36 +71,24 @@ final class RenameContentCommand
             } );
         }
 
-        processors.add( new NodeDataProcessor()
-        {
+        processors.add( ( data, newNodePath ) -> {
+            final Node persistedNode = nodeService.getById( NodeId.from( params.getContentId().toString() ) );
+            final Content persistedContent = translator.fromNode( persistedNode, true );
 
-            @Override
-            public PropertyTree process( final PropertyTree originalData )
-            {
-                throw new UnsupportedOperationException( "Not supported" );
-            }
+            final ValidationErrors validationErrors = ValidateContentDataCommand.create()
+                .data( data )
+                .extraDatas( persistedContent.getAllExtraData() )
+                .contentTypeName( persistedContent.getType() )
+                .contentName( ContentName.from( newNodePath.getName() ) )
+                .displayName( persistedContent.getDisplayName() )
+                .contentTypeService( contentTypeService )
+                .contentValidators( contentValidators )
+                .build()
+                .execute();
 
-            @Override
-            public PropertyTree process( final PropertyTree data, final NodePath newNodePath )
-            {
-                final Node persistedNode = nodeService.getById( NodeId.from( params.getContentId().toString() ) );
-                final Content persistedContent = translator.fromNode( persistedNode, true );
+            data.setProperty( ContentPropertyNames.VALID, ValueFactory.newBoolean( !validationErrors.hasErrors() ) );
 
-                final ValidationErrors validationErrors = ValidateContentDataCommand.create()
-                    .data( data )
-                    .extraDatas( persistedContent.getAllExtraData() )
-                    .contentTypeName( persistedContent.getType() )
-                    .contentName( ContentName.from( newNodePath.getName() ) )
-                    .displayName( persistedContent.getDisplayName() )
-                    .contentTypeService( contentTypeService )
-                    .contentValidators( contentValidators )
-                    .build()
-                    .execute();
-
-                data.setProperty( ContentPropertyNames.VALID, ValueFactory.newBoolean( !validationErrors.hasErrors() ) );
-
-                return data;
-            }
+            return data;
         } );
 
         return new AggregatedNodeDataProcessor( processors );
