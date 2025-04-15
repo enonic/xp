@@ -13,7 +13,6 @@ export interface LocalizeParams {
     locale?: string | string[];
     values?: string[];
     bundles?: string[];
-    application?: string;
 }
 
 interface LocaleScriptBean {
@@ -22,8 +21,6 @@ interface LocaleScriptBean {
     getPhrases(locale: string[], bundles: string[]): Record<string, string>;
 
     getSupportedLocales(bundles: string[]): string[];
-
-    setApplication(value?: string | null): void;
 }
 
 /**
@@ -45,7 +42,6 @@ interface LocaleScriptBean {
  * @param {string|string[]} [params.locale] A string-representation of a locale, or an array of locales in preferred order. If the locale is not set, the site language is used.
  * @param {string[]} [params.values] Optional placeholder values.
  * @param {string[]} [params.bundles] Optional list of bundle names.
- * @param {string} [params.application] Application key where to find resource bundles. Defaults to current application.
  *
  * @returns {string} The localized string.
  */
@@ -57,11 +53,9 @@ export function localize(params: LocalizeParams): string {
         locale = [],
         values = [],
         bundles,
-        application,
     } = params ?? {};
 
     const locales = ([] as string[]).concat(locale);
-    bean.setApplication(__.nullOrValue(application));
     return bean.localize(
         key,
         locales,
