@@ -1,17 +1,27 @@
 package com.enonic.xp.core.impl.content;
 
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
+import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.AggregatedNodeDataProcessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 
@@ -47,63 +57,69 @@ final class RenameContentCommand
         }
     }
 
+    private NodeDataProcessor initProcessors()
+    {
+        final List<NodeDataProcessor> processors = new ArrayList<>();
+
+        if ( params.stopInherit() )
+        {
+            processors.add( new InheritedContentDataProcessor()
+            {
+                @Override
+                protected EnumSet<ContentInheritType> getTypesToProceed()
+                {
+                    return EnumSet.of( ContentInheritType.NAME );
+                }
+            } );
+        }
+
+        processors.add( new NodeDataProcessor()
+        {
+
+            @Override
+            public PropertyTree process( final PropertyTree originalData )
+            {
+                throw new UnsupportedOperationException( "Not supported" );
+            }
+
+            @Override
+            public PropertyTree process( final PropertyTree data, final NodePath newNodePath )
+            {
+                final Node persistedNode = nodeService.getById( NodeId.from( params.getContentId().toString() ) );
+                final Content persistedContent = translator.fromNode( persistedNode, true );
+
+                final ValidationErrors validationErrors = ValidateContentDataCommand.create()
+                    .data( data )
+                    .extraDatas( persistedContent.getAllExtraData() )
+                    .contentTypeName( persistedContent.getType() )
+                    .contentName( ContentName.from( newNodePath.getName() ) )
+                    .displayName( persistedContent.getDisplayName() )
+                    .contentTypeService( contentTypeService )
+                    .contentValidators( contentValidators )
+                    .build()
+                    .execute();
+
+                data.setProperty( ContentPropertyNames.VALID, ValueFactory.newBoolean( !validationErrors.hasErrors() ) );
+
+                return data;
+            }
+        } );
+
+        return new AggregatedNodeDataProcessor( processors );
+    }
+
     private Content doExecute()
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
         final NodeName nodeName = NodeName.from( params.getNewName().toString() );
 
-        final RenameNodeParams.Builder builder = RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName );
-
-        if ( params.stopInherit() )
-        {
-            builder.processor( new RenameContentProcessor() );
-        }
+        final RenameNodeParams.Builder builder =
+            RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName ).processor( initProcessors() );
 
         final Node node = nodeService.rename( builder.build() );
 
-        final Content content = translator.fromNode( node, true );
-
-        final ValidationErrors validationErrors = validateContent( content );
-
-        if ( content.isValid() == validationErrors.hasErrors() || !validationErrors.equals( content.getValidationErrors() ) )
-        {
-            return updateValidState( content );
-        }
-        else
-        {
-            return content;
-        }
-    }
-
-    private ValidationErrors validateContent( final Content content )
-    {
-        return ValidateContentDataCommand.create()
-            .data( content.getData() )
-            .extraDatas( content.getAllExtraData() )
-            .contentTypeName( content.getType() )
-            .contentName( content.getName() )
-            .displayName( content.getDisplayName() )
-            .contentTypeService( this.contentTypeService )
-            .contentValidators( this.contentValidators )
-            .build()
-            .execute();
-    }
-
-    private Content updateValidState( final Content content )
-    {
-        final ModifyContentParams updateContentParams = ModifyContentParams.create()
-            .contentId( content.getId() ).modifier( edit -> edit.valid.setValue( !content.isValid() ) ).build();
-
-        return ModifyContentCommand.create( this )
-            .params( updateContentParams )
-            .siteService( siteService )
-            .contentTypeService( contentTypeService )
-            .xDataService( this.xDataService )
-            .pageDescriptorService( this.pageDescriptorService )
-            .partDescriptorService( this.partDescriptorService )
-            .layoutDescriptorService( this.layoutDescriptorService )
-            .build().execute().getResult( ContextAccessor.current().getBranch() );
+        return translator.fromNode( node, true );
     }
 
     public static class Builder

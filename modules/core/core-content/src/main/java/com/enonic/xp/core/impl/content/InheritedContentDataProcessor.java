@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
 
-public abstract class ContentDataProcessor
+public abstract class InheritedContentDataProcessor
     implements NodeDataProcessor
 {
     @Override
