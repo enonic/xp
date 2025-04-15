@@ -28,8 +28,6 @@ public class ApplicationDeployerManager
 {
     private StoredApplicationsDeployer storedApplicationsDeployer;
 
-    private AutoDeployer autoDeployer;
-
     private DeployDirectoryWatcher deployDirectoryWatcher;
 
     @Activate
@@ -39,7 +37,6 @@ public class ApplicationDeployerManager
         bundleContext.registerService( Condition.class, Condition.INSTANCE,
                                        Dictionaries.of( Condition.CONDITION_ID, "com.enonic.xp.server.deploy.ready" ) );
         storedApplicationsDeployer.deploy();
-        autoDeployer.deploy();
         deployDirectoryWatcher.deploy();
     }
 
@@ -47,12 +44,6 @@ public class ApplicationDeployerManager
     public void setStoredApplicationsDeployer( final StoredApplicationsDeployer storedApplicationsDeployer )
     {
         this.storedApplicationsDeployer = storedApplicationsDeployer;
-    }
-
-    @Reference
-    public void setAutoDeployer( final AutoDeployer autoDeployer )
-    {
-        this.autoDeployer = autoDeployer;
     }
 
     @Reference
