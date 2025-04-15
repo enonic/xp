@@ -66,8 +66,7 @@ public class SetNodeChildOrderCommand
         }
 
         final Node editedNode = Node.create( parentNode ).
-            childOrder( childOrder ).
-            data( processor.process( parentNode.data() ) ).
+            childOrder( childOrder ).data( processor.process( parentNode.data(), parentNode.path() ) ).
             timestamp( Instant.now( CLOCK ) ).
             build();
 
@@ -115,7 +114,7 @@ public class SetNodeChildOrderCommand
 
         private ChildOrder childOrder;
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private RefreshMode refresh;
 

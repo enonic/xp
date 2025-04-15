@@ -239,7 +239,7 @@ public class MoveNodeCommand
 
         private NodeName newNodeName;
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private MoveNodeListener moveListener;
 
