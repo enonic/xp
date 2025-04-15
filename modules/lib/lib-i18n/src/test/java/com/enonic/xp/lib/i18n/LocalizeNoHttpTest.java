@@ -32,14 +32,16 @@ public class LocalizeNoHttpTest
         throws Exception
     {
         super.initialize();
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
         final LocaleService localeService = Mockito.mock( LocaleService.class );
 
         final Set<Locale> locales = new LinkedHashSet<>();
-        locales.add( new Locale( "en" ) );
-        Mockito.when( localeService.getLocales( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), any() ) ).thenReturn( locales );
+        locales.add( Locale.of( "en" ) );
+        Mockito.when( localeService.getLocales( eq( applicationKey ), any() ) ).thenReturn( locales );
 
         final MessageBundle bundle = Mockito.mock( MessageBundle.class, this::answer );
-        Mockito.when( localeService.getBundle( eq( ApplicationKey.from( "com.enonic.myapplication" ) ), any(), any() ) ).
+        Mockito.when( localeService.getBundle( eq( applicationKey ), any(), any() ) ).
             thenReturn( bundle );
 
         addService( LocaleService.class, localeService );

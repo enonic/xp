@@ -24,7 +24,7 @@ public final class LocaleScriptBean
 
     private Supplier<PortalRequest> portalRequest;
 
-    private ApplicationKey application;
+    private ApplicationKey applicationKey;
 
     private static final String NOT_TRANSLATED_MESSAGE = "NOT_TRANSLATED";
 
@@ -79,15 +79,8 @@ public final class LocaleScriptBean
 
     private ApplicationKey getApplication()
     {
-        if ( this.application != null )
-        {
-            return this.application;
-        }
-        else
-        {
-            final PortalRequest req = portalRequest.get();
-            return req != null ? req.getApplicationKey() : ApplicationKey.from( LocaleScriptBean.class );
-        }
+        final PortalRequest req = portalRequest.get();
+        return req != null ? req.getApplicationKey() : applicationKey;
     }
 
     private Locale resolveLocale( final String locale )
@@ -117,25 +110,16 @@ public final class LocaleScriptBean
     {
         if ( ( value != null ) && value.isArray() )
         {
-            return toArray( value.getArray( String.class ) );
+            return value.getArray( String.class ).toArray( new String[0] );
         }
 
         return new String[0];
     }
 
-    private String[] toArray( final List<String> value )
-    {
-        return value.toArray( new String[0] );
-    }
-
-    public void setApplication( final String application )
-    {
-        this.application = application == null ? null : ApplicationKey.from( application );
-    }
-
     @Override
     public void initialize( final BeanContext context )
     {
+        this.applicationKey = context.getApplicationKey();
         this.localeService = context.getService( LocaleService.class );
         this.portalRequest = context.getBinding( PortalRequest.class );
     }
