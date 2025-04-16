@@ -11,10 +11,12 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.node.AggregatedNodeDataProcessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeDataProcessor;
@@ -22,6 +24,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
 
@@ -72,15 +75,20 @@ final class RenameContentCommand
         }
 
         processors.add( ( data, newNodePath ) -> {
-            final Node persistedNode = nodeService.getById( NodeId.from( params.getContentId().toString() ) );
-            final Content persistedContent = translator.fromNode( persistedNode, true );
+            final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+
+            final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().getTree();
+            final ExtraDatas extraData =
+                contentDataSerializer.fromExtraData( data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() );
+            final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
+            final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
-                .data( data )
-                .extraDatas( persistedContent.getAllExtraData() )
-                .contentTypeName( persistedContent.getType() )
+                .data( contentData )
+                .extraDatas( extraData )
+                .contentTypeName( type )
                 .contentName( ContentName.from( newNodePath.getName() ) )
-                .displayName( persistedContent.getDisplayName() )
+                .displayName( displayName )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
                 .build()
@@ -91,7 +99,7 @@ final class RenameContentCommand
             return data;
         } );
 
-        return new AggregatedNodeDataProcessor( processors );
+        return new CompositeNodeDataProcessor( processors );
     }
 
     private Content doExecute()

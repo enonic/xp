@@ -1,17 +1,19 @@
-package com.enonic.xp.node;
+package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.NodeDataProcessor;
+import com.enonic.xp.node.NodePath;
 
-public final class AggregatedNodeDataProcessor
+final class CompositeNodeDataProcessor
     implements NodeDataProcessor
 {
     private final List<NodeDataProcessor> processors;
 
-    public AggregatedNodeDataProcessor( final List<NodeDataProcessor> processors )
+    public CompositeNodeDataProcessor( final List<NodeDataProcessor> processors )
     {
         Preconditions.checkNotNull( processors, "processors must not be null" );
         this.processors = processors;
