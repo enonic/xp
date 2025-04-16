@@ -66,6 +66,7 @@ export function getLocales(): string[] {
 }
 
 /**
+ * @deprecated Use `i18n.getPhrases` instead.
  * Returns all i18n phrases.
  *
  * @returns {object} JSON object with phrases.
