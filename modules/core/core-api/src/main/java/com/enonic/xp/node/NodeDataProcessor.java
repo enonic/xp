@@ -4,5 +4,5 @@ import com.enonic.xp.data.PropertyTree;
 
 public interface NodeDataProcessor
 {
-    PropertyTree process( PropertyTree originalData );
+    PropertyTree process( PropertyTree originalData, NodePath nodePath );
 }

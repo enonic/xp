@@ -118,7 +118,7 @@ class RenameContentCommandTest
 
         createCommand( params ).execute();
 
-        verify( nodeService, times( 1 ) ).patch( isA( PatchNodeParams.class ) );
+        verify( nodeService, times( 1 ) ).rename( isA( RenameNodeParams.class ) );
     }
 
     @Test

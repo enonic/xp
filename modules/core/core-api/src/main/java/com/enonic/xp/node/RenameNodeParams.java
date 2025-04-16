@@ -54,7 +54,7 @@ public class RenameNodeParams
 
         private NodeName newNodeName;
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private RefreshMode refresh;
 

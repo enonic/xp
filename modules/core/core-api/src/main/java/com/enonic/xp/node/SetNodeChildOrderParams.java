@@ -54,7 +54,7 @@ public class SetNodeChildOrderParams
 
         private ChildOrder childOrder;
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private RefreshMode refresh;
 

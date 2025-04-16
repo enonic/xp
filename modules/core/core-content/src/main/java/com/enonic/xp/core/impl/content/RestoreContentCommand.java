@@ -148,7 +148,7 @@ final class RestoreContentCommand
 
         if ( params.stopInherit() )
         {
-            builder.processor( new ContentDataProcessor()
+            builder.processor( new InheritedContentDataProcessor()
             {
                 @Override
                 protected EnumSet<ContentInheritType> getTypesToProceed()

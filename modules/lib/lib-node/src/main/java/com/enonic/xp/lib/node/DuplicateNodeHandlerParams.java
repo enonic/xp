@@ -46,7 +46,7 @@ public class DuplicateNodeHandlerParams
 
     public void setDataProcessor( final ScriptValue processor )
     {
-        this.dataProcessor = processor != null ? originalData -> {
+        this.dataProcessor = processor != null ? ( originalData, path ) -> {
             PropertyTreeMapper mapper = new PropertyTreeMapper( originalData );
             return new ScriptValueTranslator().create( processor.call( mapper ) ).getPropertyTree();
         } : null;

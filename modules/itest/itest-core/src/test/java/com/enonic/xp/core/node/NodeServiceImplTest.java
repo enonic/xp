@@ -306,8 +306,7 @@ public class NodeServiceImplTest
                                                                     .nodeId( node_1_1.id() )
                                                                     .includeChildren( false )
                                                                     .name( "duplicated-of-child-1" )
-                                                                    .parent( node_1_2.path() )
-                                                                    .dataProcessor( originalData -> {
+                                                                    .parent( node_1_2.path() ).dataProcessor( ( originalData, path ) -> {
                                                                         originalData.setString( "extraProp", "extraPropValue" );
                                                                         return originalData;
                                                                     } )
@@ -458,8 +457,7 @@ public class NodeServiceImplTest
 
         final ReorderChildNodesParams params = ReorderChildNodesParams.create()
             .add( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() )
-            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() )
-            .processor( data -> {
+            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ).processor( ( data, path ) -> {
                 data.addString( "processedValue", "value" );
                 return data;
             } )

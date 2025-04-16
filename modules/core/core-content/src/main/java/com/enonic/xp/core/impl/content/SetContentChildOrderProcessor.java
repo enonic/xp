@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import com.enonic.xp.content.ContentInheritType;
 
 public class SetContentChildOrderProcessor
-    extends ContentDataProcessor
+    extends InheritedContentDataProcessor
 {
     @Override
     protected EnumSet<ContentInheritType> getTypesToProceed()
