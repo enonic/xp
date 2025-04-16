@@ -13,7 +13,7 @@ final class CompositeNodeDataProcessor
 {
     private final List<NodeDataProcessor> processors;
 
-    public CompositeNodeDataProcessor( final List<NodeDataProcessor> processors )
+    CompositeNodeDataProcessor( final List<NodeDataProcessor> processors )
     {
         Preconditions.checkNotNull( processors, "processors must not be null" );
         this.processors = processors;
