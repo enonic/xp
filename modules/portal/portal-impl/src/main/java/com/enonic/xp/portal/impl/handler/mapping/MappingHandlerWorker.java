@@ -7,7 +7,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.Resource;
@@ -21,8 +20,9 @@ import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 final class MappingHandlerWorker
-    extends PortalHandlerWorker<PortalRequest>
 {
+    private final PortalRequest request;
+
     ResourceService resourceService;
 
     ControllerScriptFactory controllerScriptFactory;
@@ -33,10 +33,9 @@ final class MappingHandlerWorker
 
     MappingHandlerWorker( final PortalRequest request )
     {
-        super( request );
+        this.request = request;
     }
 
-    @Override
     public PortalResponse execute()
         throws Exception
     {

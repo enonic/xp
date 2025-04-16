@@ -8,14 +8,14 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebException;
 
 final class AdminToolHandlerWorker
-    extends PortalHandlerWorker<PortalRequest>
 {
+    private final PortalRequest request;
+
     ControllerScriptFactory controllerScriptFactory;
 
     AdminToolDescriptorService adminToolDescriptorService;
@@ -24,12 +24,10 @@ final class AdminToolHandlerWorker
 
     AdminToolHandlerWorker( final PortalRequest request )
     {
-        super( request );
+        this.request = request;
     }
 
-    @Override
-    public PortalResponse execute()
-        throws Exception
+    PortalResponse execute()
     {
         //Retrieves the AdminToolDescriptor
         final AdminToolDescriptor adminToolDescriptor = adminToolDescriptorService.getByKey( descriptorKey );

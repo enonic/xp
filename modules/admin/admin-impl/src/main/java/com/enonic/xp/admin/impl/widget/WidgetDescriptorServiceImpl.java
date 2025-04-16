@@ -10,11 +10,9 @@ import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.security.PrincipalKeys;
 
 @Component(immediate = true)
 public final class WidgetDescriptorServiceImpl
@@ -33,15 +31,6 @@ public final class WidgetDescriptorServiceImpl
     {
         return this.descriptorService.getAll( WidgetDescriptor.class )
             .filter( widgetDescriptor -> Arrays.stream( interfaceNames ).anyMatch( widgetDescriptor::hasInterface ) );
-    }
-
-    @Override
-    public Descriptors<WidgetDescriptor> getAllowedByInterfaces( final String... interfaceNames )
-    {
-        final PrincipalKeys userPrincipalKeys = ContextAccessor.current().getAuthInfo().getPrincipals();
-        return this.descriptorService.getAll( WidgetDescriptor.class )
-            .filter( widgetDescriptor -> Arrays.stream( interfaceNames ).anyMatch( widgetDescriptor::hasInterface ) &&
-                widgetDescriptor.isAccessAllowed( userPrincipalKeys ) );
     }
 
     @Override

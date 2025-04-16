@@ -4,7 +4,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
-import com.enonic.xp.portal.handler.PortalHandlerWorker;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -15,8 +14,9 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
 final class MappingFilterHandlerWorker
-    extends PortalHandlerWorker<PortalRequest>
 {
+    private final PortalRequest request;
+
     private final WebResponse response;
 
     private final WebHandlerChain webHandlerChain;
@@ -29,14 +29,12 @@ final class MappingFilterHandlerWorker
 
     MappingFilterHandlerWorker( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
-        super( request );
+        this.request = request;
         this.response = response;
         this.webHandlerChain = webHandlerChain;
     }
 
-    @Override
     public PortalResponse execute()
-        throws Exception
     {
         final Trace trace = Tracer.current();
         if ( trace != null )

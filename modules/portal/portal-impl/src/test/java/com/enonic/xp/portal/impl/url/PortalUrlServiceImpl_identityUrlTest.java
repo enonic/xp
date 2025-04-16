@@ -12,7 +12,6 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -129,9 +128,6 @@ public class PortalUrlServiceImpl_identityUrlTest
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
         url = this.service.identityUrl( params );
         assertEquals( "/site/myproject/draft/context/path/_/idprovider/system/login", url );
-
-        //Post treatment
-        ServletRequestHolder.setRequest( null );
     }
 
     @Test

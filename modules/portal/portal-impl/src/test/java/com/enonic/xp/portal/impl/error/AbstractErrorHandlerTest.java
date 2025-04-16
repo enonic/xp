@@ -8,8 +8,6 @@ import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -26,7 +24,6 @@ import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.mockito.Mockito.when;
 
@@ -88,9 +85,6 @@ public abstract class AbstractErrorHandlerTest
         this.factory = new ErrorHandlerScriptFactoryImpl( scriptService );
 
         this.postProcessor = new PostProcessorImpl();
-
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( req );
     }
 
     protected final void execute( final String script, final HttpStatus status )

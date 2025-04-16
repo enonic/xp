@@ -86,11 +86,6 @@ public final class PortalRequest
         this.repositoryId = repositoryId;
     }
 
-    public String rewriteUri( final String uri )
-    {
-        return ServletRequestUrlHelper.rewriteUri( getRawRequest(), uri ).getRewrittenUri();
-    }
-
     public Site getSite()
     {
         return site;
@@ -109,18 +104,6 @@ public final class PortalRequest
     public void setContent( final Content content )
     {
         this.content = content;
-    }
-
-    @Deprecated
-    public PageTemplate getPageTemplate()
-    {
-        return pageTemplate;
-    }
-
-    @Deprecated
-    public void setPageTemplate( final PageTemplate pageTemplate )
-    {
-        this.pageTemplate = pageTemplate;
     }
 
     public Component getComponent()

@@ -37,8 +37,6 @@ public class WidgetDescriptor
 
     private final ImmutableMap<String, String> config;
 
-    private static final String URL_PREFIX = "_/admin:widget/";
-
     private WidgetDescriptor( final Builder builder )
     {
         super( builder.key );
@@ -50,12 +48,6 @@ public class WidgetDescriptor
         this.interfaces = ImmutableSet.copyOf( builder.interfaces );
         this.allowedPrincipals = builder.allowedPrincipals == null ? null : PrincipalKeys.from( builder.allowedPrincipals );
         this.config = ImmutableMap.copyOf( builder.config );
-    }
-
-    @Deprecated
-    public String getUrl()
-    {
-        return URL_PREFIX + getApplicationKey().toString() + "/" + getName();
     }
 
     public String getKeyString()

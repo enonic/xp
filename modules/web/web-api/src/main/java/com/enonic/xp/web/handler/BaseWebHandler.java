@@ -99,24 +99,6 @@ public abstract class BaseWebHandler
             build();
     }
 
-    @Deprecated
-    protected final WebException badRequest( final String message, final Object... args )
-    {
-        return WebException.badRequest( String.format( message, args ) );
-    }
-
-    @Deprecated
-    protected final WebException notFound( final String message, final Object... args )
-    {
-        return new WebException( HttpStatus.NOT_FOUND, String.format( message, args ) );
-    }
-
-    @Deprecated
-    protected final WebException methodNotAllowed( final String message, final Object... args )
-    {
-        return new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( message, args ) );
-    }
-
     protected Long getSize( final WebResponse webResponse )
     {
         final String length = webResponse.getHeaders().get( HttpHeaders.CONTENT_LENGTH );

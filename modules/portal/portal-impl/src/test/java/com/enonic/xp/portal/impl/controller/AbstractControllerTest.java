@@ -17,8 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.net.MediaType;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -34,7 +32,6 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
-import com.enonic.xp.web.servlet.ServletRequestHolder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -96,9 +93,6 @@ public abstract class AbstractControllerTest
         this.factory = new ControllerScriptFactoryImpl( scriptService );
 
         this.postProcessor = new PostProcessorImpl();
-
-        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
-        ServletRequestHolder.setRequest( req );
     }
 
     protected final void execute( final String script )
