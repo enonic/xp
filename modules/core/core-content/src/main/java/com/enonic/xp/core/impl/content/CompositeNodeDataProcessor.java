@@ -22,7 +22,10 @@ final class CompositeNodeDataProcessor
     @Override
     public PropertyTree process( PropertyTree originalData, NodePath nodePath )
     {
-        processors.forEach( processor -> processor.process( originalData, nodePath ) );
-        return originalData;
+        PropertyTree transformedData = originalData;
+        for (NodeDataProcessor processor : processors) {
+            transformedData = processor.process(transformedData, nodePath);
+        }
+        return transformedData;
     }
 }
