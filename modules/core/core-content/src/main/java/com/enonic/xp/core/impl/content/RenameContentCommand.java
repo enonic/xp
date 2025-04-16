@@ -78,10 +78,10 @@ final class RenameContentCommand
             final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().getTree();
-            final ExtraDatas extraData =
-                contentDataSerializer.fromExtraData( data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() );
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
+            final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? contentDataSerializer.fromExtraData(
+                data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )
