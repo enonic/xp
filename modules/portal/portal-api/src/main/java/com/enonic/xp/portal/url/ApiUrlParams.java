@@ -165,6 +165,7 @@ public final class ApiUrlParams
         helper.add( "application", this.application );
         helper.add( "path", this.path );
         helper.add( "pathSegments", this.pathSegments );
+        helper.add( "baseUrl", this.baseUrl );
         return helper.toString();
     }
 }

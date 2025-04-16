@@ -140,7 +140,7 @@ interface ImageUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
- * @param {string|object} [params.baseUrl] Custom baseUrl.If an object, it should be an object with project, branch and key properties.
+ * @param {string} [params.baseUrl] Custom baseUrl.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -248,7 +248,7 @@ interface AttachmentUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
- * @param {string|object} [params.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
+ * @param {string} [params.baseUrl] Custom baseUrl.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -304,7 +304,6 @@ interface PageUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Project of the context.
  * @param {string} [params.branch] Branch of the project for context.
- * @param {string|object} [params.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
  * @param {object} [params.params] Custom parameters to append to the url.
  *
  * @returns {string} The generated URL.
@@ -753,7 +752,7 @@ interface ApiUrlHandler {
  * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
  * @param {object} [urlParams.params] Custom parameters to append to the URL.
- * @param {string|object} [urlParams.baseUrl] Custom baseUrl. If an object, it should be an object with project, branch and key properties.
+ * @param {string} [urlParams.baseUrl] Custom baseUrl.
  *
  * @returns {string} The generated URL.
  */
@@ -775,6 +774,7 @@ export function apiUrl(urlParams: ApiUrlParams): string {
     bean.setApplication(__.nullOrValue(application));
     bean.setApi(api);
     bean.addQueryParams(__.toScriptValue(params));
+    bean.setBaseUrl(__.nullOrValue(baseUrl));
 
     if (path) {
         if (Array.isArray(path)) {
