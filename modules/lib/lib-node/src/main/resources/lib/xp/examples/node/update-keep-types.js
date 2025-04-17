@@ -19,21 +19,21 @@ function editor(node) {
     return node;
 }
 
-// Modify node by id
-var result = repo.modify({
+// Update node by id
+var result = repo.update({
     key: 'abc',
     editor: editor
 });
 
 if (result) {
-    log.info('Node modified');
+    log.info('Node updated');
 } else {
     log.info('Node not found');
 }
 // END
 
 // BEGIN
-// Node modified.
+// Node updated.
 var expected = {
     '_id': 'abc',
     '_name': 'myNode',

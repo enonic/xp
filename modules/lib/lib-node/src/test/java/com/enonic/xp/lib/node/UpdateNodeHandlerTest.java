@@ -47,46 +47,48 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class ModifyNodeHandlerTest
+public class UpdateNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Captor
     private ArgumentCaptor<UpdateNodeParams> updateCaptor;
 
+    @SuppressWarnings("unused")
+    public static ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
+    }
+
     private void mockUpdateNode( final Node originalNode )
     {
-        Mockito.when( this.nodeService.update( Mockito.isA( UpdateNodeParams.class ) ) ).
-            then( new Answer<Node>()
+        Mockito.when( this.nodeService.update( Mockito.isA( UpdateNodeParams.class ) ) ).then( new Answer<Node>()
+        {
+            @Override
+            public Node answer( InvocationOnMock invocation )
+                throws Throwable
             {
-                @Override
-                public Node answer( InvocationOnMock invocation )
-                    throws Throwable
+                final UpdateNodeParams updateNodeParams = (UpdateNodeParams) invocation.getArguments()[0];
+                final EditableNode editableNode = new EditableNode( originalNode );
+                updateNodeParams.getEditor().edit( editableNode );
+
+                final Node editedNode = editableNode.build();
+                final Node.Builder builder = Node.create( editedNode );
+
+                final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
+                final AttachedBinaries.Builder binariesBuilder = AttachedBinaries.create();
+                for ( final BinaryAttachment binaryAttachment : binaryAttachments )
                 {
-                    final UpdateNodeParams updateNodeParams = (UpdateNodeParams) invocation.getArguments()[0];
-                    final EditableNode editableNode = new EditableNode( originalNode );
-                    updateNodeParams.getEditor().edit( editableNode );
-
-                    final Node editedNode = editableNode.build();
-                    final Node.Builder builder = Node.create( editedNode );
-
-                    final BinaryAttachments binaryAttachments = updateNodeParams.getBinaryAttachments();
-                    final AttachedBinaries.Builder binariesBuilder = AttachedBinaries.create();
-                    for ( final BinaryAttachment binaryAttachment : binaryAttachments )
-                    {
-                        binariesBuilder.add( new AttachedBinary( binaryAttachment.getReference(), "fisk" ) );
-                    }
-
-                    return builder.
-                        attachedBinaries( binariesBuilder.build() ).
-                        build();
+                    binariesBuilder.add( new AttachedBinary( binaryAttachment.getReference(), "fisk" ) );
                 }
-            } );
+
+                return builder.attachedBinaries( binariesBuilder.build() ).build();
+            }
+        } );
     }
 
     private void mockGetNode( final Node node )
     {
-        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
-            thenReturn( node );
+        Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenReturn( node );
     }
 
     @Test
@@ -99,19 +101,19 @@ public class ModifyNodeHandlerTest
         final PropertySet mySet = data.addSet( "mySet" );
         mySet.setGeoPoint( "myGeoPoint", new GeoPoint( 30, -30 ) );
 
-        final Node node = Node.create().
-            id( NodeId.from( "abc" ) ).parentPath( NodePath.ROOT )
+        final Node node = Node.create()
+            .id( NodeId.from( "abc" ) )
+            .parentPath( NodePath.ROOT )
             .data( data )
             .name( "myNode" )
             .permissions(
                 AccessControlList.of( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() ) )
-            .
-            build();
+            .build();
 
         mockGetNode( node );
         mockUpdateNode( node );
 
-        runScript( "/lib/xp/examples/node/modify.js" );
+        runScript( "/lib/xp/examples/node/update.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
@@ -147,17 +149,12 @@ public class ModifyNodeHandlerTest
         data.setLocalDate( "untouchedLocalDate", LocalDate.parse( "2017-03-24" ) );
         data.setReference( "untouchedReference", Reference.from( "myReference" ) );
 
-        final Node node = Node.create().
-            id( NodeId.from( "abc" ) ).
-            parentPath( NodePath.ROOT ).
-            data( data ).
-            name( "myNode" ).
-            build();
+        final Node node = Node.create().id( NodeId.from( "abc" ) ).parentPath( NodePath.ROOT ).data( data ).name( "myNode" ).build();
 
         mockGetNode( node );
         mockUpdateNode( node );
 
-        runScript( "/lib/xp/examples/node/modify-keep-types.js" );
+        runScript( "/lib/xp/examples/node/update-keep-types.js" );
 
         Mockito.verify( this.nodeService ).update( updateCaptor.capture() );
         assertEquals( updateCaptor.getValue().getId(), NodeId.from( "abc" ) );
@@ -186,11 +183,5 @@ public class ModifyNodeHandlerTest
         editor.edit( editableNode );
 
         return editableNode;
-    }
-
-    @SuppressWarnings("unused")
-    public static ByteSource createByteSource( final String value )
-    {
-        return ByteSource.wrap( value.getBytes() );
     }
 }

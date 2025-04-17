@@ -17,7 +17,7 @@ import com.enonic.xp.convert.Converters;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 import com.enonic.xp.script.ScriptValue;
 
-public final class ModifyContentHandler
+public final class UpdateContentHandler
     extends BaseContentHandler
 {
     private String key;
@@ -121,11 +121,11 @@ public final class ModifyContentHandler
             return null;
         }
 
-        return ContentPublishInfo.create().
-            from( getInstant( value, "from" ) ).
-            to( getInstant( value, "to" ) ).
-            first( getInstant( value, "first" ) ).
-            build();
+        return ContentPublishInfo.create()
+            .from( getInstant( value, "from" ) )
+            .to( getInstant( value, "to" ) )
+            .first( getInstant( value, "first" ) )
+            .build();
     }
 
     private Instant getInstant( final Map<String, Object> valueMap, final String key )

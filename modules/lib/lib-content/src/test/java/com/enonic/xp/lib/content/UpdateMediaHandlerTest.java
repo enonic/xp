@@ -16,7 +16,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.security.PrincipalKey;
 
-public class ModifyMediaHandlerTest
+public class UpdateMediaHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
@@ -47,34 +47,33 @@ public class ModifyMediaHandlerTest
             return Content.create( content ).data( data ).workflowInfo( params.getWorkflowInfo() ).build();
         } );
 
-        runScript( "/lib/xp/examples/content/modifyMedia.js" );
+        runScript( "/lib/xp/examples/content/updateMedia.js" );
     }
 
     @Test
-    public void testModifyMediaValidate()
+    public void testUpdateMediaValidate()
     {
-        runFunction( "/test/ModifyMediaHandlerTest.js", "modifyMediaValidate" );
+        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaValidate" );
     }
 
     @Test
-    public void testModifyMediaContentNotFoundById()
+    public void testUpdateMediaContentNotFoundById()
     {
         Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenReturn( null );
-        runFunction( "/test/ModifyMediaHandlerTest.js", "modifyMediaContentNotFoundById" );
+        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundById" );
     }
 
     @Test
-    public void testModifyMediaContentNotFoundByPath()
+    public void testUpdateMediaContentNotFoundByPath()
     {
         Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn( null );
-        runFunction( "/test/ModifyMediaHandlerTest.js", "modifyMediaContentNotFoundByPath" );
+        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundByPath" );
     }
 
     @Test
-    public void testModifyMediaThrowContentNotFound()
+    public void testUpdateMediaThrowContentNotFound()
     {
-        Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) )
-            .thenThrow( ContentNotFoundException.class );
-        runFunction( "/test/ModifyMediaHandlerTest.js", "modifyMediaThrowContentNotFound" );
+        Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenThrow( ContentNotFoundException.class );
+        runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaThrowContentNotFound" );
     }
 }
