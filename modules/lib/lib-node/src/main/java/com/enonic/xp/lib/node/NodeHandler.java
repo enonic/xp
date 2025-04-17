@@ -89,6 +89,16 @@ public class NodeHandler
         return execute( handler );
     }
 
+    public Object patch( final PatchNodeHandlerParams params )
+    {
+        return execute( PatchNodeHandler.create()
+                            .nodeService( this.nodeService )
+                            .key( params.getKey() )
+                            .branches( params.getBranches() )
+                            .editor( params.getEditor() )
+                            .build() );
+    }
+
     @SuppressWarnings("unused")
     public Object diff( final DiffBranchesHandlerParams params )
     {
