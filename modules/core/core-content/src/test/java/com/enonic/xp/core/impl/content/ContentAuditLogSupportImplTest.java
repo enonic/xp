@@ -1,8 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -13,20 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.google.common.io.ByteSource;
-
-import com.enonic.xp.attachment.CreateAttachment;
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.LogAuditLogParams;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -108,66 +99,6 @@ public class ContentAuditLogSupportImplTest
             .build();
 
         test( support::update, params, content );
-    }
-
-    @Test
-    public void testModifyContent()
-        throws Exception
-    {
-        final ModifyContentParams params = ModifyContentParams.create()
-            .contentId( ContentId.from( "contentId" ) )
-            .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-            .createAttachments( CreateAttachments.from( CreateAttachment.create()
-                                                            .mimeType( "image/jpeg" )
-                                                            .label( "My Image 1" )
-                                                            .name( "MyImage.jpg" )
-                                                            .byteSource( ByteSource.wrap( "data".getBytes( StandardCharsets.UTF_8 ) ) )
-                                                            .build(), CreateAttachment.create()
-                                                            .mimeType( "plain/text" )
-                                                            .label( "My Text 1" )
-                                                            .name( "MyText.txp" )
-                                                            .byteSource( ByteSource.wrap( "text data".getBytes( StandardCharsets.UTF_8 ) ) )
-                                                            .text( "text data" )
-                                                            .build() ) )
-            .modifier( edit -> edit.displayName.setValue( "New Display Name" ) )
-            .build();
-
-        final ModifyContentResult result = ModifyContentResult.create()
-            .contentId( ContentId.from( "contentId" ) )
-            .addResult( ContentConstants.BRANCH_DRAFT, Content.create()
-                .id( ContentId.from( "contentId" ) )
-                .type( ContentTypeName.site() )
-                .name( "contentName1" )
-                .displayName( "displayName1" )
-                .parentPath( ContentPath.ROOT )
-                .build() )
-            .addResult( ContentConstants.BRANCH_MASTER, Content.create()
-                .id( ContentId.from( "contentId" ) )
-                .type( ContentTypeName.site() )
-                .name( "contentName2" )
-                .displayName( "displayName2" )
-                .parentPath( ContentPath.ROOT )
-                .build() )
-            .build();
-
-        //test
-        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::modify, params, result );
-
-        assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
-        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
-        assertEquals( List.of( "draft", "master" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "branches" ) );
-        assertEquals( "MyImage.jpg",
-                      argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getString( "name" ) );
-        assertEquals( "image/jpeg",
-                      argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getString( "mimeType" ) );
-        assertEquals( "My Image 1",
-                      argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getString( "label" ) );
-        assertEquals( 4L, argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getLong( "byteSize" ) );
-
-        assertEquals( 9L, argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments", 1 ).getLong( "textSize" ) );
-
-        assertEquals( "/contentName1", argumentCaptor.getValue().getData().getSet( "result" ).getSet( "draft" ).getString( "path" ) );
-        assertEquals( "/contentName2", argumentCaptor.getValue().getData().getSet( "result" ).getSet( "master" ).getString( "path" ) );
     }
 
     private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )
