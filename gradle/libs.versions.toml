@@ -40,7 +40,7 @@ jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", ver
 jakarta-jaxrs = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version = "3.1.0" }
 
 jakarta-servlet = "jakarta.servlet:jakarta.servlet-api:6.1.0"
-jakarta-websocket-clientapi = "jakarta.websocket:jakarta.websocket-client-api:2.1.0"
+jakarta-websocket-clientapi = "jakarta.websocket:jakarta.websocket-client-api:2.2.0"
 
 osgi-service-component = { module = "org.osgi:org.osgi.service.component", version = "1.5.1" }
 osgi-service-componentannotations = { module = "org.osgi:org.osgi.service.component.annotations", version = "1.5.1" }
