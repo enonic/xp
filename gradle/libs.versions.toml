@@ -61,7 +61,7 @@ bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.80" 
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 
-jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
+jna = { module = "net.java.dev.jna:jna", version = "5.17.0" }
 
 findbugs-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 
