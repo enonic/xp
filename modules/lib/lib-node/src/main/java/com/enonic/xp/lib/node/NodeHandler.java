@@ -43,9 +43,9 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object modify( final ScriptValue editor, String key )
+    public Object update( final ScriptValue editor, String key )
     {
-        return execute( ModifyNodeHandler.create().nodeService( this.nodeService ).key( NodeKey.from( key ) ).editor( editor ).build() );
+        return execute( UpdateNodeHandler.create().nodeService( this.nodeService ).key( NodeKey.from( key ) ).editor( editor ).build() );
     }
 
     @SuppressWarnings("unused")
@@ -87,6 +87,16 @@ public class NodeHandler
             .build();
 
         return execute( handler );
+    }
+
+    public Object patch( final PatchNodeHandlerParams params )
+    {
+        return execute( PatchNodeHandler.create()
+                            .nodeService( this.nodeService )
+                            .key( params.getKey() )
+                            .branches( params.getBranches() )
+                            .editor( params.getEditor() )
+                            .build() );
     }
 
     @SuppressWarnings("unused")

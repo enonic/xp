@@ -278,8 +278,7 @@ public class MoveNodeCommandTest
             .searchService( this.searchService )
             .refresh( RefreshMode.ALL )
             .id( child1.id() )
-            .newParent( newParent.path() )
-            .processor( ( data ) -> {
+            .newParent( newParent.path() ).processor( ( data, path ) -> {
                 data.addString( "field", "value" );
                 return data;
             } )

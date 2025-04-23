@@ -27,8 +27,9 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.RenameNodeParams;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -96,6 +97,9 @@ class RenameContentCommandTest
         mockNode = Node.create().id( NodeId.from( "testId" ) ).build();
 
         when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenReturn( mockNode );
+        final PatchNodeResult patchNodeResult = mock( PatchNodeResult.class );
+        when( patchNodeResult.getNodeId() ).thenReturn( mockNode.id() );
+        when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( patchNodeResult );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
     }
@@ -114,7 +118,7 @@ class RenameContentCommandTest
 
         createCommand( params ).execute();
 
-        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
+        verify( nodeService, times( 1 ) ).rename( isA( RenameNodeParams.class ) );
     }
 
     @Test
@@ -175,6 +179,7 @@ class RenameContentCommandTest
             .id( ContentId.from( "testId" ) )
             .path( "/mycontent" )
             .creator( PrincipalKey.from( "user:system:anonymous" ) )
+            .modifier( PrincipalKey.from( "user:system:anonymous" ) )
             .type( ContentTypeName.folder() )
             .data( new PropertyTree() )
             .valid( valid )

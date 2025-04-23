@@ -17,8 +17,6 @@ public class UpdateNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
-    private final boolean dryRun;
-
     private final RefreshMode refresh;
 
     private UpdateNodeParams( final Builder builder )
@@ -27,7 +25,6 @@ public class UpdateNodeParams
         this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
-        this.dryRun = builder.dryRun;
         this.refresh = builder.refresh;
     }
 
@@ -56,9 +53,10 @@ public class UpdateNodeParams
         return editor;
     }
 
+    @Deprecated
     public boolean isDryRun()
     {
-        return dryRun;
+        return false;
     }
 
     public RefreshMode getRefresh()
@@ -76,9 +74,8 @@ public class UpdateNodeParams
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        private boolean dryRun;
-
         private RefreshMode refresh;
+
 
         private Builder()
         {
@@ -118,10 +115,10 @@ public class UpdateNodeParams
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( final boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder refresh( final RefreshMode refresh )

@@ -59,7 +59,7 @@ public class MoveNodeParams
 
         private MoveNodeListener moveListener;
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private RefreshMode refresh;
 

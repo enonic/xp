@@ -13,8 +13,8 @@ import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -31,8 +31,6 @@ public class ImportNodeCommand
 
     private final BinaryService binaryService;
 
-    private final boolean dryRun;
-
     private final boolean importPermissions;
 
     private final boolean importPermissionsOnCreate;
@@ -46,7 +44,6 @@ public class ImportNodeCommand
         this.binaryAttachments = builder.binaryAttachments;
         this.importNode = builder.importNode;
         this.binaryService = builder.binaryService;
-        this.dryRun = builder.dryRun;
         this.importPermissions = builder.importPermissions;
         this.importPermissionsOnCreate = builder.importPermissionsOnCreate;
         this.refresh = builder.refresh;
@@ -131,8 +128,7 @@ public class ImportNodeCommand
 
     private Node updateNode( final Node existingNode )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
-            .dryRun( this.dryRun )
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create()
             .id( existingNode.id() )
             .setBinaryAttachments( this.binaryAttachments )
             .editor( editableNode -> {
@@ -141,8 +137,15 @@ public class ImportNodeCommand
             .refresh( RefreshMode.ALL )
             .build();
 
-        final Node updatedNode =
-            UpdateNodeCommand.create( this ).params( updateNodeParams ).binaryService( binaryService ).build().execute();
+        final Node updatedNode = PatchNodeCommand.create( this )
+            .params( updateNodeParams )
+            .binaryService( binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute()
+            .getResult( ContextAccessor.current().getBranch() );
 
         if ( this.importPermissions )
         {
@@ -192,8 +195,6 @@ public class ImportNodeCommand
 
         private BinaryService binaryService;
 
-        private boolean dryRun;
-
         private boolean importPermissions;
 
         private boolean importPermissionsOnCreate = true;
@@ -228,10 +229,10 @@ public class ImportNodeCommand
             return this;
         }
 
+        @Deprecated
         public Builder dryRun( boolean dryRun )
         {
-            this.dryRun = dryRun;
-            return this;
+            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importPermissions( boolean importPermissions )

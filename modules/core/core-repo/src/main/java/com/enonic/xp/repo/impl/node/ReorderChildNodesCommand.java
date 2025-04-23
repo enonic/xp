@@ -80,7 +80,7 @@ public class ReorderChildNodesCommand
 
     private void processParent( final Node parentNode )
     {
-        final PropertyTree processedData = params.getProcessor().process( parentNode.data().copy() );
+        final PropertyTree processedData = params.getProcessor().process( parentNode.data().copy(), parentNode.path() );
         if ( !processedData.equals( parentNode.data() ) )
         {
             final Node editedNode = Node.create( parentNode ).data( processedData ).timestamp( Instant.now( CLOCK ) ).build();

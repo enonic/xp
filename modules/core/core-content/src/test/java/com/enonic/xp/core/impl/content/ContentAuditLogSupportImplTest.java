@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,6 +30,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ContentAuditLogSupportImplTest
 {
 
@@ -39,8 +41,6 @@ public class ContentAuditLogSupportImplTest
 
     private AuditLogService auditLogService;
 
-    private ContentAuditLogFilterService contentAuditLogFilterService;
-
     @BeforeEach
     public void setUp()
     {
@@ -48,11 +48,10 @@ public class ContentAuditLogSupportImplTest
         final ContentConfig config = Mockito.mock( ContentConfig.class );
 
         auditLogService = Mockito.mock( AuditLogService.class );
-        contentAuditLogFilterService = Mockito.mock( ContentAuditLogFilterService.class, invocation -> true );
+        ContentAuditLogFilterService contentAuditLogFilterService = Mockito.mock( ContentAuditLogFilterService.class, invocation -> true );
 
         Mockito.when( config.auditlog_enabled() ).thenReturn( true );
 
-        // prepare
         executor = Executors.newSingleThreadExecutor();
 
         support = new ContentAuditLogSupportImpl( config, executor, auditLogService, contentAuditLogFilterService );
@@ -62,113 +61,101 @@ public class ContentAuditLogSupportImplTest
     public void testCreateContent()
         throws Exception
     {
-        final PropertyTree propertyTree = new PropertyTree();
-        propertyTree.addString( "test-data", "test-data" );
+        final PropertyTree propertyTree = createTestPropertyTree();
 
-        final CreateContentParams params = CreateContentParams.create().
-            type( ContentTypeName.site() ).
-            parent( ContentPath.ROOT ).
-            contentData( propertyTree ).
-            displayName( "displayName" ).build();
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.site() )
+            .parent( ContentPath.ROOT )
+            .contentData( propertyTree )
+            .displayName( "displayName" )
+            .build();
 
-        final Content content = Content.create().
-            id( ContentId.from( "contentId" ) ).
-            type( ContentTypeName.site() ).
-            name( "contentName" ).
-            displayName( "displayName" ).
-            parentPath( ContentPath.ROOT ).
-            build();
+        final Content content = Content.create()
+            .id( ContentId.from( "contentId" ) )
+            .type( ContentTypeName.site() )
+            .name( "contentName" )
+            .displayName( "displayName" )
+            .parentPath( ContentPath.ROOT )
+            .build();
 
-        final User user = User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.system(), "testUser" ) ).
-            displayName( "Test User" ).
-            modifiedTime( Instant.now() ).
-            email( "test-user@enonic.com" ).
-            login( "test-user" ).
-            build();
-
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( user ).
-            principals( RoleKeys.ADMIN_LOGIN ).
-            build();
-
-        final Context context = ContextBuilder.create().
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( RepositoryId.from( "test-repository" ) ).
-            authInfo( authInfo ).
-            build();
-
-        // test
-        context.runWith( () -> support.createContent( params, content ) );
-
-        executor.shutdown();
-        executor.awaitTermination( 1, TimeUnit.MINUTES );
-
-        // verify and assert
-        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
-
-        Mockito.verify( auditLogService, Mockito.times( 1 ) ).log( argumentCaptor.capture() );
-
-        Assertions.assertEquals( user.getKey(), argumentCaptor.getValue().getUser() );
+        test( support::createContent, params, content );
     }
 
     @Test
     public void testUpdateContent()
         throws Exception
     {
-        final PropertyTree propertyTree = new PropertyTree();
-        propertyTree.addString( "test-data", "test-data" );
+        final UpdateContentParams params = new UpdateContentParams().requireValid( true )
+            .contentId( ContentId.from( "contentId" ) )
+            .clearAttachments( true )
+            .editor( edit -> edit.displayName = "New Display Name" );
 
-        final User user = User.create().
-            key( PrincipalKey.ofUser( IdProviderKey.system(), "testUser" ) ).
-            displayName( "Test User" ).
-            modifiedTime( Instant.now() ).
-            email( "test-user@enonic.com" ).
-            login( "test-user" ).
-            build();
+        final Content content = Content.create()
+            .id( ContentId.from( "contentId" ) )
+            .type( ContentTypeName.site() )
+            .name( "contentName" )
+            .displayName( "displayName" )
+            .parentPath( ContentPath.ROOT )
+            .build();
 
-        final UpdateContentParams params = new UpdateContentParams().
-            requireValid( true ).
-            contentId( ContentId.from( "contentId" ) ).
-            clearAttachments( true ).
-            modifier( user.getKey() ).
-            editor( edit -> edit.displayName = "New Display Name" );
-
-        final Content content = Content.create().
-            id( ContentId.from( "contentId" ) ).
-            type( ContentTypeName.site() ).
-            name( "contentName" ).
-            displayName( "displayName" ).
-            parentPath( ContentPath.ROOT ).
-            build();
-
-        final AuthenticationInfo authInfo = AuthenticationInfo.create().
-            user( user ).
-            principals( RoleKeys.ADMIN_LOGIN ).
-            build();
-
-        final Context context = ContextBuilder.create().
-            branch( ContentConstants.BRANCH_DRAFT ).
-            repositoryId( RepositoryId.from( "test-repository" ) ).
-            authInfo( authInfo ).
-            build();
-
-        // test
-        context.runWith( () -> support.update( params, content ) );
-
-        executor.shutdown();
-        executor.awaitTermination( 1, TimeUnit.MINUTES );
-
-        // verify and assert
-        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
-
-        Mockito.verify( auditLogService, Mockito.times( 1 ) ).log( argumentCaptor.capture() );
-
-        Assertions.assertEquals( user.getKey(), argumentCaptor.getValue().getUser() );
-
-        final String modifier = argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" );
-
-        Assertions.assertEquals( user.getKey().toString(), modifier );
+        test( support::update, params, content );
     }
 
+    private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )
+        throws Exception
+    {
+        final User testUser = createTestUser();
+        createTestContext( testUser );
+
+        //run
+        createTestContext( testUser ).runWith( () -> log.accept( params, result ) );
+
+        shutdownExecutor();
+        return verifyAuditLog( testUser );
+    }
+
+
+    private User createTestUser()
+    {
+        return User.create()
+            .key( PrincipalKey.ofUser( IdProviderKey.system(), "testUser" ) )
+            .displayName( "Test User" )
+            .modifiedTime( Instant.now() )
+            .email( "test-user@enonic.com" )
+            .login( "test-user" )
+            .build();
+    }
+
+    private Context createTestContext( User user )
+    {
+        AuthenticationInfo authInfo = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        return ContextBuilder.create()
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .repositoryId( RepositoryId.from( "test-repository" ) )
+            .authInfo( authInfo )
+            .build();
+    }
+
+    private PropertyTree createTestPropertyTree()
+    {
+        PropertyTree propertyTree = new PropertyTree();
+        propertyTree.addString( "test-data", "test-data" );
+        return propertyTree;
+    }
+
+    private void shutdownExecutor()
+        throws InterruptedException
+    {
+        executor.shutdown();
+        executor.awaitTermination( 1, TimeUnit.MINUTES );
+    }
+
+    private ArgumentCaptor<LogAuditLogParams> verifyAuditLog( User user )
+    {
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        Mockito.verify( auditLogService, Mockito.times( 1 ) ).log( argumentCaptor.capture() );
+        assertEquals( user.getKey(), argumentCaptor.getValue().getUser() );
+
+        return argumentCaptor;
+    }
 }

@@ -165,7 +165,8 @@ public class MoveNodeCommand
 
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
-            .data( processor.process( persistedNode.data() ) )
+            .data(
+                processor.process( persistedNode.data(), NodePath.create( newParentPath ).addElement( newNodeName.toString() ).build() ) )
             .parentPath( newParentPath )
             .indexConfigDocument( persistedNode.getIndexConfigDocument() )
             .timestamp( Instant.now( CLOCK ) );
@@ -210,7 +211,7 @@ public class MoveNodeCommand
         if ( newParentPath.equals( this.newParentPath ) )
         {
             final Node parentNode = doGetByPath( newParentPath );
-            if (parentNode.getChildOrder().isManualOrder() )
+            if ( parentNode.getChildOrder().isManualOrder() )
             {
 
                 final Long newOrderValue = ResolveInsertOrderValueCommand.create( this )
@@ -238,7 +239,7 @@ public class MoveNodeCommand
 
         private NodeName newNodeName;
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private MoveNodeListener moveListener;
 
@@ -283,6 +284,7 @@ public class MoveNodeCommand
             this.processor = processor;
             return this;
         }
+
         public Builder refresh( final RefreshMode refresh )
         {
             this.refresh = refresh;

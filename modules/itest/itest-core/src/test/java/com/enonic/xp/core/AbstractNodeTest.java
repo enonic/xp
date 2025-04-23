@@ -40,6 +40,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
@@ -62,8 +63,8 @@ import com.enonic.xp.repo.impl.node.GetNodeByPathCommand;
 import com.enonic.xp.repo.impl.node.GetNodesByIdsCommand;
 import com.enonic.xp.repo.impl.node.MoveNodeCommand;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
+import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -341,14 +342,26 @@ public abstract class AbstractNodeTest
 
     protected Node updateNode( final UpdateNodeParams updateNodeParams )
     {
-        return UpdateNodeCommand.create().
-            params( updateNodeParams ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute()
+            .getResult( ContextAccessor.current().getBranch() );
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 
     protected Node createNode( final NodePath parent, final String name )

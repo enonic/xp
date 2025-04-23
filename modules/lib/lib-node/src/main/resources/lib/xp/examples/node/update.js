@@ -35,8 +35,8 @@ function editor(node) {
     return node;
 }
 
-// Modify node by id
-var result = repo.modify({
+// Update node by id
+var result = repo.update({
     key: 'abc',
     editor: editor
 });

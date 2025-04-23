@@ -231,7 +231,9 @@ interface MultiRepoNodeHandler {
 interface NodeHandler {
     create<NodeData>(node: ScriptValue): Node<NodeData>;
 
-    modify<NodeData>(editor: ScriptValue, key: string): Node<NodeData>;
+    update<NodeData>(editor: ScriptValue, key: string): Node<NodeData>;
+
+    patch(params: PatchNodeHandlerParams): PatchNodeResult;
 
     setChildOrder<NodeData>(key: string, childOrder: string): Node<NodeData>;
 
@@ -277,9 +279,17 @@ interface NodeHandler {
 
 export type CreateNodeParams<NodeData = unknown> = NodePropertiesOnCreate & NodeData;
 
+/**
+ * @deprecated Use {@link UpdateNodeParams} instead
+ */
 export interface ModifyNodeParams<NodeData = unknown> {
     key: string;
     editor: (node: Node<NodeData>) => ModifiedNode<NodeData>;
+}
+
+export interface UpdateNodeParams<NodeData = unknown> {
+    key: string;
+    editor: (node: Node<NodeData>) => UpdatedNode<NodeData>;
 }
 
 export interface GetNodeParams {
@@ -323,6 +333,28 @@ interface PushNodeHandlerParams {
     setExclude(value?: string[] | null): void;
 
     setResolve(value: boolean): void;
+}
+
+export interface PatchNodeParams {
+    key: string;
+    editor: (node: Node) => PatchedNode;
+    branches: string[];
+}
+
+export interface PatchNodeResult {
+    nodeId: string;
+    branchResult: {
+        branch: string;
+        node: PatchedNode;
+    }[];
+}
+
+interface PatchNodeHandlerParams {
+    setKey(value?: string | null): void;
+
+    setBranches(value: string[] | null): void;
+
+    setEditor(value: ScriptValue): void;
 }
 
 export interface DiffBranchesParams {
@@ -592,7 +624,22 @@ export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
     _inheritsPermissions?: boolean;
 };
 
+/**
+ * @deprecated Use {@link NodePropertiesOnUpdate} instead
+ */
 export type NodePropertiesOnModify = CommonNodeProperties & {
+    _id: string;
+    _indexConfig: NodeIndexConfigParams;
+    _parentPath?: never;
+};
+
+export type NodePropertiesOnUpdate = CommonNodeProperties & {
+    _id: string;
+    _indexConfig: NodeIndexConfigParams;
+    _parentPath?: never;
+};
+
+export type NodePropertiesOnPatch = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
     _parentPath?: never;
@@ -604,14 +651,21 @@ export type NodePropertiesOnRead = CommonNodeProperties & {
     _parentPath?: never;
 };
 
+/**
+ * @deprecated Use {@link UpdatedNode} instead
+ */
 export type ModifiedNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
+
+export type UpdatedNode<Data = Record<string, unknown>> = NodePropertiesOnUpdate & Data;
+
+export type PatchedNode<Data = Record<string, unknown>> = NodePropertiesOnPatch & Data;
 
 export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 
 export interface RepoConnection {
     create<NodeData = Record<string, unknown>>(params: CreateNodeParams<NodeData>): Node<NodeData>;
 
-    modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData>;
+    update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData>;
 
     get<NodeData = Record<string, unknown>>(key: string | GetNodeParams): Node<NodeData> | null;
 
@@ -697,9 +751,8 @@ class RepoConnectionImpl
     }
 
     /**
+     * @deprecated Use {@link update} instead
      * This function modifies a node.
-     *
-     * @example-ref examples/node/modify.js
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.key Path or id to the node.
@@ -710,7 +763,53 @@ class RepoConnectionImpl
     modify<NodeData = Record<string, unknown>>(params: ModifyNodeParams<NodeData>): Node<NodeData> {
         checkRequired(params, 'key');
 
-        return __.toNativeObject(this.nodeHandler.modify(__.toScriptValue(params.editor), params.key));
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
+    }
+
+    /**
+     * This function patches a node.
+     *
+     * @example-ref examples/node/update.js
+     *
+     * @param {PatchNodeParams} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     *
+     * @returns {PatchNodeResult} patch result.
+     */
+    patch(params: PatchNodeParams): PatchNodeResult {
+        checkRequired(params, 'key');
+
+        const {
+            key,
+            editor = () => ({}),
+            branches = []
+        } = params ?? {};
+
+        const handlerParams: PatchNodeHandlerParams = __.newBean<PatchNodeHandlerParams>('com.enonic.xp.lib.node.PatchNodeHandlerParams');
+
+        handlerParams.setKey(__.nullOrValue(key));
+        handlerParams.setBranches(branches);
+        handlerParams.setEditor(__.toScriptValue(editor));
+
+        return __.toNativeObject(this.nodeHandler.patch(handlerParams));
+    }
+
+    /**
+     * This function updates a node.
+     *
+     * @example-ref examples/node/update.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     *
+     * @returns {object} Updated node as JSON.
+     */
+    update<NodeData = Record<string, unknown>>(params: UpdateNodeParams<NodeData>): Node<NodeData> {
+        checkRequired(params, 'key');
+
+        return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
     }
 
     get<NodeData = Record<string, unknown>>(keys: string | GetNodeParams): Node<NodeData> | null;

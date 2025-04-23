@@ -25,6 +25,7 @@ public class EditableContent
 
     public Page page;
 
+    @Deprecated
     public boolean valid;
 
     public Thumbnail thumbnail;
@@ -40,8 +41,10 @@ public class EditableContent
 
     public Instant createdTime;
 
+    @Deprecated
     public PrincipalKey modifier;
 
+    @Deprecated
     public Instant modifiedTime;
 
     public ContentPublishInfo publishInfo;

@@ -181,36 +181,39 @@ public class ApplyNodePermissionsCommand
             return null;
         }
 
-        NodeVersionData result;
+        return NodeHelper.runAsAdmin( () -> {
+            NodeVersionData result;
+            if ( updatedVersionMetadata != null )
+            {
+                this.nodeStorageService.push( List.of( PushNodeEntry.create()
+                                                           .nodeBranchEntry( NodeBranchEntry.create()
+                                                                                 .nodeVersionId( updatedVersionMetadata.getNodeVersionId() )
+                                                                                 .nodePath( updatedVersionMetadata.getNodePath() )
+                                                                                 .nodeVersionKey(
+                                                                                     updatedVersionMetadata.getNodeVersionKey() )
+                                                                                 .nodeId( updatedVersionMetadata.getNodeId() )
+                                                                                 .timestamp( updatedVersionMetadata.getTimestamp() )
+                                                                                 .build() )
+                                                           .build() ), branch, l -> {
+                }, targetContext );
 
-        if ( updatedVersionMetadata != null )
-        {
-            this.nodeStorageService.push( List.of( PushNodeEntry.create()
-                                                       .nodeBranchEntry( NodeBranchEntry.create()
-                                                                             .nodeVersionId( updatedVersionMetadata.getNodeVersionId() )
-                                                                             .nodePath( updatedVersionMetadata.getNodePath() )
-                                                                             .nodeVersionKey( updatedVersionMetadata.getNodeVersionKey() )
-                                                                             .nodeId( updatedVersionMetadata.getNodeId() )
-                                                                             .timestamp( updatedVersionMetadata.getTimestamp() )
-                                                                             .build() )
-                                                       .build() ), branch, l -> {
-            }, InternalContext.from( ContextAccessor.current() ) );
+                return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(),
+                                                                    InternalContext.create( ContextAccessor.current() ).build() ),
+                                            updatedVersionMetadata );
+            }
+            else
+            {
+                final Node editedNode = Node.create( persistedNode )
+                    .timestamp( Instant.now( CLOCK ) )
+                    .permissions( compileNewPermissions( persistedNode.getPermissions(), permissions, params.getAddPermissions(),
+                                                         params.getRemovePermissions() ) )
+                    .build();
+                result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
+            }
 
-            return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(), targetContext ),
-                                        updatedVersionMetadata );
-        }
-        else
-        {
-            final Node editedNode = Node.create( persistedNode )
-                .timestamp( Instant.now( CLOCK ) )
-                .permissions( compileNewPermissions( persistedNode.getPermissions(), permissions, params.getAddPermissions(),
-                                                     params.getRemovePermissions() ) )
-                .build();
-            result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
-        }
-
-        listener.permissionsApplied( 1 );
-        return result;
+            listener.permissionsApplied( 1 );
+            return result;
+        } );
     }
 
     private Map<Branch, NodeVersionMetadata> getActiveNodeVersions( final NodeId nodeId, final Branches branches )

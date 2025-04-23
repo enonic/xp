@@ -3,18 +3,25 @@ package com.enonic.xp.core.node;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -38,6 +45,7 @@ import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodeParams;
@@ -48,6 +56,7 @@ import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.security.IdProviderKey;
@@ -70,6 +79,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
@@ -295,8 +306,7 @@ public class NodeServiceImplTest
                                                                     .nodeId( node_1_1.id() )
                                                                     .includeChildren( false )
                                                                     .name( "duplicated-of-child-1" )
-                                                                    .parent( node_1_2.path() )
-                                                                    .dataProcessor( originalData -> {
+                                                                    .parent( node_1_2.path() ).dataProcessor( ( originalData, path ) -> {
                                                                         originalData.setString( "extraProp", "extraPropValue" );
                                                                         return originalData;
                                                                     } )
@@ -447,8 +457,7 @@ public class NodeServiceImplTest
 
         final ReorderChildNodesParams params = ReorderChildNodesParams.create()
             .add( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() )
-            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() )
-            .processor( data -> {
+            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ).processor( ( data, path ) -> {
                 data.addString( "processedValue", "value" );
                 return data;
             } )
@@ -468,7 +477,8 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_tree_by_path() {
+    void delete_tree_by_path()
+    {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
@@ -485,7 +495,8 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_tree_by_id() {
+    void delete_tree_by_id()
+    {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
@@ -502,44 +513,33 @@ public class NodeServiceImplTest
     }
 
     @Test
-    void delete_root_path_fail() {
+    void delete_root_path_fail()
+    {
 
-        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
+        assertThrows( OperationNotPermittedException.class,
+                      () -> nodeService.delete( DeleteNodeParams.create().nodePath( NodePath.ROOT ).build() ) );
     }
 
     @Test
-    void delete_root_id_fail() {
+    void delete_root_id_fail()
+    {
 
-        assertThrows( OperationNotPermittedException.class, () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
+        assertThrows( OperationNotPermittedException.class,
+                      () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
     }
 
     @Test
     void nodes_has_children()
     {
-        final Node parentNode1 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-1" ).
-            build() );
+        final Node parentNode1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
 
-        final Node parentNode2 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-2" ).
-            build() );
+        final Node parentNode2 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-2" ).build() );
 
-        final Node parentNode3 = createNode( CreateNodeParams.create().
-            parent( NodePath.ROOT ).
-            name( "my-node-3" ).
-            build() );
+        final Node parentNode3 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-3" ).build() );
 
-        createNode( CreateNodeParams.create().
-            parent( parentNode1.path() ).
-            name( "my-child-node-1" ).
-            build() );
+        createNode( CreateNodeParams.create().parent( parentNode1.path() ).name( "my-child-node-1" ).build() );
 
-        createNode( CreateNodeParams.create().
-            parent( parentNode2.path() ).
-            name( "my-child-node-2" ).
-            build() );
+        createNode( CreateNodeParams.create().parent( parentNode2.path() ).name( "my-child-node-2" ).build() );
 
         nodeService.refresh( RefreshMode.ALL );
 
@@ -549,6 +549,88 @@ public class NodeServiceImplTest
         assertTrue( result.hasChild( parentNode2.id() ) );
         assertFalse( result.hasChild( parentNode3.id() ) );
     }
+
+    @Test
+    void applyPermissions_shouldPublishCorrectEvents()
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
+        final Node childNode = createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "my-node-2" ).build() );
+
+        pushNodes( ContentConstants.BRANCH_MASTER, parentNode.id(), childNode.id() );
+
+        ContextAccessor.current().runWith( () -> {
+            updateNode( UpdateNodeParams.create().id( childNode.id() ).editor( node -> node.data.addString( "test", "test" ) ).build() );
+        } );
+
+        final ApplyNodePermissionsParams params = ApplyNodePermissionsParams.create()
+            .nodeId( parentNode.id() )
+            .permissions( AccessControlList.of(
+                AccessControlEntry.create().allowAll().principal( PrincipalKey.from( "user:myidprovider:rmy" ) ).build() ) )
+            .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .build();
+
+        Mockito.clearInvocations( eventPublisher );
+
+        nodeService.applyPermissions( params );
+
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 4 ) ).publish( captor.capture() );
+
+        List<Event> publishedEvents = captor.getAllValues();
+
+        assertEquals( 3,
+                      publishedEvents.stream().filter( event -> event.getType().equals( NodeEvents.NODE_PERMISSIONS_UPDATED ) ).count() );
+        assertEquals( 1, publishedEvents.stream().filter( event -> event.getType().equals( NodeEvents.NODE_PUSHED_EVENT ) ).count() );
+    }
+
+    @Test
+    void patch_shouldPublishCorrectEvents()
+    {
+        final Node nodeToPatch = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
+        final Node editedNodeToPatch = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-2" ).build() );
+
+        pushNodes( ContentConstants.BRANCH_MASTER, nodeToPatch.id(), editedNodeToPatch.id() );
+
+        ContextAccessor.current().runWith( () -> {
+            updateNode(
+                UpdateNodeParams.create().id( editedNodeToPatch.id() ).editor( node -> node.data.addString( "test", "test1" ) ).build() );
+        } );
+
+        Mockito.clearInvocations( eventPublisher );
+
+        nodeService.patch( PatchNodeParams.create()
+                               .id( editedNodeToPatch.id() )
+                               .editor( node -> node.data.addString( "test", "test2" ) )
+                               .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                               .build() );
+
+        ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 2 ) ).publish( captor.capture() );
+
+        List<Event> publishedEvents = captor.getAllValues();
+
+        assertEquals( NodeEvents.NODE_UPDATED_EVENT, publishedEvents.get( 0 ).getType() );
+        assertEquals( NodeEvents.NODE_UPDATED_EVENT, publishedEvents.get( 1 ).getType() );
+
+        Mockito.clearInvocations( eventPublisher );
+
+        nodeService.patch( PatchNodeParams.create()
+                               .id( nodeToPatch.id() )
+                               .editor( node -> node.data.addString( "test", "test2" ) )
+                               .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                               .build() );
+
+        verify( eventPublisher, times( 2 ) ).publish( captor.capture() );
+
+        publishedEvents = captor.getAllValues();
+
+        assertEquals( 4, publishedEvents.size() );
+        assertEquals( NodeEvents.NODE_UPDATED_EVENT, publishedEvents.get( 2 ).getType() );
+        assertEquals( NodeEvents.NODE_PUSHED_EVENT, publishedEvents.get( 3 ).getType() );
+    }
+
 
     private NodeVersionsMetadata getVersionsMetadata( NodeId nodeId )
     {

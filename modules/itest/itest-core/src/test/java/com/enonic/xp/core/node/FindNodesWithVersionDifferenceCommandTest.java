@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
@@ -11,11 +12,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.FindNodesWithVersionDifferenceCommand;
+import com.enonic.xp.repo.impl.node.PatchNodeCommand;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
-import com.enonic.xp.repo.impl.node.UpdateNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -267,6 +268,7 @@ public class FindNodesWithVersionDifferenceCommandTest
         {
             if ( counter == 0 )
             {
+
                 assertEquals( "dddd", nodeId.toString() );
             }
             else if ( counter == 1 )
@@ -339,19 +341,18 @@ public class FindNodesWithVersionDifferenceCommandTest
 
     private Node doUpdateNode( final Node node )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( node.id() ).
             editor( editableNode -> editableNode.manualOrderValue = 10L ).
             build();
 
-        return UpdateNodeCommand.create().
+        return PatchNodeCommand.create().
             params( updateNodeParams ).
             indexServiceInternal( this.indexServiceInternal ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).
             searchService( this.searchService ).
-            build().
-            execute();
+            build().execute().getResult( ContextAccessor.current().getBranch() );
     }
 
     private PushNodesResult doPushNode( final Branch target, final Node createdNode )

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.EnumSet;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -7,6 +9,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentException;
 import com.enonic.xp.content.MoveContentListener;
@@ -87,7 +90,14 @@ final class MoveContentCommand
 
         if ( params.stopInherit() )
         {
-            builder.processor( new MoveContentProcessor() );
+            builder.processor( new InheritedContentDataProcessor()
+            {
+                @Override
+                protected EnumSet<ContentInheritType> getTypesToProceed()
+                {
+                    return EnumSet.of( ContentInheritType.PARENT );
+                }
+            } );
         }
 
         final Node movedNode = nodeService.move( builder.build() );

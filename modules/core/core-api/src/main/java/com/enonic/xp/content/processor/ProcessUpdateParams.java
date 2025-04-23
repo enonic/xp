@@ -18,8 +18,6 @@ public class ProcessUpdateParams
 
     private final Content editedContent;
 
-    private final User modifier;
-
     private ProcessUpdateParams( final Builder builder )
     {
         this.createAttachments = builder.createAttachments;
@@ -27,7 +25,6 @@ public class ProcessUpdateParams
         mediaInfo = builder.mediaInfo;
         originalContent = builder.originalContent;
         editedContent = builder.editedContent;
-        modifier = builder.modifier;
     }
 
     public static Builder create()
@@ -63,7 +60,7 @@ public class ProcessUpdateParams
     @Deprecated
     public User getModifier()
     {
-        return modifier;
+        return null;
     }
 
     public static final class Builder
@@ -77,8 +74,6 @@ public class ProcessUpdateParams
         private Content originalContent;
 
         private Content editedContent;
-
-        private User modifier;
 
         private Builder()
         {
@@ -117,7 +112,6 @@ public class ProcessUpdateParams
         @Deprecated
         public Builder modifier( final User modifier )
         {
-            this.modifier = modifier;
             return this;
         }
 

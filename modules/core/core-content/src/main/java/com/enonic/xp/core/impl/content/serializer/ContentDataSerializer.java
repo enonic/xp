@@ -141,12 +141,12 @@ public class ContentDataSerializer
         return propertyTree;
     }
 
-    public PropertyTree toUpdateNodeData( final Content content, final PrincipalKey modifier, final Attachments attachments )
+    public PropertyTree toNodeData( final Content content )
     {
         final PropertyTree newPropertyTree = new PropertyTree();
         final PropertySet contentAsData = newPropertyTree.getRoot();
 
-        addMetadata( contentAsData, content, modifier );
+        addMetadata( contentAsData, content );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
         if ( content.hasExtraData() )
@@ -154,7 +154,7 @@ public class ContentDataSerializer
             extraDataSerializer.toData( content.getAllExtraData(), contentAsData );
         }
 
-        applyAttachmentsAsData( attachments, contentAsData );
+        applyAttachmentsAsData( content, contentAsData );
 
         if ( content.getPage() != null )
         {
@@ -164,34 +164,6 @@ public class ContentDataSerializer
         addProcessedReferences( contentAsData, content.getProcessedReferences() );
 
         return newPropertyTree;
-    }
-
-    public PropertyTree toNodeData( final Content content )
-    {
-        final PropertyTree propertyTree = new PropertyTree();
-
-        final PropertySet contentAsData = propertyTree.getRoot();
-
-        addMetadata( contentAsData, content, content.getModifier() );
-
-        contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
-        final ExtraDatas extraData = content.getAllExtraData();
-
-        if ( extraData != null && !extraData.isEmpty() )
-        {
-            extraDataSerializer.toData( extraData, contentAsData );
-        }
-
-        if ( content.getPage() != null )
-        {
-            pageDataSerializer.toData( content.getPage(), contentAsData );
-        }
-
-        applyAttachmentsAsData( content.getAttachments(), contentAsData );
-
-        addProcessedReferences( contentAsData, content.getProcessedReferences() );
-
-        return propertyTree;
     }
 
     public void toPageData( final Page page, final PropertySet parent )
@@ -239,7 +211,7 @@ public class ContentDataSerializer
         return builder;
     }
 
-    private void addMetadata( final PropertySet contentAsData, final Content content, final PrincipalKey modifier )
+    private void addMetadata( final PropertySet contentAsData, final Content content )
     {
         contentAsData.setBoolean( ContentPropertyNames.VALID, content.isValid() );
         addValidationErrors( content.getValidationErrors(), contentAsData );
@@ -249,7 +221,7 @@ public class ContentDataSerializer
         contentAsData.ifNotNull().addString( OWNER, content.getOwner() != null ? content.getOwner().toString() : null );
         contentAsData.ifNotNull().addString( LANGUAGE, content.getLanguage() != null ? content.getLanguage().toLanguageTag() : null );
         contentAsData.ifNotNull().addInstant( MODIFIED_TIME, content.getModifiedTime() );
-        contentAsData.ifNotNull().addString( MODIFIER, modifier.toString() );
+        contentAsData.ifNotNull().addString( MODIFIER, content.getModifier().toString() );
         contentAsData.ifNotNull().addString( CREATOR, content.getCreator().toString() );
         contentAsData.ifNotNull().addInstant( CREATED_TIME, content.getCreatedTime() );
         contentAsData.ifNotNull()
@@ -521,9 +493,9 @@ public class ContentDataSerializer
         return attachments.build();
     }
 
-    private void applyAttachmentsAsData( final Attachments attachments, final PropertySet contentAsData )
+    private void applyAttachmentsAsData( final Content content, final PropertySet contentAsData )
     {
-        for ( final Attachment attachment : attachments )
+        for ( final Attachment attachment : content.getAttachments() )
         {
             final PropertySet attachmentSet = contentAsData.addSet( ATTACHMENT );
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_NAME, attachment.getName() );

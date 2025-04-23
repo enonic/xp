@@ -13,11 +13,11 @@ import com.enonic.xp.util.GeoPoint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ModifyNodeExecutorTest
+public class UpdateNodeExecutorTest
 {
 
     @Test
-    public void modify_user_properties()
+    public void update_user_properties()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
@@ -26,21 +26,13 @@ public class ModifyNodeExecutorTest
         final PropertySet mySet = data.addSet( "mySet" );
         mySet.setGeoPoint( "myGeoPoint", new GeoPoint( 30, -30 ) );
 
-        final Node originalNode = Node.create().
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( data ).
-            build();
+        final Node originalNode = Node.create().name( "myNode" ).parentPath( NodePath.ROOT ).data( data ).build();
 
         final EditableNode editableNode = new EditableNode( originalNode );
 
         final PropertyTree updateScript = createUpdateScript();
 
-        ModifyNodeExecutor.create().
-            editableNode( editableNode ).
-            propertyTree( updateScript ).
-            build().
-            execute();
+        UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( updateScript ).build().execute();
 
         assertEquals( new GeoPoint( 0, 0 ), editableNode.data.getGeoPoint( "mySet.myGeoPoint" ) );
         assertEquals( "updatedValue", editableNode.data.getString( "myString" ) );
@@ -59,22 +51,14 @@ public class ModifyNodeExecutorTest
     public void update_child_order()
         throws Exception
     {
-        final Node originalNode = Node.create().
-            name( "myNode" ).
-            childOrder( ChildOrder.manualOrder() ).
-            parentPath( NodePath.ROOT ).
-            build();
+        final Node originalNode = Node.create().name( "myNode" ).childOrder( ChildOrder.manualOrder() ).parentPath( NodePath.ROOT ).build();
 
         final EditableNode editableNode = new EditableNode( originalNode );
 
         final PropertyTree updateScript = new PropertyTree();
         updateScript.setString( "_childOrder", ChildOrder.reverseManualOrder().toString() );
 
-        ModifyNodeExecutor.create().
-            editableNode( editableNode ).
-            propertyTree( updateScript ).
-            build().
-            execute();
+        UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( updateScript ).build().execute();
 
         assertEquals( ChildOrder.reverseManualOrder(), editableNode.childOrder );
     }
@@ -86,21 +70,13 @@ public class ModifyNodeExecutorTest
         final PropertyTree data = new PropertyTree();
         data.setString( "toBeRemoved", "removeMe" );
 
-        final Node originalNode = Node.create().
-            name( "myNode" ).
-            parentPath( NodePath.ROOT ).
-            data( data ).
-            build();
+        final Node originalNode = Node.create().name( "myNode" ).parentPath( NodePath.ROOT ).data( data ).build();
 
         final EditableNode editableNode = new EditableNode( originalNode );
 
         final PropertyTree updateScript = new PropertyTree();
 
-        ModifyNodeExecutor.create().
-            editableNode( editableNode ).
-            propertyTree( updateScript ).
-            build().
-            execute();
+        UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( updateScript ).build().execute();
 
         assertNull( editableNode.data.getString( "toBeRemoved" ) );
     }

@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -11,6 +13,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -64,6 +67,8 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.NodesHasChildrenResult;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
@@ -106,18 +111,19 @@ public class NodeServiceImpl
 
     private final NodeStorageService nodeStorageService;
 
-    private final  NodeSearchService nodeSearchService;
+    private final NodeSearchService nodeSearchService;
 
-    private final  EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     private final BinaryService binaryService;
 
     private final RepositoryService repositoryService;
 
     @Activate
-    public NodeServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final NodeStorageService nodeStorageService,
-                            @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
-                            @Reference final BinaryService binaryService, @Reference final RepositoryService repositoryService )
+    public NodeServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
+                            @Reference final NodeStorageService nodeStorageService, @Reference final NodeSearchService nodeSearchService,
+                            @Reference final EventPublisher eventPublisher, @Reference final BinaryService binaryService,
+                            @Reference final RepositoryService repositoryService )
     {
         this.indexServiceInternal = indexServiceInternal;
         this.nodeStorageService = nodeStorageService;
@@ -132,15 +138,14 @@ public class NodeServiceImpl
     public Node getById( final NodeId id )
     {
         return Tracer.trace( "node.getById", trace -> {
-                                 trace.put( "id", id );
-                                 final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-                                 if ( repositoryId != null )
-                                 {
-                                     trace.put( "repo", repositoryId.toString() );
-                                 }
-                                 trace.put( "branch", ContextAccessor.current().getBranch() );
-                             }, () -> executeGetById( id ),
-                             ( trace, node ) -> trace.put( "path", node.path() ) );
+            trace.put( "id", id );
+            final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
+            if ( repositoryId != null )
+            {
+                trace.put( "repo", repositoryId.toString() );
+            }
+            trace.put( "branch", ContextAccessor.current().getBranch() );
+        }, () -> executeGetById( id ), ( trace, node ) -> trace.put( "path", node.path() ) );
     }
 
     private Node executeGetById( final NodeId id )
@@ -195,13 +200,13 @@ public class NodeServiceImpl
 
     private Node doGetById( final NodeId id )
     {
-        return GetNodeByIdCommand.create().
-            id( id ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetNodeByIdCommand.create()
+            .id( id )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -226,13 +231,13 @@ public class NodeServiceImpl
     private Node executeGetByPath( final NodePath path )
     {
         verifyContext();
-        return GetNodeByPathCommand.create().
-            nodePath( path ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetNodeByPathCommand.create()
+            .nodePath( path )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -254,14 +259,14 @@ public class NodeServiceImpl
     private Node executeGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
     {
         verifyContext();
-        final Node node = GetNodeByPathAndVersionIdCommand.create().
-            nodePath( path ).
-            versionId( versionId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final Node node = GetNodeByPathAndVersionIdCommand.create()
+            .nodePath( path )
+            .versionId( versionId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         if ( node == null )
         {
@@ -289,13 +294,13 @@ public class NodeServiceImpl
     private Nodes executeGetByIds( final NodeIds ids )
     {
         verifyContext();
-        return GetNodesByIdsCommand.create().
-            ids( ids ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetNodesByIdsCommand.create()
+            .ids( ids )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -315,13 +320,13 @@ public class NodeServiceImpl
     private Nodes executeGetByPaths( final NodePaths paths )
     {
         verifyContext();
-        return GetNodesByPathsCommand.create().
-            paths( paths ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetNodesByPathsCommand.create()
+            .paths( paths )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -379,13 +384,13 @@ public class NodeServiceImpl
     private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery )
     {
         verifyContext();
-        return FindNodesByQueryCommand.create().
-            query( nodeQuery ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return FindNodesByQueryCommand.create()
+            .query( nodeQuery )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -444,52 +449,97 @@ public class NodeServiceImpl
 
     private Node doCreate( final CreateNodeParams params )
     {
-        final Node createdNode = CreateNodeCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final Node createdNode = CreateNodeCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         this.eventPublisher.publish( NodeEvents.created( createdNode ) );
 
         return createdNode;
     }
 
-    @Override
     public Node update( final UpdateNodeParams params )
     {
         verifyContext();
-        final Node updatedNode = UpdateNodeCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            binaryService( this.binaryService ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
 
-        this.eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+        final PatchNodeResult result = PatchNodeCommand.create()
+            .params( convertUpdateParams( params ) )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
-        return updatedNode;
+        result.getResults().forEach( ( branchResult ) -> {
+            if ( branchResult.node() != null )
+            {
+                ContextBuilder.from( ContextAccessor.current() ).branch( branchResult.branch() ).build().runWith( () -> {
+                    this.eventPublisher.publish( NodeEvents.updated( branchResult.node() ) );
+                } );
+            }
+        } );
+
+        return result.getResult( ContextAccessor.current().getBranch() );
+    }
+
+    @Override
+    public PatchNodeResult patch( final PatchNodeParams params )
+    {
+        verifyContext();
+
+        final PatchNodeResult result = PatchNodeCommand.create()
+            .params( params ).indexServiceInternal( this.indexServiceInternal ).binaryService( this.binaryService )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
+
+        final Branch mainBranch = ContextAccessor.current().getBranch();
+        final Node mainBranchNode = result.getResult( ContextAccessor.current().getBranch() );
+        final NodeVersionId mainBranchVersion = mainBranchNode != null ? mainBranchNode.getNodeVersionId() : null;
+
+        for ( PatchNodeResult.BranchResult br : result.getResults() )
+        {
+            if ( br.node() == null )
+            {
+                continue;
+            }
+
+            ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build().runWith( () -> {
+                if ( ( br.branch().equals( mainBranch ) ) || !br.node().getNodeVersionId().equals( mainBranchVersion ) )
+                {
+                    eventPublisher.publish( NodeEvents.updated( br.node() ) );
+                }
+                else
+                {
+                    eventPublisher.publish( NodeEvents.pushed( br.node() ) );
+                }
+            } );
+        }
+
+        return result;
     }
 
     @Override
     public Node rename( final RenameNodeParams params )
     {
         verifyContext();
-        final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
-            id( params.getNodeId() ).
-            newNodeName( params.getNewNodeName() ).
-            processor( params.getProcessor() ).
-            refresh( params.getRefresh() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
+            .id( params.getNodeId() )
+            .newNodeName( params.getNewNodeName() )
+            .processor( params.getProcessor() )
+            .refresh( params.getRefresh() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         if ( !moveNodeResult.getMovedNodes().isEmpty() )
         {
@@ -603,28 +653,24 @@ public class NodeServiceImpl
     @Deprecated
     public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
     {
-        return move( MoveNodeParams.create().
-            nodeId( nodeId ).
-            parentNodePath( parentNodePath ).
-            moveListener( moveListener ).
-            build() );
+        return move( MoveNodeParams.create().nodeId( nodeId ).parentNodePath( parentNodePath ).moveListener( moveListener ).build() );
     }
 
     @Override
     public Node move( final MoveNodeParams params )
     {
         verifyContext();
-        final MoveNodeResult moveNodeResult = MoveNodeCommand.create().
-            id( params.getNodeId() ).
-            newParent( params.getParentNodePath() ).
-            refresh( params.getRefresh() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            moveListener( params.getMoveListener() ).
-            processor( params.getProcessor() ).
-            build().
-            execute();
+        final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
+            .id( params.getNodeId() )
+            .newParent( params.getParentNodePath() )
+            .refresh( params.getRefresh() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .moveListener( params.getMoveListener() )
+            .processor( params.getProcessor() )
+            .build()
+            .execute();
 
         if ( !moveNodeResult.getMovedNodes().isEmpty() )
         {
@@ -650,24 +696,14 @@ public class NodeServiceImpl
     public NodeComparison compare( final NodeId nodeId, final Branch target )
     {
         verifyContext();
-        return CompareNodeCommand.create().
-            nodeId( nodeId ).
-            target( target ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
+        return CompareNodeCommand.create().nodeId( nodeId ).target( target ).storageService( this.nodeStorageService ).build().execute();
     }
 
     @Override
     public NodeComparisons compare( final NodeIds nodeIds, final Branch target )
     {
         verifyContext();
-        return CompareNodesCommand.create().
-            nodeIds( nodeIds ).
-            target( target ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
+        return CompareNodesCommand.create().nodeIds( nodeIds ).target( target ).storageService( this.nodeStorageService ).build().execute();
     }
 
     @Override
@@ -675,18 +711,14 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        final NodeVersionQuery query = NodeVersionQuery.create().
-            size( params.getSize() ).
-            from( params.getFrom() ).
-            nodeId( params.getNodeId() ).
-            addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) ).
-            build();
+        final NodeVersionQuery query = NodeVersionQuery.create()
+            .size( params.getSize() )
+            .from( params.getFrom() )
+            .nodeId( params.getNodeId() )
+            .addOrderBy( FieldOrderExpr.create( VersionIndexPath.TIMESTAMP, OrderExpr.Direction.DESC ) )
+            .build();
 
-        return FindNodeVersionsCommand.create().
-            query( query ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return FindNodeVersionsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
     }
 
     @Override
@@ -694,11 +726,7 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        return FindNodeVersionsCommand.create().
-            query( query ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return FindNodeVersionsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
     }
 
     @Override
@@ -706,11 +734,7 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        return FindNodeCommitsCommand.create().
-            query( query ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return FindNodeCommitsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
     }
 
     @Override
@@ -723,14 +747,14 @@ public class NodeServiceImpl
     public GetActiveNodeVersionsResult getActiveVersions( final GetActiveNodeVersionsParams params )
     {
         verifyContext();
-        return GetActiveNodeVersionsCommand.create().
-            nodeId( params.getNodeId() ).
-            branches( params.getBranches() ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return GetActiveNodeVersionsCommand.create()
+            .nodeId( params.getNodeId() )
+            .branches( params.getBranches() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
 
@@ -738,14 +762,14 @@ public class NodeServiceImpl
     public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
     {
         verifyContext();
-        final NodeVersionId result = SetActiveVersionCommand.create().
-            nodeVersionId( nodeVersionId ).
-            nodeId( nodeId ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final NodeVersionId result = SetActiveVersionCommand.create()
+            .nodeVersionId( nodeVersionId )
+            .nodeId( nodeId )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         final Node node = this.getById( nodeId );
 
@@ -770,35 +794,35 @@ public class NodeServiceImpl
     public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         verifyContext();
-        return ResolveSyncWorkCommand.create().
-            target( params.getBranch() ).
-            nodeId( params.getNodeId() ).
-            excludedNodeIds( params.getExcludedNodeIds() ).
-            includeChildren( params.isIncludeChildren() ).
-            includeDependencies( params.isIncludeDependencies() ).
-            initialDiffFilter( params.getInitialDiffFilter() ).
-            statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return ResolveSyncWorkCommand.create()
+            .target( params.getBranch() )
+            .nodeId( params.getNodeId() )
+            .excludedNodeIds( params.getExcludedNodeIds() )
+            .includeChildren( params.isIncludeChildren() )
+            .includeDependencies( params.isIncludeDependencies() )
+            .initialDiffFilter( params.getInitialDiffFilter() )
+            .statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
         verifyContext();
-        final Node sortedNode = SetNodeChildOrderCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            childOrder( params.getChildOrder() ).
-            nodeId( params.getNodeId() ).
-            processor( params.getProcessor() ).
-            refresh( params.getRefresh() ).
-            build().
-            execute();
+        final Node sortedNode = SetNodeChildOrderCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .childOrder( params.getChildOrder() )
+            .nodeId( params.getNodeId() )
+            .processor( params.getProcessor() )
+            .refresh( params.getRefresh() )
+            .build()
+            .execute();
 
         this.eventPublisher.publish( NodeEvents.sorted( sortedNode ) );
 
@@ -809,13 +833,13 @@ public class NodeServiceImpl
     public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
     {
         verifyContext();
-        final ReorderChildNodesResult reorderChildNodesResult = ReorderChildNodesCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final ReorderChildNodesResult reorderChildNodesResult = ReorderChildNodesCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         for ( Node parentNode : reorderChildNodesResult.getParentNodes() )
         {
@@ -863,15 +887,43 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        result.getResults()
+        final Map<NodeId, List<ApplyNodePermissionsResult.BranchResult>> resultsByNodeId = result.getResults()
             .values()
             .stream()
             .flatMap( Collection::stream )
-            .filter( br -> br.getNode() != null )
-            .forEach( br -> ContextBuilder.from( ContextAccessor.current() )
-                .branch( br.getBranch() )
-                .build()
-                .runWith( () -> this.eventPublisher.publish( NodeEvents.permissionsUpdated( br.getNode() ) ) ) );
+            .filter( br -> br.getNode() != null ).collect( Collectors.groupingBy( br -> br.getNode().id() ) );
+
+        for ( Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : resultsByNodeId.entrySet() )
+        {
+            final List<ApplyNodePermissionsResult.BranchResult> branchResults = entry.getValue();
+
+            final ApplyNodePermissionsResult.BranchResult mainBranchResult = branchResults.stream()
+                .filter( br -> ContextAccessor.current().getBranch().equals( br.getBranch() ) )
+                .findFirst()
+                .orElse( null );
+
+            final NodeVersionId mainBranchVersion = mainBranchResult != null ? mainBranchResult.getNode().getNodeVersionId() : null;
+
+            for ( ApplyNodePermissionsResult.BranchResult br : branchResults )
+            {
+                if ( br.getNode() == null )
+                {
+                    continue;
+                }
+
+                ContextBuilder.from( ContextAccessor.current() ).branch( br.getBranch() ).build().runWith( () -> {
+                    if ( ( mainBranchResult != null && mainBranchResult.getBranch().equals( br.getBranch() ) ) ||
+                        !br.getNode().getNodeVersionId().equals( mainBranchVersion ) )
+                    {
+                        eventPublisher.publish( NodeEvents.permissionsUpdated( br.getNode() ) );
+                    }
+                    else
+                    {
+                        eventPublisher.publish( NodeEvents.pushed( br.getNode() ) );
+                    }
+                } );
+            }
+        }
 
         return result;
     }
@@ -979,13 +1031,13 @@ public class NodeServiceImpl
     public Node createRootNode( final CreateRootNodeParams params )
     {
         verifyContext();
-        final Node createdNode = CreateRootNodeCommand.create().
-            params( params ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final Node createdNode = CreateRootNodeCommand.create()
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         if ( createdNode != null )
         {
@@ -1017,33 +1069,32 @@ public class NodeServiceImpl
     @Override
     public Node setRootPermissions( final AccessControlList acl )
     {
-        return SetRootPermissionsCommand.create().
-            permissions( acl ).
-            indexServiceInternal( indexServiceInternal ).
-            searchService( this.nodeSearchService ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
+        return SetRootPermissionsCommand.create()
+            .permissions( acl )
+            .indexServiceInternal( indexServiceInternal )
+            .searchService( this.nodeSearchService )
+            .storageService( this.nodeStorageService )
+            .build()
+            .execute();
     }
 
     @Override
     public ImportNodeResult importNode( final ImportNodeParams params )
     {
         verifyContext();
-        final ImportNodeResult importNodeResult = ImportNodeCommand.create().
-            binaryAttachments( params.getBinaryAttachments() ).
-            importNode( params.getNode() ).
-            insertManualStrategy( params.getInsertManualStrategy() ).
-            dryRun( params.isDryRun() ).
-            refresh( params.getRefresh() ).
-            importPermissions( params.isImportPermissions() ).
-            importPermissionsOnCreate( params.isImportPermissionsOnCreate() ).
-            binaryBlobStore( this.binaryService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        final ImportNodeResult importNodeResult = ImportNodeCommand.create()
+            .binaryAttachments( params.getBinaryAttachments() )
+            .importNode( params.getNode() )
+            .insertManualStrategy( params.getInsertManualStrategy() )
+            .refresh( params.getRefresh() )
+            .importPermissions( params.isImportPermissions() )
+            .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
+            .binaryBlobStore( this.binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
 
         if ( importNodeResult.isPreExisting() )
         {
@@ -1060,13 +1111,13 @@ public class NodeServiceImpl
     @Override
     public LoadNodeResult loadNode( final LoadNodeParams params )
     {
-        return LoadNodeCommand.create().
-            params( params ).
-            searchService( this.nodeSearchService ).
-            storageService( this.nodeStorageService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        return LoadNodeCommand.create()
+            .params( params )
+            .searchService( this.nodeSearchService )
+            .storageService( this.nodeStorageService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .build()
+            .execute();
     }
 
     @Override
@@ -1083,7 +1134,7 @@ public class NodeServiceImpl
         }, () -> {
             verifyContext();
             return NodeHelper.runAsAdmin( () -> doGetById( nodeId ) ) != null;
-        }, (trace, exists) -> trace.put( "exists", exists ) );
+        }, ( trace, exists ) -> trace.put( "exists", exists ) );
     }
 
     @Override
@@ -1109,8 +1160,7 @@ public class NodeServiceImpl
 
         for ( final Node node : nodes )
         {
-            builder.add( node.id(),
-                         NodeHasChildResolver.create().searchService( this.nodeSearchService ).build().resolve( node.path() ) );
+            builder.add( node.id(), NodeHasChildResolver.create().searchService( this.nodeSearchService ).build().resolve( node.path() ) );
         }
 
         return builder.build();
@@ -1137,14 +1187,14 @@ public class NodeServiceImpl
     public boolean hasUnpublishedChildren( final NodeId parent, final Branch target )
     {
         verifyContext();
-        return HasUnpublishedChildrenCommand.create().
-            parent( parent ).
-            target( target ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( nodeStorageService ).
-            searchService( nodeSearchService ).
-            build().
-            execute();
+        return HasUnpublishedChildrenCommand.create()
+            .parent( parent )
+            .target( target )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( nodeStorageService )
+            .searchService( nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override
@@ -1152,18 +1202,18 @@ public class NodeServiceImpl
     {
         verifyRepositoryExists();
 
-        LoadNodeVersionCommand.create().
-            nodeId( params.getNodeId() ).
-            nodePath( params.getNodePath() ).
-            nodeVersion( params.getNodeVersion() ).
-            nodeVersionId( params.getNodeVersionId() ).
-            nodeCommitId( params.getNodeCommitId() ).
-            timestamp( params.getTimestamp() ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        LoadNodeVersionCommand.create()
+            .nodeId( params.getNodeId() )
+            .nodePath( params.getNodePath() )
+            .nodeVersion( params.getNodeVersion() )
+            .nodeVersionId( params.getNodeVersionId() )
+            .nodeCommitId( params.getNodeCommitId() )
+            .timestamp( params.getTimestamp() )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .build()
+            .execute();
     }
 
     @Override
@@ -1171,16 +1221,16 @@ public class NodeServiceImpl
     {
         verifyRepositoryExists();
 
-        LoadNodeCommitCommand.create().
-            nodeCommitId( params.getNodeCommitId() ).
-            message( params.getMessage() ).
-            committer( params.getCommitter() ).
-            timestamp( params.getTimestamp() ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            indexServiceInternal( this.indexServiceInternal ).
-            build().
-            execute();
+        LoadNodeCommitCommand.create()
+            .nodeCommitId( params.getNodeCommitId() )
+            .message( params.getMessage() )
+            .committer( params.getCommitter() )
+            .timestamp( params.getTimestamp() )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .build()
+            .execute();
     }
 
     @Override
@@ -1229,8 +1279,7 @@ public class NodeServiceImpl
     private void verifyRepositoryExists()
     {
         NodeHelper.runAsAdmin( () -> {
-            final RepositoryId repoId = ContextAccessor.current().
-                getRepositoryId();
+            final RepositoryId repoId = ContextAccessor.current().getRepositoryId();
             final Repository repository = this.repositoryService.get( repoId );
             if ( repository == null )
             {
@@ -1242,8 +1291,7 @@ public class NodeServiceImpl
     private void verifyBranchExists( Branch branch )
     {
         NodeHelper.runAsAdmin( () -> {
-            final RepositoryId repoId = ContextAccessor.current().
-                getRepositoryId();
+            final RepositoryId repoId = ContextAccessor.current().getRepositoryId();
             final Repository repository = this.repositoryService.get( repoId );
             if ( repository == null )
             {
@@ -1255,5 +1303,17 @@ public class NodeServiceImpl
                 throw new BranchNotFoundException( branch );
             }
         } );
+    }
+
+    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
+    {
+        return PatchNodeParams.create()
+            .id( params.getId() )
+            .path( params.getPath() )
+            .editor( params.getEditor() )
+            .setBinaryAttachments( params.getBinaryAttachments() )
+            .refresh( params.getRefresh() )
+            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
+            .build();
     }
 }

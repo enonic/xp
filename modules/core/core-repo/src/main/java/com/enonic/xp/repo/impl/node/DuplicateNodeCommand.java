@@ -20,8 +20,8 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
@@ -156,8 +156,9 @@ public final class DuplicateNodeCommand
 
         if ( params.getDataProcessor() != null )
         {
-            updatedParams =
-                CreateNodeParams.create( originalParams ).data( params.getDataProcessor().process( originalParams.getData() ) ).build();
+            updatedParams = CreateNodeParams.create( originalParams )
+                .data( params.getDataProcessor().process( originalParams.getData(), null ) )
+                .build();
         }
 
         return updatedParams;
@@ -253,14 +254,14 @@ public final class DuplicateNodeCommand
 
         if ( changes )
         {
-            UpdateNodeCommand.create( this ).
-                params( UpdateNodeParams.create().
-                    id( node.id() ).
-                    editor( toBeEdited -> toBeEdited.data = data ).
-                    build() ).
-                binaryService( this.binaryService ).
-                build().
-                execute();
+            PatchNodeCommand.create()
+                .params( PatchNodeParams.create().id( node.id() ).editor( toBeEdited -> toBeEdited.data = data ).build() )
+                .binaryService( this.binaryService )
+                .indexServiceInternal( this.indexServiceInternal )
+                .storageService( this.nodeStorageService )
+                .searchService( this.nodeSearchService )
+                .build()
+                .execute();
         }
 
         nodeReferencesUpdated( 1 );

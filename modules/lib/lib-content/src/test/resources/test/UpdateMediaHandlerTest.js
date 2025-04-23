@@ -4,15 +4,15 @@ var assert = require('/lib/xp/testing.js');
 var TestClass = Java.type('com.enonic.xp.lib.content.CreateMediaHandlerTest');
 var stream = TestClass.createByteSource('Hello World');
 
-exports.modifyMediaValidate = function () {
+exports.updateMediaValidate = function () {
     try {
-        contentLib.modifyMedia({});
+        contentLib.updateMedia({});
     } catch (e) {
         assert.assertEquals('Parameter \'data\' is required', e);
     }
 
     try {
-        contentLib.modifyMedia({
+        contentLib.updateMedia({
             data: stream,
         });
     } catch (e) {
@@ -20,7 +20,7 @@ exports.modifyMediaValidate = function () {
     }
 
     try {
-        contentLib.modifyMedia({
+        contentLib.updateMedia({
             data: stream,
             key: 123,
         });
@@ -29,7 +29,7 @@ exports.modifyMediaValidate = function () {
     }
 
     try {
-        contentLib.modifyMedia({
+        contentLib.updateMedia({
             data: stream,
             key: '/a/b/c',
         });
@@ -38,7 +38,7 @@ exports.modifyMediaValidate = function () {
     }
 
     try {
-        contentLib.modifyMedia({
+        contentLib.updateMedia({
             data: stream,
             key: '/a/b/c',
             name: 'media',
@@ -49,24 +49,24 @@ exports.modifyMediaValidate = function () {
     }
 };
 
-exports.modifyMediaContentNotFoundByPath = function () {
-    assert.assertNull(contentLib.modifyMedia({
+exports.updateMediaContentNotFoundByPath = function () {
+    assert.assertNull(contentLib.updateMedia({
         data: stream,
         key: '/a/b/c',
         name: 'media',
     }));
 };
 
-exports.modifyMediaContentNotFoundById = function () {
-    assert.assertNull(contentLib.modifyMedia({
+exports.updateMediaContentNotFoundById = function () {
+    assert.assertNull(contentLib.updateMedia({
         data: stream,
         key: 'contentId',
         name: 'media',
     }));
 };
 
-exports.modifyMediaThrowContentNotFound = function () {
-    assert.assertNull(contentLib.modifyMedia({
+exports.updateMediaThrowContentNotFound = function () {
+    assert.assertNull(contentLib.updateMedia({
         data: stream,
         key: '/a/b/c',
         name: 'media',

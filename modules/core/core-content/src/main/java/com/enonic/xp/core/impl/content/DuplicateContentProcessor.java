@@ -9,6 +9,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.security.User;
 import com.enonic.xp.util.Reference;
 
@@ -26,7 +27,7 @@ public class DuplicateContentProcessor
     }
 
     @Override
-    public PropertyTree process( final PropertyTree originalData )
+    public PropertyTree process( final PropertyTree originalData, final NodePath path )
     {
         final User user = ContextAccessor.current().getAuthInfo().getUser();
 

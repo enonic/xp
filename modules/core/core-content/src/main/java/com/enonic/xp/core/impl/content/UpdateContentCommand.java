@@ -10,9 +10,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -20,6 +17,7 @@ import com.google.common.io.ByteStreams;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -34,17 +32,18 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
@@ -54,8 +53,6 @@ import com.enonic.xp.util.BinaryReference;
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( UpdateContentCommand.class );
-
     private final UpdateContentParams params;
 
     private final MediaInfo mediaInfo;
@@ -135,8 +132,7 @@ final class UpdateContentCommand
 
         if ( !params.isClearAttachments() && contentBeforeChange.getValidationErrors() != null )
         {
-            contentBeforeChange.getValidationErrors()
-                .stream()
+            contentBeforeChange.getValidationErrors().stream()
                 .filter( validationError -> validationError instanceof AttachmentValidationError )
                 .map( validationError -> (AttachmentValidationError) validationError )
                 .filter( validationError -> !params.getRemoveAttachments().contains( validationError.getAttachment() ) )
@@ -153,7 +149,9 @@ final class UpdateContentCommand
             .createAttachments( params.getCreateAttachments() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
-            .validationErrorsBuilder( validationErrorsBuilder ).build().execute();
+            .validationErrorsBuilder( validationErrorsBuilder )
+            .build()
+            .execute();
 
         if ( params.isRequireValid() )
         {
@@ -172,27 +170,27 @@ final class UpdateContentCommand
             .valid( !validationErrors.hasErrors() )
             .validationErrors( validationErrors )
             .modifiedTime( Instant.now() )
-            .build();
-
-        final UpdateNodeParams updateNodeParams =
-            UpdateNodeParamsFactory.create()
-                .editedContent( editedContent )
-                .createAttachments( params.getCreateAttachments() )
             .attachments( attachments )
             .modifier( getCurrentUser().getKey() )
+            .build();
+
+        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
+            .editedContent( editedContent )
+            .createAttachments( params.getCreateAttachments() )
+            .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
-                .xDataService( this.xDataService )
-                .pageDescriptorService( this.pageDescriptorService )
-                .partDescriptorService( this.partDescriptorService )
-                .layoutDescriptorService( this.layoutDescriptorService )
-                .contentDataSerializer( this.translator.getContentDataSerializer() )
-                .siteService( this.siteService )
-                .build()
-                .produce();
+            .xDataService( this.xDataService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .contentDataSerializer( this.translator.getContentDataSerializer() )
+            .siteService( this.siteService )
+            .build()
+            .produce();
 
-        final Node editedNode = this.nodeService.update( updateNodeParams );
+        final PatchNodeResult result = this.nodeService.patch( patchNodeParams );
 
-        return translator.fromNode( editedNode, true );
+        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
@@ -206,8 +204,8 @@ final class UpdateContentCommand
         if ( !params.isClearAttachments() )
         {
             originalAttachments.stream().forEach( a -> attachments.put( a.getBinaryReference(), a ) );
+            params.getRemoveAttachments().stream().forEach( attachments::remove );
         }
-        params.getRemoveAttachments().stream().forEach( attachments::remove );
 
         // added attachments with same BinaryReference will replace existing ones
         for ( final CreateAttachment createAttachment : params.getCreateAttachments() )
@@ -244,7 +242,6 @@ final class UpdateContentCommand
         }
     }
 
-
     private Content processContent( final Content originalContent, Content editedContent )
     {
         final ContentType contentType = getContentType( editedContent.getType() );
@@ -259,14 +256,12 @@ final class UpdateContentCommand
                     .createAttachments( params.getCreateAttachments() )
                     .originalContent( originalContent )
                     .editedContent( editedContent )
-                    .modifier( getCurrentUser() )
                     .build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
 
                 if ( result != null )
                 {
-                    editedContent =  editContent( result.getEditor(), editedContent );
-                    this.params.createAttachments( result.getCreateAttachments() );
+                    editedContent = editContent( result.getEditor(), editedContent );
                 }
             }
         }
@@ -297,11 +292,10 @@ final class UpdateContentCommand
 
     private void validateImageMediaProperties( final Content editedContent )
     {
-        if ( !( editedContent instanceof Media ) )
+        if ( !( editedContent instanceof final Media mediaContent ) )
         {
             return;
         }
-        final Media mediaContent = (Media) editedContent;
 
         try
         {
@@ -373,7 +367,7 @@ final class UpdateContentCommand
             Preconditions.checkNotNull( params );
         }
 
-        public UpdateContentCommand build()
+        UpdateContentCommand build()
         {
             validate();
             return new UpdateContentCommand( this );

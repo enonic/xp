@@ -40,7 +40,7 @@ public class ReorderChildNodesParams
     {
         private final ImmutableList.Builder<ReorderChildNodeParams> orderChildNodeParamsList = ImmutableList.builder();
 
-        private NodeDataProcessor processor = ( n ) -> n;
+        private NodeDataProcessor processor = ( n, p ) -> n;
 
         private RefreshMode refresh;
 

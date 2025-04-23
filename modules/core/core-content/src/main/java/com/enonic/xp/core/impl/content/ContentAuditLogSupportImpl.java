@@ -602,11 +602,6 @@ public class ContentAuditLogSupportImpl
         targetSet.addStrings( name, contents.stream().map( ContentId::toString ).collect( Collectors.toList() ) );
     }
 
-    private void addContents( final PropertySet targetSet, final ContentPaths contents, final String name )
-    {
-        targetSet.addStrings( name, contents.stream().map( ContentPath::toString ).collect( Collectors.toList() ) );
-    }
-
     private void log( final String type, final PropertyTree data, final ContentPaths contentPaths, final Context rootContext )
     {
         log( type, data, AuditLogUris.from(
