@@ -140,6 +140,9 @@ public class ImportNodeCommand
         final Node updatedNode = PatchNodeCommand.create( this )
             .params( updateNodeParams )
             .binaryService( binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
             .build()
             .execute()
             .getResult( ContextAccessor.current().getBranch() );

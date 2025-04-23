@@ -254,13 +254,14 @@ public final class DuplicateNodeCommand
 
         if ( changes )
         {
-            PatchNodeCommand.create( this ).params( PatchNodeParams.create().
-                    id( node.id() ).
-                    editor( toBeEdited -> toBeEdited.data = data ).
-                    build() ).
-                binaryService( this.binaryService ).
-                build().
-                execute();
+            PatchNodeCommand.create()
+                .params( PatchNodeParams.create().id( node.id() ).editor( toBeEdited -> toBeEdited.data = data ).build() )
+                .binaryService( this.binaryService )
+                .indexServiceInternal( this.indexServiceInternal )
+                .storageService( this.nodeStorageService )
+                .searchService( this.nodeSearchService )
+                .build()
+                .execute();
         }
 
         nodeReferencesUpdated( 1 );

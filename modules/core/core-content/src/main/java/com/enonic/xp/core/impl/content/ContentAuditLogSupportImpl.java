@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -14,8 +13,6 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
-import com.enonic.xp.attachment.CreateAttachment;
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
@@ -603,26 +600,6 @@ public class ContentAuditLogSupportImpl
     private void addContents( final PropertySet targetSet, final ContentIds contents, final String name )
     {
         targetSet.addStrings( name, contents.stream().map( ContentId::toString ).collect( Collectors.toList() ) );
-    }
-
-    private void addCreateAttachments( final PropertySet targetSet, final CreateAttachments attachments )
-    {
-        for ( final CreateAttachment attachment : attachments )
-        {
-            final PropertySet attachmentSet = targetSet.addSet( "createAttachments" );
-            addCreateAttachment( attachmentSet, attachment );
-        }
-    }
-
-    private void addCreateAttachment( final PropertySet targetSet, final CreateAttachment attachment )
-    {
-        targetSet.addString( "name", attachment.getName() );
-        targetSet.addString( "mimeType", attachment.getMimeType() );
-        targetSet.addString( "label", attachment.getLabel() );
-        attachment.getByteSource().sizeIfKnown().toJavaUtil().ifPresent( ( size -> targetSet.addLong( "byteSize", size ) ) );
-        targetSet.addLong( "textSize", Optional.ofNullable( attachment.getTextContent() )
-            .map( textContent -> (long) textContent.length() )
-            .orElse( null ) );
     }
 
     private void log( final String type, final PropertyTree data, final ContentPaths contentPaths, final Context rootContext )
