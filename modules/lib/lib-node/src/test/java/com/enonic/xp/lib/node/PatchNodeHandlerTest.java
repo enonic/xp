@@ -75,7 +75,7 @@ public class PatchNodeHandlerTest
 
         when( nodeService.getById( eq( node.id() ) ) ).thenReturn( node );
 
-        Mockito.when( nodeService.patch( isA( PatchNodeParams.class ) ) )
+        when( nodeService.patch( isA( PatchNodeParams.class ) ) )
             .thenReturn( PatchNodeResult.create()
                              .addResult( ContentConstants.BRANCH_MASTER, node )
                              .addResult( ContentConstants.BRANCH_DRAFT, node )
