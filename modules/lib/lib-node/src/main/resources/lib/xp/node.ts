@@ -233,6 +233,8 @@ interface NodeHandler {
 
     update<NodeData>(editor: ScriptValue, key: string): Node<NodeData>;
 
+    patch(params: PatchNodeHandlerParams): PatchNodeResult;
+
     setChildOrder<NodeData>(key: string, childOrder: string): Node<NodeData>;
 
     get<NodeData>(params: GetNodeHandlerParams): Node<NodeData> | Node<NodeData>[] | null;
@@ -331,6 +333,28 @@ interface PushNodeHandlerParams {
     setExclude(value?: string[] | null): void;
 
     setResolve(value: boolean): void;
+}
+
+export interface PatchNodeParams {
+    key: string;
+    editor: (node: Node) => PatchedNode;
+    branches: string[];
+}
+
+export interface PatchNodeResult {
+    nodeId: string;
+    branchResult: {
+        branch: string;
+        node: PatchedNode;
+    }[];
+}
+
+interface PatchNodeHandlerParams {
+    setKey(value?: string | null): void;
+
+    setBranches(value: string[] | null): void;
+
+    setEditor(value: ScriptValue): void;
 }
 
 export interface DiffBranchesParams {
@@ -615,6 +639,12 @@ export type NodePropertiesOnUpdate = CommonNodeProperties & {
     _parentPath?: never;
 };
 
+export type NodePropertiesOnPatch = CommonNodeProperties & {
+    _id: string;
+    _indexConfig: NodeIndexConfigParams;
+    _parentPath?: never;
+};
+
 export type NodePropertiesOnRead = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfig;
@@ -627,6 +657,8 @@ export type NodePropertiesOnRead = CommonNodeProperties & {
 export type ModifiedNode<Data = Record<string, unknown>> = NodePropertiesOnModify & Data;
 
 export type UpdatedNode<Data = Record<string, unknown>> = NodePropertiesOnUpdate & Data;
+
+export type PatchedNode<Data = Record<string, unknown>> = NodePropertiesOnPatch & Data;
 
 export type Node<Data = Record<string, unknown>> = NodePropertiesOnRead & Data;
 
@@ -732,6 +764,35 @@ class RepoConnectionImpl
         checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.update(__.toScriptValue(params.editor), params.key));
+    }
+
+    /**
+     * This function patches a node.
+     *
+     * @example-ref examples/node/update.js
+     *
+     * @param {PatchNodeParams} params JSON with the parameters.
+     * @param {string} params.key Path or id to the node.
+     * @param {function} params.editor Editor callback function.
+     *
+     * @returns {PatchNodeResult} patch result.
+     */
+    patch(params: PatchNodeParams): PatchNodeResult {
+        checkRequired(params, 'key');
+
+        const {
+            key,
+            editor = () => ({}),
+            branches = []
+        } = params ?? {};
+
+        const handlerParams: PatchNodeHandlerParams = __.newBean<PatchNodeHandlerParams>('com.enonic.xp.lib.node.PatchNodeHandlerParams');
+
+        handlerParams.setKey(__.nullOrValue(key));
+        handlerParams.setBranches(branches);
+        handlerParams.setEditor(__.toScriptValue(editor));
+
+        return __.toNativeObject(this.nodeHandler.patch(handlerParams));
     }
 
     /**
