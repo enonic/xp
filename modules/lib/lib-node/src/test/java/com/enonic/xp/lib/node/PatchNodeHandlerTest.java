@@ -47,7 +47,7 @@ public class PatchNodeHandlerTest
     @Test
     public void nodeNotFound()
     {
-        Mockito.when( nodeService.patch( isA( PatchNodeParams.class ) ) )
+        when( nodeService.patch( isA( PatchNodeParams.class ) ) )
             .thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_MASTER, mock( Node.class ) ).build() );
 
         assertThrows( NodeNotFoundException.class, () -> runScript( "/lib/xp/examples/node/patch-1.js" ) );
