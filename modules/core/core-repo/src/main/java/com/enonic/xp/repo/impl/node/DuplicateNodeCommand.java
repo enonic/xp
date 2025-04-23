@@ -258,7 +258,10 @@ public final class DuplicateNodeCommand
                     id( node.id() ).
                     editor( toBeEdited -> toBeEdited.data = data ).
                     build() ).
-                binaryService( this.binaryService ).
+                binaryService( this.binaryService ).indexServiceInternal( this.indexServiceInternal )
+                .storageService( this.nodeStorageService )
+                .searchService( this.nodeSearchService )
+                .
                 build().
                 execute();
         }

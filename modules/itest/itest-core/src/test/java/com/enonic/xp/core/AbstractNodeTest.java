@@ -343,8 +343,7 @@ public abstract class AbstractNodeTest
     protected Node updateNode( final UpdateNodeParams updateNodeParams )
     {
         return PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) )
-            .indexServiceInternal( this.indexServiceInternal )
-            .binaryService( this.binaryService )
+            .binaryService( this.binaryService ).indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
