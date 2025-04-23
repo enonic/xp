@@ -3,7 +3,7 @@ package com.enonic.xp.lib.node;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.NodeEditor;
 
-record NodeEditorInput(BinaryAttachments binaryAttachments, NodeEditor editor)
+record NodeEditorInput(NodeEditor editor, BinaryAttachments binaryAttachments)
 {
 }
 

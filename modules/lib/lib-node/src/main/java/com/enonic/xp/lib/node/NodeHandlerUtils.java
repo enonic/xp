@@ -22,7 +22,7 @@ final class NodeHandlerUtils
         final BinaryAttachments attachments = new BinaryAttachmentsParser().parse( appliedResult );
         final NodeEditor nodeEditor = createEditor( appliedResult );
 
-        return new NodeEditorInput( attachments, nodeEditor );
+        return new NodeEditorInput( nodeEditor, attachments );
     }
 
     private static ScriptValue applyEditor( final Node node, final ScriptValue editor )
