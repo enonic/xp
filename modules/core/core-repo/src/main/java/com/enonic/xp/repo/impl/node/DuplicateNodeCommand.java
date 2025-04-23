@@ -254,7 +254,7 @@ public final class DuplicateNodeCommand
 
         if ( changes )
         {
-            PatchNodeCommand.create( this ).params( PatchNodeParams.create().
+            PatchNodeCommand.create().params( PatchNodeParams.create().
                     id( node.id() ).
                     editor( toBeEdited -> toBeEdited.data = data ).
                     build() ).

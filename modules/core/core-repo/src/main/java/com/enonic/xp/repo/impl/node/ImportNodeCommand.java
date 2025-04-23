@@ -137,7 +137,7 @@ public class ImportNodeCommand
             .refresh( RefreshMode.ALL )
             .build();
 
-        final Node updatedNode = PatchNodeCommand.create( this )
+        final Node updatedNode = PatchNodeCommand.create()
             .params( updateNodeParams )
             .binaryService( binaryService )
             .build()

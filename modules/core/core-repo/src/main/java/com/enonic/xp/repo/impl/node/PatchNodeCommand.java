@@ -48,11 +48,6 @@ public final class PatchNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public PatchNodeResult execute()
     {
         return doPatchNode();
