@@ -1,9 +1,7 @@
 package com.enonic.xp.server.internal.deploy;
 
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.Dictionary;
-import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,8 +28,6 @@ public class ApplicationDeployerManagerTest
 
     private StoredApplicationsDeployer storedApplicationsDeployer;
 
-    private AutoDeployer autoDeployer;
-
     private DeployDirectoryWatcher deployDirectoryWatcher;
 
     @BeforeEach
@@ -42,12 +38,6 @@ public class ApplicationDeployerManagerTest
 
         storedApplicationsDeployer = new StoredApplicationsDeployer();
         applicationDeployerManager.setStoredApplicationsDeployer( storedApplicationsDeployer );
-
-        autoDeployer = new AutoDeployer();
-        final HashMap<String, String> autoDeployerConfig = new HashMap<>();
-        autoDeployerConfig.put( "deploy.1", "http://localhost/url1" );
-        autoDeployer.activate( autoDeployerConfig );
-        applicationDeployerManager.setAutoDeployer( autoDeployer );
 
         deployDirectoryWatcher = new DeployDirectoryWatcher();
         final DeployConfig deployConfig = mock( DeployConfig.class );
@@ -62,13 +52,11 @@ public class ApplicationDeployerManagerTest
     {
         final ApplicationService applicationService = mock( ApplicationService.class );
         storedApplicationsDeployer.setApplicationService( applicationService );
-        autoDeployer.setApplicationService( applicationService );
         deployDirectoryWatcher.setApplicationService( applicationService );
 
         final BundleContext bundleContext = mock( BundleContext.class );
         applicationDeployerManager.activate( bundleContext );
         verify( applicationService ).installAllStoredApplications( any() );
-        verify( applicationService ).installGlobalApplication( new URL( "http://localhost/url1" ) );
 
         var captor = ArgumentCaptor.forClass( Dictionary.class );
         verify( bundleContext ).registerService( same( Condition.class ), eq(Condition.INSTANCE), captor.capture());
