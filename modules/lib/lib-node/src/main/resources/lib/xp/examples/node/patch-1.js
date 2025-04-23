@@ -7,7 +7,7 @@ var repo = nodeLib.connect({
 });
 
 // BEGIN
-// pathch nodes in several branches
+// patch nodes in several branches
 var result = repo.patch({
     key: 'a',
     branches: ['master', 'draft'],
