@@ -15,6 +15,7 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
+import com.enonic.xp.core.impl.content.serializer.ValidationErrorsSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.Node;
@@ -75,12 +76,10 @@ final class RenameContentCommand
         }
 
         processors.add( ( data, newNodePath ) -> {
-            final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
-
-            final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().getTree();
+            final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
-            final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? contentDataSerializer.fromExtraData(
+            final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? new ContentDataSerializer().fromExtraData(
                 data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
@@ -95,6 +94,7 @@ final class RenameContentCommand
                 .execute();
 
             data.setProperty( ContentPropertyNames.VALID, ValueFactory.newBoolean( !validationErrors.hasErrors() ) );
+            new ValidationErrorsSerializer().toData( validationErrors, data.getRoot() );
 
             return data;
         } );
