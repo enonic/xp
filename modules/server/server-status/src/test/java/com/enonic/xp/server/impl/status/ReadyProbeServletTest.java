@@ -31,7 +31,8 @@ public class ReadyProbeServletTest
                  "com.enonic.xp.portal.url.PortalUrlService", "com.enonic.xp.web.multipart.MultipartService",
                  "com.enonic.xp.mail.MailService", "com.enonic.xp.i18n.LocaleService", "com.enonic.xp.portal.owasp.HtmlSanitizer",
                  "com.enonic.xp.schema.content.ContentTypeService", "com.enonic.xp.admin.tool.AdminToolDescriptorService",
-                 "com.enonic.xp.server.internal.deploy.DeployDirectoryWatcher", "com.enonic.xp.server.internal.deploy.AutoDeployer",
+                 "com.enonic.xp.admin.tool.WidgetDescriptorService",
+                 "com.enonic.xp.server.internal.deploy.DeployDirectoryWatcher",
                  "com.enonic.xp.server.internal.deploy.StoredApplicationsDeployer" );
 
     @Mock(stubOnly = true)

@@ -6,6 +6,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.condition.Condition;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
@@ -25,9 +27,17 @@ import com.enonic.xp.web.multipart.MultipartService;
 @Component(immediate = true)
 public class ApplicationDeployerManager
 {
-    private StoredApplicationsDeployer storedApplicationsDeployer;
+    private final StoredApplicationsDeployer storedApplicationsDeployer;
 
-    private DeployDirectoryWatcher deployDirectoryWatcher;
+    private final DeployDirectoryWatcher deployDirectoryWatcher;
+
+    @Activate
+    public ApplicationDeployerManager( @Reference final StoredApplicationsDeployer storedApplicationsDeployer,
+                                       @Reference final DeployDirectoryWatcher deployDirectoryWatcher )
+    {
+        this.storedApplicationsDeployer = storedApplicationsDeployer;
+        this.deployDirectoryWatcher = deployDirectoryWatcher;
+    }
 
     @Activate
     public void activate( final BundleContext bundleContext )
@@ -40,18 +50,17 @@ public class ApplicationDeployerManager
     }
 
     @Reference
-    public void setStoredApplicationsDeployer( final StoredApplicationsDeployer storedApplicationsDeployer )
+    public void setWidgetDescriptorService( final WidgetDescriptorService widgetDescriptorService )
     {
-        this.storedApplicationsDeployer = storedApplicationsDeployer;
+        //Needed to ensure startup-order
     }
 
     @Reference
-    public void setDeployDirectoryWatcher( final DeployDirectoryWatcher deployDirectoryWatcher )
+    public void setAdminToolDescriptorService( final AdminToolDescriptorService adminToolDescriptorService )
     {
-        this.deployDirectoryWatcher = deployDirectoryWatcher;
+        //Needed to ensure startup-order
     }
 
-    //TODO Temporary fix. See issue xp#7003
     @Reference
     public void setContentTypeService( final ContentTypeService contentTypeService )
     {
