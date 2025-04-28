@@ -28,10 +28,10 @@ public class OSGICheckTest
 
         assertThat( result.getErrorMessages() ).containsOnly( "[com.enonic.xp.portal.url.PortalUrlService] service in not available",
                                                               "[com.enonic.xp.admin.tool.AdminToolDescriptorService] service in not available",
+                                                              "[com.enonic.xp.admin.tool.WidgetDescriptorService] service in not available",
                                                               "[com.enonic.xp.task.TaskDescriptorService] service in not available",
                                                               "[com.enonic.xp.portal.view.ViewFunctionService] service in not available",
                                                               "[com.enonic.xp.schema.content.ContentTypeService] service in not available",
-                                                              "[com.enonic.xp.server.internal.deploy.AutoDeployer] service in not available",
                                                               "[com.enonic.xp.script.event.ScriptEventManager] service in not available",
                                                               "[com.enonic.xp.scheduler.SchedulerService] service in not available",
                                                               "[com.enonic.xp.task.TaskService] service in not available",

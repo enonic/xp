@@ -34,16 +34,13 @@ public class ApplicationDeployerManagerTest
     public void setup()
         throws Exception
     {
-        applicationDeployerManager = new ApplicationDeployerManager();
-
         storedApplicationsDeployer = new StoredApplicationsDeployer();
-        applicationDeployerManager.setStoredApplicationsDeployer( storedApplicationsDeployer );
 
         deployDirectoryWatcher = new DeployDirectoryWatcher();
         final DeployConfig deployConfig = mock( DeployConfig.class );
         System.setProperty( "xp.home", temporaryFolder.toFile().getAbsolutePath() );
         deployDirectoryWatcher.activate( deployConfig );
-        applicationDeployerManager.setDeployDirectoryWatcher( deployDirectoryWatcher );
+        applicationDeployerManager = new ApplicationDeployerManager( storedApplicationsDeployer, deployDirectoryWatcher );
     }
 
     @Test
