@@ -1,6 +1,6 @@
 [versions]
 jackson = "2.19.0"
-junit5 = "5.11.4"
+junit5 = "5.12.2"
 mockito = "5.17.0"
 slf4j = "2.0.17"
 jetty = "12.0.19"
