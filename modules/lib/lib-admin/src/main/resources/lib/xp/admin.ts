@@ -14,7 +14,6 @@ declare global {
  */
 
 
-const i18n = require('/lib/xp/i18n');
 const portal = require('/lib/xp/portal');
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
@@ -28,51 +27,7 @@ const helper: AdminLibHelper = __.newBean<AdminLibHelper>('com.enonic.xp.lib.adm
 interface AdminLibHelper {
     getInstallation(): string;
 
-    getLocales(): string[];
-
     getVersion(): string;
-}
-
-/**
- * @deprecated use `getHomeToolUrl` instead
- * Returns the admin base uri.
- *
- * @returns {string} Admin base uri.
- */
-export function getBaseUri(): string {
-    return portal.url({
-        path: '/admin',
-    });
-}
-
-/**
- * @deprecated Use first item from `request.locales` instead.
- * Returns the preferred locale based on the current HTTP request, or the server default locale if none is specified.
- *
- * @returns {string} Current locale.
- */
-export function getLocale(): string {
-    return  __.toNativeObject(helper.getLocales())[0];
-}
-
-/**
- * @deprecated Use `request.locales` instead.
- * Returns the list of preferred locales based on the current HTTP request, or the server default locale if none is specified.
- *
- * @returns {string[]} Current locales in order of preference.
- */
-export function getLocales(): string[] {
-    return __.toNativeObject(helper.getLocales());
-}
-
-/**
- * @deprecated Use `i18n.getPhrases` instead.
- * Returns all i18n phrases.
- *
- * @returns {object} JSON object with phrases.
- */
-export function getPhrases(): string {
-    return JSON.stringify(i18n.getPhrases(__.toNativeObject(helper.getLocales()), ['i18n/common', 'i18n/phrases']));
 }
 
 /**

@@ -31,6 +31,8 @@ public final class SubmitTaskHandler
 
     private ScriptValue config;
 
+    private ApplicationKey applicationKey;
+
     public void setDescriptor( final String descriptor )
     {
         this.descriptor = descriptor;
@@ -78,20 +80,14 @@ public final class SubmitTaskHandler
 
     private ApplicationKey getApplication()
     {
-        PortalRequest portalRequest = requestSupplier.get();
-        if ( portalRequest != null )
-        {
-            return portalRequest.getApplicationKey();
-        }
-        else
-        {
-            return ApplicationKey.from( SubmitTaskHandler.class );
-        }
+        final PortalRequest portalRequest = requestSupplier.get();
+        return portalRequest != null ? portalRequest.getApplicationKey() : applicationKey;
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
+        applicationKey = context.getApplicationKey();
         requestSupplier = context.getBinding( PortalRequest.class );
         taskServiceSupplier = context.getService( TaskService.class );
         propertyTreeMarshallerServiceSupplier = context.getService( PropertyTreeMarshallerService.class );
