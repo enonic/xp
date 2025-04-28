@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -46,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -119,38 +117,6 @@ class RenameContentCommandTest
         createCommand( params ).execute();
 
         verify( nodeService, times( 1 ) ).rename( isA( RenameNodeParams.class ) );
-    }
-
-    @Test
-    void test_valid_not_changed()
-    {
-        final Content content = createContent( false );
-
-        when( translator.fromNode( mockNode, false ) ).thenReturn( content );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( content );
-
-        final RenameContentParams params =
-            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.unnamed() ).build();
-
-        createCommand( params ).execute();
-
-        verify( contentService, never() ).update( isA( UpdateContentParams.class ) );
-    }
-
-    @Test
-    void test_valid_not_changed_but_fiwer_errors()
-    {
-        final Content content = createContent( false );
-
-        when( translator.fromNode( mockNode, false ) ).thenReturn( content );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( content );
-
-        final RenameContentParams params =
-            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.unnamed() ).build();
-
-        createCommand( params ).execute();
-
-        verify( contentService, never() ).update( isA( UpdateContentParams.class ) );
     }
 
     @Test

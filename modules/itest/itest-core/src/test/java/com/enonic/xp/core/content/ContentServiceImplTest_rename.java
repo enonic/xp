@@ -14,6 +14,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentServiceImplTest_rename
@@ -35,6 +36,8 @@ public class ContentServiceImplTest_rename
         final Content result = this.contentService.rename( params );
 
         assertEquals( "newName", result.getName().toString() );
+        assertTrue( result.isValid() );
+        assertFalse( result.getValidationErrors().hasErrors() );
     }
 
     @Test
@@ -50,7 +53,11 @@ public class ContentServiceImplTest_rename
         final RenameContentParams params =
             RenameContentParams.create().contentId( content.getId() ).newName( ContentName.from( "__unnamed__" ) ).build();
 
-        assertTrue( this.contentService.rename( params ).getName().isUnnamed() );
+        final Content result = this.contentService.rename( params );
+
+        assertTrue( result.getName().isUnnamed() );
+        assertFalse( result.isValid() );
+        assertTrue( result.getValidationErrors().hasErrors() );
     }
 
 
