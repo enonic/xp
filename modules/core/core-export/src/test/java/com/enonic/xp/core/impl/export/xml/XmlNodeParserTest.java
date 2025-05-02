@@ -1,9 +1,13 @@
 package com.enonic.xp.core.impl.export.xml;
 
 import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
+
 import com.google.common.io.Resources;
+
 import com.enonic.xp.node.Node;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlNodeParserTest
@@ -27,6 +31,26 @@ public class XmlNodeParserTest
         final String result = serializer.serialize();
 
         assertXml( "node.xml", result );
+    }
+
+    @Test
+    public void testAllInputTypesParse()
+        throws Exception
+    {
+        final Node.Builder builder = Node.create();
+
+        final XmlNodeParser parser = new XmlNodeParser();
+        parser.source( Resources.asCharSource( getClass().getResource( "all-input-types.xml" ), StandardCharsets.UTF_8 ) );
+        parser.builder( builder );
+        parser.parse();
+
+        final Node node = builder.build();
+
+        final XmlNodeSerializer serializer = new XmlNodeSerializer();
+        serializer.node( node ).exportNodeIds( true );
+        final String result = serializer.serialize();
+
+        assertXml( "all-input-types.xml", result );
     }
 
     @Test
