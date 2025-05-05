@@ -385,7 +385,7 @@ public class ProjectContentEventListenerTest
         assertEquals( "/content1/content2", targetContent2.getPath().toString() );
 
         projectContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent1.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent1.getPath() ).build() ) );
 
         handleEvents(); // not synced
 
@@ -877,7 +877,7 @@ public class ProjectContentEventListenerTest
         handleEvents();
 
         projectContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 
@@ -899,7 +899,7 @@ public class ProjectContentEventListenerTest
         handleEvents();
 
         layerContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 
@@ -936,7 +936,7 @@ public class ProjectContentEventListenerTest
         handleEvents();
 
         mixedChildLayerContext.runWith( () -> {
-            contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() );
+            contentService.delete( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() );
         } );
 
         handleEvents();

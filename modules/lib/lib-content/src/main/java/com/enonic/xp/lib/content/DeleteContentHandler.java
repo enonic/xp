@@ -49,7 +49,7 @@ public final class DeleteContentHandler
     {
         try
         {
-            return this.contentService.deleteWithoutFetch( params ) != null;
+            return this.contentService.delete( params ) != null;
         }
         catch ( final ContentNotFoundException e )
         {

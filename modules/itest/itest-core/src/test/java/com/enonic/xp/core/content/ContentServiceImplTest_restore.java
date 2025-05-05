@@ -163,7 +163,7 @@ public class ContentServiceImplTest_restore
         createContent( child1.getPath(), "child2_1" );
 
         this.contentService.archive( ArchiveContentParams.create().contentId( child1.getId() ).build() );
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( parent.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( parent.getPath() ).build() );
 
         final RestoreContentsResult result = this.contentService.restore(
             RestoreContentParams.create().contentId( child1.getId() ).restoreContentListener( listener ).build() );
@@ -217,7 +217,7 @@ public class ContentServiceImplTest_restore
     public void restore_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )
@@ -242,7 +242,7 @@ public class ContentServiceImplTest_restore
     public void restore_dont_stop_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )

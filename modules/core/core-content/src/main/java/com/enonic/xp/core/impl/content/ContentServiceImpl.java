@@ -361,7 +361,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
+    public DeleteContentsResult delete( final DeleteContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
@@ -377,6 +377,12 @@ public class ContentServiceImpl
         contentAuditLogSupport.delete( params, result );
 
         return result;
+    }
+
+    @Override
+    public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
+    {
+        return delete( params );
     }
 
     @Override

@@ -122,7 +122,7 @@ public class SyncContentServiceImplTest
         } );
 
         projectContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 
         assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create()
                                                                                                      .contentId( source.getId() )

@@ -789,7 +789,7 @@ public class ParentContentSynchronizerTest
         final Content targetContent = syncCreated( sourceContent.getId() );
 
         projectContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         assertNull( syncDeleted( targetContent.getId() ) );
     }
@@ -802,7 +802,7 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceContent.getId() );
 
         projectContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         sync( sourceContent.getId(), false );
 
@@ -817,7 +817,7 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceContent.getId() );
 
         layerContext.runWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         refresh();
 
@@ -857,7 +857,7 @@ public class ParentContentSynchronizerTest
         projectContext.callWith( () -> contentService.move(
             MoveContentParams.create().contentId( sourceChild1_1.getId() ).parentContentPath( ContentPath.ROOT ).build() ) );
         projectContext.callWith(
-            () -> contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( sourceChild1.getPath() ).build() ) );
+            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceChild1.getPath() ).build() ) );
         projectContext.callWith( () -> contentService.update(
             new UpdateContentParams().contentId( sourceContent.getId() ).editor( edit -> edit.data = new PropertyTree() ) ) );
 

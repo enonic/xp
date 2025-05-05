@@ -53,7 +53,7 @@ final class DeletedEventSyncCommand
                     final DeleteContentParams deleteParams =
                         DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
 
-                    contentService.deleteWithoutFetch( deleteParams );
+                    contentService.delete( deleteParams );
                 }
             }
         } ) );
