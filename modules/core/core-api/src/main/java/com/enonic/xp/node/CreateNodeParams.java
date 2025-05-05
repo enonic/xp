@@ -128,11 +128,6 @@ public class CreateNodeParams
         return permissions;
     }
 
-    public boolean inheritPermissions()
-    {
-        return inheritPermissions;
-    }
-
     public NodeType getNodeType()
     {
         return nodeType;

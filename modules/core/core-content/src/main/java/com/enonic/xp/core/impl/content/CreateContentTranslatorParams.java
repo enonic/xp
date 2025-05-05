@@ -1,19 +1,25 @@
-package com.enonic.xp.content;
+package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.Locale;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 
-@PublicApi
 public class CreateContentTranslatorParams
 {
     private final PropertyTree data;

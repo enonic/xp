@@ -5,7 +5,6 @@ var assert = require('/lib/xp/testing');
 // Set permissions for content by path.
 var flag = contentLib.applyPermissions({
     key: '/features/js-libraries/mycontent',
-    overwriteChildPermissions: true,
     permissions: [{
         principal: 'user:system:anonymous',
         allow: ['READ'],

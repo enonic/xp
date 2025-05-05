@@ -40,11 +40,9 @@ var result1 = contentLib.create({
             }
         }
     },
-    'attachments': {},
-    'publish': {},
-    'workflow': {
-        'state': 'PENDING_APPROVAL',
-        'checks': {
+    workflow: {
+        state: 'PENDING_APPROVAL',
+        checks: {
             'Review by lawyer': 'PENDING'
         }
     }

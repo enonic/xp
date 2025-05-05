@@ -89,6 +89,7 @@ public class NodeHandler
         return execute( handler );
     }
 
+    @SuppressWarnings("unused")
     public Object patch( final PatchNodeHandlerParams params )
     {
         return execute( PatchNodeHandler.create()
@@ -194,35 +195,6 @@ public class NodeHandler
         return execute( GetCommitHandler.create().nodeService( this.nodeService ).id( NodeCommitId.from( id ) ).build() );
     }
 
-    private static AccessControlList getAccessControlList( final ScriptValue permissions )
-    {
-        if ( permissions == null )
-        {
-            return AccessControlList.empty();
-        }
-
-        final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( permissions );
-
-        final PropertyTree asPropertyTree = translatorResult.getPropertyTree();
-        final Iterable<PropertySet> asPropertySets = asPropertyTree.getSets( "_permissions" );
-
-        if ( asPropertySets == null )
-        {
-            throw new IllegalArgumentException( "Did not find parameter [_permissions]" );
-        }
-
-        return new PermissionsFactory( asPropertySets ).create();
-    }
-
-    @SuppressWarnings("unused")
-    @Deprecated
-    public Object setRootPermissions( final ScriptValue value )
-    {
-        final AccessControlList permissions = getAccessControlList( value );
-
-        return execute( SetRootPermissionsHandler.create().permissions( permissions ).nodeService( this.nodeService ).build() );
-    }
-
     @SuppressWarnings("unused")
     public ByteSource getBinary( final String key, final String binaryReference )
     {
@@ -278,6 +250,26 @@ public class NodeHandler
     private Object execute( final AbstractNodeHandler handler )
     {
         return this.context.callWith( handler::execute );
+    }
+
+    private static AccessControlList getAccessControlList( final ScriptValue permissions )
+    {
+        if ( permissions == null )
+        {
+            return AccessControlList.empty();
+        }
+
+        final ScriptValueTranslatorResult translatorResult = new ScriptValueTranslator( false ).create( permissions );
+
+        final PropertyTree asPropertyTree = translatorResult.getPropertyTree();
+        final Iterable<PropertySet> asPropertySets = asPropertyTree.getSets( "_permissions" );
+
+        if ( asPropertySets == null )
+        {
+            throw new IllegalArgumentException( "Did not find parameter [_permissions]" );
+        }
+
+        return new PermissionsFactory( asPropertySets ).create();
     }
 }
 
