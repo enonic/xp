@@ -55,7 +55,7 @@ class CreateNodeParamsFactory
             indexConfigDocument( new IndexConfigFactory( indexConfig ).create() ).
             setBinaryAttachments( createAttachments );
 
-        if ( inheritPermissions != null && inheritPermissions )
+        if ( Boolean.TRUE.equals( inheritPermissions ) )
         {
             builder.inheritPermissions( true );
         }

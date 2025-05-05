@@ -14,7 +14,6 @@ var repo = nodeLib.connect({
 var result = repo.applyPermissions({
     key: '/my-node',
     branches: ['draft'],
-    overwriteChildPermissions: true,
     permissions: [
         {
             'principal': 'role:system.admin',

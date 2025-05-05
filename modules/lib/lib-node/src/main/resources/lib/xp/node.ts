@@ -265,8 +265,6 @@ interface NodeHandler {
 
     getCommit(commitId: string): NodeCommit | null;
 
-    setRootPermissions<NodeData>(v: ScriptValue): Node<NodeData>;
-
     applyPermissions(key: string, permissions: ScriptValue, addPermissions: ScriptValue, removePermissions: ScriptValue, branches: string[],
                      scope: string): ApplyPermissionsResult;
 
@@ -552,13 +550,6 @@ export interface CommitParams {
     message?: string;
 }
 
-/**
- * @deprecated
- */
-export interface SetRootPermissionsParams {
-    _permissions: AccessControlEntry[];
-}
-
 export type Permission = 'READ' | 'CREATE' | 'MODIFY' | 'DELETE' | 'PUBLISH' | 'READ_PERMISSIONS' | 'WRITE_PERMISSIONS';
 
 export interface AccessControlEntry {
@@ -701,8 +692,6 @@ export interface RepoConnection {
 
     refresh(mode?: RefreshMode): void;
 
-    setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData>;
-
     applyPermissions(params: ApplyPermissionsParams): ApplyPermissionsResult;
 
     commit(params: CommitParams): NodeCommit;
@@ -739,8 +728,7 @@ class RepoConnectionImpl
      * @param {string} [params._name] Name of content.
      * @param {string} [params._parentPath] Path to place content under.
      * @param {object} [params._indexConfig] How the document should be indexed. A default value "byType" will be set if no value specified.
-     * @param {object} [params._permissions] The access control list for the node. By the default the creator will have full access
-     * @param {boolean} [params._inheritsPermissions] true if the permissions should be inherited from the node parent. Default is false.
+     * @param {object} [params._permissions] The access control list for the node. By default, the creator will have full access
      * @param {number} [params._manualOrderValue] Value used to order document when ordering by parent and child-order is set to manual
      * @param {string} [params._childOrder] Default ordering of children when doing getChildren if no order is given in query
      *
@@ -783,7 +771,7 @@ class RepoConnectionImpl
         const {
             key,
             editor = () => ({}),
-            branches = []
+            branches = [],
         } = params ?? {};
 
         const handlerParams: PatchNodeHandlerParams = __.newBean<PatchNodeHandlerParams>('com.enonic.xp.lib.node.PatchNodeHandlerParams');
@@ -1141,24 +1129,6 @@ class RepoConnectionImpl
     }
 
     /**
-     * @deprecated
-     *
-     * Set the root node permissions and inherit.
-     *
-     * @example-ref examples/node/modifyRootPermissions.js
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {object} params._permissions the permission json
-     *
-     * @returns {object} Updated root-node as JSON.
-     */
-    setRootPermissions<NodeData = Record<string, unknown>>(params: SetRootPermissionsParams): Node<NodeData> {
-        checkRequired(params, '_permissions');
-
-        return __.toNativeObject(this.nodeHandler.setRootPermissions(__.toScriptValue(params)));
-    }
-
-    /**
      * Apply permissions to a node.
      *
      * @example-ref examples/node/applyPermissions.js
@@ -1169,7 +1139,7 @@ class RepoConnectionImpl
      * @param {object} [params.addPermissions] the permissions to add json
      * @param {object} [params.removePermissions] the permissions to remove json
      * @param {string[]} [params.branches] Additional branches to apply permissions to. Current context branch should not be included.
-     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+     * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'SUBTREE'. Default is 'SINGLE'.
      *
      * @returns {object} Result of the apply permissions operation.
      */

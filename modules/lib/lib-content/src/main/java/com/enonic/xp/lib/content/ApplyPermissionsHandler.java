@@ -48,11 +48,6 @@ public final class ApplyPermissionsHandler
         this.key = key;
     }
 
-    @Deprecated
-    public void setOverwriteChildPermissions( final boolean overwriteChildPermissions )
-    {
-    }
-
     public void setScope( final String scope )
     {
         this.scope = scope != null ? ApplyPermissionsScope.valueOf( scope ) : null;

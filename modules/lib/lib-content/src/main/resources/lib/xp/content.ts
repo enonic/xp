@@ -1069,19 +1069,9 @@ export interface AccessControlEntry {
     deny?: Permission[];
 }
 
-/**
- * @deprecated Use the new {@link ApplyPermissionsParams} interface instead.
- */
-export interface SetPermissionsParams {
-    key: string;
-    inheritPermissions?: boolean;
-    overwriteChildPermissions?: boolean;
-    permissions?: AccessControlEntry[];
-}
-
 export interface ApplyPermissionsParams {
     key: string;
-    scope?: 'SINGLE' | 'TREE' | 'CHILDREN';
+    scope?: 'SINGLE' | 'TREE' | 'SUBTREE';
     permissions?: AccessControlEntry[];
     addPermissions?: AccessControlEntry[];
     removePermissions?: AccessControlEntry[];
@@ -1115,53 +1105,13 @@ interface ApplyPermissionsHandler {
 }
 
 /**
- * Sets permissions on a content.
- *
- * @deprecated Please use {@link applyPermissions}.
- *
- * @example-ref examples/content/setPermissions.js
- *
- * @param {object} params JSON parameters.
- * @param {string} params.key Path or id of the content.
- * @param {boolean} [params.inheritPermissions] Set to true if the content must inherit permissions. Default to false.
- * @param {boolean} [params.overwriteChildPermissions] Set to true to overwrite child permissions. Default to false.
- * @param {array} [params.permissions] Array of permissions.
- * @param {string} params.permissions.principal Principal key.
- * @param {array} params.permissions.allow Allowed permissions.
- * @param {array} params.permissions.deny Denied permissions.
- * @returns {boolean} True if successful, false otherwise.
- */
-export function setPermissions(params: SetPermissionsParams): boolean {
-    const bean: ApplyPermissionsHandler = __.newBean<ApplyPermissionsHandler>('com.enonic.xp.lib.content.ApplyPermissionsHandler');
-
-    if (params.key) {
-        bean.setKey(params.key);
-    }
-    if (params.permissions) {
-        bean.setPermissions(__.toScriptValue(params.permissions));
-    }
-    const result: ApplyPermissionsResult = bean.execute();
-
-    for (const nodeId in result) {
-        const branchResults: BranchResult[] = result.nodeId;
-        for (const branchResult of branchResults) {
-            if (branchResult.content !== null) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-/**
  * Applies permissions to a content.
  *
  * @example-ref examples/content/applyPermissions.js
  *
  * @param {object} params JSON parameters.
  * @param {string} params.key Path or id of the content.
- * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'CHILDREN'. Default is 'SINGLE'.
+ * @param {string} [params.scope] Scope of operation. Possible values are 'SINGE', 'TREE' or 'SUBTREE'. Default is 'SINGLE'.
  * @param {array} [params.permissions] Array of permissions. Cannot be used together with addPermissions and removePermissions.
  * @param {string} params.permissions.principal Principal key.
  * @param {array} params.permissions.allow Allowed permissions.

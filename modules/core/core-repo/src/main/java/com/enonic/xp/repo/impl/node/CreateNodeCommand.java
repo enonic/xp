@@ -74,7 +74,7 @@ public final class CreateNodeCommand
 
         final PrincipalKey user = getCurrentPrincipalKey();
 
-        final AccessControlList permissions = params.inheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
+        final AccessControlList permissions = params.isInheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
 
         final Long manualOrderValue = NodeHelper.runAsAdmin( () -> resolvePotentialManualOrderValue( parentNode ) );
 

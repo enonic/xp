@@ -118,12 +118,6 @@ public class ApplyPermissionsHandler
             return this;
         }
 
-        @Deprecated
-        public Builder overwriteChildPermissions( final boolean val )
-        {
-            return this;
-        }
-
         public ApplyPermissionsHandler build()
         {
             return new ApplyPermissionsHandler( this );

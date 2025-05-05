@@ -5,7 +5,6 @@ exports.applyPermissionsMissingPrincipals = function () {
 
     assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
-        overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',
             allow: ['READ'],
@@ -18,7 +17,6 @@ exports.applyPermissionsNotFoundByPath = function () {
 
     assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
-        overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',
             allow: ['READ'],
@@ -31,7 +29,6 @@ exports.applyPermissionsNotFoundById = function () {
 
     assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
-        overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',
             allow: ['READ'],
@@ -44,7 +41,6 @@ exports.applyPermissionsNonCompatible = function () {
 
     assert.assertThrows(() => contentLib.applyPermissions({
         key: '/features/js-libraries/mycontent',
-        overwriteChildPermissions: true,
         permissions: [{
             principal: 'user:system:anonymous',
             allow: ['READ']
