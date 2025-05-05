@@ -307,7 +307,7 @@ public class ContentServiceImplTest_publish
 
         this.contentService.move( params );
 
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
 
         final Content movedContent =
             this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName().toString() ) );
@@ -533,7 +533,7 @@ public class ContentServiceImplTest_publish
     {
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( f1Path ).build();
 
-        return this.contentService.deleteWithoutFetch( deleteContentParams );
+        return this.contentService.delete( deleteContentParams );
     }
 
     private PublishContentResult publishContent( final ContentId... contentIds )

@@ -122,7 +122,7 @@ public class ContentServiceImplTest_archive
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         this.contentService.importContent( ImportContentParams.create()
                                                .importContent( content )
@@ -145,7 +145,7 @@ public class ContentServiceImplTest_archive
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         this.contentService.importContent( ImportContentParams.create()
                                                .importContent( content )

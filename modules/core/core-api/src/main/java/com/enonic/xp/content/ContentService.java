@@ -30,6 +30,9 @@ public interface ContentService
 
     Content rename( RenameContentParams params );
 
+    DeleteContentsResult delete( DeleteContentParams params );
+
+    @Deprecated
     DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
     @Deprecated

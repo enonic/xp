@@ -48,7 +48,7 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final DeleteContentsResult deletedContents = this.contentService.deleteWithoutFetch( deleteContentParams );
+        final DeleteContentsResult deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getDeletedContents().getSize() );
         assertEquals( content.getId(), deletedContents.getDeletedContents().first() );
@@ -104,7 +104,7 @@ public class ContentServiceImplTest_delete
 
         //Deletes the content
         final DeleteContentsResult deletedContents =
-            this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+            this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
         assertNotNull( deletedContents );
         assertEquals( 4, deletedContents.getDeletedContents().getSize() );
 
@@ -138,7 +138,7 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final DeleteContentsResult deletedContents = this.contentService.deleteWithoutFetch( deleteContentParams );
+        final DeleteContentsResult deletedContents = this.contentService.delete( deleteContentParams );
 
         assertNotNull( deletedContents );
 
@@ -199,7 +199,7 @@ public class ContentServiceImplTest_delete
         //Deletes the content
         final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
 
-        final DeleteContentsResult deletedContents = this.contentService.deleteWithoutFetch( deleteContentParams );
+        final DeleteContentsResult deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 4, deletedContents.getDeletedContents().getSize() );
         assertEquals( deletedContents.getDeletedContents(), deletedContents.getUnpublishedContents() );
@@ -246,7 +246,7 @@ public class ContentServiceImplTest_delete
             parentContentPath( child1Content.getPath() ).
             build() );
 
-        final DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+        final DeleteContentsResult result = this.contentService.delete( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
@@ -297,7 +297,7 @@ public class ContentServiceImplTest_delete
             parentContentPath( ContentPath.ROOT ).
             build() );
 
-        DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+        DeleteContentsResult result = this.contentService.delete( DeleteContentParams.create().
             contentPath( content.getPath() ).
             build() );
 
@@ -342,7 +342,7 @@ public class ContentServiceImplTest_delete
             MoveContentParams.create().contentId( contentToMove.getId() ).parentContentPath( content.getPath() ).build() );
 
         DeleteContentsResult result =
-            this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+            this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         assertEquals( 3, result.getDeletedContents().getSize() );
         assertEquals( result.getDeletedContents(), result.getUnpublishedContents() );
@@ -375,12 +375,12 @@ public class ContentServiceImplTest_delete
 
         //Deletes the content
         final DeleteContentsResult deletedContents =
-            contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
+            contentService.delete( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getDeletedContents().getSize() );
         assertEquals( 0, deletedContents.getUnpublishedContents().getSize() );
 
-        final DeleteContentsResult deletedOther = contentService.deleteWithoutFetch(
+        final DeleteContentsResult deletedOther = contentService.delete(
             DeleteContentParams.create().contentPath( ContentPath.from( folder.getPath(), content.getName().toString() ) ).build() );
 
         assertNotNull( deletedOther );
@@ -408,7 +408,7 @@ public class ContentServiceImplTest_delete
 
         this.contentService.move( params );
 
-        final DeleteContentsResult result = this.contentService.deleteWithoutFetch( DeleteContentParams.create().
+        final DeleteContentsResult result = this.contentService.delete( DeleteContentParams.create().
             contentPath( site.getPath() ).
             build() );
 
@@ -443,7 +443,7 @@ public class ContentServiceImplTest_delete
 
         Mockito.reset( auditLogService );
 
-        this.contentService.deleteWithoutFetch( DeleteContentParams.create().contentPath( content.getPath() ).build() );
+        this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
         verify( auditLogService, atMost(2) ).log( captor.capture() );
 

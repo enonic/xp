@@ -15,7 +15,7 @@ public class DeleteContentHandlerTest
     @Test
     public void testExample()
     {
-        Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
         runScript( "/lib/xp/examples/content/delete.js" );
     }
@@ -27,7 +27,7 @@ public class DeleteContentHandlerTest
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
         runFunction( "/test/DeleteContentHandlerTest.js", "deleteById" );
     }
@@ -36,7 +36,7 @@ public class DeleteContentHandlerTest
     public void deleteByPath()
         throws Exception
     {
-        Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
         runFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath" );
     }
@@ -57,7 +57,7 @@ public class DeleteContentHandlerTest
         throws Exception
     {
         final ContentPath path = ContentPath.from( "/a/b" );
-        Mockito.when( this.contentService.deleteWithoutFetch( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
+        Mockito.when( this.contentService.delete( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
         runFunction( "/test/DeleteContentHandlerTest.js", "deleteByPath_notFound" );
     }
