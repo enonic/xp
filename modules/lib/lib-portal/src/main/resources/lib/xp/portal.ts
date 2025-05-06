@@ -66,7 +66,7 @@ interface AssetUrlHandler {
  * @param {string} params.path Path to the asset.
  * @param {string} [params.application] Other application to reference to. Defaults to current application.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -141,7 +141,7 @@ interface ImageUrlHandler {
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
  * @param {string} [params.baseUrl] Custom baseUrl.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -188,7 +188,7 @@ interface ComponentUrlHandler {
  * @param {string} [params.path] Path to the page.
  * @param {string} [params.component] Path to the component. If not set, the current path is set.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -249,7 +249,7 @@ interface AttachmentUrlHandler {
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
  * @param {string} [params.baseUrl] Custom baseUrl.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -304,7 +304,7 @@ interface PageUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Project of the context.
  * @param {string} [params.branch] Branch of the project for context.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -341,7 +341,7 @@ interface ServiceUrlHandler {
  * @param {string} params.service Name of the service.
  * @param {string} [params.application] Other application to reference to. Default is current application.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -370,7 +370,7 @@ interface IdProviderUrlHandler {
  * If idProvider is not set, then the id provider corresponding to the current execution context will be used.
  * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -401,7 +401,7 @@ interface LoginUrlHandler {
  * @param {string} [params.redirect] The URL to redirect to after the login.
  * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -429,7 +429,7 @@ interface LogoutUrlHandler {
  * @param {string} [params.redirect] The URL to redirect to after the logout.
  * @param {string} [params.contextPath=vhost] Context path. Either `vhost` (using vhost target path) or `relative` to the current path.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -456,7 +456,7 @@ interface UrlHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.path Path of the resource.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
  */
@@ -751,7 +751,7 @@ interface ApiUrlHandler {
  * @param {string} urlParams.api Name of the API
  * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
- * @param {object} [urlParams.params] Custom parameters to append to the URL.
+ * @param {object} [urlParams.params] Custom query parameters to append to the URL.
  * @param {string} [urlParams.baseUrl] Custom baseUrl.
  *
  * @returns {string} The generated URL.

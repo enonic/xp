@@ -100,11 +100,6 @@ public class AdminToolDescriptor
         return interfaces.contains( interfaceName );
     }
 
-    public boolean isAppLauncherApplication()
-    {
-        return displayName != null;
-    }
-
     public ApiMountDescriptors getApiMounts()
     {
         return apiMounts;
