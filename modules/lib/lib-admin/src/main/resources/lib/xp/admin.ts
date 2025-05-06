@@ -95,7 +95,7 @@ export interface WidgetUrlParams {
  * @param {string} params.application Application to reference to a widget.
  * @param {string} params.widget Name of the widget.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {object} [params.params] Custom parameters to append to the url.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} URL.
  */
@@ -106,7 +106,7 @@ export function widgetUrl(params: WidgetUrlParams): string {
     return portal.apiUrl({
         application: 'admin',
         api: 'widget',
-        type: params.type || 'server',
+        type: params.type,
         path: [params.application, params.widget],
         params: params.params || {},
     });
