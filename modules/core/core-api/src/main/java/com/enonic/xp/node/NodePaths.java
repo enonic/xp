@@ -45,19 +45,6 @@ public class NodePaths
         return nodePaths.isEmpty() ? EMPTY : new NodePaths( nodePaths );
     }
 
-    @Deprecated
-    public ImmutableSet<String> getAsStrings()
-    {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-
-        for ( final NodePath nodePath : this.getSet() )
-        {
-            builder.add( nodePath.toString() );
-        }
-
-        return builder.build();
-    }
-
     public static Builder create()
     {
         return new Builder();

@@ -36,7 +36,7 @@ public class TemplateControllerMappings
         }
     }
 
-    public ImmutableMap<String, String> getMappings() {
+    public Map<String, String> getMappings() {
         return ImmutableMap.copyOf( templateControllerMap );
     }
 }

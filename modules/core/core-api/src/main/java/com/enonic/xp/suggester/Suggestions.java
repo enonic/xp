@@ -24,12 +24,6 @@ public class Suggestions
         return EMPTY;
     }
 
-    @Deprecated
-    public static Suggestions from( final ImmutableSet<Suggestion> suggestions )
-    {
-        return fromInternal( suggestions );
-    }
-
     public static Suggestions from( final Iterable<Suggestion> suggestions )
     {
         return fromInternal( ImmutableSet.copyOf( suggestions ) );

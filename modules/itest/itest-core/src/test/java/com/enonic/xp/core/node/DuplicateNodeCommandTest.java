@@ -1,6 +1,7 @@
 package com.enonic.xp.core.node;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.AbstractNodeTest;
@@ -328,8 +328,8 @@ public class DuplicateNodeCommandTest
 
     private void assertDuplicatedTree( final NodePath duplicatedTreeRootPath, final Node originalNode, final Node duplicatedNode )
     {
-        final ImmutableList<Property> originalReferences = originalNode.data().getProperties( ValueTypes.REFERENCE );
-        final ImmutableList<Property> duplicateReferences = duplicatedNode.data().getProperties( ValueTypes.REFERENCE );
+        final List<Property> originalReferences = originalNode.data().getProperties( ValueTypes.REFERENCE );
+        final List<Property> duplicateReferences = duplicatedNode.data().getProperties( ValueTypes.REFERENCE );
 
         assertReferenceIntegrity( duplicatedTreeRootPath, originalReferences, duplicateReferences );
 
@@ -365,7 +365,7 @@ public class DuplicateNodeCommandTest
         return foundNode;
     }
 
-    private void assertReferenceIntegrity( final NodePath duplicatedRootPath, final ImmutableList<Property> originalReferences, final ImmutableList<Property> duplicateReferences )
+    private void assertReferenceIntegrity( final NodePath duplicatedRootPath, final List<Property> originalReferences, final List<Property> duplicateReferences )
     {
         assertEquals( originalReferences.size(), duplicateReferences.size() );
 
@@ -388,7 +388,7 @@ public class DuplicateNodeCommandTest
         return isChildOrSamePath( duplicatedRootPath, referredPath );
     }
 
-    private void assertReferencesOutsideTreeKept( final ImmutableList<Property> duplicateReferences, final Set<Property> referencesOutsideTree )
+    private void assertReferencesOutsideTreeKept( final List<Property> duplicateReferences, final Set<Property> referencesOutsideTree )
     {
         if ( !duplicateReferences.isEmpty() )
         {
@@ -396,7 +396,7 @@ public class DuplicateNodeCommandTest
         }
     }
 
-    private void assertReferencesInTreeMovedToDuplicatedNode( final ImmutableList<Property> duplicateReferences, final Set<Property> referencesWithinSameTree )
+    private void assertReferencesInTreeMovedToDuplicatedNode( final List<Property> duplicateReferences, final Set<Property> referencesWithinSameTree )
     {
         for ( final Property ref : referencesWithinSameTree )
         {

@@ -13,15 +13,9 @@ public final class RegionDescriptors
 {
     private final ImmutableSet<RegionDescriptor> regionDescriptors;
 
-    public RegionDescriptors( final ImmutableSet<RegionDescriptor> regionDescriptors )
+    private RegionDescriptors( final ImmutableSet<RegionDescriptor> regionDescriptors )
     {
         this.regionDescriptors = regionDescriptors;
-    }
-
-    @Deprecated
-    public RegionDescriptor getRegionDescriptor( final String name )
-    {
-        return regionDescriptors.stream().filter( regionDescriptor -> regionDescriptor.getName().equals( name ) ).findAny().orElse( null );
     }
 
     public int numberOfRegions()

@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -9,7 +10,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.highlight.constants.Encoder;
@@ -115,8 +115,8 @@ public class SearchRequestBuilderFactory
         final Integer noMatchSize = highlight.getNoMatchSize();
         final Integer numOfFragments = highlight.getNumOfFragments();
         final Order order = highlight.getOrder();
-        final ImmutableList<String> preTags = highlight.getPreTags();
-        final ImmutableList<String> postTags = highlight.getPostTags();
+        final List<String> preTags = highlight.getPreTags();
+        final List<String> postTags = highlight.getPostTags();
         final Boolean requireFieldMatch = highlight.getRequireFieldMatch();
 
         builder.setHighlighterType( HIGHLIGHTER_TYPE );

@@ -146,12 +146,12 @@ public class MacroInstructionTest
         when( macroDescriptorService.getByApplication( any() ) ).thenReturn( MacroDescriptors.empty() );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
+            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
         String outputHtml =
             (String) macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody();
-        assertEquals( "mymacro: param1=value1, body=body", outputHtml );
+        assertEquals( "mymacro: param1=[value1], body=body", outputHtml );
     }
 
     @Test
@@ -184,10 +184,10 @@ public class MacroInstructionTest
         when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create().body(
-            ctx.getName() + ": param1=" + ctx.getParam( "param1" ) + ", body=" + ctx.getBody() ).build();
+            ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() ).build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getBody() );
+        assertEquals( "mymacro: param1=[value1], body=body", macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getBody() );
     }
 
     @Test

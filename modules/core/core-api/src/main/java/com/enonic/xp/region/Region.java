@@ -97,7 +97,7 @@ public final class Region
         return this.components.get( index );
     }
 
-    public ImmutableList<Component> getComponents()
+    public List<Component> getComponents()
     {
         return components;
     }

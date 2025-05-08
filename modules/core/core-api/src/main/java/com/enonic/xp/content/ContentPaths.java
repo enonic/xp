@@ -97,10 +97,10 @@ public final class ContentPaths
         return new ContentPaths( ImmutableSet.copyOf( paths ) );
     }
 
-    public static Collector<ContentPath, ContentPaths.Builder, ContentPaths> collecting()
+    public static Collector<ContentPath, ?, ContentPaths> collecting()
     {
-        return Collector.of( ContentPaths.Builder::new, ContentPaths.Builder::add, ( left, right ) -> left.addAll( right.build() ),
-                             ContentPaths.Builder::build );
+        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ),
+                             Builder::build );
     }
     public static Builder create()
     {

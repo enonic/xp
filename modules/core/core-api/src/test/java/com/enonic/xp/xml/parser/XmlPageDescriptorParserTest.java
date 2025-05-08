@@ -78,6 +78,5 @@ public class XmlPageDescriptorParserTest
         final RegionDescriptors regions = result.getRegions();
         assertNotNull( regions );
         assertEquals( 3, regions.numberOfRegions() );
-        assertNotNull( regions.getRegionDescriptor( "header" ) );
     }
 }

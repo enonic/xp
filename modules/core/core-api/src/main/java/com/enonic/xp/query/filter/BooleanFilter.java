@@ -1,10 +1,10 @@
 package com.enonic.xp.query.filter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -12,31 +12,31 @@ import com.enonic.xp.annotation.PublicApi;
 public class BooleanFilter
     extends Filter
 {
-    final ImmutableSet<Filter> must;
+    final ImmutableList<Filter> must;
 
-    final ImmutableSet<Filter> mustNot;
+    final ImmutableList<Filter> mustNot;
 
-    final ImmutableSet<Filter> should;
+    final ImmutableList<Filter> should;
 
     public BooleanFilter( final Builder builder )
     {
         super( builder );
-        this.must = ImmutableSet.copyOf( builder.must );
-        this.mustNot = ImmutableSet.copyOf( builder.mustNot );
-        this.should = ImmutableSet.copyOf( builder.should );
+        this.must = ImmutableList.copyOf( builder.must );
+        this.mustNot = ImmutableList.copyOf( builder.mustNot );
+        this.should = ImmutableList.copyOf( builder.should );
     }
 
-    public ImmutableSet<Filter> getMust()
+    public List<Filter> getMust()
     {
         return must;
     }
 
-    public ImmutableSet<Filter> getMustNot()
+    public List<Filter> getMustNot()
     {
         return mustNot;
     }
 
-    public ImmutableSet<Filter> getShould()
+    public List<Filter> getShould()
     {
         return should;
     }
@@ -60,11 +60,11 @@ public class BooleanFilter
     public static class Builder
         extends Filter.Builder<Builder>
     {
-        Set<Filter> must = new HashSet<>();
+        List<Filter> must = new ArrayList<>();
 
-        Set<Filter> mustNot = new HashSet<>();
+        List<Filter> mustNot = new ArrayList<>();
 
-        Set<Filter> should = new HashSet<>();
+        List<Filter> should = new ArrayList<>();
 
         public Builder must( final Filter filter )
         {
@@ -87,10 +87,6 @@ public class BooleanFilter
         public BooleanFilter build()
         {
             return new BooleanFilter( this );
-
         }
-
     }
-
-
 }

@@ -15,12 +15,6 @@ public class BinaryAttachments
 {
     private static final BinaryAttachments EMPTY = new BinaryAttachments( ImmutableSet.of(), false );
 
-    @Deprecated
-    public BinaryAttachments( final ImmutableSet<BinaryAttachment> set )
-    {
-        super( set );
-    }
-
     private BinaryAttachments( final ImmutableSet<BinaryAttachment> set, boolean ignore )
     {
         super( set );

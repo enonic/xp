@@ -66,12 +66,12 @@ public class WebResponse
         return this.body;
     }
 
-    public ImmutableMap<String, String> getHeaders()
+    public Map<String, String> getHeaders()
     {
         return this.headers;
     }
 
-    public ImmutableList<Cookie> getCookies()
+    public List<Cookie> getCookies()
     {
         return cookies;
     }

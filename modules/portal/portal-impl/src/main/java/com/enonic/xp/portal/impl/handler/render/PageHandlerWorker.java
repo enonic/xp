@@ -1,7 +1,8 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import java.util.List;
+
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.content.Content;
@@ -99,7 +100,7 @@ final class PageHandlerWorker
     private Multimap<String, String> getShortcutParameters( final Content content )
     {
         final Multimap<String, String> params = HashMultimap.create();
-        final ImmutableList<Property> paramsProperties = content.getData().getProperties( "parameters" );
+        final List<Property> paramsProperties = content.getData().getProperties( "parameters" );
 
         if ( paramsProperties != null )
         {

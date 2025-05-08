@@ -59,7 +59,7 @@ public final class AuditLogUris
         return list.stream().map( AuditLogUri::from ).collect( ImmutableSet.toImmutableSet() );
     }
 
-    public static Collector<AuditLogUri, Builder, AuditLogUris> collecting()
+    public static Collector<AuditLogUri, ?, AuditLogUris> collecting()
     {
         return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }

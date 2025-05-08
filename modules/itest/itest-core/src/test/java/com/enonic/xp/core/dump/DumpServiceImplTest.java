@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
@@ -474,7 +473,7 @@ public class DumpServiceImplTest
         final Node defaultBranchNode = ctxDefault().callWith( () -> this.nodeService.getById( node.id() ) );
         final Node otherBranchNode = ctxOther().callWith( () -> this.nodeService.getById( node.id() ) );
 
-        final ImmutableMap<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
+        final Map<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
 
         assertEquals( 2, activeVersionsMap.size() );
         assertEquals( defaultBranchNode.getNodeVersionId(), activeVersionsMap.get( WS_DEFAULT ).getNodeVersionId() );
@@ -496,7 +495,7 @@ public class DumpServiceImplTest
         final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
             GetActiveNodeVersionsParams.create().branches( Branches.from( WS_DEFAULT, WS_OTHER ) ).nodeId( node.id() ).build() );
 
-        final ImmutableMap<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
+        final Map<Branch, NodeVersionMetadata> activeVersionsMap = activeVersions.getNodeVersions();
 
         final NodeVersionQueryResult versionsAfterLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );

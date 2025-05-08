@@ -3,7 +3,6 @@ package com.enonic.xp.node;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -35,12 +34,6 @@ public class PushNodesResult
     public List<Failed> getFailedEntries()
     {
         return failed;
-    }
-
-    @Deprecated
-    public ImmutableSet<Failed> getFailed()
-    {
-        return ImmutableSet.copyOf( failed );
     }
 
     public static Builder create()

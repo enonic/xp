@@ -2,6 +2,7 @@ package com.enonic.xp.vacuum;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -35,7 +36,7 @@ public class VacuumParameters
         return ageThreshold;
     }
 
-    public ImmutableSet<String> getTaskNames()
+    public Set<String> getTaskNames()
     {
         return taskNames;
     }

@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.highlight;
 
-import org.elasticsearch.search.highlight.HighlightBuilder;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import org.elasticsearch.search.highlight.HighlightBuilder;
 
 import com.enonic.xp.query.highlight.HighlightQuery;
 import com.enonic.xp.query.highlight.HighlightQueryProperty;
@@ -48,8 +48,8 @@ public class ElasticHighlightQueryBuilderFactory
         final Integer noMatchSize = property.getNoMatchSize();
         final Integer numOfFragments = property.getNumOfFragments();
         final Order order = property.getOrder();
-        final ImmutableList<String> preTags = property.getPreTags();
-        final ImmutableList<String> postTags = property.getPostTags();
+        final List<String> preTags = property.getPreTags();
+        final List<String> postTags = property.getPostTags();
         final Boolean requireFieldMatch = property.getRequireFieldMatch();
 
         if (fragmenter != null) {

@@ -42,7 +42,7 @@ public final class Nodes
         return new Builder();
     }
 
-    public static Collector<Node, Builder, Nodes> collecting()
+    public static Collector<Node, ?, Nodes> collecting()
     {
         return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }

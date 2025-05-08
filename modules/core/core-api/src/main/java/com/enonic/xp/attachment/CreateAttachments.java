@@ -2,6 +2,7 @@ package com.enonic.xp.attachment;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
@@ -20,7 +21,7 @@ public final class CreateAttachments
     }
 
     @Deprecated
-    public ImmutableList<String> getNames()
+    public List<String> getNames()
     {
         return this.set.stream().map( CreateAttachment::getName ).collect( ImmutableList.toImmutableList() );
     }

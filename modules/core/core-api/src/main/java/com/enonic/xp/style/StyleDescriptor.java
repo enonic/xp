@@ -2,6 +2,7 @@ package com.enonic.xp.style;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public final class StyleDescriptor
         return cssPath;
     }
 
-    public ImmutableList<ElementStyle> getElements()
+    public List<ElementStyle> getElements()
     {
         return elements;
     }

@@ -2,6 +2,7 @@ package com.enonic.xp.query.aggregation;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -22,7 +23,7 @@ public abstract class AbstractRangeAggregationQuery<R extends Range>
         this.fieldName = builder.fieldName;
     }
 
-    public ImmutableSet<R> getRanges()
+    public Set<R> getRanges()
     {
         return ranges;
     }

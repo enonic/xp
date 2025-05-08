@@ -59,17 +59,17 @@ public final class FindContentIdsByQueryResult
         return aggregations;
     }
 
-    public ImmutableMap<ContentId, HighlightedProperties> getHighlight()
+    public Map<ContentId, HighlightedProperties> getHighlight()
     {
         return highlight;
     }
 
-    public ImmutableMap<ContentId, SortValuesProperty> getSort()
+    public Map<ContentId, SortValuesProperty> getSort()
     {
         return sort;
     }
 
-    public ImmutableMap<ContentId, Float> getScore()
+    public Map<ContentId, Float> getScore()
     {
         return score;
     }

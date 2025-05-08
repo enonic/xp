@@ -3,7 +3,6 @@ package com.enonic.xp.site;
 import java.util.Collection;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
@@ -23,18 +22,6 @@ public final class SiteConfigs
     public SiteConfig get( final ApplicationKey applicationKey )
     {
         return list.stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findAny().orElse( null );
-    }
-
-    @Deprecated
-    public SiteConfig get( final String applicationKey )
-    {
-        return get( ApplicationKey.from( applicationKey ) );
-    }
-
-    @Deprecated
-    public ImmutableSet<ApplicationKey> getApplicationKeys()
-    {
-        return list.stream().map( SiteConfig::getApplicationKey ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public static SiteConfigs empty()

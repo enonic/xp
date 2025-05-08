@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMap;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,7 +31,7 @@ class WebResponseTest
     {
         final WebResponse webResponse = WebResponse.create().headers( Map.of( "A", "av", "B", "bv" ) ).build();
 
-        final ImmutableMap<String, String> headers = webResponse.getHeaders();
+        final Map<String, String> headers = webResponse.getHeaders();
         assertAll( () -> assertEquals( Map.of( "a", "av", "B", "bv" ), headers ), () -> assertEquals( "av", headers.get( "A" ) ),
                    () -> assertEquals( "bv", headers.get( "b" ) ) );
     }

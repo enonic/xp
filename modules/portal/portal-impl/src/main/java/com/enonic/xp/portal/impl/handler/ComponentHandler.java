@@ -7,8 +7,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -173,7 +171,7 @@ public class ComponentHandler
         for ( ComponentPath.RegionAndComponent pathPart : componentPath )
         {
             partialComponentPathParts.add( pathPart );
-            final ComponentPath path = new ComponentPath( ImmutableList.copyOf( partialComponentPathParts ) );
+            final ComponentPath path = new ComponentPath( partialComponentPathParts );
             final com.enonic.xp.region.Component component = page.getRegions().getComponent( path );
 
             if ( component == null )

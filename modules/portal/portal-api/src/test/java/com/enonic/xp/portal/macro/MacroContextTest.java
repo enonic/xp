@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.macro;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,8 +73,8 @@ public class MacroContextTest
         assertEquals( MacroContext.copyOf( macroContext1 ).build(), macroContext1 );
         assertEquals( MacroContext.copyOf( macroContext1 ).build().hashCode(), macroContext1.hashCode() );
 
-        assertEquals( "value1,value2,value3", macroContext1.getParam( "param1" ) );
-        assertEquals( "other", macroContext1.getParam( "param2" ) );
+        assertEquals( List.of( "value1", "value2", "value3" ), macroContext1.getParameter( "param1" ) );
+        assertEquals( List.of( "other" ), macroContext1.getParameter( "param2" ) );
 
         assertEquals( 3, macroContext1.getParameter( "param1" ).size() );
         assertEquals( "value1", macroContext1.getParameter( "param1" ).get( 0 ) );
@@ -81,7 +83,6 @@ public class MacroContextTest
         assertEquals( "other", macroContext1.getParameter( "param2" ).get( 0 ) );
 
         assertEquals( 3, macroContext1.getParameter( "param1" ).size() );
-        assertEquals( 2, macroContext1.getParams().size() );
 
         assertEquals( 4, macroContext1.getParameters().size() );
 

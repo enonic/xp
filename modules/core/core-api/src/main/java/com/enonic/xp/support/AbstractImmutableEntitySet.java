@@ -14,9 +14,9 @@ public abstract class AbstractImmutableEntitySet<T>
 {
     protected final ImmutableSet<T> set;
 
-    protected AbstractImmutableEntitySet( final ImmutableSet<T> set )
+    protected AbstractImmutableEntitySet( final Set<T> set )
     {
-        this.set = set;
+        this.set = ImmutableSet.copyOf( set );
     }
 
     public final int getSize()

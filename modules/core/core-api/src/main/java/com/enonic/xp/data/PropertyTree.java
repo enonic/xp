@@ -9,9 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
@@ -88,7 +87,7 @@ public final class PropertyTree
         return new PropertyTree( this.getRoot() );
     }
 
-    public ImmutableList<Property> getProperties( final ValueType valueType )
+    public List<Property> getProperties( final ValueType valueType )
     {
         return root.getProperties( valueType );
     }
@@ -200,7 +199,7 @@ public final class PropertyTree
         return root.getProperty( path );
     }
 
-    public ImmutableList<Property> getProperties( final String name )
+    public List<Property> getProperties( final String name )
     {
         return root.getProperties( name );
     }

@@ -148,12 +148,12 @@ public final class IndexConfig
         return !languages.isEmpty();
     }
 
-    public ImmutableList<String> getLanguages()
+    public List<String> getLanguages()
     {
         return languages;
     }
 
-    public ImmutableList<IndexValueProcessor> getIndexValueProcessors()
+    public List<IndexValueProcessor> getIndexValueProcessors()
     {
         return indexValueProcessors;
     }

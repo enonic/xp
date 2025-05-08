@@ -14,9 +14,9 @@ public abstract class AbstractImmutableEntityList<T>
 {
     protected final ImmutableList<T> list;
 
-    protected AbstractImmutableEntityList( final ImmutableList<T> list )
+    protected AbstractImmutableEntityList( final List<T> list )
     {
-        this.list = list;
+        this.list = ImmutableList.copyOf( list );
     }
 
     public final int getSize()

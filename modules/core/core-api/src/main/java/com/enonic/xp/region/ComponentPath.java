@@ -19,9 +19,9 @@ public final class ComponentPath
 
     private final ImmutableList<RegionAndComponent> regionAndComponentList;
 
-    public ComponentPath( final ImmutableList<RegionAndComponent> regionAndComponentList )
+    public ComponentPath( final List<RegionAndComponent> regionAndComponentList )
     {
-        this.regionAndComponentList = regionAndComponentList;
+        this.regionAndComponentList = ImmutableList.copyOf( regionAndComponentList );
     }
 
     public static ComponentPath from( final RegionPath parentPath, final int componentIndex )

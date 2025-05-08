@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -40,12 +39,6 @@ public final class ContentTypes
         tmp.addAll( contentTypes );
 
         return new ContentTypes( ImmutableList.copyOf( tmp ) );
-    }
-
-    @Deprecated
-    public ImmutableSet<ContentTypeName> getNames()
-    {
-        return list.stream().map( ContentType::getName ).collect( ImmutableSet.toImmutableSet() );
     }
 
     @Deprecated

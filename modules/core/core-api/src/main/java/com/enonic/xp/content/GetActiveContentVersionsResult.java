@@ -21,7 +21,7 @@ public class GetActiveContentVersionsResult
                                                                  builder.activeContentVersions );
     }
 
-    public ImmutableList<ActiveContentVersionEntry> getActiveContentVersions()
+    public List<ActiveContentVersionEntry> getActiveContentVersions()
     {
         return activeContentVersions;
     }

@@ -155,7 +155,7 @@ public class PublishContentCommand
 
         commitPushedNodes( pushNodesResult.getSuccessful() );
 
-        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailed()
+        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailedEntries()
                                                                           .stream()
                                                                           .map( failed -> failed.getNodeBranchEntry().getNodeId() )
                                                                           .collect( Collectors.toList() ) ) );

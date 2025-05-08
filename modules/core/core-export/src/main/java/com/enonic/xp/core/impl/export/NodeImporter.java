@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharSource;
 
 import com.enonic.xp.core.impl.export.reader.ExportReader;
@@ -299,7 +298,7 @@ public final class NodeImporter
     {
         final PropertyTree data = newNode.data();
 
-        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
+        final List<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
         if ( binaryReferences.isEmpty() )
         {

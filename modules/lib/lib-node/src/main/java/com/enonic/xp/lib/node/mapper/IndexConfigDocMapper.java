@@ -3,7 +3,6 @@ package com.enonic.xp.lib.node.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.index.IndexConfig;
@@ -78,14 +77,14 @@ class IndexConfigDocMapper
         gen.value( "includeInAllText", indexConfig.isIncludeInAllText() );
         gen.value( "path", indexConfig.isPath() );
 
-        final ImmutableList<IndexValueProcessor> indexValueProcessors = indexConfig.getIndexValueProcessors();
+        final List<IndexValueProcessor> indexValueProcessors = indexConfig.getIndexValueProcessors();
 
         serializeArray( gen, "indexValueProcessors", indexValueProcessors.
             stream().
             map( IndexValueProcessor::getName ).
             collect( Collectors.toList() ) );
 
-        final ImmutableList<String> languages = indexConfig.getLanguages();
+        final List<String> languages = indexConfig.getLanguages();
 
         serializeArray( gen, "languages", languages );
     }

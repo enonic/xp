@@ -1,10 +1,12 @@
 package com.enonic.xp.query.highlight;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 public class HighlightQuery
 {
-    private final ImmutableSet<HighlightQueryProperty> properties;
+    private final ImmutableList<HighlightQueryProperty> properties;
 
     private final HighlightQuerySettings settings;
 
@@ -30,14 +32,14 @@ public class HighlightQuery
         return settings;
     }
 
-    public ImmutableSet<HighlightQueryProperty> getProperties()
+    public List<HighlightQueryProperty> getProperties()
     {
         return properties;
     }
 
     public static class Builder
     {
-        private final ImmutableSet.Builder<HighlightQueryProperty> properties = ImmutableSet.builder();
+        private final ImmutableList.Builder<HighlightQueryProperty> properties = ImmutableList.builder();
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 
@@ -61,7 +63,5 @@ public class HighlightQuery
         {
             return new HighlightQuery( this );
         }
-
     }
-
 }
