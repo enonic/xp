@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.query.filter.BooleanFilter;
@@ -81,7 +80,7 @@ public class MultiRepoSearchSourceAdaptorTest
         assertEquals( 1, filters.getSize() );
         final Filter allFilters = filters.get( 0 );
         assert ( allFilters instanceof BooleanFilter );
-        final ImmutableSet<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getMust();
+        final List<Filter> shouldFilters = ( (BooleanFilter) allFilters ).getMust();
         assertEquals( 2, shouldFilters.size() );
     }
 }

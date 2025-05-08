@@ -1,6 +1,6 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import jakarta.servlet.http.Cookie;
 
@@ -37,7 +37,7 @@ public final class PortalResponseMapper
         gen.map( "pageContributions" );
         for ( final HtmlTag tag : HtmlTag.values() )
         {
-            final ImmutableList<String> contributions = response.getContributions( tag );
+            final List<String> contributions = response.getContributions( tag );
             if ( contributions.isEmpty() )
             {
                 continue;
@@ -52,7 +52,7 @@ public final class PortalResponseMapper
 
     private void serializeCookies( final MapGenerator gen )
     {
-        final ImmutableList<Cookie> cookies = response.getCookies();
+        final List<Cookie> cookies = response.getCookies();
         if ( cookies.isEmpty() )
         {
             return;

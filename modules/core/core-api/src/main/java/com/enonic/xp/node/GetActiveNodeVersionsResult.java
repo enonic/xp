@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Map;
+
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -20,7 +22,7 @@ public class GetActiveNodeVersionsResult
         return new Builder();
     }
 
-    public ImmutableMap<Branch, NodeVersionMetadata> getNodeVersions()
+    public Map<Branch, NodeVersionMetadata> getNodeVersions()
     {
         return nodeVersions;
     }

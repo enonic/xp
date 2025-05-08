@@ -1,10 +1,10 @@
 package com.enonic.xp.macro;
 
+import java.util.List;
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -34,31 +34,12 @@ public final class Macro
         return body;
     }
 
-    @Deprecated
-    public String getParam( final String name )
-    {
-        final ImmutableList<String> values = this.params.get( name );
-        return values.isEmpty() ? null : String.join( ",", values );
-    }
-
-    @Deprecated
-    public ImmutableMap<String, String> getParams()
-    {
-        final ImmutableMap.Builder<String, String> mapParams = ImmutableMap.builder();
-        for ( String key : this.params.keySet() )
-        {
-            final String value = String.join( ",", this.params.get( key ) );
-            mapParams.put( key, value );
-        }
-        return mapParams.build();
-    }
-
-    public ImmutableList<String> getParameter( final String name )
+    public List<String> getParameter( final String name )
     {
         return this.params.get( name );
     }
 
-    public ImmutableListMultimap<String, String> getParameters()
+    public ListMultimap<String, String> getParameters()
     {
         return params;
     }

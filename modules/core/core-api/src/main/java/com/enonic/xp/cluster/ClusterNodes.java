@@ -10,12 +10,6 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public class ClusterNodes
     extends AbstractImmutableEntitySet<ClusterNode>
 {
-    @Deprecated
-    public ClusterNodes( final ImmutableSet<ClusterNode> set )
-    {
-        super( set );
-    }
-
     private ClusterNodes( final ImmutableSet<ClusterNode> set, boolean ignore )
     {
         super( set );

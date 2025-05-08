@@ -1,6 +1,7 @@
 package com.enonic.xp.form;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
@@ -26,12 +27,6 @@ public final class FormItemPath
         Preconditions.checkNotNull( name, "name cannot be null" );
 
         this.elements = ImmutableList.<String>builder().addAll( parentPath.elements ).add( name ).build();
-    }
-
-    @Deprecated
-    public FormItemPath( final ImmutableList<String> elementNames )
-    {
-        this( Preconditions.checkNotNull( elementNames, "elementNames cannot be null" ), false );
     }
 
     private FormItemPath( final ImmutableList<String> elementNames, boolean ignore )
@@ -86,7 +81,7 @@ public final class FormItemPath
         return elements.size();
     }
 
-    public ImmutableList<String> getElements()
+    public List<String> getElements()
     {
         return elements;
     }

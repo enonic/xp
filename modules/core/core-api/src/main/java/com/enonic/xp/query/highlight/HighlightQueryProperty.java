@@ -1,7 +1,8 @@
 package com.enonic.xp.query.highlight;
 
+import java.util.List;
+
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
@@ -57,12 +58,12 @@ public class HighlightQueryProperty
         return doGetSettings().getOrder();
     }
 
-    public ImmutableList<String> getPreTags()
+    public List<String> getPreTags()
     {
         return doGetSettings().getPreTags();
     }
 
-    public ImmutableList<String> getPostTags()
+    public List<String> getPostTags()
     {
         return doGetSettings().getPostTags();
     }

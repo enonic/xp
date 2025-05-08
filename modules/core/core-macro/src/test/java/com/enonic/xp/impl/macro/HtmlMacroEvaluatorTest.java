@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.macro.Macro;
 
@@ -175,7 +175,7 @@ public class HtmlMacroEvaluatorTest
     private String macroToString( final Macro macro )
     {
         final StringBuilder result = new StringBuilder( "{" ).append( macro.getName() );
-        final ImmutableMultimap<String, String> params = macro.getParameters();
+        final Multimap<String, String> params = macro.getParameters();
         if ( params.isEmpty() && macro.getBody().isEmpty() )
         {
             result.append( "/}" );

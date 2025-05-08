@@ -31,7 +31,7 @@ public final class Branches
         return new Branches( ImmutableSet.of() );
     }
 
-    public static Collector<Branch, ImmutableSet.Builder<Branch>, Branches> collecting()
+    public static Collector<Branch, ?, Branches> collecting()
     {
         return Collector.of( ImmutableSet.Builder<Branch>::new, ImmutableSet.Builder::add, ( left, right ) -> left.addAll( right.build() ),
                              is -> new Branches( is.build() ) );

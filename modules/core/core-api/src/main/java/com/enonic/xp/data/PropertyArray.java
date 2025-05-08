@@ -143,12 +143,12 @@ public final class PropertyArray
         return valueType;
     }
 
-    public ImmutableList<Property> getProperties()
+    public List<Property> getProperties()
     {
         return ImmutableList.copyOf( array );
     }
 
-    public ImmutableList<Value> getValues()
+    public List<Value> getValues()
     {
         ImmutableList.Builder<Value> builder = new ImmutableList.Builder<>();
         for ( final Property p : array )

@@ -1,13 +1,13 @@
 package com.enonic.xp.repo.impl.elasticsearch.query;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.search.highlight.HighlightBuilder;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.query.highlight.HighlightQuerySettings;
@@ -63,12 +63,12 @@ public class ElasticHighlightQuery
         return doGetSettings().getOrder();
     }
 
-    public ImmutableList<String> getPreTags()
+    public List<String> getPreTags()
     {
         return doGetSettings().getPreTags();
     }
 
-    public ImmutableList<String> getPostTags()
+    public List<String> getPostTags()
     {
         return doGetSettings().getPostTags();
     }

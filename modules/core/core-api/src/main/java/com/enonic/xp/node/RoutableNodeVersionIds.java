@@ -35,7 +35,7 @@ public class RoutableNodeVersionIds
         return new RoutableNodeVersionIds( ImmutableSet.copyOf( routableNodeVersionIds ) );
     }
 
-    public static Collector<RoutableNodeVersionId, Builder, RoutableNodeVersionIds> collecting()
+    public static Collector<RoutableNodeVersionId, ?, RoutableNodeVersionIds> collecting()
     {
         return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build().getSet() ), Builder::build );
     }

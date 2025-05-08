@@ -64,9 +64,6 @@ public class MacroTest
         assertEquals( Macro.copyOf( macro ).build(), macro );
         assertEquals( Macro.copyOf( macro ).build().hashCode(), macro.hashCode() );
 
-        assertEquals( "value1,value2,value3", macro.getParam( "param1" ) );
-        assertEquals( "other", macro.getParam( "param2" ) );
-
         assertEquals( 3, macro.getParameter( "param1" ).size() );
         assertEquals( "value1", macro.getParameter( "param1" ).get( 0 ) );
         assertEquals( "value3", macro.getParameter( "param1" ).get( 2 ) );
@@ -74,7 +71,6 @@ public class MacroTest
         assertEquals( "other", macro.getParameter( "param2" ).get( 0 ) );
 
         assertEquals( 3, macro.getParameter( "param1" ).size() );
-        assertEquals( 2, macro.getParams().size() );
 
         assertEquals( 4, macro.getParameters().size() );
 

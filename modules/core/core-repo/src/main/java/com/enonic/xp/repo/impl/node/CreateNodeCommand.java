@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
@@ -105,7 +105,7 @@ public final class CreateNodeCommand
 
         final AttachedBinaries.Builder builder = AttachedBinaries.create();
 
-        final ImmutableList<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
+        final List<Property> binaryReferences = data.getProperties( ValueTypes.BINARY_REFERENCE );
 
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         for ( final Property binaryRef : binaryReferences )

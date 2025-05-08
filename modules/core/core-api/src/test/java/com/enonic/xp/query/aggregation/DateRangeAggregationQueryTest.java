@@ -3,10 +3,9 @@ package com.enonic.xp.query.aggregation;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.UnmodifiableIterator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -34,7 +33,7 @@ public class DateRangeAggregationQueryTest
         assertEquals( "myFieldName", query.getFieldName() );
         assertEquals( 2, query.getRanges().size() );
 
-        final UnmodifiableIterator<DateRange> iterator = query.getRanges().iterator();
+        final Iterator<DateRange> iterator = query.getRanges().iterator();
         final DateRange first = iterator.next();
         final DateRange second = iterator.next();
 

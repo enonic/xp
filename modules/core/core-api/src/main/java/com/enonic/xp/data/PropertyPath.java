@@ -122,7 +122,7 @@ public final class PropertyPath
         return elements.iterator();
     }
 
-    public ImmutableList<Element> pathElements()
+    public List<Element> pathElements()
     {
         return elements;
     }

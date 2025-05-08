@@ -7,7 +7,7 @@ abstract class AbstractSimpleQueryStringFunction
 
     static void appendQueryFieldNames( final AbstractSimpleQueryStringFunctionArguments arguments, final SimpleQueryStringBuilder builder )
     {
-        for ( final WeightedQueryFieldName weightedQueryFieldName : arguments.getWeightedQueryFieldName() )
+        for ( final WeightedQueryFieldName weightedQueryFieldName : arguments.getWeightedQueryFieldName().getWeightedQueryFieldNames() )
         {
             final String queryFieldName = arguments.resolveQueryFieldName( weightedQueryFieldName.getBaseFieldName() );
 

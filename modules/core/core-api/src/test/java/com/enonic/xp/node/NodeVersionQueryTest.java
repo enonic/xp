@@ -1,8 +1,8 @@
 package com.enonic.xp.node;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.query.expr.OrderExpr;
 
@@ -19,7 +19,7 @@ public class NodeVersionQueryTest
         final NodeVersionQuery query = NodeVersionQuery.create().
             build();
 
-        final ImmutableList<OrderExpr> orderBys = query.getOrderBys();
+        final List<OrderExpr> orderBys = query.getOrderBys();
         assertNotNull( orderBys );
 
         System.out.println( orderBys );

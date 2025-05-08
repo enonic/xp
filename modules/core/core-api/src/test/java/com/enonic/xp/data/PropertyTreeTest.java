@@ -14,8 +14,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableList;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 
@@ -350,7 +348,7 @@ public class PropertyTreeTest
 
         PropertyTree tree = new PropertyTree( set );
 
-        final ImmutableList<Property> stringProperties = tree.getProperties( ValueTypes.STRING );
+        final List<Property> stringProperties = tree.getProperties( ValueTypes.STRING );
         assertEquals( 2, stringProperties.size() );
     }
 

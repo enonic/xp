@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -485,7 +486,7 @@ public final class PropertySet
         return getProperty( element.getName(), element.getIndex() );
     }
 
-    public ImmutableList<Property> getProperties( final String name )
+    public List<Property> getProperties( final String name )
     {
         Property.checkName( name );
         final PropertyArray propertyArray = this.propertyArrayByName.get( name );
@@ -507,7 +508,7 @@ public final class PropertySet
         return builder.build();
     }
 
-    public ImmutableList<Property> getProperties( ValueType valueType )
+    public List<Property> getProperties( ValueType valueType )
     {
         final ImmutableList.Builder<Property> builder = new ImmutableList.Builder<>();
         for ( final PropertyArray propertyArray : this.propertyArrayByName.values() )

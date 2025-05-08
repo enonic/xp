@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.content.mapper;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.Content;
@@ -20,11 +20,11 @@ public final class ContentsResultMapper
 
     private final Aggregations aggregations;
 
-    private final ImmutableMap<ContentId, HighlightedProperties> highlight;
+    private final Map<ContentId, HighlightedProperties> highlight;
 
-    private final ImmutableMap<ContentId, SortValuesProperty> sortValues;
+    private final Map<ContentId, SortValuesProperty> sortValues;
 
-    private final ImmutableMap<ContentId, Float> scoreValues;
+    private final Map<ContentId, Float> scoreValues;
 
     public ContentsResultMapper( final Contents contents, final long total )
     {
@@ -37,9 +37,9 @@ public final class ContentsResultMapper
     }
 
     public ContentsResultMapper( final Contents contents, final long total, final Aggregations aggregations,
-                                 final ImmutableMap<ContentId, HighlightedProperties> highlight,
-                                 final ImmutableMap<ContentId, SortValuesProperty> sortValues,
-                                 final ImmutableMap<ContentId, Float> scoreValues)
+                                 final Map<ContentId, HighlightedProperties> highlight,
+                                 final Map<ContentId, SortValuesProperty> sortValues,
+                                 final Map<ContentId, Float> scoreValues)
     {
         this.contents = contents;
         this.total = total;
@@ -84,7 +84,7 @@ public final class ContentsResultMapper
         }
     }
 
-    private void serialize( final MapGenerator gen, ImmutableMap<ContentId, HighlightedProperties> highlight )
+    private void serialize( final MapGenerator gen, Map<ContentId, HighlightedProperties> highlight )
     {
         if ( highlight != null )
         {

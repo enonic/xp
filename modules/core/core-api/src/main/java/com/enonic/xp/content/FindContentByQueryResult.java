@@ -47,7 +47,7 @@ public final class FindContentByQueryResult
         return aggregations;
     }
 
-    public ImmutableMap<ContentId, HighlightedProperties> getHighlight()
+    public Map<ContentId, HighlightedProperties> getHighlight()
     {
         return highlight;
     }

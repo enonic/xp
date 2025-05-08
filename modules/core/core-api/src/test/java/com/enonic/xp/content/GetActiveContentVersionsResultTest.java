@@ -1,10 +1,9 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.branch.Branch;
 
@@ -93,7 +92,7 @@ public class GetActiveContentVersionsResultTest
             add( ActiveContentVersionEntry.from( archive, oldestVersion ) ).
             build();
 
-        final UnmodifiableIterator<ActiveContentVersionEntry> iterator = result.getActiveContentVersions().iterator();
+        final Iterator<ActiveContentVersionEntry> iterator = result.getActiveContentVersions().iterator();
 
         assertEquals( draft, iterator.next().getBranch() );
         assertEquals( master, iterator.next().getBranch() );

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +10,6 @@ import com.google.common.collect.ImmutableList;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class WeightedQueryFieldNames
-    implements Iterable<WeightedQueryFieldName>
 {
     private final ImmutableList<WeightedQueryFieldName> weightedQueryFieldNames;
 
@@ -45,16 +43,8 @@ public class WeightedQueryFieldNames
         return new WeightedQueryFieldNames( list );
     }
 
-    public ImmutableList<WeightedQueryFieldName> getWeightedQueryFieldNames()
+    public List<WeightedQueryFieldName> getWeightedQueryFieldNames()
     {
         return weightedQueryFieldNames;
     }
-
-    @Override
-    public Iterator<WeightedQueryFieldName> iterator()
-    {
-        return this.weightedQueryFieldNames.iterator();
-    }
-
-
 }

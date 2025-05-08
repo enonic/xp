@@ -82,7 +82,7 @@ public class AbstractQuery
     }
 
     @Override
-    public ImmutableList<OrderExpr> getOrderBys()
+    public List<OrderExpr> getOrderBys()
     {
         return orderBys;
     }

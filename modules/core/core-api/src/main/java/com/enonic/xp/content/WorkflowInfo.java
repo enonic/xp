@@ -33,7 +33,7 @@ public final class WorkflowInfo
         return state;
     }
 
-    public ImmutableMap<String, WorkflowCheckState> getChecks()
+    public Map<String, WorkflowCheckState> getChecks()
     {
         return checks;
     }

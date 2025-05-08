@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -44,7 +44,7 @@ public class GetActiveContentVersionsCommand
 
         final GetActiveContentVersionsResult.Builder builder = GetActiveContentVersionsResult.create();
 
-        final ImmutableMap<Branch, NodeVersionMetadata> nodeVersionsMap = activeNodeVersions.getNodeVersions();
+        final Map<Branch, NodeVersionMetadata> nodeVersionsMap = activeNodeVersions.getNodeVersions();
         for ( final Branch branch : nodeVersionsMap.keySet() )
         {
             final NodeVersionMetadata nodeVersionMetadata = nodeVersionsMap.get( branch );

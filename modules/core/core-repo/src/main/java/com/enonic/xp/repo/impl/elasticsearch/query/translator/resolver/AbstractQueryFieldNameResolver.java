@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -45,7 +43,7 @@ abstract class AbstractQueryFieldNameResolver
     {
         final String valueQueryFilterFieldName = valueQueryFilter.getFieldName();
         final String baseFieldName = IndexFieldNameNormalizer.normalize( valueQueryFilterFieldName );
-        final ImmutableSet<Value> values = valueQueryFilter.getValues();
+        final Set<Value> values = valueQueryFilter.getValues();
         final Value firstValue = values.iterator().next();
         return createValueTypeAwareFieldName( baseFieldName, firstValue );
     }

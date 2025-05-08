@@ -1,12 +1,10 @@
 package com.enonic.xp.core.content;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.UnmodifiableIterator;
 
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -105,11 +103,11 @@ public class ContentServiceImplTest_versions
                 branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) ).
                 build() );
 
-        final ImmutableList<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();
+        final List<ActiveContentVersionEntry> activeContentVersions = activeVersions.getActiveContentVersions();
 
         assertEquals( 2, activeContentVersions.size() );
 
-        final UnmodifiableIterator<ActiveContentVersionEntry> iterator = activeContentVersions.iterator();
+        final Iterator<ActiveContentVersionEntry> iterator = activeContentVersions.iterator();
 
         assertNotSame( iterator.next().getContentVersion(), iterator.next().getContentVersion() );
     }

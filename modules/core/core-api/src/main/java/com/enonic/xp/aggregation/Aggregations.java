@@ -1,8 +1,5 @@
 package com.enonic.xp.aggregation;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -22,12 +19,6 @@ public class Aggregations
     public static Aggregations empty()
     {
         return EMPTY;
-    }
-
-    @Deprecated
-    public static Aggregations from( final ImmutableSet<Aggregation> aggregations )
-    {
-        return fromInternal( aggregations );
     }
 
     public static Aggregations from( final Iterable<Aggregation> aggregations )
@@ -57,7 +48,7 @@ public class Aggregations
 
     public static class Builder
     {
-        private final Set<Aggregation> aggregations = new LinkedHashSet<>();
+        private final ImmutableSet.Builder<Aggregation> aggregations = ImmutableSet.builder();
 
         public Builder add( final Aggregation aggregation )
         {
@@ -67,7 +58,7 @@ public class Aggregations
 
         public Aggregations build()
         {
-            return Aggregations.fromInternal( ImmutableSet.copyOf( aggregations ) );
+            return Aggregations.fromInternal( aggregations.build() );
         }
     }
 }

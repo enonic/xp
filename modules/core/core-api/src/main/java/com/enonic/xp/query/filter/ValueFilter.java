@@ -40,7 +40,7 @@ public class ValueFilter
     }
 
 
-    public ImmutableSet<Value> getValues()
+    public Set<Value> getValues()
     {
         return values;
     }

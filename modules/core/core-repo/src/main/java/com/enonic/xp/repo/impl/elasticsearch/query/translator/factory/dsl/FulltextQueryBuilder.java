@@ -23,7 +23,7 @@ class FulltextQueryBuilder
             ( (org.elasticsearch.index.query.SimpleQueryStringBuilder) super.create() ).analyzer(
                 NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER ).analyzeWildcard( true );
 
-        fields.forEach( field -> {
+        fields.getWeightedQueryFieldNames().forEach( field -> {
             final String resolvedName = NAME_RESOLVER.resolve( field.getBaseFieldName(), IndexValueType.ANALYZED );
             if ( field.getWeight() != null )
             {

@@ -21,7 +21,7 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().getWeightedQueryFieldNames().iterator().next().getBaseFieldName() );
         assertEquals( "SearchString", functionArguments.getSearchString() );
         assertEquals( SimpleQueryStringBuilder.Operator.AND, functionArguments.getOperator() );
     }
@@ -33,7 +33,7 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().getWeightedQueryFieldNames().iterator().next().getBaseFieldName() );
         assertEquals( "SearchString", functionArguments.getSearchString() );
         assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
         assertEquals( NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER, functionArguments.getAnalyzer() );
@@ -59,7 +59,7 @@ public class FulltextFunctionArgumentsTest
 
         final FulltextFunctionArguments functionArguments = new FulltextFunctionArguments( arguments );
 
-        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().iterator().next().getBaseFieldName() );
+        assertEquals( "myField", functionArguments.getWeightedQueryFieldName().getWeightedQueryFieldNames().iterator().next().getBaseFieldName() );
         assertEquals( "SearchString", functionArguments.getSearchString() );
         assertEquals( SimpleQueryStringBuilder.Operator.OR, functionArguments.getOperator() );
         assertEquals( "myAnalyzer", functionArguments.getAnalyzer() );

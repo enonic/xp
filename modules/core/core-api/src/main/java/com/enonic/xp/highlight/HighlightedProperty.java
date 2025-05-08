@@ -30,7 +30,7 @@ public class HighlightedProperty
         return name;
     }
 
-    public ImmutableSet<String> getFragments()
+    public Set<String> getFragments()
     {
         return fragments;
     }

@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class FilterBuilderFactory
         return null;
     }
 
-    private void appendFilters( final ImmutableSet<Filter> queryFilters, final List<QueryBuilder> filtersToApply )
+    private void appendFilters( final Collection<Filter> queryFilters, final List<QueryBuilder> filtersToApply )
     {
         for ( final Filter filter : queryFilters )
         {
@@ -142,7 +143,7 @@ public class FilterBuilderFactory
         return builder;
     }
 
-    private QueryBuilder[] createBooleanFilterChildren( final ImmutableSet<Filter> queryFilters )
+    private QueryBuilder[] createBooleanFilterChildren( final Collection<Filter> queryFilters )
     {
         List<QueryBuilder> filtersToApply = new ArrayList<>();
 

@@ -5,8 +5,6 @@ import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.UnmodifiableIterator;
-
 import com.enonic.xp.page.PageRegions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +72,7 @@ public class PageRegionsTest
 
         // verify: components in a-region
         Region nextRegion = iterator.next();
-        UnmodifiableIterator<Component> components = nextRegion.getComponents().iterator();
+        Iterator<Component> components = nextRegion.getComponents().iterator();
         assertEquals( "/a-region/0", components.next().getPath().toString() );
 
         // verify: components in b-region
@@ -101,13 +99,13 @@ public class PageRegionsTest
 
         // verify
         final Region regionLevel1 = regions.iterator().next();
-        final UnmodifiableIterator<Component> componentsLevel1 = regionLevel1.getComponents().iterator();
+        final Iterator<Component> componentsLevel1 = regionLevel1.getComponents().iterator();
         final LayoutComponent layoutLevel1 = (LayoutComponent) componentsLevel1.next();
         assertEquals( "/region-level-1/0", layoutLevel1.getPath().toString() );
 
         final LayoutRegions layoutRegions = layoutLevel1.getRegions();
         final Region regionLevel2 = layoutRegions.iterator().next();
-        final UnmodifiableIterator<Component> componentsLevel2 = regionLevel2.getComponents().iterator();
+        final Iterator<Component> componentsLevel2 = regionLevel2.getComponents().iterator();
         assertEquals( "/region-level-1/0/region-level-2/0", componentsLevel2.next().getPath().toString() );
     }
 

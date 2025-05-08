@@ -76,7 +76,6 @@ public class ContentTypesTest
                 modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType = builder.build();
         ContentTypes contentTypes = ContentTypes.create().add( contentType ).build();
-        assertTrue( contentTypes.getNames().contains( ContentTypeName.media() ) );
         assertTrue( ContentTypes.empty().isEmpty() );
         assertEquals( 1, ContentTypes.from( contentType ).getSize() );
         assertNotNull( contentTypes.getContentType( contentType.getName() ) );

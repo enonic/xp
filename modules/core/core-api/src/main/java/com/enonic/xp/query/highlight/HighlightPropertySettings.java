@@ -63,12 +63,12 @@ public class HighlightPropertySettings
         return order;
     }
 
-    public ImmutableList<String> getPreTags()
+    public List<String> getPreTags()
     {
         return preTags;
     }
 
-    public ImmutableList<String> getPostTags()
+    public List<String> getPostTags()
     {
         return postTags;
     }

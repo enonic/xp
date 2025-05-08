@@ -1,5 +1,7 @@
 package com.enonic.xp.portal;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -32,7 +34,7 @@ public final class PortalResponse
         return postProcess;
     }
 
-    public ImmutableList<String> getContributions( final HtmlTag tag )
+    public List<String> getContributions( final HtmlTag tag )
     {
         return this.contributions.get( tag );
     }

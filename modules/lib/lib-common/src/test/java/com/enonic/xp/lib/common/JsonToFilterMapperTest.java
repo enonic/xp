@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
@@ -50,7 +48,7 @@ public class JsonToFilterMapperTest
 
         assertTrue( filters.get( 0 ) instanceof BooleanFilter );
         final BooleanFilter booleanFilter = (BooleanFilter) filters.get( 0 );
-        final ImmutableSet<Filter> mustNotFilters = booleanFilter.getMustNot();
+        final List<Filter> mustNotFilters = booleanFilter.getMustNot();
         assertEquals( 1, mustNotFilters.size() );
         final Filter mustNotFilter = mustNotFilters.iterator().next();
         assertTrue( mustNotFilter instanceof ExistsFilter );
@@ -75,15 +73,15 @@ public class JsonToFilterMapperTest
         assertTrue( filters.get( 0 ) instanceof BooleanFilter );
         final BooleanFilter booleanFilter = (BooleanFilter) filters.get( 0 );
 
-        final ImmutableSet<Filter> mustFilters = booleanFilter.getMust();
+        final List<Filter> mustFilters = booleanFilter.getMust();
         assertEquals( 2, mustFilters.size() );
         assertTrue( mustFilters.iterator().next() instanceof ExistsFilter );
         assertTrue( mustFilters.iterator().next() instanceof ExistsFilter );
 
-        final ImmutableSet<Filter> mustNotFilters = booleanFilter.getMustNot();
+        final List<Filter> mustNotFilters = booleanFilter.getMustNot();
         assertEquals( 1, mustNotFilters.size() );
 
-        final ImmutableSet<Filter> shouldFilters = booleanFilter.getShould();
+        final List<Filter> shouldFilters = booleanFilter.getShould();
         assertEquals( 3, shouldFilters.size() );
     }
 
@@ -162,7 +160,7 @@ public class JsonToFilterMapperTest
         final Filters filters = com.enonic.xp.lib.common.JsonToFilterMapper.create( existsFilters );
 
         assertTrue( filters.get( 0 ) instanceof BooleanFilter );
-        final ImmutableSet<Filter> mustFilters = ( (BooleanFilter) filters.get( 0 ) ).getMust();
+        final List<Filter> mustFilters = ( (BooleanFilter) filters.get( 0 ) ).getMust();
         assertEquals( 3, mustFilters.size() );
     }
 

@@ -1,6 +1,6 @@
 package com.enonic.xp.query;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -12,7 +12,7 @@ import com.enonic.xp.query.suggester.SuggestionQueries;
 
 public interface Query
 {
-    ImmutableList<OrderExpr> getOrderBys();
+    List<OrderExpr> getOrderBys();
 
     QueryExpr getQuery();
 
