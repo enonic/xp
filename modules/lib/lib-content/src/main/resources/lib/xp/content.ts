@@ -22,6 +22,7 @@ import type {
     AggregationsToAggregationResults,
     ByteSource,
     Content,
+    ContentInheritValue,
     Filter,
     FormItem,
     Highlight,
@@ -30,6 +31,7 @@ import type {
     QueryDsl,
     ScriptValue,
     SortDsl,
+    Workflow,
 } from '@enonic-types/core';
 
 const isString = (value: unknown): value is string => value instanceof String || typeof value === 'string';
@@ -127,10 +129,6 @@ export type {
 } from '@enonic-types/core';
 
 type Attachments = Content['attachments'];
-
-type ContentInheritType = Content['inherit'];
-
-type Workflow = Content['workflow'];
 
 export type PageComponentWhenAutomaticTemplate = Record<string,never>;
 
@@ -1272,7 +1270,7 @@ export function getOutboundDependencies(params: GetOutboundDependenciesParams): 
 export interface ResetInheritanceParams {
     key: string;
     projectName: string;
-    inherit: ContentInheritType[];
+    inherit: ContentInheritValue[];
 }
 
 export interface ResetInheritanceHandler {
@@ -1280,7 +1278,7 @@ export interface ResetInheritanceHandler {
 
     setProjectName(value: string): void;
 
-    setInherit(value: ContentInheritType[]): void;
+    setInherit(value: ContentInheritValue[]): void;
 
     execute(): void;
 }

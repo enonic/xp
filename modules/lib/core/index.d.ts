@@ -154,13 +154,13 @@ export type Merge<
 export interface ComplexCookie {
     /**
      * The value of the cookie (optional).
-     * 
+     *
      * @type string
      */
     value: string;
     /**
      * A comment (rfc2109) to document the cookie (optional).
-     * 
+     *
      * @type string
      */
     comment?: string;
@@ -538,7 +538,7 @@ export interface LayoutComponent<
         ? XpLayoutMap[Descriptor]
         : NestedRecord,
     Regions extends
-        Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> = 
+        Record<string, Region<(FragmentComponent | PartComponent | TextComponent)[]>> =
         Record<string, Region<(FragmentComponent | Part          | TextComponent)[]>>
 > {
     type: 'layout'
@@ -578,7 +578,7 @@ export interface PageComponent<
         ? XpPageMap[Descriptor]
         : NestedRecord,
     Regions extends
-        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> = 
+        Record<string, Region<(FragmentComponent | LayoutComponent | PartComponent | TextComponent)[]>> =
         Record<string, Region<(FragmentComponent | Layout          | Part          | TextComponent)[]>>
 > {
     config: Config
@@ -677,14 +677,18 @@ export interface Content<
     x: XpXData;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
-    workflow?: {
-        state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
-        checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
-    };
-    inherit?: ('CONTENT' | 'PARENT' | 'NAME' | 'SORT')[];
+    workflow?: Workflow;
+    inherit?: ContentInheritValue[];
     variantOf?: string;
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
+
+export type Workflow = {
+    state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
+    checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
+};
+
+export type ContentInheritValue = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
 
 // Compliant with npm module ts-brand
 type Brand<
