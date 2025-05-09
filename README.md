@@ -2,7 +2,7 @@
 
 # Enonic XP
 
-[![Actions Status](https://github.com/enonic/xp/workflows/Java%20CI/badge.svg)](https://github.com/enonic/xp/actions)
+[![Actions Status](https://github.com/enonic/xp/workflows/Gradle%20Build/badge.svg)](https://github.com/enonic/xp/actions)
 [![Codecov](https://codecov.io/gh/enonic/xp/branch/master/graph/badge.svg)](https://codecov.io/gh/enonic/xp)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c21f9de69f0444797abdeea49a682e6)](https://www.codacy.com/gh/enonic/xp/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=enonic/xp&amp;utm_campaign=Badge_Grade)
 
