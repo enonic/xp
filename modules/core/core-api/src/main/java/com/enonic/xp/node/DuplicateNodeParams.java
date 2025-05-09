@@ -47,7 +47,7 @@ public class DuplicateNodeParams
         return nodeId;
     }
 
-    @Deprecated
+    @Deprecated( since = "8" )
     public DuplicateNodeProcessor getProcessor()
     {
         return processor;
@@ -111,7 +111,7 @@ public class DuplicateNodeParams
             return this;
         }
 
-        @Deprecated
+        @Deprecated( since = "8" )
         public Builder processor( final DuplicateNodeProcessor processor )
         {
             this.processor = processor;

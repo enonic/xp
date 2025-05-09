@@ -21,12 +21,10 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
-import com.enonic.xp.node.FindNodePathsByQueryResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -52,10 +50,8 @@ import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
-import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -66,7 +62,6 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
@@ -79,15 +74,12 @@ import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SetNodeChildOrderParams;
-import com.enonic.xp.node.SetNodeStateParams;
-import com.enonic.xp.node.SetNodeStateResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -99,7 +91,6 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -241,43 +232,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Node getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
-    {
-        return Tracer.trace( "node.getByPathAndVersionId", trace -> {
-            trace.put( "path", path );
-            trace.put( "versionId", versionId );
-            final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
-            if ( repositoryId != null )
-            {
-                trace.put( "repo", repositoryId.toString() );
-            }
-            trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetByPathAndVersionId( path, versionId ), ( trace, node ) -> trace.put( "id", node.id() ) );
-    }
-
-    private Node executeGetByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
-    {
-        verifyContext();
-        final Node node = GetNodeByPathAndVersionIdCommand.create()
-            .nodePath( path )
-            .versionId( versionId )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-
-        if ( node == null )
-        {
-            throw new NodeNotFoundException( "Node with path " + path + " and versionId " + versionId + " not found in branch " +
-                                                 ContextAccessor.current().getBranch().getValue() );
-        }
-
-        return node;
-    }
-
-    @Override
     public Nodes getByIds( final NodeIds ids )
     {
         return Tracer.trace( "node.getByIds", trace -> {
@@ -391,25 +345,6 @@ public class NodeServiceImpl
             .searchService( this.nodeSearchService )
             .build()
             .execute();
-    }
-
-    @Override
-    @Deprecated
-    public FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery )
-    {
-        verifyContext();
-        final FindNodesByQueryResult queryResult = FindNodesByQueryCommand.create()
-            .query( nodeQuery )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .returnFields( ReturnFields.from( NodeIndexPath.PATH ) )
-            .build()
-            .execute();
-
-        return FindNodePathsByQueryResult.create()
-            .paths( NodePaths.from( queryResult.getNodeHits().stream().map( NodeHit::getNodePath ).toArray( NodePath[]::new ) ) )
-            .build();
     }
 
     @Override
@@ -554,30 +489,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    @Deprecated
-    public NodeIds deleteById( final NodeId id )
-    {
-        return deleteById( id, null );
-    }
-
-    @Override
-    @Deprecated
-    public NodeIds deleteById( final NodeId id, final DeleteNodeListener deleteNodeListener )
-    {
-        final DeleteNodeResult result =
-            delete( DeleteNodeParams.create().nodeId( id ).refresh( RefreshMode.ALL ).deleteNodeListener( deleteNodeListener ).build() );
-        return NodeIds.from( result.getNodeBranchEntries().getKeys() );
-    }
-
-    @Override
-    @Deprecated
-    public NodeIds deleteByPath( final NodePath path )
-    {
-        final DeleteNodeResult result = delete( DeleteNodeParams.create().nodePath( path ).refresh( RefreshMode.ALL ).build() );
-        return NodeIds.from( result.getNodeBranchEntries().getKeys() );
-    }
-
-    @Override
     public DeleteNodeResult delete( final DeleteNodeParams deleteNodeParams )
     {
         verifyContext();
@@ -650,13 +561,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Node move( final NodeId nodeId, final NodePath parentNodePath, final MoveNodeListener moveListener )
-    {
-        return move( MoveNodeParams.create().nodeId( nodeId ).parentNodePath( parentNodePath ).moveListener( moveListener ).build() );
-    }
-
-    @Override
     public Node move( final MoveNodeParams params )
     {
         verifyContext();
@@ -681,15 +585,6 @@ public class NodeServiceImpl
         {
             return doGetById( params.getNodeId() );
         }
-    }
-
-    @Override
-    @Deprecated
-    public Nodes move( final NodeIds nodeIds, final NodePath parentNodePath, final MoveNodeListener moveListener )
-    {
-        verifyContext();
-        return Nodes.from(
-            nodeIds.stream().map( nodeId -> this.move( nodeId, parentNodePath, moveListener ) ).collect( Collectors.toList() ) );
     }
 
     @Override
@@ -735,12 +630,6 @@ public class NodeServiceImpl
         verifyContext();
 
         return FindNodeCommitsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
-    }
-
-    @Override
-    public boolean deleteVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
-    {
-        throw new UnsupportedOperationException( "deleteVersion is not supported" );
     }
 
     @Override
@@ -1027,33 +916,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Node createRootNode( final CreateRootNodeParams params )
-    {
-        verifyContext();
-        final Node createdNode = CreateRootNodeCommand.create()
-            .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-
-        if ( createdNode != null )
-        {
-            this.eventPublisher.publish( NodeEvents.created( createdNode ) );
-        }
-        return createdNode;
-    }
-
-    @Override
-    @Deprecated
-    public SetNodeStateResult setNodeState( final SetNodeStateParams params )
-    {
-        return SetNodeStateResult.create().build();
-    }
-
-    @Override
     public Node getRoot()
     {
         final Node node = executeGetByPath( NodePath.ROOT );
@@ -1064,18 +926,6 @@ public class NodeServiceImpl
         }
 
         throw new RuntimeException( "Expected node with path " + NodePath.ROOT + " to be of type RootNode, found " + node.id() );
-    }
-
-    @Override
-    public Node setRootPermissions( final AccessControlList acl )
-    {
-        return SetRootPermissionsCommand.create()
-            .permissions( acl )
-            .indexServiceInternal( indexServiceInternal )
-            .searchService( this.nodeSearchService )
-            .storageService( this.nodeStorageService )
-            .build()
-            .execute();
     }
 
     @Override
@@ -1149,21 +999,6 @@ public class NodeServiceImpl
             }
             trace.put( "branch", ContextAccessor.current().getBranch() );
         }, () -> NodeHelper.runAsAdmin( () -> executeGetByPath( nodePath ) ) != null, ( trace, exists ) -> trace.put( "exists", exists ) );
-    }
-
-    @Override
-    @Deprecated
-    public NodesHasChildrenResult hasChildren( final Nodes nodes )
-    {
-        verifyContext();
-        final NodesHasChildrenResult.Builder builder = NodesHasChildrenResult.create();
-
-        for ( final Node node : nodes )
-        {
-            builder.add( node.id(), NodeHasChildResolver.create().searchService( this.nodeSearchService ).build().resolve( node.path() ) );
-        }
-
-        return builder.build();
     }
 
     @Override

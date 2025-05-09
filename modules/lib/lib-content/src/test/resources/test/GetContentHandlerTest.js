@@ -280,22 +280,6 @@ exports.getByIdAndVersionId = function () {
     });
 };
 
-exports.getByPathAndVersionId = function () {
-    var result = content.get({
-        key: '/a/b/mycontent',
-        versionId: 'versionId'
-    });
-};
-
-exports.getByPathAndVersionId_notFound = function () {
-    var result = content.get({
-        key: '/a/b/mycontent',
-        versionId: 'versionId'
-    });
-
-    assert.assertNull(result);
-};
-
 exports.getByIdAndVersionId_notFound = function () {
     var result = content.get({
         key: 'mycontentId',

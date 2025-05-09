@@ -5,7 +5,6 @@ import com.enonic.xp.branch.Branch;
 
 @PublicApi
 public class ActiveContentVersionEntry
-    implements Comparable<ActiveContentVersionEntry>
 {
     private final Branch branch;
 
@@ -31,17 +30,4 @@ public class ActiveContentVersionEntry
     {
         return branch;
     }
-
-    @Deprecated
-    @Override
-    public int compareTo( final ActiveContentVersionEntry o )
-    {
-        if ( this.contentVersion.equals( o.contentVersion ) )
-        {
-            return this.branch.getValue().compareTo( o.branch.getValue() );
-        }
-
-        return this.contentVersion.compareTo( o.contentVersion );
-    }
-
 }

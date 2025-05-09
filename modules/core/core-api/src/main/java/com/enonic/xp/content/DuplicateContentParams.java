@@ -48,22 +48,9 @@ public final class DuplicateContentParams
         return contentId;
     }
 
-    @Deprecated
-    public DuplicateContentParams creator( final PrincipalKey creator )
-    {
-        this.creator = creator;
-        return this;
-    }
-
     public DuplicateContentListener getDuplicateContentListener()
     {
         return duplicateContentListener;
-    }
-
-    @Deprecated
-    public PrincipalKey getCreator()
-    {
-        return creator;
     }
 
     public WorkflowInfo getWorkflowInfo()
@@ -89,23 +76,6 @@ public final class DuplicateContentParams
     public ContentPath getParent()
     {
         return parent;
-    }
-
-    @Deprecated
-    public void validate()
-    {
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
     }
 
     public static final class Builder
@@ -134,13 +104,6 @@ public final class DuplicateContentParams
         public Builder contentId( ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        @Deprecated
-        public Builder creator( PrincipalKey creator )
-        {
-            this.creator = creator;
             return this;
         }
 

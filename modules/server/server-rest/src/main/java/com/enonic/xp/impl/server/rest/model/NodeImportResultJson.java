@@ -42,13 +42,6 @@ public class NodeImportResultJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
     public List<String> getAddedNodes()
     {
         return addedNodes;

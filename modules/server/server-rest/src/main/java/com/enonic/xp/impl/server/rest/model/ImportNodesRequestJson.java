@@ -51,12 +51,6 @@ public class ImportNodesRequestJson
         return exportName;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public boolean isImportWithIds()
     {
         return importWithIds;

@@ -10,7 +10,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class ContentVersion
-    implements Comparable<ContentVersion>
 {
     private final ContentVersionId id;
 
@@ -104,32 +103,9 @@ public final class ContentVersion
         return permissions;
     }
 
-    @Deprecated
-    public boolean isInheritPermissions()
-    {
-        return false;
-    }
-
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Deprecated
-    @Override
-    public int compareTo( final ContentVersion o )
-    {
-        if ( Objects.equals( this.modified, o.modified ) )
-        {
-            return 0;
-        }
-
-        if ( this.modified.isBefore( o.modified ) )
-        {
-            return 1;
-        }
-
-        return -1;
     }
 
     @Override

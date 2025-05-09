@@ -56,22 +56,6 @@ public final class ApplicationRelativeResolver
         return ContentTypeName.from( this.current, name );
     }
 
-    @Deprecated
-    public String toContentTypeNameRegexp( final String name )
-    {
-        if ( name.contains( ":" ) || new ApplicationWildcardResolver().stringHasWildcard( name ) )
-        {
-            return name;
-        }
-
-        if ( this.current == null )
-        {
-            throw new IllegalArgumentException( "Unable to resolve application for ContentType [" + name + "]" );
-        }
-
-        return ContentTypeName.from( this.current, name ).toString();
-    }
-
     public MixinName toMixinName( final String name )
     {
         if ( name.contains( ":" ) )

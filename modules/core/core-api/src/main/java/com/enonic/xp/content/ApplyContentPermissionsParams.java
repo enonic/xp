@@ -47,12 +47,6 @@ public final class ApplyContentPermissionsParams
         return contentId;
     }
 
-    @Deprecated
-    public boolean isOverwriteChildPermissions()
-    {
-        return false;
-    }
-
     public ApplyPermissionsScope getScope()
     {
         return applyPermissionsScope;
@@ -78,12 +72,6 @@ public final class ApplyContentPermissionsParams
         return listener;
     }
 
-    @Deprecated
-    public boolean isInheritPermissions()
-    {
-        return false;
-    }
-
     public static final class Builder
     {
         private ContentId contentId;
@@ -105,12 +93,6 @@ public final class ApplyContentPermissionsParams
         public Builder contentId( final ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        @Deprecated
-        public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
-        {
             return this;
         }
 
@@ -150,12 +132,6 @@ public final class ApplyContentPermissionsParams
             {
                 this.removePermissions.addAll( permissions );
             }
-            return this;
-        }
-
-        @Deprecated
-        public Builder inheritPermissions( final boolean inheritPermissions )
-        {
             return this;
         }
 

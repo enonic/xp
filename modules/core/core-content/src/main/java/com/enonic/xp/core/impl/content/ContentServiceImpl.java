@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -18,18 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ActiveContentVersionEntry;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
-import com.enonic.xp.content.CompareContentParams;
-import com.enonic.xp.content.CompareContentResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
@@ -47,7 +40,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidityParams;
 import com.enonic.xp.content.ContentValidityResult;
-import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
@@ -58,15 +50,12 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentByQueryParams;
-import com.enonic.xp.content.FindContentByQueryResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryParams;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
-import com.enonic.xp.content.GetActiveContentVersionParams;
 import com.enonic.xp.content.GetActiveContentVersionsParams;
 import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
@@ -87,9 +76,7 @@ import com.enonic.xp.content.ReorderChildContentsResult;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
-import com.enonic.xp.content.SetActiveContentVersionResult;
 import com.enonic.xp.content.SetContentChildOrderParams;
-import com.enonic.xp.content.UndoPendingDeleteContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -380,16 +367,10 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated( since = "8" )
     public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
     {
         return delete( params );
-    }
-
-    @Override
-    @Deprecated
-    public int undoPendingDelete( final UndoPendingDeleteContentParams params )
-    {
-        return 0;
     }
 
     @Override
@@ -443,20 +424,6 @@ public class ContentServiceImpl
             contentIds( params.getContentIds() ).
             build().
             execute();
-    }
-
-    @Override
-    @Deprecated
-    public boolean isValidContent( ContentIds contentIds )
-    {
-        return getInvalidContent( contentIds ).isEmpty();
-    }
-
-    @Override
-    @Deprecated
-    public ContentIds getInvalidContent( ContentIds contentIds )
-    {
-        return getContentValidity( ContentValidityParams.create().contentIds( contentIds ).build() ).getNotValidContentIds();
     }
 
     @Override
@@ -623,18 +590,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    @Deprecated
-    public AccessControlList getPermissionsById( ContentId contentId )
-    {
-        Content content = doGetById( contentId );
-        if ( content.getPermissions() != null )
-        {
-            return content.getPermissions();
-        }
-        return AccessControlList.empty();
-    }
-
-    @Override
     public Contents getByPaths( final ContentPaths paths )
     {
         final GetContentByPathsCommand command = GetContentByPathsCommand.create( paths )
@@ -778,20 +733,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    @Deprecated
-    public FindContentByQueryResult find( final FindContentByQueryParams params )
-    {
-        return FindContentByQueryCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
-    }
-
-    @Override
     public FindContentIdsByQueryResult find( final ContentQuery query )
     {
         final FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create()
@@ -811,28 +752,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Contents findByApplicationKey( final ApplicationKey key )
-    {
-        return Contents.empty();
-    }
-
-    @Override
-    @Deprecated
-    public ContentPaths findContentPaths( ContentQuery query )
-    {
-        return FindContentPathsByQueryCommand.create().
-            params( new FindContentPathsByQueryParams( query ) ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute().
-            getContentPaths();
-    }
-
-    @Override
     public FindContentPathsByQueryResult findPaths( ContentQuery query )
     {
         return FindContentPathsByQueryCommand.create().
@@ -843,20 +762,6 @@ public class ContentServiceImpl
             eventPublisher( this.eventPublisher ).
             build().
             execute();
-    }
-
-    @Override
-    @Deprecated
-    public CompareContentResult compare( final CompareContentParams params )
-    {
-        return CompareContentsCommand.create()
-            .nodeService( this.nodeService )
-            .contentIds( ContentIds.from( params.getContentId() ) )
-            .target( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_MASTER ) )
-            .build()
-            .execute()
-            .iterator()
-            .next();
     }
 
     @Override
@@ -933,25 +838,6 @@ public class ContentServiceImpl
             branches( params.getBranches() ).
             build().
             execute();
-    }
-
-    @Override
-    public ContentVersion getActiveVersion( final GetActiveContentVersionParams params )
-    {
-        final GetActiveContentVersionsParams versionsParams = GetActiveContentVersionsParams.create()
-            .branches( Branches.from( Objects.requireNonNullElseGet( params.getBranch(), ContextAccessor.current()::getBranch ) ) )
-            .contentId( params.getContentId() )
-            .build();
-        final List<ActiveContentVersionEntry> contentVersions = getActiveVersions( versionsParams ).getActiveContentVersions();
-
-        return contentVersions.isEmpty() ? null : contentVersions.get( 0 ).getContentVersion();
-    }
-
-    @Override
-    @Deprecated
-    public SetActiveContentVersionResult setActiveContentVersion( final ContentId contentId, final ContentVersionId versionId )
-    {
-        throw new UnsupportedOperationException( "setActiveContentVersion is no longer supported" );
     }
 
     @Override
@@ -1143,12 +1029,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content reprocess( final ContentId contentId )
-    {
-        throw new UnsupportedOperationException( "reprocess is no longer supported" );
-    }
-
-    @Override
     public Content getByIdAndVersionId( final ContentId contentId, final ContentVersionId versionId )
     {
         final GetContentByIdAndVersionIdCommand command = GetContentByIdAndVersionIdCommand.create()
@@ -1167,25 +1047,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Content getByPathAndVersionId( final ContentPath contentPath, final ContentVersionId versionId )
-    {
-        final GetContentByPathAndVersionIdCommand command = GetContentByPathAndVersionIdCommand.create()
-            .contentPath( contentPath )
-            .versionId( versionId )
-            .nodeService( this.nodeService )
-            .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
-            .build();
-
-        return Tracer.trace( "content.getByPathAndVersionId", trace -> {
-            trace.put( "path", contentPath );
-            trace.put( "versionId", versionId );
-        }, command::execute, ( trace, content ) -> trace.put( "contentId", content.getId() ) );
-    }
-
-    @Override
     public ImportContentResult importContent( final ImportContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
@@ -1198,20 +1059,6 @@ public class ContentServiceImpl
             translator( translator ).
             build().
             execute();
-    }
-
-    @Override
-    @Deprecated
-    public InputStream getBinaryInputStream( final ContentId contentId, final BinaryReference binaryReference )
-    {
-        try
-        {
-            return nodeService.getBinary( NodeId.from( contentId ), binaryReference ).openStream();
-        }
-        catch ( IOException e )
-        {
-            return null;
-        }
     }
 
     private ContentDataSerializer getContentDataSerializer()

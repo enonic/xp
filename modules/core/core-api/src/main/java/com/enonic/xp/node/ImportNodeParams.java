@@ -44,7 +44,7 @@ public class ImportNodeParams
         return binaryAttachments;
     }
 
-    @Deprecated
+    @Deprecated( since = "8" )
     public boolean isDryRun()
     {
         return false;
@@ -101,7 +101,7 @@ public class ImportNodeParams
             return this;
         }
 
-        @Deprecated
+        @Deprecated( since = "8" )
         public Builder dryRun( boolean dryRun )
         {
             throw new UnsupportedOperationException( "dryRun is not supported" );

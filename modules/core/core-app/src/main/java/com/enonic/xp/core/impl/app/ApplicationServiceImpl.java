@@ -106,12 +106,6 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public ApplicationKeys getInstalledApplicationKeys()
-    {
-        return getInstalledApplications().getApplicationKeys();
-    }
-
-    @Override
     public Applications getInstalledApplications()
     {
         return Applications.from( this.registry.getAll() );
@@ -192,24 +186,9 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Application installStoredApplication( final NodeId nodeId )
-    {
-        final ApplicationInstallationParams params = ApplicationInstallationParams.create().triggerEvent( false ).build();
-        return installStoredApplication( nodeId, params );
-    }
-
-    @Override
     public Application installStoredApplication( final NodeId nodeId, final ApplicationInstallationParams params )
     {
         return ApplicationHelper.callWithContext( () -> doInstallStoredApplication( nodeId, params ) );
-    }
-
-    @Override
-    @Deprecated
-    public void installAllStoredApplications()
-    {
-        installAllStoredApplications( ApplicationInstallationParams.create().triggerEvent( false ).build() );
     }
 
     @Override
@@ -228,25 +207,6 @@ public final class ApplicationServiceImpl
         } );
     }
 
-    @Override
-    public void publishUninstalledEvent( final ApplicationKey applicationKey )
-    {
-        final Node node = this.repoService.getApplicationNode( applicationKey );
-        if ( node != null )
-        {
-            doPublishUninstalledEvent( applicationKey );
-        }
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key )
-    {
-    }
-
-    @Override
-    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
-    {
-    }
 
     @Override
     public Application createVirtualApplication( final CreateVirtualApplicationParams params )

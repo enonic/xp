@@ -15,9 +15,6 @@ public interface ApplicationService
 
     Application get( ApplicationKey key );
 
-    @Deprecated
-    ApplicationKeys getInstalledApplicationKeys();
-
     Applications getInstalledApplications();
 
     Applications list();
@@ -36,24 +33,9 @@ public interface ApplicationService
 
     Application installLocalApplication( ByteSource byteSource, String applicationName );
 
-    @Deprecated
-    Application installStoredApplication( NodeId nodeId );
-
     Application installStoredApplication( NodeId nodeId, ApplicationInstallationParams params );
 
     void uninstallApplication( ApplicationKey key, boolean triggerEvent );
-
-    @Deprecated
-    void publishUninstalledEvent( ApplicationKey key );
-
-    @Deprecated
-    void invalidate( ApplicationKey key );
-
-    @Deprecated
-    void invalidate( ApplicationKey key, ApplicationInvalidationLevel level );
-
-    @Deprecated
-    void installAllStoredApplications();
 
     void installAllStoredApplications( ApplicationInstallationParams params );
 

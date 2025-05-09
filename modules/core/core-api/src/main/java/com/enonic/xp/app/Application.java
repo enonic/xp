@@ -43,12 +43,6 @@ public interface Application
 
     boolean isStarted();
 
-    @Deprecated
-    Set<String> getFiles();
-
-    @Deprecated
-    URL resolveFile( String path );
-
     Configuration getConfig();
 
     boolean isSystem();

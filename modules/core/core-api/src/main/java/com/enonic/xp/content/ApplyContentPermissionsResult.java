@@ -15,7 +15,6 @@ public final class ApplyContentPermissionsResult
 {
     private final Map<ContentId, List<BranchResult>> results;
 
-
     private ApplyContentPermissionsResult( Builder builder )
     {
         this.results = (ImmutableMap) builder.results.build().asMap();
@@ -24,23 +23,6 @@ public final class ApplyContentPermissionsResult
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Deprecated
-    public ContentPaths getSucceedContents()
-    {
-        return results.values()
-            .stream()
-            .filter( l -> l.get( 0 ).content != null )
-            .map( l -> l.get( 0 ).content.getPath() )
-            .collect( ContentPaths.collecting() );
-
-    }
-
-    @Deprecated
-    public ContentPaths getSkippedContents()
-    {
-        return ContentPaths.empty();
     }
 
     public Map<ContentId, List<BranchResult>> getResults()
@@ -90,18 +72,6 @@ public final class ApplyContentPermissionsResult
 
         private Builder()
         {
-        }
-
-        @Deprecated
-        public Builder setSucceedContents( final ContentPaths succeedContents )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder setSkippedContents( final ContentPaths skippedContents )
-        {
-            return this;
         }
 
         public Builder addResult( ContentId contentId, Branch branch, Content content )

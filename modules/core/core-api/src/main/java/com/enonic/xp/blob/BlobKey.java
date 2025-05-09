@@ -41,12 +41,6 @@ public final class BlobKey
         return new BlobKey( key );
     }
 
-    @Deprecated
-    public static BlobKey from( final HashCode key )
-    {
-        return from( HexEncoder.toHex( key.asBytes() ) );
-    }
-
     public static BlobKey from( final ByteSource in )
     {
         try

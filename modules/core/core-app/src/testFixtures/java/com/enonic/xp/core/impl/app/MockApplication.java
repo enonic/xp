@@ -130,19 +130,6 @@ public class MockApplication
         this.started = started;
     }
 
-    @Override
-    public Set<String> getFiles()
-    {
-        return this.urlResolver.findFiles();
-    }
-
-    @Override
-    public URL resolveFile( final String path )
-    {
-        final Resource resource = this.urlResolver.findResource( path );
-        return resource != null ? resource.getUrl() : null;
-    }
-
     public void setResourcePath( final Path resourcePath )
     {
         final URL url;

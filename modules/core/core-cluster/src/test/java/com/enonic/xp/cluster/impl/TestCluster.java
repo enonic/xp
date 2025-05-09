@@ -21,12 +21,6 @@ public class TestCluster
         nodes = builder.nodes;
     }
 
-    @Override
-    public boolean isEnabled()
-    {
-        return true;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -60,15 +54,6 @@ public class TestCluster
         return this.nodes;
     }
 
-    @Override
-    public void enable()
-    {
-    }
-
-    @Override
-    public void disable()
-    {
-    }
 
     public static final class Builder
     {

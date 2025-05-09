@@ -27,32 +27,9 @@ public final class DeleteContentParams
         return contentPath;
     }
 
-    @Deprecated
-    public boolean isDeleteOnline()
-    {
-        return true;
-    }
-
     public DeleteContentListener getDeleteContentListener()
     {
         return deleteContentListener;
-    }
-
-    @Deprecated
-    public void validate()
-    {
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
     }
 
     public static final class Builder
@@ -68,12 +45,6 @@ public final class DeleteContentParams
         public Builder contentPath( ContentPath contentPath )
         {
             this.contentPath = contentPath;
-            return this;
-        }
-
-        @Deprecated
-        public Builder deleteOnline( boolean deleteOnline )
-        {
             return this;
         }
 

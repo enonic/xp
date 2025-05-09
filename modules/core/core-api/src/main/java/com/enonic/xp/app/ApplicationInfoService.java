@@ -30,9 +30,6 @@ public interface ApplicationInfoService
 
     Descriptors<TaskDescriptor> getTaskDescriptors( ApplicationKey applicationKey );
 
-    @Deprecated
-    Contents getContentReferences( ApplicationKey applicationKey );
-
     IdProviders getIdProviderReferences( ApplicationKey applicationKey );
 
     IdProviderDescriptor getIdProviderDescriptor( ApplicationKey applicationKey );

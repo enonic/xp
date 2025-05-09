@@ -20,12 +20,6 @@ public class DeleteContentsResult
         return new Builder();
     }
 
-    @Deprecated
-    public ContentIds getPendingContents()
-    {
-        return ContentIds.empty();
-    }
-
     public ContentIds getDeletedContents()
     {
         return deletedContents;
@@ -44,18 +38,6 @@ public class DeleteContentsResult
 
         private Builder()
         {
-        }
-
-        @Deprecated
-        public Builder addPending( final ContentId pendingContent )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder addPending( final ContentIds pendingContents )
-        {
-            return this;
         }
 
         public Builder addDeleted( final ContentId deletedContent )

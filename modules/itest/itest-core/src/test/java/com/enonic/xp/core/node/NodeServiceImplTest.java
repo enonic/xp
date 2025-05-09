@@ -131,35 +131,6 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void createRootNode()
-    {
-        final User user = User.create()
-            .key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
-            .displayName( "User 1" )
-            .modifiedTime( Instant.now() )
-            .email( "user1@enonic.com" )
-            .login( "user1" )
-            .build();
-
-        this.nodeService.createRootNode( CreateRootNodeParams.create()
-                                             .childOrder( ChildOrder.from( "_name ASC" ) )
-                                             .permissions( AccessControlList.of(
-                                                 AccessControlEntry.create().allowAll().principal( user.getKey() ).build() ) )
-                                             .build() );
-
-        printContentRepoIndex();
-
-        final Context context = ContextBuilder.create()
-            .authInfo( AuthenticationInfo.create().user( user ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
-            .branch( WS_DEFAULT )
-            .repositoryId( testRepoId )
-            .build();
-
-        context.runWith( () -> assertNotNull( this.nodeService.getByPath( NodePath.ROOT ) ) );
-        context.runWith( () -> assertNotNull( this.nodeService.getRoot() ) );
-    }
-
-    @Test
     public void rename()
         throws Exception
     {
@@ -434,16 +405,6 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void testGetByPathAndVersionId()
-    {
-        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
-
-        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId() );
-
-        assertEquals( createdNode, fetchedNode );
-    }
-
-    @Test
     public void testReorderChildren()
     {
         final Node parent = createNode(
@@ -526,28 +487,6 @@ public class NodeServiceImplTest
 
         assertThrows( OperationNotPermittedException.class,
                       () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
-    }
-
-    @Test
-    void nodes_has_children()
-    {
-        final Node parentNode1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
-
-        final Node parentNode2 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-2" ).build() );
-
-        final Node parentNode3 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-3" ).build() );
-
-        createNode( CreateNodeParams.create().parent( parentNode1.path() ).name( "my-child-node-1" ).build() );
-
-        createNode( CreateNodeParams.create().parent( parentNode2.path() ).name( "my-child-node-2" ).build() );
-
-        nodeService.refresh( RefreshMode.ALL );
-
-        final NodesHasChildrenResult result = nodeService.hasChildren( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
-
-        assertTrue( result.hasChild( parentNode1.id() ) );
-        assertTrue( result.hasChild( parentNode2.id() ) );
-        assertFalse( result.hasChild( parentNode3.id() ) );
     }
 
     @Test

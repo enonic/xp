@@ -24,8 +24,6 @@ public interface SecurityService
 
     IdProvider updateIdProvider( UpdateIdProviderParams updateIdProviderParams );
 
-    Principals findPrincipals( IdProviderKey useStore, List<PrincipalType> types, String query );
-
     AuthenticationInfo authenticate( AuthenticationToken token );
 
     User setPassword( PrincipalKey key, String password );

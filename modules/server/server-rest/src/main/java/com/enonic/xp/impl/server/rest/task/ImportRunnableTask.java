@@ -130,12 +130,6 @@ public class ImportRunnableTask
             return this;
         }
 
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
         public Builder importWithIds( boolean importWithIds )
         {
             this.importWithIds = importWithIds;

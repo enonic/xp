@@ -27,12 +27,6 @@ public final class Contents
         return ContentIds.from( set.stream().map( Content::getId ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
-    @Deprecated
-    public Content getContentById( final ContentId contentId )
-    {
-        return this.set.stream().filter( c -> contentId.equals( c.getId() ) ).findAny().orElse( null );
-    }
-
     public static Contents empty()
     {
         return new Contents( ImmutableSet.of() );

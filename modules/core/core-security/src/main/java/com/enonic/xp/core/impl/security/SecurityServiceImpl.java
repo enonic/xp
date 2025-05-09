@@ -72,7 +72,6 @@ import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.PrincipalRelationship;
 import com.enonic.xp.security.PrincipalRelationships;
-import com.enonic.xp.security.PrincipalType;
 import com.enonic.xp.security.Principals;
 import com.enonic.xp.security.Role;
 import com.enonic.xp.security.RoleKeys;
@@ -303,20 +302,6 @@ public final class SecurityServiceImpl
         {
             return PrincipalKeys.empty();
         }
-    }
-
-    @Override
-    @Deprecated
-    public Principals findPrincipals( final IdProviderKey idProvider, final List<PrincipalType> types, final String query )
-    {
-        final PrincipalQuery.Builder principalQuery = PrincipalQuery.create().getAll().includeTypes( types ).searchText( query );
-        if ( idProvider != null )
-        {
-            principalQuery.idProvider( idProvider );
-        }
-
-        final PrincipalQueryResult result = query( principalQuery.build() );
-        return result.getPrincipals();
     }
 
     @Override

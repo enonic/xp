@@ -165,16 +165,7 @@ public class ApplicationInfoServiceImplTest
 
         assertEquals( relationshipTypes.getSize(), 2 );
     }
-
-    @Test
-    public void testReferences()
-    {
-        mockReferences( this.applicationKey );
-        final Contents contentReferences = this.service.getContentReferences( this.applicationKey );
-
-        assertEquals( contentReferences.getSize(), 0 );
-    }
-
+    
     @Test
     public void testTasks()
     {
@@ -344,35 +335,6 @@ public class ApplicationInfoServiceImplTest
             macroDescriptors );
     }
 
-    private void mockReferences( final ApplicationKey applicationKey )
-    {
-        final Content content1 = Content.create().
-            id( ContentId.from( "id1" ) ).
-            name( "name1" ).
-            displayName( "My Content 1" ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        final Content content2 = Content.create().
-            id( ContentId.from( "id2" ) ).
-            name( "name2" ).
-            displayName( "My Content 2" ).
-            parentPath( ContentPath.from( "/a/c" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        final Contents contents = Contents.from( content1, content2 );
-
-        Mockito.when( this.contentService.findByApplicationKey( applicationKey ) ).thenReturn( contents );
-    }
-
     private void mockTasks( final ApplicationKey applicationKey )
     {
         final TaskDescriptor taskDescriptor1 = TaskDescriptor.create().
@@ -433,7 +395,6 @@ public class ApplicationInfoServiceImplTest
         mockLayoutDescriptors( applicationKey );
         mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
-        mockReferences( applicationKey );
         mockTasks( applicationKey );
         mockIdProviderApplication( applicationKey );
     }

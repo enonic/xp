@@ -64,12 +64,6 @@ public class ApplicationInstallationParams
             return this;
         }
 
-        @Deprecated
-        public Builder triggerEvent( final boolean triggerEvent )
-        {
-            return this;
-        }
-
         public ApplicationInstallationParams build()
         {
             return new ApplicationInstallationParams( this );

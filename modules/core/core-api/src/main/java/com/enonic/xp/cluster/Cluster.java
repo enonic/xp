@@ -7,13 +7,4 @@ public interface Cluster
     ClusterHealth getHealth();
 
     ClusterNodes getNodes();
-
-    @Deprecated
-    void enable();
-
-    @Deprecated
-    void disable();
-
-    @Deprecated
-    boolean isEnabled();
 }

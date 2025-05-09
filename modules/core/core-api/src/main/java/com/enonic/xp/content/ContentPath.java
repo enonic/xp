@@ -67,23 +67,6 @@ public final class ContentPath
         return absolute;
     }
 
-    @Deprecated
-    public boolean isRelative()
-    {
-        return !absolute;
-    }
-
-    @Deprecated
-    public ContentPath asRelative()
-    {
-        if ( !absolute )
-        {
-            return this;
-        }
-
-        return new ContentPath.Builder( this ).absolute( false ).build();
-    }
-
     public ContentPath asAbsolute()
     {
         if ( absolute )
@@ -141,12 +124,6 @@ public final class ContentPath
     public int hashCode()
     {
         return Objects.hash( absolute, elements );
-    }
-
-    @Deprecated
-    public int compareTo( ContentPath contentPath )
-    {
-        return this.toString().compareTo( contentPath.toString() );
     }
 
     @Override

@@ -101,13 +101,6 @@ public final class ApplicationInfoServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Contents getContentReferences( final ApplicationKey applicationKey )
-    {
-        return Contents.empty();
-    }
-
-    @Override
     public IdProviders getIdProviderReferences( final ApplicationKey applicationKey )
     {
         return IdProviders.from( securityService.getIdProviders().

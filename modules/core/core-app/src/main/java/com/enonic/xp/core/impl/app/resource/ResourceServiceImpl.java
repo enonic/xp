@@ -100,13 +100,6 @@ public final class ResourceServiceImpl
     }
 
     @Override
-    @Deprecated
-    public void invalidate( final ApplicationKey key )
-    {
-        invalidate( key, ApplicationInvalidationLevel.FULL );
-    }
-
-    @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         LOG.debug( "Cleanup Resource cache for {}", key );

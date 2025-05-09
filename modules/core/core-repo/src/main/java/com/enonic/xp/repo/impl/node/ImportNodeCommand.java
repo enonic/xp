@@ -229,12 +229,6 @@ public class ImportNodeCommand
             return this;
         }
 
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
         public Builder importPermissions( boolean importPermissions )
         {
             this.importPermissions = importPermissions;

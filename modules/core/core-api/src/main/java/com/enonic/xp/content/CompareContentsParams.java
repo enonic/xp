@@ -18,13 +18,6 @@ public final class CompareContentsParams
         this.target = null;
     }
 
-    @Deprecated
-    public CompareContentsParams( final ContentIds contentIds, final Branch target )
-    {
-        this.contentIds = contentIds;
-        this.target = target;
-    }
-
     public ContentIds getContentIds()
     {
         return contentIds;

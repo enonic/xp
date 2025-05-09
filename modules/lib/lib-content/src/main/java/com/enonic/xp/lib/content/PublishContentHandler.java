@@ -120,16 +120,6 @@ public final class PublishContentHandler
         this.keys = keys;
     }
 
-    @Deprecated
-    public void setTargetBranch( final String targetBranch )
-    {
-    }
-
-    @Deprecated
-    public void setSourceBranch( final String sourceBranch )
-    {
-    }
-
     public void setExcludeChildrenIds( final String[] excludeChildrenIds )
     {
         this.excludeChildrenIds = excludeChildrenIds;

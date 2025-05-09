@@ -25,7 +25,6 @@ import com.enonic.xp.impl.task.script.NamedTask;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -61,13 +60,6 @@ public final class TaskServiceImpl
     public void activate( final TaskConfig config )
     {
         acceptOffloaded = config.distributable_acceptInbound();
-    }
-
-    @Override
-    @Deprecated
-    public TaskId submitTask( final RunnableTask runnable, final String description )
-    {
-        return submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnable ).description( description ).build() );
     }
 
     @Override

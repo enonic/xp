@@ -426,12 +426,6 @@ public final class NodeImporter
             return this;
         }
 
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
         public Builder importNodeIds( final boolean importNodeIds )
         {
             this.importNodeIds = importNodeIds;

@@ -63,12 +63,6 @@ public class AttachedBinaries
             return this;
         }
 
-        @Deprecated
-        public Set<AttachedBinary> getNodeAttachedBinaries()
-        {
-            return nodeAttachedBinaries.build();
-        }
-
         public AttachedBinaries build()
         {
             return fromInternal( nodeAttachedBinaries.build() );

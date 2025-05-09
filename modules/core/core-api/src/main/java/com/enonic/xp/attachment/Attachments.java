@@ -99,13 +99,6 @@ public final class Attachments
             return this;
         }
 
-        @Deprecated
-        public Builder addAll( Attachments attachments )
-        {
-            builder.addAll( attachments );
-            return this;
-        }
-
         public Attachments build()
         {
             return fromInternal( builder.build() );

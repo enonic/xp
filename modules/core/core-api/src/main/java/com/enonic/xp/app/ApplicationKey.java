@@ -68,7 +68,7 @@ public final class ApplicationKey
         return ApplicationKey.from( bundle.getSymbolicName() );
     }
 
-    @Deprecated
+    @Deprecated( since = "8")
     public static ApplicationKey from( final Class<?> clzz )
     {
         return from( FrameworkUtil.getBundle( clzz ) );
