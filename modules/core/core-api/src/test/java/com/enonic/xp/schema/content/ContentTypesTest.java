@@ -11,7 +11,6 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentTypesTest
@@ -26,34 +25,6 @@ public class ContentTypesTest
             multiple( true ).
             build() ).
         build();
-
-    @Test
-    public void add_array()
-    {
-        ContentTypes contentTypes = ContentTypes.empty();
-
-        ContentTypes newContentTypes =
-            contentTypes.add( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
-                              ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
-
-        assertEquals( 0, contentTypes.getSize() );
-        assertEquals( 2, newContentTypes.getSize() );
-    }
-
-    @Test
-    public void add_iterable()
-    {
-        ContentTypes contentTypes = ContentTypes.empty();
-
-        List<ContentType> contentTypeList =
-            List.of( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),
-                     ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test2" ).build() );
-
-        ContentTypes newContentTypes = contentTypes.add( contentTypeList );
-
-        assertEquals( 0, contentTypes.getSize() );
-        assertEquals( 2, newContentTypes.getSize() );
-    }
 
     @Test
     public void contentTypes()
@@ -75,10 +46,8 @@ public class ContentTypesTest
                 creator( PrincipalKey.ofAnonymous() ).
                 modifier( PrincipalKey.ofAnonymous() );
         ContentType contentType = builder.build();
-        ContentTypes contentTypes = ContentTypes.create().add( contentType ).build();
         assertTrue( ContentTypes.empty().isEmpty() );
         assertEquals( 1, ContentTypes.from( contentType ).getSize() );
-        assertNotNull( contentTypes.getContentType( contentType.getName() ) );
     }
 
     @Test

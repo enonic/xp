@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 import jakarta.mail.Message;
-import jakarta.mail.internet.MimeMessage;
 
 import com.enonic.xp.mail.MailException;
-import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.SendMailParams;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -46,7 +44,7 @@ public class MailServiceImplTest
     public void sendTest()
         throws Exception
     {
-        this.mailService.send( this::createMockMessage );
+        this.mailService.send( createMockMessage() );
 
         List<Message> inbox = Mailbox.get( "testuser@mockserver.com" );
         assertEquals( 1, inbox.size() );
@@ -59,8 +57,7 @@ public class MailServiceImplTest
 
         MailServiceImpl mailService = new MailServiceImpl();
 
-        MailMessage mockMessage = this::createMockMessage;
-        assertThrows( MailException.class, () -> mailService.send( mockMessage ) );
+        assertThrows( MailException.class, () -> mailService.send( createMockMessage() ) );
     }
 
     @Test
@@ -76,11 +73,8 @@ public class MailServiceImplTest
         assertEquals( "noreply@domain.com", this.mailService.getDefaultFromEmail() );
     }
 
-    private void createMockMessage( MimeMessage msg )
-        throws Exception
+    private SendMailParams createMockMessage()
     {
-        msg.setRecipients( Message.RecipientType.TO, "testuser@mockserver.com" );
-        msg.setSubject( "Some Subject" );
-        msg.setText( "sometext" );
+        return SendMailParams.create().to( "testuser@mockserver.com" ).subject( "Some Subject" ).body( "sometext" ).build();
     }
 }

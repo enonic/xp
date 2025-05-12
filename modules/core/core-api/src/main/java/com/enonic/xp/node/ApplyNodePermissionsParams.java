@@ -67,12 +67,6 @@ public final class ApplyNodePermissionsParams
         return removePermissions;
     }
 
-    @Deprecated
-    public boolean isOverwriteChildPermissions()
-    {
-        return false;
-    }
-
     public ApplyPermissionsScope getScope()
     {
         return scope;
@@ -138,12 +132,6 @@ public final class ApplyNodePermissionsParams
             {
                 this.removePermissions.addAll( permissions.getEntries() );
             }
-            return this;
-        }
-
-        @Deprecated
-        public Builder overwriteChildPermissions( final boolean overwriteChildPermissions )
-        {
             return this;
         }
 

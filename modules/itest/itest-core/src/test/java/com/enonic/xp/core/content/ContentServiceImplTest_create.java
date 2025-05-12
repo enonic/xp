@@ -21,7 +21,6 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.CreateSiteParams;
@@ -128,7 +127,6 @@ public class ContentServiceImplTest_create
         final Content root = this.contentService.getByPath( ContentPath.ROOT );
         contentService.update( new UpdateContentParams().
             contentId( root.getId() ).
-            modifier( ContextAccessor.current().getAuthInfo().getUser().getKey() ).
             editor( edit -> edit.language = Locale.ENGLISH ) );
 
         final CreateContentParams createContentParams = CreateContentParams.create().

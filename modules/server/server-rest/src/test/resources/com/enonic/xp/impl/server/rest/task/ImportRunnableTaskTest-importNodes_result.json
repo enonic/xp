@@ -2,7 +2,6 @@
   "addedNodes": [
     "/node/path"
   ],
-  "dryRun": false,
   "importErrors": [],
   "importedBinaries": [
     "/binary [binaryRef]"

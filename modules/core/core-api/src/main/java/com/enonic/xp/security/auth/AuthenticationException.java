@@ -16,16 +16,4 @@ public class AuthenticationException
     {
         super( t, message );
     }
-
-    @Deprecated
-    public AuthenticationException( final String message, final Object... args )
-    {
-        super( message, args );
-    }
-
-    @Deprecated
-    public AuthenticationException( final Throwable cause, final String message, final Object... args )
-    {
-        super( cause, message, args );
-    }
 }

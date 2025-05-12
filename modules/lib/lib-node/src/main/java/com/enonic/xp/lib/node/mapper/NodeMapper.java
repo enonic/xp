@@ -37,7 +37,6 @@ public class NodeMapper
         gen.value( NodePropertyConstants.CHILD_ORDER, node.getChildOrder().toString() );
         serializeIndexConfigDocument( gen, node.getIndexConfigDocument() );
         serializePermissions( gen, node );
-        gen.value( NodePropertyConstants.NODE_STATE, node.getNodeState().toString() );
         gen.value( NodePropertyConstants.NODE_TYPE, node.getNodeType().getName() );
         gen.value( NodePropertyConstants.NODE_VERSION_ID, node.getNodeVersionId() );
         gen.value( NodePropertyConstants.MANUAL_ORDER_VALUE, node.getManualOrderValue() );

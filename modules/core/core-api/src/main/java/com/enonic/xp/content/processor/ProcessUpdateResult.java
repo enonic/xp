@@ -10,12 +10,6 @@ public final class ProcessUpdateResult
 
     final CreateAttachments createAttachments;
 
-    @Deprecated
-    public ProcessUpdateResult( final CreateAttachments createAttachments, final ContentEditor editor )
-    {
-        this( editor );
-    }
-
     public ProcessUpdateResult( final ContentEditor editor )
     {
         this.editor = editor;
@@ -27,9 +21,4 @@ public final class ProcessUpdateResult
         return editor;
     }
 
-    @Deprecated
-    public CreateAttachments getCreateAttachments()
-    {
-        return createAttachments;
-    }
 }

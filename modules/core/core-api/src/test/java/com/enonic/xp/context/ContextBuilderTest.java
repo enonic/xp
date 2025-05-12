@@ -86,33 +86,6 @@ class ContextBuilderTest
     }
 
     @Test
-    void detachSession()
-    {
-        final Context oldCtx = ContextBuilder.create().
-            attribute( "key1", "value1" ).
-            build();
-
-        oldCtx.getLocalScope().setAttribute( Branch.from( "draft" ) );
-        oldCtx.getLocalScope().setAttribute( RepositoryId.from( "repository" ) );
-        oldCtx.getLocalScope().setSession( new SessionMock() );
-        oldCtx.getLocalScope().getSession().setAttribute( "sessionKey", "sessionValue" );
-
-        assertNotNull( oldCtx.getLocalScope().getSession() );
-        assertEquals( "repository", oldCtx.getRepositoryId().toString() );
-        assertEquals( "draft", oldCtx.getBranch().toString() );
-        assertEquals( "sessionValue", oldCtx.getAttribute( "sessionKey" ) );
-
-        final Context newContext = ContextBuilder.from( oldCtx ).
-            detachSession().
-            build();
-
-        assertNull( newContext.getLocalScope().getSession() );
-        assertEquals( "repository", newContext.getRepositoryId().toString() );
-        assertEquals( "draft", newContext.getBranch().toString() );
-        assertEquals( "sessionValue", newContext.getAttribute( "sessionKey" ) );
-    }
-
-    @Test
     void copyOf()
     {
         final Context oldCtx = ContextBuilder.create().attribute( "key1", "value1" ).build();

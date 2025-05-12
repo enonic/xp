@@ -74,12 +74,6 @@ public class ImportContentParams
         return originProject;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public boolean isImportPermissions()
     {
         return importPermissions;
@@ -147,12 +141,6 @@ public class ImportContentParams
         {
             this.originProject = originProject;
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importPermissions( boolean importPermissions )

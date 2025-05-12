@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ public class ApplicationAuditLogSupportImplTest
         verify( auditLogService ).log( argumentCaptor.capture() );
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.application.start", value.getType() );
-        assertEquals( "com.enonic.app.testApp", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "com.enonic.app.testApp", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ApplicationAuditLogSupportImplTest
         verify( auditLogService ).log( argumentCaptor.capture() );
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.application.stop", value.getType() );
-        assertEquals( "com.enonic.app.testApp", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "com.enonic.app.testApp", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test
@@ -70,7 +71,7 @@ public class ApplicationAuditLogSupportImplTest
         verify( auditLogService ).log( argumentCaptor.capture() );
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.application.install", value.getType() );
-        assertEquals( "com.enonic.app.testApp", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "com.enonic.app.testApp", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
         assertEquals( "https://repo.enonic.com/snapshot/com/enonic/app/testApp/2.5.1-SNAPSHOT/testApp-2.5.1-20220301.200937-4.jar",
                       value.getData().getSet( "params" ).getString( "url" ) );
     }
@@ -85,7 +86,7 @@ public class ApplicationAuditLogSupportImplTest
         verify( auditLogService ).log( argumentCaptor.capture() );
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.application.install", value.getType() );
-        assertEquals( "com.enonic.app.testApp", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "com.enonic.app.testApp", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test
@@ -98,6 +99,6 @@ public class ApplicationAuditLogSupportImplTest
         verify( auditLogService ).log( argumentCaptor.capture() );
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.application.uninstall", value.getType() );
-        assertEquals( "com.enonic.app.testApp", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "com.enonic.app.testApp", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 }

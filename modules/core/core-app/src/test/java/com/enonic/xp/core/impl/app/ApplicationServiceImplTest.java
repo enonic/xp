@@ -22,7 +22,6 @@ import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
@@ -264,24 +263,6 @@ public class ApplicationServiceImplTest
         assertNotNull( result );
         assertEquals( 3, result.getSize() );
         assertEquals( "app3", result.get( 2 ).getKey().toString() );
-    }
-
-    @Test
-    public void get_application_keys()
-        throws Exception
-    {
-        final Bundle bundle1 = deployAppBundle( "app1" );
-        final Bundle bundle2 = deployAppBundle( "app2" );
-        deployAppBundle( "noapp" );
-
-        applicationRegistry.installApplication( bundle1 );
-        applicationRegistry.installApplication( bundle2 );
-
-        final ApplicationKeys result = this.service.getInstalledApplicationKeys();
-        assertNotNull( result );
-        assertEquals( 2, result.getSize() );
-        assertTrue( result.contains( ApplicationKey.from( "app1" ) ) );
-        assertTrue( result.contains( ApplicationKey.from( "app2" ) ) );
     }
 
     @Test
@@ -609,7 +590,7 @@ public class ApplicationServiceImplTest
     public void install_stored_application_not_found()
         throws Exception
     {
-        assertThrows( ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ) ) );
+        assertThrows( ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ), ApplicationInstallationParams.create().build() ) );
     }
 
     @Test
@@ -626,7 +607,7 @@ public class ApplicationServiceImplTest
 
         when( this.repoService.getApplicationSource( node.id() ) ).thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id() );
+        final Application application = this.service.installStoredApplication( node.id(), ApplicationInstallationParams.create().build() );
 
         assertNotNull( application );
         assertEquals( bundleName, application.getKey().getName() );
@@ -653,7 +634,7 @@ public class ApplicationServiceImplTest
 
         when( this.repoService.getApplicationSource( node.id() ) ).thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id() );
+        final Application application = this.service.installStoredApplication( node.id(), ApplicationInstallationParams.create().build() );
         assertNull( application );
     }
 
@@ -686,7 +667,7 @@ public class ApplicationServiceImplTest
         when( this.repoService.getApplicationSource( node1.id() ) ).thenReturn( createBundleSource( bundleName1 ) );
         when( this.repoService.getApplicationSource( node2.id() ) ).thenReturn( createBundleSource( bundleName2 ) );
 
-        this.service.installAllStoredApplications( ApplicationInstallationParams.create().triggerEvent( false ).build() );
+        this.service.installAllStoredApplications( ApplicationInstallationParams.create().build() );
 
         assertFalse( this.service.isLocalApplication( applicationKey1 ) );
         assertNotNull( this.service.getInstalledApplication( applicationKey1 ) );
@@ -711,7 +692,7 @@ public class ApplicationServiceImplTest
 
         when( this.repoService.getApplicationSource( node.id() ) ).thenReturn( createBundleSource( bundleName ) );
 
-        final Application application = this.service.installStoredApplication( node.id() );
+        final Application application = this.service.installStoredApplication( node.id(), ApplicationInstallationParams.create().build() );
 
         this.service.uninstallApplication( application.getKey(), true );
 

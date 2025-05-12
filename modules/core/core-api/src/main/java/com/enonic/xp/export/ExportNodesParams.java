@@ -1,7 +1,5 @@
 package com.enonic.xp.export;
 
-import java.nio.file.Path;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -35,18 +33,6 @@ public class ExportNodesParams
         return new Builder();
     }
 
-    @Deprecated
-    public String getRootDirectory()
-    {
-        return null;
-    }
-
-    @Deprecated
-    public String getTargetDirectory()
-    {
-        return null;
-    }
-
     public String getExportName()
     {
         return exportName;
@@ -72,12 +58,6 @@ public class ExportNodesParams
         return nodeExportListener;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public static final class Builder
     {
         private String exportName;
@@ -94,19 +74,6 @@ public class ExportNodesParams
         {
         }
 
-        @Deprecated
-        public Builder rootDirectory( final String rootDirectory )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder targetDirectory( final String targetDirectory )
-        {
-            exportName = Path.of( targetDirectory ).getFileName().toString();
-            return this;
-        }
-
         public Builder exportName( final String exportName )
         {
             this.exportName = exportName;
@@ -117,12 +84,6 @@ public class ExportNodesParams
         {
             this.sourceNodePath = sourceNodePath;
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "Dry run is not supported" );
         }
 
         public Builder includeNodeIds( final boolean includeNodeIds )

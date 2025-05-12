@@ -25,27 +25,9 @@ public class PublishContentResult
         return pushedContents;
     }
 
-    @Deprecated
-    public ContentIds getDeletedContents()
-    {
-        return ContentIds.empty();
-    }
-
     public ContentIds getFailedContents()
     {
         return failedContents;
-    }
-
-    @Deprecated
-    public ContentIds getUnpublishedContents()
-    {
-        return ContentIds.empty();
-    }
-
-    @Deprecated
-    public ContentPath getDeletedPath()
-    {
-        return null;
     }
 
     public static final class Builder
@@ -67,24 +49,6 @@ public class PublishContentResult
         public Builder setFailed( final ContentIds failedContents )
         {
             this.failedContents = failedContents;
-            return this;
-        }
-
-        @Deprecated
-        public Builder setDeleted( final ContentIds deletedContents )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder setUnpublishedContents( final ContentIds unpublishedContents )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder setDeletedPath( final ContentPath deletedPath )
-        {
             return this;
         }
 

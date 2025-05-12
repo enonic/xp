@@ -44,12 +44,6 @@ public class ImportNodeParams
         return binaryAttachments;
     }
 
-    @Deprecated( since = "8" )
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public boolean isImportPermissions()
     {
         return importPermissions;
@@ -99,12 +93,6 @@ public class ImportNodeParams
         {
             this.insertManualStrategy = insertManualStrategy;
             return this;
-        }
-
-        @Deprecated( since = "8" )
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importPermissions( boolean importPermissions )

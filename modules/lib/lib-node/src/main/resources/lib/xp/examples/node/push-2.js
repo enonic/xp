@@ -30,7 +30,6 @@ var expected = {
             'reason': 'ACCESS_DENIED'
         }
     ],
-    'deleted': []
 };
 // END
 

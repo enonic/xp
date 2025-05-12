@@ -181,12 +181,6 @@ public final class SecurityServiceImpl
     }
 
     @Override
-    public IdProviderAccessControlList getDefaultIdProviderPermissions()
-    {
-        return SecurityInitializer.DEFAULT_ID_PROVIDER_ACL;
-    }
-
-    @Override
     public PrincipalRelationships getRelationships( final PrincipalKey from )
     {
         final Node node = callWithContext( () -> this.nodeService.getByPath( from.toPath() ) );
@@ -229,7 +223,6 @@ public final class SecurityServiceImpl
         } );
     }
 
-    @Override
     public void removeRelationships( final PrincipalKey from )
     {
         callWithContext( () -> {

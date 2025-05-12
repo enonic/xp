@@ -42,12 +42,6 @@ public abstract class Value
         this.object = value.getObject();
     }
 
-    @Deprecated
-    public boolean isSet()
-    {
-        return isPropertySet();
-    }
-
     public boolean isPropertySet()
     {
         return type.equals( ValueTypes.PROPERTY_SET );

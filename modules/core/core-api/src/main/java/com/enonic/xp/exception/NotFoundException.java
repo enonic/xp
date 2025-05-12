@@ -15,16 +15,4 @@ public abstract class NotFoundException
     {
         super( t, message );
     }
-
-    @Deprecated
-    public NotFoundException( final String message, final Object... args )
-    {
-        super( message, args );
-    }
-
-    @Deprecated
-    public NotFoundException( final Throwable cause, final String message, final Object... args )
-    {
-        super( cause, message, args );
-    }
 }

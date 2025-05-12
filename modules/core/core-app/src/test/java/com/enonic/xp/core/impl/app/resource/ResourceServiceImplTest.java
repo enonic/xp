@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -135,7 +136,7 @@ class ResourceServiceImplTest
         final String value2 = processResource( "segment1", "a.txt", "2" );
         assertEquals( value1, value2 );
 
-        this.resourceService.invalidate( ApplicationKey.from( "myapp" ) );
+        this.resourceService.invalidate( ApplicationKey.from( "myapp" ), ApplicationInvalidationLevel.FULL );
 
         final String value3 = processResource( "segment1", "a.txt", "3" );
         assertEquals( "myapp:/a.txt->3", value3 );

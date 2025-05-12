@@ -76,13 +76,6 @@ public final class UpdateMediaParams
         return this;
     }
 
-    @Deprecated
-    public UpdateMediaParams artist( final String artist )
-    {
-        this.artist = artist != null ? List.of( artist ) : List.of();
-        return this;
-    }
-
     public UpdateMediaParams artist( final List<String> artist )
     {
         this.artist = List.copyOf( artist );
@@ -98,13 +91,6 @@ public final class UpdateMediaParams
     public UpdateMediaParams altText( final String altText )
     {
         this.altText = altText;
-        return this;
-    }
-
-    @Deprecated
-    public UpdateMediaParams tags( final String tags )
-    {
-        this.tags = tags != null ? List.of( tags ) : List.of();
         return this;
     }
 
@@ -172,12 +158,6 @@ public final class UpdateMediaParams
         return artist;
     }
 
-    @Deprecated
-    public String getArtist()
-    {
-        return !artist.isEmpty() ? artist.get( 0 ) : null;
-    }
-
     public String getCopyright()
     {
         return copyright;
@@ -186,12 +166,6 @@ public final class UpdateMediaParams
     public List<String> getTagList()
     {
         return tags;
-    }
-
-    @Deprecated
-    public String getTags()
-    {
-        return !tags.isEmpty() ? tags.get( 0 ) : null;
     }
 
     public WorkflowInfo getWorkflowInfo()

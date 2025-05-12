@@ -48,27 +48,6 @@ public class PropertyTest
     }
 
     @Test
-    public void countAncestors()
-    {
-        PropertyTree tree = new PropertyTree();
-
-        PropertySet aSet = tree.newSet();
-        Property aProperty = tree.addSet( "a", aSet );
-
-        PropertySet bSet = tree.newSet();
-        Property bProperty = aSet.addSet( "b", bSet );
-
-        PropertySet cSet = tree.newSet();
-        Property cProperty = bSet.addSet( "c", cSet );
-        Property cSubProperty = cSet.addString( "myProp", "value" );
-
-        assertEquals( 0, aProperty.countAncestors() );
-        assertEquals( 1, bProperty.countAncestors() );
-        assertEquals( 2, cProperty.countAncestors() );
-        assertEquals( 3, cSubProperty.countAncestors() );
-    }
-
-    @Test
     public void property_copy()
     {
         PropertyTree sourceTree = new PropertyTree();

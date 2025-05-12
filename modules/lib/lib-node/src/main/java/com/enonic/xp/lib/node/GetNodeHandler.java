@@ -7,6 +7,7 @@ import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 
 public final class GetNodeHandler
@@ -46,7 +47,26 @@ public final class GetNodeHandler
         }
         else
         {
-            throw new UnsupportedOperationException("Key must be id: " + key);
+            if ( key.getVersionId() == null )
+            {
+                return getByPath( key.getAsPath() );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Key must be id: " + key );
+            }
+        }
+    }
+
+    private NodeMapper getByPath( final NodePath key )
+    {
+        try
+        {
+            return convert( this.nodeService.getByPath( key ) );
+        }
+        catch ( final NodeNotFoundException e )
+        {
+            return null;
         }
     }
 

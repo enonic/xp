@@ -20,7 +20,6 @@ import jakarta.mail.internet.MimeMessage;
 
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.mail.MailException;
-import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.mail.SendMailParams;
 
@@ -74,21 +73,6 @@ public final class MailServiceImpl
     public void deactivate()
     {
         simpleExecutor.shutdownAndAwaitTermination( Duration.ofSeconds( 5 ), neverCommenced -> LOG.warn( "Not all messages were sent" ) );
-    }
-
-    @Override
-    public void send( final MailMessage message )
-    {
-        try
-        {
-            final MimeMessage mimeMessage = newMessage();
-            message.compose( mimeMessage );
-            doSend( mimeMessage );
-        }
-        catch ( final Exception e )
-        {
-            throw handleException( e );
-        }
     }
 
     @Override

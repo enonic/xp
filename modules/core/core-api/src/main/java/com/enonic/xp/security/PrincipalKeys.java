@@ -1,8 +1,6 @@
 package com.enonic.xp.security;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
@@ -58,12 +56,6 @@ public final class PrincipalKeys
     private static ImmutableSet<PrincipalKey> parsePrincipalKeys( final String... principalKeys )
     {
         return Stream.of( principalKeys ).map( PrincipalKey::from ).collect( ImmutableSet.toImmutableSet() );
-    }
-
-    @Deprecated
-    public Set<String> asStrings()
-    {
-        return this.set.stream().map( PrincipalKey::toString ).collect( Collectors.toSet() );
     }
 
     public static class Builder

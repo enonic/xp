@@ -12,7 +12,6 @@ import com.google.common.io.CharStreams;
 
 import com.enonic.xp.mail.MailAttachment;
 import com.enonic.xp.mail.MailHeader;
-import com.enonic.xp.mail.MailMessage;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.resource.ResourceProblemException;
@@ -34,12 +33,6 @@ public class SendMailScriptTest
         super.initialize();
         addService( MailService.class, new MailService()
         {
-            @Override
-            public void send( final MailMessage message )
-            {
-                // do nothing
-            }
-
             @Override
             public void send( final SendMailParams message )
             {
@@ -121,12 +114,6 @@ public class SendMailScriptTest
         final MailService mailService = new MailService()
         {
             @Override
-            public void send( final MailMessage message )
-            {
-                throw new RuntimeException( "Error sending mail" );
-            }
-
-            @Override
             public void send( final SendMailParams message )
             {
                 throw new RuntimeException( "Error sending mail" );
@@ -167,12 +154,6 @@ public class SendMailScriptTest
         final MailService mailService = new MailService()
         {
             @Override
-            public void send( final MailMessage message )
-            {
-                throw new RuntimeException( "Error sending mail" );
-            }
-
-            @Override
             public void send( final SendMailParams message )
             {
                 throw new RuntimeException( "Error sending mail" );
@@ -205,12 +186,6 @@ public class SendMailScriptTest
     {
         addService( MailService.class, new MailService()
         {
-            @Override
-            public void send( final MailMessage message )
-            {
-                throw new RuntimeException( "Error sending mail" );
-            }
-
             @Override
             public void send( final SendMailParams message )
             {

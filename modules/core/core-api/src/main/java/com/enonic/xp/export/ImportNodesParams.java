@@ -51,12 +51,6 @@ public class ImportNodesParams
         return targetNodePath;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public VirtualFile getSource()
     {
         return source;
@@ -121,13 +115,7 @@ public class ImportNodesParams
             this.targetNodePath = targetNodePath;
             return this;
         }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
+        
         public Builder source( final VirtualFile source )
         {
             this.source = source;

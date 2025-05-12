@@ -56,12 +56,6 @@ public class NodeExportResultJson
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
     public List<String> getExportedNodes()
     {
         return exportedNodes;

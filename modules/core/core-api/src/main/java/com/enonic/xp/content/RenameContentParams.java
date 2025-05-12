@@ -48,11 +48,6 @@ public final class RenameContentParams
         return super.hashCode();
     }
 
-    @Deprecated
-    public void validate()
-    {
-    }
-
     public static Builder create()
     {
         return new Builder();

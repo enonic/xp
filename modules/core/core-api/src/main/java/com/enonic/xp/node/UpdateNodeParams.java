@@ -53,12 +53,6 @@ public class UpdateNodeParams
         return editor;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public RefreshMode getRefresh()
     {
         return refresh;
@@ -113,12 +107,6 @@ public class UpdateNodeParams
                 binaryAttachments.stream().forEach( this.binaryAttachments::add );
             }
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder refresh( final RefreshMode refresh )

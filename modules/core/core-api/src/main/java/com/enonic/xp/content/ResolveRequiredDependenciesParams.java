@@ -44,12 +44,6 @@ public final class ResolveRequiredDependenciesParams
             return this;
         }
 
-        @Deprecated
-        public Builder target( Branch target )
-        {
-            return this;
-        }
-
         public ResolveRequiredDependenciesParams build()
         {
             Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );

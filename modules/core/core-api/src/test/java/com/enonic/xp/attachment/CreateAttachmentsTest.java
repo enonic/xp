@@ -8,36 +8,10 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateAttachmentsTest
 {
-    @Test
-    public void getByName()
-    {
-        CreateAttachment a1 = CreateAttachment.create().
-            mimeType( "image/jpeg" ).
-            byteSource( ByteSource.empty() ).
-            label( "My Image 1" ).
-            name( "MyImage.jpg" ).
-            build();
-
-        CreateAttachment a2 = CreateAttachment.create().
-            mimeType( "image/gif" ).
-            byteSource( ByteSource.empty() ).
-            label( "My Image 2" ).
-            name( "MyImage.something.gif" ).
-            build();
-
-        CreateAttachments attachments = CreateAttachments.from( a1, a2 );
-
-        assertEquals( 2, attachments.getNames().size() );
-
-        assertEquals( a1, attachments.getByName( "MyImage.jpg" ) );
-        assertNull( attachments.getByName( "MyImage3.png" ) );
-    }
-
     @Test
     public void empty()
     {

@@ -4,6 +4,7 @@ package com.enonic.xp.lib.content;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
@@ -21,7 +22,14 @@ public final class GetContentHandler
     {
         if ( this.key.startsWith( "/" ) )
         {
-            throw new IllegalArgumentException( "Key must be id:" + this.key );
+            if ( nullToEmpty( this.versionId ).isBlank() )
+            {
+                return getByPath( ContentPath.from( this.key ) );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Key must be id: " + this.key );
+            }
         }
         else
         {
@@ -36,6 +44,18 @@ public final class GetContentHandler
         try
         {
             return convert( this.contentService.getById( key ) );
+        }
+        catch ( final ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private ContentMapper getByPath( final ContentPath key )
+    {
+        try
+        {
+            return convert( this.contentService.getByPath( key ) );
         }
         catch ( final ContentNotFoundException e )
         {

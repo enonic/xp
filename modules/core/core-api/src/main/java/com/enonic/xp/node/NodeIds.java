@@ -2,8 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -65,12 +63,6 @@ public class NodeIds
         {
             return new NodeIds( set );
         }
-    }
-
-    @Deprecated
-    public List<String> getAsStrings()
-    {
-        return this.set.stream().map( NodeId::toString ).collect( Collectors.toList() );
     }
 
     public static class Builder

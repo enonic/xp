@@ -25,7 +25,6 @@ var expected = {
         'd'
     ],
     'failed': [],
-    'deleted': []
 };
 // END
 

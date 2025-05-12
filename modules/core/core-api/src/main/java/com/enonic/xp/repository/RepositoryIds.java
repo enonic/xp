@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -56,12 +54,6 @@ public final class RepositoryIds
     private static ImmutableSet<RepositoryId> doParseIds( final Collection<String> list )
     {
         return list.stream().map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() );
-    }
-
-    @Deprecated
-    public Set<String> asStrings()
-    {
-        return this.set.stream().map( RepositoryId::toString ).collect( Collectors.toSet() );
     }
 
     public static Builder create()

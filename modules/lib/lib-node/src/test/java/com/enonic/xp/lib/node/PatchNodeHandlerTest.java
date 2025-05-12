@@ -17,7 +17,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeState;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.security.RoleKeys;
@@ -68,7 +67,6 @@ public class PatchNodeHandlerTest
             .parentPath( NodePath.ROOT )
             .data( data )
             .name( "myNode" )
-            .nodeState( NodeState.DEFAULT )
             .permissions(
                 AccessControlList.of( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() ) )
             .build();

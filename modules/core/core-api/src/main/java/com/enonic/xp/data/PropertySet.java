@@ -33,13 +33,6 @@ public final class PropertySet
 
     private boolean ifNotNull = false;
 
-    @Deprecated
-    public PropertySet()
-    {
-        // Creating a detached PropertySet (i.e. no tree set)
-        this.propertyArrayByName = new LinkedHashMap<>();
-    }
-
     PropertySet( final PropertyTree tree, final int initialCapacity )
     {
         this.tree = tree;
@@ -166,16 +159,6 @@ public final class PropertySet
         return new PropertyTree( this );
     }
 
-    @Deprecated
-    public int countAncestors()
-    {
-        if ( this.property == null )
-        {
-            throw new UnsupportedOperationException( "The PropertySet must be attached to a Property before this method can be invoked" );
-        }
-        return this.property.getPath().elementCount() - 1;
-    }
-
     void setProperty( final Property property )
     {
         this.property = property;
@@ -185,17 +168,6 @@ public final class PropertySet
     {
         ifNotNull = true;
         return this;
-    }
-
-    @Deprecated
-    public PropertySet newSet()
-    {
-        if ( tree == null )
-        {
-            throw new IllegalStateException(
-                "The PropertySet must be attached to a PropertyTree before this method can be invoked. Use PropertySet constructor with no arguments instead." );
-        }
-        return new PropertySet( tree, 0 );
     }
 
     // In future disallow to change parent tree
@@ -209,25 +181,6 @@ public final class PropertySet
                     this.tree );
         }
         this.tree = propertyTree;
-    }
-
-    @Deprecated
-    public PropertySet detach()
-    {
-        this.tree = null;
-        for ( PropertyArray propertyArray : this.propertyArrayByName.values() )
-        {
-            for ( final Property p : propertyArray.getProperties() )
-            {
-                final Object valueObject = p.getObject();
-
-                if ( valueObject instanceof PropertySet )
-                {
-                    ( (PropertySet) valueObject ).detach();
-                }
-            }
-        }
-        return this;
     }
 
     public int countProperties( final String name )

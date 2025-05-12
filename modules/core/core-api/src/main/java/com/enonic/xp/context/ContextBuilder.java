@@ -62,13 +62,6 @@ public final class ContextBuilder
         return attribute( value.getClass().getName(), value );
     }
 
-    @Deprecated
-    public ContextBuilder detachSession()
-    {
-        this.localScope = new LocalScopeImpl( mergeLocalScopeAttributes( this.localScope ) );
-        return this;
-    }
-
     public Context build()
     {
         return new ContextImpl( ImmutableMap.copyOf( this.attributes ), this.localScope );

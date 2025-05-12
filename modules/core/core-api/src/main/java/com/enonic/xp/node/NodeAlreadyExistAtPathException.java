@@ -20,12 +20,6 @@ public class NodeAlreadyExistAtPathException
 
     private final Branch branch;
 
-    @Deprecated
-    public NodeAlreadyExistAtPathException( final NodePath nodePath )
-    {
-        this( nodePath, null, null );
-    }
-
     public NodeAlreadyExistAtPathException( final NodePath nodePath, final RepositoryId repositoryId, final Branch branch )
     {
         super( buildMessage( nodePath, repositoryId, branch ) );

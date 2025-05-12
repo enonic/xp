@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.security;
 
+import java.util.Objects;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -59,7 +61,7 @@ public class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.principal.create", value.getType() );
-        assertEquals( "user:system:testUser", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "user:system:testUser", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test
@@ -78,7 +80,7 @@ public class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.principal.update", value.getType() );
-        assertEquals( "user:system:testUser", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "user:system:testUser", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test
@@ -96,7 +98,7 @@ public class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.principal.create", value.getType() );
-        assertEquals( "role:testRole", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "role:testRole", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test
@@ -161,7 +163,7 @@ public class SecurityAuditLogSupportImplTest
 
         final LogAuditLogParams value = argumentCaptor.getValue();
         assertEquals( "system.security.principal.delete", value.getType() );
-        assertEquals( "user:system:userId", value.getObjectUris().asStrings().stream().findFirst().get() );
+        assertEquals( "user:system:userId", value.getObjectUris().stream().map( Objects::toString ).findFirst().orElseThrow() );
     }
 
     @Test

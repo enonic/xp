@@ -77,24 +77,6 @@ public class PropertyArrayTest
     }
 
     @Test
-    public void countAncestors()
-    {
-        PropertyTree tree = new PropertyTree();
-        tree.addString( "myString", "a" );
-        PropertyArray propertyArray = tree.getRoot().getPropertyArray( "myString" );
-
-        // exercise
-        assertEquals( 0, propertyArray.countAncestors() );
-
-        PropertySet mySet = tree.addSet( "mySet" );
-        mySet.addString( "myString", "a" );
-        propertyArray = mySet.getPropertyArray( "myString" );
-
-        // exercise
-        assertEquals( 1, propertyArray.countAncestors() );
-    }
-
-    @Test
     public void given_existing_Property_at_index_0_when_setting_another_value_without_specifying_index_then_existing_is_overwritten()
     {
         PropertyTree tree = new PropertyTree();

@@ -1,7 +1,6 @@
 package com.enonic.xp.site;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -18,17 +17,6 @@ public final class Site
     public String getDescription()
     {
         return this.getData().getString( "description" );
-    }
-
-    @Deprecated
-    public PropertyTree getSiteConfig( final ApplicationKey applicationKey )
-    {
-        final SiteConfig siteConfig = this.getSiteConfigs().get( applicationKey );
-        if ( siteConfig == null )
-        {
-            return null;
-        }
-        return siteConfig.getConfig();
     }
 
     public SiteConfigs getSiteConfigs()

@@ -20,15 +20,6 @@ public final class FormItemPath
 
     private final ImmutableList<String> elements;
 
-    @Deprecated
-    public FormItemPath( final FormItemPath parentPath, final String name )
-    {
-        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( name, "name cannot be null" );
-
-        this.elements = ImmutableList.<String>builder().addAll( parentPath.elements ).add( name ).build();
-    }
-
     private FormItemPath( final ImmutableList<String> elementNames, boolean ignore )
     {
         this.elements = elementNames;

@@ -24,9 +24,6 @@ public class GetNodeHandlerTest
             thenReturn( node );
         Mockito.when( this.nodeService.getByIdAndVersionId( NodeId.from( "nodeId" ), NodeVersionId.from( "versionKey" ) ) ).
             thenReturn( createNode() );
-        Mockito.when(
-            this.nodeService.getByPathAndVersionId( new NodePath( "/my-name" ), NodeVersionId.from( "versionKey" ) ) ).
-            thenReturn( node );
     }
 
     @Test

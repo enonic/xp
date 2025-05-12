@@ -82,7 +82,7 @@ public class ExportServiceImpl
             .build()
             .execute();
 
-        if ( !params.isDryRun() && targetIsSystemRepo() )
+        if ( targetIsSystemRepo() )
         {
             repositoryService.recreateMissing();
         }

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
 
 @PublicApi
 public class ResolvePublishDependenciesParams
@@ -39,12 +38,6 @@ public class ResolvePublishDependenciesParams
         return excludeChildrenIds;
     }
 
-    @Deprecated
-    public Branch getTarget()
-    {
-        return ContentConstants.BRANCH_MASTER;
-    }
-
     public static final class Builder
     {
         private ContentIds contentIds;
@@ -72,12 +65,6 @@ public class ResolvePublishDependenciesParams
         public Builder excludeChildrenIds( ContentIds excludeChildrenIds )
         {
             this.excludeChildrenIds = excludeChildrenIds;
-            return this;
-        }
-
-        @Deprecated
-        public Builder target( Branch target )
-        {
             return this;
         }
 

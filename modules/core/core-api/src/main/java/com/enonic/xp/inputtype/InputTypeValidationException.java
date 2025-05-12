@@ -15,12 +15,6 @@ public final class InputTypeValidationException
         super( message );
     }
 
-    @Deprecated
-    public InputTypeValidationException( final String message, final Object... args )
-    {
-        super( String.format( message, args ) );
-    }
-
     public static InputTypeValidationException invalidType( final Property property, final ValueType... expectedTypes )
     {
         final String strList = Arrays.stream( expectedTypes ).map( Objects::toString ).

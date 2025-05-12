@@ -1,7 +1,6 @@
 package com.enonic.xp.session;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -36,11 +35,5 @@ public final class SessionKey
     public static SessionKey from( final String value )
     {
         return new SessionKey( value );
-    }
-
-    @Deprecated
-    public static SessionKey generate()
-    {
-        return new SessionKey( UUID.randomUUID().toString() );
     }
 }

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
 
 @PublicApi
 public class PushContentParams
@@ -13,8 +12,6 @@ public class PushContentParams
     private final ContentIds excludeChildrenIds;
 
     private final ContentPublishInfo contentPublishInfo;
-
-    private final boolean includeChildren;
 
     private final boolean includeDependencies;
 
@@ -30,13 +27,10 @@ public class PushContentParams
         contentPublishInfo = builder.contentPublishInfo;
         includeDependencies = builder.includeDependencies;
         excludeChildrenIds = builder.excludeChildrenIds;
-        includeChildren = builder.includeChildren;
         publishContentListener = builder.publishContentListener;
         deleteContentListener = builder.deleteContentListener;
         message = builder.message;
-        excludedContentIds = builder.excludedContentIds.isEmpty()
-            ? ( builder.includeChildren ? ContentIds.empty() : builder.contentIds )
-            : builder.excludedContentIds;
+        excludedContentIds = builder.excludedContentIds;
     }
 
     public static Builder create()
@@ -54,21 +48,9 @@ public class PushContentParams
         return excludedContentIds;
     }
 
-    @Deprecated
-    public Branch getTarget()
-    {
-        return ContentConstants.BRANCH_MASTER;
-    }
-
     public ContentPublishInfo getContentPublishInfo()
     {
         return contentPublishInfo;
-    }
-
-    @Deprecated
-    public boolean isIncludeChildren()
-    {
-        return includeChildren;
     }
 
     public ContentIds getExcludeChildrenIds()
@@ -118,8 +100,6 @@ public class PushContentParams
 
         private ContentPublishInfo contentPublishInfo;
 
-        private boolean includeChildren = true;
-
         private boolean includeDependencies = true;
 
         private PushContentListener publishContentListener;
@@ -150,22 +130,9 @@ public class PushContentParams
             return this;
         }
 
-        @Deprecated
-        public Builder target( Branch target )
-        {
-            return this;
-        }
-
         public Builder contentPublishInfo( ContentPublishInfo contentPublishInfo )
         {
             this.contentPublishInfo = contentPublishInfo;
-            return this;
-        }
-
-        @Deprecated
-        public Builder includeChildren( boolean includeChildren )
-        {
-            this.includeChildren = includeChildren;
             return this;
         }
 

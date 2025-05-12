@@ -75,7 +75,6 @@ public class ApplicationClusterEventListener
             ifPresent( nodeId -> {
                 final ApplicationInstallationParams params = ApplicationInstallationParams.create().
                     start( false ).
-                    triggerEvent( false ).
                     build();
                 ApplicationHelper.runAsAdmin( () -> this.applicationService.installStoredApplication( nodeId, params ) );
             } );

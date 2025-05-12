@@ -9,11 +9,6 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
@@ -36,7 +31,6 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -70,10 +64,6 @@ public class ApplicationInfoServiceImplTest
 
     private ContentTypeService contentTypeService;
 
-    private ContentService contentService;
-
-    private ResourceService resourceService;
-
     private TaskDescriptorService taskDescriptorService;
 
     private SecurityService securityService;
@@ -95,8 +85,6 @@ public class ApplicationInfoServiceImplTest
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        this.contentService = Mockito.mock( ContentService.class );
-        this.resourceService = Mockito.mock( ResourceService.class );
         this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         this.securityService = Mockito.mock( SecurityService.class );
         this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
@@ -107,8 +95,6 @@ public class ApplicationInfoServiceImplTest
         this.service.setLayoutDescriptorService( this.layoutDescriptorService );
         this.service.setRelationshipTypeService( this.relationshipTypeService );
         this.service.setMacroDescriptorService( this.macroDescriptorService );
-        this.service.setContentService( this.contentService );
-        this.service.setResourceService( this.resourceService );
         this.service.setTaskDescriptorService( this.taskDescriptorService );
         this.service.setSecurityService( this.securityService );
         this.service.setIdProviderDescriptorService( this.idProviderDescriptorService );
@@ -165,7 +151,7 @@ public class ApplicationInfoServiceImplTest
 
         assertEquals( relationshipTypes.getSize(), 2 );
     }
-    
+
     @Test
     public void testTasks()
     {
@@ -208,7 +194,6 @@ public class ApplicationInfoServiceImplTest
         assertEquals( applicationInfo.getParts().getSize(), 2 );
         assertEquals( applicationInfo.getLayouts().getSize(), 2 );
         assertEquals( applicationInfo.getRelations().getSize(), 2 );
-        assertEquals( applicationInfo.getContentReferences().getSize(), 0 );
         assertEquals( applicationInfo.getTasks().getSize(), 2 );
         assertEquals( applicationInfo.getMacros().getSize(), 2 );
         assertEquals( applicationInfo.getIdProviderReferences().getSize(), 2 );

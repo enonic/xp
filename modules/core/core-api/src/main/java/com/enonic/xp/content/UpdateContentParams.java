@@ -40,13 +40,6 @@ public final class UpdateContentParams
         return this;
     }
 
-    @Deprecated
-    public UpdateContentParams modifier( final PrincipalKey modifier )
-    {
-        this.modifier = modifier;
-        return this;
-    }
-
     public UpdateContentParams createAttachments( final CreateAttachments value )
     {
         this.createAttachments = Objects.requireNonNullElseGet( value, CreateAttachments::empty );
@@ -85,12 +78,6 @@ public final class UpdateContentParams
     public ContentEditor getEditor()
     {
         return this.editor;
-    }
-
-    @Deprecated
-    public PrincipalKey getModifier()
-    {
-        return modifier;
     }
 
     public ContentId getContentId()
