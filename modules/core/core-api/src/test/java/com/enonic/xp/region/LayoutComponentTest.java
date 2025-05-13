@@ -62,7 +62,6 @@ public class LayoutComponentTest
         assertNotNull( copy );
         assertEquals( source.getType(), copy.getType() );
         assertEquals( source.getRegions(), copy.getRegions() );
-        assertEquals( source.getName(), copy.getName() );
         assertEquals( source.getConfig(), copy.getConfig() );
     }
 

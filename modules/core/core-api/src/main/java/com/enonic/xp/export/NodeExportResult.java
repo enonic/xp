@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class NodeExportResult
+public final class NodeExportResult
 {
     private final NodePaths exportedNodes;
 

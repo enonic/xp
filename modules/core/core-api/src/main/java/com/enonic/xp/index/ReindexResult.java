@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
-public class ReindexResult
+public final class ReindexResult
 {
     private final Duration duration;
 

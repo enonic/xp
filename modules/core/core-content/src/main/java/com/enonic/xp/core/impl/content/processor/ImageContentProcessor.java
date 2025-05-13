@@ -55,7 +55,6 @@ import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
-import com.enonic.xp.util.Exceptions;
 import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO;
@@ -443,7 +442,7 @@ public final class ImageContentProcessor
                     }
                     catch ( IOException e )
                     {
-                        throw Exceptions.newRuntime( "Failed to read BufferedImage from InputStream" ).withCause( e );
+                        throw new RuntimeException( "Failed to read BufferedImage from InputStream", e );
                     }
                 }
             }

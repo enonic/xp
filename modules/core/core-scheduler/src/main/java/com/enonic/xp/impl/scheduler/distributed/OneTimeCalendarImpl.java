@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -30,12 +29,6 @@ public final class OneTimeCalendarImpl
     public Instant getValue()
     {
         return value;
-    }
-
-    @Override
-    public Optional<Duration> nextExecution()
-    {
-        return Optional.of( Duration.between( Instant.now(), value ) );
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
@@ -40,12 +39,6 @@ public final class NodeValueResource
         this.timestamp = timestamp;
         this.value = resource;
 
-    }
-
-    @Override
-    public URL getUrl()
-    {
-        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.enonic.xp.aggregation;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class StatsAggregation
+public final class StatsAggregation
     extends MetricAggregation
 {
     private final double avg;

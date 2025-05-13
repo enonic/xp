@@ -5,7 +5,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexPath;
 
 @PublicApi
-public class ContentIndexPath
+public final class ContentIndexPath
 {
     public static final IndexPath MODIFIED_TIME = IndexPath.from( ContentPropertyNames.MODIFIED_TIME );
 
@@ -23,4 +23,8 @@ public class ContentIndexPath
     public static final IndexPath REFERENCES = IndexPath.from( "_references" );
 
     public static final IndexPath ID = IndexPath.from( "_id" );
+
+    private ContentIndexPath()
+    {
+    }
 }

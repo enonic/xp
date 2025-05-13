@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 import com.google.common.base.Preconditions;
 
-public class ImportNodeResult
+public final class ImportNodeResult
 {
     private final Node node;
 

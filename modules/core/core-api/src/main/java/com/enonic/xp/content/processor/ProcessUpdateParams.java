@@ -5,7 +5,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 
-public class ProcessUpdateParams
+public final class ProcessUpdateParams
 {
     private final CreateAttachments createAttachments;
 

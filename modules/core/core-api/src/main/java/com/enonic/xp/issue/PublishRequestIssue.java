@@ -1,11 +1,11 @@
 package com.enonic.xp.issue;
 
-public class PublishRequestIssue
+public final class PublishRequestIssue
     extends Issue
 {
     private final PublishRequestIssueSchedule schedule;
 
-    protected PublishRequestIssue( final Builder builder )
+    private PublishRequestIssue( final Builder builder )
     {
         super( builder );
         schedule = builder.schedule;

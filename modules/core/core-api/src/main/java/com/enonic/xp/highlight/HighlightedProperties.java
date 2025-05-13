@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 
-public class HighlightedProperties
+public final class HighlightedProperties
     implements Iterable<HighlightedProperty>
 {
     private final ImmutableMap<String, HighlightedProperty> highlightedFields;

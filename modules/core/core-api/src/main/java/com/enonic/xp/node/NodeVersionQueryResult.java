@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class NodeVersionQueryResult
+public final class NodeVersionQueryResult
 {
     final NodeVersionsMetadata nodeVersionsMetadata;
 

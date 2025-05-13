@@ -1,6 +1,6 @@
 package com.enonic.xp.dump;
 
-public class VersionsLoadResult
+public final class VersionsLoadResult
     extends AbstractLoadResult
 {
     private VersionsLoadResult( final Builder builder )

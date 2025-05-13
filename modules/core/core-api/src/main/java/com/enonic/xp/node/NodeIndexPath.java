@@ -4,15 +4,13 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.IndexPath;
 
 @PublicApi
-public class NodeIndexPath
+public final class NodeIndexPath
 {
     private static final String DIVIDER = ".";
 
     private static final String PERMISSIONS_ROOT = "_permissions";
 
     public static final IndexPath TIMESTAMP = IndexPath.from( "_ts" );
-
-    public static final IndexPath STATE = IndexPath.from( "_state" );
 
     public static final IndexPath VERSION = IndexPath.from( "_versionKey" );
 
@@ -47,4 +45,8 @@ public class NodeIndexPath
     public static final IndexPath PERMISSIONS_READ_PERMISSION = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "readpermissions" );
 
     public static final IndexPath PERMISSIONS_WRITE_PERMISSION = IndexPath.from( PERMISSIONS_ROOT + DIVIDER + "writepermissions" );
+
+    private NodeIndexPath()
+    {
+    }
 }

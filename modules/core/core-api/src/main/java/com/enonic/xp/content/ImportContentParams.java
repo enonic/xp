@@ -9,7 +9,7 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.project.ProjectName;
 
-public class ImportContentParams
+public final class ImportContentParams
 {
     private final BinaryAttachments binaryAttachments;
 

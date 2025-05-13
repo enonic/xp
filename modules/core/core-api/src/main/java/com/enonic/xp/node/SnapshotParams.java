@@ -8,22 +8,16 @@ import com.enonic.xp.repository.RepositoryId;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
-public class SnapshotParams
+public final class SnapshotParams
 {
     final String snapshotName;
 
-    final boolean overwrite;
-
     final RepositoryId repositoryId;
-
-    final boolean includeIndexedData;
 
     private SnapshotParams( Builder builder )
     {
         this.snapshotName = builder.snapshotName;
-        this.overwrite = builder.overwrite;
         this.repositoryId = builder.repositoryId;
-        this.includeIndexedData = builder.includeIndexedData;
     }
 
     public static Builder create()
@@ -41,25 +35,11 @@ public class SnapshotParams
         return repositoryId;
     }
 
-    public boolean isIncludeIndexedData()
-    {
-        return includeIndexedData;
-    }
-
-    public boolean isOverwrite()
-    {
-        return overwrite;
-    }
-
     public static final class Builder
     {
         private String snapshotName;
 
-        private boolean overwrite = true;
-
         private RepositoryId repositoryId;
-
-        private boolean includeIndexedData = true;
 
         private Builder()
         {
@@ -74,18 +54,6 @@ public class SnapshotParams
         public Builder repositoryId( final RepositoryId repositoryId )
         {
             this.repositoryId = repositoryId;
-            return this;
-        }
-
-        public Builder overwrite( final boolean overwrite )
-        {
-            this.overwrite = overwrite;
-            return this;
-        }
-
-        public Builder setIncludeIndexedData( final boolean includeIndexedData )
-        {
-            this.includeIndexedData = includeIndexedData;
             return this;
         }
 

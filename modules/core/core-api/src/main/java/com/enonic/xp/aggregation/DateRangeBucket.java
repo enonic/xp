@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DateRangeBucket
+public final class DateRangeBucket
     extends Bucket
 {
     private final Instant from;

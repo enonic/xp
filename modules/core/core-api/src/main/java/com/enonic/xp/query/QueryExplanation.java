@@ -2,7 +2,7 @@ package com.enonic.xp.query;
 
 import java.util.ArrayList;
 
-public class QueryExplanation
+public final class QueryExplanation
 {
     private final float value;
 

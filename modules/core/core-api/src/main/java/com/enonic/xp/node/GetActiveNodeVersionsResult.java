@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class GetActiveNodeVersionsResult
+public final class GetActiveNodeVersionsResult
 {
     private final ImmutableMap<Branch, NodeVersionMetadata> nodeVersions;
 

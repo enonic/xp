@@ -103,20 +103,6 @@ class ImageServiceImplTest
     }
 
     @Test
-    @Deprecated
-    void readImage_with_format()
-        throws IOException
-    {
-        mockOriginalImage( "effect/transparent.png" );
-
-        final ReadImageParams readImageParams =
-            ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference ).format( "png" ).build();
-        final ByteSource imageData = imageService.readImage( readImageParams );
-
-        assertArrayEquals( imageDataOriginal, imageData.read() );
-    }
-
-    @Test
     public void readImage_jpeg_progressive_default()
         throws IOException
     {

@@ -8,7 +8,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 
 @PublicApi
-public class SyncWorkResolverParams
+public final class SyncWorkResolverParams
 {
     private final Branch branch;
 

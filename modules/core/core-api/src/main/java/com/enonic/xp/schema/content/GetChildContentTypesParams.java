@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class GetChildContentTypesParams
+public final class GetChildContentTypesParams
 {
     private ContentTypeName parentName;
 

@@ -8,7 +8,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 
 @PublicApi
-public class UpdateIndexSettingsParams
+public final class UpdateIndexSettingsParams
 {
     private final RepositoryIds repositoryIds;
 

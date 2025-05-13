@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.util.Version;
 
-public class DumpUpgradeStepResult
+public final class DumpUpgradeStepResult
 {
     private final Version initialVersion;
 

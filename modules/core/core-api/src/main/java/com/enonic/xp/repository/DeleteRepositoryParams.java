@@ -1,6 +1,6 @@
 package com.enonic.xp.repository;
 
-public class DeleteRepositoryParams
+public final class DeleteRepositoryParams
 {
     private final RepositoryId repositoryId;
 

@@ -18,7 +18,6 @@ class NormalizedImageParamsTest
     @Test
     void normalizeFormat()
     {
-        assertEquals( "PNG", new NormalizedImageParams( noFormatTemplate().format( "PNG" ).build() ).getFormat() );
         assertEquals( "JPEG", new NormalizedImageParams( noFormatTemplate().mimeType( "image/jpeg" ).build() ).getFormat() );
         assertEquals( "png", new NormalizedImageParams( noFormatTemplate().mimeType( "image/png" ).build() ).getFormat() );
         assertEquals( "gif", new NormalizedImageParams( noFormatTemplate().mimeType( "image/gif" ).build() ).getFormat() );

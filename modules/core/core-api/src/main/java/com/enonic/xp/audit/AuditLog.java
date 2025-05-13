@@ -8,7 +8,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.Objects.requireNonNull;
 
-public class AuditLog
+public final class AuditLog
 {
     private final AuditLogId id;
 

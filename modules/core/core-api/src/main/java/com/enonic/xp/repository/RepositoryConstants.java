@@ -9,7 +9,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public class RepositoryConstants
+public final class RepositoryConstants
 {
     public static final NodePath REPOSITORY_STORAGE_PARENT_PATH = new NodePath( NodePath.ROOT, NodeName.from( "repository" ) );
 
@@ -30,4 +30,7 @@ public class RepositoryConstants
     public static final Branch MASTER_BRANCH = Branch.from( "master" );
 
 
+    private RepositoryConstants()
+    {
+    }
 }

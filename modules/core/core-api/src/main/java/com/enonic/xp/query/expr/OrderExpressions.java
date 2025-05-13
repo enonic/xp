@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class OrderExpressions
+public final class OrderExpressions
     extends AbstractImmutableEntityList<OrderExpr>
 {
     private static final OrderExpressions EMPTY = new OrderExpressions( ImmutableList.of() );

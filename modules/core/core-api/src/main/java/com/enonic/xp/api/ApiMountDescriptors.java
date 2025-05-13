@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class ApiMountDescriptors
+public final class ApiMountDescriptors
     extends AbstractImmutableEntityList<ApiMountDescriptor>
 {
     private ApiMountDescriptors( final ImmutableList<ApiMountDescriptor> list )

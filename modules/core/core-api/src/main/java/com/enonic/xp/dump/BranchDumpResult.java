@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.enonic.xp.branch.Branch;
 
-public class BranchDumpResult
+public final class BranchDumpResult
 {
     private final Branch branch;
 

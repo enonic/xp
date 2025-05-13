@@ -10,15 +10,15 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class NodeImportResult
+public final class NodeImportResult
 {
     public final NodePaths addedNodes;
 
     public final NodePaths updateNodes;
 
-    private List<ImportError> importErrors;
+    private final List<ImportError> importErrors;
 
-    private List<String> importedBinaries;
+    private final List<String> importedBinaries;
 
     private NodeImportResult( final Builder builder )
     {

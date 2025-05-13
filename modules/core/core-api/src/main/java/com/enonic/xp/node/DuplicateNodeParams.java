@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DuplicateNodeParams
+public final class DuplicateNodeParams
 {
     private final NodeId nodeId;
 

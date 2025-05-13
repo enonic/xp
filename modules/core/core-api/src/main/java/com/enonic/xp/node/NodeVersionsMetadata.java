@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class NodeVersionsMetadata
+public final class NodeVersionsMetadata
     implements Iterable<NodeVersionMetadata>
 {
     private final NodeId nodeId;

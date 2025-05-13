@@ -106,11 +106,6 @@ class NormalizedImageParams
 
     private static String normalizeFormat( final ReadImageParams readImageParams )
     {
-        // Existing code should not set format parameter, but if it does all bets are off.
-        if ( readImageParams.getFormat() != null )
-        {
-            return readImageParams.getFormat();
-        }
         // Limit to web formats we support. Leave WBMP and BMP support behind.
         // Tip: WEBP is not supported by ImageService implementation yet. Throw IllegalArgumentException here.
         final String mimeType = readImageParams.getMimeType();

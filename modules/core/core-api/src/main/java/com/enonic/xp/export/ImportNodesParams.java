@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFile;
 
 @PublicApi
-public class ImportNodesParams
+public final class ImportNodesParams
 {
     private final NodePath targetNodePath;
 
@@ -115,7 +115,7 @@ public class ImportNodesParams
             this.targetNodePath = targetNodePath;
             return this;
         }
-        
+
         public Builder source( final VirtualFile source )
         {
             this.source = source;

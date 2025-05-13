@@ -1,5 +1,8 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.TimeZone;
 
 import org.junit.jupiter.api.Test;
@@ -49,7 +52,8 @@ public class CronCalendarTest
             timeZone( TimeZone.getDefault() ).
             build();
 
-        assertTrue( calendar.nextExecution().get().toSeconds() <= 60 );
+        final Instant now = Instant.now();
+        assertTrue( Duration.between( now, calendar.nextExecution( now ).get() ).get( ChronoUnit.SECONDS ) <= 60 );
         assertEquals( ScheduleCalendarType.CRON, calendar.getType() );
     }
 

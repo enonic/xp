@@ -4,13 +4,11 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
 @PublicApi
-public class SetContentChildOrderParams
+public final class SetContentChildOrderParams
 {
     private final ContentId contentId;
 
     private final ChildOrder childOrder;
-
-    private final boolean silent;
 
     private final boolean stopInherit;
 
@@ -18,7 +16,6 @@ public class SetContentChildOrderParams
     {
         contentId = builder.contentId;
         childOrder = builder.childOrder;
-        silent = builder.silent;
         stopInherit = builder.stopInherit;
     }
 
@@ -30,11 +27,6 @@ public class SetContentChildOrderParams
     public ChildOrder getChildOrder()
     {
         return childOrder;
-    }
-
-    public boolean isSilent()
-    {
-        return silent;
     }
 
     public boolean stopInherit()
@@ -54,8 +46,6 @@ public class SetContentChildOrderParams
 
         private ChildOrder childOrder;
 
-        private boolean silent;
-
         private boolean stopInherit = true;
 
         private Builder()
@@ -71,12 +61,6 @@ public class SetContentChildOrderParams
         public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
-            return this;
-        }
-
-        public Builder silent( final boolean silent )
-        {
-            this.silent = silent;
             return this;
         }
 

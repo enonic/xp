@@ -5,7 +5,7 @@ import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.repository.RepositoryId;
 
-public class MultiRepoNodeHit
+public final class MultiRepoNodeHit
 {
     private final NodeId nodeId;
 

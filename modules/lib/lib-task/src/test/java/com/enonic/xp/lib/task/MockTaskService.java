@@ -3,8 +3,6 @@ package com.enonic.xp.lib.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
@@ -33,12 +31,6 @@ class MockTaskService
 
     @Override
     public TaskId submitTask( final SubmitTaskParams params )
-    {
-        return taskId;
-    }
-
-    @Override
-    public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
     {
         return taskId;
     }

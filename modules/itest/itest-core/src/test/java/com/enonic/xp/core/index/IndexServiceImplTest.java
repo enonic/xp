@@ -11,7 +11,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
@@ -99,10 +98,6 @@ public class IndexServiceImplTest
             refresh( RefreshMode.ALL ).
             build() );
 
-        this.indexService.purgeSearchIndex( new PurgeIndexParams( testRepoId ) );
-
-        assertNull( queryForNode( node.id() ) );
-
         final ReindexResult result = this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
             repositoryId( testRepoId ).
@@ -141,22 +136,6 @@ public class IndexServiceImplTest
         assertNotNull( queryForNode( node.id() ) );
         assertNotNull( ctxOther().callWith( () -> queryForNode( node.id() ) ) );
 
-        this.indexService.purgeSearchIndex( new PurgeIndexParams( testRepoId ) );
-
-        refresh();
-
-        assertNull( queryForNode( node.id() ) );
-
-        this.indexService.reindex( ReindexParams.create().
-            addBranch( WS_DEFAULT ).
-            repositoryId( testRepoId ).
-            initialize( false ).
-            build() );
-
-        refresh();
-
-        assertNotNull( queryForNode( node.id() ) );
-        assertNull( ctxOther().callWith( () -> queryForNode( node.id() ) ) );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( WS_OTHER ).
@@ -188,10 +167,6 @@ public class IndexServiceImplTest
                                                        .build() ) );
 
         assertEquals( 2, cmsRepoContext.callWith( this::findAllNodes ).getHits() );
-
-        this.indexService.purgeSearchIndex( new PurgeIndexParams( cmsRepoContext.getRepositoryId() ) );
-
-        assertEquals( 0, cmsRepoContext.callWith( this::findAllNodes ).getHits() );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( cmsRepoContext.getBranch() ).
@@ -226,10 +201,6 @@ public class IndexServiceImplTest
                                                           .build() ) );
 
         final long nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getHits();
-
-        this.indexService.purgeSearchIndex( new PurgeIndexParams( systemRepoContext.getRepositoryId() ) );
-
-        assertEquals( 0, systemRepoContext.callWith( this::findAllNodes ).getHits() );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( systemRepoContext.getBranch() ).

@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class FindContentVersionsParams
+public final class FindContentVersionsParams
 {
     private static final int DEFAULT_SIZE = 10;
 

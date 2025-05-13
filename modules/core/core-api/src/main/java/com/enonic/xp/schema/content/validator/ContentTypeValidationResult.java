@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ContentTypeValidationResult
+public final class ContentTypeValidationResult
     implements Iterable<ContentTypeValidationError>
 {
     private final ImmutableList<ContentTypeValidationError> errors;

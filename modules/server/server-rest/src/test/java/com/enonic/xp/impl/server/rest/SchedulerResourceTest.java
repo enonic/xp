@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.server.rest;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -56,11 +55,6 @@ public class SchedulerResourceTest
                 return TimeZone.getTimeZone( "GMT+3:00" );
             }
 
-            public Optional<Duration> nextExecution()
-            {
-                return Optional.of( Duration.ofSeconds( 50 ) );
-            }
-
             @Override
             public Optional<Instant> nextExecution( final Instant instant )
             {
@@ -80,12 +74,6 @@ public class SchedulerResourceTest
             public Instant getValue()
             {
                 return Instant.parse( "2016-11-02T10:36:00Z" );
-            }
-
-            @Override
-            public Optional<Duration> nextExecution()
-            {
-                return Optional.of( Duration.ofSeconds( 50 ) );
             }
 
             @Override

@@ -24,16 +24,3 @@ exports.executeFunctionThrowingError = function () {
 
     t.assertEquals('123', taskId);
 };
-
-exports.submit = function () {
-
-    var taskId = taskLib.submit({
-        description: 'Deprecated',
-        task() {
-            // do something
-        }
-    });
-
-    t.assertEquals('123', taskId);
-};
-

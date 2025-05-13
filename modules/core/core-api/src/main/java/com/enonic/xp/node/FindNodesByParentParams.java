@@ -7,7 +7,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.filter.Filters;
 
 @PublicApi
-public class FindNodesByParentParams
+public final class FindNodesByParentParams
 {
     private final NodePath parentPath;
 

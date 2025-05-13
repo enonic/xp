@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class UpdateNodeParams
+public final class UpdateNodeParams
 {
     private final NodeId id;
 

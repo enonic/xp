@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ReorderChildContentsResult
+public final class ReorderChildContentsResult
 {
     private final int movedChildren;
 

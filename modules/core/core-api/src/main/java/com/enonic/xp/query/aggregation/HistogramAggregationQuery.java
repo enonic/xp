@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class HistogramAggregationQuery
+public final class HistogramAggregationQuery
     extends AbstractHistogramAggregationQuery<Long>
 {
     private final Long extendedBoundMin;

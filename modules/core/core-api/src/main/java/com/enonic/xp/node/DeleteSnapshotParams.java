@@ -8,7 +8,7 @@ import java.util.Set;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DeleteSnapshotParams
+public final class DeleteSnapshotParams
 {
     private final Set<String> snapshotNames;
 

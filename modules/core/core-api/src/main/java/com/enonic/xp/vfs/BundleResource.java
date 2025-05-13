@@ -18,7 +18,7 @@ import com.google.common.io.Resources;
 
 import static java.util.Objects.requireNonNullElse;
 
-class BundleResource
+final class BundleResource
     implements VirtualFile
 {
     private static final String PATTERN = "*";

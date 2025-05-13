@@ -7,7 +7,7 @@ import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.node.NodePath;
 
 @PublicApi
-public class ExportNodesParams
+public final class ExportNodesParams
 {
     private final String exportName;
 

@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 
 @PublicApi
-public class PathIndexConfig
+public final class PathIndexConfig
     implements Comparable<PathIndexConfig>
 {
     public static final Comparator<PathIndexConfig> COMPARATOR =

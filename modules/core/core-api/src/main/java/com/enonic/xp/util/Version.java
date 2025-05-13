@@ -3,7 +3,7 @@ package com.enonic.xp.util;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-public class Version
+public final class Version
     implements Comparable<Version>
 {
     public static final Version emptyVersion = new Version( 0 );

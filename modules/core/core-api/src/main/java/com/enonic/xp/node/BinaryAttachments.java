@@ -10,7 +10,7 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class BinaryAttachments
+public final class BinaryAttachments
     extends AbstractImmutableEntitySet<BinaryAttachment>
 {
     private static final BinaryAttachments EMPTY = new BinaryAttachments( ImmutableSet.of(), false );

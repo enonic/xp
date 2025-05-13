@@ -47,12 +47,6 @@ public final class Nodes
         return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }
 
-    @Deprecated
-    public Node getNodeById( final NodeId nodeId )
-    {
-        return this.set.stream().filter( n -> nodeId.equals( n.id() ) ).findAny().orElse( null );
-    }
-
     public NodePaths getPaths()
     {
         return NodePaths.from( set.stream().map( Node::path ).collect( ImmutableSet.toImmutableSet() ) );

@@ -9,7 +9,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class NodeIds
+public final class NodeIds
     extends AbstractImmutableEntitySet<NodeId>
 {
     private static final NodeIds EMPTY = new NodeIds( ImmutableSet.of() );

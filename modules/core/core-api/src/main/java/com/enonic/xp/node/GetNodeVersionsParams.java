@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class GetNodeVersionsParams
+public final class GetNodeVersionsParams
 {
     private final NodeId nodeId;
 

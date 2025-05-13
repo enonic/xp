@@ -1,14 +1,11 @@
 package com.enonic.xp.project;
 
 import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
@@ -23,18 +20,6 @@ public final class Projects
     public static Projects empty()
     {
         return new Projects( ImmutableList.of() );
-    }
-
-    @Deprecated
-    public static Projects from( Repositories repositories )
-    {
-        if ( repositories == null )
-        {
-            return null;
-        }
-
-        return create().addAll( repositories.stream().map( Project::from ).filter( Objects::nonNull ).collect( Collectors.toList() ) )
-            .build();
     }
 
     public static Projects from( Collection<Project> projects )

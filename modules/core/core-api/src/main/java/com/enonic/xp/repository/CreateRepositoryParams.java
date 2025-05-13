@@ -6,7 +6,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.acl.AccessControlList;
 
-public class CreateRepositoryParams
+public final class CreateRepositoryParams
 {
     private final RepositoryId repositoryId;
 

@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DateHistogramBucket
+public final class DateHistogramBucket
     extends Bucket
 {
     private final Instant keyAsInstant;

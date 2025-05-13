@@ -2,7 +2,7 @@ package com.enonic.xp.dump;
 
 import java.util.Objects;
 
-public class SystemDumpParams
+public final class SystemDumpParams
 {
     private final String dumpName;
 

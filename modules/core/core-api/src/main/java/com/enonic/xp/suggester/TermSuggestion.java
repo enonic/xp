@@ -1,6 +1,6 @@
 package com.enonic.xp.suggester;
 
-public class TermSuggestion
+public final class TermSuggestion
     extends Suggestion<TermSuggestionEntry>
 {
     private TermSuggestion( final Builder builder )

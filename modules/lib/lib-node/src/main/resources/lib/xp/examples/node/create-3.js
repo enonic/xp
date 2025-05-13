@@ -71,7 +71,6 @@ var expected = {
                 'deny': []
             }
         ],
-    '_state': 'DEFAULT',
     '_nodeType': 'default',
     'displayName': 'Child node inheriting permissions'
     }

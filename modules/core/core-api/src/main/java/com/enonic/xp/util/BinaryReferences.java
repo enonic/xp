@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class BinaryReferences
+public final class BinaryReferences
     extends AbstractImmutableEntitySet<BinaryReference>
 {
     private static final BinaryReferences EMPTY = new BinaryReferences( ImmutableSet.of() );

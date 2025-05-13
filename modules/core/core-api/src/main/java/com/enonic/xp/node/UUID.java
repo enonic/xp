@@ -71,16 +71,4 @@ public class UUID
     {
         return value;
     }
-
-    @Deprecated
-    public static UUID from( final String string )
-    {
-        return new UUID( string );
-    }
-
-    @Deprecated
-    public static UUID from( final Object object )
-    {
-        return new UUID( object );
-    }
 }

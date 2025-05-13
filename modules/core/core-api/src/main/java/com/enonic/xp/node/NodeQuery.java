@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class NodeQuery
+public final class NodeQuery
     extends AbstractQuery
 {
     public static final int ALL_RESULTS_SIZE_FLAG = -1;

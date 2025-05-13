@@ -1,20 +1,14 @@
 package com.enonic.xp.node;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 @PublicApi
-public class RestoreParams
+public final class RestoreParams
 {
     private final String snapshotName;
 
     private final RepositoryId repositoryId;
-
-    private final boolean includeIndexedData;
 
     private final boolean latest;
 
@@ -24,14 +18,8 @@ public class RestoreParams
     {
         this.snapshotName = builder.snapshotName;
         this.repositoryId = builder.repositoryId;
-        this.includeIndexedData = builder.includeIndexedData;
         this.latest = builder.latest;
         this.force = builder.force;
-    }
-
-    public boolean isIncludeIndexedData()
-    {
-        return includeIndexedData;
     }
 
     public String getSnapshotName()
@@ -65,8 +53,6 @@ public class RestoreParams
 
         private RepositoryId repositoryId;
 
-        private boolean includeIndexedData = true;
-
         private boolean latest = false;
 
         private boolean force = false;
@@ -87,12 +73,6 @@ public class RestoreParams
             return this;
         }
 
-        public Builder setIncludeIndexedData( final boolean includeIndexedData )
-        {
-            this.includeIndexedData = includeIndexedData;
-            return this;
-        }
-
         public Builder latest( final boolean latest )
         {
             this.latest = latest;
@@ -103,14 +83,6 @@ public class RestoreParams
         {
             this.force = force;
             return this;
-        }
-
-        private void validate()
-        {
-            if ( !latest )
-            {
-                Preconditions.checkArgument( !isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
-            }
         }
 
         public RestoreParams build()

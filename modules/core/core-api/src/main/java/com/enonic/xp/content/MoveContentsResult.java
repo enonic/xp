@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class MoveContentsResult
+public final class MoveContentsResult
 {
     private final ContentIds movedContents;
 

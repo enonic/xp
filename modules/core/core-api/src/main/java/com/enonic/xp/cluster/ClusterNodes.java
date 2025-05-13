@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-public class ClusterNodes
+public final class ClusterNodes
     extends AbstractImmutableEntitySet<ClusterNode>
 {
     private ClusterNodes( final ImmutableSet<ClusterNode> set, boolean ignore )

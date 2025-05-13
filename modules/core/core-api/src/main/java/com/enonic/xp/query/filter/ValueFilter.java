@@ -14,7 +14,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 
 @PublicApi
-public class ValueFilter
+public final class ValueFilter
     extends FieldFilter
 {
     private final ImmutableSet<Value> values;

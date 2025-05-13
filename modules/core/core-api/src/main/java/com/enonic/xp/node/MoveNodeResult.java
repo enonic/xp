@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-public class MoveNodeResult
+public final class MoveNodeResult
 {
     private final List<MovedNode> movedNodes;
 

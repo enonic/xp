@@ -7,7 +7,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
 
 @PublicApi
-public class EditableNode
+public final class EditableNode
 {
     public Node source;
 

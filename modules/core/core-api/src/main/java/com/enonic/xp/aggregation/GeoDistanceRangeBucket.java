@@ -3,7 +3,7 @@ package com.enonic.xp.aggregation;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class GeoDistanceRangeBucket
+public final class GeoDistanceRangeBucket
     extends Bucket
 {
     private final Number from;

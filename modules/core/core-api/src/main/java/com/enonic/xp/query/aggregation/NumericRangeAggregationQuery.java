@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class NumericRangeAggregationQuery
+public final class NumericRangeAggregationQuery
     extends AbstractRangeAggregationQuery<NumericRange>
 {
 

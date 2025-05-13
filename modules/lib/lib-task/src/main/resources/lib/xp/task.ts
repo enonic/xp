@@ -25,11 +25,6 @@ function checkRequired<T extends object>(obj: T, name: keyof T): void {
 
 export type CallbackFn = () => void;
 
-export interface SubmitParams {
-    description: string;
-    task: CallbackFn;
-}
-
 export interface ExecuteFunctionParams {
     description: string;
     func: CallbackFn;
@@ -59,32 +54,6 @@ interface ExecuteFunctionHandler {
  * @property {string} progress.info Latest progress textual information.
  */
 
-/**
- * @deprecated Please use {@link executeFunction}.
-
- * Submits a task to be executed in the background and returns an id representing the task.
- *
- * This function returns immediately. The callback function will be executed asynchronously.
- *
- * @example-ref examples/task/submit.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.description Text describing the task to be executed.
- * @param {function} params.task Callback function to be executed asynchronously.
- *
- * @returns {string} Id of the task that will be executed.
- */
-export function submit(params: SubmitParams): string {
-    const bean: ExecuteFunctionHandler = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
-
-    checkRequired(params, 'description');
-    checkRequired(params, 'task');
-
-    bean.setDescription(__.nullOrValue(params.description));
-    bean.setFunc(__.nullOrValue(params.task));
-
-    return bean.executeFunction();
-}
 
 /**
  * Runs a task function in the background and returns an id representing the task.
@@ -111,11 +80,6 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     return bean.executeFunction();
 }
 
-export interface SubmitNamedTaskParams<Config extends Record<string, unknown>> {
-    name: string;
-    config?: Config;
-}
-
 interface SubmitTaskHandler {
     setDescriptor(value?: string | null): void;
 
@@ -126,31 +90,6 @@ interface SubmitTaskHandler {
     submitTask(): string;
 }
 
-/**
- * @deprecated Please use {@link submitTask}.
- *
- * Submits a named task to be executed in the background and returns an id representing the task.
- *
- * This function returns immediately. The callback function will be executed asynchronously.
- *
- * @example-ref examples/task/submitNamed.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Name of the task to execute.
- * @param {object} [params.config] Configuration parameters to pass to the task to be executed.
- * The object must be valid according to the schema defined in the form of the task descriptor XML.
- * @returns {string} Id of the task that will be executed.
- */
-export function submitNamed<Config extends Record<string, unknown> = Record<string, unknown>>(params: SubmitNamedTaskParams<Config>): string {
-    checkRequired(params, 'name');
-
-    const bean: SubmitTaskHandler = __.newBean<SubmitTaskHandler>('com.enonic.xp.lib.task.SubmitTaskHandler');
-
-    bean.setDescriptor(__.nullOrValue(params.name));
-    bean.setConfig(__.toScriptValue(params.config));
-
-    return bean.submitTask();
-}
 
 export interface SubmitTaskParams<Config extends Record<string, unknown>> {
     descriptor: string;

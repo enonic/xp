@@ -8,7 +8,7 @@ import java.util.Optional;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 
-public class RepoDumpResult
+public final class RepoDumpResult
     implements Iterable<BranchDumpResult>
 {
     private final List<BranchDumpResult> branchResults;

@@ -25,4 +25,8 @@ public final class IssuePropertyNames
     public static final String PUBLISH_REQUEST_ITEM_ID = PUBLISH_REQUEST + ".items.itemId";
 
     public static final String TYPE = "type";
+
+    private IssuePropertyNames()
+    {
+    }
 }

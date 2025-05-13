@@ -9,7 +9,7 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
-public class ReindexParams
+public final class ReindexParams
 {
     private final boolean initialize;
 

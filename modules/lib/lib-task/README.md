@@ -30,7 +30,7 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 `example.ts`
 
 ```ts
-const {submit, executeFunction, submitNamed, submitTask, list, get, sleep, progress, isRunning} = require('/lib/xp/task');
+const {executeFunction, submitTask, list, get, sleep, progress, isRunning} = require('/lib/xp/task');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be
@@ -57,7 +57,7 @@ types mapping to your configuration.
 `example.ts`
 
 ```ts
-import {submit, executeFunction, submitNamed, submitTask, list, get, sleep, progress, isRunning} from '/lib/xp/task';
+import {executeFunction, submitTask, list, get, sleep, progress, isRunning} from '/lib/xp/task';
 ```
 
 Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.

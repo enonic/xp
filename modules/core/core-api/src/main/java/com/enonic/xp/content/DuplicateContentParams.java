@@ -5,14 +5,11 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
 public final class DuplicateContentParams
 {
     private final ContentId contentId;
-
-    private PrincipalKey creator;
 
     private final WorkflowInfo workflowInfo;
 
@@ -29,7 +26,6 @@ public final class DuplicateContentParams
     public DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
-        this.creator = builder.creator;
         this.workflowInfo = builder.workflowInfo;
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = !builder.variant ? builder.includeChildren : false;
@@ -82,8 +78,6 @@ public final class DuplicateContentParams
     {
 
         private ContentId contentId;
-
-        private PrincipalKey creator;
 
         private WorkflowInfo workflowInfo;
 

@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.util.Version;
 
-public class DumpUpgradeResult
+public final class DumpUpgradeResult
 {
     private final Version initialVersion;
 

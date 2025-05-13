@@ -3,9 +3,6 @@ package com.enonic.xp.inputtype;
 import java.time.Duration;
 import java.time.Period;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 final class RelativeTime
 {
     private final Duration duration;

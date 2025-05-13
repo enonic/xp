@@ -3,9 +3,8 @@ package com.enonic.xp.content.processor;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.media.MediaInfo;
 
-public class ProcessCreateParams
+public final class ProcessCreateParams
 {
-
     private final CreateContentParams params;
 
     private final MediaInfo mediaInfo;

@@ -3,10 +3,10 @@ package com.enonic.xp.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClusterValidatorResult
+public final class ClusterValidatorResult
 {
     private final List<ClusterValidationError> errors;
-    
+
     private final List<ClusterValidationWarning> warnings;
 
     private ClusterValidatorResult( final Builder builder )

@@ -10,6 +10,10 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class VirtualFiles
 {
+    private VirtualFiles()
+    {
+    }
+
     public static VirtualFile from( final Path path )
     {
         return new LocalFile( path );

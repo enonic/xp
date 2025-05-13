@@ -10,7 +10,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class NodeVersionKeys
+public final class NodeVersionKeys
     extends AbstractImmutableEntitySet<NodeVersionKey>
 {
     private NodeVersionKeys( final ImmutableSet<NodeVersionKey> set )

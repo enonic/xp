@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class ImportNodeParams
+public final class ImportNodeParams
 {
     private final BinaryAttachments binaryAttachments;
 

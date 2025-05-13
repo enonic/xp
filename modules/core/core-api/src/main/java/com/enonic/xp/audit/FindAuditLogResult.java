@@ -2,7 +2,7 @@ package com.enonic.xp.audit;
 
 import com.google.common.base.Preconditions;
 
-public class FindAuditLogResult
+public final class FindAuditLogResult
 {
     private final long count;
 

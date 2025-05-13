@@ -4,7 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public class ActiveContentVersionEntry
+public final class ActiveContentVersionEntry
 {
     private final Branch branch;
 

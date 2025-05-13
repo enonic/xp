@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 import com.enonic.xp.query.expr.OrderExpressions;
 
-public class NodeCommitQuery
+public final class NodeCommitQuery
     extends AbstractQuery
 {
 

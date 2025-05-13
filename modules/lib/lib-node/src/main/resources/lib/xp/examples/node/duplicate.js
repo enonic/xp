@@ -28,7 +28,6 @@ var expectedJson = {
         "allow": ["READ", "CREATE", "MODIFY", "DELETE", "PUBLISH", "READ_PERMISSIONS", "WRITE_PERMISSIONS"],
         "deny": []
     }],
-    "_state": "DEFAULT",
     "_nodeType": "default",
     "data": {
         "prop1": "Value 1",

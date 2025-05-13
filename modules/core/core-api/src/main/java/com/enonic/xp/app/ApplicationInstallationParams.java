@@ -2,7 +2,7 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
-public class ApplicationInstallationParams
+public final class ApplicationInstallationParams
 {
     private final boolean start;
 

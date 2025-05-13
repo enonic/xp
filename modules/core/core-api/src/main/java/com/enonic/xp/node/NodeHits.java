@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-public class NodeHits
+public final class NodeHits
     extends AbstractImmutableEntityList<NodeHit>
 {
 

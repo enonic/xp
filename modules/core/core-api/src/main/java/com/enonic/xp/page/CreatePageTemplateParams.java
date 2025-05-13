@@ -8,7 +8,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
 @PublicApi
-public class CreatePageTemplateParams
+public final class CreatePageTemplateParams
 {
     private ContentPath site;
 

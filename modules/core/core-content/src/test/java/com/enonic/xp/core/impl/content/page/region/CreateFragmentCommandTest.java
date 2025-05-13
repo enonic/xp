@@ -79,7 +79,6 @@ public class CreateFragmentCommandTest
     public void layoutComponentName_nullDisplayName()
     {
         assertEquals( "Layout", testLayoutComponentName( null ) );
-
     }
 
     @Test
@@ -93,7 +92,6 @@ public class CreateFragmentCommandTest
     public void textComponentName_nullValue()
     {
         assertEquals( "Text", testTextComponentName( null ) );
-
     }
 
     @Test

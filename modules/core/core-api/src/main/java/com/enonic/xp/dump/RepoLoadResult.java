@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.enonic.xp.repository.RepositoryId;
 
-public class RepoLoadResult
+public final class RepoLoadResult
     implements Iterable<BranchLoadResult>
 {
     private final List<BranchLoadResult> branchResults;

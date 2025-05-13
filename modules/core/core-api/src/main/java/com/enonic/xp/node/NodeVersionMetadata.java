@@ -7,7 +7,7 @@ import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 
 @PublicApi
-public class NodeVersionMetadata
+public final class NodeVersionMetadata
     implements Comparable<NodeVersionMetadata>
 {
     private final NodeVersionId nodeVersionId;

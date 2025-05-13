@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class Aggregations
+public final class Aggregations
     extends AbstractImmutableEntitySet<Aggregation>
 {
     private static final Aggregations EMPTY = new Aggregations( ImmutableSet.of() );

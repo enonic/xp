@@ -3,7 +3,7 @@ package com.enonic.xp.util;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class Link
+public final class Link
 {
     private final String path;
 

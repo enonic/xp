@@ -4,7 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
 
 @PublicApi
-public class GetActiveNodeVersionsParams
+public final class GetActiveNodeVersionsParams
 {
     private final NodeId nodeId;
 

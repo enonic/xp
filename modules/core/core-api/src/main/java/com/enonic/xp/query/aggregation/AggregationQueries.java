@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class AggregationQueries
+public final class AggregationQueries
     extends AbstractImmutableEntitySet<AggregationQuery>
 {
     private AggregationQueries( final ImmutableSet<AggregationQuery> set )

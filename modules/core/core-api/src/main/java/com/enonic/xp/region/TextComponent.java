@@ -5,14 +5,12 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class TextComponent
+public final class TextComponent
     extends Component
 {
-    private static final ComponentName NAME = ComponentName.from( "Text" );
-
     private final String text;
 
-    protected TextComponent( final Builder builder )
+    private TextComponent( final Builder builder )
     {
         super( builder );
         this.text = builder.text != null ? builder.text : "";
@@ -38,13 +36,6 @@ public class TextComponent
     public ComponentType getType()
     {
         return TextComponentType.INSTANCE;
-    }
-
-    @Deprecated
-    @Override
-    public ComponentName getName()
-    {
-        return NAME;
     }
 
     public String getText()
@@ -94,19 +85,6 @@ public class TextComponent
         {
             super( source );
             text = source.text;
-        }
-
-        @Deprecated
-        @Override
-        public Builder name( ComponentName value )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder name( String value )
-        {
-            return this;
         }
 
         public Builder text( String value )

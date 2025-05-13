@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class Filters
+public final class Filters
     extends AbstractImmutableEntityList<Filter>
 {
     private Filters( final ImmutableList<Filter> set )

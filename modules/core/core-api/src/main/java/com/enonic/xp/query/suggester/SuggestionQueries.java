@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-public class SuggestionQueries
+public final class SuggestionQueries
     extends AbstractImmutableEntitySet<SuggestionQuery>
 {
     private SuggestionQueries( final ImmutableSet<SuggestionQuery> set )

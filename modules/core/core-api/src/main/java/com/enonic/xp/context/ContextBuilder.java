@@ -18,7 +18,7 @@ public final class ContextBuilder
 {
     private final Map<String, Object> attributes;
 
-    private LocalScope localScope;
+    private final LocalScope localScope;
 
     private ContextBuilder( final Map<String, Object> attributes, final LocalScope localScope )
     {

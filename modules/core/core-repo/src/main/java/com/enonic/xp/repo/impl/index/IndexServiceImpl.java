@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.index.PurgeIndexParams;
 import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
@@ -149,12 +148,6 @@ public class IndexServiceImpl
     public boolean waitForYellowStatus()
     {
         return indexServiceInternal.waitForYellowStatus();
-    }
-
-    @Override
-    public void purgeSearchIndex( final PurgeIndexParams params )
-    {
-        doPurgeSearchIndex( params.getRepositoryId() );
     }
 
     private void doPurgeSearchIndex( final RepositoryId repositoryId )

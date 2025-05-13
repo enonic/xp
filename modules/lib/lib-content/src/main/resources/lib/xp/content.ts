@@ -781,7 +781,6 @@ export interface PublishContentParams {
 
 export interface PublishContentResult {
     pushedContents: string[];
-    deletedContents: string[];
     failedContents: string[];
 }
 

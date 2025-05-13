@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class ReorderChildNodesParams
+public final class ReorderChildNodesParams
     extends AbstractImmutableEntityList<ReorderChildNodeParams>
 {
     private final NodeDataProcessor processor;

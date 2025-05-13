@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 
-public class HighlightedProperty
+public final class HighlightedProperty
 {
     private final String name;
 

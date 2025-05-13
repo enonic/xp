@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class TermsAggregationQuery
+public final class TermsAggregationQuery
     extends BucketAggregationQuery
 {
     public static final int TERM_DEFAULT_SIZE = 10;

@@ -2,7 +2,7 @@ package com.enonic.xp.repository;
 
 import com.enonic.xp.branch.Branch;
 
-public class DeleteBranchParams
+public final class DeleteBranchParams
 {
 
     private final Branch branch;

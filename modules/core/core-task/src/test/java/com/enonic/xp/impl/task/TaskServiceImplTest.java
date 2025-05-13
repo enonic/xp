@@ -14,16 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskManager;
-import com.enonic.xp.impl.task.script.NamedTask;
-import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
-import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,9 +35,6 @@ class TaskServiceImplTest
 {
     @Mock
     TaskManager taskManager;
-
-    @Mock
-    NamedTaskFactory namedTaskFactory;
 
     @Captor
     ArgumentCaptor<DescribedTask> describedTaskCaptor;
@@ -59,7 +52,7 @@ class TaskServiceImplTest
 
         taskConfig = mock( TaskConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
-        taskService = new TaskServiceImpl( taskManager, namedTaskFactory );
+        taskService = new TaskServiceImpl( taskManager );
         taskService.activate( taskConfig );
     }
 
@@ -81,24 +74,6 @@ class TaskServiceImplTest
         verify( taskManager ).submitTask( describedTaskCaptor.capture() );
         final DescribedTask argument = describedTaskCaptor.getValue();
         assertEquals( "someDescription", argument.getDescription() );
-        assertEquals( taskId, argument.getTaskId() );
-    }
-
-    @Test
-    void submitTask_DescriptorKey()
-    {
-        final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
-        final PropertyTree config = new PropertyTree();
-
-        final NamedTask namedTask = mock( NamedTask.class );
-        when( namedTaskFactory.createLegacy( descriptorKey, config ) ).thenReturn( namedTask );
-        when( namedTask.getTaskDescriptor() ).
-            thenReturn( TaskDescriptor.create().key( descriptorKey ).description( "task description" ).build() );
-
-        final TaskId taskId = taskService.submitTask( descriptorKey, config );
-        verify( taskManager ).submitTask( describedTaskCaptor.capture() );
-        describedTaskCaptor.getValue();
-        final DescribedTask argument = describedTaskCaptor.getValue();
         assertEquals( taskId, argument.getTaskId() );
     }
 

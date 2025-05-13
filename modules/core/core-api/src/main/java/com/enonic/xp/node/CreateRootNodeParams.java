@@ -12,7 +12,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
-public class CreateRootNodeParams
+public final class CreateRootNodeParams
 {
     private final ChildOrder childOrder;
 

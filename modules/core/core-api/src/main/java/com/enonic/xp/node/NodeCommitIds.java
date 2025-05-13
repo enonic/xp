@@ -10,7 +10,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class NodeCommitIds
+public final class NodeCommitIds
     extends AbstractImmutableEntitySet<NodeCommitId>
 {
     private NodeCommitIds( final ImmutableSet<NodeCommitId> set )

@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-public class ContentValidityResult
+public final class ContentValidityResult
 {
     private static final ContentValidityResult EMPTY = create().
         notValidContentIds( ContentIds.empty() ).

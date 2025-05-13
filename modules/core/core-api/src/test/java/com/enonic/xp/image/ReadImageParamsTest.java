@@ -53,19 +53,9 @@ public class ReadImageParamsTest
     public void testWithoutMimeTypeAndFormat()
         throws IOException
     {
-        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
+        assertThrows( NullPointerException.class, () -> ReadImageParams.newImageParams().
             contentId( ContentId.from( "content-id" ) ).
             binaryReference( BinaryReference.from( "ref" ) ).
-            build() );
-    }
-
-    @Test
-    public void testWithBothMimeTypeAndFormat()
-        throws IOException
-    {
-        assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
-            contentId( ContentId.from( "content-id" ) ).
-            binaryReference( BinaryReference.from( "ref" ) ).format( "PNG" ).mimeType( "image/jpeg" ).
             build() );
     }
 

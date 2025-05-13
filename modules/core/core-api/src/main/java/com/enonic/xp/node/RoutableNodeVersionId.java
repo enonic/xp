@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class RoutableNodeVersionId
+public final class RoutableNodeVersionId
 {
     private final NodeId nodeId;
 

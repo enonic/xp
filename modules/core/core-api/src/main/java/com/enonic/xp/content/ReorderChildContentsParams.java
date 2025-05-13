@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class ReorderChildContentsParams
+public final class ReorderChildContentsParams
     extends AbstractImmutableEntityList<ReorderChildParams>
 {
     private final ContentId contentId;

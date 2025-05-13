@@ -9,12 +9,10 @@ import com.enonic.xp.data.PropertyTree;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @PublicApi
-public class ImageComponent
+public final class ImageComponent
     extends Component
 {
     private static final String CAPTION = "caption";
-
-    private static final ComponentName NAME = ComponentName.from( "Image" );
 
     private final ContentId image;
 
@@ -47,13 +45,6 @@ public class ImageComponent
     public ComponentType getType()
     {
         return ImageComponentType.INSTANCE;
-    }
-
-    @Deprecated
-    @Override
-    public ComponentName getName()
-    {
-        return NAME;
     }
 
     public ContentId getImage()
@@ -131,19 +122,6 @@ public class ImageComponent
             super( source );
             image = source.image;
             config = source.config != null ? source.config.copy() : null;
-        }
-
-        @Deprecated
-        @Override
-        public Builder name( ComponentName value )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder name( String value )
-        {
-            return this;
         }
 
         public Builder image( final ContentId value )

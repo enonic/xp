@@ -50,7 +50,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.impl.task.LocalTaskManagerImpl;
 import com.enonic.xp.impl.task.TaskManagerCleanupScheduler;
 import com.enonic.xp.impl.task.TaskServiceImpl;
-import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -330,9 +329,7 @@ public abstract class AbstractContentSynchronizerTest
         } );
         taskMan.activate();
 
-        NamedTaskFactory namedTaskFactory = mock( NamedTaskFactory.class );
-
-        this.taskService = new TaskServiceImpl( taskMan, namedTaskFactory );
+        this.taskService = new TaskServiceImpl( taskMan );
     }
 
     private static class TaskManagerCleanupSchedulerMock

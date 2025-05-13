@@ -5,13 +5,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.task.TaskDescriptor;
-import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskNotFoundException;
 
 @Component
@@ -22,27 +20,15 @@ public class NamedTaskScriptFactoryImpl
 
     private final PortalScriptService scriptService;
 
-    private final TaskDescriptorService taskDescriptorService;
-
     @Activate
-    public NamedTaskScriptFactoryImpl( @Reference final PortalScriptService scriptService,
-                                       @Reference final TaskDescriptorService taskDescriptorService )
+    public NamedTaskScriptFactoryImpl( @Reference final PortalScriptService scriptService )
     {
         this.scriptService = scriptService;
-        this.taskDescriptorService = taskDescriptorService;
     }
 
     @Override
     public NamedTaskScript create( final TaskDescriptor descriptor, final PropertyTree data )
     {
-        return doCreate( descriptor, data );
-    }
-
-    @Override
-    public NamedTaskScript createLegacy( final DescriptorKey key, final PropertyTree data )
-    {
-        final TaskDescriptor descriptor = taskDescriptorService.getTask( key );
-
         return doCreate( descriptor, data );
     }
 

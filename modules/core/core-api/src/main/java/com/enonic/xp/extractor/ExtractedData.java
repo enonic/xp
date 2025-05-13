@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ExtractedData
+public final class ExtractedData
 {
     private final Map<String, List<String>> metadata;
 

@@ -7,7 +7,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 @PublicApi
-public class GetDefaultPageTemplateParams
+public final class GetDefaultPageTemplateParams
 {
     private final ContentId site;
 

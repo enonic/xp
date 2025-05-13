@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.GeoPoint;
 
 @PublicApi
-public class GeoDistanceAggregationQuery
+public final class GeoDistanceAggregationQuery
     extends AbstractRangeAggregationQuery<DistanceRange>
 {
     private final GeoPoint origin;

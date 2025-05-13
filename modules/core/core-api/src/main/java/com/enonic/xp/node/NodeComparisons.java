@@ -13,7 +13,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.CompareStatus;
 
 @PublicApi
-public class NodeComparisons
+public final class NodeComparisons
     implements Iterable<NodeComparison>
 {
     private final Map<NodeId, NodeComparison> comparisonMap;

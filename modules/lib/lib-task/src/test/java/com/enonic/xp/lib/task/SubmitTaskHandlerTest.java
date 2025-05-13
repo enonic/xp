@@ -83,14 +83,6 @@ class SubmitTaskHandlerTest
     }
 
     @Test
-    void testSubmitNamed()
-    {
-        Mockito.when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
-
-        runFunction( "/test/submitTask-test.js", "submitNamed" );
-    }
-
-    @Test
     void submitTaskFromApp()
     {
         final MockTaskService mockTaskMan = new MockTaskService();

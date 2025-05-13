@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.suggester.Suggestions;
 
 @PublicApi
-public class FindNodesByMultiRepoQueryResult
+public final class FindNodesByMultiRepoQueryResult
 {
     private final MultiRepoNodeHits nodeHits;
 

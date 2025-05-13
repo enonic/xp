@@ -15,7 +15,7 @@ import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 @PublicApi
-public class Media
+public final class Media
     extends Content
 {
     private Media( final Builder builder )

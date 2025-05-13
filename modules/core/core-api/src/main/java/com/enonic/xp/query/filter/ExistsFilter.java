@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ExistsFilter
+public final class ExistsFilter
     extends FieldFilter
 {
     public static Builder create()

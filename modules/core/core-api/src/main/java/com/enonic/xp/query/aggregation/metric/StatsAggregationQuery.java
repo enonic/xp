@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 
 @PublicApi
-public class StatsAggregationQuery
+public final class StatsAggregationQuery
     extends MetricAggregationQuery
 {
     private StatsAggregationQuery( final Builder builder )
