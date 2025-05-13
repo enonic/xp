@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.security.IdProviderKey;
 
-public class IdProviderControllerExecutionParams
+public final class IdProviderControllerExecutionParams
 {
     private final IdProviderKey idProviderKey;
 

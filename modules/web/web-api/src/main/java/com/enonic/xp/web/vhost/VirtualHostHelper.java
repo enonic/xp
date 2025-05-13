@@ -18,4 +18,8 @@ public final class VirtualHostHelper
     {
         req.setAttribute( KEY, vhost );
     }
+
+    private VirtualHostHelper()
+    {
+    }
 }

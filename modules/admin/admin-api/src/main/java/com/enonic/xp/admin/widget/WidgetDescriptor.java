@@ -18,7 +18,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
 @PublicApi
-public class WidgetDescriptor
+public final class WidgetDescriptor
     extends Descriptor
 {
     private final String displayName;

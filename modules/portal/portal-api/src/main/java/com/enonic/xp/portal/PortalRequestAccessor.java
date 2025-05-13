@@ -33,4 +33,8 @@ public final class PortalRequestAccessor
     {
         req.setAttribute( PortalRequest.class.getName(), portalRequest );
     }
+
+    private PortalRequestAccessor()
+    {
+    }
 }

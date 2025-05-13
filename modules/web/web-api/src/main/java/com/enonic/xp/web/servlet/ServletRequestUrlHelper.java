@@ -181,4 +181,8 @@ public final class ServletRequestUrlHelper
             }
         }
     }
+
+    private ServletRequestUrlHelper()
+    {
+    }
 }
