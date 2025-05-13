@@ -431,13 +431,13 @@ interface IdProviderUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function idProviderUrl(params: IdProviderUrlParams): string {
+export function idProviderUrl(params?: IdProviderUrlParams): string {
     const bean: IdProviderUrlHandler = __.newBean<IdProviderUrlHandler>('com.enonic.xp.lib.portal.url.IdProviderUrlHandler');
 
-    bean.setIdProvider(__.nullOrValue(params.idProvider));
-    bean.setUrlType(__.nullOrValue(params.type));
-    bean.setContextPath(__.nullOrValue(params.contextPath));
-    bean.addQueryParams(__.toScriptValue(params.params));
+    bean.setIdProvider(__.nullOrValue(params?.idProvider));
+    bean.setUrlType(__.nullOrValue(params?.type));
+    bean.setContextPath(__.nullOrValue(params?.contextPath));
+    bean.addQueryParams(__.toScriptValue(params?.params));
 
     return bean.createUrl();
 }
@@ -478,13 +478,13 @@ interface LoginUrlHandler {
  *
  * @returns {string} The generated URL.
  */
-export function loginUrl(params: LoginUrlParams): string {
+export function loginUrl(params?: LoginUrlParams): string {
     const bean: LoginUrlHandler = __.newBean<LoginUrlHandler>('com.enonic.xp.lib.portal.url.LoginUrlHandler');
 
-    bean.setIdProvider(__.nullOrValue(params.idProvider));
-    bean.setRedirect(__.nullOrValue(params.redirect));
-    bean.setContextPath(__.nullOrValue(params.contextPath));
-    bean.setUrlType(__.nullOrValue(params.type));
+    bean.setIdProvider(__.nullOrValue(params?.idProvider));
+    bean.setRedirect(__.nullOrValue(params?.redirect));
+    bean.setContextPath(__.nullOrValue(params?.contextPath));
+    bean.setUrlType(__.nullOrValue(params?.type));
 
     return bean.createUrl();
 }
