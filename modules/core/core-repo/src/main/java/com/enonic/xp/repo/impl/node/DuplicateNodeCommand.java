@@ -149,11 +149,6 @@ public final class DuplicateNodeCommand
     {
         CreateNodeParams updatedParams = originalParams;
 
-        if ( params.getProcessor() != null )
-        {
-            updatedParams = params.getProcessor().process( originalParams );
-        }
-
         if ( params.getDataProcessor() != null )
         {
             updatedParams = CreateNodeParams.create( originalParams )

@@ -1,11 +1,8 @@
 package com.enonic.xp.content;
 
-import java.io.InputStream;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -31,9 +28,6 @@ public interface ContentService
     Content rename( RenameContentParams params );
 
     DeleteContentsResult delete( DeleteContentParams params );
-
-    @Deprecated( since = "8" )
-    DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
 
     PublishContentResult publish( PushContentParams params );
 

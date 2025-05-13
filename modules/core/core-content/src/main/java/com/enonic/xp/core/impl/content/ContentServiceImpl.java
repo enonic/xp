@@ -367,13 +367,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    @Deprecated( since = "8" )
-    public DeleteContentsResult deleteWithoutFetch( final DeleteContentParams params )
-    {
-        return delete( params );
-    }
-
-    @Override
     public PublishContentResult publish( final PushContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );

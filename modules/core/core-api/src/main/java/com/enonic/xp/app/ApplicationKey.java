@@ -3,7 +3,6 @@ package com.enonic.xp.app;
 import java.io.Serializable;
 
 import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 import com.google.common.base.Preconditions;
 
@@ -66,12 +65,6 @@ public final class ApplicationKey
     public static ApplicationKey from( final Bundle bundle )
     {
         return ApplicationKey.from( bundle.getSymbolicName() );
-    }
-
-    @Deprecated( since = "8")
-    public static ApplicationKey from( final Class<?> clzz )
-    {
-        return from( FrameworkUtil.getBundle( clzz ) );
     }
 
     public static ApplicationKey from( final String name, final String preffix )

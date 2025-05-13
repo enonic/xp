@@ -51,7 +51,6 @@ public class DuplicateNodeHandlerTest
         assertThat( value.getParent() ).isEqualTo( NodePath.ROOT );
         assertThat( value.getRefresh() ).isEqualTo( RefreshMode.SEARCH );
         assertThat( value.getDataProcessor() ).isNotNull();
-        assertThat( value.getProcessor() ).isNull();
     }
 
     @Test
