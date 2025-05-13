@@ -2,19 +2,15 @@ package com.enonic.xp.portal.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PageUrlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testId()
     {
-        final PageUrlParams params = configure( new PageUrlParams() );
+        final PageUrlParams params = new PageUrlParams();
         assertNull( params.getId() );
 
         params.id( "" );
@@ -27,7 +23,7 @@ public class PageUrlParamsTest
     @Test
     public void testPath()
     {
-        final PageUrlParams params = configure( new PageUrlParams() );
+        final PageUrlParams params = new PageUrlParams();
         assertNull( params.getPath() );
 
         params.path( "" );
@@ -40,13 +36,10 @@ public class PageUrlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_id", "123456" );
-        map.put( "_path", "/a/b" );
-        map.put( "a", "1" );
-
-        final PageUrlParams params = configure( new PageUrlParams() );
-        params.setAsMap( map );
+        final PageUrlParams params = new PageUrlParams();
+        params.path( "/a/b" );
+        params.id( "123456" );
+        params.param( "a", "1" );
 
         assertEquals( "123456", params.getId() );
         assertEquals( "/a/b", params.getPath() );

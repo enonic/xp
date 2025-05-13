@@ -6,7 +6,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.AssetUrlParams;
-import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.ResourceKey;
@@ -25,7 +24,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
-        final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my.css" );
+        final AssetUrlParams params = new AssetUrlParams().path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
@@ -40,24 +39,10 @@ public class PortalUrlServiceImpl_assetUrlTest
         final StringBuilder longContentPath = new StringBuilder();
         longContentPath.append( "/a".repeat( 10000 ) );
         this.portalRequest.setContentPath( ContentPath.from( longContentPath.toString() ) );
-        final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my.css" );
+        final AssetUrlParams params = new AssetUrlParams().path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
-    }
-
-    @Test
-    public void createUrl_withContentPath()
-    {
-        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
-        when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
-
-        final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest )
-            .contextPathType( ContextPathType.RELATIVE.getValue() )
-            .path( "css/my.css" );
-
-        final String url = this.service.assetUrl( params );
-        assertEquals( "/site/myproject/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
@@ -66,8 +51,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "otherapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 2 ) );
 
-        final AssetUrlParams params =
-            new AssetUrlParams().portalRequest( this.portalRequest ).application( "otherapplication" ).path( "css/my.css" );
+        final AssetUrlParams params = new AssetUrlParams().application( "otherapplication" ).path( "css/my.css" );
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/site/myproject/draft/_/asset/otherapplication:0000000000000002/css/my.css", url );
@@ -79,7 +63,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
-        final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my.css" );
+        final AssetUrlParams params = new AssetUrlParams().path( "css/my.css" );
 
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = mock( VirtualHost.class );
@@ -129,8 +113,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
-        final AssetUrlParams params =
-            new AssetUrlParams().type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).path( "css/my.css" );
+        final AssetUrlParams params = new AssetUrlParams().type( UrlTypeConstants.ABSOLUTE ).path( "css/my.css" );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -146,7 +129,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
-        final AssetUrlParams params = new AssetUrlParams().portalRequest( this.portalRequest ).path( "css/my other & strange.css" );
+        final AssetUrlParams params = new AssetUrlParams().path( "css/my other & strange.css" );
 
         final String url = this.service.assetUrl( params );
         assertEquals( "/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my%20other%20&%20strange.css", url );
@@ -158,8 +141,7 @@ public class PortalUrlServiceImpl_assetUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
-        final AssetUrlParams params =
-            new AssetUrlParams().type( UrlTypeConstants.ABSOLUTE ).portalRequest( this.portalRequest ).path( "css/my.css" );
+        final AssetUrlParams params = new AssetUrlParams().type( UrlTypeConstants.ABSOLUTE ).path( "css/my.css" );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );

@@ -14,7 +14,6 @@ import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -117,12 +116,6 @@ public class ApplicationDeployerManager
 
     @Reference
     public void setTaskService( final TaskService taskService )
-    {
-        //Needed to ensure startup-order
-    }
-
-    @Reference
-    public void setViewFunctionService( final ViewFunctionService viewFunctionService )
     {
         //Needed to ensure startup-order
     }

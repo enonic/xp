@@ -2,19 +2,15 @@ package com.enonic.xp.portal.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AssetUrlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testApplication()
     {
-        final AssetUrlParams params = configure( new AssetUrlParams() );
+        final AssetUrlParams params = new AssetUrlParams();
         assertNull( params.getApplication() );
 
         params.application( "" );
@@ -27,7 +23,7 @@ public class AssetUrlParamsTest
     @Test
     public void testPath()
     {
-        final AssetUrlParams params = configure( new AssetUrlParams() );
+        final AssetUrlParams params = new AssetUrlParams();
         assertNull( params.getPath() );
 
         params.path( "" );
@@ -40,13 +36,10 @@ public class AssetUrlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_path", "/a/b" );
-        map.put( "_application", "otherapplication" );
-        map.put( "a", "1" );
-
-        final AssetUrlParams params = configure( new AssetUrlParams() );
-        params.setAsMap( map );
+        final AssetUrlParams params = new AssetUrlParams();
+        params.path( "/a/b" );
+        params.application( "otherapplication" );
+        params.param( "a", "1" );
 
         assertEquals( "/a/b", params.getPath() );
         assertEquals( "otherapplication", params.getApplication() );

@@ -11,18 +11,14 @@ import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.web.servlet.UriRewritingResult;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 final class AssetUrlBuilder
-    extends GenericEndpointUrlBuilder<AssetUrlParams>
+    extends PortalUrlBuilder<AssetUrlParams>
 {
     private boolean useLegacyContextPath;
-
-    AssetUrlBuilder()
-    {
-        super( "asset" );
-    }
 
     public void setUseLegacyContextPath( final boolean useLegacyContextPath )
     {
@@ -35,6 +31,7 @@ final class AssetUrlBuilder
         if ( useLegacyContextPath )
         {
             super.buildUrl( url, params );
+            UrlBuilderHelper.appendAndEncodePathParts( url, this.portalRequest.getContentPath().toString() );
         }
         else
         {
@@ -42,8 +39,10 @@ final class AssetUrlBuilder
 
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.portalRequest.getRawRequest() );
             UrlBuilderHelper.appendSubPath( url, virtualHost.getTarget() );
-            UrlBuilderHelper.appendSubPath( url, "/_/" + this.endpointType );
         }
+
+        UrlBuilderHelper.appendSubPath( url, "_" );
+        UrlBuilderHelper.appendSubPath( url, "asset" );
 
         final ApplicationKey applicationKey =
             new ApplicationResolver().portalRequest( this.portalRequest ).application( this.params.getApplication() ).resolve();
@@ -59,6 +58,12 @@ final class AssetUrlBuilder
 
         UrlBuilderHelper.appendPart( url, applicationKey + ":" + fingerprint );
         UrlBuilderHelper.appendAndEncodePathParts( url, this.params.getPath() );
+    }
+
+    @Override
+    protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
+    {
+        return new LegacyVhostUrlPostRewriter( uriRewritingResult, this.portalRequest, "asset" ).rewrite();
     }
 
     private static long stableTime()

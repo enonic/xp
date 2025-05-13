@@ -2,7 +2,6 @@ package com.enonic.xp.portal.url;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -37,20 +36,14 @@ public final class ServiceUrlParams
     }
 
     @Override
-    public ServiceUrlParams setAsMap( final Multimap<String, String> map )
+    public String toString()
     {
-        super.setAsMap( map );
-        service( singleValue( map, "_service" ) );
-        application( singleValue( map, "_application" ) );
-        getParams().putAll( map );
-        return this;
-    }
-
-    @Override
-    protected void buildToString( final MoreObjects.ToStringHelper helper )
-    {
-        super.buildToString( helper );
+        final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper( this );
+        helper.omitNullValues();
+        helper.add( "type", this.getType() );
+        helper.add( "params", this.getParams() );
         helper.add( "service", this.service );
         helper.add( "application", this.application );
+        return helper.toString();
     }
 }

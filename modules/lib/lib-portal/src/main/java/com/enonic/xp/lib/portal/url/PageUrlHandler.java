@@ -52,7 +52,7 @@ public final class PageUrlHandler
         this.branch = branch;
     }
 
-    public void setQueryParams( final ScriptValue params )
+    public void addQueryParams( final ScriptValue params )
     {
         this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
     }

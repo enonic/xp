@@ -21,6 +21,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlParser;
@@ -151,7 +152,7 @@ public class RichTextProcessor
         this.imageStylesSupplier = Suppliers.memoize( () -> {
             final StyleDescriptors styleDescriptors = params.getCustomStyleDescriptorsCallback() != null
                 ? params.getCustomStyleDescriptorsCallback().get()
-                : getStyleDescriptors( params.getPortalRequest() );
+                : getStyleDescriptors( PortalRequestAccessor.get() );
             return getImageStyleMap( styleDescriptors );
         } );
 

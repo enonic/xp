@@ -2,19 +2,15 @@ package com.enonic.xp.portal.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ServiceUrlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testApplication()
     {
-        final ServiceUrlParams params = configure( new ServiceUrlParams() );
+        final ServiceUrlParams params = new ServiceUrlParams();
         assertNull( params.getApplication() );
 
         params.application( "" );
@@ -27,7 +23,7 @@ public class ServiceUrlParamsTest
     @Test
     public void testService()
     {
-        final ServiceUrlParams params = configure( new ServiceUrlParams() );
+        final ServiceUrlParams params = new ServiceUrlParams();
         assertNull( params.getService() );
 
         params.service( "" );
@@ -40,13 +36,10 @@ public class ServiceUrlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_service", "myservice" );
-        map.put( "_application", "otherapplication" );
-        map.put( "a", "1" );
-
-        final ServiceUrlParams params = configure( new ServiceUrlParams() );
-        params.setAsMap( map );
+        final ServiceUrlParams params = new ServiceUrlParams();
+        params.service( "myservice" );
+        params.application( "otherapplication" );
+        params.param( "a", "1" );
 
         assertEquals( "myservice", params.getService() );
         assertEquals( "otherapplication", params.getApplication() );

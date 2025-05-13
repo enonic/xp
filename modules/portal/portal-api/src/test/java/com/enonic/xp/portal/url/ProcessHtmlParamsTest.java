@@ -1,20 +1,18 @@
 package com.enonic.xp.portal.url;
 
-import org.junit.jupiter.api.Test;
+import java.util.List;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ProcessHtmlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testValue()
     {
-        final ProcessHtmlParams params = configure( new ProcessHtmlParams() );
+        final ProcessHtmlParams params = new ProcessHtmlParams();
         assertNull( params.getValue() );
 
         params.value( "" );
@@ -27,17 +25,15 @@ public class ProcessHtmlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_value", "<html/>" );
-        map.put( "a", "1" );
-        map.put( "_imageWidths", "600" );
-        map.put( "_imageWidths", "1024" );
-
-        final ProcessHtmlParams params = configure( new ProcessHtmlParams() );
-        params.setAsMap( map );
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( "<html/>" );
+        params.imageWidths( List.of( 600, 1024 ) );
+        params.param( "a", "1" );
+        params.imageSizes( "sizes" );
 
         assertEquals( "<html/>", params.getValue() );
         assertEquals( "{a=[1]}", params.getParams().toString() );
-        assertEquals( "ProcessHtmlParams{type=server, params={a=[1]}, value=<html/>, imageWidths=[600, 1024]}", params.toString() );
+        assertEquals( "ProcessHtmlParams{type=server, params={a=[1]}, value=<html/>, imageWidths=[600, 1024], imageSizes=sizes}",
+                      params.toString() );
     }
 }

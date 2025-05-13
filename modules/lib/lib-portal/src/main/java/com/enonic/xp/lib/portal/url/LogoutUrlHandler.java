@@ -1,57 +1,85 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import com.google.common.collect.Multimap;
-
-import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public final class LogoutUrlHandler
-    extends AbstractUrlHandler
+    implements ScriptBean
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS =
-        Set.of( "redirect", "contextPath", "type", "params" );
+    private Supplier<PortalUrlService> urlServiceSupplier;
 
-    private Context context;
+    private String redirect;
 
-    @Override
-    protected String buildUrl( final Multimap<String, String> map )
-    {
-        final IdentityUrlParams params = new IdentityUrlParams().
-            portalRequest( request ).
-            idProviderFunction( "logout" ).
-            idProviderKey( retrieveIdProviderKey() ).
-            setAsMap( map );
+    private String contextPath;
 
-        return this.urlService.identityUrl( params );
-    }
+    private String urlType;
 
-    private IdProviderKey retrieveIdProviderKey()
-    {
-        final AuthenticationInfo authInfo = this.context.getAuthInfo();
-        if ( authInfo.isAuthenticated() )
-        {
-            return authInfo.getUser().
-                getKey().
-                getIdProviderKey();
-        }
-        return null;
-    }
-
-    @Override
-    protected boolean isValidParam( final String param )
-    {
-        return VALID_URL_PROPERTY_KEYS.contains( param );
-    }
+    private Map<String, Collection<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
     {
-        super.initialize( context );
-        this.context = context.getBinding( Context.class ).get();
+        this.urlServiceSupplier = context.getService( PortalUrlService.class );
+    }
+
+    public LogoutUrlHandler setRedirect( final String redirect )
+    {
+        this.redirect = redirect;
+        return this;
+    }
+
+    public LogoutUrlHandler setContextPath( final String contextPath )
+    {
+        this.contextPath = contextPath;
+        return this;
+    }
+
+    public LogoutUrlHandler setUrlType( final String urlType )
+    {
+        this.urlType = urlType;
+        return this;
+    }
+
+    public void addQueryParams( final ScriptValue params )
+    {
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
+    }
+
+    public String createUrl()
+    {
+        final IdentityUrlParams params = new IdentityUrlParams().idProviderFunction( "logout" )
+            .redirectionUrl( this.redirect )
+            .contextPathType( this.contextPath )
+            .type( this.urlType )
+            .idProviderKey( retrieveIdProviderKey() )
+            .portalRequest( PortalRequestAccessor.get() );
+
+        if ( this.queryParams != null )
+        {
+            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
+        }
+
+        return this.urlServiceSupplier.get().identityUrl( params );
+    }
+
+    private IdProviderKey retrieveIdProviderKey()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( authInfo.isAuthenticated() )
+        {
+            return authInfo.getUser().getKey().getIdProviderKey();
+        }
+        return null;
     }
 }

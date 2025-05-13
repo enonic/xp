@@ -1,26 +1,58 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import com.google.common.collect.Multimap;
-
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.GenerateUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
 
 public final class UrlHandler
-    extends AbstractUrlHandler
+    implements ScriptBean
 {
-    private static final Set<String> VALID_URL_PROPERTY_KEYS = Set.of( "path", "type", "params" );
+    private Supplier<PortalUrlService> urlServiceSupplier;
+
+    private String path;
+
+    private String urlType;
+
+    private Map<String, Collection<String>> queryParams;
 
     @Override
-    protected String buildUrl( final Multimap<String, String> map )
+    public void initialize( final BeanContext context )
     {
-        final GenerateUrlParams params = new GenerateUrlParams().portalRequest( this.request ).setAsMap( map );
-        return this.urlService.generateUrl( params );
+        this.urlServiceSupplier = context.getService( PortalUrlService.class );
     }
 
-    @Override
-    protected boolean isValidParam( final String param )
+    public void setPath( final String path )
     {
-        return VALID_URL_PROPERTY_KEYS.contains( param );
+        this.path = path;
+    }
+
+    public void setUrlType( final String urlType )
+    {
+        this.urlType = urlType;
+    }
+
+    public void addQueryParams( final ScriptValue params )
+    {
+        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
+    }
+
+    public String createUrl()
+    {
+        final GenerateUrlParams params =
+            new GenerateUrlParams().url( this.path ).portalRequest( PortalRequestAccessor.get() ).type( this.urlType );
+
+        if ( this.queryParams != null )
+        {
+            this.queryParams.forEach( ( key, values ) -> values.forEach( value -> params.param( key, value ) ) );
+        }
+
+        return this.urlServiceSupplier.get().generateUrl( params );
     }
 }

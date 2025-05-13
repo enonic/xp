@@ -30,15 +30,17 @@ exports.assetUrlTest_unknownProperty = function () {
 };
 
 exports.assetUrlTest_invalidProperty = function () {
-    var result = portal.assetUrl({
-        _path: 'styles/my.css',
-        params: {
-            a: 1,
-            b: [1, 2]
-        }
-    });
-
-    assert.assertEquals('AssetUrlParams{type=server, params={a=[1], b=[1, 2]}}', result);
+    try {
+        portal.assetUrl({
+            _path: 'styles/my.css',
+            params: {
+                a: 1,
+                b: [1, 2]
+            }
+        });
+    } catch (e) {
+        assert.assertEquals('Parameter \'path\' is required', e);
+    }
     return true;
 };
 
@@ -214,18 +216,18 @@ exports.processHtmlTest = function () {
 
     // NOTE: This is not the actual url. Only a mock representation.
     assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +
-                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>, imageWidths=[]}', result);
+                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };
 
-exports.processHtmlTest_unknownProperty = function () {
+exports.processHtmlTest_ignoreUnknownProperty = function () {
     var result = portal.processHtml({
         value: '<p><a title="Link tooltip" href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>',
         unknownProperty: 'value'
     });
 
     assert.assertEquals('ProcessHtmlParams{type=server, params={}, value=<p><a title="Link tooltip" ' +
-                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>, imageWidths=[]}', result);
+                        'href="content://3e266eea-9875-4cb7-b259-41ad152f8532" target="_blank">link</a></p>}', result);
     return true;
 };
 

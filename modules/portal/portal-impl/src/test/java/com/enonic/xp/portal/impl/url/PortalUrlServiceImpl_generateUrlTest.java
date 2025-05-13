@@ -16,10 +16,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     @Test
     public void createUrl()
     {
-        final GenerateUrlParams params = new GenerateUrlParams().
-            portalRequest( this.portalRequest ).
-            url( "/admin" ).
-            param( "a", 3 );
+        final GenerateUrlParams params = new GenerateUrlParams().url( "/admin" ).param( "a", 3 );
 
         final String url = this.service.generateUrl( params );
         assertEquals( "/admin?a=3", url );
@@ -28,11 +25,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     @Test
     public void createUrl_absolute()
     {
-        final GenerateUrlParams params = new GenerateUrlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            url( "/admin" ).
-            param( "a", 3 );
+        final GenerateUrlParams params = new GenerateUrlParams().type( UrlTypeConstants.ABSOLUTE ).url( "/admin" ).param( "a", 3 );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -45,11 +38,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     @Test
     public void createUrl_withVirtualHost()
     {
-        final GenerateUrlParams params = new GenerateUrlParams().
-            type( UrlTypeConstants.ABSOLUTE ).
-            portalRequest( this.portalRequest ).
-            url( "/admin" ).
-            param( "a", 3 );
+        final GenerateUrlParams params = new GenerateUrlParams().type( UrlTypeConstants.ABSOLUTE ).url( "/admin" ).param( "a", 3 );
 
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
