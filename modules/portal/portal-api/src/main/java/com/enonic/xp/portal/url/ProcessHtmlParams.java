@@ -1,14 +1,11 @@
 package com.enonic.xp.portal.url;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.style.StyleDescriptors;
@@ -109,25 +106,15 @@ public final class ProcessHtmlParams
     }
 
     @Override
-    public ProcessHtmlParams setAsMap( final Multimap<String, String> map )
+    public String toString()
     {
-        super.setAsMap( map );
-        value( singleValue( map, "_value" ) );
-        imageWidths( Objects.requireNonNullElse( map.removeAll( "_imageWidths" ), List.<String>of() )
-                         .stream()
-                         .map( Integer::parseInt )
-                         .collect( Collectors.toUnmodifiableList() ) );
-        imageSizes( singleValue( map, "_imageSizes" ) );
-        getParams().putAll( map );
-        return this;
-    }
-
-    @Override
-    protected void buildToString( final MoreObjects.ToStringHelper helper )
-    {
-        super.buildToString( helper );
+        final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper( this );
+        helper.omitNullValues();
+        helper.add( "type", this.getType() );
+        helper.add( "params", this.getParams() );
         helper.add( "value", this.value );
         helper.add( "imageWidths", this.imageWidths );
         helper.add( "imageSizes", this.imageSizes );
+        return helper.toString();
     }
 }

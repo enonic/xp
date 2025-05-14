@@ -2,19 +2,15 @@ package com.enonic.xp.portal.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ComponentUrlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testId()
     {
-        final ComponentUrlParams params = configure( new ComponentUrlParams() );
+        final ComponentUrlParams params = new ComponentUrlParams();
         assertNull( params.getId() );
 
         params.id( "" );
@@ -27,7 +23,7 @@ public class ComponentUrlParamsTest
     @Test
     public void testPath()
     {
-        final ComponentUrlParams params = configure( new ComponentUrlParams() );
+        final ComponentUrlParams params = new ComponentUrlParams();
         assertNull( params.getPath() );
 
         params.path( "" );
@@ -40,7 +36,7 @@ public class ComponentUrlParamsTest
     @Test
     public void testComponent()
     {
-        final ComponentUrlParams params = configure( new ComponentUrlParams() );
+        final ComponentUrlParams params = new ComponentUrlParams();
         assertNull( params.getComponent() );
 
         params.component( "" );
@@ -53,14 +49,11 @@ public class ComponentUrlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_id", "123456" );
-        map.put( "_path", "/a/b" );
-        map.put( "_component", "main/0" );
-        map.put( "a", "1" );
-
-        final ComponentUrlParams params = configure( new ComponentUrlParams() );
-        params.setAsMap( map );
+        final ComponentUrlParams params = new ComponentUrlParams();
+        params.id( "123456" );
+        params.path( "/a/b" );
+        params.component( "main/0" );
+        params.param( "a", "1" );
 
         assertEquals( "123456", params.getId() );
         assertEquals( "/a/b", params.getPath() );

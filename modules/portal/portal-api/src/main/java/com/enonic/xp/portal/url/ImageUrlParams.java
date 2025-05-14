@@ -1,9 +1,7 @@
 package com.enonic.xp.portal.url;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -149,24 +147,12 @@ public final class ImageUrlParams
     }
 
     @Override
-    public ImageUrlParams setAsMap( final Multimap<String, String> map )
+    public String toString()
     {
-        super.setAsMap( map );
-        id( singleValue( map, "_id" ) );
-        path( singleValue( map, "_path" ) );
-        format( singleValue( map, "_format" ) );
-        quality( singleValue( map, "_quality" ) );
-        filter( singleValue( map, "_filter" ) );
-        background( singleValue( map, "_background" ) );
-        scale( singleValue( map, "_scale" ) );
-        getParams().putAll( map );
-        return this;
-    }
-
-    @Override
-    protected void buildToString( final MoreObjects.ToStringHelper helper )
-    {
-        super.buildToString( helper );
+        final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper( this );
+        helper.omitNullValues();
+        helper.add( "type", this.getType() );
+        helper.add( "params", this.getParams() );
         helper.add( "id", this.id );
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
@@ -177,12 +163,6 @@ public final class ImageUrlParams
         helper.add( "filter", this.filter );
         helper.add( "background", this.background );
         helper.add( "scale", this.scale );
-    }
-
-    public ImageUrlParams validate()
-    {
-        Preconditions.checkState( ( getPortalRequest() != null && getPortalRequest().getContent() != null ) || id != null || path != null,
-                                  "id, path or content must be set" );
-        return this;
+        return helper.toString();
     }
 }

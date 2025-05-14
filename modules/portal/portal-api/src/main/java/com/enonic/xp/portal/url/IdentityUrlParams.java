@@ -1,11 +1,14 @@
 package com.enonic.xp.portal.url;
 
+import java.util.Objects;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.IdProviderKey;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
 public final class IdentityUrlParams
@@ -16,6 +19,8 @@ public final class IdentityUrlParams
     private String idProviderFunction;
 
     private String redirectionUrl;
+
+    private ContextPathType contextPathType;
 
     public IdProviderKey getIdProviderKey()
     {
@@ -30,6 +35,11 @@ public final class IdentityUrlParams
     public String getRedirectionUrl()
     {
         return redirectionUrl;
+    }
+
+    public ContextPathType getContextPathType()
+    {
+        return Objects.requireNonNullElse( this.contextPathType, ContextPathType.VHOST );
     }
 
     public IdentityUrlParams idProviderKey( final IdProviderKey value )
@@ -50,33 +60,22 @@ public final class IdentityUrlParams
         return this;
     }
 
-    @Override
-    protected ContextPathType getDefaultContextPath()
+    public IdentityUrlParams contextPathType( final String value )
     {
-        return ContextPathType.VHOST;
-    }
-
-    @Override
-    public IdentityUrlParams setAsMap( final Multimap<String, String> map )
-    {
-        super.setAsMap( map );
-
-        redirectionUrl( singleValue( map, "_redirect" ) );
-        final String idProviderKey = singleValue( map, "_idProvider" );
-        if ( idProviderKey != null )
-        {
-            idProviderKey( IdProviderKey.from( idProviderKey ) );
-        }
-        getParams().putAll( map );
+        this.contextPathType = isNullOrEmpty( value ) ? null : ContextPathType.from( value );
         return this;
     }
 
     @Override
-    protected void buildToString( final MoreObjects.ToStringHelper helper )
+    public String toString()
     {
-        super.buildToString( helper );
+        final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper( this );
+        helper.omitNullValues();
+        helper.add( "type", this.getType() );
+        helper.add( "params", this.getParams() );
         helper.add( "idProviderKey", this.idProviderKey );
         helper.add( "idProviderFunction", this.idProviderFunction );
         helper.add( "redirect", this.redirectionUrl );
+        return helper.toString();
     }
 }

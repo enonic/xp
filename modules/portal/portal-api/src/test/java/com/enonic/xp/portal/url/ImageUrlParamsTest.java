@@ -2,19 +2,15 @@ package com.enonic.xp.portal.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ImageUrlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testId()
     {
-        final ImageUrlParams params = configure( new ImageUrlParams() );
+        final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getId() );
 
         params.id( "" );
@@ -27,7 +23,7 @@ public class ImageUrlParamsTest
     @Test
     public void testPath()
     {
-        final ImageUrlParams params = configure( new ImageUrlParams() );
+        final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getPath() );
 
         params.path( "" );
@@ -40,7 +36,7 @@ public class ImageUrlParamsTest
     @Test
     public void testFormat()
     {
-        final ImageUrlParams params = configure( new ImageUrlParams() );
+        final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getFormat() );
 
         params.format( "" );
@@ -53,7 +49,7 @@ public class ImageUrlParamsTest
     @Test
     public void testFilter()
     {
-        final ImageUrlParams params = configure( new ImageUrlParams() );
+        final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getFilter() );
 
         params.filter( "" );
@@ -66,7 +62,7 @@ public class ImageUrlParamsTest
     @Test
     public void testBackground()
     {
-        final ImageUrlParams params = configure( new ImageUrlParams() );
+        final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getBackground() );
 
         params.background( "" );
@@ -79,7 +75,7 @@ public class ImageUrlParamsTest
     @Test
     public void testQuality()
     {
-        final ImageUrlParams params = configure( new ImageUrlParams() );
+        final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getQuality() );
 
         params.quality( "" );
@@ -92,17 +88,14 @@ public class ImageUrlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_id", "123456" );
-        map.put( "_path", "/a/b" );
-        map.put( "_format", "png" );
-        map.put( "_background", "00ff00" );
-        map.put( "_quality", "90" );
-        map.put( "_filter", "scale(10,10)" );
-        map.put( "a", "1" );
-
-        final ImageUrlParams params = configure( new ImageUrlParams() );
-        params.setAsMap( map );
+        final ImageUrlParams params = new ImageUrlParams();
+        params.id( "123456" );
+        params.path( "/a/b" );
+        params.format( "png" );
+        params.background( "00ff00" );
+        params.quality( 90 );
+        params.filter( "scale(10,10)" );
+        params.param( "a", "1" );
 
         assertEquals( "123456", params.getId() );
         assertEquals( "/a/b", params.getPath() );

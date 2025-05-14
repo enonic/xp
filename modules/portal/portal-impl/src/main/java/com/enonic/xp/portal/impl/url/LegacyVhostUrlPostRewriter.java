@@ -5,43 +5,31 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.portal.url.AbstractUrlParams;
-import com.enonic.xp.portal.url.ContextPathType;
+import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.servlet.UriRewritingResult;
 
-abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
-    extends PortalUrlBuilder<T>
+final class LegacyVhostUrlPostRewriter
 {
     private static final String ELEMENT_DIVIDER = "/";
 
-    protected final String endpointType;
+    private final UriRewritingResult uriRewritingResult;
 
-    GenericEndpointUrlBuilder( final String endpointType )
+    private final PortalRequest portalRequest;
+
+    private final String endpointType;
+
+    LegacyVhostUrlPostRewriter( final UriRewritingResult uriRewritingResult, final PortalRequest portalRequest, final String endpointType )
     {
+        this.uriRewritingResult = uriRewritingResult;
+        this.portalRequest = portalRequest;
         this.endpointType = endpointType;
     }
 
-    @Override
-    protected void buildUrl( final StringBuilder url, final Multimap<String, String> params )
+    public String rewrite()
     {
-        super.buildUrl( url, params );
-        UrlBuilderHelper.appendAndEncodePathParts( url, this.portalRequest.getContentPath().toString() );
-        UrlBuilderHelper.appendPart( url, "_" );
-        UrlBuilderHelper.appendPart( url, this.endpointType );
-    }
-
-    @Override
-    protected String postUriRewriting( final UriRewritingResult uriRewritingResult )
-    {
-        if ( ContextPathType.RELATIVE == this.params.getContextPathType() )
-        {
-            return uriRewritingResult.getRewrittenUri();
-        }
-
         //Example of URI: /site/repo/draft/context/path/_/asset/myapplication/css/my.css
         //Corresponding result: /site/repo/draft/_/asset/myapplication/css/my.css
 
@@ -99,4 +87,5 @@ abstract class GenericEndpointUrlBuilder<T extends AbstractUrlParams>
     {
         return UrlEscapers.urlPathSegmentEscaper().escape( value );
     }
+
 }

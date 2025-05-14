@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 
@@ -15,13 +14,10 @@ final class ServiceRequestBaseUrlSupplier
 
     private final String urlType;
 
-    private final ContextPathType contextPathType;
-
     private ServiceRequestBaseUrlSupplier( final Builder builder )
     {
         this.portalRequest = Objects.requireNonNull( builder.portalRequest );
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.contextPathType = Objects.requireNonNullElse( builder.contextPathType, ContextPathType.RELATIVE );
     }
 
     @Override
@@ -35,11 +31,7 @@ final class ServiceRequestBaseUrlSupplier
             UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
         }
 
-        if ( contextPathType == ContextPathType.RELATIVE )
-        {
-            UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, this.portalRequest.getContentPath().toString() );
-        }
-
+        UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, this.portalRequest.getContentPath().toString() );
         UrlBuilderHelper.appendPart( uriBuilder, "_" );
 
         return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );
@@ -56,8 +48,6 @@ final class ServiceRequestBaseUrlSupplier
 
         private String urlType;
 
-        private ContextPathType contextPathType;
-
         public Builder setPortalRequest( final PortalRequest portalRequest )
         {
             this.portalRequest = portalRequest;
@@ -67,12 +57,6 @@ final class ServiceRequestBaseUrlSupplier
         public Builder setUrlType( final String urlType )
         {
             this.urlType = urlType;
-            return this;
-        }
-
-        public Builder setContextPathType( final ContextPathType contextPathType )
-        {
-            this.contextPathType = contextPathType;
             return this;
         }
 

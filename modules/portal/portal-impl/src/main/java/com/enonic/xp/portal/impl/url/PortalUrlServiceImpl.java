@@ -105,11 +105,8 @@ public final class PortalUrlServiceImpl
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final ServiceRequestBaseUrlSupplier baseUrlSupplier = ServiceRequestBaseUrlSupplier.create()
-            .setPortalRequest( portalRequest )
-            .setUrlType( params.getType() )
-            .setContextPathType( params.getContextPathType() )
-            .build();
+        final ServiceRequestBaseUrlSupplier baseUrlSupplier =
+            ServiceRequestBaseUrlSupplier.create().setPortalRequest( portalRequest ).setUrlType( params.getType() ).build();
 
         final Supplier<String> pathStrategy = () -> {
             final ApplicationKey applicationKey =

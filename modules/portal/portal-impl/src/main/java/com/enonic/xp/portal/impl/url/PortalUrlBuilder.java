@@ -1,8 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -17,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
 import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -40,7 +39,7 @@ abstract class PortalUrlBuilder<T extends AbstractUrlParams>
     public final void setParams( final T params )
     {
         this.params = params;
-        this.portalRequest = this.params.getPortalRequest();
+        this.portalRequest = PortalRequestAccessor.get();
     }
 
     public final String build()

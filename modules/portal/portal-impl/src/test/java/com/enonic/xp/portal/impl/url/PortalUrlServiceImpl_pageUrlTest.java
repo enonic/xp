@@ -40,7 +40,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         ContextBuilder.create().build().runWith( () -> {
             PortalRequestAccessor.set( null );
 
-            final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( "contentId" );
+            final PageUrlParams params = new PageUrlParams().id( "contentId" );
 
             final String url = this.service.pageUrl( params );
             // Not possible to resolve project
@@ -58,7 +58,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             .runWith( () -> {
                 PortalRequestAccessor.set( null );
 
-                final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( "contentId" );
+                final PageUrlParams params = new PageUrlParams().id( "contentId" );
 
                 final String url = this.service.pageUrl( params );
                 // Not possible to resolve branch
@@ -72,7 +72,7 @@ public class PortalUrlServiceImpl_pageUrlTest
         ContextBuilder.create().repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) ).build().runWith( () -> {
             PortalRequestAccessor.set( null );
 
-            final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( "contentId" );
+            final PageUrlParams params = new PageUrlParams().id( "contentId" );
 
             final String url = this.service.pageUrl( params );
             // Not possible to resolve branch
@@ -94,7 +94,7 @@ public class PortalUrlServiceImpl_pageUrlTest
                                                                          .contentRoot( ContentNodeHelper.getContentRoot() )
                                                                          .build() );
 
-        final PageUrlParams params = new PageUrlParams().portalRequest( null ).id( contentId.toString() );
+        final PageUrlParams params = new PageUrlParams().id( contentId.toString() );
 
         final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
@@ -115,8 +115,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             .runWith( () -> {
                 PortalRequestAccessor.set( null );
 
-                final PageUrlParams params =
-                    new PageUrlParams().portalRequest( null ).type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
+                final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
 
                 final Content content = ContentFixtures.newContent();
 
@@ -151,8 +150,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             .runWith( () -> {
                 PortalRequestAccessor.set( null );
 
-                final PageUrlParams params =
-                    new PageUrlParams().portalRequest( null ).type( UrlTypeConstants.SERVER_RELATIVE ).path( "/mycontent" );
+                final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE ).path( "/mycontent" );
 
                 final Content content = ContentFixtures.newContent();
 
@@ -187,8 +185,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             .runWith( () -> {
                 PortalRequestAccessor.set( null );
 
-                final PageUrlParams params =
-                    new PageUrlParams().portalRequest( null ).type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
+                final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" );
 
                 final Content content = ContentFixtures.newContent();
 
@@ -227,10 +224,8 @@ public class PortalUrlServiceImpl_pageUrlTest
             .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> {
-                final PageUrlParams params = new PageUrlParams().portalRequest( null )
-                    .type( UrlTypeConstants.ABSOLUTE )
-                    .path( "/mycontent" )
-                    .projectName( "explicit-project" );
+                final PageUrlParams params =
+                    new PageUrlParams().type( UrlTypeConstants.ABSOLUTE ).path( "/mycontent" ).projectName( "explicit-project" );
 
                 return this.service.pageUrl( params );
             } );
@@ -259,8 +254,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> {
-                final PageUrlParams params = new PageUrlParams().portalRequest( null )
-                    .type( UrlTypeConstants.ABSOLUTE )
+                final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
                     .path( "/mycontent" )
                     .projectName( "explicit-project" )
                     .branch( "explicit-branch" );
@@ -298,8 +292,7 @@ public class PortalUrlServiceImpl_pageUrlTest
             .branch( Branch.from( "context-branch" ) )
             .build()
             .callWith( () -> {
-                final PageUrlParams params = new PageUrlParams().portalRequest( null )
-                    .type( UrlTypeConstants.ABSOLUTE )
+                final PageUrlParams params = new PageUrlParams().type( UrlTypeConstants.ABSOLUTE )
                     .path( "/mycontent" )
                     .projectName( "explicit-project" )
                     .branch( "explicit-branch" );

@@ -24,9 +24,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     @Test
     public void createUrl()
     {
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
+        final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/site/myproject/draft/_/idprovider/system/login", url );
@@ -36,8 +34,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     public void createUrl_withRedirect()
     {
         when( redirectChecksumService.generateChecksum( "https://example.com" ) ).thenReturn( "some-great-checksum" );
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .idProviderKey( IdProviderKey.system() )
+        final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() )
             .idProviderFunction( "login" )
             .redirectionUrl( "https://example.com" );
 
@@ -49,8 +46,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     @Test
     public void createUrl_withContentPath()
     {
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .contextPathType( ContextPathType.RELATIVE.getValue() )
+        final IdentityUrlParams params = new IdentityUrlParams().contextPathType( ContextPathType.RELATIVE.getValue() )
             .idProviderKey( IdProviderKey.system() )
             .idProviderFunction( "login" );
 
@@ -63,9 +59,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     {
         this.portalRequest.setContentPath( ContentPath.from( ContentPath.ROOT, "feåtures" ) );
 
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
+        final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/site/myproject/draft/_/idprovider/system/login", url );
@@ -75,8 +69,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     @Test
     public void createUrl_withoutFunction()
     {
-        final IdentityUrlParams params =
-            new IdentityUrlParams().portalRequest( this.portalRequest ).idProviderKey( IdProviderKey.system() );
+        final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() );
 
         final String url = this.service.identityUrl( params );
         assertEquals( "/site/myproject/draft/_/idprovider/system", url );
@@ -85,9 +78,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     @Test
     public void createUrl_withVirtualHost()
     {
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
+        final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
@@ -133,10 +124,8 @@ public class PortalUrlServiceImpl_identityUrlTest
     @Test
     public void createUrl_absolute()
     {
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .type( UrlTypeConstants.ABSOLUTE )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
+        final IdentityUrlParams params =
+            new IdentityUrlParams().type( UrlTypeConstants.ABSOLUTE ).idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -152,10 +141,8 @@ public class PortalUrlServiceImpl_identityUrlTest
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
 
-        final IdentityUrlParams params = new IdentityUrlParams().portalRequest( this.portalRequest )
-            .type( UrlTypeConstants.ABSOLUTE )
-            .idProviderKey( IdProviderKey.system() )
-            .idProviderFunction( "login" );
+        final IdentityUrlParams params =
+            new IdentityUrlParams().type( UrlTypeConstants.ABSOLUTE ).idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );

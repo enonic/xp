@@ -126,9 +126,9 @@ public class UrlServiceScriptTest
     }
 
     @Test
-    public void processHtmlTest_unknownProperty()
+    public void processHtmlTest_ignoreUnknownProperty()
     {
-        assertTrue( execute( "processHtmlTest_unknownProperty" ) );
+        assertTrue( execute( "processHtmlTest_ignoreUnknownProperty" ) );
     }
 
     @Test

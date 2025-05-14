@@ -2,21 +2,17 @@ package com.enonic.xp.portal.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AttachmentUrlParamsTest
-    extends AbstractUrlParamsTest
 {
     @Test
     public void testId()
     {
-        final AttachmentUrlParams params = configure( new AttachmentUrlParams() );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getId() );
 
         params.id( "" );
@@ -29,7 +25,7 @@ public class AttachmentUrlParamsTest
     @Test
     public void testPath()
     {
-        final AttachmentUrlParams params = configure( new AttachmentUrlParams() );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getPath() );
 
         params.path( "" );
@@ -42,7 +38,7 @@ public class AttachmentUrlParamsTest
     @Test
     public void testName()
     {
-        final AttachmentUrlParams params = configure( new AttachmentUrlParams() );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getName() );
 
         params.name( "" );
@@ -55,7 +51,7 @@ public class AttachmentUrlParamsTest
     @Test
     public void testLabel()
     {
-        final AttachmentUrlParams params = configure( new AttachmentUrlParams() );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getLabel() );
 
         params.label( "" );
@@ -68,7 +64,7 @@ public class AttachmentUrlParamsTest
     @Test
     public void testDownload()
     {
-        final AttachmentUrlParams params = configure( new AttachmentUrlParams() );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
         assertFalse( params.isDownload() );
 
         params.download( "" );
@@ -81,16 +77,13 @@ public class AttachmentUrlParamsTest
     @Test
     public void testSetAsMap()
     {
-        final Multimap<String, String> map = HashMultimap.create();
-        map.put( "_id", "123456" );
-        map.put( "_path", "/a/b" );
-        map.put( "_name", "myfile.pdf" );
-        map.put( "_label", "media" );
-        map.put( "_download", "true" );
-        map.put( "a", "1" );
-
-        final AttachmentUrlParams params = configure( new AttachmentUrlParams() );
-        params.setAsMap( map );
+        final AttachmentUrlParams params = new AttachmentUrlParams();
+        params.id( "123456" );
+        params.path( "/a/b" );
+        params.name( "myfile.pdf" );
+        params.label( "media" );
+        params.download( true );
+        params.param( "a", "1" );
 
         assertEquals( "123456", params.getId() );
         assertEquals( "/a/b", params.getPath() );

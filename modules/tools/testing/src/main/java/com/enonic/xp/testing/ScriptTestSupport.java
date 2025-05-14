@@ -29,7 +29,6 @@ import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.view.ViewFunctionService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
@@ -43,7 +42,6 @@ import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.testing.mock.MockBeanContext;
 import com.enonic.xp.testing.mock.MockServiceRegistry;
-import com.enonic.xp.testing.mock.MockViewFunctionService;
 import com.enonic.xp.testing.resource.ClassLoaderResourceService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -115,7 +113,6 @@ public abstract class ScriptTestSupport
 
         addService( ContentService.class, this.contentService );
         addService( ResourceService.class, this.resourceService );
-        addService( ViewFunctionService.class, new MockViewFunctionService() );
         addService( ProjectService.class, this.projectService );
 
         this.scriptSettings = ScriptSettings.create();
