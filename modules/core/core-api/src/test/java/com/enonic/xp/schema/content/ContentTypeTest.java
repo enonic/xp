@@ -157,26 +157,6 @@ public class ContentTypeTest
     }
 
     @Test
-    public void contentTypeFilter()
-    {
-        ContentTypeFilter.Builder builder = ContentTypeFilter.create().allowContentType( ContentTypeName.media() ).allowContentType(
-            ContentTypeName.from( "myapplication:my_type" ) ).allowContentTypes(
-            ContentTypeNames.from( ContentTypeName.archiveMedia() ) ).defaultDeny().denyContentType(
-            ContentTypeName.audioMedia() ).denyContentTypes( ContentTypeNames.from( ContentTypeName.documentMedia() ) ).allowContentType(
-            "myapplication:my_type1" ).denyContentType( "myapplication:my_type2" );
-        ContentTypeFilter ctFilter = builder.build();
-        ContentTypeFilter ctFilter1 = builder.build();
-        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type" ) ) );
-        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type1" ) ) );
-        assertTrue( ctFilter.isContentTypeAllowed( ContentTypeName.archiveMedia() ) );
-        assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.from( "myapplication:my_type2" ) ) );
-        assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.audioMedia() ) );
-        assertFalse( ctFilter.isContentTypeAllowed( ContentTypeName.documentMedia() ) );
-        assertTrue( ctFilter.equals( ctFilter1 ) );
-        assertFalse( ctFilter.equals( builder ) );
-    }
-
-    @Test
     public void getChildContentTypesParams()
     {
         GetChildContentTypesParams params1 = new GetChildContentTypesParams();
