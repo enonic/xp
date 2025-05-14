@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -62,8 +61,7 @@ public final class LogoutUrlHandler
             .redirectionUrl( this.redirect )
             .contextPathType( this.contextPath )
             .type( this.urlType )
-            .idProviderKey( retrieveIdProviderKey() )
-            .portalRequest( PortalRequestAccessor.get() );
+            .idProviderKey( retrieveIdProviderKey() );
 
         if ( this.queryParams != null )
         {

@@ -3,7 +3,6 @@ package com.enonic.xp.lib.portal.url;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.script.bean.BeanContext;
@@ -54,11 +53,8 @@ public final class ProcessHtmlHandler
 
     public String createUrl()
     {
-        final ProcessHtmlParams params = new ProcessHtmlParams().portalRequest( PortalRequestAccessor.get() )
-            .type( this.urlType )
-            .value( this.value )
-            .imageWidths( this.imageWidths )
-            .imageSizes( this.imageSizes );
+        final ProcessHtmlParams params =
+            new ProcessHtmlParams().type( this.urlType ).value( this.value ).imageWidths( this.imageWidths ).imageSizes( this.imageSizes );
 
         return this.urlServiceSupplier.get().processHtml( params );
     }

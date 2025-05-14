@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -45,8 +44,7 @@ public final class UrlHandler
 
     public String createUrl()
     {
-        final GenerateUrlParams params =
-            new GenerateUrlParams().url( this.path ).portalRequest( PortalRequestAccessor.get() ).type( this.urlType );
+        final GenerateUrlParams params = new GenerateUrlParams().url( this.path ).type( this.urlType );
 
         if ( this.queryParams != null )
         {

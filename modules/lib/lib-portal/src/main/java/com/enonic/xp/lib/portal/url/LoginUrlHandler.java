@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -69,8 +68,7 @@ public final class LoginUrlHandler
             .redirectionUrl( this.redirect )
             .contextPathType( this.contextPath )
             .type( this.urlType )
-            .portalRequest( PortalRequestAccessor.get() )
-            .idProviderKey( Optional.of( this.idProvider ).map( IdProviderKey::from ).orElse( null ) );
+            .idProviderKey( Optional.ofNullable( this.idProvider ).map( IdProviderKey::from ).orElse( null ) );
 
         if ( this.queryParams != null )
         {

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ServiceUrlParams;
 import com.enonic.xp.script.ScriptValue;
@@ -52,10 +51,7 @@ public final class ServiceUrlHandler
 
     public String createUrl()
     {
-        final ServiceUrlParams params = new ServiceUrlParams().service( this.service )
-            .application( this.application )
-            .portalRequest( PortalRequestAccessor.get() )
-            .type( this.urlType );
+        final ServiceUrlParams params = new ServiceUrlParams().service( this.service ).application( this.application ).type( this.urlType );
 
         if ( this.queryParams != null )
         {
