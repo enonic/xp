@@ -189,12 +189,6 @@ public class Content
         return path;
     }
 
-    @Deprecated
-    public boolean isRoot()
-    {
-        return this.path.elementCount() == 1;
-    }
-
     public ContentTypeName getType()
     {
         return type;
@@ -300,12 +294,6 @@ public class Content
         return this instanceof PageTemplate;
     }
 
-    @Deprecated
-    public boolean hasPage()
-    {
-        return page != null;
-    }
-
     public Page getPage()
     {
         return page;
@@ -334,12 +322,6 @@ public class Content
     public Locale getLanguage()
     {
         return language;
-    }
-
-    @Deprecated
-    public ContentState getContentState()
-    {
-        return ContentState.DEFAULT;
     }
 
     public ContentIds getProcessedReferences()
@@ -380,12 +362,6 @@ public class Content
     public ContentId getVariantOf()
     {
         return variantOf;
-    }
-
-    @Deprecated
-    public boolean inheritsPermissions()
-    {
-        return false;
     }
 
     @Override
@@ -731,12 +707,6 @@ public class Content
         public BUILDER language( final Locale language )
         {
             this.language = language;
-            return (BUILDER) this;
-        }
-
-        @Deprecated
-        public BUILDER contentState( final ContentState contentState )
-        {
             return (BUILDER) this;
         }
 

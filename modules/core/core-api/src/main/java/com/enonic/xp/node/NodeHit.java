@@ -4,7 +4,7 @@ import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
-public class NodeHit
+public final class NodeHit
 {
     private final NodeId nodeId;
 

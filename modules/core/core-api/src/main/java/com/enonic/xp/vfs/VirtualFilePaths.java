@@ -7,6 +7,10 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public final class VirtualFilePaths
 {
+    private VirtualFilePaths()
+    {
+    }
+
     public static VirtualFilePath from( final String path, final String separator )
     {
         return new VirtualFilePathImpl( path, separator );

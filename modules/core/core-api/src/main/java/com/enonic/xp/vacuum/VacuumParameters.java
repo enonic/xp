@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
-public class VacuumParameters
+public final class VacuumParameters
 {
     private final VacuumListener vacuumListener;
 

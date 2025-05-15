@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
-public class AuditLogUri
+public final class AuditLogUri
 {
     private final String value;
 

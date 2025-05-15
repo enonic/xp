@@ -59,7 +59,6 @@ public final class SnapshotResource
     {
         final SnapshotResult result = this.snapshotService.snapshot( SnapshotParams.create().
             snapshotName( createSnapshotName( params.getRepositoryId() ) ).
-            setIncludeIndexedData( !params.isSkipIndexedData() ).
             repositoryId( params.getRepositoryId() ).
             build() );
 
@@ -73,7 +72,6 @@ public final class SnapshotResource
     {
         final RestoreResult result = this.snapshotService.restore( RestoreParams.create()
                                                                        .snapshotName( params.getSnapshotName() )
-                                                                       .setIncludeIndexedData( !params.isSkipIndexedData() )
                                                                        .repositoryId( params.getRepositoryId() )
                                                                        .latest( params.isLatest() )
                                                                        .force( params.isForce() )

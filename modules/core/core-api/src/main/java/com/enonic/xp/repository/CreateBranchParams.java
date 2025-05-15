@@ -2,7 +2,7 @@ package com.enonic.xp.repository;
 
 import com.enonic.xp.branch.Branch;
 
-public class CreateBranchParams
+public final class CreateBranchParams
 {
     private final Branch branch;
 

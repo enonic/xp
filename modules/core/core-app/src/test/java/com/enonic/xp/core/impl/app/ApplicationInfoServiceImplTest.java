@@ -9,11 +9,6 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
@@ -36,7 +31,6 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -70,10 +64,6 @@ public class ApplicationInfoServiceImplTest
 
     private ContentTypeService contentTypeService;
 
-    private ContentService contentService;
-
-    private ResourceService resourceService;
-
     private TaskDescriptorService taskDescriptorService;
 
     private SecurityService securityService;
@@ -95,8 +85,6 @@ public class ApplicationInfoServiceImplTest
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
         this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
-        this.contentService = Mockito.mock( ContentService.class );
-        this.resourceService = Mockito.mock( ResourceService.class );
         this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         this.securityService = Mockito.mock( SecurityService.class );
         this.idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
@@ -107,8 +95,6 @@ public class ApplicationInfoServiceImplTest
         this.service.setLayoutDescriptorService( this.layoutDescriptorService );
         this.service.setRelationshipTypeService( this.relationshipTypeService );
         this.service.setMacroDescriptorService( this.macroDescriptorService );
-        this.service.setContentService( this.contentService );
-        this.service.setResourceService( this.resourceService );
         this.service.setTaskDescriptorService( this.taskDescriptorService );
         this.service.setSecurityService( this.securityService );
         this.service.setIdProviderDescriptorService( this.idProviderDescriptorService );
@@ -167,15 +153,6 @@ public class ApplicationInfoServiceImplTest
     }
 
     @Test
-    public void testReferences()
-    {
-        mockReferences( this.applicationKey );
-        final Contents contentReferences = this.service.getContentReferences( this.applicationKey );
-
-        assertEquals( contentReferences.getSize(), 0 );
-    }
-
-    @Test
     public void testTasks()
     {
         mockTasks( this.applicationKey );
@@ -217,7 +194,6 @@ public class ApplicationInfoServiceImplTest
         assertEquals( applicationInfo.getParts().getSize(), 2 );
         assertEquals( applicationInfo.getLayouts().getSize(), 2 );
         assertEquals( applicationInfo.getRelations().getSize(), 2 );
-        assertEquals( applicationInfo.getContentReferences().getSize(), 0 );
         assertEquals( applicationInfo.getTasks().getSize(), 2 );
         assertEquals( applicationInfo.getMacros().getSize(), 2 );
         assertEquals( applicationInfo.getIdProviderReferences().getSize(), 2 );
@@ -344,35 +320,6 @@ public class ApplicationInfoServiceImplTest
             macroDescriptors );
     }
 
-    private void mockReferences( final ApplicationKey applicationKey )
-    {
-        final Content content1 = Content.create().
-            id( ContentId.from( "id1" ) ).
-            name( "name1" ).
-            displayName( "My Content 1" ).
-            parentPath( ContentPath.from( "/a/b" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        final Content content2 = Content.create().
-            id( ContentId.from( "id2" ) ).
-            name( "name2" ).
-            displayName( "My Content 2" ).
-            parentPath( ContentPath.from( "/a/c" ) ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            modifiedTime( Instant.ofEpochSecond( 0 ) ).
-            creator( PrincipalKey.from( "user:system:admin" ) ).
-            createdTime( Instant.ofEpochSecond( 0 ) ).
-            build();
-
-        final Contents contents = Contents.from( content1, content2 );
-
-        Mockito.when( this.contentService.findByApplicationKey( applicationKey ) ).thenReturn( contents );
-    }
-
     private void mockTasks( final ApplicationKey applicationKey )
     {
         final TaskDescriptor taskDescriptor1 = TaskDescriptor.create().
@@ -433,7 +380,6 @@ public class ApplicationInfoServiceImplTest
         mockLayoutDescriptors( applicationKey );
         mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
-        mockReferences( applicationKey );
         mockTasks( applicationKey );
         mockIdProviderApplication( applicationKey );
     }

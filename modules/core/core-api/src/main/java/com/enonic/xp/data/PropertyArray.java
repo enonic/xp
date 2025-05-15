@@ -122,12 +122,6 @@ public final class PropertyArray
         return s.toString();
     }
 
-    @Deprecated
-    public int countAncestors()
-    {
-        return parent.getProperty() != null ? parent.getProperty().getPath().elementCount() : 0;
-    }
-
     PropertySet getParent()
     {
         return parent;

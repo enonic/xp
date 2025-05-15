@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -70,8 +69,8 @@ public class UnpublishContentHandlerTest
 
         runScript( "/lib/xp/examples/content/unpublish.js" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "unpublishBranch" )
-            .containsExactly( ContentIds.from( PUB_ID_1, FAIL_ID ), ContentConstants.BRANCH_MASTER );
+        assertThat( captor.getValue() ).extracting( "contentIds" )
+            .isEqualTo( ContentIds.from( PUB_ID_1, FAIL_ID ) );
     }
 
     @Test
@@ -82,8 +81,8 @@ public class UnpublishContentHandlerTest
 
         runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishById" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "unpublishBranch" )
-            .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), ContentConstants.BRANCH_MASTER );
+        assertThat( captor.getValue() ).extracting( "contentIds" )
+            .isEqualTo( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ) );
     }
 
     @Test
@@ -100,7 +99,6 @@ public class UnpublishContentHandlerTest
 
         runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "unpublishBranch" )
-            .containsExactly( ContentIds.from( PUB_ID_2, PUB_ID_3 ), ContentConstants.BRANCH_MASTER );
+        assertThat( captor.getValue() ).extracting( "contentIds" ).isEqualTo(  ContentIds.from( PUB_ID_2, PUB_ID_3 ) );
     }
 }

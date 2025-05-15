@@ -3,10 +3,7 @@ package com.enonic.xp.lib.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
-import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -24,15 +21,6 @@ class MockTaskService
     public List<TaskProgress> progressHistory;
 
     @Override
-    public TaskId submitTask( final RunnableTask runnable, final String description )
-    {
-        this.description = description;
-        this.progressHistory = new ArrayList<>();
-        runnable.run( taskId, this );
-        return taskId;
-    }
-
-    @Override
     public TaskId submitLocalTask( final SubmitLocalTaskParams params )
     {
         this.description = params.getDescription();
@@ -43,12 +31,6 @@ class MockTaskService
 
     @Override
     public TaskId submitTask( final SubmitTaskParams params )
-    {
-        return taskId;
-    }
-
-    @Override
-    public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
     {
         return taskId;
     }

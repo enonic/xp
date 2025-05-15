@@ -33,12 +33,6 @@ public final class UrlResource
     }
 
     @Override
-    public URL getUrl()
-    {
-        return this.url;
-    }
-
-    @Override
     public boolean exists()
     {
         try

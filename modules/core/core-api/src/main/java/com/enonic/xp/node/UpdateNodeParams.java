@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class UpdateNodeParams
+public final class UpdateNodeParams
 {
     private final NodeId id;
 
@@ -51,12 +51,6 @@ public class UpdateNodeParams
     public NodeEditor getEditor()
     {
         return editor;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     public RefreshMode getRefresh()
@@ -113,12 +107,6 @@ public class UpdateNodeParams
                 binaryAttachments.stream().forEach( this.binaryAttachments::add );
             }
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder refresh( final RefreshMode refresh )

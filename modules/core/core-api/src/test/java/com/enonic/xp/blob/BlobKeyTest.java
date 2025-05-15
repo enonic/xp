@@ -2,7 +2,6 @@ package com.enonic.xp.blob;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.hash.HashCode;
 import com.google.common.io.ByteSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,16 +16,6 @@ public class BlobKeyTest
         final BlobKey key = BlobKey.from( "123" );
         assertNotNull( key );
         assertEquals( "123", key.toString() );
-    }
-
-    @Test
-    public void fromHashCode()
-    {
-        final HashCode code = HashCode.fromBytes( new byte[]{(byte) 0x01, (byte) 0xA1, (byte) 0xB1} );
-
-        final BlobKey key = BlobKey.from( code );
-        assertNotNull( key );
-        assertEquals( "01a1b1", key.toString() );
     }
 
     @Test

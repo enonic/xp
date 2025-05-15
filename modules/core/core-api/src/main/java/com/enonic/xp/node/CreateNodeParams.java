@@ -11,7 +11,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class CreateNodeParams
+public final class CreateNodeParams
 {
     private final NodePath parent;
 

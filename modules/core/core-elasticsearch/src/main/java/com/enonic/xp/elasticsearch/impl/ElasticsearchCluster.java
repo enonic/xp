@@ -45,12 +45,6 @@ public final class ElasticsearchCluster
     }
 
     @Override
-    public boolean isEnabled()
-    {
-        return true;
-    }
-
-    @Override
     public ClusterHealth getHealth()
     {
         try
@@ -87,16 +81,6 @@ public final class ElasticsearchCluster
         {
             return ClusterNodes.create().build();
         }
-    }
-
-    @Override
-    public void enable()
-    {
-    }
-
-    @Override
-    public void disable()
-    {
     }
 
     private ClusterHealth toClusterHealth( final ClusterHealthResponse healthResponse )

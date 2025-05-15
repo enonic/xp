@@ -1,10 +1,7 @@
 package com.enonic.xp.schema.content;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableList;
 
@@ -18,39 +15,6 @@ public final class ContentTypes
     private ContentTypes( final ImmutableList<ContentType> list )
     {
         super( list );
-    }
-
-    @Deprecated
-    public ContentTypes add( final ContentType... contentTypes )
-    {
-        return add( ImmutableList.copyOf( contentTypes ) );
-    }
-
-    @Deprecated
-    public ContentTypes add( final Iterable<ContentType> contentTypes )
-    {
-        return add( ImmutableList.copyOf( contentTypes ) );
-    }
-
-    private ContentTypes add( final ImmutableList<ContentType> contentTypes )
-    {
-        final List<ContentType> tmp = new ArrayList<>();
-        tmp.addAll( this.list );
-        tmp.addAll( contentTypes );
-
-        return new ContentTypes( ImmutableList.copyOf( tmp ) );
-    }
-
-    @Deprecated
-    public ContentType getContentType( final ContentTypeName contentTypeName )
-    {
-        return list.stream().filter( ct -> contentTypeName.equals( ct.getName() ) ).findFirst().orElse( null );
-    }
-
-    @Deprecated
-    public ContentTypes filter( final Predicate<ContentType> filter )
-    {
-        return from( this.list.stream().filter( filter ).iterator() );
     }
 
     public static ContentTypes empty()

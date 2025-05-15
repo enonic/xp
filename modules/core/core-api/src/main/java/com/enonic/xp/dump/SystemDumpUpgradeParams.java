@@ -2,7 +2,7 @@ package com.enonic.xp.dump;
 
 import com.enonic.xp.upgrade.UpgradeListener;
 
-public class SystemDumpUpgradeParams
+public final class SystemDumpUpgradeParams
 {
     private final String dumpName;
 

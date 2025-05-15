@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.UUID;
 
-public class IdFilter
+public final class IdFilter
     extends FieldFilter
 {
     private final List<String> values;
@@ -20,12 +20,6 @@ public class IdFilter
     {
         super( builder );
         values = builder.values;
-    }
-
-    @Override
-    public String getFieldName()
-    {
-        return this.fieldName;
     }
 
     public List<String> getValues()

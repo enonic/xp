@@ -23,12 +23,6 @@ public final class ControllerScriptFactoryImpl
     }
 
     @Override
-    public ControllerScript fromDir( final ResourceKey dir )
-    {
-        return fromScript( dir.resolve( dir.getName() + ".js" ) );
-    }
-
-    @Override
     public ControllerScript fromScript( final ResourceKey script )
     {
         final ScriptExports exports = this.scriptService.execute( script );

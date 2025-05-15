@@ -74,7 +74,6 @@ var expected = {
             'deny': []
         }
     ],
-    '_state': 'DEFAULT',
     '_nodeType': 'default',
     '_versionKey': 'versionKey',
     '_ts': '2010-10-10T10:10:10.100Z',

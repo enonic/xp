@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-public class MultiRepoNodeQuery
+public final class MultiRepoNodeQuery
 {
     private final SearchTargets searchTargets;
 

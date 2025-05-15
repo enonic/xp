@@ -15,7 +15,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
 @PublicApi
-public class AdminToolDescriptor
+public final class AdminToolDescriptor
 {
     private final DescriptorKey key;
 
@@ -55,12 +55,12 @@ public class AdminToolDescriptor
         return displayName;
     }
 
-    public final String getName()
+    public String getName()
     {
         return this.key.getName();
     }
 
-    public final ApplicationKey getApplicationKey()
+    public ApplicationKey getApplicationKey()
     {
         return this.key.getApplicationKey();
     }

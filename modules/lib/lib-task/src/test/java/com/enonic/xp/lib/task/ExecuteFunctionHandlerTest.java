@@ -44,15 +44,6 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
-    public void testSubmit()
-        throws Exception
-    {
-        Mockito.when( this.taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "123" ) );
-
-        runFunction( "/test/executeFunction-test.js", "submit" );
-    }
-
-    @Test
     public void testExecuteFunctionThrowingError()
         throws Exception
     {

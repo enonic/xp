@@ -38,7 +38,6 @@ public class ComponentsTest
             config( partConfig ).
             build();
 
-        assertEquals( "Part", partComponent.getName().toString() );
         assertEquals( "partTemplateName", partComponent.getDescriptor().getName() );
         assertEquals( "mainmodule", partComponent.getDescriptor().getApplicationKey().toString() );
         assertEquals( PartComponentType.INSTANCE, partComponent.getType() );
@@ -55,7 +54,7 @@ public class ComponentsTest
             config( layoutConfig ).
             build();
 
-        assertEquals( "Layout", layoutComponent.getName().toString() );
+        assertEquals( LayoutComponentType.INSTANCE, layoutComponent.getType() );
         assertEquals( "layoutTemplateName", layoutComponent.getDescriptor().getName() );
         assertEquals( "mainmodule", layoutComponent.getDescriptor().getApplicationKey().toString() );
     }

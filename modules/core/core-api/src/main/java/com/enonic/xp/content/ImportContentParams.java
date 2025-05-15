@@ -9,7 +9,7 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.project.ProjectName;
 
-public class ImportContentParams
+public final class ImportContentParams
 {
     private final BinaryAttachments binaryAttachments;
 
@@ -72,12 +72,6 @@ public class ImportContentParams
     public ProjectName getOriginProject()
     {
         return originProject;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     public boolean isImportPermissions()
@@ -147,12 +141,6 @@ public class ImportContentParams
         {
             this.originProject = originProject;
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importPermissions( boolean importPermissions )

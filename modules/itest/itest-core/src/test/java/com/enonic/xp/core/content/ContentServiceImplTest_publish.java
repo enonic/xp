@@ -70,7 +70,6 @@ public class ContentServiceImplTest_publish
         final PublishContentResult push = this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
-        assertEquals( 0, push.getDeletedContents().getSize() );
         assertEquals( 0, push.getFailedContents().getSize() );
         assertEquals( 1, push.getPushedContents().getSize() );
     }
@@ -128,7 +127,6 @@ public class ContentServiceImplTest_publish
         final PublishContentResult push = this.contentService.publish(
             PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() );
 
-        assertEquals( 0, push.getDeletedContents().getSize() );
         assertEquals( 1, push.getFailedContents().getSize() );
         assertEquals( 0, push.getPushedContents().getSize() );
     }

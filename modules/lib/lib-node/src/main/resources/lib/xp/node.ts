@@ -604,7 +604,6 @@ export type CommonNodeProperties = {
     // _parentPath?: string; // Only on create
     _path: string;
     _permissions: AccessControlEntry[];
-    _state: string;
     _ts: string;
     _versionKey: string;
 };

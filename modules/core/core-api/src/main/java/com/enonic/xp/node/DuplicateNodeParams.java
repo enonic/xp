@@ -7,11 +7,9 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DuplicateNodeParams
+public final class DuplicateNodeParams
 {
     private final NodeId nodeId;
-
-    private final DuplicateNodeProcessor processor;
 
     private final NodeDataProcessor dataProcessor;
 
@@ -28,7 +26,6 @@ public class DuplicateNodeParams
     private DuplicateNodeParams( Builder builder )
     {
         this.nodeId = builder.nodeId;
-        this.processor = builder.processor;
         this.dataProcessor = builder.dataProcessor;
         this.duplicateListener = builder.duplicateListener;
         this.includeChildren = builder.includeChildren;
@@ -45,12 +42,6 @@ public class DuplicateNodeParams
     public NodeId getNodeId()
     {
         return nodeId;
-    }
-
-    @Deprecated
-    public DuplicateNodeProcessor getProcessor()
-    {
-        return processor;
     }
 
     public NodeDataProcessor getDataProcessor()
@@ -87,8 +78,6 @@ public class DuplicateNodeParams
     {
         private NodeId nodeId;
 
-        private DuplicateNodeProcessor processor;
-
         private NodeDataProcessor dataProcessor;
 
         private DuplicateNodeListener duplicateListener;
@@ -108,13 +97,6 @@ public class DuplicateNodeParams
         public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
-            return this;
-        }
-
-        @Deprecated
-        public Builder processor( final DuplicateNodeProcessor processor )
-        {
-            this.processor = processor;
             return this;
         }
 

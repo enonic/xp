@@ -226,12 +226,6 @@ public final class Property
         return array.getName() + ": " + value;
     }
 
-    @Deprecated
-    public int countAncestors()
-    {
-        return getPath().elementCount() - 1;
-    }
-
     public Property copyTo( final PropertySet destination )
     {
         return destination.addProperty( array.getName(), value.copy( destination.getTree() ) );

@@ -1,6 +1,5 @@
 package com.enonic.xp.app;
 
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;
@@ -29,8 +28,6 @@ public final class ApplicationInfo
 
     private final Descriptors<TaskDescriptor> tasks;
 
-    private final Contents contentReferences;
-
     private final IdProviders idProviderReferences;
 
     private final IdProviderDescriptor idProviderDescriptor;
@@ -45,7 +42,6 @@ public final class ApplicationInfo
         this.relations = builder.relations;
         this.macros = builder.macros;
         this.tasks = builder.tasks;
-        this.contentReferences = builder.contentReferences;
         this.idProviderReferences = builder.idProviderReferences;
         this.idProviderDescriptor = builder.idProviderDescriptor;
     }
@@ -85,11 +81,6 @@ public final class ApplicationInfo
         return tasks;
     }
 
-    public Contents getContentReferences()
-    {
-        return contentReferences;
-    }
-
     public IdProviders getIdProviderReferences()
     {
         return idProviderReferences;
@@ -121,8 +112,6 @@ public final class ApplicationInfo
         private MacroDescriptors macros;
 
         private Descriptors<TaskDescriptor> tasks;
-
-        private Contents contentReferences;
 
         private IdProviders idProviderReferences;
 
@@ -171,12 +160,6 @@ public final class ApplicationInfo
         public Builder setTasks( final Descriptors<TaskDescriptor> tasks )
         {
             this.tasks = tasks;
-            return this;
-        }
-
-        public Builder setContentReferences( final Contents contentReferences )
-        {
-            this.contentReferences = contentReferences;
             return this;
         }
 

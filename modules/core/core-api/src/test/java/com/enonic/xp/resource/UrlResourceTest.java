@@ -26,7 +26,6 @@ public class UrlResourceTest
         assertEquals( 7, resource.getSize() );
         assertTrue( resource.getTimestamp() > 0 );
         assertTrue( resource.exists() );
-        assertEquals( resourceUrl, resource.getUrl() );
         assertEquals( "bundle", resource.getResolverName() );
 
         resource.requireExists();
@@ -49,7 +48,6 @@ public class UrlResourceTest
         assertEquals( -1, resource.getSize() );
         assertEquals( -1, resource.getTimestamp() );
         assertFalse( resource.exists() );
-        assertEquals( resourceUrl, resource.getUrl() );
 
         boolean requireExistExceptionCaught = false;
         try

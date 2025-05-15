@@ -21,16 +21,4 @@ public final class XmlException
     {
         super( t, message );
     }
-
-    @Deprecated
-    public XmlException( final String message, final Object... args )
-    {
-        super( message, args );
-    }
-
-    @Deprecated
-    public XmlException( final Throwable cause, final String message, final Object... args )
-    {
-        super( cause, message, args );
-    }
 }

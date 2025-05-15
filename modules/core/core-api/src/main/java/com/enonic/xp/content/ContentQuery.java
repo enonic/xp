@@ -13,7 +13,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
 @PublicApi
-public class ContentQuery
+public final class ContentQuery
 {
     public static final int DEFAULT_FETCH_SIZE = 10;
 

@@ -78,12 +78,6 @@ public class ScriptRuntimeFactoryImpl
     }
 
     @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        invalidate( key, ApplicationInvalidationLevel.FULL );
-    }
-
-    @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         this.list.forEach( runtime -> runtime.invalidate( key ) );

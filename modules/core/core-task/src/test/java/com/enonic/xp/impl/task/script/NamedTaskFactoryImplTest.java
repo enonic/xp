@@ -55,7 +55,7 @@ class NamedTaskFactoryImplTest
     {
         final PortalScriptService portalScriptService = setupPortalScriptService();
 
-        namedTaskScriptFactory = new NamedTaskScriptFactoryImpl( portalScriptService, taskDescriptorService );
+        namedTaskScriptFactory = new NamedTaskScriptFactoryImpl( portalScriptService );
     }
 
     private PortalScriptService setupPortalScriptService()

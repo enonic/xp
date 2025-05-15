@@ -3,13 +3,11 @@
   "clusters": [
     {
       "id": "cluster1",
-      "enabled": true,
       "healthy": true,
       "numberOfNodesSeen": 2
     },
     {
       "id": "cluster2",
-      "enabled": true,
       "healthy": true,
       "numberOfNodesSeen": 2
     }

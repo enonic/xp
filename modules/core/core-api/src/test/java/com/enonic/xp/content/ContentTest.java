@@ -27,20 +27,6 @@ public class ContentTest
     }
 
     @Test
-    public void isRoot_given_path_with_one_element_then_true_is_returned()
-    {
-        Content content = Content.create().path( "/myroot" ).build();
-        assertEquals( true, content.isRoot() );
-    }
-
-    @Test
-    public void isRoot_given_path_with_more_than_one_element_then_false_is_returned()
-    {
-        Content content = Content.create().path( "/myroot/mysub" ).build();
-        assertEquals( false, content.isRoot() );
-    }
-
-    @Test
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup

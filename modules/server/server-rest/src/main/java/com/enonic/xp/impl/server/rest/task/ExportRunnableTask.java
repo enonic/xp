@@ -116,12 +116,6 @@ public class ExportRunnableTask
             return this;
         }
 
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
-        }
-
         public Builder includeVersions( final boolean includeVersions )
         {
             this.includeVersions = includeVersions;

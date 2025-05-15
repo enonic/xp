@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class GetActiveContentVersionsResult
+public final class GetActiveContentVersionsResult
 {
     private final ImmutableList<ActiveContentVersionEntry> activeContentVersions;
 

@@ -24,7 +24,6 @@ class BranchStorageRequestFactory
                  nodeBranchEntry.getNodeVersionKey().getAccessControlBlobKey().toString() ).
             add( BranchIndexPath.BRANCH_NAME.getPath(), branch.getValue() ).
             add( BranchIndexPath.NODE_ID.getPath(), nodeBranchEntry.getNodeId().toString() ).
-            add( BranchIndexPath.STATE.getPath(), nodeBranchEntry.getNodeState().value() ).
             add( BranchIndexPath.PATH.getPath(), nodeBranchEntry.getNodePath().toString() ).
             add( BranchIndexPath.TIMESTAMP.getPath(),
                  nodeBranchEntry.getTimestamp() != null ? nodeBranchEntry.getTimestamp() : Instant.now() ).

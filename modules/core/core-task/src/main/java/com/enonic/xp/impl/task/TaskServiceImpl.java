@@ -17,15 +17,10 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.concurrent.DynamicReference;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.task.distributed.DistributableTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.impl.task.distributed.TaskManager;
-import com.enonic.xp.impl.task.script.NamedTask;
-import com.enonic.xp.impl.task.script.NamedTaskFactory;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.page.DescriptorKey;
-import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -44,16 +39,13 @@ public final class TaskServiceImpl
 
     private final DynamicReference<TaskManager> clusteredTaskManagerRef = new DynamicReference<>();
 
-    private final NamedTaskFactory namedTaskFactory;
 
     private volatile boolean acceptOffloaded;
 
     @Activate
-    public TaskServiceImpl( @Reference(target = "(local=true)") final TaskManager localTaskManager,
-                            @Reference final NamedTaskFactory namedTaskFactory )
+    public TaskServiceImpl( @Reference(target = "(local=true)") final TaskManager localTaskManager )
     {
         this.localTaskManager = localTaskManager;
-        this.namedTaskFactory = namedTaskFactory;
     }
 
     @Activate
@@ -61,23 +53,6 @@ public final class TaskServiceImpl
     public void activate( final TaskConfig config )
     {
         acceptOffloaded = config.distributable_acceptInbound();
-    }
-
-    @Override
-    @Deprecated
-    public TaskId submitTask( final RunnableTask runnable, final String description )
-    {
-        return submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnable ).description( description ).build() );
-    }
-
-    @Override
-    @Deprecated
-    public TaskId submitTask( final DescriptorKey key, final PropertyTree config )
-    {
-        final NamedTask namedTask = namedTaskFactory.createLegacy( key, config );
-        final DescribedTaskImpl task = new DescribedTaskImpl( namedTask, buildContext() );
-        localTaskManager.submitTask( task );
-        return task.getTaskId();
     }
 
     @Override

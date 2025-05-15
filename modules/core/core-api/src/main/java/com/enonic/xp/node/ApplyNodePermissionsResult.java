@@ -27,18 +27,6 @@ public final class ApplyNodePermissionsResult
         return new Builder();
     }
 
-    @Deprecated
-    public Nodes getSucceedNodes()
-    {
-        return results.values().stream().map( l -> l.get( 0 ).node ).filter( Objects::nonNull ).collect( Nodes.collecting() );
-    }
-
-    @Deprecated
-    public Nodes getSkippedNodes()
-    {
-        return Nodes.empty();
-    }
-
     public Map<NodeId, List<BranchResult>> getResults()
     {
         return results;
@@ -85,18 +73,6 @@ public final class ApplyNodePermissionsResult
 
         private Builder()
         {
-        }
-
-        @Deprecated
-        public Builder succeedNode( final Node succeedNode )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder skippedNode( final Node skippedNode )
-        {
-            return this;
         }
 
         public Builder addResult( NodeId nodeId, Branch branch, Node node )

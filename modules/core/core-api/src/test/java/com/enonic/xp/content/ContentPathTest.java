@@ -107,25 +107,6 @@ public class ContentPathTest
     }
 
     @Test
-    public void isRelative()
-        throws Exception
-    {
-        assertEquals( true, ContentPath.from( "parent" ).isRelative() );
-        assertEquals( false, ContentPath.from( "/parent" ).isRelative() );
-    }
-
-    @Test
-    public void asRelative()
-    {
-        ContentPath samePath = ContentPath.from( "same" );
-        assertSame( samePath, samePath.asRelative() );
-
-        ContentPath absolute = ContentPath.from( "/absolute" );
-        assertEquals( true, absolute.asRelative().isRelative() );
-        assertEquals( "absolute", absolute.asRelative().toString() );
-    }
-
-    @Test
     public void asAbsolute()
     {
         ContentPath samePath = ContentPath.from( "/same" );

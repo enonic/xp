@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.query.aggregation.MetricAggregationQuery;
 
 @PublicApi
-public class MaxAggregationQuery
+public final class MaxAggregationQuery
     extends MetricAggregationQuery
 {
     private MaxAggregationQuery( final Builder builder )

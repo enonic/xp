@@ -1,6 +1,6 @@
 package com.enonic.xp.issue;
 
-public class EditablePublishRequestIssue
+public final class EditablePublishRequestIssue
     extends EditableIssue
 {
     public PublishRequestIssueSchedule schedule;

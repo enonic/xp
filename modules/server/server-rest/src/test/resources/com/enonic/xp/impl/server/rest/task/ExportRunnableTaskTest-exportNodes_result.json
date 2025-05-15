@@ -1,5 +1,4 @@
 {
-  "dryRun": false,
   "exportErrors": [],
   "exportedBinaries": [
     "/binary [binaryRef]"

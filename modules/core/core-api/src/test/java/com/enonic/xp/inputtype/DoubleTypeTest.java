@@ -39,10 +39,6 @@ public class DoubleTypeTest
         final Value value = this.type.createValue( ValueFactory.newDouble( 1.3 ), config );
         assertNotNull( value );
         assertSame( ValueTypes.DOUBLE, value.getType() );
-
-        final Value value2 = this.type.createValue( "1.3", config );
-        assertNotNull( value2 );
-        assertSame( ValueTypes.DOUBLE, value2.getType() );
     }
 
     @Test

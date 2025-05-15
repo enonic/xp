@@ -127,18 +127,6 @@ public class VirtualAppFactory
             }
 
             @Override
-            public Set<String> getFiles()
-            {
-                return null;
-            }
-
-            @Override
-            public URL resolveFile( final String path )
-            {
-                return null;
-            }
-
-            @Override
             public Configuration getConfig()
             {
                 return ConfigBuilder.create().build();

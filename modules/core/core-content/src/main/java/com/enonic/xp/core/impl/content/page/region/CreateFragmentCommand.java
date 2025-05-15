@@ -102,14 +102,14 @@ final class CreateFragmentCommand
             return doGenerateDisplayName( (LayoutComponent) component );
         }
 
-        return component.getName().toString();
+        return component.getType().toString();
     }
 
     private String doGenerateDisplayName( final TextComponent textComponent )
     {
         final String html = textComponent.getText();
         String text = HtmlHelper.htmlToText( html );
-        return text.isEmpty() ? textComponent.getName().toString() : abbreviate( text, 40 );
+        return text.isEmpty() ? "Text" : abbreviate( text, 40 );
     }
 
     private String doGenerateDisplayName( final ImageComponent imageComponent )
@@ -130,29 +130,28 @@ final class CreateFragmentCommand
             }
         }
 
-        return imageComponent.getName().toString();
+        return "Image";
     }
 
     private String doGenerateDisplayName( final PartComponent partComponent )
     {
-        return partComponent.hasDescriptor() ? doGenerateDisplayName( this.partDescriptorService.getByKey( partComponent.getDescriptor() ),
-                                                                      partComponent ) : partComponent.getName().toString();
+        return doGenerateDisplayName(
+            partComponent.hasDescriptor() ? this.partDescriptorService.getByKey( partComponent.getDescriptor() ) : null, "Part" );
     }
 
     private String doGenerateDisplayName( final LayoutComponent layoutComponent )
     {
-        return layoutComponent.hasDescriptor()
-            ? doGenerateDisplayName( this.layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ), layoutComponent )
-            : layoutComponent.getName().toString();
+        return doGenerateDisplayName(
+            layoutComponent.hasDescriptor() ? this.layoutDescriptorService.getByKey( layoutComponent.getDescriptor() ) : null, "Layout" );
     }
 
-    private String doGenerateDisplayName( final ComponentDescriptor componentDescriptor, final Component component )
+    private String doGenerateDisplayName( final ComponentDescriptor componentDescriptor, final String defaultName )
     {
         if ( componentDescriptor != null && componentDescriptor.getDisplayName() != null )
         {
             return componentDescriptor.getDisplayName();
         }
-        return component.getName().toString();
+        return defaultName;
     }
 
     private String generateUniqueContentName( final ContentPath parent, final String displayName )

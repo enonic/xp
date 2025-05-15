@@ -6,7 +6,6 @@ import com.enonic.xp.issue.IssueNotFoundException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.util.Exceptions;
 
 public class GetIssueByIdCommand
     extends AbstractIssueCommand
@@ -35,7 +34,7 @@ public class GetIssueByIdCommand
         }
         catch ( Exception e )
         {
-            throw Exceptions.newRuntime( "Error getting node" ).withCause( e );
+            throw new RuntimeException( "Error getting node", e );
         }
     }
 

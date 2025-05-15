@@ -3,7 +3,6 @@ package com.enonic.xp.inputtype;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.form.Input;
 
@@ -28,12 +27,6 @@ public abstract class InputTypeBase
     public final String toString()
     {
         return this.name.toString();
-    }
-
-    @Override
-    public Value createValue( final String value, final InputTypeConfig config )
-    {
-        return createValue( ValueFactory.newString( value ), config );
     }
 
     @Override

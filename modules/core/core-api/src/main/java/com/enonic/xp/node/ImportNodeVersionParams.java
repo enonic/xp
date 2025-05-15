@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
-public class ImportNodeVersionParams
+public final class ImportNodeVersionParams
 {
     private final NodeId nodeId;
 

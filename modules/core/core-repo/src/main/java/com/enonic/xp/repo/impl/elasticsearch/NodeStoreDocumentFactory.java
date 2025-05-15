@@ -95,17 +95,6 @@ public class NodeStoreDocumentFactory
         addNodeType( builder );
 
         addTimestamp( builder );
-
-        addNodeState( builder );
-    }
-
-    private void addNodeState( final IndexItems.Builder builder )
-    {
-        if ( this.node.getNodeState() != null )
-        {
-            builder.add( NodeIndexPath.STATE, ValueFactory.newString( this.node.getNodeState().value() ),
-                         createDefaultDocument( IndexConfig.MINIMAL ) );
-        }
     }
 
     private void addTimestamp( final IndexItems.Builder builder )

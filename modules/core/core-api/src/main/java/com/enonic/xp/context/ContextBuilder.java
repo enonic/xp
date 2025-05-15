@@ -18,7 +18,7 @@ public final class ContextBuilder
 {
     private final Map<String, Object> attributes;
 
-    private LocalScope localScope;
+    private final LocalScope localScope;
 
     private ContextBuilder( final Map<String, Object> attributes, final LocalScope localScope )
     {
@@ -60,13 +60,6 @@ public final class ContextBuilder
     public <T> ContextBuilder attribute( final T value )
     {
         return attribute( value.getClass().getName(), value );
-    }
-
-    @Deprecated
-    public ContextBuilder detachSession()
-    {
-        this.localScope = new LocalScopeImpl( mergeLocalScopeAttributes( this.localScope ) );
-        return this;
     }
 
     public Context build()

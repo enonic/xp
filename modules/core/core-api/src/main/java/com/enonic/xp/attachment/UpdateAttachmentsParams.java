@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 
 @PublicApi
-public class UpdateAttachmentsParams
+public final class UpdateAttachmentsParams
 {
     private final ContentId contentId;
 

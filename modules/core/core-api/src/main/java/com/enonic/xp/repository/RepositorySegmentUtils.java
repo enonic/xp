@@ -3,8 +3,12 @@ package com.enonic.xp.repository;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 
-public class RepositorySegmentUtils
+public final class RepositorySegmentUtils
 {
+    private RepositorySegmentUtils()
+    {
+    }
+
     public static final int REPOSITORY_LEVEL = 0;
 
     public static final int BLOB_TYPE_LEVEL = 1;
@@ -27,12 +31,6 @@ public class RepositorySegmentUtils
         final String repositoryId = segment.getLevel( REPOSITORY_LEVEL ).
             getValue();
         return RepositoryId.from( repositoryId );
-    }
-
-    @Deprecated
-    public static boolean hasRepository( final Segment segment, final RepositoryId repositoryId )
-    {
-        return segment.getLevel( REPOSITORY_LEVEL ).equals( repositoryId );
     }
 
     public static boolean hasBlobTypeLevel( final Segment segment, final SegmentLevel blobType )

@@ -44,7 +44,7 @@ public class TextComponentDataSerializerTest
         final TextComponent textComponent = new TextComponentDataSerializer().fromData( data );
 
         // verify
-        assertEquals( "Text", textComponent.getName().toString() );
+        assertEquals( TextComponentType.INSTANCE, textComponent.getType() );
         assertEquals( text, textComponent.getText() );
     }
 }

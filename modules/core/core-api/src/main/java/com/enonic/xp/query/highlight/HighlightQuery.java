@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-public class HighlightQuery
+public final class HighlightQuery
 {
     private final ImmutableList<HighlightQueryProperty> properties;
 

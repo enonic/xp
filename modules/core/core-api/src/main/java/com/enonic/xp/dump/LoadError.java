@@ -1,6 +1,6 @@
 package com.enonic.xp.dump;
 
-public class LoadError
+public final class LoadError
 {
     private final String error;
 

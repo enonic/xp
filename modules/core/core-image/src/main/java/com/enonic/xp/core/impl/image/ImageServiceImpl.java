@@ -108,14 +108,6 @@ public class ImageServiceImpl
         }
     }
 
-    @Deprecated
-    @Override
-    public String getFormatByMimeType( final String mimeType )
-        throws IOException
-    {
-        return ImageHelper.getFormatByMimeType( mimeType );
-    }
-
     private Path getCachedImagePath( final NormalizedImageParams readImageParams )
     {
         //Cropping string value

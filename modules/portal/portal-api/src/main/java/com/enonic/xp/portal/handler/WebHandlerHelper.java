@@ -6,7 +6,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
-public class WebHandlerHelper
+public final class WebHandlerHelper
 {
     public static void checkAdminAccess( final WebRequest webRequest )
     {
@@ -27,4 +27,7 @@ public class WebHandlerHelper
             webRequest.getRawRequest().isUserInRole( RoleKeys.ADMIN_ID );
     }
 
+    private WebHandlerHelper()
+    {
+    }
 }

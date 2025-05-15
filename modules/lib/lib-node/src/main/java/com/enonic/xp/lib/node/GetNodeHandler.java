@@ -47,9 +47,14 @@ public final class GetNodeHandler
         }
         else
         {
-            return key.getVersionId() == null
-                ? getByPath( key.getAsPath() )
-                : getByPathAndVersionId( key.getAsPath(), NodeVersionId.from( key.getVersionId() ) );
+            if ( key.getVersionId() == null )
+            {
+                return getByPath( key.getAsPath() );
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Key must be id: " + key );
+            }
         }
     }
 
@@ -82,19 +87,6 @@ public final class GetNodeHandler
         try
         {
             return convert( this.nodeService.getByIdAndVersionId( id, versionId ) );
-        }
-        catch ( final NodeNotFoundException e )
-        {
-            return null;
-        }
-    }
-
-    @Deprecated
-    private NodeMapper getByPathAndVersionId( final NodePath path, final NodeVersionId versionId )
-    {
-        try
-        {
-            return convert( this.nodeService.getByPathAndVersionId( path, versionId ) );
         }
         catch ( final NodeNotFoundException e )
         {

@@ -9,8 +9,6 @@ import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationInfoService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
@@ -22,7 +20,6 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeService;
@@ -47,10 +44,6 @@ public final class ApplicationInfoServiceImpl
     private MacroDescriptorService macroDescriptorService;
 
     private ContentTypeService contentTypeService;
-
-    private ContentService contentService;
-
-    private ResourceService resourceService;
 
     private TaskDescriptorService taskDescriptorService;
 
@@ -101,13 +94,6 @@ public final class ApplicationInfoServiceImpl
     }
 
     @Override
-    @Deprecated
-    public Contents getContentReferences( final ApplicationKey applicationKey )
-    {
-        return Contents.empty();
-    }
-
-    @Override
     public IdProviders getIdProviderReferences( final ApplicationKey applicationKey )
     {
         return IdProviders.from( securityService.getIdProviders().
@@ -132,7 +118,6 @@ public final class ApplicationInfoServiceImpl
             setParts( this.getPartDescriptors( applicationKey ) ).
             setLayouts( this.getLayoutDescriptors( applicationKey ) ).
             setRelations( this.getRelationshipTypes( applicationKey ) ).
-            setContentReferences( this.getContentReferences( applicationKey ) ).
             setIdProviderReferences( this.getIdProviderReferences( applicationKey ) ).
             setMacros( this.getMacroDescriptors( applicationKey ) ).
             setTasks( this.getTaskDescriptors( applicationKey ) ).
@@ -156,18 +141,6 @@ public final class ApplicationInfoServiceImpl
     public void setLayoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
     {
         this.layoutDescriptorService = layoutDescriptorService;
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setResourceService( final ResourceService resourceService )
-    {
-        this.resourceService = resourceService;
     }
 
     @Reference

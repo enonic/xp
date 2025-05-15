@@ -88,19 +88,6 @@ public class PropertySetTest
     }
 
     @Test
-    public void countAncestors()
-    {
-        PropertyTree tree = new PropertyTree();
-        PropertySet a = tree.addSet( "a" );
-        PropertySet b = a.addSet( "b" );
-        PropertySet c = b.addSet( "c" );
-
-        assertEquals( 0, a.countAncestors() );
-        assertEquals( 1, b.countAncestors() );
-        assertEquals( 2, c.countAncestors() );
-    }
-
-    @Test
     public void addLongs()
     {
         PropertySet set = new PropertyTree().newSet();
@@ -170,22 +157,6 @@ public class PropertySetTest
     }
 
     @Test
-    public void creating_detached_PropertySet()
-    {
-        PropertySet set = new PropertySet();
-
-        Property aProperty = set.addString( "myString", "a" );
-        Property bProperty = set.addString( "myString", "b" );
-
-        assertEquals( "a", aProperty.getString() );
-        assertEquals( "b", bProperty.getString() );
-
-        assertEquals( "a", set.getProperty( "myString", 0 ).getString() );
-        assertEquals( "b", set.getProperty( "myString", 1 ).getString() );
-
-    }
-
-    @Test
     public void attaching_detached_PropertySet()
     {
         PropertySet set = new PropertySet(null , 0);
@@ -207,18 +178,6 @@ public class PropertySetTest
         assertSame( bProperty, tree.getProperty( bProperty.getPath() ) );
         assertSame( innerSetProperty, tree.getProperty( innerSetProperty.getPath() ) );
         assertSame( innerStringProperty, tree.getProperty( innerStringProperty.getPath() ) );
-    }
-
-    @Test
-    void detach()
-    {
-        PropertySet set = new PropertyTree().newSet();
-        set.setString( "myProp", "myValue" );
-
-        PropertySet detached = set.detach();
-        assertSame( set, detached );
-        assertNull( detached.getTree() );
-        assertEquals( "myValue", detached.getString("myProp") );
     }
 
     @Test

@@ -11,20 +11,8 @@ public final class InitializationException
         super( message );
     }
 
-    @Deprecated
-    public InitializationException( final String message, final Object... args )
-    {
-        super( message, args );
-    }
-
     public InitializationException( final Throwable cause, final String message )
     {
         super( cause, message );
-    }
-
-    @Deprecated
-    public InitializationException( final Throwable cause, final String message, final Object... args )
-    {
-        super( cause, message, args );
     }
 }

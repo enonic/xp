@@ -9,7 +9,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class Buckets
+public final class Buckets
     extends AbstractImmutableEntitySet<Bucket>
 {
     private Buckets( final Builder builder )

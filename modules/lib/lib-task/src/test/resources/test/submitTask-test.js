@@ -13,18 +13,6 @@ exports.submitTask = function () {
     t.assertEquals('123', taskId);
 };
 
-exports.submitNamed = function () {
-
-    var taskId = taskLib.submitNamed({
-        name: 'my-task',
-        config: {
-            values: ['one', 'two', 'three']
-        }
-    });
-
-    t.assertEquals('123', taskId);
-};
-
 exports.submitTaskFromApp = function () {
 
     var taskId = taskLib.submitTask({

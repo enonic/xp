@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class SortValuesProperty
+public final class SortValuesProperty
 {
     /**
      * Can be null or contain null values

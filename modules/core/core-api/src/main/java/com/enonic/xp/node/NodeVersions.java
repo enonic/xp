@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-public class NodeVersions
+public final class NodeVersions
     extends AbstractImmutableEntityList<NodeVersion>
 {
     private NodeVersions( final Builder builder )

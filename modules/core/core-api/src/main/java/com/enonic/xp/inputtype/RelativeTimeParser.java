@@ -8,9 +8,6 @@ import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 final class RelativeTimeParser
 {
     private static final String VALUE_GROUP = "(\\d*)";

@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 
 @PublicApi
-public class SiteConfigDataSerializer
+public final class SiteConfigDataSerializer
 {
     public void toData( final SiteConfig siteConfig, PropertySet parentSet )
     {

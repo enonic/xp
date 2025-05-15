@@ -781,7 +781,6 @@ export interface PublishContentParams {
 
 export interface PublishContentResult {
     pushedContents: string[];
-    deletedContents: string[];
     failedContents: string[];
 }
 
@@ -791,8 +790,6 @@ interface PublishContentHandler {
     setContentPublishInfo(value: ScriptValue): void;
 
     setExcludeChildrenIds(value: string[]): void;
-
-    setIncludeChildren(value?: boolean): void;
 
     setIncludeDependencies(value?: boolean): void;
 
@@ -828,10 +825,6 @@ export function publish(params: PublishContentParams): PublishContentResult {
     }
     if (params.excludeChildrenIds) {
         bean.setExcludeChildrenIds(params.excludeChildrenIds);
-    }
-    if (!__.nullOrValue(params.includeChildren)) {
-        // keep for backwards compatibility
-        bean.setIncludeChildren(params.includeChildren);
     }
     if (!__.nullOrValue(params.includeDependencies)) {
         bean.setIncludeDependencies(params.includeDependencies);

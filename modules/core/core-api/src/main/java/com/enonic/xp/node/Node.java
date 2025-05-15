@@ -149,21 +149,9 @@ public final class Node
         return attachedBinaries;
     }
 
-    @Deprecated
-    public NodeState getNodeState()
-    {
-        return NodeState.DEFAULT;
-    }
-
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
-    }
-
-    @Deprecated
-    public boolean inheritsPermissions()
-    {
-        return false;
     }
 
     public void validateForIndexing()
@@ -281,13 +269,6 @@ public final class Node
             return this;
         }
 
-        @Deprecated
-        public Builder path( final String value )
-        {
-            this.parentPath = new NodePath( value );
-            return this;
-        }
-
         public Builder parentPath( final NodePath value )
         {
             this.parentPath = value;
@@ -339,12 +320,6 @@ public final class Node
         public Builder attachedBinaries( final AttachedBinaries attachedBinaries )
         {
             this.attachedBinaries = attachedBinaries;
-            return this;
-        }
-
-        @Deprecated
-        public Builder nodeState( final NodeState nodeState )
-        {
             return this;
         }
 

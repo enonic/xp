@@ -5,10 +5,9 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfigDocument;
-import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
-public class EditableNode
+public final class EditableNode
 {
     public Node source;
 
@@ -19,9 +18,6 @@ public class EditableNode
     public Long manualOrderValue;
 
     public ChildOrder childOrder;
-
-    @Deprecated
-    public AccessControlList permissions;
 
     public NodeType nodeType;
 

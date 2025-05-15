@@ -43,12 +43,6 @@ public class ApplicationImplTest
         assertEquals( "2.0.0", application.getMaxSystemVersion() );
         assertEquals( "1.2.0", application.getMinSystemVersion() );
 
-        application.getFiles();
-        Mockito.verify( urlResolver, Mockito.times( 1 ) ).findFiles();
-
-        application.resolveFile( "a/b.txt" );
-        Mockito.verify( urlResolver, Mockito.times( 1 ) ).findResource( "a/b.txt" );
-
         bundle.start();
         assertTrue( application.isStarted() );
     }

@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class FindNodesByParentResult
+public final class FindNodesByParentResult
 {
     private final NodeIds nodeIds;
 

@@ -21,4 +21,8 @@ public final class IssueConstants
     public static final ChildOrder DEFAULT_CHILD_ORDER = ChildOrder.create().
         add( FieldOrderExpr.create( ContentIndexPath.MODIFIED_TIME, OrderExpr.Direction.DESC ) ).
         build();
+
+    private IssueConstants()
+    {
+    }
 }

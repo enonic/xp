@@ -113,21 +113,6 @@ class VirtualFilePathImpl
     }
 
     @Override
-    public VirtualFilePath join( final VirtualFilePathImpl... paths )
-    {
-        final Builder builder = VirtualFilePathImpl.create().
-            addAll( this.elements ).
-            absolute( this.absolute );
-
-        for ( final VirtualFilePathImpl virtualFilePath : paths )
-        {
-            builder.addAll( virtualFilePath.getElements() );
-        }
-
-        return builder.build();
-    }
-
-    @Override
     public VirtualFilePath join( final String... elements )
     {
         final Builder builder = VirtualFilePathImpl.create().

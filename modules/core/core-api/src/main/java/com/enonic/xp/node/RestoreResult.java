@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
-public class RestoreResult
+public final class RestoreResult
 {
     final Set<String> indices;
 

@@ -21,7 +21,4 @@ public interface IndexService
     ReindexResult reindex( ReindexParams params );
 
     boolean waitForYellowStatus();
-
-    @Deprecated
-    void purgeSearchIndex( PurgeIndexParams params );
 }

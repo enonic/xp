@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -62,12 +61,6 @@ public final class CronCalendarImpl
     public Optional<Instant> nextExecution( final Instant instant )
     {
         return this.executionTime.nextExecution( ZonedDateTime.ofInstant( instant, timeZone.toZoneId() ) ).map( ZonedDateTime::toInstant );
-    }
-
-    @Override
-    public Optional<Duration> nextExecution()
-    {
-        return this.executionTime.timeToNextExecution( ZonedDateTime.now( timeZone.toZoneId() ) );
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DateRangeAggregationQuery
+public final class DateRangeAggregationQuery
     extends AbstractRangeAggregationQuery<DateRange>
 {
     private final String format;

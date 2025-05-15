@@ -3,7 +3,7 @@ package com.enonic.xp.aggregation;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class NumericRangeBucket
+public final class NumericRangeBucket
     extends Bucket
 {
     private final Number from;

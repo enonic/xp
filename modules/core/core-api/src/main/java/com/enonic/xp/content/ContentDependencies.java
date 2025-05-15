@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ContentDependencies
+public final class ContentDependencies
 {
     private final Collection<ContentDependenciesAggregation> inbound;
 

@@ -42,11 +42,6 @@ public final class NodeBranchEntry
         return nodeVersionKey;
     }
 
-    public NodeState getNodeState()
-    {
-        return NodeState.DEFAULT;
-    }
-
     public NodePath getNodePath()
     {
         return nodePath;
@@ -132,12 +127,6 @@ public final class NodeBranchEntry
         public Builder nodeVersionKey( final NodeVersionKey nodeVersionKey )
         {
             this.nodeVersionKey = nodeVersionKey;
-            return this;
-        }
-
-        @Deprecated
-        public Builder nodeState( final NodeState state )
-        {
             return this;
         }
 

@@ -1,11 +1,8 @@
 package com.enonic.xp.content;
 
-import java.io.InputStream;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
@@ -32,12 +29,6 @@ public interface ContentService
 
     DeleteContentsResult delete( DeleteContentParams params );
 
-    @Deprecated
-    DeleteContentsResult deleteWithoutFetch( DeleteContentParams params );
-
-    @Deprecated
-    int undoPendingDelete( UndoPendingDeleteContentParams params );
-
     PublishContentResult publish( PushContentParams params );
 
     UnpublishContentsResult unpublishContent( UnpublishContentParams params );
@@ -45,12 +36,6 @@ public interface ContentService
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
-
-    @Deprecated
-    boolean isValidContent( ContentIds contentIds );
-
-    @Deprecated
-    ContentIds getInvalidContent( ContentIds contentIds );
 
     ContentValidityResult getContentValidity( ContentValidityParams params );
 
@@ -80,30 +65,15 @@ public interface ContentService
 
     Content getByPath( ContentPath path );
 
-    @Deprecated
-    AccessControlList getPermissionsById( ContentId contentId );
-
     Contents getByPaths( ContentPaths paths );
 
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
-    @Deprecated
-    FindContentByQueryResult find( FindContentByQueryParams params );
-
     FindContentIdsByQueryResult find( ContentQuery query );
 
-    @Deprecated
-    Contents findByApplicationKey( ApplicationKey key );
-
-    @Deprecated
-    ContentPaths findContentPaths( ContentQuery query );
-
     FindContentPathsByQueryResult findPaths( ContentQuery query );
-
-    @Deprecated
-    CompareContentResult compare( CompareContentParams params );
 
     CompareContentResults compare( CompareContentsParams params );
 
@@ -113,18 +83,9 @@ public interface ContentService
 
     GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
-    @Deprecated
-    ContentVersion getActiveVersion( GetActiveContentVersionParams params );
-
-    @Deprecated
-    SetActiveContentVersionResult setActiveContentVersion( ContentId contentId, ContentVersionId versionId );
-
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 
     ByteSource getBinary( ContentId contentId, ContentVersionId contentVersionId, BinaryReference binaryReference );
-
-    @Deprecated
-    InputStream getBinaryInputStream( ContentId contentId, BinaryReference binaryReference );
 
     String getBinaryKey( ContentId contentId, BinaryReference binaryReference );
 
@@ -138,13 +99,7 @@ public interface ContentService
 
     boolean contentExists( ContentPath contentPath );
 
-    @Deprecated
-    Content reprocess( ContentId contentId );
-
     Content getByIdAndVersionId( ContentId contentId, ContentVersionId versionId );
-
-    @Deprecated
-    Content getByPathAndVersionId( ContentPath contentPath, ContentVersionId versionId );
 
     ImportContentResult importContent( ImportContentParams params );
 }

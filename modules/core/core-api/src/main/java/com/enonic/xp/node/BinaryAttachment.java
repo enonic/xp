@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class BinaryAttachment
+public final class BinaryAttachment
 {
     private final BinaryReference reference;
 

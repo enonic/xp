@@ -7,8 +7,7 @@ import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 
 @PublicApi
-public class NodeVersionMetadata
-    implements Comparable<NodeVersionMetadata>
+public final class NodeVersionMetadata
 {
     private final NodeVersionId nodeVersionId;
 
@@ -78,23 +77,6 @@ public class NodeVersionMetadata
     public Instant getTimestamp()
     {
         return timestamp;
-    }
-
-    // Insert with newest first
-    @Override
-    public int compareTo( final NodeVersionMetadata o )
-    {
-        if ( this.timestamp.equals( o.timestamp ) )
-        {
-            return 0;
-        }
-
-        if ( this.timestamp.isBefore( o.timestamp ) )
-        {
-            return 1;
-        }
-
-        return -1;
     }
 
     public static final class Builder

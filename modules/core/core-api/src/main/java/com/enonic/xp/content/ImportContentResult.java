@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import com.google.common.base.Preconditions;
 
-public class ImportContentResult
+public final class ImportContentResult
 {
     private final Content content;
 

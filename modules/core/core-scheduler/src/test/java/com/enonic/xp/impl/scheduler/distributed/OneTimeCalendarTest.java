@@ -12,7 +12,6 @@ import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,8 +34,6 @@ public class OneTimeCalendarTest
 
         OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().value( now.plus( Duration.of( 1, ChronoUnit.MINUTES ) ) ).build();
 
-        assertFalse( calendar.nextExecution().get().isNegative() );
-
         assertTrue( calendar.nextExecution( null ).isPresent() );
         assertTrue( calendar.nextExecution( now ).isPresent() );
 
@@ -44,7 +41,7 @@ public class OneTimeCalendarTest
 
         calendar = OneTimeCalendarImpl.create().value( now.minus( Duration.of( 1, ChronoUnit.SECONDS ) ) ).build();
 
-        assertTrue( calendar.nextExecution().get().isNegative() );
+        assertTrue( calendar.nextExecution( null ).isPresent() );
     }
 
     @Test

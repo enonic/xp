@@ -1,11 +1,11 @@
 package com.enonic.xp.issue;
 
-public class CreatePublishRequestIssueParams
+public final class CreatePublishRequestIssueParams
     extends CreateIssueParams
 {
     private final PublishRequestIssueSchedule schedule;
 
-    protected CreatePublishRequestIssueParams( final Builder builder )
+    private CreatePublishRequestIssueParams( final Builder builder )
     {
         super( builder );
         this.schedule = builder.schedule;

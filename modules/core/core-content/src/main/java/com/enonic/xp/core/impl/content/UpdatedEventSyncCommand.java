@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.security.PrincipalKey;
 
 final class UpdatedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -117,7 +116,6 @@ final class UpdatedEventSyncCommand
     private UpdateContentParams updateParams( final Content source )
     {
         return new UpdateContentParams().contentId( source.getId() )
-            .modifier( PrincipalKey.ofAnonymous() )
             .requireValid( false )
             .stopInherit( false )
             .editor( edit -> {
@@ -129,7 +127,6 @@ final class UpdatedEventSyncCommand
                 edit.workflowInfo = source.getWorkflowInfo();
                 edit.page = source.getPage();
                 edit.thumbnail = source.getThumbnail();
-                edit.valid = source.isValid();
                 edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
             } );
     }

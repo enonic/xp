@@ -1,7 +1,5 @@
 package com.enonic.xp.resource;
 
-import java.net.URL;
-
 import com.google.common.io.ByteSource;
 
 public class MockResource
@@ -26,12 +24,6 @@ public class MockResource
     public static MockResource empty( final ResourceKey key, long timestamp )
     {
         return new MockResource( key, new byte[]{}, timestamp );
-    }
-
-    @Override
-    public URL getUrl()
-    {
-        return null;
     }
 
     @Override

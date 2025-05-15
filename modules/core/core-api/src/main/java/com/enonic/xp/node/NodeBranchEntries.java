@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class NodeBranchEntries
+public final class NodeBranchEntries
     implements Iterable<NodeBranchEntry>
 {
     private static final NodeBranchEntries EMPTY = new NodeBranchEntries( Collections.emptySet() );

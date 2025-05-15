@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
+import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -40,7 +41,6 @@ import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_PROJECT
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -135,7 +135,7 @@ class ResourceServiceImplTest
         final String value2 = processResource( "segment1", "a.txt", "2" );
         assertEquals( value1, value2 );
 
-        this.resourceService.invalidate( ApplicationKey.from( "myapp" ) );
+        this.resourceService.invalidate( ApplicationKey.from( "myapp" ), ApplicationInvalidationLevel.FULL );
 
         final String value3 = processResource( "segment1", "a.txt", "3" );
         assertEquals( "myapp:/a.txt->3", value3 );
@@ -235,10 +235,6 @@ class ResourceServiceImplTest
 
         final String value = processResource( "segment1", "site/parts/my-part/my-part.xml", "1" );
         assertEquals( "myapp:/site/parts/my-part/my-part.xml->1", value );
-
-        assertThrows( UnsupportedOperationException.class, () -> {
-            resource.getUrl();
-        } );
     }
 
     @Test

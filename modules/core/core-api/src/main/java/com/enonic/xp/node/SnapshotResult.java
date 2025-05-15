@@ -8,7 +8,7 @@ import java.util.Set;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class SnapshotResult
+public final class SnapshotResult
 {
     private final Set<String> indices;
 

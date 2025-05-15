@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFile;
 
 @PublicApi
-public class ImportNodesParams
+public final class ImportNodesParams
 {
     private final NodePath targetNodePath;
 
@@ -49,12 +49,6 @@ public class ImportNodesParams
     public NodePath getTargetNodePath()
     {
         return targetNodePath;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     public VirtualFile getSource()
@@ -120,12 +114,6 @@ public class ImportNodesParams
         {
             this.targetNodePath = targetNodePath;
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder source( final VirtualFile source )

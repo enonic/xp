@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
 import com.enonic.xp.query.highlight.constants.Order;
 
-public class HighlightQueryProperty
+public final class HighlightQueryProperty
 {
     private final String name;
 

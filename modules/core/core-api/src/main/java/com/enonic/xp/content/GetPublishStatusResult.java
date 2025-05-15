@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class GetPublishStatusResult
+public final class GetPublishStatusResult
 {
     private final ContentId contentId;
 

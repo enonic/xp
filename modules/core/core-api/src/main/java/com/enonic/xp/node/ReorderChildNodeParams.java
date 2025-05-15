@@ -3,7 +3,7 @@ package com.enonic.xp.node;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ReorderChildNodeParams
+public final class ReorderChildNodeParams
 {
     private final NodeId nodeId;
 

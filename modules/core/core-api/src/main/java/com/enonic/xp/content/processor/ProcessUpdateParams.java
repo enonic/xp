@@ -4,9 +4,8 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.security.User;
 
-public class ProcessUpdateParams
+public final class ProcessUpdateParams
 {
     private final CreateAttachments createAttachments;
 
@@ -57,12 +56,6 @@ public class ProcessUpdateParams
         return editedContent;
     }
 
-    @Deprecated
-    public User getModifier()
-    {
-        return null;
-    }
-
     public static final class Builder
     {
         private ContentType contentType;
@@ -106,12 +99,6 @@ public class ProcessUpdateParams
         public Builder editedContent( final Content editedContent )
         {
             this.editedContent = editedContent;
-            return this;
-        }
-
-        @Deprecated
-        public Builder modifier( final User modifier )
-        {
             return this;
         }
 

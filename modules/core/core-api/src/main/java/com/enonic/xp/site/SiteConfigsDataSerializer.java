@@ -6,7 +6,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 
 @PublicApi
-public class SiteConfigsDataSerializer
+public final class SiteConfigsDataSerializer
 {
     private final SiteConfigDataSerializer siteConfigSerializer = new SiteConfigDataSerializer();
 

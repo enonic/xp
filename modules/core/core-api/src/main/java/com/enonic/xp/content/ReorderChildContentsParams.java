@@ -6,12 +6,10 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class ReorderChildContentsParams
+public final class ReorderChildContentsParams
     extends AbstractImmutableEntityList<ReorderChildParams>
 {
     private final ContentId contentId;
-
-    private final boolean silent;
 
     private final boolean stopInherit;
 
@@ -19,19 +17,12 @@ public class ReorderChildContentsParams
     {
         super( builder.orderChildContentParamsList.build() );
         contentId = builder.contentId;
-        silent = builder.silent;
         stopInherit = builder.stopInherit;
     }
 
     public ContentId getContentId()
     {
         return contentId;
-    }
-
-    @Deprecated
-    public boolean isSilent()
-    {
-        return silent;
     }
 
     public boolean stopInherit()
@@ -44,14 +35,11 @@ public class ReorderChildContentsParams
         return new Builder();
     }
 
-
     public static class Builder
     {
         private final ImmutableList.Builder<ReorderChildParams> orderChildContentParamsList = ImmutableList.builder();
 
         private ContentId contentId;
-
-        private boolean silent;
 
         private boolean stopInherit = true;
 
@@ -64,13 +52,6 @@ public class ReorderChildContentsParams
         public Builder contentId( final ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        @Deprecated
-        public Builder silent( final boolean silent )
-        {
-            this.silent = silent;
             return this;
         }
 

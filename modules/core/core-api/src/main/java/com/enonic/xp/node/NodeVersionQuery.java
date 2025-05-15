@@ -2,7 +2,7 @@ package com.enonic.xp.node;
 
 import com.enonic.xp.query.expr.OrderExpressions;
 
-public class NodeVersionQuery
+public final class NodeVersionQuery
     extends AbstractQuery
 {
     private final NodeId nodeId;

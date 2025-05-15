@@ -7,13 +7,13 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class PushNodesResult
+public final class PushNodesResult
 {
     private final ImmutableList<PushNodeEntry> successful;
 
     private final ImmutableList<Failed> failed;
 
-    protected PushNodesResult( Builder<?> builder )
+    private PushNodesResult( Builder<?> builder )
     {
         successful = builder.successful.build();
         failed = builder.failed.build();
@@ -57,22 +57,10 @@ public class PushNodesResult
             return (T) this;
         }
 
-        @Deprecated
-        public T addSuccess( final NodeBranchEntry success )
-        {
-            return (T) this;
-        }
-
         public T addFailed( final NodeBranchEntry failed, final Reason reason )
         {
             this.failed.add( new Failed( failed, reason ) );
             return (T) this;
-        }
-
-        @Deprecated
-        public boolean hasBeenAdded( final NodePath parentPath )
-        {
-            return false;
         }
 
         public PushNodesResult build()

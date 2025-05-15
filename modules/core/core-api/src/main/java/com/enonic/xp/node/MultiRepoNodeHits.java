@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
-public class MultiRepoNodeHits
+public final class MultiRepoNodeHits
     extends AbstractImmutableEntityList<MultiRepoNodeHit>
 {
     private MultiRepoNodeHits( final Collection<MultiRepoNodeHit> hits )
@@ -19,11 +19,6 @@ public class MultiRepoNodeHits
     public static MultiRepoNodeHits empty()
     {
         final List<MultiRepoNodeHit> returnFields = new ArrayList<>();
-        return new MultiRepoNodeHits( returnFields );
-    }
-
-    private static MultiRepoNodeHits from( final Collection<MultiRepoNodeHit> returnFields )
-    {
         return new MultiRepoNodeHits( returnFields );
     }
 

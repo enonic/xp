@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-public class MoveNodeResult
+public final class MoveNodeResult
 {
     private final List<MovedNode> movedNodes;
 
@@ -22,18 +22,6 @@ public class MoveNodeResult
     public List<MovedNode> getMovedNodes()
     {
         return movedNodes;
-    }
-
-    @Deprecated
-    public Node getSourceNode()
-    {
-        return null;
-    }
-
-    @Deprecated
-    public Node getTargetNode()
-    {
-        return movedNodes.isEmpty() ? null : movedNodes.get( 0 ).getNode();
     }
 
     public static class MovedNode
@@ -106,18 +94,6 @@ public class MoveNodeResult
         public Builder addMovedNode( final MovedNode node )
         {
             this.movedNodes.add( node );
-            return this;
-        }
-
-        @Deprecated
-        public Builder sourceNode( final Node sourceNode )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder targetNode( final Node targetNode )
-        {
             return this;
         }
 

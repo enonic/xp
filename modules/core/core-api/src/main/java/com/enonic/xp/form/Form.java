@@ -35,12 +35,6 @@ public final class Form
         FormValidator.validate( this );
     }
 
-    @Deprecated
-    public void addFormItem( final FormItem formItem )
-    {
-        this.formItems.add( formItem );
-    }
-
     public FormItem getFormItem( final String path )
     {
         return formItems.getFormItem( FormItemPath.from( path ) );

@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DistanceRange
+public final class DistanceRange
     extends Range
 {
     private final Double from;

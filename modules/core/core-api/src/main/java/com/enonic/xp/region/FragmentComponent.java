@@ -6,11 +6,9 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
 
 @PublicApi
-public class FragmentComponent
+public final class FragmentComponent
     extends Component
 {
-    private static final ComponentName NAME = ComponentName.from( "Fragment" );
-
     private final ContentId fragment;
 
     public FragmentComponent( final Builder builder )
@@ -39,13 +37,6 @@ public class FragmentComponent
     public ComponentType getType()
     {
         return FragmentComponentType.INSTANCE;
-    }
-
-    @Deprecated
-    @Override
-    public ComponentName getName()
-    {
-        return NAME;
     }
 
     public ContentId getFragment()
@@ -97,19 +88,6 @@ public class FragmentComponent
         public Builder fragment( final ContentId value )
         {
             this.fragment = value;
-            return this;
-        }
-
-        @Deprecated
-        @Override
-        public Builder name( ComponentName value )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder name( String value )
-        {
             return this;
         }
 

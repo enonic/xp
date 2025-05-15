@@ -1,6 +1,5 @@
 package com.enonic.xp.security;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -17,14 +16,9 @@ public interface SecurityService
 
     IdProviderAccessControlList getIdProviderPermissions( IdProviderKey idProviderKey );
 
-    @Deprecated
-    IdProviderAccessControlList getDefaultIdProviderPermissions();
-
     IdProvider createIdProvider( CreateIdProviderParams createIdProviderParams );
 
     IdProvider updateIdProvider( UpdateIdProviderParams updateIdProviderParams );
-
-    Principals findPrincipals( IdProviderKey useStore, List<PrincipalType> types, String query );
 
     AuthenticationInfo authenticate( AuthenticationToken token );
 
@@ -168,8 +162,4 @@ public interface SecurityService
     void addRelationship( PrincipalRelationship relationship );
 
     void removeRelationship( PrincipalRelationship relationship );
-
-    @Deprecated
-    void removeRelationships( PrincipalKey from );
-
 }

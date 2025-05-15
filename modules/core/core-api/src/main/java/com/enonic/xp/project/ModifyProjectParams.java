@@ -30,15 +30,6 @@ public final class ModifyProjectParams
         return new Builder();
     }
 
-    @Deprecated
-    public static Builder create( final CreateProjectParams params )
-    {
-        return create().
-            name( params.getName() ).
-            description( params.getDescription() ).
-            displayName( params.getDisplayName() );
-    }
-
     public ProjectName getName()
     {
         return name;

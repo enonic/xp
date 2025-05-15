@@ -3,7 +3,7 @@ package com.enonic.xp.export;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ExportError
+public final class ExportError
 {
     private final String message;
 

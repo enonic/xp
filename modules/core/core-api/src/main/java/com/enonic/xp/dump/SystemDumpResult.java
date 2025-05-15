@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 import com.enonic.xp.repository.RepositoryId;
 
-public class SystemDumpResult
+public final class SystemDumpResult
     implements Iterable<RepoDumpResult>
 {
     private final List<RepoDumpResult> repoDumpResults;

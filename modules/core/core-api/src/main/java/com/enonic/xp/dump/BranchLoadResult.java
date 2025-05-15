@@ -2,7 +2,7 @@ package com.enonic.xp.dump;
 
 import com.enonic.xp.branch.Branch;
 
-public class BranchLoadResult
+public final class BranchLoadResult
     extends AbstractLoadResult
 {
     private final Branch branch;

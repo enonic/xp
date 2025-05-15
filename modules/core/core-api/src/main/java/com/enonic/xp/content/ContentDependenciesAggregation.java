@@ -5,7 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 @PublicApi
-public class ContentDependenciesAggregation
+public final class ContentDependenciesAggregation
 {
     private final ContentTypeName type;
 

@@ -6,7 +6,7 @@ import java.util.List;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class PropertyTreeJson
+public final class PropertyTreeJson
 {
     public static PropertyTree fromJson( final List<PropertyArrayJson> list )
     {

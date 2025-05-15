@@ -42,12 +42,6 @@ public class ExportNodesRequestJson
         return exportWithIds;
     }
 
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
-    }
-
     public boolean isIncludeVersions()
     {
         return includeVersions;

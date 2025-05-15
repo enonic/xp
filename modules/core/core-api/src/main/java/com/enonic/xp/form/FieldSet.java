@@ -11,7 +11,7 @@ import com.enonic.xp.annotation.PublicApi;
 
 
 @PublicApi
-public class FieldSet
+public final class FieldSet
     extends Layout
     implements Iterable<FormItem>
 {

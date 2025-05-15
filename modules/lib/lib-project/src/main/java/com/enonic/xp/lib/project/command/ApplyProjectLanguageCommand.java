@@ -37,7 +37,6 @@ public final class ApplyProjectLanguageCommand
 
             final UpdateContentParams params = new UpdateContentParams().
                 contentId( root.getId() ).
-                modifier( getCurrentUser().getKey() ).
                 editor( edit -> edit.language = this.language );
 
             return this.contentService.update( params ).

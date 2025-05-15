@@ -9,7 +9,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 
-public class LogAuditLogParams
+public final class LogAuditLogParams
 {
     private final String type;
 

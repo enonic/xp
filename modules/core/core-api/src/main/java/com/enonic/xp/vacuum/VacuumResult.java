@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-public class VacuumResult
+public final class VacuumResult
 {
     private final List<VacuumTaskResult> results;
 

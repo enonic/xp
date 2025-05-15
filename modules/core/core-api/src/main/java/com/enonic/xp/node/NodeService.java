@@ -5,7 +5,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
@@ -23,15 +22,6 @@ public interface NodeService
 
     PushNodesResult push( NodeIds ids, Branch target, PushNodesListener pushListener );
 
-    @Deprecated
-    NodeIds deleteById( NodeId id );
-
-    @Deprecated
-    NodeIds deleteById( NodeId id, DeleteNodeListener deleteListener );
-
-    @Deprecated
-    NodeIds deleteByPath( NodePath path );
-
     DeleteNodeResult delete( DeleteNodeParams deleteNodeParams );
 
     Node getById( NodeId id );
@@ -42,27 +32,15 @@ public interface NodeService
 
     Node getByPath( NodePath path );
 
-    @Deprecated
-    Node getByPathAndVersionId( NodePath path, NodeVersionId versionId );
-
     Nodes getByPaths( NodePaths paths );
 
     Node duplicate( DuplicateNodeParams params );
 
-    @Deprecated
-    Node move( NodeId nodeId, NodePath parentNodePath, MoveNodeListener moveListener );
-
     Node move( MoveNodeParams params );
-
-    @Deprecated
-    Nodes move( NodeIds nodeIds, NodePath parentNodePath, MoveNodeListener moveListener );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
-
-    @Deprecated
-    FindNodePathsByQueryResult findNodePathsByQuery( NodeQuery nodeQuery );
 
     FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
 
@@ -75,9 +53,6 @@ public interface NodeService
     NodeVersionQueryResult findVersions( NodeVersionQuery nodeVersionQuery );
 
     NodeCommitQueryResult findCommits( NodeCommitQuery nodeCommitQuery );
-
-    @Deprecated
-    boolean deleteVersion( NodeId nodeId, NodeVersionId nodeVersionId );
 
     GetActiveNodeVersionsResult getActiveVersions( GetActiveNodeVersionsParams params );
 
@@ -101,23 +76,11 @@ public interface NodeService
 
     String getBinaryKey( NodeId nodeId, BinaryReference reference );
 
-    @Deprecated
-    Node createRootNode( CreateRootNodeParams params );
-
-    @Deprecated
-    SetNodeStateResult setNodeState( SetNodeStateParams params );
-
     Node getRoot();
-
-    @Deprecated
-    Node setRootPermissions( AccessControlList accessControlList );
 
     ImportNodeResult importNode( ImportNodeParams params );
 
     LoadNodeResult loadNode( LoadNodeParams params );
-
-    @Deprecated
-    NodesHasChildrenResult hasChildren( Nodes nodes );
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
 
@@ -136,5 +99,4 @@ public interface NodeService
     void importNodeVersion( ImportNodeVersionParams params );
 
     void importNodeCommit( ImportNodeCommitParams params );
-
 }

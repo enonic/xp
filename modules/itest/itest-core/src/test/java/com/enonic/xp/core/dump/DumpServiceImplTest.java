@@ -248,7 +248,6 @@ public class DumpServiceImplTest
         assertEquals( node.getAttachedBinaries(), currentStoredNode.getAttachedBinaries() );
         assertEquals( node.getIndexConfigDocument(), currentStoredNode.getIndexConfigDocument() );
         assertEquals( node.getChildOrder(), currentStoredNode.getChildOrder() );
-        assertEquals( node.getNodeState(), currentStoredNode.getNodeState() );
         assertEquals( node.getNodeType(), currentStoredNode.getNodeType() );
         assertEquals( node.data(), currentStoredNode.data() );
     }

@@ -9,8 +9,6 @@ import com.enonic.xp.page.DescriptorKey;
 public final class PartComponent
     extends DescriptorBasedComponent
 {
-    private static final ComponentName NAME = ComponentName.from( "Part" );
-
     public PartComponent( final Builder builder )
     {
         super( builder );
@@ -38,13 +36,6 @@ public final class PartComponent
         return PartComponentType.INSTANCE;
     }
 
-    @Deprecated
-    @Override
-    public ComponentName getName()
-    {
-        return NAME;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -70,19 +61,6 @@ public final class PartComponent
         private Builder( final PartComponent source )
         {
             super( source );
-        }
-
-        @Deprecated
-        @Override
-        public Builder name( ComponentName value )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder name( String value )
-        {
-            return this;
         }
 
         @Override

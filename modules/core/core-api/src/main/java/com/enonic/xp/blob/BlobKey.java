@@ -3,7 +3,6 @@ package com.enonic.xp.blob;
 import java.io.IOException;
 import java.util.Objects;
 
-import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteSource;
 
@@ -39,12 +38,6 @@ public final class BlobKey
     public static BlobKey from( final String key )
     {
         return new BlobKey( key );
-    }
-
-    @Deprecated
-    public static BlobKey from( final HashCode key )
-    {
-        return from( HexEncoder.toHex( key.asBytes() ) );
     }
 
     public static BlobKey from( final ByteSource in )

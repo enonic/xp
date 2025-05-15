@@ -28,17 +28,4 @@ public class RenameContentParamsTest
             newName( null ).
             build() );
     }
-
-    @Test
-    public void testValidate()
-    {
-
-        RenameContentParams params = RenameContentParams.create().
-            contentId( contentId ).
-            newName( contentName ).
-            build();
-
-        params.validate();
-    }
-
 }

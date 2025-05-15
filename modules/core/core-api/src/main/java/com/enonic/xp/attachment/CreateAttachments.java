@@ -20,18 +20,6 @@ public final class CreateAttachments
         super( ImmutableSet.copyOf( set ) );
     }
 
-    @Deprecated
-    public List<String> getNames()
-    {
-        return this.set.stream().map( CreateAttachment::getName ).collect( ImmutableList.toImmutableList() );
-    }
-
-    @Deprecated
-    public CreateAttachment getByName( final String name )
-    {
-        return this.set.stream().filter( ca -> ca.getName().equals( name ) ).findAny().orElse( null );
-    }
-
     public static CreateAttachments empty()
     {
         return new CreateAttachments( ImmutableSet.of() );

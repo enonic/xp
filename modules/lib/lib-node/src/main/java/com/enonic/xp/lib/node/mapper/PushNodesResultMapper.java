@@ -20,14 +20,6 @@ public class PushNodesResultMapper
     {
         addSuccessful( gen );
         addFailed( gen );
-        addDeleted( gen );
-    }
-
-    @Deprecated
-    private void addDeleted( final MapGenerator gen )
-    {
-        gen.array( "deleted" );
-        gen.end();
     }
 
     private void addFailed( final MapGenerator gen )

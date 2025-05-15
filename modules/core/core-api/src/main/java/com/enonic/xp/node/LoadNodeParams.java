@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class LoadNodeParams
+public final class LoadNodeParams
 {
     private final Node node;
 

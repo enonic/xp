@@ -7,11 +7,6 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.repository.Repository;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 
@@ -43,63 +38,6 @@ public final class Project
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Deprecated
-    public static Project from( final Repository repository )
-    {
-        if ( repository == null )
-        {
-            return null;
-        }
-
-        final PropertyTree repositoryData = repository.getData();
-
-        if ( repositoryData == null )
-        {
-            return null;
-        }
-
-        final PropertySet projectData = repositoryData.getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
-
-        if ( projectData == null )
-        {
-            return null;
-        }
-
-        final Project.Builder project = Project.create()
-            .name( ProjectName.from( repository.getId() ) )
-            .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
-            .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) );
-
-        buildParents( project, projectData );
-        buildIcon( project, projectData );
-
-        return project.build();
-    }
-
-    private static void buildIcon( final Project.Builder project, final PropertySet projectData )
-    {
-        final PropertySet iconData = projectData.getPropertySet( ProjectConstants.PROJECT_ICON_PROPERTY );
-
-        if ( iconData != null )
-        {
-            project.icon( Attachment.create()
-                              .name( iconData.getString( ContentPropertyNames.ATTACHMENT_NAME ) )
-                              .label( iconData.getString( ContentPropertyNames.ATTACHMENT_LABEL ) )
-                              .mimeType( iconData.getString( ContentPropertyNames.ATTACHMENT_MIMETYPE ) )
-                              .size( iconData.getLong( ContentPropertyNames.ATTACHMENT_SIZE ) )
-                              .textContent( iconData.getString( ContentPropertyNames.ATTACHMENT_TEXT ) )
-                              .build() );
-        }
-    }
-
-    private static void buildParents( final Project.Builder project, final PropertySet projectData )
-    {
-        for ( String parent : projectData.getStrings( ProjectConstants.PROJECT_PARENTS_PROPERTY ) )
-        {
-            project.addParent( ProjectName.from( parent ) );
-        }
     }
 
     public ProjectName getName()

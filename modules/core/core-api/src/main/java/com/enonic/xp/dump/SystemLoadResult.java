@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class SystemLoadResult
+public final class SystemLoadResult
     implements Iterable<RepoLoadResult>
 {
     private final List<RepoLoadResult> repoLoadResults;

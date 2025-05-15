@@ -103,17 +103,6 @@ public final class PropertyTree
         return new PropertySet( this, 0 );
     }
 
-    @Deprecated
-    public PropertySet newSet( final PropertyTree source )
-    {
-        final PropertySet propertySet = new PropertySet( this, 0 );
-        for ( final Property sourceProperty : source.getProperties() )
-        {
-            propertySet.addProperty( sourceProperty.getName(), sourceProperty.getValue() );
-        }
-        return propertySet;
-    }
-
     public int countNames( final String name )
     {
         return root.countProperties( name );

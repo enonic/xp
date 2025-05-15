@@ -345,10 +345,10 @@ public class ParentContentSynchronizerTest
                                                   .name( "new name" )
                                                   .byteSource( loadImage( "darth-small.jpg" ) )
                                                   .mimeType( "image/jpeg" )
-                                                  .artist( "artist" )
+                                                  .artist( List.of("artist") )
                                                   .altText( "alt text" )
                                                   .copyright( "copy" )
-                                                  .tags( "my new tags" )
+                                                  .tags( List.of("my new tags") )
                                                   .caption( "caption" ) );
             }
             catch ( IOException e )

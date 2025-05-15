@@ -5,14 +5,14 @@ import java.util.Objects;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.TagsSchema;
 
-public class HighlightQuerySettings
+public final class HighlightQuerySettings
     extends HighlightPropertySettings
 {
     private final Encoder encoder;
 
     private final TagsSchema tagsSchema;
 
-    protected HighlightQuerySettings( final Builder builder )
+    private HighlightQuerySettings( final Builder builder )
     {
         super( builder );
         this.encoder = builder.encoder;

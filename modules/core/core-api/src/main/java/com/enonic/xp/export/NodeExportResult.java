@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class NodeExportResult
+public final class NodeExportResult
 {
     private final NodePaths exportedNodes;
 
@@ -25,12 +25,6 @@ public class NodeExportResult
         exportedNodes = NodePaths.from( builder.nodePaths );
         exportErrors = builder.exportErrors;
         exportedBinaries = builder.exportedBinaries;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     public NodePaths getExportedNodes()
@@ -75,15 +69,8 @@ public class NodeExportResult
 
         private final Set<NodePath> nodePaths = new HashSet<>();
 
-
         private Builder()
         {
-        }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "Dry run is not supported" );
         }
 
         public Builder addBinary( final NodePath nodePath, final BinaryReference binaryReference )

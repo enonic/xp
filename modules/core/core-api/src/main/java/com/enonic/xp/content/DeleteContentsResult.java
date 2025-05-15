@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DeleteContentsResult
+public final class DeleteContentsResult
 {
     private final ContentIds deletedContents;
 
@@ -18,12 +18,6 @@ public class DeleteContentsResult
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Deprecated
-    public ContentIds getPendingContents()
-    {
-        return ContentIds.empty();
     }
 
     public ContentIds getDeletedContents()
@@ -44,18 +38,6 @@ public class DeleteContentsResult
 
         private Builder()
         {
-        }
-
-        @Deprecated
-        public Builder addPending( final ContentId pendingContent )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder addPending( final ContentIds pendingContents )
-        {
-            return this;
         }
 
         public Builder addDeleted( final ContentId deletedContent )

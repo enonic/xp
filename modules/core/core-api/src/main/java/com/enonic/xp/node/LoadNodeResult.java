@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class LoadNodeResult
+public final class LoadNodeResult
 {
     private final Node node;
 

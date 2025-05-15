@@ -91,12 +91,6 @@ public class NodeVersion
         return attachedBinaries;
     }
 
-    @Deprecated
-    public boolean isInheritPermissions()
-    {
-        return false;
-    }
-
     public static Builder create()
     {
         return new Builder();

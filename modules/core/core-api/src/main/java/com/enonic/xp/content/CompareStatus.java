@@ -5,11 +5,9 @@ import com.enonic.xp.annotation.PublicApi;
 @PublicApi
 public enum CompareStatus
 {
-    NEW( false, "Offline" ), NEW_TARGET( false, "New in prod" ), NEWER( false, "Modified" ), OLDER( false,
-                                                                                                    "Out-of-date" ), @Deprecated PENDING_DELETE(
-    false, "Pending delete" ), @Deprecated PENDING_DELETE_TARGET( false, "Deleted in prod" ), EQUAL( false, "Online" ), MOVED( false,
-                                                                                                                               "Moved" ), CONFLICT_PATH_EXISTS(
-    true, "Conflict" ), CONFLICT_VERSION_BRANCH_DIVERGS( true, "Conflict version" );
+    NEW( false, "Offline" ), NEW_TARGET( false, "New in prod" ), NEWER( false, "Modified" ), OLDER( false, "Out-of-date" ), EQUAL( false,
+                                                                                                                                   "Online" ), MOVED(
+    false, "Moved" ), CONFLICT_PATH_EXISTS( true, "Conflict" ), CONFLICT_VERSION_BRANCH_DIVERGS( true, "Conflict version" );
 
     private final boolean conflict;
 

@@ -4,7 +4,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 
-public class IdProviderDescriptor
+public final class IdProviderDescriptor
 {
     private final ApplicationKey key;
 

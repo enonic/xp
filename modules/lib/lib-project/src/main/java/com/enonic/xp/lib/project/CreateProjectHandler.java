@@ -136,12 +136,6 @@ public final class CreateProjectHandler
         this.parents = values != null ? Arrays.stream( values ).map( ProjectName::from ).collect( Collectors.toList() ) : List.of();
     }
 
-    @Deprecated
-    public void setParent( final String value )
-    {
-        this.parents = value != null ? List.of( ProjectName.from( value ) ) : List.of();
-    }
-
     public void setSiteConfig( final ScriptValue value )
     {
         final List<SiteConfig> configs = buildSiteConfigs( value );

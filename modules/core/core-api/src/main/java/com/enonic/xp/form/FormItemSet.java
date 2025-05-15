@@ -13,7 +13,7 @@ import com.enonic.xp.annotation.PublicApi;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @PublicApi
-public class FormItemSet
+public final class FormItemSet
     extends FormItem
     implements Iterable<FormItem>
 {

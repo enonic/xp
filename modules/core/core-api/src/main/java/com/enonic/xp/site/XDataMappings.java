@@ -10,7 +10,7 @@ import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public class XDataMappings
+public final class XDataMappings
     extends AbstractImmutableEntityList<XDataMapping>
 {
     private XDataMappings( final ImmutableList<XDataMapping> list )

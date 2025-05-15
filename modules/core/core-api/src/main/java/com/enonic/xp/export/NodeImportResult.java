@@ -10,15 +10,15 @@ import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class NodeImportResult
+public final class NodeImportResult
 {
     public final NodePaths addedNodes;
 
     public final NodePaths updateNodes;
 
-    private List<ImportError> importErrors;
+    private final List<ImportError> importErrors;
 
-    private List<String> importedBinaries;
+    private final List<String> importedBinaries;
 
     private NodeImportResult( final Builder builder )
     {
@@ -38,24 +38,6 @@ public class NodeImportResult
         return importErrors;
     }
 
-    @Deprecated
-    public void setImportErrors( final List<ImportError> importErrors )
-    {
-        this.importErrors = importErrors;
-    }
-
-    @Deprecated
-    public List<String> getExportedBinaries()
-    {
-        return importedBinaries;
-    }
-
-    @Deprecated
-    public void setExportedBinaries( final List<String> exportedBinaries )
-    {
-        this.importedBinaries = exportedBinaries;
-    }
-
     public List<String> getImportedBinaries()
     {
         return importedBinaries;
@@ -69,12 +51,6 @@ public class NodeImportResult
     public NodePaths getUpdateNodes()
     {
         return updateNodes;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     @Override
@@ -127,12 +103,6 @@ public class NodeImportResult
         {
             this.importErrors.add( new ImportError( e, message ) );
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( final boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public NodeImportResult build()

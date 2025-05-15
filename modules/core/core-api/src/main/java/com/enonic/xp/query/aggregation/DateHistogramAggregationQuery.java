@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DateHistogramAggregationQuery
+public final class DateHistogramAggregationQuery
     extends AbstractHistogramAggregationQuery<String>
 {
     private final String format;

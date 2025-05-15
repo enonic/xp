@@ -1,7 +1,11 @@
 package com.enonic.xp.util;
 
-public class GlobPatternMatcher
+public final class GlobPatternMatcher
 {
+
+    private GlobPatternMatcher()
+    {
+    }
 
     public static boolean match( final String pattern, final String value, final String separator )
     {

@@ -5,14 +5,11 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
 public final class DuplicateContentParams
 {
     private final ContentId contentId;
-
-    private PrincipalKey creator;
 
     private final WorkflowInfo workflowInfo;
 
@@ -29,7 +26,6 @@ public final class DuplicateContentParams
     public DuplicateContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
-        this.creator = builder.creator;
         this.workflowInfo = builder.workflowInfo;
         this.duplicateContentListener = builder.duplicateContentListener;
         this.includeChildren = !builder.variant ? builder.includeChildren : false;
@@ -48,22 +44,9 @@ public final class DuplicateContentParams
         return contentId;
     }
 
-    @Deprecated
-    public DuplicateContentParams creator( final PrincipalKey creator )
-    {
-        this.creator = creator;
-        return this;
-    }
-
     public DuplicateContentListener getDuplicateContentListener()
     {
         return duplicateContentListener;
-    }
-
-    @Deprecated
-    public PrincipalKey getCreator()
-    {
-        return creator;
     }
 
     public WorkflowInfo getWorkflowInfo()
@@ -91,29 +74,10 @@ public final class DuplicateContentParams
         return parent;
     }
 
-    @Deprecated
-    public void validate()
-    {
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-
     public static final class Builder
     {
 
         private ContentId contentId;
-
-        private PrincipalKey creator;
 
         private WorkflowInfo workflowInfo;
 
@@ -134,13 +98,6 @@ public final class DuplicateContentParams
         public Builder contentId( ContentId contentId )
         {
             this.contentId = contentId;
-            return this;
-        }
-
-        @Deprecated
-        public Builder creator( PrincipalKey creator )
-        {
-            this.creator = creator;
             return this;
         }
 

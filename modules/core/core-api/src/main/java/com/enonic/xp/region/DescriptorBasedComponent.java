@@ -87,13 +87,6 @@ public abstract class DescriptorBasedComponent
             this.descriptor = source.getDescriptor();
         }
 
-        @Deprecated
-        @Override
-        public Builder name( ComponentName value )
-        {
-            return this;
-        }
-
         public Builder descriptor( DescriptorKey value )
         {
             this.descriptor = value;

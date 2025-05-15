@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class MoveNodeParams
+public final class MoveNodeParams
 {
     private final NodeId nodeId;
 

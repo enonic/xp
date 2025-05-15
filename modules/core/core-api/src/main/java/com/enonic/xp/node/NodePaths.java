@@ -9,7 +9,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class NodePaths
+public final class NodePaths
     extends AbstractImmutableEntitySet<NodePath>
 {
     private static final NodePaths EMPTY = new NodePaths( ImmutableSet.of() );

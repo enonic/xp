@@ -64,12 +64,6 @@ public final class AuditLogUris
         return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }
 
-    @Deprecated
-    public Set<String> asStrings()
-    {
-        return this.set.stream().map( AuditLogUri::toString ).collect( Collectors.toSet() );
-    }
-
     public static Builder create()
     {
         return new Builder();

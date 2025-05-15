@@ -7,7 +7,7 @@ import java.util.Set;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
-public class IndicesFilter
+public final class IndicesFilter
     extends Filter
 {
 

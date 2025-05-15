@@ -35,7 +35,6 @@ class ClusterManagerReport
         this.clusters.forEach( c -> {
             ObjectNode clusterNode = JsonNodeFactory.instance.objectNode();
             clusterNode.put( "id", c.getId().toString() );
-            clusterNode.put( "enabled", c.isEnabled() );
             clusterNode.put( "healthy", c.getHealth().isHealthy() );
             clusterNode.put( "numberOfNodesSeen", c.getNodes().getSize() );
 

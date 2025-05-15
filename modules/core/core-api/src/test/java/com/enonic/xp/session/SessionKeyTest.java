@@ -18,15 +18,6 @@ public class SessionKeyTest
     }
 
     @Test
-    public void testGenerate()
-    {
-        final SessionKey key1 = SessionKey.generate();
-        final SessionKey key2 = SessionKey.generate();
-
-        assertNotEquals( key1, key2 );
-    }
-
-    @Test
     public void equalsContract()
     {
         EqualsVerifier.forClass( SessionKey.class ).withNonnullFields( "value" ).verify();

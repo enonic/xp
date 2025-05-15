@@ -6,7 +6,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.util.BinaryReference;
 
-public class ReadImageParams
+public final class ReadImageParams
 {
     private static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFF;
 
@@ -30,8 +30,6 @@ public class ReadImageParams
 
     private final int backgroundColor;
 
-    private final String format;
-
     private final String mimeType;
 
     private final int quality;
@@ -50,7 +48,6 @@ public class ReadImageParams
         this.scaleWidth = builder.scaleWidth;
         this.filterParam = builder.filterParam;
         this.backgroundColor = builder.backgroundColor;
-        this.format = builder.format;
         this.quality = builder.quality;
         this.mimeType = builder.mimeType;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
@@ -111,12 +108,6 @@ public class ReadImageParams
         return mimeType;
     }
 
-    @Deprecated
-    public String getFormat()
-    {
-        return format;
-    }
-
     public int getQuality()
     {
         return quality;
@@ -153,8 +144,6 @@ public class ReadImageParams
         private String filterParam;
 
         private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
-
-        private String format;
 
         private String mimeType;
 
@@ -226,13 +215,6 @@ public class ReadImageParams
             return this;
         }
 
-        @Deprecated
-        public Builder format( String format )
-        {
-            this.format = format;
-            return this;
-        }
-
         public Builder mimeType( final String mimeType )
         {
             this.mimeType = mimeType;
@@ -255,7 +237,7 @@ public class ReadImageParams
         {
             Preconditions.checkNotNull( contentId, "contentId cannot be null" );
             Preconditions.checkNotNull( binaryReference, "binaryReference cannot be null" );
-            Preconditions.checkArgument( ( mimeType != null ) == ( format == null ), "mimeType or format must be set, but not both" );
+            Preconditions.checkNotNull( mimeType, "mimeType must be set, but not both" );
             Preconditions.checkArgument( quality >= 0 && quality <= 100, "Quality out of bounds 0-100" );
             Preconditions.checkArgument( backgroundColor >= 0 && backgroundColor <= 0xFFFFFF, "Background color out of bounds 0-0xFFFFFF" );
             return new ReadImageParams( this );

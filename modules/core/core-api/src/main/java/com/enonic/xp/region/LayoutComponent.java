@@ -13,8 +13,6 @@ import com.enonic.xp.page.DescriptorKey;
 public final class LayoutComponent
     extends DescriptorBasedComponent
 {
-    private static final ComponentName NAME = ComponentName.from( "Layout" );
-
     private final LayoutRegions regions;
 
     public LayoutComponent( final Builder builder )
@@ -77,13 +75,6 @@ public final class LayoutComponent
         return regions.getComponent( path );
     }
 
-    @Deprecated
-    @Override
-    public ComponentName getName()
-    {
-        return NAME;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -135,19 +126,6 @@ public final class LayoutComponent
         {
             super( source );
             regions = source.regions.copy();
-        }
-
-        @Deprecated
-        @Override
-        public Builder name( ComponentName value )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder name( String value )
-        {
-            return this;
         }
 
         public Builder descriptor( String value )

@@ -100,17 +100,6 @@ public final class PropertyPath
         return this != ROOT && ( this.elements.isEmpty() || !this.elements.get( 0 ).getName().startsWith( ELEMENT_DIVIDER ) );
     }
 
-    @Deprecated
-    public Iterable<String> resolvePathElementNames()
-    {
-        final List<String> pathElements = new ArrayList<>();
-        for ( Element element : elements )
-        {
-            pathElements.add( element.getName() );
-        }
-        return pathElements;
-    }
-
     public int elementCount()
     {
         return elements.size();

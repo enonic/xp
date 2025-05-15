@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.branch.Branch;
-
 public final class UnpublishContentParams
 {
     private final ContentIds contentIds;
@@ -24,18 +22,6 @@ public final class UnpublishContentParams
     public PushContentListener getPublishContentListener()
     {
         return publishContentListener;
-    }
-
-    @Deprecated
-    public Branch getUnpublishBranch()
-    {
-        return ContentConstants.BRANCH_MASTER;
-    }
-
-    @Deprecated
-    public boolean isIncludeChildren()
-    {
-        return true;
     }
 
     @Override
@@ -68,18 +54,6 @@ public final class UnpublishContentParams
         public Builder contentIds( final ContentIds val )
         {
             contentIds = val;
-            return this;
-        }
-
-        @Deprecated
-        public Builder unpublishBranch( final Branch val )
-        {
-            return this;
-        }
-
-        @Deprecated
-        public Builder includeChildren( final boolean val )
-        {
             return this;
         }
 

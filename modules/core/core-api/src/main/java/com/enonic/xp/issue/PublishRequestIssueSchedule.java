@@ -2,7 +2,7 @@ package com.enonic.xp.issue;
 
 import java.time.Instant;
 
-public class PublishRequestIssueSchedule
+public final class PublishRequestIssueSchedule
 {
     private final Instant from;
 

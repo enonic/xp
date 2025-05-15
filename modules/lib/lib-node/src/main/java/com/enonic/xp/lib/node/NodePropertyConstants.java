@@ -12,8 +12,6 @@ public class NodePropertyConstants
 
     public static final String CHILD_ORDER = "_childOrder";
 
-    public static final String NODE_STATE = "_state";
-
     public static final String NODE_TYPE = "_nodeType";
 
     public static final String NODE_VERSION_ID = "_versionKey";

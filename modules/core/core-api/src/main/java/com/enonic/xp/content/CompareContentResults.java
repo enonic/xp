@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class CompareContentResults
+public final class CompareContentResults
     implements Iterable<CompareContentResult>
 {
     private final Map<ContentId, CompareContentResult> compareContentResultsMap;

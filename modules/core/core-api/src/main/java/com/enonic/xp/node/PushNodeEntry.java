@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class PushNodeEntry
+public final class PushNodeEntry
 {
     private final NodeBranchEntry nodeBranchEntry;
 

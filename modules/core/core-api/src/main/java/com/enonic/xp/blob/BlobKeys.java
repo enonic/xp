@@ -10,7 +10,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class BlobKeys
+public final class BlobKeys
     extends AbstractImmutableEntitySet<BlobKey>
 {
     private BlobKeys( final ImmutableSet<BlobKey> set )

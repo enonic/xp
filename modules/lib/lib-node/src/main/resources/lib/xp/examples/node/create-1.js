@@ -55,7 +55,6 @@ var expected = {
             'deny': []
         }
     ],
-    '_state': 'DEFAULT',
     '_nodeType': 'default',
     'likes': 'plywood',
     'numberOfUselessGadgets': 123

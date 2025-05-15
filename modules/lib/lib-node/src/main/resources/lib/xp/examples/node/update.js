@@ -91,7 +91,6 @@ var expected = {
             'deny': []
         }
     ],
-    '_state': 'DEFAULT',
     '_nodeType': 'default',
     'notChanged': 'originalValue',
     'myString': 'modified',

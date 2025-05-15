@@ -1,6 +1,6 @@
 package com.enonic.xp.cluster;
 
-public class ClusterId
+public final class ClusterId
 {
     private final String value;
 

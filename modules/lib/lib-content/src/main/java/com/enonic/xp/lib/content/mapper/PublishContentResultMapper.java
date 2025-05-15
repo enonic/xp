@@ -31,7 +31,6 @@ public class PublishContentResultMapper
     private void serialize( final MapGenerator gen, final PublishContentResult value )
     {
         serializeContentIds( gen, "pushedContents", value.getPushedContents() );
-        serializeContentIds( gen, "deletedContents", value.getDeletedContents() );
         serializeFailedContent( gen, "failedContents", value.getFailedContents() );
     }
 

@@ -14,7 +14,6 @@ public final class StoredApplicationsDeployer
     public void deploy()
     {
         DeployHelper.runAsAdmin( () -> applicationService.installAllStoredApplications( ApplicationInstallationParams.create().
-            triggerEvent( false ).
             build() ) );
     }
 

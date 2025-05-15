@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
@@ -30,7 +31,8 @@ public class CalendarServiceImplTest
     {
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) );
 
-        assertTrue( calendar.nextExecution().get().get( ChronoUnit.SECONDS ) <= 60 );
+        final Instant now = Instant.now();
+        assertTrue( Duration.between( now, calendar.nextExecution( now ).get() ).get( ChronoUnit.SECONDS ) <= 60 );
         assertEquals( TimeZone.getTimeZone( "GMT+5:30" ), calendar.getTimeZone() );
         assertEquals( "* * * * *", calendar.getCronValue() );
     }
@@ -52,8 +54,9 @@ public class CalendarServiceImplTest
     public void oneTime()
     {
         final OneTimeCalendar calendar = calendarService.oneTime( Instant.parse( "2014-09-25T10:00:00.00Z" ) );
+        final Instant now = Instant.now();
 
-        assertTrue( calendar.nextExecution().get().isNegative() );
+        assertTrue( Duration.between( now, calendar.nextExecution( now ).get() ).isNegative() );
         assertEquals( Instant.parse( "2014-09-25T10:00:00.00Z" ), calendar.getValue() );
     }
 

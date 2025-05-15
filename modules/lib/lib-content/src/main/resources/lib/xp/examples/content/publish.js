@@ -17,7 +17,6 @@ var result = contentLib.publish({
 
 if (result) {
     log.info('Pushed ' + result.pushedContents.length + ' content.');
-    log.info('Deleted ' + result.deletedContents.length + ' content.');
     log.info('Content that failed operation: ' + result.failedContents.length);
 } else {
     log.info('Operation failed.');
@@ -32,7 +31,6 @@ var expected = {
         '9f5b0db0-38f9-4e81-b92e-116f25476b1c',
         'e1f57280-d672-4cd8-b674-98e26e5b69ae'
     ],
-    'deletedContents': [],
     'failedContents': [
         '79e21db0-5b43-45ce-b58c-6e1c420b22bd'
     ]

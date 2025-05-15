@@ -9,7 +9,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class Suggestions
+public final class Suggestions
     extends AbstractImmutableEntitySet<Suggestion>
 {
     private static final Suggestions EMPTY = new Suggestions( ImmutableSet.of() );

@@ -202,7 +202,7 @@ public class ApplyNodePermissionsCommandTest
         refresh();
 
         moveNode( childNode.id(), NodePath.ROOT );
-        moveNode( createdNode.id(), NodePath.create( NodePath.ROOT, "my-node1" ).build() );
+        moveNode( createdNode.id(), NodePath.create( NodePath.ROOT ).addElement( "my-node1" ).build() );
 
         refresh();
 

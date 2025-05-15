@@ -39,10 +39,6 @@ public class LongTypeTest
         final Value value = this.type.createValue( ValueFactory.newDouble( 13.0 ), config );
         assertNotNull( value );
         assertSame( ValueTypes.LONG, value.getType() );
-
-        final Value value2 = this.type.createValue( "13.0", config );
-        assertNotNull( value2 );
-        assertSame( ValueTypes.LONG, value2.getType() );
     }
 
     @Test

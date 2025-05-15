@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class ContentVersions
+public final class ContentVersions
     implements Iterable<ContentVersion>
 {
     private final ImmutableList<ContentVersion> contentVersions;

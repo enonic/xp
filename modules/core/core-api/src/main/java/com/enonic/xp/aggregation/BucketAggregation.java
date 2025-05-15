@@ -3,7 +3,7 @@ package com.enonic.xp.aggregation;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class BucketAggregation
+public final class BucketAggregation
     extends Aggregation
 {
     private final Buckets buckets;

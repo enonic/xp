@@ -1,7 +1,6 @@
 package com.enonic.xp.core.node;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
@@ -23,7 +21,6 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
@@ -42,8 +39,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetadata;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.NodesHasChildrenResult;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
@@ -59,26 +54,20 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -128,35 +117,6 @@ public class NodeServiceImplTest
             .branch( "missing-branch" )
             .build()
             .callWith( () -> this.nodeService.getById( NodeId.from( "a" ) ) ) );
-    }
-
-    @Test
-    public void createRootNode()
-    {
-        final User user = User.create()
-            .key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) )
-            .displayName( "User 1" )
-            .modifiedTime( Instant.now() )
-            .email( "user1@enonic.com" )
-            .login( "user1" )
-            .build();
-
-        this.nodeService.createRootNode( CreateRootNodeParams.create()
-                                             .childOrder( ChildOrder.from( "_name ASC" ) )
-                                             .permissions( AccessControlList.of(
-                                                 AccessControlEntry.create().allowAll().principal( user.getKey() ).build() ) )
-                                             .build() );
-
-        printContentRepoIndex();
-
-        final Context context = ContextBuilder.create()
-            .authInfo( AuthenticationInfo.create().user( user ).principals( RoleKeys.CONTENT_MANAGER_ADMIN ).build() )
-            .branch( WS_DEFAULT )
-            .repositoryId( testRepoId )
-            .build();
-
-        context.runWith( () -> assertNotNull( this.nodeService.getByPath( NodePath.ROOT ) ) );
-        context.runWith( () -> assertNotNull( this.nodeService.getRoot() ) );
     }
 
     @Test
@@ -434,16 +394,6 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void testGetByPathAndVersionId()
-    {
-        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
-
-        final Node fetchedNode = this.nodeService.getByPathAndVersionId( createdNode.path(), createdNode.getNodeVersionId() );
-
-        assertEquals( createdNode, fetchedNode );
-    }
-
-    @Test
     public void testReorderChildren()
     {
         final Node parent = createNode(
@@ -526,28 +476,6 @@ public class NodeServiceImplTest
 
         assertThrows( OperationNotPermittedException.class,
                       () -> nodeService.delete( DeleteNodeParams.create().nodeId( Node.ROOT_UUID ).build() ) );
-    }
-
-    @Test
-    void nodes_has_children()
-    {
-        final Node parentNode1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
-
-        final Node parentNode2 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-2" ).build() );
-
-        final Node parentNode3 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-3" ).build() );
-
-        createNode( CreateNodeParams.create().parent( parentNode1.path() ).name( "my-child-node-1" ).build() );
-
-        createNode( CreateNodeParams.create().parent( parentNode2.path() ).name( "my-child-node-2" ).build() );
-
-        nodeService.refresh( RefreshMode.ALL );
-
-        final NodesHasChildrenResult result = nodeService.hasChildren( Nodes.from( parentNode1, parentNode2, parentNode3 ) );
-
-        assertTrue( result.hasChild( parentNode1.id() ) );
-        assertTrue( result.hasChild( parentNode2.id() ) );
-        assertFalse( result.hasChild( parentNode3.id() ) );
     }
 
     @Test

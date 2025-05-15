@@ -131,4 +131,8 @@ public final class ContentTypeFromMimeTypeResolver
             collect( Collectors.toSet() );
 
     }
+
+    private ContentTypeFromMimeTypeResolver()
+    {
+    }
 }

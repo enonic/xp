@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-public class ImportNodeParams
+public final class ImportNodeParams
 {
     private final BinaryAttachments binaryAttachments;
 
@@ -42,12 +42,6 @@ public class ImportNodeParams
     public BinaryAttachments getBinaryAttachments()
     {
         return binaryAttachments;
-    }
-
-    @Deprecated
-    public boolean isDryRun()
-    {
-        return false;
     }
 
     public boolean isImportPermissions()
@@ -99,12 +93,6 @@ public class ImportNodeParams
         {
             this.insertManualStrategy = insertManualStrategy;
             return this;
-        }
-
-        @Deprecated
-        public Builder dryRun( boolean dryRun )
-        {
-            throw new UnsupportedOperationException( "dryRun is not supported" );
         }
 
         public Builder importPermissions( boolean importPermissions )

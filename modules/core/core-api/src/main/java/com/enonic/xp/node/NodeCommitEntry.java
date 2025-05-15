@@ -9,7 +9,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @PublicApi
-public class NodeCommitEntry
+public final class NodeCommitEntry
     implements Comparable<NodeCommitEntry>
 {
     private final NodeCommitId nodeCommitId;

@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class DeleteSnapshotsResult
+public final class DeleteSnapshotsResult
 {
     private final Set<String> deletedSnapshots;
 

@@ -6,7 +6,6 @@ import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -78,8 +77,8 @@ public class PublishContentHandlerTest
 
         runScript( "/lib/xp/examples/content/publish.js" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "target", "includeDependencies", "message" )
-            .containsExactly( ContentIds.from( PUB_ID_1, FAIL_ID ), Branch.from( "master" ), false, "My first publish" );
+        assertThat( captor.getValue() ).extracting( "contentIds", "includeDependencies", "message" )
+            .containsExactly( ContentIds.from( PUB_ID_1, FAIL_ID ), false, "My first publish" );
     }
 
     @Test
@@ -107,8 +106,8 @@ public class PublishContentHandlerTest
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishByPath" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "target" )
-            .containsExactly( ContentIds.from( PUB_ID_2, PUB_ID_3 ), Branch.from( "master" ));
+        assertThat( captor.getValue() ).extracting( "contentIds" )
+            .isEqualTo( ContentIds.from( PUB_ID_2, PUB_ID_3 ));
     }
 
     @Test
@@ -125,8 +124,8 @@ public class PublishContentHandlerTest
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "target", "excludeChildrenIds", "includeDependencies" )
-            .containsExactly( ContentIds.from( PUB_ID_3 ), Branch.from( "master" ), ContentIds.from( PUB_ID_3 ), false );
+        assertThat( captor.getValue() ).extracting( "contentIds", "excludeChildrenIds", "includeDependencies" )
+            .containsExactly( ContentIds.from( PUB_ID_3 ), ContentIds.from( PUB_ID_3 ), false );
     }
 
     @Test

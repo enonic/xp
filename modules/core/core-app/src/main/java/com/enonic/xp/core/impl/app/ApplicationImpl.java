@@ -134,19 +134,6 @@ final class ApplicationImpl
     }
 
     @Override
-    public Set<String> getFiles()
-    {
-        return this.urlResolver.findFiles();
-    }
-
-    @Override
-    public URL resolveFile( final String path )
-    {
-        final Resource resource = this.urlResolver.findResource( path );
-        return resource != null ? resource.getUrl() : null;
-    }
-
-    @Override
     public ApplicationUrlResolver getUrlResolver()
     {
         return urlResolver;

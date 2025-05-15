@@ -2,7 +2,7 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
-public class ApplicationInstallationParams
+public final class ApplicationInstallationParams
 {
     private final boolean start;
 
@@ -61,12 +61,6 @@ public class ApplicationInstallationParams
         public Builder start( final boolean start )
         {
             this.start = start;
-            return this;
-        }
-
-        @Deprecated
-        public Builder triggerEvent( final boolean triggerEvent )
-        {
             return this;
         }
 

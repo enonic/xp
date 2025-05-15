@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -10,7 +9,7 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
-public class AttachedBinaries
+public final class AttachedBinaries
     extends AbstractImmutableEntitySet<AttachedBinary>
 {
     private static final AttachedBinaries EMPTY = new AttachedBinaries( ImmutableSet.of() );
@@ -61,12 +60,6 @@ public class AttachedBinaries
         {
             this.nodeAttachedBinaries.add( attachedBinary );
             return this;
-        }
-
-        @Deprecated
-        public Set<AttachedBinary> getNodeAttachedBinaries()
-        {
-            return nodeAttachedBinaries.build();
         }
 
         public AttachedBinaries build()

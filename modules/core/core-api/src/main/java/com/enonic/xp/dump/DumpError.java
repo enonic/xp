@@ -1,6 +1,6 @@
 package com.enonic.xp.dump;
 
-public class DumpError
+public final class DumpError
 {
     private final String message;
 

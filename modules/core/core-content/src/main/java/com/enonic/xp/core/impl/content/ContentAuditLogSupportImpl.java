@@ -294,14 +294,10 @@ public class ContentAuditLogSupportImpl
         paramsSet.addBoolean( "includeDependencies", params.isIncludeDependencies() );
 
         addContents( resultSet, result.getPushedContents(), "pushedContents" );
-        addContents( resultSet, result.getDeletedContents(), "deletedContents" );
         addContents( resultSet, result.getFailedContents(), "failedContents" );
-        addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
 
         log( "system.content.publish", data, ContentIds.create()
             .addAll( result.getPushedContents() )
-            .addAll( result.getDeletedContents() )
-            .addAll( result.getUnpublishedContents() )
             .build(), rootContext );
     }
 
@@ -355,10 +351,6 @@ public class ContentAuditLogSupportImpl
         paramsSet.addBoolean( "variant", params.isVariant() );
         paramsSet.addString( "name", params.getName() );
         paramsSet.addString( "parent", Objects.toString( params.getParent(), null ) );
-        if ( params.getCreator() != null )
-        {
-            paramsSet.addString( "creator", params.getCreator().getId() );
-        }
 
         resultSet.addStrings( "duplicatedContents",
                               result.getDuplicatedContents().stream().map( ContentId::toString ).collect( Collectors.toList() ) );

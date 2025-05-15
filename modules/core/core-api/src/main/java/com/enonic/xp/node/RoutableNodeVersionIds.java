@@ -11,7 +11,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class RoutableNodeVersionIds
+public final class RoutableNodeVersionIds
     extends AbstractImmutableEntitySet<RoutableNodeVersionId>
 {
     private RoutableNodeVersionIds( final ImmutableSet<RoutableNodeVersionId> set )

@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class FindContentVersionsResult
+public final class FindContentVersionsResult
 {
     private final ContentVersions contentVersions;
 

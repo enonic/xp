@@ -5,7 +5,7 @@ import java.time.Instant;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.security.PrincipalKey;
 
-public class IssueComment
+public final class IssueComment
 {
     private final NodeId id;
 

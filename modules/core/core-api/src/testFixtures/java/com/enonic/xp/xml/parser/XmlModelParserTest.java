@@ -5,6 +5,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
 
 public abstract class XmlModelParserTest
 {
@@ -29,7 +30,9 @@ public abstract class XmlModelParserTest
     protected final void parse( final XmlModelParser parser, final String suffix )
         throws Exception
     {
-        parser.source( findResource( suffix ) );
+        final URL resource = findResource( suffix );
+        parser.systemId( resource.toString() );
+        parser.source( Resources.asCharSource( resource, StandardCharsets.UTF_8 ) );
         parser.parse();
     }
 

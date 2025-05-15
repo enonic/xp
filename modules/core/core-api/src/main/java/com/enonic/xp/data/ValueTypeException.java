@@ -10,10 +10,4 @@ public final class ValueTypeException
     {
         super( message );
     }
-
-    @Deprecated
-    public ValueTypeException( final String message, final Object... args )
-    {
-        super( String.format( message, args ) );
-    }
 }

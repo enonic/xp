@@ -63,12 +63,6 @@ public final class ContentIds
         }
     }
 
-    @Deprecated
-    public Set<String> asStrings()
-    {
-        return this.set.stream().map( ContentId::toString ).collect( Collectors.toSet() );
-    }
-
     public static Builder create()
     {
         return new Builder();

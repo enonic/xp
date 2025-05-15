@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.project.ProjectName;
 
 @PublicApi
-public class ResetContentInheritParams
+public final class ResetContentInheritParams
 {
     private final ContentId contentId;
 

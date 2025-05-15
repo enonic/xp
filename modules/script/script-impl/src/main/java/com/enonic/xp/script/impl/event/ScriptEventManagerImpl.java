@@ -52,12 +52,6 @@ public final class ScriptEventManagerImpl
     }
 
     @Override
-    public void invalidate( final ApplicationKey key )
-    {
-        invalidate( key, ApplicationInvalidationLevel.FULL );
-    }
-
-    @Override
     public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
     {
         final boolean removed = listeners.removeIf( w -> w.applicationKey.equals( key ) );

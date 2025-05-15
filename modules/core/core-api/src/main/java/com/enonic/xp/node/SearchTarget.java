@@ -6,7 +6,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 
-public class SearchTarget
+public final class SearchTarget
 {
     private final RepositoryId repositoryId;
 

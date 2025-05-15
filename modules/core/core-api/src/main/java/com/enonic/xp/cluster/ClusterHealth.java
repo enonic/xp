@@ -2,7 +2,7 @@ package com.enonic.xp.cluster;
 
 import java.util.Objects;
 
-public class ClusterHealth
+public final class ClusterHealth
 {
     private final ClusterHealthStatus status;
 

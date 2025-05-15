@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class FormOptionSetOption
+public final class FormOptionSetOption
     extends FormItem
     implements Iterable<FormItem>
 {

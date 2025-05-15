@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class BooleanFilter
+public final class BooleanFilter
     extends Filter
 {
     final ImmutableList<Filter> must;

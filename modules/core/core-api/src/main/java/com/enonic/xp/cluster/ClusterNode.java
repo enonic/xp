@@ -1,6 +1,6 @@
 package com.enonic.xp.cluster;
 
-public class ClusterNode
+public final class ClusterNode
 {
     private final ClusterNodeId id;
 

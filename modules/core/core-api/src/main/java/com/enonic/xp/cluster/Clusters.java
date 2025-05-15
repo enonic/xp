@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-public class Clusters
+public final class Clusters
     implements Iterable<Cluster>
 {
     private final CopyOnWriteArrayList<Cluster> clusters = new CopyOnWriteArrayList<>();

@@ -5,9 +5,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
@@ -18,10 +16,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
-import com.google.common.io.ByteSource;
-
-import com.enonic.xp.util.Exceptions;
-
 public final class ImageHelper
 {
     private ImageHelper()
@@ -31,34 +25,6 @@ public final class ImageHelper
     public static String createImagePlaceholder( final int width, final int height )
     {
         return new ImagePlaceholderFactory( width, height ).create();
-    }
-
-    @Deprecated
-    public static BufferedImage toBufferedImage( final InputStream inputStream )
-    {
-        try
-        {
-            return ImageIO.read( inputStream );
-        }
-        catch ( IOException e )
-        {
-            throw Exceptions.newRuntime( "Failed to read BufferedImage from InputStream" ).withCause( e );
-        }
-    }
-
-    @Deprecated
-    public static ByteSource toByteSource( final BufferedImage image, final String format )
-    {
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try
-        {
-            ImageIO.write( image, format, output );
-        }
-        catch ( final IOException e )
-        {
-            throw Exceptions.newRuntime( "Failed to report BufferedImage to InputStream" ).withCause( e );
-        }
-        return ByteSource.wrap( output.toByteArray() );
     }
 
     public static ImageWriter getWriterByFormat( final String format )
@@ -83,24 +49,6 @@ public final class ImageHelper
             throw new IllegalArgumentException( "The image-based media type " + mimeType + " is not supported for writing" );
         }
         return i.next().getOriginatingProvider().getFormatNames()[0];
-    }
-
-    @Deprecated
-    public static byte[] serializeImage( final BufferedImage bufferedImage, final String mimeType, final int quality )
-        throws IOException
-    {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        writeImage( out, bufferedImage, getFormatByMimeType( mimeType ), quality == 0 ? -1 : quality );
-        return out.toByteArray();
-    }
-
-    @Deprecated
-    public static byte[] writeImage( final BufferedImage image, final String format, final int quality )
-        throws IOException
-    {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        writeImage( out, image, format, quality );
-        return out.toByteArray();
     }
 
     public static void writeImage( OutputStream out, final BufferedImage image, final String format, final int quality )
@@ -148,12 +96,6 @@ public final class ImageHelper
         }
     }
 
-    @Deprecated
-    public static BufferedImage createImage( BufferedImage src, boolean hasAlpha )
-    {
-        return createImage( src.getWidth(), src.getHeight(), hasAlpha );
-    }
-
     public static BufferedImage createImage( int width, int height, boolean hasAlpha )
     {
         return new BufferedImage( width, height, hasAlpha ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB );
@@ -197,12 +139,6 @@ public final class ImageHelper
         }
 
         return targetImage;
-    }
-
-    @Deprecated
-    public static boolean supportsAlphaChannel( final String format )
-    {
-        return "png".equals( format );
     }
 
     public static BufferedImage scaleSquare( final BufferedImage source, final int size )

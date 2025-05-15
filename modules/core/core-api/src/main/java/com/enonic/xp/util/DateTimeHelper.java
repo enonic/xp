@@ -6,7 +6,7 @@ import java.time.temporal.TemporalAccessor;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-public class DateTimeHelper
+public final class DateTimeHelper
 {
     private static final DateTimeFormatter ISO_DATETIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
@@ -22,4 +22,7 @@ public class DateTimeHelper
         return Instant.from( ta );
     }
 
+    private DateTimeHelper()
+    {
+    }
 }

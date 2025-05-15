@@ -24,12 +24,6 @@ public final class Repositories
         return RepositoryIds.from( set.stream().map( Repository::getId ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
-    @Deprecated
-    public Repository getRepositoryById( final RepositoryId repositoryId )
-    {
-        return set.stream().filter( repository -> repository.getId().equals( repositoryId ) ).findAny().orElse( null );
-    }
-
     public static Repositories empty()
     {
         final ImmutableSet<Repository> set = ImmutableSet.of();

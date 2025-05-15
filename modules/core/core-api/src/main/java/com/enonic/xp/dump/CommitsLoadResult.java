@@ -1,6 +1,6 @@
 package com.enonic.xp.dump;
 
-public class CommitsLoadResult
+public final class CommitsLoadResult
     extends AbstractLoadResult
 {
     private CommitsLoadResult( final Builder builder )

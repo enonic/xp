@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public class GetPublishStatusesResult
+public final class GetPublishStatusesResult
     implements Iterable<GetPublishStatusResult>
 {
     private final ImmutableMap<ContentId, GetPublishStatusResult> getPublishStatusResultsMap;

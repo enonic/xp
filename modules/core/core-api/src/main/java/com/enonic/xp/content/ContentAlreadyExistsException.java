@@ -20,12 +20,6 @@ public final class ContentAlreadyExistsException
 
     private final Branch branch;
 
-    @Deprecated
-    public ContentAlreadyExistsException( final ContentPath path )
-    {
-        this( path, null, null );
-    }
-
     public ContentAlreadyExistsException( final ContentPath path, final RepositoryId repositoryId, final Branch branch )
     {
         super( buildMessage( path, repositoryId, branch ) );

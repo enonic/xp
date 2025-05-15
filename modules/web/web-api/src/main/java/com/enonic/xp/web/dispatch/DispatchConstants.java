@@ -2,7 +2,7 @@ package com.enonic.xp.web.dispatch;
 
 import java.util.List;
 
-public class DispatchConstants
+public final class DispatchConstants
 {
     public static final String VIRTUAL_HOST_PREFIX = "@";
 
@@ -17,4 +17,8 @@ public class DispatchConstants
     public static final String CONNECTOR_PROPERTY = "connector";
 
     public static final String CONNECTOR_ATTRIBUTE = "com.enonic.xp.web.dispatch.connector";
+
+    private DispatchConstants()
+    {
+    }
 }

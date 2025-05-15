@@ -6,7 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Value;
 
 @PublicApi
-public class RangeFilter
+public final class RangeFilter
     extends FieldFilter
 {
     private final Value from;

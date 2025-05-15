@@ -9,7 +9,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class SnapshotResults
+public final class SnapshotResults
     extends AbstractImmutableEntitySet<SnapshotResult>
 {
     private SnapshotResults( final Builder builder )

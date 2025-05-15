@@ -39,9 +39,6 @@ public class NodeEvents
 
     public static final String NODE_MANUAL_ORDER_EVENT = "node.manualOrderUpdated";
 
-    @Deprecated
-    public static final String NODE_STATE_UPDATED_EVENT = "node.stateUpdated";
-
     public static final String NODE_PERMISSIONS_UPDATED = "node.permissionsUpdated";
 
     public static Event created( final Node createdNode )

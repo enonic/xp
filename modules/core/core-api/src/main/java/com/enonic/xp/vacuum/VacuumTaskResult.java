@@ -1,6 +1,6 @@
 package com.enonic.xp.vacuum;
 
-public class VacuumTaskResult
+public final class VacuumTaskResult
 {
     private final long processed;
 

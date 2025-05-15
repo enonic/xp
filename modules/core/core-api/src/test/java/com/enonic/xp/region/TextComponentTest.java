@@ -8,7 +8,7 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TextComponentText
+public class TextComponentTest
 {
     @Test
     public void equals()
@@ -63,7 +63,6 @@ public class TextComponentText
         assertNotNull( copy );
         assertEquals( source.getType(), copy.getType() );
         assertEquals( source.getText(), copy.getText() );
-        assertEquals( source.getName(), copy.getName() );
     }
 
 }

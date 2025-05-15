@@ -6,7 +6,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.util.Exceptions;
 
 
 final class GetContentByIdCommand
@@ -36,7 +35,7 @@ final class GetContentByIdCommand
         }
         catch ( Exception e )
         {
-            throw Exceptions.newRuntime( "Error getting node" ).withCause( e );
+            throw new RuntimeException( "Error getting node", e );
         }
         return content;
     }
