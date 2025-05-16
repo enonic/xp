@@ -31,6 +31,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -63,6 +64,8 @@ public class PortalUrlServiceImpl_processHtmlTest
 
     private HttpServletRequest req;
 
+    PortalUrlGeneratorService portalUrlGeneratorService;
+
     @BeforeEach
     public void setUp()
     {
@@ -72,9 +75,11 @@ public class PortalUrlServiceImpl_processHtmlTest
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
+
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
-                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ) );
+                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 

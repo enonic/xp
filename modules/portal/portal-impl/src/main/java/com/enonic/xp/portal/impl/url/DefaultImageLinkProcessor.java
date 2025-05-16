@@ -17,7 +17,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.html.HtmlElement;
-import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
@@ -33,7 +33,7 @@ final class DefaultImageLinkProcessor
 
     ContentService contentService;
 
-    PortalUrlService portalUrlService;
+    PortalUrlGeneratorService portalUrlGeneratorService;
 
     Supplier<String> baseUrlSupplier;
 
@@ -113,7 +113,7 @@ final class DefaultImageLinkProcessor
                           .setBranch( branchSupplier )
                           .build() )
             .build();
-        return portalUrlService.generateUrl( imageUrl );
+        return portalUrlGeneratorService.generateUrl( imageUrl );
     }
 
     private String getScale( final ImageStyle imageStyle, final Integer expectedWidth )

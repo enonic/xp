@@ -30,6 +30,7 @@ import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
 import com.enonic.xp.portal.url.HtmlProcessorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.style.ElementStyle;
@@ -84,6 +85,8 @@ public class RichTextProcessor
 
     private final PortalUrlService portalUrlService;
 
+    private final PortalUrlGeneratorService portalUrlGeneratorService;
+
     private final ContentService contentService;
 
     private final MacroService macroService;
@@ -93,10 +96,12 @@ public class RichTextProcessor
     private Supplier<String> imageBaseUrlSupplier;
 
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
-                              final MacroService macroService, final ContentService contentService )
+                              final PortalUrlGeneratorService portalUrlGeneratorService, final MacroService macroService,
+                              final ContentService contentService )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
+        this.portalUrlGeneratorService = portalUrlGeneratorService;
         this.macroService = macroService;
         this.contentService = contentService;
     }
@@ -163,7 +168,7 @@ public class RichTextProcessor
                 .setApplication( "media" )
                 .setApi( "image" )
                 .build();
-            return portalUrlService.apiUrl( apiParams );
+            return portalUrlGeneratorService.apiUrl( apiParams );
         } );
 
         final HtmlDocument document = HtmlParser.parse( params.getValue() );
@@ -224,7 +229,7 @@ public class RichTextProcessor
         final DefaultImageLinkProcessor imageLinkProcessor = new DefaultImageLinkProcessor();
 
         imageLinkProcessor.contentService = contentService;
-        imageLinkProcessor.portalUrlService = portalUrlService;
+        imageLinkProcessor.portalUrlGeneratorService = portalUrlGeneratorService;
         imageLinkProcessor.baseUrlSupplier = imageBaseUrlSupplier;
         imageLinkProcessor.params = params;
         imageLinkProcessor.element = element;

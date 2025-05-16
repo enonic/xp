@@ -20,6 +20,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -50,13 +51,19 @@ public class PortalUrlServiceImpl_imageUrlTest
 
     private HttpServletRequest req;
 
+    private PortalUrlGeneratorService portalUrlGeneratorService;
+
     @BeforeEach
     public void setUp()
     {
         this.contentService = mock( ContentService.class );
+
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
+
+
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -576,7 +583,7 @@ public class PortalUrlServiceImpl_imageUrlTest
             .setScale( "max(300)" )
             .build();
 
-        final String url = this.service.imageUrl( params );
+        final String url = this.portalUrlGeneratorService.imageUrl( params );
 
         assertEquals( "baseUrl/_/media:image/project:branch/123456:b12b4c973748042e3b3a7e4798344289/max-300/mycontent.png", url );
     }

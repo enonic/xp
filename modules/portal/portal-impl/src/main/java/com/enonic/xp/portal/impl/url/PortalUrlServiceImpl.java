@@ -39,6 +39,7 @@ import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ServiceUrlParams;
@@ -66,6 +67,8 @@ public final class PortalUrlServiceImpl
 
     private final ProjectService projectService;
 
+    private final PortalUrlGeneratorService portalUrlGeneratorService;
+
     private volatile boolean useLegacyAssetContextPath;
 
     private volatile boolean useLegacyIdProviderContextPath;
@@ -74,7 +77,8 @@ public final class PortalUrlServiceImpl
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
                                  @Reference final RedirectChecksumService redirectChecksumService,
-                                 @Reference final ProjectService projectService )
+                                 @Reference final ProjectService projectService,
+                                 @Reference final PortalUrlGeneratorService portalUrlGeneratorService )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
@@ -82,6 +86,7 @@ public final class PortalUrlServiceImpl
         this.styleDescriptorService = styleDescriptorService;
         this.redirectChecksumService = redirectChecksumService;
         this.projectService = projectService;
+        this.portalUrlGeneratorService = portalUrlGeneratorService;
     }
 
     @Activate
@@ -135,7 +140,7 @@ public final class PortalUrlServiceImpl
     public String baseUrl( final BaseUrlParams params )
     {
         final Supplier<String> baseUrlStrategy = new ContentBaseUrlSupplier( contentService, projectService, params );
-        return generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlStrategy ).build() );
+        return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlStrategy ).build() );
     }
 
     @Override
@@ -146,7 +151,8 @@ public final class PortalUrlServiceImpl
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getParams().forEach( queryParamsStrategy::put );
 
-        return generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
+        return portalUrlGeneratorService.generateUrl(
+            UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
     }
 
     @Override
@@ -162,11 +168,11 @@ public final class PortalUrlServiceImpl
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getParams().forEach( queryParamsStrategy::put );
 
-        return generateUrl( UrlGeneratorParams.create()
-                                .setBaseUrl( baseUrlSupplier )
-                                .setPath( pathSupplier )
-                                .setQueryString( queryParamsStrategy )
-                                .build() );
+        return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
+                                                          .setBaseUrl( baseUrlSupplier )
+                                                          .setPath( pathSupplier )
+                                                          .setQueryString( queryParamsStrategy )
+                                                          .build() );
     }
 
     @Override
@@ -217,7 +223,7 @@ public final class PortalUrlServiceImpl
             .addQueryParams( params.getParams().asMap() )
             .build();
 
-        return imageUrl( generatorParams );
+        return portalUrlGeneratorService.imageUrl( generatorParams );
     }
 
     @Override
@@ -268,16 +274,31 @@ public final class PortalUrlServiceImpl
             .addQueryParams( params.getParams().asMap() )
             .build();
 
-        return attachmentUrl( generatorParams );
+        return portalUrlGeneratorService.attachmentUrl( generatorParams );
     }
 
     @Override
     public String identityUrl( final IdentityUrlParams params )
     {
-        final IdentityUrlBuilder builder = new IdentityUrlBuilder( redirectChecksumService::generateChecksum );
-        builder.setUseLegacyContextPath( useLegacyIdProviderContextPath );
+        final Supplier<String> baseUrlSupplier = new IdentityBaseUrlSupplier( params.getType() );
 
-        return build( builder, params );
+        final Supplier<String> pathSupplier = new IdentityPathSupplier( params );
+
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
+        params.getParams().forEach( queryParamsStrategy::put );
+
+        final String redirectionUrl = params.getRedirectionUrl();
+        if ( redirectionUrl != null )
+        {
+            queryParamsStrategy.put( "redirect", redirectionUrl );
+            queryParamsStrategy.put( "_ticket", redirectChecksumService.generateChecksum( redirectionUrl ) );
+        }
+
+        return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
+                                                          .setBaseUrl( baseUrlSupplier )
+                                                          .setPath( pathSupplier )
+                                                          .setQueryString( queryParamsStrategy )
+                                                          .build() );
     }
 
     @Override
@@ -289,7 +310,8 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        return new RichTextProcessor( styleDescriptorService, this, macroService, contentService ).process( params );
+        return new RichTextProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, contentService ).process(
+            params );
     }
 
     @Override
@@ -304,95 +326,7 @@ public final class PortalUrlServiceImpl
             .addQueryParams( params.getQueryParams() )
             .build();
 
-        return apiUrl( generatorParams );
-    }
-
-    @Override
-    public String imageUrl( final ImageUrlGeneratorParams params )
-    {
-        final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
-            .setUrlType( params.getUrlType() )
-            .setBaseUrl( params.getBaseUrl() )
-            .setApplication( () -> "media" )
-            .setApi( "image" )
-            .setPath( ImageMediaPathSupplier.create()
-                          .setMedia( params.getMedia() )
-                          .setProjectName( params.getProjectName() )
-                          .setBranch( params.getBranch() )
-                          .setScale( params.getScale() )
-                          .setFormat( params.getFormat() )
-                          .build() );
-
-        if ( params.getQuality() != null )
-        {
-            builder.addQueryParam( "quality", params.getQuality().toString() );
-        }
-        if ( params.getBackground() != null )
-        {
-            builder.addQueryParam( "background", params.getBackground() );
-        }
-        if ( params.getFilter() != null )
-        {
-            builder.addQueryParam( "filter", params.getFilter() );
-        }
-
-        builder.addQueryParams( params.getQueryParams() );
-
-        return apiUrl( builder.build() );
-    }
-
-    @Override
-    public String attachmentUrl( final AttachmentUrlGeneratorParams params )
-    {
-        final AttachmentMediaPathSupplier pathStrategy = AttachmentMediaPathSupplier.create()
-            .setContent( params.getContentSupplier() )
-            .setProjectName( params.getProjectName() )
-            .setBranch( params.getBranch() )
-            .setName( params.getName() )
-            .setLabel( params.getLabel() )
-            .build();
-
-        final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
-            .setBaseUrl( params.getBaseUrl() )
-            .setUrlType( params.getUrlType() )
-            .setApplication( () -> "media" )
-            .setApi( "attachment" )
-            .setPath( pathStrategy )
-            .addQueryParams( params.getQueryParams() );
-
-        if ( params.isDownload() )
-        {
-            builder.addQueryParam( "download", null );
-        }
-
-        return apiUrl( builder.build() );
-    }
-
-    @Override
-    public String apiUrl( final ApiUrlGeneratorParams params )
-    {
-        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        params.getQueryParams().forEach( queryParamsStrategy::putAll );
-
-        final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
-            .setBaseUrl( ApiUrlBaseUrlResolver.create()
-                             .setContentService( contentService )
-                             .setApi( params.getApi() )
-                             .setBaseUrl( params.getBaseUrl() )
-                             .setApplication( params.getApplication() )
-                             .setUrlType( params.getUrlType() )
-                             .build() )
-            .setPath( params.getPath() )
-            .setQueryString( queryParamsStrategy )
-            .build();
-
-        return generateUrl( generatorParams );
-    }
-
-    @Override
-    public String generateUrl( final UrlGeneratorParams params )
-    {
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( params ) );
+        return portalUrlGeneratorService.apiUrl( generatorParams );
     }
 
     private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
