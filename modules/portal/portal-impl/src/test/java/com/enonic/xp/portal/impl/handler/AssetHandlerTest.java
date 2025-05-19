@@ -62,7 +62,6 @@ public class AssetHandlerTest
         this.handler = new AssetHandler( resourceService );
 
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
         this.handler.activate( portalConfig );
 
         this.nullResource = mock( Resource.class );
@@ -201,37 +200,6 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testContextPathConfiguration()
-        throws Exception
-    {
-        VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/master/mysite" );
-        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.asset_legacyContextPath() ).thenReturn( false );
-
-        this.handler.activate( portalConfig );
-
-        addResource( "demo:/assets/css/main.css" );
-        this.request.setEndpointPath( "/_/asset/demo:0000000000000001/css/main.css" );
-        this.request.setRawPath( "/site/myproject/master/mysite/_/asset/demo:0000000000000001/css/main.css" );
-
-        final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "demo" ), "META-INF/MANIFEST.MF" );
-        when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
-
-        WebResponse res = this.handler.handle( this.request );
-        assertNotNull( res );
-        assertEquals( HttpStatus.OK, res.getStatus() );
-
-        // test invalid context path
-        this.request.setRawPath( "/admin/path/_/asset/demo:0000000000000001/css/main.css" );
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-    }
-
-    @Test
     public void testAssetOnAdminContextPath()
         throws Exception
     {
@@ -240,15 +208,11 @@ public class AssetHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/master/mysite" );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.asset_legacyContextPath() ).thenReturn( false );
-        this.handler.activate( portalConfig );
-
         addResource( "demo:/assets/css/main.css" );
-        this.request.setRawPath( "/admin/_/asset/demo:0000000000000001/css/main.css" );
+        this.request.setRawPath( "/anyPrefix/_/asset/demo:0000000000000001/css/main.css" );
 
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        WebResponse webResponse = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
     }
 
     @Test

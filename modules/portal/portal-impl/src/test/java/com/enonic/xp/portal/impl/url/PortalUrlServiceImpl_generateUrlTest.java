@@ -63,6 +63,6 @@ public class PortalUrlServiceImpl_generateUrlTest
         Mockito.when( virtualHost.getSource() ).thenReturn( "/" );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/admin" );
         url = this.service.generateUrl( params );
-        assertEquals( "http://localhost/?a=3", url );
+        assertEquals( "http://localhost?a=3", url );
     }
 }

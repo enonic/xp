@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.resource.MockResource;
@@ -12,6 +11,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,35 +76,29 @@ public class PortalUrlServiceImpl_assetUrlTest
         String url = this.service.assetUrl( params );
         assertEquals( "/main/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /site/default/draft/context
+        //Calls the method with a virtual mapping /main -> /site
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/site" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /site/default/draft/context
+        //Calls the method with a virtual mapping /main -> /site/myproject/draft
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping / -> /site/default/draft/context
+        //Calls the method with a virtual mapping / -> /site/myproject/draft
         when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
         url = this.service.assetUrl( params );
         assertEquals( "/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main/path -> /site/default/draft/context/path
-        when( virtualHost.getSource() ).thenReturn( "/main/path" );
+        //Calls the method with a virtual mapping / -> /site/myproject/draft/context/path
+        when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
         url = this.service.assetUrl( params );
-        assertEquals( "/main/path/_/asset/myapplication:0000000000000001/css/my.css", url );
-
-        //Calls the method with a virtual mapping /site/default/draft/context/path -> /site/default/draft/context/path
-        when( virtualHost.getSource() ).thenReturn( "/site/myproject/draft/context/path" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
-        url = this.service.assetUrl( params );
-        assertEquals( "/site/myproject/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
+        assertTrue( url.startsWith( "/_/error/400?message=Out+of+scope.+" ) );
     }
 
     @Test
@@ -147,15 +141,10 @@ public class PortalUrlServiceImpl_assetUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
 
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.asset_legacyContextPath() ).thenReturn( false );
-
         VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/master/mysite" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-
-        this.service.activate( portalConfig );
 
         final String url = this.service.assetUrl( params );
         assertEquals( "http://localhost/_/asset/myapplication:0000000000000001/css/my.css", url );
