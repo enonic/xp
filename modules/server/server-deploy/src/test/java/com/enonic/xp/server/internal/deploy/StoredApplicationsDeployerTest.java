@@ -17,9 +17,8 @@ public class StoredApplicationsDeployerTest
     @BeforeEach
     public void setup()
     {
-        this.deployer = new StoredApplicationsDeployer();
         this.applicationService = Mockito.mock( ApplicationService.class );
-        this.deployer.setApplicationService( this.applicationService );
+        this.deployer = new StoredApplicationsDeployer( this.applicationService );
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -21,6 +22,15 @@ public class OSGICheckTest
     private BundleContext bundleContext;
 
     @Test
+    void checkReadyClassList()
+    {
+        for ( String readyServiceName : OSGIStateChecks.READY_SERVICE_NAMES )
+        {
+            assertDoesNotThrow( () -> Class.forName( readyServiceName ) );
+        }
+    }
+
+    @Test
     public void testNotReady()
     {
         final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.READY_SERVICE_NAMES );
@@ -30,20 +40,18 @@ public class OSGICheckTest
                                                               "[com.enonic.xp.admin.tool.AdminToolDescriptorService] service in not available",
                                                               "[com.enonic.xp.admin.widget.WidgetDescriptorService] service in not available",
                                                               "[com.enonic.xp.task.TaskDescriptorService] service in not available",
-                                                              "[com.enonic.xp.portal.view.ViewFunctionService] service in not available",
                                                               "[com.enonic.xp.schema.content.ContentTypeService] service in not available",
                                                               "[com.enonic.xp.script.event.ScriptEventManager] service in not available",
                                                               "[com.enonic.xp.scheduler.SchedulerService] service in not available",
                                                               "[com.enonic.xp.task.TaskService] service in not available",
                                                               "[com.enonic.xp.portal.owasp.HtmlSanitizer] service in not available",
                                                               "[com.enonic.xp.security.SecurityService] service in not available",
-                                                              "[com.enonic.xp.server.internal.deploy.StoredApplicationsDeployer] service in not available",
+                                                              "[com.enonic.xp.app.ApplicationService] service in not available",
                                                               "[com.enonic.xp.i18n.LocaleService] service in not available",
                                                               "[com.enonic.xp.export.ExportService] service in not available",
                                                               "[com.enonic.xp.portal.websocket.WebSocketManager] service in not available",
                                                               "[com.enonic.xp.web.multipart.MultipartService] service in not available",
-                                                              "[com.enonic.xp.mail.MailService] service in not available",
-                                                              "[com.enonic.xp.server.internal.deploy.DeployDirectoryWatcher] service in not available" );
+                                                              "[com.enonic.xp.mail.MailService] service in not available" );
     }
 
     @Test

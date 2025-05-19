@@ -26,15 +26,16 @@ public class ApplicationDeployerManagerTest
 
     ApplicationDeployerManager applicationDeployerManager;
 
-    private StoredApplicationsDeployer storedApplicationsDeployer;
-
     private DeployDirectoryWatcher deployDirectoryWatcher;
+
+    ApplicationService applicationService;
 
     @BeforeEach
     public void setup()
         throws Exception
     {
-        storedApplicationsDeployer = new StoredApplicationsDeployer();
+        applicationService = mock( ApplicationService.class );
+        final StoredApplicationsDeployer storedApplicationsDeployer = new StoredApplicationsDeployer( applicationService );
 
         deployDirectoryWatcher = new DeployDirectoryWatcher();
         final DeployConfig deployConfig = mock( DeployConfig.class );
@@ -47,8 +48,6 @@ public class ApplicationDeployerManagerTest
     public void test_activate()
         throws Exception
     {
-        final ApplicationService applicationService = mock( ApplicationService.class );
-        storedApplicationsDeployer.setApplicationService( applicationService );
         deployDirectoryWatcher.setApplicationService( applicationService );
 
         final BundleContext bundleContext = mock( BundleContext.class );
