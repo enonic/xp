@@ -15,7 +15,8 @@ public interface OSGIStateChecks
                                               "com.enonic.xp.admin.tool.AdminToolDescriptorService",
                                               "com.enonic.xp.admin.widget.WidgetDescriptorService",
                                               "com.enonic.xp.server.internal.deploy.DeployDirectoryWatcher",
-                                              "com.enonic.xp.server.internal.deploy.StoredApplicationsDeployer" );
+                                              "com.enonic.xp.server.internal.deploy.StoredApplicationsDeployer",
+                                              "com.enonic.xp.portal.url.PortalUrlGeneratorService" );
 
     Set<String> LIVE_SERVICE_NAMES =
         Set.of( "org.elasticsearch.client.Client", "org.elasticsearch.client.AdminClient", "org.elasticsearch.client.ClusterAdminClient" );

@@ -71,8 +71,6 @@ public final class PortalUrlServiceImpl
 
     private volatile boolean useLegacyAssetContextPath;
 
-    private volatile boolean useLegacyIdProviderContextPath;
-
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
@@ -94,7 +92,6 @@ public final class PortalUrlServiceImpl
     public void activate( final PortalConfig config )
     {
         this.useLegacyAssetContextPath = config.asset_legacyContextPath();
-        this.useLegacyIdProviderContextPath = config.idprovider_legacyContextPath();
     }
 
     @Override

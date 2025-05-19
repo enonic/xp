@@ -16,8 +16,6 @@ public @interface PortalConfig
 
     String draftBranchAllowedFor() default "role:system.admin.login";
 
-    boolean idprovider_legacyContextPath() default false;
-
     boolean legacy_attachmentService_enabled() default true;
 
     boolean legacy_imageService_enabled() default true;

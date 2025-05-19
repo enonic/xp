@@ -87,7 +87,6 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
-        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( false );
 
         PortalRequestAccessor.set( this.portalRequest );
 

@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.content.ContentService;
@@ -19,7 +18,6 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
@@ -47,8 +45,6 @@ public class IdentityHandler
 
     private final RedirectChecksumService redirectChecksumService;
 
-    private volatile boolean useLegacyContextPath;
-
     @Activate
     public IdentityHandler( @Reference final ContentService contentService,
                             @Reference final IdProviderControllerService idProviderControllerService,
@@ -57,13 +53,6 @@ public class IdentityHandler
         this.contentService = contentService;
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
-    }
-
-    @Activate
-    @Modified
-    public void activate( final PortalConfig config )
-    {
-        this.useLegacyContextPath = config.idprovider_legacyContextPath();
     }
 
     public PortalResponse handle( final WebRequest webRequest, final WebResponse webResponse )
@@ -96,13 +85,10 @@ public class IdentityHandler
             throw WebException.forbidden( String.format( "'%s' id provider is forbidden", idProviderKey ) );
         }
 
-        if ( !useLegacyContextPath )
+        final String target = virtualHost.getTarget();
+        if ( !webRequest.getRawPath().startsWith( target + ( target.endsWith( "/" ) ? "_/idprovider/" : "/_/idprovider/" ) ) )
         {
-            final String target = virtualHost.getTarget();
-            if ( !webRequest.getRawPath().startsWith( target + ( target.endsWith( "/" ) ? "_/idprovider/" : "/_/idprovider/" ) ) )
-            {
-                throw WebException.notFound( "Not a valid idprovider url pattern" );
-            }
+            throw WebException.notFound( "Not a valid idprovider url pattern" );
         }
 
         String idProviderFunction = matcher.group( 2 );
