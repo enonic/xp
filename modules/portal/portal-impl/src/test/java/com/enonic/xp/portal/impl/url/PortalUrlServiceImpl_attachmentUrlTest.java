@@ -21,6 +21,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
@@ -47,6 +48,8 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
     private PortalUrlService service;
 
+    private PortalUrlGeneratorService portalUrlGeneratorService;
+
     private PortalRequest portalRequest;
 
     private HttpServletRequest req;
@@ -56,9 +59,11 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     {
         this.contentService = mock( ContentService.class );
 
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( contentService );
+
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -572,7 +577,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
             .setDownload( true )
             .build();
 
-        final String url = this.service.attachmentUrl( params );
+        final String url = this.portalUrlGeneratorService.attachmentUrl( params );
 
         assertEquals( "baseUrl/_/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
     }

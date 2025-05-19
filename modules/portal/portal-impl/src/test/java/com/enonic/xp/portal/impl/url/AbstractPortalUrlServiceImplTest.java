@@ -16,6 +16,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -78,15 +79,14 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
 
+        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
+
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
-                                      this.redirectChecksumService, this.projectService );
+                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService );
 
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.legacy_imageService_enabled() ).thenReturn( true );
-        when( portalConfig.legacy_attachmentService_enabled() ).thenReturn( true );
         when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
-        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( true );
 
         PortalRequestAccessor.set( this.portalRequest );
 

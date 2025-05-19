@@ -5,7 +5,6 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ContextPathType;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
@@ -27,7 +26,7 @@ public class PortalUrlServiceImpl_identityUrlTest
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/site/myproject/draft/_/idprovider/system/login", url );
+        assertEquals( "/_/idprovider/system/login", url );
     }
 
     @Test
@@ -39,8 +38,7 @@ public class PortalUrlServiceImpl_identityUrlTest
             .redirectionUrl( "https://example.com" );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/site/myproject/draft/_/idprovider/system/login?redirect=https%3A%2F%2Fexample.com&_ticket=some-great-checksum",
-                      url );
+        assertEquals( "/_/idprovider/system/login?redirect=https%3A%2F%2Fexample.com&_ticket=some-great-checksum", url );
     }
 
     @Test
@@ -51,7 +49,7 @@ public class PortalUrlServiceImpl_identityUrlTest
             .idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/site/myproject/draft/context/path/_/idprovider/system/login", url );
+        assertEquals( "/_/idprovider/system/login", url );
     }
 
     @Test
@@ -62,7 +60,7 @@ public class PortalUrlServiceImpl_identityUrlTest
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/site/myproject/draft/_/idprovider/system/login", url );
+        assertEquals( "/_/idprovider/system/login", url );
     }
 
 
@@ -72,7 +70,7 @@ public class PortalUrlServiceImpl_identityUrlTest
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "/site/myproject/draft/_/idprovider/system", url );
+        assertEquals( "/_/idprovider/system", url );
     }
 
     @Test
@@ -88,13 +86,13 @@ public class PortalUrlServiceImpl_identityUrlTest
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
         String url = this.service.identityUrl( params );
-        assertEquals( "/main/site/myproject/draft/_/idprovider/system/login", url );
+        assertEquals( "/main/_/idprovider/system/login", url );
 
         //Calls the method with a virtual mapping /main -> /site/default/draft/context
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/site" );
         url = this.service.identityUrl( params );
-        assertEquals( "/main/myproject/draft/_/idprovider/system/login", url );
+        assertEquals( "/main/_/idprovider/system/login", url );
 
         //Calls the method with a virtual mapping /main -> /site/default/draft/context
         when( virtualHost.getSource() ).thenReturn( "/main" );
@@ -132,7 +130,7 @@ public class PortalUrlServiceImpl_identityUrlTest
         when( req.getServerPort() ).thenReturn( 80 );
 
         final String url = this.service.identityUrl( params );
-        assertEquals( "http://localhost/site/myproject/draft/_/idprovider/system/login", url );
+        assertEquals( "http://localhost/_/idprovider/system/login", url );
     }
 
     @Test
@@ -148,17 +146,12 @@ public class PortalUrlServiceImpl_identityUrlTest
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );
 
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.idprovider_legacyContextPath() ).thenReturn( false );
-
         VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/master/mysite" );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        this.service.activate( portalConfig );
-
         String url = this.service.identityUrl( params );
-        assertEquals( "http://localhost/_/idprovider/system/login", url );
+        assertEquals( "http://localhost/source/_/idprovider/system/login", url );
     }
 }
