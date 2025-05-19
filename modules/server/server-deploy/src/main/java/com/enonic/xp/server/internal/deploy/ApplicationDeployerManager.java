@@ -13,7 +13,6 @@ import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
-import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.scheduler.SchedulerService;
@@ -93,12 +92,6 @@ public class ApplicationDeployerManager
 
     @Reference
     public void setPortalUrlService( final PortalUrlService portalUrlService )
-    {
-        //Needed to ensure startup-order
-    }
-
-    @Reference
-    public void setPortalUrlGeneratorService( final PortalUrlGeneratorService portalUrlGeneratorService )
     {
         //Needed to ensure startup-order
     }
