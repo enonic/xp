@@ -9,12 +9,9 @@ const log = {
     info: (message?: string, ...optionalParams: unknown[]) => { /* no-op */ },
 };
 
-const myIdProviderController = {
+const myIdProviderController: IdProviderController = {
     autoLogin: (request: Request) => {
         log.info('autoLogin request:%s', JSON.stringify(request, null, 4));
-        return {
-            status: 200,
-        };
     },
     handle401: (request: Request) => {
         log.info('401 request:%s', JSON.stringify(request, null, 4));
