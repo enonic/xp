@@ -1,11 +1,9 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Suppliers;
@@ -18,15 +16,10 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.portal.url.AbstractUrlParams;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -47,8 +40,6 @@ import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.style.StyleDescriptorService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
@@ -69,8 +60,6 @@ public final class PortalUrlServiceImpl
 
     private final PortalUrlGeneratorService portalUrlGeneratorService;
 
-    private volatile boolean useLegacyAssetContextPath;
-
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
@@ -87,19 +76,20 @@ public final class PortalUrlServiceImpl
         this.portalUrlGeneratorService = portalUrlGeneratorService;
     }
 
-    @Activate
-    @Modified
-    public void activate( final PortalConfig config )
-    {
-        this.useLegacyAssetContextPath = config.asset_legacyContextPath();
-    }
-
     @Override
     public String assetUrl( final AssetUrlParams params )
     {
-        final AssetUrlBuilder builder = new AssetUrlBuilder();
-        builder.setUseLegacyContextPath( useLegacyAssetContextPath );
-        return build( builder, params );
+        final AssetBaseUrlSupplier baseUrlSupplier = new AssetBaseUrlSupplier( params.getType() );
+        final AssetPathSupplier pathSupplier = new AssetPathSupplier( resourceService, params.getApplication(), params.getPath() );
+
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
+        params.getParams().forEach( queryParamsStrategy::put );
+
+        return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
+                                                          .setBaseUrl( baseUrlSupplier )
+                                                          .setPath( pathSupplier )
+                                                          .setQueryString( queryParamsStrategy )
+                                                          .build() );
     }
 
     @Override
@@ -126,11 +116,11 @@ public final class PortalUrlServiceImpl
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         params.getParams().forEach( queryParamsStrategy::put );
 
-        return runWithAdminRole( () -> UrlGenerator.generateUrl( UrlGeneratorParams.create()
-                                                                     .setBaseUrl( baseUrlSupplier )
-                                                                     .setPath( pathStrategy )
-                                                                     .setQueryString( queryParamsStrategy )
-                                                                     .build() ) );
+        return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create()
+                                                          .setBaseUrl( baseUrlSupplier )
+                                                          .setPath( pathStrategy )
+                                                          .setQueryString( queryParamsStrategy )
+                                                          .build() );
     }
 
     @Override
@@ -301,7 +291,17 @@ public final class PortalUrlServiceImpl
     @Override
     public String generateUrl( final GenerateUrlParams params )
     {
-        return build( new GenerateUrlBuilder(), params );
+        final Supplier<String> baseUrlSupplier = ( () -> {
+            final StringBuilder url = new StringBuilder();
+            UrlBuilderHelper.appendAndEncodePathParts( url, params.getPath() );
+            return UrlBuilderHelper.rewriteUri( PortalRequestAccessor.get().getRawRequest(), params.getType(), url.toString() );
+        } );
+
+        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
+        params.getParams().forEach( queryParamsStrategy::put );
+
+        return portalUrlGeneratorService.generateUrl(
+            UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
     }
 
     @Override
@@ -324,22 +324,6 @@ public final class PortalUrlServiceImpl
             .build();
 
         return portalUrlGeneratorService.apiUrl( generatorParams );
-    }
-
-    private <B extends PortalUrlBuilder<P>, P extends AbstractUrlParams> String build( final B builder, final P params )
-    {
-        builder.setParams( params );
-        builder.contentService = this.contentService;
-        builder.resourceService = this.resourceService;
-        return runWithAdminRole( builder::build );
-    }
-
-    private <T> T runWithAdminRole( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-        final AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
-        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 
     private ContentNotFoundException createContentNotFoundException( final ProjectName projectName, final Branch branch,

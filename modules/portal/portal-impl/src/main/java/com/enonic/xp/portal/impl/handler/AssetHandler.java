@@ -26,8 +26,6 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
-import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -44,8 +42,6 @@ public class AssetHandler
 
     private volatile String cacheControlHeader;
 
-    private volatile boolean useLegacyContextPath;
-
     @Activate
     public AssetHandler( @Reference final ResourceService resourceService )
     {
@@ -57,7 +53,6 @@ public class AssetHandler
     public void activate( final PortalConfig config )
     {
         cacheControlHeader = config.asset_cacheControl();
-        useLegacyContextPath = config.asset_legacyContextPath();
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -80,16 +75,6 @@ public class AssetHandler
         if ( webRequest.getMethod() == HttpMethod.OPTIONS )
         {
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
-        }
-
-        if ( !useLegacyContextPath )
-        {
-            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
-            final String target = virtualHost.getTarget();
-            if ( !webRequest.getRawPath().startsWith( target + ( target.endsWith( "/" ) ? "_/asset/" : "/_/asset/" ) ) )
-            {
-                throw WebException.notFound( "Not a valid asset url pattern" );
-            }
         }
 
         final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );

@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.project.ProjectService;
@@ -85,17 +84,12 @@ public abstract class AbstractPortalUrlServiceImplTest
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
                                       this.redirectChecksumService, this.projectService, portalUrlGeneratorService );
 
-        final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( portalConfig.asset_legacyContextPath() ).thenReturn( true );
-
         PortalRequestAccessor.set( this.portalRequest );
 
         this.virtualHost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
-
-        this.service.activate( portalConfig );
     }
 
     @AfterEach
