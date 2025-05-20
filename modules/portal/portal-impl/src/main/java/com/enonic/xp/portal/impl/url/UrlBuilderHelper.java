@@ -150,9 +150,14 @@ public final class UrlBuilderHelper
 
         final String rewrittenUri = rewritingResult.getRewrittenUri();
 
+        return buildServerUrl( request, urlType ) + rewrittenUri;
+    }
+
+    public static String buildServerUrl( final HttpServletRequest request, final String urlType )
+    {
         if ( UrlTypeConstants.ABSOLUTE.equals( urlType ) )
         {
-            return ServletRequestUrlHelper.getServerUrl( request ) + rewrittenUri;
+            return ServletRequestUrlHelper.getServerUrl( request );
         }
         else if ( UrlTypeConstants.WEBSOCKET.equals( urlType ) )
         {
@@ -163,11 +168,11 @@ public final class UrlBuilderHelper
                 {
                     return isSecure() ? "wss" : "ws";
                 }
-            } ) + rewrittenUri;
+            } );
         }
         else
         {
-            return rewrittenUri;
+            return "";
         }
     }
 }

@@ -2,9 +2,15 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.servlet.UriRewritingResult;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 final class AssetBaseUrlSupplier
     implements Supplier<String>
@@ -31,6 +37,20 @@ final class AssetBaseUrlSupplier
 
         UrlBuilderHelper.appendPart( uriBuilder, "_" );
 
-        return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );
+        final HttpServletRequest rawRequest = portalRequest.getRawRequest();
+
+        UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( rawRequest, uriBuilder.toString() );
+
+        if ( rewritingResult.isOutOfScope() )
+        {
+            uriBuilder.setLength( 0 );
+
+            final VirtualHost vhost = VirtualHostHelper.getVirtualHost( rawRequest );
+            uriBuilder.append( vhost.getTarget() );
+            UrlBuilderHelper.appendPart( uriBuilder, "_" );
+            rewritingResult = ServletRequestUrlHelper.rewriteUri( rawRequest, uriBuilder.toString() );
+        }
+
+        return UrlBuilderHelper.buildServerUrl( rawRequest, urlType ) + rewritingResult.getRewrittenUri();
     }
 }

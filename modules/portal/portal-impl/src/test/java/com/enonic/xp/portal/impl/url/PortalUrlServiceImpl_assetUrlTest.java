@@ -11,7 +11,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,29 +75,35 @@ public class PortalUrlServiceImpl_assetUrlTest
         String url = this.service.assetUrl( params );
         assertEquals( "/main/site/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /site
+        //Calls the method with a virtual mapping /main -> /site/myproject/draft/context
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/site" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/myproject/draft/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping /main -> /site/myproject/draft
+        //Calls the method with a virtual mapping /main -> /site/myproject/draft/context
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
         url = this.service.assetUrl( params );
         assertEquals( "/main/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping / -> /site/myproject/draft
+        //Calls the method with a virtual mapping / -> /site/myproject/draft/context
         when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context" );
         url = this.service.assetUrl( params );
         assertEquals( "/_/asset/myapplication:0000000000000001/css/my.css", url );
 
-        //Calls the method with a virtual mapping / -> /site/myproject/draft/context/path
-        when( virtualHost.getSource() ).thenReturn( "/" );
+        //Calls the method with a virtual mapping /main/path -> /site/myproject/draft/context/path
+        when( virtualHost.getSource() ).thenReturn( "/main/path" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
         url = this.service.assetUrl( params );
-        assertTrue( url.startsWith( "/_/error/400?message=Out+of+scope.+" ) );
+        assertEquals( "/main/path/_/asset/myapplication:0000000000000001/css/my.css", url );
+
+        //Calls the method with a virtual mapping /site/default/draft/context/path -> /site/default/draft/context/path
+        when( virtualHost.getSource() ).thenReturn( "/site/myproject/draft/context/path" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft/context/path" );
+        url = this.service.assetUrl( params );
+        assertEquals( "/site/myproject/draft/context/path/_/asset/myapplication:0000000000000001/css/my.css", url );
     }
 
     @Test
