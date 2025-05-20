@@ -350,6 +350,10 @@ export type RequestHandler<
     ResponseToJava extends ResponseInterface = DefaultResponse
 > = (request: RequestFromJava) => ResponseToJava;
 
+type AutoLoginRequestHandler<
+    RequestFromJava extends RequestInterface = DefaultRequest
+> = (request: RequestFromJava) => void;
+
 export type HttpFilterNext<
     RequestToJava extends SerializableRequest = SerializableRequest<DefaultRequest>,
     ResponseToJava extends ResponseInterface = DefaultResponse
@@ -449,7 +453,7 @@ export interface ErrorController {
 }
 
 export interface IdProviderController extends Controller {
-    autoLogin?: RequestHandler;
+    autoLogin?: AutoLoginRequestHandler;
     handle401?: RequestHandler;
     login?: RequestHandler;
     logout?: RequestHandler;
