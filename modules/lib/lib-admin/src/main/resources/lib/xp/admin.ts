@@ -1,3 +1,5 @@
+import type {ScriptValue} from '@enonic-types/core';
+
 declare global {
     interface XpLibraries {
         '/lib/xp/admin': typeof import('./admin');
@@ -13,9 +15,6 @@ declare global {
  * @module admin
  */
 
-
-const portal = require('/lib/xp/portal');
-
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
     if (obj == null || obj[name] == null) {
         throw `Parameter '${String(name)}' is required`;
@@ -28,6 +27,22 @@ interface AdminLibHelper {
     getInstallation(): string;
 
     getVersion(): string;
+
+    getToolUrl(application: string, tool: string): string;
+
+    getHomeToolUrl(type?: string): string;
+}
+
+interface WidgetUrlHandler {
+    setApplication(value: string): void;
+
+    setWidget(value: string): void;
+
+    setUrlType(value?: string | null): void;
+
+    addQueryParams(value?: ScriptValue | null): void;
+
+    createUrl(): string;
 }
 
 /**
@@ -38,9 +53,7 @@ interface AdminLibHelper {
  * @returns {string} URL.
  */
 export function getToolUrl(application: string, tool: string): string {
-    return portal.url({
-        path: '/admin/' + application + '/' + tool,
-    });
+    return helper.getToolUrl(application, tool);
 }
 
 /**
@@ -51,10 +64,7 @@ export function getToolUrl(application: string, tool: string): string {
  * @returns {string} URL.
  */
 export function getHomeToolUrl(params?: GetHomeToolUrlParams): string {
-    return portal.url({
-        path: '/admin',
-        type: params?.type,
-    });
+    return helper.getHomeToolUrl(params?.type);
 }
 
 export interface GetHomeToolUrlParams {
@@ -103,11 +113,12 @@ export function widgetUrl(params: WidgetUrlParams): string {
     checkRequired(params, 'application');
     checkRequired(params, 'widget');
 
-    return portal.apiUrl({
-        application: 'admin',
-        api: 'widget',
-        type: params.type,
-        path: [params.application, params.widget],
-        params: params.params || {},
-    });
+    const bean: WidgetUrlHandler = __.newBean<WidgetUrlHandler>('com.enonic.xp.lib.admin.WidgetUrlHandler');
+
+    bean.setApplication(params.application);
+    bean.setWidget(params.widget);
+    bean.setUrlType(__.nullOrValue(params.type));
+    bean.addQueryParams(__.toScriptValue(params.params));
+
+    return bean.createUrl();
 }

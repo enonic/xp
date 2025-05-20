@@ -1,18 +1,36 @@
 const t = require('/lib/xp/testing');
-
-t.mock('/lib/xp/admin', {
-    widgetUrl(params) {
-        return 'generated_url';
-    }
-});
+const adminLib = require('/lib/xp/admin');
 
 exports.testWidgetUrl = function () {
-    const adminLib = require('/lib/xp/admin');
-
     const result = adminLib.widgetUrl({
-        application: 'app',
-        widget: 'widget',
+        application: 'myapp',
+        widget: 'mywidget',
+        params: {
+            k1: 'v1',
+            k2: ['v21', 'v22'],
+        }
     });
 
+    t.assertEquals("generated_url", result);
+};
+
+exports.testWidgetUrlWithoutParams = function () {
+    const result = adminLib.widgetUrl({
+        application: 'myapp',
+        widget: 'mywidget',
+    });
+
+    t.assertEquals("generated_url", result);
+};
+
+exports.testGetToolUrl = function () {
+    const result = adminLib.getToolUrl('myapp', 'mytool');
+    t.assertEquals("generated_url", result);
+};
+
+exports.getHomeToolUrl = function () {
+    const result = adminLib.getHomeToolUrl({
+        type: 'absolute',
+    });
     t.assertEquals("generated_url", result);
 };
