@@ -1,18 +1,16 @@
 dependencies {
+    api libs.slf4j.api
     api( libs.guava.guava ) {
         exclude group: 'com.google.code.findbugs'
     }
     api libs.osgi.core
-    api libs.jakarta.mail
-
-    api libs.slf4j.api
-    compileOnlyApi libs.osgi.service.componentannotations
     api libs.osgi.service.component
+    compileOnlyApi libs.osgi.service.componentannotations
 
     implementation project( ':core:core-internal' )
 
     implementation libs.jparsec
-
+    implementation libs.jakarta.mail
     implementation libs.micrometer.core
 
     testFixturesImplementation libs.junit.jupiter.api
