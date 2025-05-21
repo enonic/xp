@@ -838,8 +838,7 @@ export function imagePlaceholder(params: ImagePlaceholderParams): string {
 }
 
 export interface ApiUrlParams {
-    application: string;
-    api?: string;
+    api: string;
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     path?: string | string[];
@@ -847,9 +846,7 @@ export interface ApiUrlParams {
 }
 
 interface ApiUrlHandler {
-    setApplication(value?: string | null): void;
-
-    setApi(value?: string | null): void;
+    setApi(value: string): void;
 
     setUrlType(value?: string | null): void;
 
@@ -867,35 +864,31 @@ interface ApiUrlHandler {
  *
  * @example-ref examples/portal/apiUrl.js
  *
- * @param {object} urlParams Input parameters as JSON.
- * @param {string} [urlParams.application] Application to reference to the API. For offline mode, this parameter is required,
- * otherwise if value is not set, the application from PortalRequest is used.
- * @param {string} urlParams.api Name of the API
- * @param {string} [urlParams.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
- * @param {string|string[]} [urlParams.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
- * @param {object} [urlParams.params] Custom query parameters to append to the URL.
- * @param {string} [urlParams.baseUrl] Custom baseUrl.
+ * @param {object} params Input parameters as JSON.
+ * @param {string} params.api Descriptor of the API
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
+ * @param {string|string[]} [params.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
+ * @param {string} [params.baseUrl] Custom baseUrl.
  *
  * @returns {string} The generated URL.
  */
-export function apiUrl(urlParams: ApiUrlParams): string {
-    checkRequired(urlParams, 'api');
+export function apiUrl(params: ApiUrlParams): string {
+    checkRequired(params, 'api');
 
     const {
-        application,
         api,
         type,
         path,
-        params,
+        params: queryParams,
         baseUrl
-    } = urlParams ?? {};
+    } = params ?? {};
 
     const bean: ApiUrlHandler = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
 
-    bean.setUrlType(__.nullOrValue(type));
-    bean.setApplication(__.nullOrValue(application));
     bean.setApi(api);
-    bean.addQueryParams(__.toScriptValue(params));
+    bean.setUrlType(__.nullOrValue(type));
+    bean.addQueryParams(__.toScriptValue(queryParams));
     bean.setBaseUrl(__.nullOrValue(baseUrl));
 
     if (path) {

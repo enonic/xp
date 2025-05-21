@@ -6,10 +6,12 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
@@ -22,6 +24,11 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class PortalUrlGeneratorServiceImpl
     implements PortalUrlGeneratorService
 {
+    private static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+
+    private static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
+        DescriptorKey.from( ApplicationKey.from( "media" ), "attachment" );
+
     private final ContentService contentService;
 
     @Activate
@@ -36,8 +43,7 @@ public class PortalUrlGeneratorServiceImpl
         final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
             .setUrlType( params.getUrlType() )
             .setBaseUrl( params.getBaseUrl() )
-            .setApplication( () -> "media" )
-            .setApi( "image" )
+            .setDescriptorKey( MEDIA_IMAGE_API_DESCRIPTOR_KEY )
             .setPath( ImageMediaPathSupplier.create()
                           .setMedia( params.getMedia() )
                           .setProjectName( params.getProjectName() )
@@ -78,8 +84,7 @@ public class PortalUrlGeneratorServiceImpl
         final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
             .setUrlType( params.getUrlType() )
-            .setApplication( () -> "media" )
-            .setApi( "attachment" )
+            .setDescriptorKey( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY )
             .setPath( pathStrategy )
             .addQueryParams( params.getQueryParams() );
 
@@ -100,9 +105,8 @@ public class PortalUrlGeneratorServiceImpl
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
             .setBaseUrl( ApiUrlBaseUrlResolver.create()
                              .setContentService( contentService )
-                             .setApi( params.getApi() )
                              .setBaseUrl( params.getBaseUrl() )
-                             .setApplication( params.getApplication() )
+                             .setDescriptorKey( params.getDescriptorKey() )
                              .setUrlType( params.getUrlType() )
                              .build() )
             .setPath( params.getPath() )

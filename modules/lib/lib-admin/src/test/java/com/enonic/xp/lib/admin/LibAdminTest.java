@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -80,8 +81,10 @@ public class LibAdminTest
         ApiUrlParams params = captor.getValue();
 
         assertEquals( "server", params.getType() );
-        assertEquals( "admin", params.getApplication() );
-        assertEquals( "widget", params.getApi() );
+
+        DescriptorKey descriptorKey = params.getDescriptorKey();
+        assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
+        assertEquals( "widget", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 2, pathSegments.size() );
@@ -111,8 +114,10 @@ public class LibAdminTest
         ApiUrlParams params = captor.getValue();
 
         assertEquals( "server", params.getType() );
-        assertEquals( "admin", params.getApplication() );
-        assertEquals( "widget", params.getApi() );
+
+        DescriptorKey descriptorKey = params.getDescriptorKey();
+        assertEquals( "admin", descriptorKey.getApplicationKey().getName() );
+        assertEquals( "widget", descriptorKey.getName() );
 
         List<String> pathSegments = params.getPathSegments();
         assertEquals( 2, pathSegments.size() );
