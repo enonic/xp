@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 

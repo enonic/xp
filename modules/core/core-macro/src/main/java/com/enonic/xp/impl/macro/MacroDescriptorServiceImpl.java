@@ -20,7 +20,7 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;

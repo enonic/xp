@@ -20,7 +20,7 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.impl.api.ApiConfig;
 import com.enonic.xp.portal.impl.api.ApiIndexMode;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;

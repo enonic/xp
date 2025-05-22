@@ -31,7 +31,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.CalendarService;

@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.ApiUrlParams;

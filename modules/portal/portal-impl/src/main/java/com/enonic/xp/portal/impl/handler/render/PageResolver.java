@@ -5,7 +5,7 @@ import java.util.List;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;

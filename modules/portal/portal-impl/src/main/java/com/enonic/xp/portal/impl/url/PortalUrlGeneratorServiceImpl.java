@@ -11,7 +11,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;

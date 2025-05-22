@@ -46,7 +46,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;

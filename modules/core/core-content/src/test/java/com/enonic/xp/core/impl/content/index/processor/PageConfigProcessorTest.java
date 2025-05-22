@@ -12,7 +12,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;

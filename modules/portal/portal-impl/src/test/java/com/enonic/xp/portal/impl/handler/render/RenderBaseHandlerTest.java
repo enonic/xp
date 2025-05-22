@@ -11,7 +11,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;

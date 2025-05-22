@@ -10,7 +10,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
 public final class ApiUrlParams

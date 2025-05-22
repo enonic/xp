@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.serializer;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.DescriptorBasedComponent;
 
 abstract class DescriptorBasedComponentDataSerializer<DATA extends DescriptorBasedComponent>

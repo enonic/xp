@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;

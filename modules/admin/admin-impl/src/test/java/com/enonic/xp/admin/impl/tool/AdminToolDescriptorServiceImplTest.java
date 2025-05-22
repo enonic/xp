@@ -6,7 +6,7 @@ import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 

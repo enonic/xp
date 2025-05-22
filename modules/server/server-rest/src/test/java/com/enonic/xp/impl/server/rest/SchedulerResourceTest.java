@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;

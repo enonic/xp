@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageRegions;

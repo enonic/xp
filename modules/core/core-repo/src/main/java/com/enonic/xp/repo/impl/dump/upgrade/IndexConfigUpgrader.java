@@ -19,7 +19,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;

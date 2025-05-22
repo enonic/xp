@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;

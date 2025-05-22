@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.EditableScheduledJob;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;

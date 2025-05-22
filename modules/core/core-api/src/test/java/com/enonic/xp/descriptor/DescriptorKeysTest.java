@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

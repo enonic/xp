@@ -4,7 +4,7 @@ package com.enonic.xp.core.impl.content.serializer;
 import java.util.List;
 
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.LayoutDescriptor;

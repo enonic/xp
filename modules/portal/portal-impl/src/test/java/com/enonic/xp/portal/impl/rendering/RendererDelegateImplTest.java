@@ -12,7 +12,7 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;

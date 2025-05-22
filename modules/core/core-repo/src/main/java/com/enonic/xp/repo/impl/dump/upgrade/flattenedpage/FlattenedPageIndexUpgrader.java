@@ -8,7 +8,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;

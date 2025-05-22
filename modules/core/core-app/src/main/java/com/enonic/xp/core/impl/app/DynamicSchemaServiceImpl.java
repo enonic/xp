@@ -14,7 +14,7 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;

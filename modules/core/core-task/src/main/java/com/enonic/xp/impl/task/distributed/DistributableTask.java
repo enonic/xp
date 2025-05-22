@@ -9,7 +9,7 @@ import com.enonic.xp.core.internal.osgi.OsgiSupport;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;

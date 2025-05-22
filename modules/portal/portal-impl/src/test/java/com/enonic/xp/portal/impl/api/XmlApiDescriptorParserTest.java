@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.xml.parser.XmlModelParserTest;

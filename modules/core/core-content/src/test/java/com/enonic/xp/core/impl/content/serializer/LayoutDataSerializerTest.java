@@ -11,7 +11,7 @@ import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;

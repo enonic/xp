@@ -12,7 +12,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroService;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;

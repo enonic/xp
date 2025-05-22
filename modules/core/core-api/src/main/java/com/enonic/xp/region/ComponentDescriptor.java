@@ -8,7 +8,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
 @PublicApi

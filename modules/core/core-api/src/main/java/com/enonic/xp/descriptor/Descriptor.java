@@ -3,7 +3,6 @@ package com.enonic.xp.descriptor;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
 
 public abstract class Descriptor
 {

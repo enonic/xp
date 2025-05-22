@@ -19,7 +19,7 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;

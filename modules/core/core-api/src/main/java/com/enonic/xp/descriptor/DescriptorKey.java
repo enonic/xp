@@ -1,4 +1,4 @@
-package com.enonic.xp.page;
+package com.enonic.xp.descriptor;
 
 import java.io.Serializable;
 import java.util.Objects;

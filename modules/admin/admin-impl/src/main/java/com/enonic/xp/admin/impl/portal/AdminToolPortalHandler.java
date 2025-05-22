@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BasePortalHandler;

@@ -14,7 +14,7 @@ import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;

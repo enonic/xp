@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

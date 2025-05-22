@@ -32,7 +32,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;

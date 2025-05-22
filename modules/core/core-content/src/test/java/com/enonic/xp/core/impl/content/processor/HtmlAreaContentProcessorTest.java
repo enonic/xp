@@ -29,7 +29,7 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;

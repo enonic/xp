@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;

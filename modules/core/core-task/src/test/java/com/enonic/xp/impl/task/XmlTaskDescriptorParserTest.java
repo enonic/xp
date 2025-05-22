@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 

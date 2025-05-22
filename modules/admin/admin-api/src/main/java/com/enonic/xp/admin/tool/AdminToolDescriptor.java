@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 

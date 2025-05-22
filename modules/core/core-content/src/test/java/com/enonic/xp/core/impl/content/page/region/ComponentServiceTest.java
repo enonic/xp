@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.page.region;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.page.AbstractDescriptorServiceTest;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.PartComponent;

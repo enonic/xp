@@ -21,7 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;

@@ -13,7 +13,7 @@ import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;

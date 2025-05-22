@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

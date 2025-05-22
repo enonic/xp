@@ -16,7 +16,7 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.CreateFragmentParams;
 import com.enonic.xp.region.ImageComponent;

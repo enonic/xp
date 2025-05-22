@@ -8,7 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;

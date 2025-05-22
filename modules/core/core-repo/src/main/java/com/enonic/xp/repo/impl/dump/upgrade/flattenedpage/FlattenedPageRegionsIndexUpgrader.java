@@ -10,7 +10,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
 import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTargetConstants.TGT_COMPONENTS_KEY;

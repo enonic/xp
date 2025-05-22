@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;

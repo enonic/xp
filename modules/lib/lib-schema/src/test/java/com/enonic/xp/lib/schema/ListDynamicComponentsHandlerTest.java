@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
