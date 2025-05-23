@@ -261,6 +261,9 @@ public class SlashApiHandler
 
         final Site site = contentResolverResult.getNearestSite();
 
+        portalRequest.setSite( site );
+        portalRequest.setContent( contentResolverResult.getContent() );
+
         final SiteConfigs siteConfigs = resolveSiteConfigs( site, portalRequest.getRepositoryId() );
 
         if ( siteConfigs.isEmpty() )
