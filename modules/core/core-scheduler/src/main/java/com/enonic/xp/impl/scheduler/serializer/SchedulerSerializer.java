@@ -13,7 +13,7 @@ import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.EditableScheduledJob;

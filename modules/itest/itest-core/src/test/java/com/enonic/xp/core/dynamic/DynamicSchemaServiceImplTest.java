@@ -57,7 +57,7 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.ComponentDescriptor;

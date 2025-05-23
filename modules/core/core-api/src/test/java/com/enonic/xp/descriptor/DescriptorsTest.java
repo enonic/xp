@@ -5,7 +5,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

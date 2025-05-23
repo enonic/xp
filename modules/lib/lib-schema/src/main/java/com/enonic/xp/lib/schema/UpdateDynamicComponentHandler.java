@@ -3,7 +3,7 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.lib.schema.mapper.DescriptorConverter;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;

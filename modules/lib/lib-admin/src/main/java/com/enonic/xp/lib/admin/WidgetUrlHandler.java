@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -78,8 +79,7 @@ public class WidgetUrlHandler
     public String createUrl()
     {
         final ApiUrlParams.Builder builder = ApiUrlParams.create()
-            .setApplication( "admin" )
-            .setApi( "widget" )
+            .setDescriptorKey( DescriptorKey.from( ApplicationKey.from( "admin" ), "widget" ) )
             .setType( this.urlType )
             .setPathSegments( List.of( this.application.getName(), this.widget ) );
 

@@ -22,7 +22,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.impl.task.script.NamedTask;
 import com.enonic.xp.impl.task.script.NamedTaskFactory;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.ProgressReporter;

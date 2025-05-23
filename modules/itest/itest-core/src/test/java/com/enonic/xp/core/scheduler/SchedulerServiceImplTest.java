@@ -30,7 +30,7 @@ import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;

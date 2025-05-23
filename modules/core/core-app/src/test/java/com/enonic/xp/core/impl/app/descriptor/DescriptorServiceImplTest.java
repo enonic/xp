@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -9,6 +9,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.google.common.base.Strings.emptyToNull;
 
@@ -19,9 +20,7 @@ public final class ApiUrlGeneratorParams
 
     private final String urlType;
 
-    private final Supplier<String> application;
-
-    private final String api;
+    private final DescriptorKey descriptorKey;
 
     private final Supplier<String> pathSupplier;
 
@@ -31,8 +30,7 @@ public final class ApiUrlGeneratorParams
     {
         this.baseUrl = builder.baseUrl;
         this.urlType = Objects.requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
-        this.application = Objects.requireNonNull( builder.application );
-        this.api = Objects.requireNonNull( builder.api );
+        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey );
         this.pathSupplier = builder.pathSupplier;
         this.queryParams = builder.queryParams;
     }
@@ -47,14 +45,9 @@ public final class ApiUrlGeneratorParams
         return urlType;
     }
 
-    public Supplier<String> getApplication()
+    public DescriptorKey getDescriptorKey()
     {
-        return application;
-    }
-
-    public String getApi()
-    {
-        return api;
+        return descriptorKey;
     }
 
     public Supplier<String> getPath()
@@ -78,9 +71,7 @@ public final class ApiUrlGeneratorParams
 
         private String baseUrl;
 
-        private Supplier<String> application;
-
-        private String api;
+        private DescriptorKey descriptorKey;
 
         private Supplier<String> pathSupplier;
 
@@ -98,21 +89,9 @@ public final class ApiUrlGeneratorParams
             return this;
         }
 
-        public Builder setApplication( final Supplier<String> application )
+        public Builder setDescriptorKey( final DescriptorKey descriptorKey )
         {
-            this.application = application;
-            return this;
-        }
-
-        public Builder setApplication( final String application )
-        {
-            this.application = () -> emptyToNull( application );
-            return this;
-        }
-
-        public Builder setApi( final String api )
-        {
-            this.api = emptyToNull( api );
+            this.descriptorKey = descriptorKey;
             return this;
         }
 

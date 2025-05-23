@@ -3,7 +3,7 @@ package com.enonic.xp.portal.impl.rendering;
 import com.google.common.base.Function;
 import com.google.common.net.MediaType;
 
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;

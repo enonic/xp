@@ -3,7 +3,6 @@ package com.enonic.xp.descriptor;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractEqualsTest;
 
 public class DescriptorKeyTest

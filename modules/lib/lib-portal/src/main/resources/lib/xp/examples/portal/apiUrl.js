@@ -3,8 +3,7 @@ const assert = require('/lib/xp/testing');
 
 // BEGIN
 const url = portalLib.apiUrl({
-    application: 'com.enonic.app.myapp',
-    api: 'myapi',
+    api: 'com.enonic.app.myapp:myapi',
     params: {
         a: 1,
         b: 2
@@ -13,25 +12,23 @@ const url = portalLib.apiUrl({
 });
 
 const apiUrlWithPathSegments = portalLib.apiUrl({
-    application: 'com.enonic.app.myapp',
-    api: 'myapi',
+    api: 'com.enonic.app.myapp:myapi',
     path: ['mypath', 'myotherpath']
 });
 
 const apiUrl = portalLib.apiUrl({
-    application: 'com.enonic.app.myapp',
-    api: 'myapi',
+    api: 'com.enonic.app.myapp:myapi',
 });
 
 const apiUrlWithBaseUrl = portalLib.apiUrl({
-    application: 'com.enonic.app.myapp',
     api: 'myapi',
     baseUrl: 'https://example.com',
 });
 
 // END
 
-assert.assertEquals('ApiUrlParams{type=server, params={a=[1], b=[2]}, api=myapi, application=com.enonic.app.myapp, path=mypath/subpath}', url);
-assert.assertEquals('ApiUrlParams{type=server, params={}, api=myapi, application=com.enonic.app.myapp, pathSegments=[mypath, myotherpath]}', apiUrlWithPathSegments);
-assert.assertEquals('ApiUrlParams{type=server, params={}, api=myapi, application=com.enonic.app.myapp}', apiUrl);
-assert.assertEquals('ApiUrlParams{type=server, params={}, api=myapi, application=com.enonic.app.myapp, baseUrl=https://example.com}', apiUrlWithBaseUrl);
+assert.assertEquals('ApiUrlParams{type=server, params={a=[1], b=[2]}, descriptorKey=com.enonic.app.myapp:myapi, path=mypath/subpath}', url);
+assert.assertEquals('ApiUrlParams{type=server, params={}, descriptorKey=com.enonic.app.myapp:myapi, pathSegments=[mypath, myotherpath]}',
+    apiUrlWithPathSegments);
+assert.assertEquals('ApiUrlParams{type=server, params={}, descriptorKey=com.enonic.app.myapp:myapi}', apiUrl);
+assert.assertEquals('ApiUrlParams{type=server, params={}, descriptorKey=myapplication:myapi, baseUrl=https://example.com}', apiUrlWithBaseUrl);

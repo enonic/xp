@@ -9,7 +9,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;

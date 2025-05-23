@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class DescriptorKeys

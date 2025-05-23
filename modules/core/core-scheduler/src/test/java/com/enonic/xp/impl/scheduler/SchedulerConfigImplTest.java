@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;

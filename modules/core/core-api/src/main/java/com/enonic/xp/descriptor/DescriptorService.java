@@ -1,7 +1,6 @@
 package com.enonic.xp.descriptor;
 
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.page.DescriptorKey;
 
 public interface DescriptorService
 {

@@ -3,8 +3,13 @@ package com.enonic.xp.lib.portal.url;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.script.ScriptValue;
@@ -16,7 +21,7 @@ public final class ApiUrlHandler
 {
     private Supplier<PortalUrlService> urlServiceSupplier;
 
-    private String application;
+    private ApplicationKey applicationKey;
 
     private String api;
 
@@ -33,14 +38,16 @@ public final class ApiUrlHandler
     @Override
     public void initialize( final BeanContext context )
     {
+        this.applicationKey = context.getApplicationKey();
         this.urlServiceSupplier = context.getService( PortalUrlService.class );
     }
 
     public String createUrl()
     {
+        final DescriptorKey descriptorKey = resolveDescriptorKey();
+
         final ApiUrlParams.Builder builder = ApiUrlParams.create()
-            .setApplication( this.application )
-            .setApi( this.api )
+            .setDescriptorKey( descriptorKey )
             .setType( this.type )
             .setBaseUrl( this.baseUrl )
             .setPath( this.path )
@@ -54,11 +61,6 @@ public final class ApiUrlHandler
         final ApiUrlParams params = builder.build();
 
         return this.urlServiceSupplier.get().apiUrl( params );
-    }
-
-    public void setApplication( final String value )
-    {
-        this.application = value;
     }
 
     public void setApi( final String value )
@@ -95,5 +97,26 @@ public final class ApiUrlHandler
     public void addQueryParams( final ScriptValue params )
     {
         this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
+    }
+
+    private DescriptorKey resolveDescriptorKey()
+    {
+        if ( api.contains( ":" ) )
+        {
+            return DescriptorKey.from( api );
+        }
+        else
+        {
+            final PortalRequest portalRequest = PortalRequestAccessor.get();
+
+            if ( portalRequest == null )
+            {
+                return DescriptorKey.from( applicationKey, api );
+            }
+            else
+            {
+                return DescriptorKey.from( Objects.requireNonNullElse( portalRequest.getApplicationKey(), applicationKey ), api );
+            }
+        }
     }
 }

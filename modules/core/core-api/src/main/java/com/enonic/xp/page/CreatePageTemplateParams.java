@@ -5,6 +5,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
 @PublicApi

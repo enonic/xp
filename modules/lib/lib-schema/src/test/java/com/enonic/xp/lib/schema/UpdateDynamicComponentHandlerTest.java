@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;

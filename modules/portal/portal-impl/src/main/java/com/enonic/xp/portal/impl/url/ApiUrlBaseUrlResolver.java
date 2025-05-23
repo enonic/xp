@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentResolver;
@@ -18,9 +19,7 @@ final class ApiUrlBaseUrlResolver
 {
     private final ContentService contentService;
 
-    private final Supplier<String> application;
-
-    private final String api;
+    private final DescriptorKey descriptorKey;
 
     private final String baseUrl;
 
@@ -29,8 +28,7 @@ final class ApiUrlBaseUrlResolver
     ApiUrlBaseUrlResolver( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService, "ContentService must be set" );
-        this.application = Objects.requireNonNull( builder.application, "Application must be set" );
-        this.api = Objects.requireNonNull( builder.api, "apiKey must be set" );
+        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey, "DescriptorKey must be set" );
         this.baseUrl = builder.baseUrl;
         this.urlType = builder.urlType;
     }
@@ -44,9 +42,7 @@ final class ApiUrlBaseUrlResolver
     {
         private ContentService contentService;
 
-        private Supplier<String> application;
-
-        private String api;
+        private DescriptorKey descriptorKey;
 
         private String baseUrl;
 
@@ -58,21 +54,9 @@ final class ApiUrlBaseUrlResolver
             return this;
         }
 
-        Builder setApplication( final Supplier<String> application )
+        Builder setDescriptorKey( final DescriptorKey descriptorKey )
         {
-            this.application = application;
-            return this;
-        }
-
-        Builder setApplication( final String application )
-        {
-            this.application = () -> application;
-            return this;
-        }
-
-        Builder setApi( final String api )
-        {
-            this.api = api;
+            this.descriptorKey = descriptorKey;
             return this;
         }
 
@@ -101,9 +85,7 @@ final class ApiUrlBaseUrlResolver
 
         final StringBuilder url = new StringBuilder( generateBaseUrlPrefix( portalRequest ) );
 
-        final String applicationKey = Objects.requireNonNull( application.get(), "Application must be set" );
-
-        UrlBuilderHelper.appendPart( url, applicationKey + ":" + api );
+        UrlBuilderHelper.appendPart( url, descriptorKey.toString() );
 
         if ( baseUrl != null )
         {

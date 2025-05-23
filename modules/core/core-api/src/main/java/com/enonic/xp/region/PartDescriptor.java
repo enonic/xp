@@ -3,7 +3,7 @@ package com.enonic.xp.region;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
 
 @PublicApi

@@ -3,7 +3,7 @@ package com.enonic.xp.resource;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
 public final class GetDynamicComponentParams

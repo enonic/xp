@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.core.impl.content.page.AbstractDataSerializerTest;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;

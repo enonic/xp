@@ -317,8 +317,7 @@ public final class PortalUrlServiceImpl
         final ApiUrlGeneratorParams generatorParams = ApiUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
             .setUrlType( params.getType() )
-            .setApplication( new ApiUrlApplicationResolver( params.getApplication() ) )
-            .setApi( params.getApi() )
+            .setDescriptorKey( params.getDescriptorKey() )
             .setPath( new ApiUrlPathResolver( params.getPath(), params.getPathSegments() ) )
             .addQueryParams( params.getQueryParams() )
             .build();

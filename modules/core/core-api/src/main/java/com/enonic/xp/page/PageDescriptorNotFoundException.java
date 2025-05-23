@@ -2,6 +2,7 @@ package com.enonic.xp.page;
 
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.NotFoundException;
 
 @PublicApi

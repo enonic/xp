@@ -20,6 +20,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
@@ -41,6 +42,8 @@ import com.enonic.xp.style.StyleDescriptors;
 public class RichTextProcessor
 {
     private static final ApplicationKey SYSTEM_APPLICATION_KEY = ApplicationKey.from( "com.enonic.xp.app.system" );
+
+    private static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
 
     private static final int[] QUERY_OR_FRAGMENT_ALLOWED_CHARACTERS =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?/:@-._~!$&'()*+,;=%".chars().sorted().toArray();
@@ -165,8 +168,7 @@ public class RichTextProcessor
             final ApiUrlGeneratorParams apiParams = ApiUrlGeneratorParams.create()
                 .setUrlType( params.getType() )
                 .setBaseUrl( params.getBaseUrl() )
-                .setApplication( "media" )
-                .setApi( "image" )
+                .setDescriptorKey( MEDIA_IMAGE_API_DESCRIPTOR_KEY )
                 .build();
             return portalUrlGeneratorService.apiUrl( apiParams );
         } );

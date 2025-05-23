@@ -10,15 +10,14 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.descriptor.DescriptorKey;
 
 @PublicApi
 public final class ApiUrlParams
 {
     private final String type;
 
-    private final String application;
-
-    private final String api;
+    private final DescriptorKey descriptorKey;
 
     private final String path;
 
@@ -31,8 +30,7 @@ public final class ApiUrlParams
     private ApiUrlParams( final Builder builder )
     {
         this.type = Objects.requireNonNullElse( builder.type, UrlTypeConstants.SERVER_RELATIVE );
-        this.api = Objects.requireNonNull( builder.api );
-        this.application = builder.application;
+        this.descriptorKey = Objects.requireNonNull( builder.descriptorKey );
         this.path = builder.path;
         this.pathSegments = builder.pathSegments;
         this.baseUrl = builder.baseUrl;
@@ -49,14 +47,9 @@ public final class ApiUrlParams
         return type;
     }
 
-    public String getApplication()
+    public DescriptorKey getDescriptorKey()
     {
-        return application;
-    }
-
-    public String getApi()
-    {
-        return api;
+        return descriptorKey;
     }
 
     public String getPath()
@@ -88,9 +81,7 @@ public final class ApiUrlParams
     {
         private String type;
 
-        private String application;
-
-        private String api;
+        private DescriptorKey descriptorKey;
 
         private String path;
 
@@ -106,15 +97,9 @@ public final class ApiUrlParams
             return this;
         }
 
-        public Builder setApplication( final String application )
+        public Builder setDescriptorKey( final DescriptorKey descriptorKey )
         {
-            this.application = application;
-            return this;
-        }
-
-        public Builder setApi( final String api )
-        {
-            this.api = api;
+            this.descriptorKey = descriptorKey;
             return this;
         }
 
@@ -161,8 +146,7 @@ public final class ApiUrlParams
         helper.omitNullValues();
         helper.add( "type", this.type );
         helper.add( "params", this.queryParams );
-        helper.add( "api", this.api );
-        helper.add( "application", this.application );
+        helper.add( "descriptorKey", this.descriptorKey );
         helper.add( "path", this.path );
         helper.add( "pathSegments", this.pathSegments );
         helper.add( "baseUrl", this.baseUrl );

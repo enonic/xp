@@ -9,7 +9,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.CreatePageParams;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.PageTemplate;
