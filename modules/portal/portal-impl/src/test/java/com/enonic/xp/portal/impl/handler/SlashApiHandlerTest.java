@@ -62,6 +62,7 @@ import com.enonic.xp.webapp.WebappService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -218,6 +219,9 @@ public class SlashApiHandlerTest
 
         WebResponse webResponse = this.handler.handle( request );
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
+
+        assertNull( request.getSite() );
+        assertNull( request.getContent() );
     }
 
     @Test
@@ -443,6 +447,9 @@ public class SlashApiHandlerTest
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
+
+        assertEquals( site, request.getSite() );
+        assertNull( request.getContent() );
     }
 
     @Test
@@ -800,6 +807,9 @@ public class SlashApiHandlerTest
 
         WebResponse response = this.handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
+
+        assertNull( request.getSite() );
+        assertNull( request.getContent() );
     }
 
     private static final class MyUniversalApiHandler
