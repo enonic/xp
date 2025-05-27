@@ -437,10 +437,10 @@
       <xs:element minOccurs="0" name="description" type="xs:string"/>
       <xs:element minOccurs="0" name="documentation-url" type="xs:string"/>
       <xs:element minOccurs="0" name="mount" type="xs:boolean"/>
-      <xs:element minOccurs="0" name="allow">
+      <xs:element name="allow">
         <xs:complexType>
           <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="principal" type="xs:string"/>
+            <xs:element maxOccurs="unbounded" name="principal" type="xs:string"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
