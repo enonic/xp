@@ -21,7 +21,6 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
@@ -38,7 +37,6 @@ import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ImportNodeVersionParams;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.LoadNodeResult;
-import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -688,8 +686,7 @@ public class NodeServiceImpl
             .nodeId( params.getNodeId() )
             .excludedNodeIds( params.getExcludedNodeIds() )
             .includeChildren( params.isIncludeChildren() )
-            .includeDependencies( params.isIncludeDependencies() )
-            .initialDiffFilter( params.getInitialDiffFilter() )
+            .includeDependencies( params.isIncludeDependencies() ).filter( params.getFilter() )
             .statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() )
             .indexServiceInternal( indexServiceInternal )
             .storageService( this.nodeStorageService )
