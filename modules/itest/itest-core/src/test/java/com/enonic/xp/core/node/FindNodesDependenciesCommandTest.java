@@ -35,7 +35,6 @@ public class FindNodesDependenciesCommandTest
     @Test
     void several_layers_of_dependencies()
     {
-
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
         createNodeWithReference( "n1_1_1", node1_1.path() );
@@ -43,7 +42,6 @@ public class FindNodesDependenciesCommandTest
         nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
-            recursive( true ).
             nodeIds( NodeIds.from( node1.id() ) ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
@@ -65,12 +63,10 @@ public class FindNodesDependenciesCommandTest
         nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
-            recursive( true ).
             nodeIds( NodeIds.from( node1.id() ) ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
-            storageService( this.storageService ).
-            recursionFilter( nodeIds -> {
+            storageService( this.storageService ).filter( nodeIds -> {
                 final NodeIds.Builder filteredNodeIds = NodeIds.create();
                 final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
                     nodeIds( nodeIds ).
@@ -86,30 +82,7 @@ public class FindNodesDependenciesCommandTest
             build().
             execute();
 
-        assertThat( dependants ).containsExactly( NodeId.from( "n1_1" ) );
-    }
-
-    @Test
-    public void several_layers_of_dependencies_non_recursive()
-        throws Exception
-    {
-
-        final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
-        final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
-        createNodeWithReference( "n1_1_1", node1_1.path() );
-
-        nodeService.refresh( RefreshMode.ALL );
-
-        final NodeIds dependants = FindNodesDependenciesCommand.create().
-            recursive( false ).
-            nodeIds( NodeIds.from( node1.id() ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            searchService( this.searchService ).
-            storageService( this.storageService ).
-            build().
-            execute();
-
-        assertThat( dependants ).containsExactly( NodeId.from( "n1_1" ) );
+        assertThat( dependants ).isEmpty();
     }
 
     @Test
@@ -123,7 +96,6 @@ public class FindNodesDependenciesCommandTest
         nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
-            recursive( true ).
             nodeIds( NodeIds.from( node1.id() ) ).
             indexServiceInternal( this.indexServiceInternal ).
             searchService( this.searchService ).
@@ -147,7 +119,6 @@ public class FindNodesDependenciesCommandTest
         nodeService.refresh( RefreshMode.ALL );
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
-            recursive( true ).
             nodeIds( NodeIds.from( node1.id() ) ).
             excludedIds( NodeIds.from( node1_1.id() ) ).
             indexServiceInternal( this.indexServiceInternal ).

@@ -20,7 +20,7 @@ public class SyncWorkResolverParams
 
     private final boolean includeDependencies;
 
-    private final Function<NodeIds, NodeIds> initialDiffFilter;
+    private final Function<NodeIds, NodeIds> filter;
 
     private final Set<CompareStatus> statusesToStopDependenciesSearch;
 
@@ -31,7 +31,7 @@ public class SyncWorkResolverParams
         excludedNodeIds = builder.excludedNodeIds;
         includeChildren = builder.includeChildren;
         this.includeDependencies = builder.includeDependencies;
-        this.initialDiffFilter = builder.initialDiffFilter;
+        this.filter = builder.filter;
         this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
     }
 
@@ -60,14 +60,20 @@ public class SyncWorkResolverParams
         return includeDependencies;
     }
 
+    @Deprecated
     public Function<NodeIds, NodeIds> getInitialDiffFilter()
     {
-        return initialDiffFilter;
+        return Function.identity();
     }
 
     public Set<CompareStatus> getStatusesToStopDependenciesSearch()
     {
         return statusesToStopDependenciesSearch;
+    }
+
+    public Function<NodeIds, NodeIds> getFilter()
+    {
+        return filter;
     }
 
     public static Builder create()
@@ -89,7 +95,7 @@ public class SyncWorkResolverParams
 
         private Set<CompareStatus> statusesToStopDependenciesSearch;
 
-        private Function<NodeIds, NodeIds> initialDiffFilter;
+        private Function<NodeIds, NodeIds> filter;
 
         private Builder()
         {
@@ -125,15 +131,21 @@ public class SyncWorkResolverParams
             return this;
         }
 
+        @Deprecated
         public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
         {
-            this.initialDiffFilter = initialDiffFilter;
             return this;
         }
 
         public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
         {
             this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
+            return this;
+        }
+
+        public Builder filter( final Function<NodeIds, NodeIds> filter )
+        {
+            this.filter = filter;
             return this;
         }
 

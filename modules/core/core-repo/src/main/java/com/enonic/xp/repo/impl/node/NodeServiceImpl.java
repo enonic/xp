@@ -104,9 +104,9 @@ public class NodeServiceImpl
 
     private final NodeStorageService nodeStorageService;
 
-    private final  NodeSearchService nodeSearchService;
+    private final NodeSearchService nodeSearchService;
 
-    private final  EventPublisher eventPublisher;
+    private final EventPublisher eventPublisher;
 
     private final BinaryService binaryService;
 
@@ -733,19 +733,19 @@ public class NodeServiceImpl
     public ResolveSyncWorkResult resolveSyncWork( final SyncWorkResolverParams params )
     {
         verifyContext();
-        return ResolveSyncWorkCommand.create().
-            target( params.getBranch() ).
-            nodeId( params.getNodeId() ).
-            excludedNodeIds( params.getExcludedNodeIds() ).
-            includeChildren( params.isIncludeChildren() ).
-            includeDependencies( params.isIncludeDependencies() ).
-            initialDiffFilter( params.getInitialDiffFilter() ).
-            statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.nodeStorageService ).
-            searchService( this.nodeSearchService ).
-            build().
-            execute();
+        return ResolveSyncWorkCommand.create()
+            .target( params.getBranch() )
+            .nodeId( params.getNodeId() )
+            .excludedNodeIds( params.getExcludedNodeIds() )
+            .includeChildren( params.isIncludeChildren() )
+            .includeDependencies( params.isIncludeDependencies() )
+            .filter( params.getFilter() )
+            .statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
     }
 
     @Override

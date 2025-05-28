@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -11,7 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
-public class NodeIds
+public final class NodeIds
     extends AbstractImmutableEntitySet<NodeId>
 {
     private static final NodeIds EMPTY = new NodeIds( ImmutableSet.of() );
@@ -53,6 +54,12 @@ public class NodeIds
             return (NodeIds) ids;
         }
         return fromInternal( ImmutableSet.copyOf( ids ) );
+    }
+
+    public static Collector<NodeId, ?, NodeIds> collecting()
+    {
+        return Collector.of( NodeIds.Builder::new, NodeIds.Builder::add, ( left, right ) -> left.addAll( right.build() ),
+                             NodeIds.Builder::build );
     }
 
     private static NodeIds fromInternal( final ImmutableSet<NodeId> set )
