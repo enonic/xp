@@ -46,9 +46,11 @@ public class ResolveSyncWorkCommand
 
     private final ResolveSyncWorkResult.Builder result;
 
-    private final Function<NodeIds, NodeIds> initialDiffFilter;
-
     private final Set<CompareStatus> statusesToStopDependenciesSearch;
+
+    private final Function<NodeIds, NodeIds> filter;
+
+    private final Function<NodeIds, NodeIds> statusFilter;
 
     private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
@@ -61,8 +63,8 @@ public class ResolveSyncWorkCommand
         this.processedIds = new HashSet<>();
         this.excludedIds = builder.excludedIds;
         this.includeDependencies = builder.includeDependencies;
-        this.initialDiffFilter = builder.initialDiffFilter;
         this.statusesToStopDependenciesSearch = builder.statusesToStopDependenciesSearch;
+        this.filter = builder.filter;
 
         final Node publishRootNode = doGetById( builder.nodeId );
 
@@ -72,6 +74,25 @@ public class ResolveSyncWorkCommand
         }
 
         this.publishRootNode = publishRootNode;
+
+        this.statusFilter = statusesToStopDependenciesSearch != null ? nodeIds -> {
+            final NodeIds.Builder filteredNodeIds = NodeIds.create();
+
+            final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create()
+                .nodeIds( nodeIds )
+                .target( target )
+                .storageService( this.nodeStorageService )
+                .build()
+                .execute();
+
+            currentLevelNodeComparisons.getComparisons()
+                .stream()
+                .filter( nodeComparison -> !statusesToStopDependenciesSearch.contains( nodeComparison.getCompareStatus() ) )
+                .map( NodeComparison::getNodeId )
+                .forEach( filteredNodeIds::add );
+
+            return filteredNodeIds.build();
+        } : Function.identity();
     }
 
     public static Builder create()
@@ -122,14 +143,9 @@ public class ResolveSyncWorkCommand
 
         LOG.debug( "Diff-query result in " + timer.stop() );
 
-        NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
+        final NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
             collect( ImmutableSet.toImmutableSet() ) );
-
-        if ( this.initialDiffFilter != null )
-        {
-            nodeIds = this.initialDiffFilter.apply( nodeIds );
-        }
 
         return initialDiff.addAll( nodeIds ).
             build();
@@ -150,28 +166,9 @@ public class ResolveSyncWorkCommand
 
     private NodeIds getNodeDependencies( final NodeIds initialDiff )
     {
-
         return FindNodesDependenciesCommand.create( this ).
             nodeIds( initialDiff ).
-            excludedIds( excludedIds ).
-            recursive( true ).
-            recursionFilter( statusesToStopDependenciesSearch == null ? null : nodeIds -> {
-                final NodeIds.Builder filteredNodeIds = NodeIds.create();
-
-                final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create().
-                    nodeIds( nodeIds ).
-                    target( target ).
-                    storageService( this.nodeStorageService ).
-                    build().
-                    execute();
-
-                currentLevelNodeComparisons.getComparisons().stream().
-                    filter( nodeComparison -> !statusesToStopDependenciesSearch.contains( nodeComparison.getCompareStatus() ) ).
-                    map( NodeComparison::getNodeId ).
-                    forEach( filteredNodeIds::add );
-
-                return filteredNodeIds.build();
-            } ).
+            excludedIds( excludedIds ).filter( filter != null ? statusFilter.compose( filter ) : statusFilter ).
             build().
             execute();
     }
@@ -347,9 +344,9 @@ public class ResolveSyncWorkCommand
 
         private boolean includeDependencies = true;
 
-        private Function<NodeIds, NodeIds> initialDiffFilter;
-
         private Set<CompareStatus> statusesToStopDependenciesSearch;
+
+        private Function<NodeIds, NodeIds> filter;
 
         private Builder()
         {
@@ -388,9 +385,9 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
-        public Builder initialDiffFilter( final Function<NodeIds, NodeIds> initialDiffFilter )
+        public Builder filter( final Function<NodeIds, NodeIds> filter )
         {
-            this.initialDiffFilter = initialDiffFilter;
+            this.filter = filter;
             return this;
         }
 

@@ -28,15 +28,12 @@ public class FindNodesDependenciesCommand
 
     private final Set<NodeId> processed = new HashSet<>();
 
-    private final boolean recursive;
-
-    private final Function<NodeIds, NodeIds> recursionFilter;
+    private final Function<NodeIds, NodeIds> filter;
 
     private FindNodesDependenciesCommand( final Builder builder )
     {
         super( builder );
-        recursive = builder.recursive;
-        recursionFilter = builder.recursionFilter;
+        filter = builder.filter != null ? builder.filter : Function.identity();
         nodeIds = builder.nodeIds.build();
         excludedIds = builder.excludedIds.build();
     }
@@ -78,17 +75,10 @@ public class FindNodesDependenciesCommand
 
         final NodeIds.Builder builder = NodeIds.create();
 
-        addNodeIdsFromReferenceReturnValues( result, builder );
+        final NodeIds directDependencies = filter.apply( getNodeIdsFromReferenceReturnValues( result ) );
 
-        if ( this.recursive )
-        {
-            NodeIds currentLevelDependencies = builder.build();
-            if ( recursionFilter != null )
-            {
-                currentLevelDependencies = recursionFilter.apply( currentLevelDependencies );
-            }
-            builder.addAll( resolveDependencies( currentLevelDependencies ) );
-        }
+        builder.addAll( directDependencies );
+        builder.addAll( resolveDependencies( directDependencies ) );
 
         return builder.build();
     }
@@ -109,8 +99,9 @@ public class FindNodesDependenciesCommand
 
     }
 
-    private void addNodeIdsFromReferenceReturnValues( final SearchResult result, final NodeIds.Builder builder )
+    private NodeIds getNodeIdsFromReferenceReturnValues( final SearchResult result )
     {
+        final NodeIds.Builder builder = NodeIds.create();
         for ( SearchHit hit : result.getHits() )
         {
             final ReturnValue returnValue = hit.getReturnValues().get( NodeIndexPath.REFERENCE.getPath() );
@@ -120,12 +111,15 @@ public class FindNodesDependenciesCommand
                 continue;
             }
 
-            returnValue.getValues().stream().
-                map( NodeId::from ).
-                filter( ( value ) -> !processed.contains( value ) ).
-                filter( ( value ) -> !excludedIds.contains( value ) ).
-                forEach( builder::add );
+            returnValue.getValues()
+                .stream()
+                .map( NodeId::from )
+                .filter( ( value ) -> !processed.contains( value ) )
+                .filter( ( value ) -> !excludedIds.contains( value ) )
+                .forEach( builder::add );
         }
+
+        return builder.build();
     }
 
     public static class Builder
@@ -135,9 +129,7 @@ public class FindNodesDependenciesCommand
 
         private final NodeIds.Builder excludedIds = NodeIds.create();
 
-        private boolean recursive;
-
-        private Function<NodeIds, NodeIds> recursionFilter = null;
+        private Function<NodeIds, NodeIds> filter = null;
 
         private Builder()
         {
@@ -160,15 +152,9 @@ public class FindNodesDependenciesCommand
             return this;
         }
 
-        public Builder recursive( final boolean val )
+        public Builder filter( final Function<NodeIds, NodeIds> val )
         {
-            recursive = val;
-            return this;
-        }
-
-        public Builder recursionFilter( final Function<NodeIds, NodeIds> val )
-        {
-            recursionFilter = val;
+            this.filter = val;
             return this;
         }
 

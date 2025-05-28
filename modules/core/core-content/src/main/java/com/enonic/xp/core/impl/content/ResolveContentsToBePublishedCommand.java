@@ -4,11 +4,13 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -61,9 +63,7 @@ public class ResolveContentsToBePublishedCommand
 
     private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
     {
-        final NodeIds nodeIds = excludedContentIds != null
-            ? ContentNodeHelper.toNodeIds( excludedContentIds )
-            : NodeIds.empty();
+        final NodeIds nodeIds = excludedContentIds != null ? ContentNodeHelper.toNodeIds( excludedContentIds ) : NodeIds.empty();
 
         final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
 
@@ -74,6 +74,14 @@ public class ResolveContentsToBePublishedCommand
                                                 .excludedNodeIds( nodeIds )
                                                 .branch( ContentConstants.BRANCH_MASTER )
                                                 .statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) )
+                                                .filter( ( ids ) -> nodeService.getByIds( ids )
+                                                    .stream()
+                                                    .filter( node -> !node.path()
+                                                        .getParentPath()
+                                                        .toString()
+                                                        .startsWith( ArchiveConstants.ARCHIVE_ROOT_PATH.toString() ) )
+                                                    .map( Node::id )
+                                                    .collect( NodeIds.collecting() ) )
                                                 .build() );
     }
 
