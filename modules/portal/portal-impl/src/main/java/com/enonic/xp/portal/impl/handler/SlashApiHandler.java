@@ -132,9 +132,9 @@ public class SlashApiHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final PortalRequest portalRequest = createPortalRequest( webRequest, applicationKey );
-
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, Objects.requireNonNull( matcher.group( "apiKey" ) ) );
+
+        final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
         final DynamicUniversalApiHandler dynamicApiHandler = universalApiHandlerRegistry.getApiHandler( descriptorKey );
         final ApiDescriptor apiDescriptor = resolveApiDescriptor( dynamicApiHandler, descriptorKey );
@@ -346,13 +346,21 @@ public class SlashApiHandler
         }
     }
 
-    private PortalRequest createPortalRequest( final WebRequest webRequest, final ApplicationKey applicationKey )
+    private PortalRequest createPortalRequest( final WebRequest webRequest, final DescriptorKey descriptorKey )
     {
         final PortalRequest portalRequest =
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
 
-        portalRequest.setContextPath( portalRequest.getBaseUri() );
-        portalRequest.setApplicationKey( applicationKey );
+        if ( webRequest.getEndpointPath() != null )
+        {
+            portalRequest.setContextPath( HandlerHelper.findPreRestPath( webRequest, descriptorKey.toString() ) );
+        }
+        else
+        {
+            portalRequest.setContextPath( "/api/" + descriptorKey );
+        }
+
+        portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
 
         return portalRequest;
     }

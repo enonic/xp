@@ -222,6 +222,7 @@ public class SlashApiHandlerTest
 
         assertNull( request.getSite() );
         assertNull( request.getContent() );
+        assertEquals( "/api/com.enonic.app.myapp:api-key", request.getContextPath() );
     }
 
     @Test
@@ -450,6 +451,7 @@ public class SlashApiHandlerTest
 
         assertEquals( site, request.getSite() );
         assertNull( request.getContent() );
+        assertEquals( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1", request.getContextPath() );
     }
 
     @Test
