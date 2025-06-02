@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.portal.url;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -17,6 +18,8 @@ public final class UrlHandler
 
     private String path;
 
+    private List<String> pathSegments;
+
     private String urlType;
 
     private Map<String, Collection<String>> queryParams;
@@ -27,9 +30,20 @@ public final class UrlHandler
         this.urlServiceSupplier = context.getService( PortalUrlService.class );
     }
 
-    public void setPath( final String path )
+    public void setPath( final Object value )
     {
-        this.path = path;
+        if ( value instanceof ScriptValue scriptValue && scriptValue.isArray() )
+        {
+            this.pathSegments = scriptValue.getArray( String.class );
+        }
+        else if ( value instanceof String )
+        {
+            this.path = (String) value;
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Invalid path value" );
+        }
     }
 
     public void setUrlType( final String urlType )
@@ -44,7 +58,7 @@ public final class UrlHandler
 
     public String createUrl()
     {
-        final GenerateUrlParams params = new GenerateUrlParams().url( this.path ).type( this.urlType );
+        final GenerateUrlParams params = new GenerateUrlParams().url( this.path ).pathSegments( this.pathSegments ).type( this.urlType );
 
         if ( this.queryParams != null )
         {

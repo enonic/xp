@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-import type {ByteSource, Component, Content, Region, ScriptValue,} from '@enonic-types/core';
+import type {ByteSource, Component, Content, Region, ScriptValue} from '@enonic-types/core';
 
 export type {
     Attachment,
@@ -21,6 +21,7 @@ export type {
     Content,
     Component,
     Region,
+    ScriptValue,
 } from '@enonic-types/core';
 
 function checkRequired<T extends object>(obj: T, name: keyof T): void {
@@ -532,13 +533,13 @@ export function logoutUrl(params?: LogoutUrlParams): string {
 }
 
 export interface UrlParams {
-    path: string;
+    path: string | string[];
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
 }
 
 interface UrlHandler {
-    setPath(value: string): void;
+    setPath(value: string | ScriptValue): void;
 
     setUrlType(value?: string | null): void;
 
@@ -553,7 +554,9 @@ interface UrlHandler {
  * @example-ref examples/portal/url.js
  *
  * @param {object} params Input parameters as JSON.
- * @param {string} params.path Path of the resource.
+ * @param {string|string[]} params.path Path to the resource.
+ *  If a string is provided, it is treated as a full path.
+ *  If an array of strings is provided, each element is treated as a path segment and will be joined using '/'.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
@@ -564,7 +567,11 @@ export function url(params: UrlParams): string {
 
     checkRequired(params, 'path');
 
-    bean.setPath(params.path);
+    if (Array.isArray(params.path)) {
+        bean.setPath(__.toScriptValue(params.path));
+    } else {
+        bean.setPath(params.path);
+    }
     bean.setUrlType(__.nullOrValue(params.type));
     bean.addQueryParams(__.toScriptValue(params.params));
 
@@ -881,7 +888,7 @@ export function apiUrl(params: ApiUrlParams): string {
         type,
         path,
         params: queryParams,
-        baseUrl
+        baseUrl,
     } = params ?? {};
 
     const bean: ApiUrlHandler = __.newBean<ApiUrlHandler>('com.enonic.xp.lib.portal.url.ApiUrlHandler');
