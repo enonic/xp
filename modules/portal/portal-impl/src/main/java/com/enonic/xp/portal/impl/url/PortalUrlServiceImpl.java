@@ -292,8 +292,14 @@ public final class PortalUrlServiceImpl
     public String generateUrl( final GenerateUrlParams params )
     {
         final Supplier<String> baseUrlSupplier = ( () -> {
+            if ( params.getPath() != null && params.getPathSegments() != null )
+            {
+                throw new IllegalArgumentException( "Both path and pathSegments cannot be set" );
+            }
+
             final StringBuilder url = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( url, params.getPath() );
+            UrlBuilderHelper.appendPathSegments( url, params.getPathSegments() );
             return UrlBuilderHelper.rewriteUri( PortalRequestAccessor.get().getRawRequest(), params.getType(), url.toString() );
         } );
 
