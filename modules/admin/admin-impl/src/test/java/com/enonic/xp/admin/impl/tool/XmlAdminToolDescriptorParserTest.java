@@ -1,12 +1,12 @@
 package com.enonic.xp.admin.impl.tool;
 
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
-import com.enonic.xp.api.ApiMountDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -57,15 +57,16 @@ public class XmlAdminToolDescriptorParserTest
 
         assertResult( toolDescriptor );
 
-        assertEquals( 2, toolDescriptor.getApiMounts().getSize() );
+        final List<DescriptorKey> apiMounts = toolDescriptor.getApiMounts().stream().toList();
+        assertEquals( 2, apiMounts.size() );
 
-        final ApiMountDescriptor apiMountDescriptor1 = toolDescriptor.getApiMounts().get( 0 );
+        final DescriptorKey apiMountDescriptor1 = apiMounts.get( 0 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor1.getApplicationKey() );
-        assertEquals( "api-key", apiMountDescriptor1.getApiKey() );
+        assertEquals( "api-key", apiMountDescriptor1.getName() );
 
-        final ApiMountDescriptor apiMountDescriptor3 = toolDescriptor.getApiMounts().get( 1 );
+        final DescriptorKey apiMountDescriptor3 = apiMounts.get( 1 );
         assertEquals( ApplicationKey.from( "myapplication" ), apiMountDescriptor3.getApplicationKey() );
-        assertEquals( "api-key", apiMountDescriptor3.getApiKey() );
+        assertEquals( "api-key", apiMountDescriptor3.getName() );
     }
 
     @Test
