@@ -14,14 +14,13 @@ import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
-import com.enonic.xp.api.ApiMountDescriptor;
-import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -400,11 +399,10 @@ public class SlashApiHandlerTest
 
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
-        final ApiMountDescriptors siteApiMountDescriptors =
-            ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( applicationKey ).apiKey( "api-key-1" ).build(),
-                                      ApiMountDescriptor.create().applicationKey( applicationKey ).apiKey( "api-key-2" ).build() );
+        final DescriptorKeys siteApiMountDescriptors =
+            DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiDescriptors( siteApiMountDescriptors ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
 
         WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
@@ -439,11 +437,10 @@ public class SlashApiHandlerTest
 
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
-        final ApiMountDescriptors siteApiMountDescriptors =
-            ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( applicationKey ).apiKey( "api-key-1" ).build(),
-                                      ApiMountDescriptor.create().applicationKey( applicationKey ).apiKey( "api-key-2" ).build() );
+        final DescriptorKeys siteApiMountDescriptors =
+            DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiDescriptors( siteApiMountDescriptors ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
 
         WebResponse response = this.handler.handle( request );
@@ -482,11 +479,10 @@ public class SlashApiHandlerTest
 
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
-        final ApiMountDescriptors siteApiMountDescriptors =
-            ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( applicationKey ).apiKey( "api-key-1" ).build(),
-                                      ApiMountDescriptor.create().applicationKey( applicationKey ).apiKey( "api-key-2" ).build() );
+        final DescriptorKeys siteApiMountDescriptors =
+            DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiDescriptors( siteApiMountDescriptors ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
 
         WebResponse response = this.handler.handle( request );
@@ -513,13 +509,10 @@ public class SlashApiHandlerTest
         final ApplicationKey webappApplicationKey = ApplicationKey.from( "com.enonic.app.mywebapp" );
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
 
-        final ApiMountDescriptor apiInExternalApp =
-            ApiMountDescriptor.create().applicationKey( apiApplicationKey ).apiKey( "myapi" ).build();
+        final DescriptorKey apiInExternalApp = DescriptorKey.from( apiApplicationKey, "myapi" );
 
-        final WebappDescriptor webappDescriptor = WebappDescriptor.create()
-            .applicationKey( webappApplicationKey )
-            .apiMounts( ApiMountDescriptors.from( apiInExternalApp ) )
-            .build();
+        final WebappDescriptor webappDescriptor =
+            WebappDescriptor.create().applicationKey( webappApplicationKey ).apiMounts( DescriptorKeys.from( apiInExternalApp ) ).build();
 
         when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( webappDescriptor );
 
@@ -550,7 +543,7 @@ public class SlashApiHandlerTest
         final ApplicationKey apiApplicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
 
         final WebappDescriptor webappDescriptor =
-            WebappDescriptor.create().applicationKey( webappApplicationKey ).apiMounts( ApiMountDescriptors.empty() ).build();
+            WebappDescriptor.create().applicationKey( webappApplicationKey ).apiMounts( DescriptorKeys.empty() ).build();
 
         when( webappService.getDescriptor( eq( webappApplicationKey ) ) ).thenReturn( webappDescriptor );
 
@@ -619,8 +612,7 @@ public class SlashApiHandlerTest
         final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
             .displayName( "My Tool" )
             .key( descriptorKey )
-            .apiMounts(
-                ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( apiApplicationKey ).apiKey( "myapi" ).build() ) )
+            .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
             .build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
@@ -645,7 +637,7 @@ public class SlashApiHandlerTest
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         final AdminToolDescriptor toolDescriptor =
-            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( ApiMountDescriptors.empty() ).build();
+            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 
@@ -727,8 +719,7 @@ public class SlashApiHandlerTest
         final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
             .displayName( "My Tool" )
             .key( descriptorKey )
-            .apiMounts(
-                ApiMountDescriptors.from( ApiMountDescriptor.create().applicationKey( apiApplicationKey ).apiKey( "myapi" ).build() ) )
+            .apiMounts( DescriptorKeys.from( DescriptorKey.from( apiApplicationKey, "myapi" ) ) )
             .build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
@@ -754,7 +745,7 @@ public class SlashApiHandlerTest
         final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
         final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "mytool" );
         final AdminToolDescriptor toolDescriptor =
-            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( ApiMountDescriptors.empty() ).build();
+            AdminToolDescriptor.create().displayName( "My Tool" ).key( descriptorKey ).apiMounts( DescriptorKeys.empty() ).build();
 
         when( adminToolDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( toolDescriptor );
 

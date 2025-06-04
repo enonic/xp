@@ -3,8 +3,8 @@ package com.enonic.xp.webapp;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.resource.ResourceKey;
 
 @PublicApi
@@ -14,12 +14,12 @@ public final class WebappDescriptor
 
     private final ApplicationKey applicationKey;
 
-    private final ApiMountDescriptors apiMounts;
+    private final DescriptorKeys apiMounts;
 
     private WebappDescriptor( final Builder builder )
     {
         this.applicationKey = Objects.requireNonNull( builder.applicationKey );
-        this.apiMounts = Objects.requireNonNullElse( builder.apiMounts, ApiMountDescriptors.empty() );
+        this.apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
     }
 
     public ApplicationKey getApplicationKey()
@@ -27,7 +27,7 @@ public final class WebappDescriptor
         return applicationKey;
     }
 
-    public ApiMountDescriptors getApiMounts()
+    public DescriptorKeys getApiMounts()
     {
         return apiMounts;
     }
@@ -46,7 +46,7 @@ public final class WebappDescriptor
     {
         private ApplicationKey applicationKey;
 
-        private ApiMountDescriptors apiMounts;
+        private DescriptorKeys apiMounts;
 
         private Builder()
         {
@@ -59,7 +59,7 @@ public final class WebappDescriptor
             return this;
         }
 
-        public Builder apiMounts( final ApiMountDescriptors apiMounts )
+        public Builder apiMounts( final DescriptorKeys apiMounts )
         {
             this.apiMounts = apiMounts;
             return this;

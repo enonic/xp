@@ -6,9 +6,9 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -29,7 +29,7 @@ public final class AdminToolDescriptor
 
     private final PrincipalKeys allowedPrincipals;
 
-    private final ApiMountDescriptors apiMounts;
+    private final DescriptorKeys apiMounts;
 
     private final ImmutableSet<String> interfaces;
 
@@ -41,7 +41,7 @@ public final class AdminToolDescriptor
         description = builder.description;
         descriptionI18nKey = builder.descriptionI18nKey;
         allowedPrincipals = PrincipalKeys.from( builder.allowedPrincipals.build() );
-        apiMounts = Objects.requireNonNullElse( builder.apiMounts, ApiMountDescriptors.empty() );
+        apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
         interfaces = builder.interfaces.build();
     }
 
@@ -100,7 +100,7 @@ public final class AdminToolDescriptor
         return interfaces.contains( interfaceName );
     }
 
-    public ApiMountDescriptors getApiMounts()
+    public DescriptorKeys getApiMounts()
     {
         return apiMounts;
     }
@@ -133,7 +133,7 @@ public final class AdminToolDescriptor
 
         private String descriptionI18nKey;
 
-        private ApiMountDescriptors apiMounts;
+        private DescriptorKeys apiMounts;
 
         private final ImmutableSet.Builder<PrincipalKey> allowedPrincipals = ImmutableSet.builder();
 
@@ -179,9 +179,9 @@ public final class AdminToolDescriptor
             return this;
         }
 
-        public Builder apiMounts( final ApiMountDescriptors apiMountDescriptors )
+        public Builder apiMounts( final DescriptorKeys apiMounts )
         {
-            this.apiMounts = apiMountDescriptors;
+            this.apiMounts = apiMounts;
             return this;
         }
 

@@ -1,15 +1,11 @@
 package com.enonic.xp.admin.impl.tool;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
-import com.enonic.xp.api.ApiMountDescriptor;
-import com.enonic.xp.api.ApiMountDescriptors;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.xml.DomElement;
+import com.enonic.xp.xml.parser.ApiMountDescriptorParser;
 import com.enonic.xp.xml.parser.XmlModelParser;
 
 public class XmlAdminToolDescriptorParser
@@ -17,15 +13,9 @@ public class XmlAdminToolDescriptorParser
 {
     private static final String APIS_DESCRIPTOR_TAG_NAME = "apis";
 
-    private static final String API_DESCRIPTOR_TAG_NAME = "api";
-
     private static final String INTERFACES_DESCRIPTOR_TAG_NAME = "interfaces";
 
     private static final String INTERFACE_DESCRIPTOR_TAG_NAME = "interface";
-
-    private static final int APPLICATION_KEY_INDEX = 0;
-
-    private static final int API_KEY_INDEX = 1;
 
     private AdminToolDescriptor.Builder builder;
 
@@ -58,7 +48,10 @@ public class XmlAdminToolDescriptorParser
             }
         }
 
-        this.builder.apiMounts( ApiMountDescriptors.from( parseApiMounts( root.getChild( APIS_DESCRIPTOR_TAG_NAME ) ) ) );
+        final ApiMountDescriptorParser apiMountDescriptorParser =
+            new ApiMountDescriptorParser( this.currentApplication, root.getChild( APIS_DESCRIPTOR_TAG_NAME ) );
+
+        this.builder.apiMounts( apiMountDescriptorParser.parse() );
 
         final DomElement interfaces = root.getChild( INTERFACES_DESCRIPTOR_TAG_NAME );
         if ( interfaces != null )
@@ -68,50 +61,6 @@ public class XmlAdminToolDescriptorParser
             {
                 this.builder.addInterface( anInterface.getValue().trim() );
             }
-        }
-    }
-
-    private List<ApiMountDescriptor> parseApiMounts( final DomElement apisElement )
-    {
-        if ( apisElement == null )
-        {
-            return Collections.emptyList();
-        }
-
-        return apisElement.getChildren( API_DESCRIPTOR_TAG_NAME ).stream().map( this::toApiMountDescriptor ).collect( Collectors.toList() );
-    }
-
-    private ApiMountDescriptor toApiMountDescriptor( final DomElement apiElement )
-    {
-        final ApiMountDescriptor.Builder builder = ApiMountDescriptor.create();
-
-        final String apiMount = apiElement.getValue().trim();
-
-        if ( !apiMount.contains( ":" ) )
-        {
-            builder.applicationKey( this.currentApplication );
-            builder.apiKey( apiMount );
-        }
-        else
-        {
-            final String[] parts = apiMount.split( ":", 2 );
-
-            builder.applicationKey( resolveApplicationKey( parts[APPLICATION_KEY_INDEX].trim() ) );
-            builder.apiKey( parts[API_KEY_INDEX].trim() );
-        }
-
-        return builder.build();
-    }
-
-    private ApplicationKey resolveApplicationKey( final String applicationKey )
-    {
-        try
-        {
-            return ApplicationKey.from( applicationKey );
-        }
-        catch ( Exception e )
-        {
-            throw new IllegalArgumentException( String.format( "Invalid applicationKey '%s'", applicationKey ), e );
         }
     }
 }

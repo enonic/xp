@@ -16,7 +16,6 @@ import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
-import com.enonic.xp.api.ApiMountDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
@@ -224,7 +223,7 @@ public class SlashApiHandler
 
         return adminToolDescriptor.getApiMounts()
             .stream()
-            .anyMatch( descriptor -> descriptor.getApiKey().equals( descriptorKey.getName() ) &&
+            .anyMatch( descriptor -> descriptor.getName().equals( descriptorKey.getName() ) &&
                 descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) );
     }
 
@@ -246,7 +245,7 @@ public class SlashApiHandler
 
         return webappDescriptor.getApiMounts()
             .stream()
-            .anyMatch( descriptor -> descriptor.getApiKey().equals( descriptorKey.getName() ) &&
+            .anyMatch( descriptor -> descriptor.getName().equals( descriptorKey.getName() ) &&
                 descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) );
     }
 
@@ -277,9 +276,9 @@ public class SlashApiHandler
 
             if ( siteDescriptor != null )
             {
-                final ApiMountDescriptor apiMountDescriptor = siteDescriptor.getApiDescriptors()
+                final DescriptorKey apiMountDescriptor = siteDescriptor.getApiMounts()
                     .stream()
-                    .filter( descriptor -> descriptor.getApiKey().equals( descriptorKey.getName() ) &&
+                    .filter( descriptor -> descriptor.getName().equals( descriptorKey.getName() ) &&
                         descriptor.getApplicationKey().equals( descriptorKey.getApplicationKey() ) )
                     .findAny()
                     .orElse( null );
