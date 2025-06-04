@@ -1,10 +1,12 @@
 package com.enonic.xp.portal.impl.webapp;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.api.ApiMountDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.xml.XmlException;
 
@@ -34,15 +36,16 @@ public class WebappServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "mywebapp" );
         final WebappDescriptor webappDescriptor = this.service.getDescriptor( applicationKey );
-        assertEquals( 2, webappDescriptor.getApiMounts().getSize() );
+        final List<DescriptorKey> apiMounts = webappDescriptor.getApiMounts().stream().toList();
+        assertEquals( 2, apiMounts.size() );
 
-        final ApiMountDescriptor apiMountDescriptor1 = webappDescriptor.getApiMounts().get( 0 );
+        final DescriptorKey apiMountDescriptor1 = apiMounts.get( 0 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor1.getApplicationKey() );
-        assertEquals( "api-key1", apiMountDescriptor1.getApiKey() );
+        assertEquals( "api-key1", apiMountDescriptor1.getName() );
 
-        final ApiMountDescriptor apiMountDescriptor2 = webappDescriptor.getApiMounts().get( 1 );
+        final DescriptorKey apiMountDescriptor2 = apiMounts.get( 1 );
         assertEquals( ApplicationKey.from( "com.enonic.app.myapp" ), apiMountDescriptor2.getApplicationKey() );
-        assertEquals( "api-key2", apiMountDescriptor2.getApiKey() );
+        assertEquals( "api-key2", apiMountDescriptor2.getName() );
     }
 
     @Test

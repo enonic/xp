@@ -5,8 +5,8 @@ import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.api.ApiMountDescriptors;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
@@ -27,7 +27,7 @@ public final class SiteDescriptor
 
     private final ControllerMappingDescriptors mappingDescriptors;
 
-    private final ApiMountDescriptors apiDescriptors;
+    private final DescriptorKeys apiMounts;
 
     private final Instant modifiedTime;
 
@@ -39,7 +39,7 @@ public final class SiteDescriptor
         this.modifiedTime = builder.modifiedTime;
         this.responseProcessors = Objects.requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
         this.mappingDescriptors = Objects.requireNonNullElse( builder.mappingDescriptors, ControllerMappingDescriptors.empty() );
-        this.apiDescriptors = Objects.requireNonNullElse( builder.apiDescriptors, ApiMountDescriptors.empty() );
+        this.apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
     }
 
     public ApplicationKey getApplicationKey()
@@ -72,9 +72,9 @@ public final class SiteDescriptor
         return mappingDescriptors;
     }
 
-    public ApiMountDescriptors getApiDescriptors()
+    public DescriptorKeys getApiMounts()
     {
-        return apiDescriptors;
+        return apiMounts;
     }
 
     public static ResourceKey toResourceKey( final ApplicationKey applicationKey )
@@ -106,7 +106,7 @@ public final class SiteDescriptor
 
         private ControllerMappingDescriptors mappingDescriptors;
 
-        private ApiMountDescriptors apiDescriptors;
+        private DescriptorKeys apiMounts;
 
         private Builder()
         {
@@ -120,7 +120,7 @@ public final class SiteDescriptor
             this.modifiedTime = siteDescriptor.modifiedTime;
             this.responseProcessors = siteDescriptor.responseProcessors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
-            this.apiDescriptors = siteDescriptor.apiDescriptors;
+            this.apiMounts = siteDescriptor.apiMounts;
         }
 
         public Builder applicationKey( final ApplicationKey applicationKey )
@@ -159,9 +159,9 @@ public final class SiteDescriptor
             return this;
         }
 
-        public Builder apiDescriptors( final ApiMountDescriptors apiDescriptors )
+        public Builder apiMounts( final DescriptorKeys apiMounts )
         {
-            this.apiDescriptors = apiDescriptors;
+            this.apiMounts = apiMounts;
             return this;
         }
 
