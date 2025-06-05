@@ -126,10 +126,6 @@ public abstract class AbstractNodeTest
         value( "master" ).
         build();
 
-    protected static final RepositoryId AUDIT_LOG_REPO_ID = AuditLogConstants.AUDIT_LOG_REPO_ID;
-
-    protected static final RepositoryId SCHEDULER_REPO_ID = SchedulerConstants.SCHEDULER_REPO_ID;
-
     protected static final Branch AUDIT_LOG_BRANCH = AuditLogConstants.AUDIT_LOG_BRANCH;
 
     protected static final Branch SCHEDULER_BRANCH = SchedulerConstants.SCHEDULER_BRANCH;
@@ -216,6 +212,7 @@ public abstract class AbstractNodeTest
         if ( clearBeforeEach )
         {
             deleteAllIndices();
+            BLOB_STORE.clear();
         }
         eventPublisher = mock( EventPublisher.class );
 
