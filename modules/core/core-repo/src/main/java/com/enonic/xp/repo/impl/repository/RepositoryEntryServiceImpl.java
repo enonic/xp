@@ -24,6 +24,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.RepositoryEvents;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -205,6 +206,7 @@ public class RepositoryEntryServiceImpl
         return InternalContext.create( ContextAccessor.current() ).
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             branch( SystemConstants.BRANCH_SYSTEM ).
+            searchPreference( SearchPreference.PRIMARY ).
             build();
     }
 

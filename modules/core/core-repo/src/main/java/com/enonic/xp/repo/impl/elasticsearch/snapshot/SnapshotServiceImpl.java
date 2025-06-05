@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.snapshot;
 
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -136,21 +137,25 @@ public class SnapshotServiceImpl
         final RepositoryId repositoryToRestore = restoreParams.getRepositoryId();
         boolean restoreAll = repositoryToRestore == null;
 
-        final RepositoryIds repositoriesBeforeRestore = restoreAll ? repositoryEntryService.findRepositoryEntryIds() : null;
-
         this.eventPublisher.publish( RepositoryEvents.restoreInitialized() );
 
+        final RepositoryIds repositoriesBeforeRestore;
+        final RepositoryIds repositoriesToClose;
+        final RepositoryIds repositoriesToRestore;
         if ( restoreAll )
         {
             LOG.info( "Restoring all repositories from snapshot" );
+            repositoriesBeforeRestore = repositoryEntryService.findRepositoryEntryIds();
+            repositoriesToClose = repositoriesBeforeRestore;
+            repositoriesToRestore = RepositoryIds.empty();
         }
         else
         {
             LOG.info( "Restoring repository {} from snapshot", repositoryToRestore );
+            repositoriesBeforeRestore = null;
+            repositoriesToClose = RepositoryIds.from( repositoryToRestore );
+            repositoriesToRestore = RepositoryIds.from( repositoryToRestore );
         }
-
-        final RepositoryIds repositoriesToClose = restoreAll ? repositoriesBeforeRestore : RepositoryIds.from( repositoryToRestore );
-        final RepositoryIds repositoriesToRestore = restoreAll ? RepositoryIds.empty() : RepositoryIds.from( repositoryToRestore );
 
         final RestoreResult result = SnapshotRestoreExecutor.create()
             .snapshotName( snapshotName )
@@ -163,9 +168,23 @@ public class SnapshotServiceImpl
             .build()
             .execute();
 
+        indexServiceInternal.waitForYellowStatus();
+
         if ( restoreAll )
         {
-            final RepositoryIds repositoriesAfterRestore = repositoryEntryService.findRepositoryEntryIds();
+            final Set<RepositoryId> repositoriesAfterRestore = new HashSet<>();
+
+            for ( RepositoryId repositoryId : repositoryEntryService.findRepositoryEntryIds() )
+            {
+                if ( repositoryEntryService.getRepositoryEntry( repositoryId ).isTransient() )
+                {
+                    repositoryEntryService.deleteRepositoryEntry( repositoryId );
+                }
+                else
+                {
+                    repositoriesAfterRestore.add( repositoryId );
+                }
+            }
 
             repositoriesBeforeRestore.stream().filter( Predicate.not( repositoriesAfterRestore::contains ) ).forEach( repositoryId -> {
                 LOG.info( "Deleting repository {} indices missing in snapshot", repositoryId );
