@@ -26,6 +26,8 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
+import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -81,6 +83,7 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
+import com.enonic.xp.scheduler.SchedulerConstants;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -184,16 +187,13 @@ public class DumpServiceImplTest
     public void obsolete_repository_deleted()
         throws Exception
     {
-        final AccessControlList newRepoACL =
-            AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
-
         final Repository newRepoInsideDump = NodeHelper.runAsAdmin(
-            () -> doCreateRepository( RepositoryId.from( "new-repo-inside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
+            () -> doCreateRepository( RepositoryId.from( "new-repo-inside-dump" ), false ) );
 
         NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
 
         final Repository newRepoOutsideDump = NodeHelper.runAsAdmin(
-            () -> doCreateRepository( RepositoryId.from( "new-repo-outside-dump" ), newRepoACL, ChildOrder.manualOrder() ) );
+            () -> doCreateRepository( RepositoryId.from( "new-repo-outside-dump" ), false ) );
 
         final Repositories oldRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
@@ -208,12 +208,27 @@ public class DumpServiceImplTest
     }
 
     @Test
+    void transient_repository_deleted()
+    {
+        final Repository transientRepo = NodeHelper.runAsAdmin(
+            () -> doCreateRepository( RepositoryId.from( "transient-repo" ), true ) );
+
+        NodeHelper.runAsAdmin( () -> doDump( SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
+
+        NodeHelper.runAsAdmin( this::doLoad );
+
+        final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
+
+        assertThat( newRepos ).map( Repository::getId ).doesNotContain( transientRepo.getId() );
+    }
+
+    @Test
     public void repositories_loaded()
         throws Exception
     {
         final Repositories repositoriesBefore = NodeHelper.runAsAdmin( this::doListRepositories );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final Repositories repositoriesAfter = NodeHelper.runAsAdmin( this::doListRepositories );
 
@@ -233,7 +248,7 @@ public class DumpServiceImplTest
         assertNotNull( result );
         assertEquals( 2, result.getSuccessful() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( node.getTimestamp(), currentStoredNode.getTimestamp() );
@@ -253,13 +268,7 @@ public class DumpServiceImplTest
         throws Exception
     {
         NodeHelper.runAsAdmin( () -> {
-            final Repository newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ),
-                                                                                        AccessControlList.create()
-                                                                                            .add( AccessControlEntry.create()
-                                                                                                      .principal( RoleKeys.EVERYONE )
-                                                                                                      .allowAll()
-                                                                                                      .build() )
-                                                                                            .build(), ChildOrder.manualOrder() ) );
+            final Repository newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ), false ) );
 
             final PropertyTree data = new PropertyTree();
             data.addBinaryReference( "attachmentName", BinaryReference.from( "image.png" ) );
@@ -277,7 +286,7 @@ public class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> this.dumpService.dump( SystemDumpParams.create().dumpName( "testDump" ).build() ) );
 
         NodeHelper.runAsAdmin( () -> {
-            dumpDeleteAndLoad( true );
+            dumpDeleteAndLoad();
 
             final AttachedBinaries attachedBinaries =
                 repositoryEntryService.getRepositoryEntry( RepositoryId.from( "new-repo" ) ).getAttachments();
@@ -302,7 +311,7 @@ public class DumpServiceImplTest
         assertNotNull( result );
         assertEquals( 2, result.getSuccessful() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final Node storedNode = this.nodeService.getById( node.id() );
         assertNotNull( storedNode );
@@ -338,7 +347,7 @@ public class DumpServiceImplTest
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
         final Repository newRepo =
-            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-new-repo" ), newRepoACL, ChildOrder.manualOrder() ) );
+            NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "my-new-repo" ), false ) );
 
         final Context newContext = ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( newRepo.getId() )
@@ -347,7 +356,7 @@ public class DumpServiceImplTest
 
         newContext.runWith( () -> createNode( NodePath.ROOT, "myNode" ) );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final Node loadedRootNode = newContext.callWith( () -> this.nodeService.getRoot() );
 
@@ -388,7 +397,7 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versionsBeforeDump =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         refresh();
 
@@ -414,7 +423,7 @@ public class DumpServiceImplTest
 
         assertEquals( 1, versionsBeforeDump.getTotalHits() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         refresh();
 
@@ -441,7 +450,7 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versionsBeforeDump =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
         refresh();
 
         final NodeVersionQueryResult versionsAfterLoad =
@@ -459,7 +468,7 @@ public class DumpServiceImplTest
         updateNode( node );
         refresh();
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
         refresh();
 
         final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
@@ -484,7 +493,7 @@ public class DumpServiceImplTest
         updateNode( node );
         refresh();
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
         refresh();
 
         final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
@@ -515,7 +524,7 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versionsBeforeLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
         refresh();
 
         final NodeVersionQueryResult versionsAfterLoad =
@@ -549,7 +558,7 @@ public class DumpServiceImplTest
                                           .attachBinary( binaryRef, ByteSource.wrap( "this is binary data".getBytes() ) )
                                           .build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( node.getAttachedBinaries(), currentStoredNode.getAttachedBinaries() );
@@ -567,7 +576,7 @@ public class DumpServiceImplTest
         }
 
         NodeHelper.runAsAdmin(
-            () -> dumpDeleteAndLoad( true, SystemDumpParams.create().dumpName( "myTestDump" ).maxVersions( 5 ).build() ) );
+            () -> dumpDeleteAndLoad( SystemDumpParams.create().dumpName( "myTestDump" ).maxVersions( 5 ).build() ) );
 
         final NodeVersionQueryResult versionsAfterLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).size( -1 ).build() );
@@ -578,9 +587,7 @@ public class DumpServiceImplTest
     @Test
     public void number_of_versions_in_other_repo()
     {
-        final Repository myRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), AccessControlList.create()
-            .add( AccessControlEntry.create().principal( ctxDefault().getAuthInfo().getUser().getKey() ).allowAll().build() )
-            .build(), null ) );
+        final Repository myRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), false ) );
 
         final Context myRepoContext = ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( myRepo.getId() )
@@ -593,7 +600,7 @@ public class DumpServiceImplTest
         myRepoContext.runWith( () -> updateNode( myNode ) );
 
         final SystemLoadResult dumpResult =
-            NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
+            NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( SystemDumpParams.create().dumpName( "myTestDump" ).build() ) );
 
         final RepoLoadResult repoLoadResult = getRepoLoadResult( dumpResult, myRepo.getId() );
 
@@ -639,7 +646,7 @@ public class DumpServiceImplTest
                                                  .attachBinary( binaryRef2, ByteSource.wrap( "anotherBinary".getBytes() ) )
                                                  .build() );
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
         assertEquals( 2, versions.getHits() );
@@ -662,8 +669,8 @@ public class DumpServiceImplTest
 
         Mockito.verify( systemDumpListener ).dumpingBranch( testRepoId, WS_DEFAULT, 2 );
         Mockito.verify( systemDumpListener ).dumpingBranch( testRepoId, WS_OTHER, 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( AuditLogConstants.AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( SchedulerConstants.SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7 );
         Mockito.verify( systemDumpListener, Mockito.times( 13 ) ).nodeDumped();
 
@@ -675,10 +682,10 @@ public class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingVersions( testRepoId );
         Mockito.verify( systemLoadListener ).loadingBranch( testRepoId, WS_OTHER, 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( testRepoId );
-        Mockito.verify( systemLoadListener ).loadingBranch( AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1L );
-        Mockito.verify( systemLoadListener ).loadingBranch( SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1L );
-        Mockito.verify( systemLoadListener ).loadingVersions( AUDIT_LOG_REPO_ID );
-        Mockito.verify( systemLoadListener ).loadingVersions( SCHEDULER_REPO_ID );
+        Mockito.verify( systemLoadListener ).loadingBranch( AuditLogConstants.AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1L );
+        Mockito.verify( systemLoadListener ).loadingBranch( SchedulerConstants.SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1L );
+        Mockito.verify( systemLoadListener ).loadingVersions( AuditLogConstants.AUDIT_LOG_REPO_ID );
+        Mockito.verify( systemLoadListener ).loadingVersions( SchedulerConstants.SCHEDULER_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7L );
         Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
         Mockito.verify( systemLoadListener, Mockito.times( 25 ) ).entryLoaded();
@@ -693,7 +700,7 @@ public class DumpServiceImplTest
         final Node currentNode = updateNode( updatedNode );
         refresh();
 
-        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true, false ) );
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( false ) );
 
         refresh();
 
@@ -984,50 +991,33 @@ public class DumpServiceImplTest
         }
     }
 
-    private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore )
+    private SystemLoadResult dumpDeleteAndLoad( )
     {
-        return dumpDeleteAndLoad( clearBlobStore, true );
+        return dumpDeleteAndLoad( true );
     }
 
-    private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore, final boolean includeVersions )
+    private SystemLoadResult dumpDeleteAndLoad( final boolean includeVersions )
     {
         final SystemDumpParams params =
             SystemDumpParams.create().dumpName( "myTestDump" ).includeVersions( includeVersions ).includeBinaries( true ).build();
 
-        return dumpDeleteAndLoad( clearBlobStore, params );
+        return dumpDeleteAndLoad( params );
     }
 
-    private SystemLoadResult dumpDeleteAndLoad( final boolean clearBlobStore, final SystemDumpParams params )
+    private SystemLoadResult dumpDeleteAndLoad( final SystemDumpParams params )
     {
         doDump( params );
 
         doListRepositories().stream()
             .map( Repository::getId )
             .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID )
-                         .or( Predicate.isEqual( AUDIT_LOG_REPO_ID ) )
-                         .or( Predicate.isEqual( SCHEDULER_REPO_ID ) )
+                         .or( Predicate.isEqual( AuditLogConstants.AUDIT_LOG_REPO_ID ) )
+                         .or( Predicate.isEqual( SchedulerConstants.SCHEDULER_REPO_ID ) )
+                         .or( Predicate.isEqual( VirtualAppConstants.VIRTUAL_APP_REPO_ID ) )
                          .negate() )
             .forEach( this::doDeleteRepository );
 
-        // Then delete all system repositories
-        doDeleteRepository( AUDIT_LOG_REPO_ID );
-        doDeleteRepository( SCHEDULER_REPO_ID );
-
-        // system-repo must be deleted last
-        doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
-
-        if ( clearBlobStore )
-        {
-            BLOB_STORE.clear();
-        }
-
-        bootstrap();
-
-        final SystemLoadResult result = doLoad();
-
-        refresh();
-
-        return result;
+        return doLoad();
     }
 
     private SystemLoadResult doLoad()
@@ -1040,22 +1030,26 @@ public class DumpServiceImplTest
         this.dumpService.dump( params );
     }
 
-    private Repository doCreateRepository( final RepositoryId repositoryId, final AccessControlList permissions,
-                                           final ChildOrder childOrder )
+    private Repository doCreateRepository( final RepositoryId repositoryId, boolean transientFlag )
     {
         final CreateRepositoryParams params =
             CreateRepositoryParams.create().repositoryId( repositoryId ).data( new PropertyTree() ).build();
 
         this.nodeRepositoryService.create( params );
 
-        final Repository createRepositoryParams =
-            Repository.create().id( repositoryId ).branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) ).build();
+        final Repository createRepositoryParams = Repository.create()
+            .id( repositoryId )
+            .branches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )
+            .transientFlag( transientFlag )
+            .build();
 
         this.repositoryEntryService.createRepositoryEntry( createRepositoryParams );
 
         final Repository repo = this.repositoryEntryService.getRepositoryEntry( repositoryId );
+        final AccessControlList permissions =
+            AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
 
-        createRootNode( repositoryId, permissions, childOrder );
+        createRootNode( repositoryId, permissions, null );
 
         return repo;
     }

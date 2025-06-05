@@ -81,7 +81,7 @@ public class DumpServiceImpl
     private static final Logger LOG = LoggerFactory.getLogger( DumpServiceImpl.class );
 
     private static final List<RepositoryId> SYSTEM_REPO_IDS =
-        List.of( RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) );
+        List.of( RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ), RepositoryId.from( "system.app" ) );
 
     private final BlobStore blobStore;
 
@@ -341,10 +341,21 @@ public class DumpServiceImpl
             // system-repo must be deleted last
             doDeleteRepository( SystemConstants.SYSTEM_REPO_ID );
 
-            // Load system repo to be able to read repository settings and data
+            // Load system-repo to be able to read repository settings and data
             initAndLoad( includeVersions, results, dumpReader, SystemConstants.SYSTEM_REPO_ID, currentSystemSettings, null,
                          AttachedBinaries.empty() );
 
+            // Transient repositories are not part of the dump. Clean them up.
+            final RepositoryIds repositoryEntryIds = repositoryEntryService.findRepositoryEntryIds();
+            for ( RepositoryId repositoryId : repositoryEntryIds )
+            {
+                if ( repositoryEntryService.getRepositoryEntry( repositoryId ).isTransient() )
+                {
+                    repositoryEntryService.deleteRepositoryEntry( repositoryId );
+                }
+            }
+
+            // Load other system repositories
             SYSTEM_REPO_IDS.forEach( repositoryId -> {
                 if ( dumpRepositories.contains( repositoryId ) )
                 {
@@ -416,6 +427,11 @@ public class DumpServiceImpl
     {
         initializeRepo( repository, settings, data, attachedBinaries );
         doLoadRepository( repository, includeVersions, dumpReader, results );
+
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( repository ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build().runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }
 
     private void doDeleteRepository( final RepositoryId repositoryId )

@@ -343,7 +343,7 @@ interface ModifyRepositoryHandler {
  */
 export function modify(params: ModifyRepositoryParams): Repository {
     if (params.scope) {
-        throw `The parameter 'scope' is not supported`;
+        throw 'The parameter \'scope\' is not supported';
     }
 
     checkRequired(params, 'id');
