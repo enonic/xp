@@ -33,19 +33,18 @@ public class MediaInfoServiceTest
     @BeforeEach
     public void setup()
     {
-        this.service = new MediaInfoServiceImpl();
-        service.setBinaryExtractor( source ->
-                                    {
-                                        Map<String, List<String>> data = new HashMap<>();
-                                        data.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
-                                        data.put( "myExtractedValue", List.of( "fisk" ) );
+        this.service = new MediaInfoServiceImpl(source ->
+                                                {
+                                                    Map<String, List<String>> data = new HashMap<>();
+                                                    data.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
+                                                    data.put( "myExtractedValue", List.of( "fisk" ) );
 
-                                        return ExtractedData.create().
-                                            metadata( data ).
-                                            text( "myTextValue" ).
-                                            imageOrientation( "1" ).
-                                            build();
-                                    } );
+                                                    return ExtractedData.create().
+                                                        metadata( data ).
+                                                        text( "myTextValue" ).
+                                                        imageOrientation( "1" ).
+                                                        build();
+                                                });
     }
 
     @Test

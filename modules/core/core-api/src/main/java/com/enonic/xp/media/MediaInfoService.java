@@ -12,5 +12,6 @@ public interface MediaInfoService
 
     ImageOrientation getImageOrientation( ByteSource byteSource );
 
+    @Deprecated
     ImageOrientation getImageOrientation( ByteSource byteSource, Media media );
 }

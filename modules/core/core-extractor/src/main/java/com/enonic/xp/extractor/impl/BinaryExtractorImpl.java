@@ -10,7 +10,9 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,55 +24,49 @@ import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.extractor.impl.config.ExtractorConfig;
 
-@Component(immediate = true)
+@Component(configurationPid = "com.enonic.xp.extractor")
 public class BinaryExtractorImpl
     implements BinaryExtractor
 {
     private static final Logger LOG = LoggerFactory.getLogger( BinaryExtractorImpl.class );
 
-    private Detector detector;
+    private final Detector detector;
 
-    private Parser parser;
+    private final Parser parser;
 
-    private ExtractorConfig extractorConfig;
+    private volatile int bodySizeLimit;
+
+    @Activate
+    public BinaryExtractorImpl( @Reference final Detector detector, @Reference final Parser parser )
+    {
+        this.detector = detector;
+        this.parser = parser;
+    }
+
+    @Activate
+    @Modified
+    public void activate( final ExtractorConfig extractorConfig )
+    {
+        this.bodySizeLimit = extractorConfig.body_size_limit();
+    }
 
     @Override
     public ExtractedData extract( final ByteSource source )
     {
-        final ParseContext context = new ParseContext();
-        final BodyContentHandler handler = new BodyContentHandler( extractorConfig.getBodySizeLimit() );
+        final BodyContentHandler handler = new BodyContentHandler( bodySizeLimit );
         final Metadata metadata = new Metadata();
 
         try (InputStream stream = source.openStream())
         {
             final AutoDetectParser autoDetectParser = new AutoDetectParser( this.detector, this.parser );
 
-            autoDetectParser.parse( stream, handler, metadata, context );
+            autoDetectParser.parse( stream, handler, metadata, new ParseContext() );
         }
         catch ( IOException | SAXException | TikaException e )
         {
-            LOG.warn( "Error extracting binary: " + e.getMessage() );
+            LOG.warn( "Error extracting binary: {}", e.getMessage(), e );
         }
 
         return ExtractorResultFactory.create( metadata, handler );
     }
-
-    @Reference
-    public void setParser( final Parser parser )
-    {
-        this.parser = parser;
-    }
-
-    @Reference
-    public void setDetector( final Detector detector )
-    {
-        this.detector = detector;
-    }
-
-    @Reference
-    public void setExtractorConfig( final ExtractorConfig extractorConfig )
-    {
-        this.extractorConfig = extractorConfig;
-    }
-
 }
