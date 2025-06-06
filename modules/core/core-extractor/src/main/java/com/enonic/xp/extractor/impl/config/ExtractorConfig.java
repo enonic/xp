@@ -1,6 +1,6 @@
 package com.enonic.xp.extractor.impl.config;
 
-public interface ExtractorConfig
+public @interface ExtractorConfig
 {
-    int getBodySizeLimit();
+    int body_size_limit() default 500_000;
 }
