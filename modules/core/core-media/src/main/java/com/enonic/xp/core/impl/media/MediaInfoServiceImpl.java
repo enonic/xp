@@ -1,27 +1,33 @@
 package com.enonic.xp.core.impl.media;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Set;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
 
-import com.enonic.xp.content.Media;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.util.Exceptions;
 
 @Component
 public final class MediaInfoServiceImpl
     implements MediaInfoService
 {
-    private BinaryExtractor binaryExtractor;
+    private final BinaryExtractor binaryExtractor;
+
+    @Activate
+    public MediaInfoServiceImpl( @Reference final BinaryExtractor binaryExtractor )
+    {
+        this.binaryExtractor = binaryExtractor;
+    }
 
     @Override
     public MediaInfo parseMediaInfo( final ByteSource byteSource )
@@ -52,7 +58,7 @@ public final class MediaInfoServiceImpl
         }
         catch ( IOException e )
         {
-            throw Exceptions.unchecked( e );
+            throw new UncheckedIOException( e );
         }
     }
 
@@ -68,24 +74,5 @@ public final class MediaInfoServiceImpl
         }
 
         return null;
-    }
-
-    @Override
-    public ImageOrientation getImageOrientation( ByteSource byteSource, Media media )
-    {
-        final ImageOrientation imageOrientation = media.getOrientation();
-
-        if ( imageOrientation != null )
-        {
-            return imageOrientation;
-        }
-
-        return getImageOrientation( byteSource );
-    }
-
-    @Reference
-    public void setBinaryExtractor( final BinaryExtractor binaryExtractor )
-    {
-        this.binaryExtractor = binaryExtractor;
     }
 }
