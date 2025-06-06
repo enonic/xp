@@ -16,7 +16,7 @@ jar {
              'com.enonic.xp.cluster;resolution:=optional' + ',' +
              'com.enonic.xp.data;resolution:=optional' + ',' +
              'com.enonic.xp.event;resolution:=optional' + ',' +
-             'com.enonic.xp.page;resolution:=optional' + ',' +
+             'com.enonic.xp.descriptor;resolution:=optional' + ',' +
              'com.enonic.xp.repository;resolution:=optional' + ',' +
              'com.enonic.xp.scheduler;resolution:=optional' + ',' +
              'com.enonic.xp.security;resolution:=optional' + ',' +
