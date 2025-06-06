@@ -1,9 +1,7 @@
 package com.enonic.xp.extractor.impl;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.tika.detect.DefaultDetector;
 import org.apache.tika.parser.DefaultParser;
@@ -11,17 +9,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.extractor.ExtractedData;
-import com.enonic.xp.extractor.impl.config.ExtractorConfigImpl;
+import com.enonic.xp.extractor.impl.config.ExtractorConfig;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BinaryExtractorImplTest
 {
@@ -31,14 +30,10 @@ public class BinaryExtractorImplTest
     public void setup()
         throws Exception
     {
-        this.extractor = new BinaryExtractorImpl();
-        extractor.setParser( new DefaultParser() );
-        extractor.setDetector( new DefaultDetector() );
-
-        final ExtractorConfigImpl extractorConfig = new ExtractorConfigImpl();
-        loadConfig( extractorConfig );
-
-        extractor.setExtractorConfig( extractorConfig );
+        final ExtractorConfig extractorConfig = mock( ExtractorConfig.class );
+        when( extractorConfig.body_size_limit() ).thenReturn( 200000 );
+        this.extractor = new BinaryExtractorImpl( new DefaultDetector(), new DefaultParser() );
+        this.extractor.activate( extractorConfig );
     }
 
     @Test
@@ -67,19 +62,6 @@ public class BinaryExtractorImplTest
         final String extractedText = extractedData.getText();
         assertFalse( isNullOrEmpty( extractedText ) );
         assertTrue( extractedText.contains( "Velkommen" ) );
-    }
-
-    private void loadConfig( final ExtractorConfigImpl extractorConfig )
-        throws Exception
-    {
-        try (InputStream in = getClass().getResourceAsStream( "./config/extractor-complete.properties" ))
-        {
-            Properties props = new Properties();
-            props.load( in );
-
-            Map<String, String> map = Maps.fromProperties( props );
-            extractorConfig.configure( map );
-        }
     }
 
 }
