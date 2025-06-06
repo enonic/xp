@@ -276,8 +276,7 @@ public abstract class AbstractContentServiceTest
         when( extractor.extract( Mockito.isA( ByteSource.class ) ) ).
             thenReturn( extractedData );
 
-        MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl();
-        mediaInfoService.setBinaryExtractor( extractor );
+        MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl( extractor );
 
         final ResourceService resourceService = mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();

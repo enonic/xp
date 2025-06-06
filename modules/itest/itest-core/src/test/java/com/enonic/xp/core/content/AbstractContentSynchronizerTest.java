@@ -282,8 +282,7 @@ public abstract class AbstractContentSynchronizerTest
         final BinaryExtractor extractor = mock( BinaryExtractor.class );
         when( extractor.extract( isA( ByteSource.class ) ) ).thenReturn( extractedData );
 
-        mediaInfoService = new MediaInfoServiceImpl();
-        mediaInfoService.setBinaryExtractor( extractor );
+        mediaInfoService = new MediaInfoServiceImpl( extractor );
 
         XDataService xDataService = mock( XDataService.class );
 
