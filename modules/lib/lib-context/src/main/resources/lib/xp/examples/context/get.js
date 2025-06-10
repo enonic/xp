@@ -10,7 +10,6 @@ log.info('Context as JSON %s', result);
 // BEGIN
 // Context returned.
 var expected = {
-    'branch': 'draft',
     'authInfo': {
         'principals': [
             'user:system:anonymous',
