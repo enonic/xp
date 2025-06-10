@@ -1,16 +1,15 @@
 package com.enonic.xp.web.impl.context;
 
+import org.osgi.service.component.annotations.Component;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.osgi.service.component.annotations.Component;
-
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.repository.RepositoryId;
@@ -29,7 +28,6 @@ public final class ContextFilter
         throws Exception
     {
         final Context context = ContextBuilder.create().build();
-        context.getLocalScope().setAttribute( ContentConstants.BRANCH_DRAFT );
         context.getLocalScope().setAttribute( "__currentTimeMillis", System.currentTimeMillis() );
         context.getLocalScope().setSession( new SessionWrapper( req ) );
 
