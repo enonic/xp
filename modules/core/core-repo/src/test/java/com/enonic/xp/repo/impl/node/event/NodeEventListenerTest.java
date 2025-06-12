@@ -241,7 +241,6 @@ public class NodeEventListenerTest
     {
         ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( ContentConstants.BRANCH_DRAFT )
             .build()
             .runWith( runnable );
     }

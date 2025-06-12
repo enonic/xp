@@ -4,7 +4,6 @@ var context = require('/lib/xp/context');
 exports.testNoChange = function () {
     var result = context.run({
         repository: 'com.enonic.cms.myproject',
-        branch: 'draft',
     }, function () {
         return context.get();
     });

@@ -16,7 +16,6 @@ import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -276,7 +275,6 @@ class NodeVersionServiceImplTest
     {
         return ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( ContentConstants.BRANCH_DRAFT )
             .build()
             .callWith( runnable );
     }
