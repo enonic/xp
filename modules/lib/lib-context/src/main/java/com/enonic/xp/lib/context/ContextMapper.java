@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.lib.common.PrincipalMapper;
@@ -31,11 +30,7 @@ public final class ContextMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        final Branch branch = this.context.getBranch();
-        if ( branch != null )
-        {
-            gen.value( "branch", branch.toString() );
-        }
+        gen.value( "branch", this.context.getBranch().toString() );
         final RepositoryId repositoryId = this.context.getRepositoryId();
         if ( repositoryId != null )
         {

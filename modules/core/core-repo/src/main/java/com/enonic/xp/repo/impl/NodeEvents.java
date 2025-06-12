@@ -149,14 +149,10 @@ public class NodeEvents
 
     private static ImmutableMap<String, String> nodeToMap( final NodeBranchEntry node )
     {
-        final ImmutableMap.Builder<String, String> map =
-            ImmutableMap.<String, String>builder().put( "id", node.getNodeId().toString() ).put( "path", node.getNodePath().toString() );
-
-        final Branch branch = ContextAccessor.current().getBranch();
-        if ( branch != null )
-        {
-            map.put( "branch", branch.getValue() );
-        }
+        final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
+            .put( "id", node.getNodeId().toString() )
+            .put( "path", node.getNodePath().toString() )
+            .put( "branch", ContextAccessor.current().getBranch().getValue() );
 
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         if ( repositoryId != null )
@@ -168,13 +164,9 @@ public class NodeEvents
 
     private static ImmutableMap<String, String> nodeToMap( final Node node, final Branch branch )
     {
-        final ImmutableMap.Builder<String, String> map =
-            ImmutableMap.<String, String>builder().put( "id", node.id().toString() ).put( "path", node.path().toString() );
-
-        if ( branch != null )
-        {
-            map.put( "branch", branch.getValue() );
-        }
+        final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
+            .put( "id", node.id().toString() )
+            .put( "path", node.path().toString() ).put( "branch", branch.getValue() );
 
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         if ( repositoryId != null )
@@ -204,14 +196,10 @@ public class NodeEvents
 
     private static ImmutableMap<String, String> createMoved( final NodePath previousPath, final Node targetNode )
     {
-        final ImmutableMap.Builder<String, String> map =
-            ImmutableMap.<String, String>builder().put( "id", targetNode.id().toString() ).put( "path", previousPath.toString() );
-
-        final Branch branch = ContextAccessor.current().getBranch();
-        if ( branch != null )
-        {
-            map.put( "branch", branch.getValue() );
-        }
+        final ImmutableMap.Builder<String, String> map = ImmutableMap.<String, String>builder()
+            .put( "id", targetNode.id().toString() )
+            .put( "path", previousPath.toString() )
+            .put( "branch", ContextAccessor.current().getBranch().getValue() );
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
         if ( repositoryId != null )
         {
