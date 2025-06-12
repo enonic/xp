@@ -1009,7 +1009,11 @@ public class NodeServiceImpl
                                  {
                                      trace.put( "repo", repositoryId.toString() );
                                  }
-                                 trace.put( "branch", ContextAccessor.current().getBranch() );
+                                 final Branch branch = ContextAccessor.current().getBranch();
+                                 if ( branch != null )
+                                 {
+                                     trace.put( "branch", branch );
+                                 }
                              }, () -> NodeHasChildResolver.create().searchService( this.nodeSearchService ).build().resolve( node.path() ),
                              ( trace, hasChildren ) -> trace.put( "hasChildren", hasChildren ) );
 
