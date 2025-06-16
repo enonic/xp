@@ -1,11 +1,10 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
@@ -30,7 +29,7 @@ public class NodeEventsTest
     {
         final Node created = createNode( "created", new NodePath( "/mynode1/child1" ), "id" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.created( created ) );
+        Event event = NodeEvents.created( created, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -45,15 +44,10 @@ public class NodeEventsTest
         final Node pushed2 = createNode( "pushed2", new NodePath( "/mynode1/pushed2" ), "id2" );
         final Node pushed3 = createNode( "pushed3Renamed", new NodePath( "/mynode1/pushed3" ), "id3" );
 
-        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().
-            nodeId( pushed1.id() ).
-            nodePath( pushed1.path() ).
-            nodeVersionId( pushed1.getNodeVersionId() ).
-            build();
-        final NodeBranchEntry nodeBranchEntry2 = NodeBranchEntry.create().nodeId( pushed2.id() )
-            .nodePath( pushed2.path() )
-            .nodeVersionId( pushed2.getNodeVersionId() )
-            .build();
+        final NodeBranchEntry nodeBranchEntry =
+            NodeBranchEntry.create().nodeId( pushed1.id() ).nodePath( pushed1.path() ).nodeVersionId( pushed1.getNodeVersionId() ).build();
+        final NodeBranchEntry nodeBranchEntry2 =
+            NodeBranchEntry.create().nodeId( pushed2.id() ).nodePath( pushed2.path() ).nodeVersionId( pushed2.getNodeVersionId() ).build();
         final NodeBranchEntry nodeBranchEntry3 =
             NodeBranchEntry.create().nodeId( pushed3.id() ).nodePath( pushed3.path() ).nodeVersionId( pushed3.getNodeVersionId() ).build();
 
@@ -64,7 +58,8 @@ public class NodeEventsTest
                                                                  .currentTargetPath( new NodePath( "/mynode1/pushed3/pushed3" ) )
                                                                  .build() );
 
-        Event event = executeInContext( "master", () -> NodeEvents.pushed( pushNodeEntries, ContentConstants.BRANCH_MASTER ) );
+        final Context context = createContext( "master" );
+        Event event = NodeEvents.pushed( pushNodeEntries, context.getBranch(), context.getRepositoryId() );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -81,7 +76,7 @@ public class NodeEventsTest
     {
         final Node deleted = createNode( "deleted", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.created( deleted ) );
+        Event event = NodeEvents.created( deleted, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -94,7 +89,7 @@ public class NodeEventsTest
     {
         final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.duplicated( duplicated ) );
+        Event event = NodeEvents.duplicated( duplicated, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -108,7 +103,7 @@ public class NodeEventsTest
     {
         final Node updated = createNode( "updated", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.updated( updated ));
+        Event event = NodeEvents.updated( updated, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -123,12 +118,12 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
         final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myId" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.moved( MoveNodeResult.create()
-                                                                             .addMovedNode( MoveNodeResult.MovedNode.create()
-                                                                                                .node( targetNode )
-                                                                                                .previousPath( sourceNode.path() )
-                                                                                                .build() )
-                                                                             .build() ) );
+        Event event = NodeEvents.moved( MoveNodeResult.create()
+                                            .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                               .node( targetNode )
+                                                               .previousPath( sourceNode.path() )
+                                                               .build() )
+                                            .build(), InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -143,13 +138,14 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
         final Node targetNode = createNode( "after", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.renamed( sourceNode.path(), targetNode ));
+        Event event = NodeEvents.renamed( sourceNode.path(), targetNode, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
-        assertEquals( "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/child1/after}]",
-                      event.getValue( "nodes" ).get().toString() );
+        assertEquals(
+            "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/child1/after}]",
+            event.getValue( "nodes" ).get().toString() );
     }
 
     @Test
@@ -157,7 +153,7 @@ public class NodeEventsTest
     {
         final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myId" );
 
-        Event event = executeInContext( "draft", () -> NodeEvents.sorted( sorted ));
+        Event event = NodeEvents.sorted( sorted, InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
@@ -169,35 +165,24 @@ public class NodeEventsTest
     @Test
     public void testNullArguments()
     {
-        Event eventCreated = NodeEvents.created( null );
+        Event eventCreated = NodeEvents.created( null, InternalContext.from( createContext( "draft" ) ) );
 
         assertNull( eventCreated );
     }
 
     private Node createNode( final String name, final NodePath root )
     {
-        return Node.create().
-            name( NodeName.from( name ) ).
-            parentPath( root ).
-            build();
+        return Node.create().name( NodeName.from( name ) ).parentPath( root ).build();
     }
 
     private Node createNode( final String name, final NodePath root, String id )
     {
-        return Node.create().
-            name( NodeName.from( name ) ).
-            parentPath( root ).
-            id( NodeId.from( id ) ).
-            build();
+        return Node.create().name( NodeName.from( name ) ).parentPath( root ).id( NodeId.from( id ) ).build();
     }
 
-    private <T> T executeInContext( final String branch, final Callable<T> runnable )
+    private Context createContext( final String branch )
     {
-        return ContextBuilder.create()
-            .branch( branch )
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .build()
-            .callWith( runnable );
+        return ContextBuilder.create().branch( branch ).repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) ).build();
     }
 
 }
