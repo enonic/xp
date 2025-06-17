@@ -42,7 +42,7 @@ public class WidgetDispatcherApiHandler
     @Override
     public WebResponse handle( final WebRequest webRequest )
     {
-        final String path = Objects.requireNonNullElse( webRequest.getEndpointPath(), webRequest.getRawPath() );
+        final String path = Objects.requireNonNull( webRequest.getEndpointPath(), "Endpoint path cannot be null" );
 
         if ( WIDGET_API_PATTERN.matcher( path ).matches() && HttpMethod.GET.equals( webRequest.getMethod() ) )
         {

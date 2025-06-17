@@ -60,9 +60,14 @@ public class WidgetApiHandlerTest
         when( webRequest.getEndpointPath() ).thenReturn( null );
         when( webRequest.getRawPath() ).thenReturn( "/path/to/some/resource" );
 
-        // path must start with `/api/` or contains `/_/` as endpoint part
+        NullPointerException npe = assertThrows( NullPointerException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( "Endpoint path cannot be null", npe.getMessage() );
+
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/somePath" );
+        when( webRequest.getRawPath() ).thenReturn( "/path/_/somePath" );
+
         IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> this.handler.handle( webRequest ) );
-        assertEquals( "Invalid Widget API path: /path/to/some/resource", ex.getMessage() );
+        assertEquals( "Invalid Widget API path: /_/somePath", ex.getMessage() );
     }
 
     @Test
@@ -118,16 +123,21 @@ public class WidgetApiHandlerTest
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
 
-        WidgetDescriptor widgetDescriptor = mock( WidgetDescriptor.class );
-        when( widgetDescriptor.isAccessAllowed( any( PrincipalKeys.class ) ) ).thenReturn( true );
-        when( widgetDescriptor.getKey() ).thenReturn( descriptorKey );
+        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( descriptorKey ).addInterface( "myInterface" ).build();
 
         when( widgetDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        final AdminToolDescriptor adminToolDescriptor =
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "myInterface" ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
 
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
         when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
-        when( webRequest.getRawPath() ).thenReturn( "/path/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
 
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
@@ -203,5 +213,117 @@ public class WidgetApiHandlerTest
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "Widget [app:widgetName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
+    }
+
+    @Test
+    void testGenericWidgetAvailableInAdminToolWhenWidgetNotInInterfaces()
+    {
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "generic" ).build();
+
+        when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        final AdminToolDescriptor adminToolDescriptor =
+            AdminToolDescriptor.create().key( adminToolDescriptorKey ).addInterface( "admin.dashboard" ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        WebResponse res = this.handler.handle( webRequest );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+    }
+
+    @Test
+    void testWidgetInWhenAdminToolDoesNotHaveInterfaces()
+    {
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
+
+        when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        final AdminToolDescriptor adminToolDescriptor = AdminToolDescriptor.create().key( adminToolDescriptorKey ).build();
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( adminToolDescriptor );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Widget [app:widgetName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
+    }
+
+    @Test
+    void testWidgetInWhenAdminToolDoesNotHaveDescriptor()
+    {
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
+
+        when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final DescriptorKey adminToolDescriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp" ), "toolName" );
+
+        when( adminToolDescriptorService.getByKey( eq( adminToolDescriptorKey ) ) ).thenReturn( null );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/myapp/toolName/_/admin:widget/app/widgetName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Widget [app:widgetName] is not mounted to admin tool [myapp:toolName]", ex.getMessage() );
+    }
+
+    @Test
+    void testWidgetOnInvalidAdminToolUrl()
+    {
+        final DescriptorKey widgetDescriptorKey = DescriptorKey.from( ApplicationKey.from( "app" ), "widgetName" );
+
+        final WidgetDescriptor widgetDescriptor = WidgetDescriptor.create().key( widgetDescriptorKey ).addInterface( "myInterface" ).build();
+
+        when( widgetDescriptorService.getByKey( eq( widgetDescriptorKey ) ) ).thenReturn( widgetDescriptor );
+
+        final WebRequest webRequest = mock( WebRequest.class );
+        when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
+        when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:widget/app/widgetName" );
+        when( webRequest.getRawPath() ).thenReturn( "/admin/app/_/admin:widget/app/widgetName" );
+
+        final ControllerScript controllerScript = mock( ControllerScript.class );
+        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( PortalResponse.create().build() );
+
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "Invalid admin tool URL [/admin/app/_/admin:widget/app/widgetName]", ex.getMessage() );
     }
 }
