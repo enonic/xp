@@ -46,8 +46,6 @@ public class MailServiceImplTest
     {
         this.mailService.send( createMockMessage() );
 
-        Thread.sleep( 1000 );
-
         List<Message> inbox = Mailbox.get( "testuser@mockserver.com" );
         assertEquals( 1, inbox.size() );
     }

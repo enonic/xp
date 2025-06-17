@@ -1,24 +1,18 @@
 package com.enonic.xp.mail.impl;
 
-import java.time.Duration;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import jakarta.mail.Address;
 import jakarta.mail.Authenticator;
+import jakarta.mail.MessagingException;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.MimeMessage;
 
-import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailService;
 import com.enonic.xp.mail.SendMailParams;
@@ -27,19 +21,9 @@ import com.enonic.xp.mail.SendMailParams;
 public final class MailServiceImpl
     implements MailService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( MailServiceImpl.class );
-
-    private final SimpleExecutor simpleExecutor;
-
-    private Session session;
+    private volatile Session session;
 
     private volatile String defaultFromEmail;
-
-    public MailServiceImpl()
-    {
-        this.simpleExecutor = new SimpleExecutor( Executors::newCachedThreadPool, "mail-service-executor-thread-%d",
-                                                  e -> LOG.error( "Message sending failed", e ) );
-    }
 
     @Activate
     @Modified
@@ -61,7 +45,8 @@ public final class MailServiceImpl
         Thread.currentThread().setContextClassLoader( Session.class.getClassLoader() );
         try
         {
-            this.session = Session.getInstance( properties, auth ? createAuthenticator( config ) : null );
+            this.session =
+                Session.getInstance( properties, auth ? new PasswordAuthenticator( config.smtpUser(), config.smtpPassword() ) : null );
         }
         finally
         {
@@ -69,30 +54,15 @@ public final class MailServiceImpl
         }
     }
 
-    @Deactivate
-    public void deactivate()
-    {
-        simpleExecutor.shutdownAndAwaitTermination( Duration.ofSeconds( 5 ), neverCommenced -> LOG.warn( "Not all messages were sent" ) );
-    }
-
     @Override
     public void send( final SendMailParams params )
     {
         try
         {
-            MimeMessage message = new MimeMessageConverter( defaultFromEmail, session ).convert( params );
-            simpleExecutor.execute( () -> {
-                try
-                {
-                    doSend( message );
-                }
-                catch ( Exception e )
-                {
-                    throw new RuntimeException( e );
-                }
-            } );
+            final MimeMessage message = new MimeMessageConverter( defaultFromEmail, session ).convert( params );
+            doSend( message );
         }
-        catch ( final Exception e )
+        catch ( Exception e )
         {
             throw handleException( e );
         }
@@ -104,28 +74,20 @@ public final class MailServiceImpl
         return defaultFromEmail;
     }
 
-    private MimeMessage newMessage()
-    {
-        return new MimeMessage( this.session );
-    }
-
-    private MailException handleException( final Exception e )
+    private static MailException handleException( final Exception e )
     {
         return new MailException( e.getMessage(), e );
     }
 
     private void doSend( final MimeMessage message )
-        throws Exception
+        throws MessagingException
     {
-        final Address[] to = message.getAllRecipients();
-        final Transport transport = this.session.getTransport();
-
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader( Session.class.getClassLoader() );
-        try (transport)
+        try (Transport transport = this.session.getTransport())
         {
             transport.connect();
-            transport.sendMessage( message, to );
+            transport.sendMessage( message, message.getAllRecipients() );
         }
         finally
         {
@@ -133,15 +95,20 @@ public final class MailServiceImpl
         }
     }
 
-    private Authenticator createAuthenticator( final MailConfig config )
+    private static class PasswordAuthenticator
+        extends Authenticator
     {
-        return new Authenticator()
+        final PasswordAuthentication passwordAuthentication;
+
+        PasswordAuthenticator( final String user, final String password )
         {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication()
-            {
-                return new PasswordAuthentication( config.smtpUser(), config.smtpPassword() );
-            }
-        };
+            this.passwordAuthentication = new PasswordAuthentication( user, password );
+        }
+
+        @Override
+        public PasswordAuthentication getPasswordAuthentication()
+        {
+            return this.passwordAuthentication;
+        }
     }
 }
