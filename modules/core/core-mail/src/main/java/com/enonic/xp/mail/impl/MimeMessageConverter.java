@@ -3,6 +3,7 @@ package com.enonic.xp.mail.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +24,6 @@ import javax.mail.internet.MimeMultipart;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.mail.MailAttachment;
-import com.enonic.xp.mail.MailException;
 import com.enonic.xp.mail.MailHeader;
 import com.enonic.xp.mail.SendMailParams;
 import com.enonic.xp.util.MediaTypes;
@@ -45,7 +45,7 @@ class MimeMessageConverter
     }
 
     MimeMessage convert( SendMailParams params )
-        throws Exception
+        throws MessagingException
     {
         MimeMessage message = new MimeMessage( session );
 
@@ -110,10 +110,10 @@ class MimeMessageConverter
     {
         final MimeBodyPart result = new MimeBodyPart();
 
-        String mimeType =
-            Objects.requireNonNullElse( attachment.getMimeType(), MediaTypes.instance().fromFile( attachment.getFileName() ).toString() );
+        final String mimeType = Objects.requireNonNullElseGet( attachment.getMimeType(),
+                                                         () -> MediaTypes.instance().fromFile( attachment.getFileName() ).toString() );
 
-        DataSource source = new ByteSourceDataSource( attachment.getData(), attachment.getFileName(), mimeType );
+        final DataSource source = new ByteSourceDataSource( attachment.getData(), attachment.getFileName(), mimeType );
         result.setDataHandler( new DataHandler( source ) );
         result.setFileName( attachment.getFileName() );
 
@@ -162,24 +162,17 @@ class MimeMessageConverter
     }
 
     private InternetAddress[] toAddresses( final List<String> addressList )
+        throws AddressException
     {
-        return addressList.stream()
-            .filter( string -> !nullToEmpty( string ).isBlank() )
-            .map( this::toAddress )
-            .toArray( InternetAddress[]::new );
-    }
-
-    private InternetAddress toAddress( final String address )
-        throws MailException
-    {
-        try
+        final List<InternetAddress> list = new ArrayList<>();
+        for ( String addressString : addressList )
         {
-            return new InternetAddress( address );
+            if ( !nullToEmpty( addressString ).isBlank() )
+            {
+                list.add( new InternetAddress( addressString ) );
+            }
         }
-        catch ( AddressException e )
-        {
-            throw new MailException( e.getMessage(), e );
-        }
+        return list.toArray( InternetAddress[]::new );
     }
 
     private static class ByteSourceDataSource
