@@ -69,10 +69,11 @@ public class RepositoryEntryServiceImpl
     public void createRepositoryEntry( final RepositoryEntry repository )
     {
         final Node node = RepositoryNodeTranslator.toNode( repository );
-        final Node createdNode = nodeStorageService.store( node, createInternalContext() ).node();
+        final InternalContext internalContext = createInternalContext();
+        final Node createdNode = nodeStorageService.store( node, internalContext ).node();
 
         refresh();
-        eventPublisher.publish( NodeEvents.created( createdNode ) );
+        eventPublisher.publish( NodeEvents.created( createdNode, internalContext ) );
         eventPublisher.publish( RepositoryEvents.created( repository.getId() ) );
     }
 
@@ -151,7 +152,7 @@ public class RepositoryEntryServiceImpl
 
         if ( deletedNodes.isNotEmpty() )
         {
-            eventPublisher.publish( NodeEvents.deleted( deletedNodes ) );
+            eventPublisher.publish( NodeEvents.deleted( deletedNodes, createInternalContext() ) );
             eventPublisher.publish( RepositoryEvents.deleted( repositoryId ) );
         }
     }
@@ -184,7 +185,7 @@ public class RepositoryEntryServiceImpl
             binaryService( this.binaryService ).
             build().execute().getResult( ContextAccessor.current().getBranch() ) );
 
-        eventPublisher.publish( NodeEvents.updated( updatedNode ) );
+        eventPublisher.publish( NodeEvents.updated( updatedNode, createInternalContext() ) );
 
         RepositoryEntry repository = RepositoryNodeTranslator.toRepository( updatedNode );
 

@@ -378,6 +378,21 @@ public class NodeExportIntegrationTest
         assertEquals( "java.lang.RuntimeException: exception message", result.getExportErrors().get( 0 ).toString() );
     }
 
+    @Test
+    public void testRootNotFound()
+    {
+        final NodeExportResult result = NodeExporter.create().
+            nodeService( this.nodeService ).
+            nodeExportWriter( new FileExportWriter() ).
+            sourceNodePath( NodePath.create().addElement( "unknown" ).build() ).
+            targetDirectory( this.temporaryFolder.resolve( "myExport" ) ).
+            build().
+            execute();
+
+        assertEquals( 0, result.size() );
+        assertEquals( "Node with path '/unknown' not found in branch 'draft', nothing to export", result.getExportErrors().getFirst().toString() );
+    }
+
     // Asserts and Utils
 
     private NodeExportResult doExportRoot( final boolean exportVersions )

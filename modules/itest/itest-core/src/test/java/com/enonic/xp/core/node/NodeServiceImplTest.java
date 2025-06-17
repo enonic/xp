@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,9 +25,13 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.MoveNodeParams;
+import com.enonic.xp.node.MultiRepoNodeHit;
+import com.enonic.xp.node.MultiRepoNodeHits;
+import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -37,6 +42,7 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -48,6 +54,8 @@ import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
+import com.enonic.xp.node.SearchTarget;
+import com.enonic.xp.node.SearchTargets;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -58,6 +66,9 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.TraceManager;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -68,8 +79,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class NodeServiceImplTest
     extends AbstractNodeTest
@@ -79,6 +93,17 @@ public class NodeServiceImplTest
         throws Exception
     {
         this.createDefaultRootNode();
+
+        final TraceManager manager = mock( TraceManager.class );
+        final Trace trace = mock( Trace.class );
+        when( manager.newTrace( any(), any() ) ).thenReturn( trace );
+        Tracer.setManager( manager );
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        Tracer.setManager( null );
     }
 
     @Test
@@ -557,6 +582,40 @@ public class NodeServiceImplTest
         assertEquals( 4, publishedEvents.size() );
         assertEquals( NodeEvents.NODE_UPDATED_EVENT, publishedEvents.get( 2 ).getType() );
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, publishedEvents.get( 3 ).getType() );
+    }
+
+    @Test
+    public void testFindByQuery()
+    {
+        final Node node = this.nodeService.create(
+            CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );
+
+        nodeService.refresh( RefreshMode.SEARCH );
+
+        final NodeQuery nodeQuery =
+            NodeQuery.create().parent( NodePath.ROOT ).path( NodePath.create().addElement( "my-node" ).build() ).build();
+
+        final SearchTargets searchTargets = SearchTargets.create()
+            .add( SearchTarget.create()
+                      .repositoryId( ContextAccessor.current().getRepositoryId() )
+                      .branch( ContextAccessor.current().getBranch() )
+                      .principalKeys( ContextAccessor.current().getAuthInfo().getPrincipals() )
+                      .build() )
+            .build();
+
+        final MultiRepoNodeQuery multiRepoNodeQuery = new MultiRepoNodeQuery( searchTargets, nodeQuery );
+
+        final FindNodesByMultiRepoQueryResult queryResult = this.nodeService.findByQuery( multiRepoNodeQuery );
+
+        assertEquals( 1, queryResult.getHits() );
+
+        final MultiRepoNodeHits nodeHits = queryResult.getNodeHits();
+        assertEquals( 1, nodeHits.getSize() );
+
+        final MultiRepoNodeHit multiRepoNodeHit = nodeHits.get( 0 );
+        assertEquals( node.id(), multiRepoNodeHit.getNodeId() );
+        assertEquals( ContextAccessor.current().getRepositoryId(), multiRepoNodeHit.getRepositoryId() );
+        assertEquals( ContextAccessor.current().getBranch(), multiRepoNodeHit.getBranch() );
     }
 
 

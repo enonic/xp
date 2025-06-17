@@ -289,7 +289,7 @@ public class NodeExporter
     private void addRootNodeNotFoundError()
     {
         result.addError( new ExportError(
-            "Node with path '" + this.sourceNodePath + "' not found in branch '" + ContextAccessor.current().getBranch().getValue() +
+            "Node with path '" + this.sourceNodePath + "' not found in branch '" + ContextAccessor.current().getBranch() +
                 "', nothing to export" ) );
     }
 

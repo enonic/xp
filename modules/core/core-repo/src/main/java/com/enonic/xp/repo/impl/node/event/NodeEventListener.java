@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -98,17 +99,27 @@ public class NodeEventListener
         }
     }
 
-    private InternalContext createNodeContext( final Map<String, Object> map )
+    @SuppressWarnings("unchecked")
+    private InternalContext createNodeContext( final Map<String, Object> data )
     {
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) data.get( "nodes" );
+
+        if ( nodes == null || nodes.isEmpty() )
+        {
+            throw new IllegalStateException( "Event data must contain a non-empty 'nodes' list" );
+        }
+
+        final Map<String, String> nodeAsMap = nodes.getFirst();
+
         final InternalContext.Builder nodeContext = InternalContext.create( ContextAccessor.current() );
 
-        final RepositoryId repositoryId = getRepositoryId( map );
+        final RepositoryId repositoryId = getRepositoryId( nodeAsMap.get( REPOSITORY_ID ) );
         if ( repositoryId != null )
         {
             nodeContext.repositoryId( repositoryId );
         }
 
-        final Branch branch = getBranch( map );
+        final Branch branch = getBranch( nodeAsMap.get( BRANCH ) );
         if ( branch != null )
         {
             nodeContext.branch( branch );
@@ -117,14 +128,14 @@ public class NodeEventListener
     }
 
 
-    private RepositoryId getRepositoryId( final Map<String, Object> map )
+    private RepositoryId getRepositoryId( final String value )
     {
-        return map.containsKey( REPOSITORY_ID ) ? RepositoryId.from( map.get( REPOSITORY_ID ).toString() ) : null;
+        return value != null ? RepositoryId.from( value ) : null;
     }
 
-    private Branch getBranch( final Map<String, Object> map )
+    private Branch getBranch( final String value )
     {
-        return map.containsKey( BRANCH ) ? Branch.from( map.get( BRANCH ).toString() ) : null;
+        return value != null ? Branch.from( value ) : null;
     }
 
     @Reference
