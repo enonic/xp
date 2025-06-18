@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 
@@ -25,7 +26,7 @@ final class ServiceRequestBaseUrlSupplier
     {
         final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
 
-        if ( portalRequest.isSiteBase() )
+        if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
             UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );

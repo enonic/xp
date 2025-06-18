@@ -7,6 +7,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
@@ -45,7 +46,7 @@ public final class PageHandler
     @Override
     public boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest instanceof PortalRequest && ( (PortalRequest) webRequest ).isSiteBase();
+        return webRequest instanceof PortalRequest && PortalRequestHelper.isSiteBase( webRequest );
     }
 
     @Override

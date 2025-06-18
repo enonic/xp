@@ -19,6 +19,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -33,8 +34,6 @@ public class ImageHandler
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
     private static final Predicate<WebRequest> IS_GET_HEAD_OPTIONS_METHOD = req -> ALLOWED_METHODS.contains( req.getMethod() );
-
-    private static final Predicate<WebRequest> IS_SITE_BASE = req -> req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
 
     private final ContentService contentService;
 
@@ -82,7 +81,7 @@ public class ImageHandler
             throw WebException.notFound( "Not a valid image url pattern" );
         }
 
-        if ( !IS_SITE_BASE.test( webRequest ) )
+        if ( !PortalRequestHelper.isSiteBase( webRequest ) )
         {
             throw WebException.notFound( "Not a valid request" );
         }

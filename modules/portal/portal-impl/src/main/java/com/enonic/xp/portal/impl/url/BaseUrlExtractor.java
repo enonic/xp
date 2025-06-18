@@ -14,6 +14,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -53,7 +54,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( portalRequest != null && portalRequest.isSiteBase() && noExplicitContext )
+        if ( PortalRequestHelper.isSiteBase( portalRequest ) && noExplicitContext )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 

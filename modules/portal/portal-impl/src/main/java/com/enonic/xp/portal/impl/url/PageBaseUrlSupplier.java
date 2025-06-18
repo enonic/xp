@@ -6,6 +6,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.project.ProjectService;
@@ -41,7 +42,7 @@ final class PageBaseUrlSupplier
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
         final boolean preferSiteRequest =
-            portalRequest != null && portalRequest.isSiteBase() && params.getProjectName() == null && params.getBranch() == null;
+            PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null;
 
         final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams ).resolve( metadata -> {
             if ( preferSiteRequest )

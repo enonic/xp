@@ -7,13 +7,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebRequest;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
 @PublicApi
 public final class PortalRequest
@@ -34,8 +32,6 @@ public final class PortalRequest
     private Site site;
 
     private Content content;
-
-    private PageTemplate pageTemplate;
 
     private Component component;
 
@@ -184,10 +180,5 @@ public final class PortalRequest
     public void setValidTicket( final Boolean validTicket )
     {
         this.validTicket = validTicket;
-    }
-
-    public boolean isSiteBase()
-    {
-        return baseUri.equals( "/site" ) || baseUri.startsWith( "/admin/site/" );
     }
 }

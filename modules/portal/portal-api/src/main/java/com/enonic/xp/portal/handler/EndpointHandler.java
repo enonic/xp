@@ -2,7 +2,6 @@ package com.enonic.xp.portal.handler;
 
 import java.util.EnumSet;
 
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.handler.BaseWebHandler;
@@ -46,8 +45,4 @@ public abstract class EndpointHandler
         return endpointPath.length() > pathPrefix.length() ? endpointPath.substring( pathPrefix.length() ) : "";
     }
 
-    protected boolean isSiteBase( final WebRequest req )
-    {
-        return req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
-    }
 }
