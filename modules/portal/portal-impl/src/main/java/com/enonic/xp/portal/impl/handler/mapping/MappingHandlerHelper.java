@@ -14,6 +14,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -97,7 +98,7 @@ class MappingHandlerHelper
 
         final PortalRequest request = (PortalRequest) webRequest;
 
-        if ( request.getMode() == RenderMode.ADMIN || !request.isSiteBase() )
+        if ( request.getMode() == RenderMode.ADMIN || !PortalRequestHelper.isSiteBase( request ) )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }

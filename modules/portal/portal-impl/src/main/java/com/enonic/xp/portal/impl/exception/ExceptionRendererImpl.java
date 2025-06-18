@@ -20,6 +20,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.impl.error.PortalError;
@@ -101,9 +102,8 @@ public final class ExceptionRendererImpl
         final ExceptionInfo info = toErrorInfo( cause );
         logIfNeeded( info );
 
-        if ( webRequest instanceof PortalRequest )
+        if ( webRequest instanceof PortalRequest portalRequest )
         {
-            PortalRequest portalRequest = (PortalRequest) webRequest;
             final HttpStatus httpStatus = cause.getStatus();
             if ( httpStatus != null )
             {
@@ -130,7 +130,7 @@ public final class ExceptionRendererImpl
                 return defaultCustomError;
             }
 
-            if ( portalRequest.isSiteBase() && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
+            if ( PortalRequestHelper.isSiteBase( portalRequest ) && ContentConstants.BRANCH_MASTER.equals( portalRequest.getBranch() ) &&
                 HttpStatus.NOT_FOUND.equals( cause.getStatus() ) )
             {
                 tip = "Tip: Did you remember to publish the site?";
@@ -224,7 +224,7 @@ public final class ExceptionRendererImpl
         {
             return siteInRequest;
         }
-        else if ( req.isSiteBase() )
+        else if ( PortalRequestHelper.isSiteBase( req ) )
         {
             return callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) );
         }

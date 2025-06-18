@@ -5,6 +5,7 @@ import java.util.Objects;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
@@ -29,7 +30,7 @@ final class ContentProjectResolver
         }
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( preferSiteRequest && portalRequest != null && portalRequest.isSiteBase() )
+        if ( preferSiteRequest && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             return ProjectName.from( portalRequest.getRepositoryId() );
         }

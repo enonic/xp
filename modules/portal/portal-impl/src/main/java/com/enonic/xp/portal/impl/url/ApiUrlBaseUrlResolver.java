@@ -10,6 +10,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
@@ -114,7 +115,7 @@ final class ApiUrlBaseUrlResolver
         {
             url.append( "/api" );
         }
-        else if ( portalRequest.isSiteBase() )
+        else if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             url.append( portalRequest.getBaseUri() );
             UrlBuilderHelper.appendSubPath( url, ProjectName.from( portalRequest.getRepositoryId() ).toString() );

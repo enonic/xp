@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.project.ProjectService;
 
@@ -30,7 +31,7 @@ final class ContentBaseUrlSupplier
         final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, params ).resolve( metadata -> null );
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( portalRequest != null && portalRequest.isSiteBase() && params.getProjectName() == null && params.getBranch() == null )
+        if ( PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null )
         {
             return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getUrlType(), baseUrl );
         }

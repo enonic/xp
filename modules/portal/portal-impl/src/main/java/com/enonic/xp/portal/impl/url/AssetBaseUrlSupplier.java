@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 import com.enonic.xp.web.servlet.UriRewritingResult;
@@ -29,7 +30,7 @@ final class AssetBaseUrlSupplier
 
         final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
 
-        if ( portalRequest.isSiteBase() )
+        if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
             UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );

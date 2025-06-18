@@ -6,6 +6,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 
 final class ContentBranchResolver
 {
@@ -27,7 +28,7 @@ final class ContentBranchResolver
         }
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( preferSiteRequest && portalRequest != null && portalRequest.isSiteBase() )
+        if ( preferSiteRequest && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             return portalRequest.getBranch();
         }

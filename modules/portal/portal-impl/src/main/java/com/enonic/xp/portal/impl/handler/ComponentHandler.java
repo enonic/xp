@@ -15,6 +15,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
@@ -70,7 +71,7 @@ public class ComponentHandler
     public WebResponse handle( final WebRequest webRequest )
         throws Exception
     {
-        if ( !( webRequest instanceof PortalRequest && ( (PortalRequest) webRequest ).isSiteBase() ) )
+        if ( !PortalRequestHelper.isSiteBase( webRequest ) )
         {
             throw WebException.notFound( "Not a valid request" );
         }

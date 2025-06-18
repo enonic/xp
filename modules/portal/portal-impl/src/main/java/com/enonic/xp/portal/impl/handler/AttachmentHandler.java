@@ -13,6 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
@@ -30,8 +31,6 @@ public class AttachmentHandler
     private static final EnumSet<HttpMethod> ALLOWED_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS );
 
     private static final Predicate<WebRequest> IS_GET_HEAD_OPTIONS_METHOD = req -> ALLOWED_METHODS.contains( req.getMethod() );
-
-    private static final Predicate<WebRequest> IS_SITE_BASE = req -> req instanceof PortalRequest && ( (PortalRequest) req ).isSiteBase();
 
     private final ContentService contentService;
 
@@ -72,7 +71,7 @@ public class AttachmentHandler
             throw WebException.notFound( "Not a valid attachment url pattern" );
         }
 
-        if ( !IS_SITE_BASE.test( webRequest ) )
+        if ( !PortalRequestHelper.isSiteBase( webRequest ) )
         {
             throw WebException.notFound( "Not a valid request" );
         }

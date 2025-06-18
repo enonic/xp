@@ -11,6 +11,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.impl.ContentResolver;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
@@ -50,7 +51,7 @@ public final class ImageServiceMappingHandler
     @Override
     public boolean canHandle( final WebRequest webRequest )
     {
-        return super.canHandle( webRequest ) && isSiteBase( webRequest );
+        return super.canHandle( webRequest ) && PortalRequestHelper.isSiteBase( webRequest );
     }
 
     @Override
