@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
@@ -30,6 +31,7 @@ public class PortalRequestMapperTest
         this.portalRequest.setHost( "localhost" );
         this.portalRequest.setPort( 80 );
         this.portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
+        this.portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
         this.portalRequest.setRemoteAddress( "10.0.0.1" );
         this.portalRequest.setPath( "/site/live/master/a/b" );
         this.portalRequest.setRawPath( "/site/live/master/a/b" );

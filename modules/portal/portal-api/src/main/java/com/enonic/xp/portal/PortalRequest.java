@@ -4,7 +4,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -21,7 +20,7 @@ public final class PortalRequest
 
     private RepositoryId repositoryId;
 
-    private Branch branch = ContentConstants.BRANCH_DRAFT;
+    private Branch branch;
 
     private ContentPath contentPath = ContentPath.ROOT;
 
