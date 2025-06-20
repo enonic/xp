@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -11,6 +10,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ContentNodeHelper;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentFixtures;
@@ -23,8 +23,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,17 +98,7 @@ public class PortalUrlServiceImpl_componentUrlTest
 
         final Content content = ContentFixtures.newContent();
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs =
-            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+        final Site site = mockSite( ContentPath.from( "/a" ) );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -133,17 +121,7 @@ public class PortalUrlServiceImpl_componentUrlTest
 
         final Content content = ContentFixtures.newContent();
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs =
-            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+        final Site site = mockSite( ContentPath.from( "/a" ));
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -167,11 +145,7 @@ public class PortalUrlServiceImpl_componentUrlTest
 
         final Content content = ContentFixtures.newContent();
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+        final Site site = mockSite( ContentPath.from( "/a" ), false);
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -195,11 +169,7 @@ public class PortalUrlServiceImpl_componentUrlTest
 
         final Content content = ContentFixtures.newContent();
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+        final Site site = mockSite( ContentPath.from( "/a" ), false);
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -228,11 +198,7 @@ public class PortalUrlServiceImpl_componentUrlTest
 
         final Content content = ContentFixtures.newContent();
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+        final Site site = mockSite( ContentPath.from( "/a" ), false);
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -262,17 +228,7 @@ public class PortalUrlServiceImpl_componentUrlTest
 
         final Content content = ContentFixtures.newContent();
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs =
-            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+        final Site site = mockSite( ContentPath.from( "/a" ));
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -434,17 +390,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         final Content content = ContentFixtures.newContent();
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs =
-            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+        final Site site = mockSite( ContentPath.from( "/a" ));
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
 
@@ -469,17 +415,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         final Content content = ContentFixtures.newContent();
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs =
-            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+        final Site site = mockSite( ContentPath.from( "/a" ));
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
 
@@ -507,11 +443,7 @@ public class PortalUrlServiceImpl_componentUrlTest
         final Content content = ContentFixtures.newContent();
         when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+        final Site site = mockSite( ContentPath.from( "/a" ), false);
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
 
@@ -554,5 +486,39 @@ public class PortalUrlServiceImpl_componentUrlTest
             .callWith( () -> this.service.componentUrl( new ComponentUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ) ) );
 
         assertEquals( "http://localhost/site/request-project/request-branch/a/b/mycontent/_/component/main/0", url );
+    }
+
+    private Site mockSite( final ContentPath sitePath )
+    {
+        return mockSite( sitePath, true );
+    }
+
+    private Site mockSite( final ContentPath sitePath, final boolean withConfig )
+    {
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( sitePath );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        final PropertyTree data = new PropertyTree();
+        when( site.getData() ).thenReturn( data );
+
+        if ( withConfig )
+        {
+            data.setSet( "siteConfig", createSiteConfig( data ) );
+        }
+
+        return site;
+    }
+
+    private PropertySet createSiteConfig( PropertyTree parentTree )
+    {
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", "https://cdn.company.com" );
+
+        final PropertySet set = parentTree.newSet();
+        set.addString( "applicationKey", "portal" );
+        set.addSet( "config", config.getRoot().copy( parentTree ) );
+        return set;
     }
 }

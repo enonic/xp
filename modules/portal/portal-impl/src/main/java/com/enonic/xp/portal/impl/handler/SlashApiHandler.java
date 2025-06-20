@@ -40,6 +40,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Trace;
@@ -297,7 +298,7 @@ public class SlashApiHandler
     {
         if ( site != null )
         {
-            return site.getSiteConfigs();
+            return new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build();
         }
         else
         {

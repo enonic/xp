@@ -18,6 +18,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -323,7 +324,7 @@ public class SlashApiHandlerTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+        when( site.getData() ).thenReturn( new PropertyTree() );
 
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
@@ -357,13 +358,7 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
-
+        final Site site = mockSite( applicationKey );
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( null );
@@ -390,13 +385,7 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
-
+        final Site site = mockSite( applicationKey );
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
         final DescriptorKeys siteApiMountDescriptors =
@@ -428,13 +417,7 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
-
+        final Site site = mockSite( applicationKey );
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
         final DescriptorKeys siteApiMountDescriptors =
@@ -470,13 +453,7 @@ public class SlashApiHandlerTest
 
         when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
 
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
-
+        final Site site = mockSite( applicationKey );
         when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
 
         final DescriptorKeys siteApiMountDescriptors =
@@ -840,5 +817,27 @@ public class SlashApiHandlerTest
         {
             return counter;
         }
+    }
+
+    private PropertySet createSiteConfig( PropertyTree tree, ApplicationKey applicationKey )
+    {
+        PropertySet set = tree.newSet();
+        set.addString( "applicationKey", applicationKey.getName() );
+        set.addSet( "config" );
+        return set;
+    }
+
+    private Site mockSite( final ApplicationKey applicationKey )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setSet( "siteConfig", createSiteConfig( data, applicationKey ) );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        when( site.getData() ).thenReturn( data );
+
+        return site;
     }
 }

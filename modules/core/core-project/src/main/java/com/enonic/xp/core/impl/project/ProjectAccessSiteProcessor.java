@@ -20,6 +20,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 @Component
 public final class ProjectAccessSiteProcessor
@@ -45,9 +46,9 @@ public final class ProjectAccessSiteProcessor
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
         final Site editedSite = (Site) params.getEditedContent();
-        final SiteConfigs editedSiteConfigs = editedSite.getSiteConfigs();
+        final SiteConfigs editedSiteConfigs = new SiteConfigsDataSerializer().fromProperties( editedSite.getData().getRoot() ).build();
         final Site originalSite = (Site) params.getOriginalContent();
-        final SiteConfigs originalSiteConfigs = originalSite.getSiteConfigs();
+        final SiteConfigs originalSiteConfigs = new SiteConfigsDataSerializer().fromProperties( originalSite.getData().getRoot() ).build();
 
         final Context context = ContextAccessor.current();
         final AuthenticationInfo authenticationInfo = context.getAuthInfo();

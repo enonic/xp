@@ -22,6 +22,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 record BaseUrlExtractor(ContentService contentService, ProjectService projectService)
 {
@@ -41,11 +42,8 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             .build()
             .resolve();
 
-        final Branch branch = ContentBranchResolver.create()
-            .setBranch( params.getBranch() )
-            .setPreferSiteRequest( noExplicitContext )
-            .build()
-            .resolve();
+        final Branch branch =
+            ContentBranchResolver.create().setBranch( params.getBranch() ).setPreferSiteRequest( noExplicitContext ).build().resolve();
 
         final BaseUrlMetadata.Builder builder = BaseUrlMetadata.create();
 
@@ -83,7 +81,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             }
 
             final SiteConfigs siteConfigs = site != null
-                ? site.getSiteConfigs()
+                ? new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build()
                 : Optional.ofNullable( projectService.get( projectName ) ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
 
             if ( site != null )

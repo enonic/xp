@@ -14,7 +14,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
@@ -22,6 +21,7 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
@@ -34,6 +34,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -120,7 +121,7 @@ class MappingHandlerHelper
 
         if ( site != null )
         {
-            siteConfigs = site.getSiteConfigs();
+            siteConfigs = new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build();
         }
         else
         {

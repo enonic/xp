@@ -19,8 +19,8 @@ import com.google.common.base.Suppliers;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
@@ -34,6 +34,8 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.style.ElementStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
@@ -311,7 +313,9 @@ public class RichTextProcessor
         appKeys.add( SYSTEM_APPLICATION_KEY );
         if ( portalRequest != null && portalRequest.getSite() != null )
         {
-            portalRequest.getSite().getSiteConfigs().forEach( siteConfig -> appKeys.add( siteConfig.getApplicationKey() ) );
+            final SiteConfigs siteConfigs =
+                new SiteConfigsDataSerializer().fromProperties( portalRequest.getSite().getData().getRoot() ).build();
+            siteConfigs.forEach( siteConfig -> appKeys.add( siteConfig.getApplicationKey() ) );
         }
         return styleDescriptorService.getByApplications( ApplicationKeys.from( appKeys ) );
     }

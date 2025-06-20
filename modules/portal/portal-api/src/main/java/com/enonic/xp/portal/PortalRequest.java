@@ -9,7 +9,6 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebRequest;
 
 @PublicApi
@@ -28,7 +27,7 @@ public final class PortalRequest
 
     private String contextPath;
 
-    private Site site;
+    private Content site;
 
     private Content content;
 
@@ -48,7 +47,7 @@ public final class PortalRequest
 
     public PortalRequest( final WebRequest webRequest )
     {
-        super(webRequest);
+        super( webRequest );
     }
 
     public Branch getBranch()
@@ -81,12 +80,12 @@ public final class PortalRequest
         this.repositoryId = repositoryId;
     }
 
-    public Site getSite()
+    public Content getSite()
     {
         return site;
     }
 
-    public void setSite( final Site site )
+    public void setSite( final Content site )
     {
         this.site = site;
     }

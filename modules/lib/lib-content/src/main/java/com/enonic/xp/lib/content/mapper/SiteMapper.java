@@ -1,15 +1,15 @@
 package com.enonic.xp.lib.content.mapper;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.site.Site;
 
 public final class SiteMapper
     implements MapSerializable
 {
-    private final Site site;
+    private final Content site;
 
-    public SiteMapper( final Site site )
+    public SiteMapper( final Content site )
     {
         this.site = site;
     }
@@ -18,6 +18,6 @@ public final class SiteMapper
     public void serialize( final MapGenerator gen )
     {
         new ContentMapper( this.site ).serialize( gen );
-        gen.value( "description", this.site.getDescription() );
+        gen.value( "description", this.site.getData().getString( "description" ) );
     }
 }

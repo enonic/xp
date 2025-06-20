@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.portal.PortalRequest;
@@ -12,7 +13,6 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.site.Site;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
@@ -96,7 +96,7 @@ public final class LocaleScriptBean
             return null;
         }
 
-        final Site site = request.getSite();
+        final Content site = request.getSite();
 
         if ( site != null )
         {

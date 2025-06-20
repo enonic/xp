@@ -20,7 +20,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 
 public class PatchNodeParamsFactory
@@ -94,7 +94,9 @@ public class PatchNodeParamsFactory
             .xDataService( this.xDataService )
             .contentTypeName( editedContent.getType() )
             .page( editedContent.getPage() )
-            .siteConfigs( editedContent.isSite() ? ( (Site) editedContent ).getSiteConfigs() : null )
+            .siteConfigs( editedContent.isSite()
+                              ? new SiteConfigsDataSerializer().fromProperties( editedContent.getData().getRoot() ).build()
+                              : null )
             .extraDatas( editedContent.getAllExtraData() )
             .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
             .build();

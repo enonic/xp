@@ -11,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -31,8 +33,9 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -84,8 +87,7 @@ public final class ExceptionRendererImpl
     }
 
     @Activate
-    public ExceptionRendererImpl( @Reference final ResourceService resourceService,
-                                  @Reference final PortalUrlService portalUrlService,
+    public ExceptionRendererImpl( @Reference final ResourceService resourceService, @Reference final PortalUrlService portalUrlService,
                                   @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
                                   @Reference final ContentService contentService,
                                   @Reference final IdProviderControllerService idProviderControllerService,
@@ -164,20 +166,18 @@ public final class ExceptionRendererImpl
 
     private PortalResponse doRenderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
-        final PortalError portalError = PortalError.create().
-            status( cause.getStatus() ).
-            message( cause.getMessage() ).
-            exception( cause ).
-            request( req ).build();
+        final PortalError portalError =
+            PortalError.create().status( cause.getStatus() ).message( cause.getMessage() ).exception( cause ).request( req ).build();
 
-        final Site siteInRequest = req.getSite();
-        final Site site = resolveSite( siteInRequest, req );
+        final Content siteInRequest = req.getSite();
+        final Content site = resolveSite( siteInRequest, req );
         if ( site != null )
         {
             req.setSite( site );
             try
             {
-                for ( SiteConfig siteConfig : site.getSiteConfigs() )
+                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build();
+                for ( SiteConfig siteConfig : siteConfigs )
                 {
                     final ApplicationKey applicationKey = siteConfig.getApplicationKey();
                     for ( final String scriptPath : SITE_ERROR_SCRIPT_PATHS )
@@ -218,7 +218,7 @@ public final class ExceptionRendererImpl
         return null;
     }
 
-    private Site resolveSite( final Site siteInRequest, final PortalRequest req )
+    private Content resolveSite( final Content siteInRequest, final PortalRequest req )
     {
         if ( siteInRequest != null )
         {
@@ -230,7 +230,7 @@ public final class ExceptionRendererImpl
         }
         else
         {
-            return null;
+            return callAsContentAdmin( () -> this.contentService.getByPath( ContentPath.ROOT ) );
         }
     }
 
@@ -261,10 +261,8 @@ public final class ExceptionRendererImpl
     {
         if ( isUnauthorizedError( cause.getStatus() ) )
         {
-            final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-                functionName( "handle401" ).
-                portalRequest( req ).
-                build();
+            final IdProviderControllerExecutionParams executionParams =
+                IdProviderControllerExecutionParams.create().functionName( "handle401" ).portalRequest( req ).build();
             try
             {
                 return idProviderControllerService.execute( executionParams );
@@ -279,12 +277,12 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderInternalErrorPage( final WebRequest req, String tip, final WebException cause )
     {
-        final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() ).
-            runMode( runMode ).
-            cause( cause ).
-            tip( tip ).
-            resourceService( resourceService ).
-            portalUrlService( portalUrlService );
+        final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() )
+            .runMode( runMode )
+            .cause( cause )
+            .tip( tip )
+            .resourceService( resourceService )
+            .portalUrlService( portalUrlService );
 
         logIfNeeded( info );
         return info.toResponse( req );
@@ -292,11 +290,11 @@ public final class ExceptionRendererImpl
 
     private ExceptionInfo toErrorInfo( final WebException cause )
     {
-        return ExceptionInfo.create( cause.getStatus() ).
-            runMode( runMode ).
-            cause( cause ).
-            resourceService( this.resourceService ).
-            portalUrlService( this.portalUrlService );
+        return ExceptionInfo.create( cause.getStatus() )
+            .runMode( runMode )
+            .cause( cause )
+            .resourceService( this.resourceService )
+            .portalUrlService( this.portalUrlService );
     }
 
     private void logIfNeeded( final ExceptionInfo info )

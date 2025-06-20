@@ -14,11 +14,13 @@ public final class Site
         super( builder );
     }
 
+    @Deprecated
     public String getDescription()
     {
         return this.getData().getString( "description" );
     }
 
+    @Deprecated
     public SiteConfigs getSiteConfigs()
     {
         return new SiteConfigsDataSerializer().fromProperties( this.getData().getRoot() ).build();

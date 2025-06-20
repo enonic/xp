@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -23,9 +24,9 @@ import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorFactory;
 import com.enonic.xp.portal.postprocess.PostProcessInstruction;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 @Component(immediate = true)
 public final class MacroInstruction
@@ -68,13 +69,14 @@ public final class MacroInstruction
         }
 
         // resolve macro processor
-        final Site site = portalRequest.getSite();
+        final Content site = portalRequest.getSite();
         if ( site == null )
         {
             throw new RenderException( "Macro controller script could not be resolved, context site could not be found." );
         }
 
-        final MacroDescriptor macroDescriptor = resolveMacroDescriptor( site.getSiteConfigs(), macroName );
+        final MacroDescriptor macroDescriptor =
+            resolveMacroDescriptor( new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build(), macroName );
         if ( macroDescriptor == null )
         {
             final String editModeMacro = toMacroInstruction( macroInstruction );

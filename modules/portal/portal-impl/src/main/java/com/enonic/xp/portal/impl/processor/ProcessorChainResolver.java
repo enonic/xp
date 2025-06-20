@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
@@ -29,7 +30,7 @@ public class ProcessorChainResolver
 
         if ( request.getSite() != null )
         {
-            for ( SiteConfig siteConfig : request.getSite().getSiteConfigs() )
+            for ( SiteConfig siteConfig : new SiteConfigsDataSerializer().fromProperties( request.getSite().getData().getRoot() ).build() )
             {
                 siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
                 if ( siteDescriptor != null )

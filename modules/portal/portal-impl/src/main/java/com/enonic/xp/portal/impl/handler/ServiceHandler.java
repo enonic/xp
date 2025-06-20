@@ -25,6 +25,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -130,7 +131,9 @@ public class ServiceHandler
         final Site site = resolvedContent.getNearestSite();
 
         //Checks if the application is set on the current site
-        if ( site != null && site.getSiteConfigs().get( descriptorKey.getApplicationKey() ) == null )
+        if ( site != null &&
+            new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build().get( descriptorKey.getApplicationKey() ) ==
+                null )
         {
             throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
         }
