@@ -1,11 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -21,7 +23,6 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -61,7 +62,6 @@ public class ApplyNodePermissionsCommand
         this.appliedVersions = new HashMap<>();
         this.listener = params.getListener() != null ? params.getListener() : new EmptyApplyPermissionsListener();
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
-
     }
 
     public static Builder create()
@@ -74,100 +74,120 @@ public class ApplyNodePermissionsCommand
         return new Builder( source );
     }
 
+    private void verifyBranch()
+    {
+        Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
+                                  "Current(source) branch '%s' is not in the list of branches for apply: %s",
+                                  ContextAccessor.current().getBranch(), this.branches );
+    }
+
     public ApplyNodePermissionsResult execute()
     {
-        refresh( RefreshMode.SEARCH );
+        final Context context = this.branches.getSize() == 1
+            ? ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build()
+            : ContextAccessor.current();
 
-        doApplyPermissions( params.getNodeId() );
-
-        refresh( RefreshMode.ALL );
+        context.runWith( () -> {
+            verifyBranch();
+            doApplyPermissions();
+        } );
 
         return results.build();
     }
 
-    private void doApplyPermissions( final NodeId nodeId )
+    private void doApplyPermissions()
     {
+        refresh( RefreshMode.SEARCH );
+
         final Node persistedNode =
-            ContextBuilder.from( ContextAccessor.current() ).branch( branches.first() ).build().callWith( () -> doGetById( nodeId ) );
+            ContextBuilder.from( ContextAccessor.current() ).build().callWith( () -> doGetById( params.getNodeId() ) );
 
         if ( persistedNode == null )
         {
-            throw new NodeNotFoundException( "Node not found: " + nodeId );
+            throw new NodeNotFoundException( "Node not found: " + params.getNodeId() );
         }
 
-        if ( ApplyPermissionsScope.SUBTREE == params.getScope() && params.getNodeId().equals( nodeId ) )
+        final List<Map<Branch, Node>> versionsToApply = findVersionsToApply( persistedNode );
+
+        doApply( versionsToApply );
+
+        refresh( RefreshMode.STORAGE );
+    }
+
+    private List<Map<Branch, Node>> findVersionsToApply( final Node node )
+    {
+        final List<Map<Branch, Node>> result = new ArrayList<>();
+
+        if ( ApplyPermissionsScope.SINGLE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
-            doApplyOnChildren( params.getPermissions(), persistedNode.path() );
+            result.add( getActiveNodes( params.getNodeId(), this.branches ) );
         }
-        else
-        {
-            doApplyOnNode( nodeId, params.getPermissions() );
-        }
+
+        final Context sourceBranchContext = ContextBuilder.from( ContextAccessor.current() ).build();
+
+        result.addAll(
+            findChildrenVersionsToApply( this.nodeStorageService.get( params.getNodeId(), InternalContext.from( sourceBranchContext ) ) ) );
+
+        return result;
     }
 
-    private void doApplyOnNode( final NodeId nodeId, final AccessControlList permissions )
+    private List<Map<Branch, Node>> findChildrenVersionsToApply( final Node node )
     {
-        final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( nodeId, branches );
+        final List<Map<Branch, Node>> result = new ArrayList<>();
 
-        doApplyOnNode( nodeId, permissions, Branches.from( branches.first() ), activeVersionMap, true );
-
-        final Branches otherBranches = activeVersionMap.keySet()
-            .stream()
-            .filter( targetBranch -> !targetBranch.equals( branches.first() ) )
-            .collect( Branches.collecting() );
-
-        otherBranches.forEach( targetBranch -> doApplyOnNode( nodeId, permissions, otherBranches, activeVersionMap, false ) );
-    }
-
-    private void doApplyOnNode( final NodeId nodeId, final AccessControlList permissions, final Branches branches,
-                                final Map<Branch, NodeVersionMetadata> activeVersionMap, final boolean recursive )
-    {
-
-        branches.forEach( branch -> {
-            final NodeVersionData updatedSourceNode = updatePermissionsInBranch( nodeId, appliedVersions.get(
-                                                                                     Optional.ofNullable( activeVersionMap.get( branch ) ).map( NodeVersionMetadata::getNodeVersionId ).orElse( null ) ),
-                                                                                 permissions, branch );
-
-            if ( updatedSourceNode != null )
-            {
-                appliedVersions.put( activeVersionMap.get( branch ).getNodeVersionId(), updatedSourceNode.nodeVersionMetadata() );
-            }
-
-            results.addResult( nodeId, branch, updatedSourceNode != null ? updatedSourceNode.node() : null );
-
-            if ( recursive )
-            {
-                if ( updatedSourceNode != null && updatedSourceNode.node() != null )
-                {
-                    doApplyOnChildren( permissions, updatedSourceNode.node().path() );
-                }
-            }
-        } );
-    }
-
-    private void doApplyOnChildren( final AccessControlList permissions, final NodePath parentPath )
-    {
-        final Context sourceBranchContext = ContextBuilder.from( ContextAccessor.current() ).branch( branches.first() ).build();
+        final Context sourceBranchContext = ContextBuilder.from( ContextAccessor.current() ).build();
 
         final NodeIds childrenIds = NodeIds.from(
-            this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( parentPath ).build(),
+            this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( node.path() ).build(),
                                           SingleRepoSearchSource.from( sourceBranchContext ) ).getIds() );
 
         final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( sourceBranchContext ) );
 
-        for ( Node child : children )
+        children.stream().map( child -> getActiveNodes( child.id(), this.branches ) ).forEach( result::add );
+
+        children.stream().map( this::findChildrenVersionsToApply ).forEach( result::addAll );
+
+        return result;
+    }
+
+
+    private void doApply( List<Map<Branch, Node>> versionsToApply )
+    {
+
+        branches.forEach( branch -> {
+            versionsToApply.stream()
+                .map( versionMap -> versionMap.get( branch ) )
+                .forEach( versionMetadata -> doApplyOnNode( versionMetadata, branch ) );
+        } );
+    }
+
+    private void doApplyOnNode( final Node node, final Branch branch )
+    {
+        if ( node == null )
         {
-            final PermissionsMergingStrategy mergingStrategy =
-                ApplyPermissionsScope.SINGLE == params.getScope() ? PermissionsMergingStrategy.MERGE : PermissionsMergingStrategy.OVERWRITE;
-
-            final AccessControlList childPermissions = mergingStrategy.mergePermissions( child.getPermissions(), permissions );
-
-            doApplyOnNode( child.id(), childPermissions );
+            return;
         }
+
+        final PermissionsMergingStrategy mergingStrategy =
+            !params.getNodeId().equals( node.id() ) && ApplyPermissionsScope.SINGLE == params.getScope()
+                ? PermissionsMergingStrategy.MERGE
+                : PermissionsMergingStrategy.OVERWRITE;
+
+        final AccessControlList permissions = mergingStrategy.mergePermissions( node.getPermissions(), params.getPermissions() );
+
+        final NodeVersionData updatedSourceNode =
+            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch, permissions );
+
+        if ( updatedSourceNode != null )
+        {
+            appliedVersions.put( node.getNodeVersionId(), updatedSourceNode.nodeVersionMetadata() );
+        }
+
+        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.node() : null );
     }
 
     private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
-                                                       final AccessControlList permissions, final Branch branch )
+                                                       final Branch branch, final AccessControlList permissions )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
@@ -216,10 +236,17 @@ public class ApplyNodePermissionsCommand
         } );
     }
 
-    private Map<Branch, NodeVersionMetadata> getActiveNodeVersions( final NodeId nodeId, final Branches branches )
+    private Map<Branch, Node> getActiveNodes( final NodeId nodeId, final Branches branches )
     {
+        final Map<Branch, Node> result = new HashMap<>();
 
-        return GetActiveNodeVersionsCommand.create( this ).nodeId( nodeId ).branches( branches ).build().execute().getNodeVersions();
+        branches.forEach( branch -> {
+            InternalContext context = InternalContext.from( ContextBuilder.copyOf( ContextAccessor.current() ).branch( branch ).build() );
+            final Node node = nodeStorageService.get( nodeId, context );
+            result.put( branch, node );
+        } );
+
+        return result;
     }
 
     private AccessControlList compileNewPermissions( final AccessControlList persistedPermissions, final AccessControlList permissions,
