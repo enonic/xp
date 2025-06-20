@@ -269,6 +269,7 @@ public class PatchNodeCommandTest
                                                                .build() )
                                           .build() );
 
+        ContextBuilder.copyOf( ContextAccessor.current() ).branch( RepositoryConstants.MASTER_BRANCH );
         nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                           .nodeId( createdNode.id() )
                                           .addBranches( Branches.from( RepositoryConstants.MASTER_BRANCH ) )

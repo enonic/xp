@@ -42,7 +42,7 @@ final class ApplyContentPermissionsCommand
             .removePermissions( params.getRemovePermissions() )
             .scope( params.getScope() )
             .applyPermissionsListener( params.getListener() )
-            .addBranches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) );
+            .addBranches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
