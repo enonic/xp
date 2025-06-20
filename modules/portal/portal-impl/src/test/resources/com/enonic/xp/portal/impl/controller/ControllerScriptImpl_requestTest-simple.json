@@ -3,7 +3,6 @@
   "port": 80,
   "mode": "live",
   "webSocket": false,
-  "branch": "draft",
   "params": {},
   "headers": {},
   "getHeader" : {},

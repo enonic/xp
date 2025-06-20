@@ -9,13 +9,14 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -102,6 +103,7 @@ public class MappingHandlerTest
     {
         this.request = new PortalRequest();
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
+        this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
         ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( controllerScript );
@@ -252,7 +254,7 @@ public class MappingHandlerTest
         when( rendererDelegate.render( eq( projectMapping ), same( request ) ) ).thenReturn(
             PortalResponse.create().body( "Project body" ).build() );
         final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "project-app1" );
-        when( this.contentService.findNearestSiteByPath( any( ContentPath.class) ) ).thenReturn( site );
+        when( this.contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( site );
 
         final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertEquals( HttpStatus.OK, response.getStatus() );
@@ -418,8 +420,8 @@ public class MappingHandlerTest
             .displayName( "My Content" )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .permissions( AccessControlList.create()
-                               .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
-                               .build() )
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() )
             .type( ContentTypeName.from( contentTypeName ) );
 
         if ( withPage )
@@ -441,8 +443,7 @@ public class MappingHandlerTest
 
         Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
-        final SiteConfig siteConfig =
-            SiteConfig.create().application( ApplicationKey.from( appKey ) ).config( new PropertyTree() ).build();
+        final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( appKey ) ).config( new PropertyTree() ).build();
         return Site.create()
             .siteConfigs( SiteConfigs.from( siteConfig ) )
             .id( ContentId.from( id ) )

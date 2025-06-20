@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
@@ -26,6 +27,7 @@ public class MacroContextMapperTest
         portalRequest.setHost( "localhost" );
         portalRequest.setPort( 80 );
         portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
+        portalRequest.setBranch( ContentConstants.BRANCH_DRAFT );
         portalRequest.setPath( "/site/live/master/a/b" );
         portalRequest.setRawPath( "/site/live/master/a/b" );
         portalRequest.setContextPath( "/site/live/master/a" );
