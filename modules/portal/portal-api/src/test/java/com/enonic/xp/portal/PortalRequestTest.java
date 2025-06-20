@@ -96,7 +96,7 @@ public class PortalRequestTest
         throws Exception
     {
         final PortalRequest request = new PortalRequest();
-        assertEquals( ContentConstants.BRANCH_DRAFT, request.getBranch() );
+        assertNull( request.getBranch() );
 
         request.setBranch( Branch.from( "another" ) );
         assertEquals( Branch.from( "another" ), request.getBranch() );
