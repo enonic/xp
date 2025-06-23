@@ -18,7 +18,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -69,7 +68,6 @@ class ImageServiceMappingHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
-        ProjectService projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -87,7 +85,7 @@ class ImageServiceMappingHandlerTest
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
         this.handler =
-            new ImageServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+            new ImageServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                             siteService, contentService );
 
         this.request.setMethod( HttpMethod.GET );
@@ -143,6 +141,7 @@ class ImageServiceMappingHandlerTest
         throws Exception
     {
         this.request.setEndpointPath( "/_/image/" );
+        setupContentInsideSite( SiteConfigs.empty() );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
         verify( webHandlerChain, times( 1 ) ).handle( eq( request ), isA( PortalResponse.class ) );

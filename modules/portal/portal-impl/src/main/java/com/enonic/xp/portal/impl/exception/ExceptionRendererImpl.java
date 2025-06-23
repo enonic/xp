@@ -170,13 +170,13 @@ public final class ExceptionRendererImpl
             PortalError.create().status( cause.getStatus() ).message( cause.getMessage() ).exception( cause ).request( req ).build();
 
         final Content siteInRequest = req.getSite();
-        final Content site = resolveSite( siteInRequest, req );
-        if ( site != null )
+        final Content siteOrProject = resolveSite( siteInRequest, req );
+        if ( siteOrProject != null )
         {
-            req.setSite( site );
+            req.setSite( siteOrProject );
             try
             {
-                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build();
+                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() ).build();
                 for ( SiteConfig siteConfig : siteConfigs )
                 {
                     final ApplicationKey applicationKey = siteConfig.getApplicationKey();

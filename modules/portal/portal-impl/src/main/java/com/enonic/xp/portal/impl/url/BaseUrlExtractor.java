@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
@@ -16,7 +15,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
-import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
@@ -59,6 +57,11 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             UrlBuilderHelper.appendSubPath( str, projectName.toString() );
             UrlBuilderHelper.appendSubPath( str, branch.toString() );
 
+            final Content site = portalRequest.getSite();
+            if ( site != null && !site.getPath().isRoot() )
+            {
+                builder.setNearestSite( (Site) site );
+            }
             builder.setBaseUrl( str.toString() );
         }
         else
@@ -70,24 +73,29 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
             builder.setContent( content );
 
-            Site site = null;
+            Content siteOrProject = null;
             if ( content instanceof Site )
             {
-                site = (Site) content;
+                siteOrProject = content;
+                builder.setNearestSite( (Site) siteOrProject );
             }
             else if ( !content.getPath().isRoot() )
             {
-                site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
+                siteOrProject = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
             }
 
-            final SiteConfigs siteConfigs = site != null
-                ? new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build()
-                : Optional.ofNullable( projectService.get( projectName ) ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
-
-            if ( site != null )
+            if ( siteOrProject != null )
             {
-                builder.setNearestSite( site );
+                builder.setNearestSite( (Site) siteOrProject );
             }
+            else
+            {
+                siteOrProject = context.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+            }
+
+            final SiteConfigs siteConfigs = siteOrProject != null
+                ? new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() ).build()
+                : SiteConfigs.empty();
 
             builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
         }

@@ -17,8 +17,11 @@ import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -31,13 +34,10 @@ import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
-import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.site.Site;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -75,8 +75,6 @@ public class SlashApiHandler
 
     private final ContentService contentService;
 
-    private final ProjectService projectService;
-
     private final ExceptionMapper exceptionMapper;
 
     private final ExceptionRenderer exceptionRenderer;
@@ -92,16 +90,14 @@ public class SlashApiHandler
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
                             @Reference final ApiDescriptorService apiDescriptorService, @Reference final ContentService contentService,
-                            @Reference final ProjectService projectService, @Reference final ExceptionMapper exceptionMapper,
-                            @Reference final ExceptionRenderer exceptionRenderer, @Reference final SiteService siteService,
-                            @Reference final WebappService webappService,
+                            @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer,
+                            @Reference final SiteService siteService, @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
                             @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
         this.contentService = contentService;
-        this.projectService = projectService;
         this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
         this.siteService = siteService;
@@ -259,12 +255,19 @@ public class SlashApiHandler
 
         final ContentResolverResult contentResolverResult = new ContentResolver( contentService ).resolve( portalRequest );
 
-        final Site site = contentResolverResult.getNearestSite();
+        final Content siteOrProject = contentResolverResult.getNearestSite() != null
+            ? contentResolverResult.getNearestSite()
+            : ContextBuilder.from( ContextAccessor.current() )
+                .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
+                               .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
+                               .build() )
+                .build()
+                .callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-        portalRequest.setSite( site );
+        portalRequest.setSite( siteOrProject );
         portalRequest.setContent( contentResolverResult.getContent() );
 
-        final SiteConfigs siteConfigs = resolveSiteConfigs( site, portalRequest.getRepositoryId() );
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() ).build();
 
         if ( siteConfigs.isEmpty() )
         {
@@ -292,19 +295,6 @@ public class SlashApiHandler
         }
 
         return false;
-    }
-
-    private SiteConfigs resolveSiteConfigs( final Site site, final RepositoryId repositoryId )
-    {
-        if ( site != null )
-        {
-            return new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build();
-        }
-        else
-        {
-            final Project project = projectService.get( ProjectName.from( repositoryId ) );
-            return project == null ? SiteConfigs.empty() : project.getSiteConfigs();
-        }
     }
 
     private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final String rawPath,

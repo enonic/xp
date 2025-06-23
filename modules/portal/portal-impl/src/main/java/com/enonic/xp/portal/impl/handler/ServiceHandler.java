@@ -9,8 +9,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -22,9 +25,10 @@ import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -128,11 +132,18 @@ public class ServiceHandler
 
         final ContentResolverResult resolvedContent = contentResolver.resolve( portalRequest );
 
-        final Site site = resolvedContent.getNearestSite();
+        final Content siteOrProject = resolvedContent.getNearestSite() != null
+            ? resolvedContent.getNearestSite()
+            : ContextBuilder.from( ContextAccessor.current() )
+                .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
+                               .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
+                               .build() )
+                .build()
+                .callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-        //Checks if the application is set on the current site
-        if ( site != null &&
-            new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build().get( descriptorKey.getApplicationKey() ) ==
+        //Checks if the application is set on the current site or project
+        if ( siteOrProject != null &&
+            new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() ).build().get( descriptorKey.getApplicationKey() ) ==
                 null )
         {
             throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
@@ -148,7 +159,7 @@ public class ServiceHandler
         //Prepares the request
         portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
         portalRequest.setContent( resolvedContent.getContent() );
-        portalRequest.setSite( site );
+        portalRequest.setSite( siteOrProject );
 
         return portalRequest;
     }

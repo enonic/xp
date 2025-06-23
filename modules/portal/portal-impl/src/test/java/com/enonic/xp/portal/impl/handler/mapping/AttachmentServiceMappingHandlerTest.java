@@ -18,7 +18,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -69,7 +68,6 @@ class AttachmentServiceMappingHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
-        ProjectService projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -86,7 +84,7 @@ class AttachmentServiceMappingHandlerTest
         when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.handler = new AttachmentServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory,
+        this.handler = new AttachmentServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory,
                                                             rendererDelegate, siteService, contentService );
 
         this.request.setMethod( HttpMethod.GET );
@@ -149,6 +147,7 @@ class AttachmentServiceMappingHandlerTest
         throws Exception
     {
         this.request.setEndpointPath( "/_/attachment/" );
+        setupContentInsideSite( SiteConfigs.empty() );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
         verify( webHandlerChain, times( 1 ) ).handle( eq( request ), isA( PortalResponse.class ) );

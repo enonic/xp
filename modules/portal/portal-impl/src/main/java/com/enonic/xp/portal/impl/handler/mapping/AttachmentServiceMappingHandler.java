@@ -13,7 +13,6 @@ import com.enonic.xp.portal.handler.EndpointHandler;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.web.HttpMethod;
@@ -29,8 +28,7 @@ public final class AttachmentServiceMappingHandler
     private final MappingHandlerHelper mappingHandlerHelper;
 
     @Activate
-    public AttachmentServiceMappingHandler( @Reference final ProjectService projectService,
-                                            @Reference final ResourceService resourceService,
+    public AttachmentServiceMappingHandler( @Reference final ResourceService resourceService,
                                             @Reference final ControllerScriptFactory controllerScriptFactory,
                                             @Reference final FilterScriptFactory filterScriptFactory,
                                             @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
@@ -39,7 +37,7 @@ public final class AttachmentServiceMappingHandler
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
 
         this.mappingHandlerHelper =
-            new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+            new MappingHandlerHelper( contentService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
                                       new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
     }
 

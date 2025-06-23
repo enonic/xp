@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.time.Instant;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -11,9 +13,10 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
@@ -31,9 +34,7 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -65,7 +66,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -88,8 +88,6 @@ public class MappingHandlerTest
     private RendererDelegate rendererDelegate;
 
     private SiteService siteService;
-
-    private ProjectService projectService;
 
     private PageTemplateService pageTemplateService;
 
@@ -125,14 +123,12 @@ public class MappingHandlerTest
         this.contentService = mock( ContentService.class );
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
-        this.projectService = mock( ProjectService.class );
         this.pageTemplateService = mock( PageTemplateService.class );
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
 
         this.handler = new MappingHandler( siteService, contentService, resourceService, controllerScriptFactory, filterScriptFactory,
-                                           rendererDelegate, projectService, pageTemplateService, pageDescriptorService,
-                                           layoutDescriptorService );
+                                           rendererDelegate, pageTemplateService, pageDescriptorService, layoutDescriptorService );
         this.request.setMethod( HttpMethod.GET );
     }
 
@@ -373,16 +369,13 @@ public class MappingHandlerTest
     {
         final Content content = createPage( "id", contentPath, "app1:ctype", true );
 
-        final Project project = createProject( "my-project", ApplicationKeys.from( ApplicationKey.from( "project-app1" ),
-                                                                                   ApplicationKey.from( "project-app2" ) ) );
+        final ProjectName projectName = ProjectName.from( "my-project" );
+        final Content project = createProject( projectName.toString(), ApplicationKeys.from( ApplicationKey.from( "project-app1" ),
+                                                                                             ApplicationKey.from( "project-app2" ) ) );
 
-        when( projectService.get( isA( ProjectName.class ) ) ).then( ( answer ) -> {
-            assertTrue( ContextAccessor.current().getAuthInfo().hasRole( RoleKeys.ADMIN ) );
+        when( contentService.getByPath( eq( ContentPath.ROOT ) ) ).thenReturn( project );
 
-            return project;
-        } );
-
-        this.request.setRepositoryId( project.getName().getRepoId() );
+        this.request.setRepositoryId( projectName.getRepoId() );
 
         final ContentPath path = ContentPath.from( contentPath ).asAbsolute();
 
@@ -413,7 +406,7 @@ public class MappingHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create()
+        final Content.Builder<?> content = Content.create()
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )
@@ -456,16 +449,31 @@ public class MappingHandlerTest
             .build();
     }
 
-    private Project createProject( final String name, final ApplicationKeys applicationKeys )
+    private Content createProject( final String name, final ApplicationKeys applicationKeys )
     {
-        final Project.Builder project = Project.create().name( ProjectName.from( name ) ).displayName( name ).description( name );
+        final PropertyTree data = new PropertyTree();
 
-        Optional.ofNullable( applicationKeys )
-            .ifPresent( s -> s.stream()
-                .map( applicationKey -> SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() )
-                .forEach( project::addSiteConfig ) );
+        final PropertyTree config = new PropertyTree();
 
-        return project.build();
+        Optional.ofNullable( applicationKeys ).ifPresent( s -> s.stream().forEach( applicationKey -> {
+            final PropertySet set = data.newSet();
+            set.addString( "applicationKey", applicationKey.getName() );
+            set.addSet( "config", config.getRoot().copy( data ) );
+
+            data.setSet( "siteConfig", set );
+        } ) );
+
+        return Content.create()
+            .id( ContentId.from( "0123456789" ) )
+            .name( ContentName.from( name ) )
+            .parentPath( ContentPath.ROOT )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .modifiedTime( Instant.ofEpochSecond( 0 ) )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
+            .createdTime( Instant.ofEpochSecond( 0 ) )
+            .language( Locale.ENGLISH )
+            .data( data )
+            .build();
     }
 
     private PageTemplate createPageTemplate()

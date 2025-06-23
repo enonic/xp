@@ -81,7 +81,6 @@ public class SlashApiHandlerTest
 
     private ContentService contentService;
 
-    private ProjectService projectService;
 
     private SiteService siteService;
 
@@ -101,14 +100,13 @@ public class SlashApiHandlerTest
         apiDescriptorService = mock( ApiDescriptorService.class );
         exceptionRenderer = mock( ExceptionRenderer.class );
         contentService = mock( ContentService.class );
-        projectService = mock( ProjectService.class );
         siteService = mock( SiteService.class );
         webappService = mock( WebappService.class );
         adminToolDescriptorService = mock( AdminToolDescriptorService.class );
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
 
         handler =
-            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, contentService, projectService, new ExceptionMapperImpl(),
+            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, contentService, new ExceptionMapperImpl(),
                                  exceptionRenderer, siteService, webappService, adminToolDescriptorService, universalApiHandlerRegistry );
 
         when( this.exceptionRenderer.render( any(), any() ) ).thenReturn(
@@ -331,10 +329,6 @@ public class SlashApiHandlerTest
         final SiteConfigs projectConfigs = mock( SiteConfigs.class );
         when( projectConfigs.get( eq( applicationKey ) ) ).thenReturn(
             SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() );
-
-        final Project project = mock( Project.class );
-        when( project.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
-        when( projectService.get( eq( ProjectName.from( request.getRepositoryId() ) ) ) ).thenReturn( project );
 
         WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );

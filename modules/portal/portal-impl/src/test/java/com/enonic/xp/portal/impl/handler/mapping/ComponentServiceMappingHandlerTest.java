@@ -20,7 +20,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
@@ -77,7 +76,6 @@ class ComponentServiceMappingHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
-        ProjectService projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         RendererDelegate rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -97,7 +95,7 @@ class ComponentServiceMappingHandlerTest
         when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.handler = new ComponentServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory,
+        this.handler = new ComponentServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory,
                                                            rendererDelegate, siteService, contentService, pageTemplateService,
                                                            pageDescriptorService, layoutDescriptorService );
 
@@ -144,6 +142,7 @@ class ComponentServiceMappingHandlerTest
         throws Exception
     {
         this.request.setEndpointPath( "/_/component/" );
+        setupContentInsideSite( SiteConfigs.empty() );
 
         this.handler.handle( this.request, PortalResponse.create().build(), webHandlerChain );
         verify( webHandlerChain, times( 1 ) ).handle( eq( request ), isA( PortalResponse.class ) );

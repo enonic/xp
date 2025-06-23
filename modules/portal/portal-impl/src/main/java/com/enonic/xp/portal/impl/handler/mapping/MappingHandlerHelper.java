@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,7 +8,7 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.context.Context;
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.page.Page;
@@ -25,14 +24,10 @@ import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -49,7 +44,7 @@ class MappingHandlerHelper
 {
     private static final Pattern PATTERN = Pattern.compile( "^/_/([^/]+)/.*" );
 
-    private final ProjectService projectService;
+    private final ContentService contentService;
 
     private final ResourceService resourceService;
 
@@ -65,21 +60,21 @@ class MappingHandlerHelper
 
     private final PageResolver pageResolver;
 
-    MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
+    MappingHandlerHelper( final ContentService contentService, final ResourceService resourceService,
                           final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
                           final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
                           final ContentResolver contentResolver )
     {
-        this( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver,
+        this( contentService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver,
               contentResolver, null );
     }
 
-    MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
+    MappingHandlerHelper( final ContentService contentService, final ResourceService resourceService,
                           final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
                           final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
                           final ContentResolver contentResolver, final PageResolver pageResolver )
     {
-        this.projectService = projectService;
+        this.contentService = contentService;
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
         this.filterScriptFactory = filterScriptFactory;
@@ -92,12 +87,10 @@ class MappingHandlerHelper
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        if ( !( webRequest instanceof PortalRequest ) )
+        if ( !( webRequest instanceof PortalRequest request ) )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
-
-        final PortalRequest request = (PortalRequest) webRequest;
 
         if ( request.getMode() == RenderMode.ADMIN || !PortalRequestHelper.isSiteBase( request ) )
         {
@@ -115,19 +108,18 @@ class MappingHandlerHelper
 
         final ContentResolverResult resolvedContent = contentResolver.resolve( request );
 
-        final Site site = resolvedContent.getNearestSite();
+        final Content siteOrProject = resolvedContent.getNearestSite() != null
+            ? resolvedContent.getNearestSite()
+            : ContextBuilder.from( ContextAccessor.current() )
+                .repositoryId( request.getRepositoryId() )
+                .branch( request.getBranch() )
+                .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
+                               .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
+                               .build() )
+                .build()
+                .callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-        final SiteConfigs siteConfigs;
-
-        if ( site != null )
-        {
-            siteConfigs = new SiteConfigsDataSerializer().fromProperties( site.getData().getRoot() ).build();
-        }
-        else
-        {
-            final Project project = callAsAdmin( () -> projectService.get( ProjectName.from( request.getRepositoryId() ) ) );
-            siteConfigs = Optional.ofNullable( project ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
-        }
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() ).build();
 
         if ( siteConfigs.isEmpty() )
         {
@@ -150,7 +142,7 @@ class MappingHandlerHelper
             }
             else
             {
-                final PageResolverResult resolvedPage = pageResolver.resolve( content, site != null ? site.getPath() : ContentPath.ROOT );
+                final PageResolverResult resolvedPage = pageResolver.resolve( content, siteOrProject.getPath() );
                 final Page effectivePage = resolvedPage.getEffectivePage();
                 if ( effectivePage != null )
                 {
@@ -164,10 +156,10 @@ class MappingHandlerHelper
                 }
             }
 
-            request.setSite( site );
+            request.setSite( siteOrProject );
             request.setContextPath(
                 request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
-                    ( site != null ? site.getPath() : ContentPath.ROOT ) );
+                    siteOrProject.getPath() );
             request.setApplicationKey( mapping.getApplication() );
 
             if ( mapping.isController() )
@@ -216,16 +208,6 @@ class MappingHandlerHelper
             return worker.execute();
         }
         return Tracer.traceEx( trace, worker::execute );
-    }
-
-    private <T> T callAsAdmin( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-
-        final AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
-
-        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 
     private String getServiceType( final PortalRequest req )
