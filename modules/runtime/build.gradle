@@ -209,7 +209,7 @@ def repackBundle( depProvider, level, Closure config = null ) {
 
 def repackTikaBundle( depProvider, level ) {
     repackBundle( depProvider, level) {
-        forceOptional = ["com.github.javaparser", "net.sf.saxon.str", "org.apache.xerces", "org.apache.commons.logging", "org.apache.logging.log4j", "org.apache.pdfbox", "picocli"]
+        forceOptional = ["com.github.javaparser", "net.sf.saxon.str", "org.apache.xerces", "org.apache.commons.logging", "org.apache.logging.log4j", "org.apache.pdfbox", "picocli", "sun.print"]
     }
 }
 
