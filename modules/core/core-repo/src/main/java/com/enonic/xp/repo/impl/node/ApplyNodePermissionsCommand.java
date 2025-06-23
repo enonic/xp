@@ -107,7 +107,7 @@ public class ApplyNodePermissionsCommand
             throw new NodeNotFoundException( "Node not found: " + params.getNodeId() );
         }
 
-        final List<Map<Branch, Node>> versionsToApply = findVersionsToApply( persistedNode );
+        final List<Map<Branch, Node>> versionsToApply = findVersionsToApply();
 
         doApply( versionsToApply );
 
