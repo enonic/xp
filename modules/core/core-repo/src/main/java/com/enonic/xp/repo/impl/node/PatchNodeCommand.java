@@ -4,18 +4,19 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -36,11 +37,17 @@ public final class PatchNodeCommand
 
     private final BinaryService binaryService;
 
+    private final Branches branches;
+
+    private final PatchNodeResult.Builder results;
+
     private PatchNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.binaryService = builder.binaryService;
+        this.results = PatchNodeResult.create().nodeId( params.getId() );
+        this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
     }
 
     public static Builder create()
@@ -55,38 +62,44 @@ public final class PatchNodeCommand
 
     public PatchNodeResult execute()
     {
-        return doPatchNode();
+        final Context context = this.branches.getSize() == 1
+            ? ContextBuilder.from( ContextAccessor.current() ).branch( this.branches.first() ).build()
+            : ContextAccessor.current();
+
+        context.runWith( () -> {
+            verifyBranch();
+            doPatchNode();
+        } );
+
+        return results.build();
     }
 
-    private PatchNodeResult doPatchNode()
+    private void verifyBranch()
     {
-        final PatchNodeResult.Builder result = PatchNodeResult.create().nodeId( params.getId() );
+        Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
+                                  "Current(source) branch '%s' is not in the list of branches for patch: %s",
+                                  ContextAccessor.current().getBranch(), this.branches );
+    }
 
-        final Branches branches =
-            params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
-
-        final Map<Branch, NodeVersionMetadata> activeVersionMap = getActiveNodeVersions( branches );
+    private void doPatchNode()
+    {
+        final Map<Branch, Node> activeNodeMap = getActiveNodes( this.branches );
 
         final Map<NodeVersionId, NodeVersionMetadata> patchedVersions = new HashMap<>(); // old version id -> new version metadata
 
-        activeVersionMap.keySet().forEach( targetBranch -> {
+        this.branches.forEach( targetBranch -> {
 
             final NodeVersionData updatedTargetNode =
-                patchNodeInBranch( patchedVersions.get( activeVersionMap.get( targetBranch ).getNodeVersionId() ), targetBranch );
+                patchNodeInBranch( patchedVersions.get( activeNodeMap.get( targetBranch ).getNodeVersionId() ), targetBranch );
 
             if ( updatedTargetNode != null )
             {
-                patchedVersions.put( activeVersionMap.get( targetBranch ).getNodeVersionId(), updatedTargetNode.nodeVersionMetadata() );
+                patchedVersions.put( activeNodeMap.get( targetBranch ).getNodeVersionId(), updatedTargetNode.nodeVersionMetadata() );
+                results.nodeId( updatedTargetNode.node().id() );
             }
 
-            result.addResult( targetBranch, updatedTargetNode != null ? updatedTargetNode.node() : null );
-            if ( updatedTargetNode != null )
-            {
-                result.nodeId( updatedTargetNode.node().id() );
-            }
+            results.addResult( targetBranch, updatedTargetNode != null ? updatedTargetNode.node() : null );
         } );
-
-        return result.build();
     }
 
     private NodeVersionData patchNodeInBranch( final NodeVersionMetadata patchedVersionMetadata, final Branch branch )
@@ -150,17 +163,19 @@ public final class PatchNodeCommand
         }
     }
 
-    private Map<Branch, NodeVersionMetadata> getActiveNodeVersions( final Branches branches )
+    private Map<Branch, Node> getActiveNodes( final Branches branches )
     {
-        final NodeId nodeId = branches.stream().<NodeId>mapMulti( ( branch, consumer ) -> {
-            Node node = getPersistedNode( branch );
-            if ( node != null )
-            {
-                consumer.accept( node.id() );
-            }
-        } ).findFirst().orElseThrow( () -> new NodeNotFoundException( "Node not found" ) );
+        final Map<Branch, Node> result = new HashMap<>();
 
-        return GetActiveNodeVersionsCommand.create( this ).nodeId( nodeId ).branches( branches ).build().execute().getNodeVersions();
+        branches.stream().forEach( branch -> result.put( branch, this.getPersistedNode( branch ) ) );
+
+        result.values()
+            .stream()
+            .filter( Objects::nonNull )
+            .findAny()
+            .orElseThrow( () -> new NodeNotFoundException( "No active node found" ) );
+
+        return result;
     }
 
     private Node getPersistedNode( final Branch branch )
