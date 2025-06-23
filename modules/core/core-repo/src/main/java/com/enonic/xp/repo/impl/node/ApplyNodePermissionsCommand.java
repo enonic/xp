@@ -114,7 +114,7 @@ public class ApplyNodePermissionsCommand
         refresh( RefreshMode.STORAGE );
     }
 
-    private List<Map<Branch, Node>> findVersionsToApply( final Node node )
+    private List<Map<Branch, Node>> findVersionsToApply()
     {
         final List<Map<Branch, Node>> result = new ArrayList<>();
 
