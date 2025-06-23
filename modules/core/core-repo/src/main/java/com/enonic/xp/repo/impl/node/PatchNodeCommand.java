@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
@@ -89,8 +90,10 @@ public final class PatchNodeCommand
 
         this.branches.forEach( targetBranch -> {
 
-            final NodeVersionData updatedTargetNode =
-                patchNodeInBranch( patchedVersions.get( activeNodeMap.get( targetBranch ).getNodeVersionId() ), targetBranch );
+            final NodeVersionData updatedTargetNode = patchNodeInBranch( Optional.ofNullable( activeNodeMap.get( targetBranch ) )
+                                                                             .map( activeNode -> patchedVersions.get(
+                                                                                 activeNode.getNodeVersionId() ) )
+                                                                             .orElse( null ), targetBranch );
 
             if ( updatedTargetNode != null )
             {
