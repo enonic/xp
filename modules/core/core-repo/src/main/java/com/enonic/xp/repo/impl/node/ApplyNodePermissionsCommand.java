@@ -241,7 +241,8 @@ public class ApplyNodePermissionsCommand
         final Map<Branch, Node> result = new HashMap<>();
 
         branches.forEach( branch -> {
-            InternalContext context = InternalContext.from( ContextBuilder.copyOf( ContextAccessor.current() ).branch( branch ).build() );
+            final InternalContext context =
+                InternalContext.from( ContextBuilder.copyOf( ContextAccessor.current() ).branch( branch ).build() );
             final Node node = nodeStorageService.get( nodeId, context );
             result.put( branch, node );
         } );
