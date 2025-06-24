@@ -170,7 +170,7 @@ public final class PatchNodeCommand
     {
         final Map<Branch, Node> result = new HashMap<>();
 
-        branches.stream().forEach( branch -> result.put( branch, this.getPersistedNode( branch ) ) );
+        branches.forEach( branch -> result.put( branch, this.getPersistedNode( branch ) ) );
 
         result.values()
             .stream()
