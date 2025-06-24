@@ -32,7 +32,8 @@ public class ContentResolver
 
         if ( contentPath.isRoot() )
         {
-            return new ContentResolverResult( null, false, null, "/", contentPath.toString() );
+            // TODO fetch project content
+            return new ContentResolverResult( null, false, null, request.getContent(), "/", contentPath.toString() );
         }
 
         if ( request.getMode() == RenderMode.EDIT )
@@ -48,13 +49,15 @@ public class ContentResolver
     private ContentResolverResult resolveInNonEditMode( final ContentPath contentPath )
     {
         final Content content = callAsContentAdmin( () -> getContentByPath( contentPath ) );
+        final Content project = callAsContentAdmin( () -> getContentByPath( ContentPath.ROOT ) );
 
         final Site site = content != null && content.isSite()
             ? (Site) content
             : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) );
 
         final String siteRelativePath = siteRelativePath( site, contentPath );
-        return new ContentResolverResult( visibleContent( content ), content != null, site, siteRelativePath, contentPath.toString() );
+        return new ContentResolverResult( visibleContent( content ), content != null, site, project, siteRelativePath,
+                                          contentPath.toString() );
     }
 
     private ContentResolverResult resolveInEditMode( final ContentPath contentPath )
@@ -67,21 +70,23 @@ public class ContentResolver
 
         final Content content = contentById != null ? contentById : callAsContentAdmin( () -> this.getContentByPath( contentPath ) );
 
+        final Content project = callAsContentAdmin( () -> this.getContentByPath( ContentPath.ROOT ) );
+
         if ( content == null )
         {
-            return new ContentResolverResult( null, false, null, contentPathString, contentPathString );
+            return new ContentResolverResult( null, false, null, project, contentPathString, contentPathString );
         }
 
         if ( content.getPath().isRoot() )
         {
-            return new ContentResolverResult( null, false, null, "/", contentPathString );
+            return new ContentResolverResult( null, false, null, project, "/", contentPathString );
         }
 
         final Site site =
             content.isSite() ? (Site) content : callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) );
 
         final String siteRelativePath = siteRelativePath( site, content.getPath() );
-        return new ContentResolverResult( visibleContent( content ), true, site, siteRelativePath, contentPathString );
+        return new ContentResolverResult( visibleContent( content ), true, site, project, siteRelativePath, contentPathString );
     }
 
     private static ContentId tryConvertToContentId( final String contentPathString )

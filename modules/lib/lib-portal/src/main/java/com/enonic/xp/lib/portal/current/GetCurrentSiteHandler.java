@@ -7,6 +7,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.Site;
 
 public final class GetCurrentSiteHandler
     implements ScriptBean
@@ -15,17 +16,17 @@ public final class GetCurrentSiteHandler
 
     public SiteMapper execute()
     {
-        final Content site = getSite();
+        final Site site = getSite();
         return site != null ? new SiteMapper( site ) : null;
     }
 
-    private Content getSite()
+    private Site getSite()
     {
         final Content site = this.request.getSite();
         if ( site != null &&
             site.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ ) )
         {
-            return site;
+            return (Site) site;
         }
         else
         {

@@ -1,15 +1,15 @@
 package com.enonic.xp.lib.content.mapper;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.site.Site;
 
 public final class SiteMapper
     implements MapSerializable
 {
-    private final Content site;
+    private final Site site;
 
-    public SiteMapper( final Content site )
+    public SiteMapper( final Site site )
     {
         this.site = site;
     }

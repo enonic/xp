@@ -21,6 +21,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.resource.ResourceKey;
@@ -114,8 +115,6 @@ public class ServiceHandler
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
         portalRequest.setContextPath( HandlerHelper.findPreRestPath( portalRequest, "service" ) + "/" + servicePath );
 
-        ContentResolver contentResolver = new ContentResolver( this.contentService );
-
         //Retrieves the ServiceDescriptor
         final ServiceDescriptor serviceDescriptor = serviceDescriptorService.getByKey( descriptorKey );
         if ( serviceDescriptor == null )
@@ -130,23 +129,31 @@ public class ServiceHandler
             throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
-        final ContentResolverResult resolvedContent = contentResolver.resolve( portalRequest );
-
-        final Content siteOrProject = resolvedContent.getNearestSite() != null
-            ? resolvedContent.getNearestSite()
-            : ContextBuilder.from( ContextAccessor.current() )
-                .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
-                               .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
-                               .build() )
-                .build()
-                .callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
-
-        //Checks if the application is set on the current site or project
-        if ( siteOrProject != null &&
-            new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() ).build().get( descriptorKey.getApplicationKey() ) ==
-                null )
+        if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
-            throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
+            final ContentResolver contentResolver = new ContentResolver( this.contentService );
+
+            final ContentResolverResult resolvedContent = contentResolver.resolve( portalRequest );
+
+            final Content siteOrProject = resolvedContent.getNearestSite() != null
+                ? resolvedContent.getNearestSite()
+                : ContextBuilder.from( ContextAccessor.current() )
+                    .authInfo( AuthenticationInfo.copyOf( ContextAccessor.current().getAuthInfo() )
+                                   .principals( RoleKeys.CONTENT_MANAGER_ADMIN )
+                                   .build() )
+                    .build()
+                    .callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+
+            //Checks if the application is set on the current site or project
+            if ( siteOrProject != null && new SiteConfigsDataSerializer().fromProperties( siteOrProject.getData().getRoot() )
+                .build()
+                .get( descriptorKey.getApplicationKey() ) == null )
+            {
+                throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
+            }
+
+            portalRequest.setContent( resolvedContent.getContent() );
+            portalRequest.setSite( siteOrProject );
         }
 
         //Checks if the application is set on the current application
@@ -158,8 +165,6 @@ public class ServiceHandler
 
         //Prepares the request
         portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
-        portalRequest.setContent( resolvedContent.getContent() );
-        portalRequest.setSite( siteOrProject );
 
         return portalRequest;
     }

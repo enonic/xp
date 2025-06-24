@@ -7,6 +7,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.controller.ControllerScript;
+import com.enonic.xp.project.Project;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.WebRequest;
@@ -28,6 +29,8 @@ public final class PortalRequest
     private String contextPath;
 
     private Content site;
+
+    private Project project;
 
     private Content content;
 

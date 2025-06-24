@@ -10,17 +10,20 @@ public final class ContentResolverResult
 
     private final Site nearestSite;
 
+    private final Content project;
+
     private final String siteRelativePath;
 
     private final String notFoundHint;
 
     private final boolean contentExists;
 
-    ContentResolverResult( final Content content, final boolean contentExists, final Site nearestSite, final String siteRelativePath,
+    ContentResolverResult( final Content content, final boolean contentExists, final Site nearestSite, final Content project, final String siteRelativePath,
                            final String notFoundHint )
     {
         this.content = content;
         this.nearestSite = nearestSite;
+        this.project = project;
         this.siteRelativePath = siteRelativePath;
         this.notFoundHint = notFoundHint;
         this.contentExists = contentExists;
@@ -51,6 +54,11 @@ public final class ContentResolverResult
     public Site getNearestSite()
     {
         return nearestSite;
+    }
+
+    public Content getProject()
+    {
+        return project;
     }
 
     public Site getNearestSiteOrElseThrow()
