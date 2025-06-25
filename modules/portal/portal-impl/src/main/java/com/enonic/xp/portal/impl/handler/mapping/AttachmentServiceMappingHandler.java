@@ -39,8 +39,9 @@ public final class AttachmentServiceMappingHandler
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "attachment" );
 
         this.mappingHandlerHelper =
-            new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ) );
+            new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                      new ControllerMappingsResolver( siteService ),
+                                      new ContentResolver( contentService, projectService ) );
     }
 
     @Override

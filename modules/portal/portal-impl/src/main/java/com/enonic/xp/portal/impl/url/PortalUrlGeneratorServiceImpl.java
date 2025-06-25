@@ -17,6 +17,7 @@ import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -31,10 +32,13 @@ public class PortalUrlGeneratorServiceImpl
 
     private final ContentService contentService;
 
+    private final ProjectService projectService;
+
     @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final ContentService contentService )
+    public PortalUrlGeneratorServiceImpl( @Reference final ContentService contentService, @Reference final ProjectService projectService )
     {
         this.contentService = contentService;
+        this.projectService = projectService;
     }
 
     @Override
@@ -105,6 +109,7 @@ public class PortalUrlGeneratorServiceImpl
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
             .setBaseUrl( ApiUrlBaseUrlResolver.create()
                              .setContentService( contentService )
+                             .setProjectService( projectService )
                              .setBaseUrl( params.getBaseUrl() )
                              .setDescriptorKey( params.getDescriptorKey() )
                              .setUrlType( params.getUrlType() )

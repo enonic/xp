@@ -13,12 +13,15 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 
 final class ApiUrlBaseUrlResolver
     implements Supplier<String>
 {
     private final ContentService contentService;
+
+    private final ProjectService projectService;
 
     private final DescriptorKey descriptorKey;
 
@@ -29,6 +32,7 @@ final class ApiUrlBaseUrlResolver
     ApiUrlBaseUrlResolver( final Builder builder )
     {
         this.contentService = Objects.requireNonNull( builder.contentService, "ContentService must be set" );
+        this.projectService = Objects.requireNonNull( builder.projectService, "ProjectService must be set" );
         this.descriptorKey = Objects.requireNonNull( builder.descriptorKey, "DescriptorKey must be set" );
         this.baseUrl = builder.baseUrl;
         this.urlType = builder.urlType;
@@ -43,6 +47,8 @@ final class ApiUrlBaseUrlResolver
     {
         private ContentService contentService;
 
+        private ProjectService projectService;
+
         private DescriptorKey descriptorKey;
 
         private String baseUrl;
@@ -52,6 +58,12 @@ final class ApiUrlBaseUrlResolver
         Builder setContentService( final ContentService contentService )
         {
             this.contentService = contentService;
+            return this;
+        }
+
+        Builder setProjectService( final ProjectService projectService )
+        {
+            this.projectService = projectService;
             return this;
         }
 
@@ -127,7 +139,7 @@ final class ApiUrlBaseUrlResolver
                 .build();
 
             final Site nearestSite = context.callWith( () -> {
-                final ContentResolver contentResolver = new ContentResolver( contentService );
+                final ContentResolver contentResolver = new ContentResolver( contentService, projectService );
                 return contentResolver.resolve( portalRequest ).getNearestSite();
             } );
 

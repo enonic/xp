@@ -22,6 +22,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -62,7 +63,7 @@ public class AttachmentMediaHandlerTest
     final void setup()
     {
         this.contentService = mock( ContentService.class );
-        this.handler = new AttachmentMediaHandler( this.contentService );
+        this.handler = new AttachmentMediaHandler( this.contentService, mock( ProjectService.class ) );
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request = new PortalRequest();

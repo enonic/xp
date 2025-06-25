@@ -34,12 +34,11 @@ public final class MappingHandler
                            @Reference final FilterScriptFactory filterScriptFactory, @Reference final RendererDelegate rendererDelegate,
                            @Reference final ProjectService projectService, @Reference final PageTemplateService pageTemplateService,
                            @Reference final PageDescriptorService pageDescriptorService,
-                           @Reference final LayoutDescriptorService layoutDescriptorService
-                           )
+                           @Reference final LayoutDescriptorService layoutDescriptorService )
     {
         this.mappingHandlerHelper =
-            new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ),
+            new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                      new ControllerMappingsResolver( siteService ), new ContentResolver( contentService, projectService ),
                                       new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ) );
     }
 

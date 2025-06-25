@@ -304,6 +304,7 @@ public class SlashApiHandlerTest
     @Test
     void testSiteMountApplicationDoesNotInstalledToSiteAndProject()
     {
+        request.setBaseUri( "/site" );
         request.setContentPath( ContentPath.from( "/mysite" ) );
         request.setEndpointPath( "/_/com.enonic.app.myapp:api-key" );
         request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key" );
@@ -342,6 +343,7 @@ public class SlashApiHandlerTest
     @Test
     void testSiteMountSiteDescriptorNotFound()
     {
+        request.setBaseUri( "/site" );
         request.setContentPath( ContentPath.from( "/mysite" ) );
         request.setEndpointPath( "/_/com.enonic.app.myapp:api-key" );
         request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key" );
@@ -375,6 +377,7 @@ public class SlashApiHandlerTest
     @Test
     void testSiteMountApiDoesNotDefinedIdApis()
     {
+        request.setBaseUri( "/site" );
         request.setContentPath( ContentPath.from( "/mysite" ) );
         request.setEndpointPath( "/_/com.enonic.app.myapp:api-key" );
         request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key" );
@@ -413,6 +416,7 @@ public class SlashApiHandlerTest
     void testSiteMountApiDefinedApis()
         throws Exception
     {
+        request.setBaseUri( "/site" );
         request.setContentPath( ContentPath.from( "/mysite" ) );
         request.setEndpointPath( "/_/com.enonic.app.myapp:api-key-1" );
         request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1" );
@@ -455,6 +459,7 @@ public class SlashApiHandlerTest
     void testSiteMountApiDefinedIdApis()
         throws Exception
     {
+        request.setBaseUri( "/site" );
         request.setContentPath( ContentPath.from( "/mysite" ) );
         request.setEndpointPath( "/_/com.enonic.app.myapp:api-key-1" );
         request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1" );
@@ -492,6 +497,7 @@ public class SlashApiHandlerTest
     @Test
     void testSiteEndpointWithInvalidApplicationName()
     {
+        request.setBaseUri( "/site" );
         request.setEndpointPath( "/_/<>:api-key" );
         request.setRawPath( "/site/project/branch/mysite/_/<>:api-key" );
         request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );

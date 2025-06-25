@@ -49,7 +49,7 @@ public class PortalUrlServiceImpl_apiUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
+        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService, mock( ProjectService.class ) );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

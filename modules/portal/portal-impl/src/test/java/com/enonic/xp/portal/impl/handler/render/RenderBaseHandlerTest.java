@@ -24,6 +24,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -53,6 +54,8 @@ public abstract class RenderBaseHandlerTest
 
     protected ContentService contentService;
 
+    protected ProjectService projectService;
+
     protected PageTemplateService pageTemplateService;
 
     protected PageDescriptorService pageDescriptorService;
@@ -74,6 +77,7 @@ public abstract class RenderBaseHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
+        this.projectService = mock( ProjectService.class );
         this.pageTemplateService = mock( PageTemplateService.class );
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );

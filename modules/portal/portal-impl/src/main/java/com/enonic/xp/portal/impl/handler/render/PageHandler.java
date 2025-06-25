@@ -13,6 +13,7 @@ import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -27,6 +28,8 @@ public final class PageHandler
     extends BaseWebHandler
 {
     private ContentService contentService;
+
+    private ProjectService projectService;
 
     private RendererDelegate rendererDelegate;
 
@@ -56,7 +59,7 @@ public final class PageHandler
         WebHandlerHelper.checkAdminAccess( webRequest );
 
         final PageHandlerWorker worker = new PageHandlerWorker( (PortalRequest) webRequest );
-        worker.contentResolver = new ContentResolver( contentService );
+        worker.contentResolver = new ContentResolver( contentService, projectService );
         worker.rendererDelegate = rendererDelegate;
         worker.pageDescriptorService = pageDescriptorService;
         worker.pageResolver = new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService );
@@ -73,6 +76,12 @@ public final class PageHandler
     public void setContentService( final ContentService contentService )
     {
         this.contentService = contentService;
+    }
+
+    @Reference
+    public void setProjectService( final ProjectService projectService )
+    {
+        this.projectService = projectService;
     }
 
     @Reference

@@ -64,6 +64,7 @@ final class PageHandlerWorker
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
 
         this.request.setSite( site );
+        this.request.setProject( resolvedContent.getProject() );
         this.request.setContent( effectiveContent );
         this.request.setPageDescriptor( resolvedPage.getPageDescriptor() );
         this.request.setApplicationKey( resolvedPage.getApplicationKey() );
@@ -87,7 +88,7 @@ final class PageHandlerWorker
             throw WebException.notFound( "Missing shortcut target" );
         }
 
-        final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() ).portalRequest( this.request );
+        final PageUrlParams pageUrlParams = new PageUrlParams().id( target.toString() );
         final Multimap<String, String> params = pageUrlParams.getParams();
         params.putAll( this.request.getParams() );
         params.putAll( getShortcutParameters( content ) );

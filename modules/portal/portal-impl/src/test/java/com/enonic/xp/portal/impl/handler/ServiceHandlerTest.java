@@ -21,8 +21,10 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -91,13 +93,15 @@ public class ServiceHandlerTest
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
         this.contentService = mock( ContentService.class );
+        ProjectService projectService = mock( ProjectService.class );
 
-        this.handler = new ServiceHandler( contentService, serviceDescriptorService, controllerScriptFactory );
+        this.handler = new ServiceHandler( contentService, serviceDescriptorService, controllerScriptFactory, projectService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
         this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/myservice" );
+        this.request.setBaseUri( "/site" );
     }
 
     @Test
@@ -164,6 +168,7 @@ public class ServiceHandlerTest
     public void executeScript_noContent()
         throws Exception
     {
+        this.request.setBaseUri( "/webapp/demo" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request );
@@ -182,6 +187,7 @@ public class ServiceHandlerTest
     {
         setupContentAndSite();
 
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myrepo" ) );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request );
@@ -207,6 +213,7 @@ public class ServiceHandlerTest
     public void executeScript_validApplication()
         throws Exception
     {
+        this.request.setBaseUri( "/webapp/demo" );
         this.request.setRawPath( "/webapp/demo/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
@@ -219,6 +226,7 @@ public class ServiceHandlerTest
     @Test
     public void executeScript_invalidApplication()
     {
+        this.request.setBaseUri( "/webapp/forbidden" );
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 

@@ -59,7 +59,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( contentService );
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( contentService, mock( ProjectService.class ) );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

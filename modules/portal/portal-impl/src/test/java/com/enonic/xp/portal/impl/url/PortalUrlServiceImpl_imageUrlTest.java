@@ -58,7 +58,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService, mock( ProjectService.class ) );
 
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),

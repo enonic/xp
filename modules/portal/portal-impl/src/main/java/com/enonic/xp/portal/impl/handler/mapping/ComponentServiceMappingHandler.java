@@ -43,9 +43,9 @@ public final class ComponentServiceMappingHandler
         super( HttpMethod.standard(), "component" );
 
         this.mappingHandlerHelper =
-            new MappingHandlerHelper( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ), new ContentResolver( contentService ),
-                                      new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ));
+            new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                      new ControllerMappingsResolver( siteService ), new ContentResolver( contentService, projectService ),
+                                      new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService ) );
     }
 
     @Override

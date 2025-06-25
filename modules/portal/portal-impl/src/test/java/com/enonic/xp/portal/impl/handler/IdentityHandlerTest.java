@@ -13,6 +13,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.HttpMethod;
@@ -68,7 +69,7 @@ public class IdentityHandlerTest
 
         redirectChecksumService = mock( RedirectChecksumService.class );
 
-        this.handler = new IdentityHandler( contentService, idProviderControllerService, redirectChecksumService );
+        this.handler = new IdentityHandler( contentService, mock( ProjectService.class), idProviderControllerService, redirectChecksumService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
@@ -91,7 +92,7 @@ public class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( mock( ContentService.class ), idProviderControllerService, mock() );
+        this.handler = new IdentityHandler( mock( ContentService.class ), mock( ProjectService.class), idProviderControllerService, mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 

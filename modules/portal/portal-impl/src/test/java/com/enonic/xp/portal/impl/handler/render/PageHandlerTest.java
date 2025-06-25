@@ -18,6 +18,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -51,6 +52,7 @@ public class PageHandlerTest
     {
         this.handler = new PageHandler();
         this.handler.setContentService( this.contentService );
+        this.handler.setProjectService( this.projectService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setLayoutDescriptorService( this.layoutDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );
@@ -58,6 +60,8 @@ public class PageHandlerTest
         this.handler.setPortalUrlService( this.portalUrlService );
 
         this.request.setMethod( HttpMethod.GET );
+        this.request.setBaseUri( "/site" );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( null );
     }

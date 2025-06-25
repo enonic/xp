@@ -20,12 +20,14 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.handler.render.RenderBaseHandlerTest;
 import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.TextComponent;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -42,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class ComponentHandlerTest
     extends RenderBaseHandlerTest
@@ -53,8 +56,10 @@ public class ComponentHandlerTest
         throws Exception
     {
         this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor,
-                                             this.pageDescriptorService, this.layoutDescriptorService );
+                                             this.pageDescriptorService, this.layoutDescriptorService, mock( ProjectService.class ) );
 
+        this.request.setBaseUri( "/site" );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/component/main" );
@@ -169,7 +174,8 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderAdded() throws Exception
+    public void testHasContributionsHeaderAdded()
+        throws Exception
     {
         setupSite();
         setupContent();
@@ -194,7 +200,8 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderNotAddedInNonEditMode() throws Exception
+    public void testHasContributionsHeaderNotAddedInNonEditMode()
+        throws Exception
     {
         setupSite();
         setupContent();
@@ -218,7 +225,8 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderNotAddedInEditModeWithoutContributions() throws Exception
+    public void testHasContributionsHeaderNotAddedInEditModeWithoutContributions()
+        throws Exception
     {
         setupSite();
         setupContent();
