@@ -58,8 +58,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService, mock( ProjectService.class ) );
-
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
@@ -423,8 +422,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ImageUrlParams params = new ImageUrlParams().scale( "max(300)" );
 
@@ -453,8 +451,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ImageUrlParams params = new ImageUrlParams().scale( "max(300)" );
 
@@ -496,8 +493,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.ABSOLUTE ).scale( "max(300)" );
 
@@ -526,8 +522,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ImageUrlParams params = new ImageUrlParams().type( UrlTypeConstants.SERVER_RELATIVE )
             .scale( "max(300)" )
@@ -557,8 +552,7 @@ public class PortalUrlServiceImpl_imageUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" ).baseUrl( "baseUrl" );
 

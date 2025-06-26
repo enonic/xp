@@ -75,7 +75,7 @@ public class PortalUrlServiceImpl_processHtmlTest
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService, mock( ProjectService.class ) );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,

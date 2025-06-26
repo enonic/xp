@@ -2,12 +2,9 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.concurrent.Callable;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -17,7 +14,6 @@ import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -29,17 +25,6 @@ public class PortalUrlGeneratorServiceImpl
 
     private static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
         DescriptorKey.from( ApplicationKey.from( "media" ), "attachment" );
-
-    private final ContentService contentService;
-
-    private final ProjectService projectService;
-
-    @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final ContentService contentService, @Reference final ProjectService projectService )
-    {
-        this.contentService = contentService;
-        this.projectService = projectService;
-    }
 
     @Override
     public String imageUrl( final ImageUrlGeneratorParams params )
@@ -108,8 +93,6 @@ public class PortalUrlGeneratorServiceImpl
 
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
             .setBaseUrl( ApiUrlBaseUrlResolver.create()
-                             .setContentService( contentService )
-                             .setProjectService( projectService )
                              .setBaseUrl( params.getBaseUrl() )
                              .setDescriptorKey( params.getDescriptorKey() )
                              .setUrlType( params.getUrlType() )
