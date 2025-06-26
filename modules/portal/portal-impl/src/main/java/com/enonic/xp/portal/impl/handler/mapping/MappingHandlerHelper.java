@@ -15,8 +15,6 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
@@ -49,29 +47,24 @@ class MappingHandlerHelper
 
     private final ControllerMappingsResolver controllerMappingsResolver;
 
-    private final ContentResolver contentResolver;
-
     private final PageResolver pageResolver;
 
     MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
                           final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                          final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver )
+                          final ControllerMappingsResolver controllerMappingsResolver )
     {
-        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver, contentResolver,
-              null );
+        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver, null );
     }
 
     MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
                           final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
-                          final ControllerMappingsResolver controllerMappingsResolver, final ContentResolver contentResolver,
-                          final PageResolver pageResolver )
+                          final ControllerMappingsResolver controllerMappingsResolver, final PageResolver pageResolver )
     {
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
         this.filterScriptFactory = filterScriptFactory;
         this.rendererDelegate = rendererDelegate;
         this.controllerMappingsResolver = controllerMappingsResolver;
-        this.contentResolver = contentResolver;
         this.pageResolver = pageResolver;
     }
 
@@ -97,24 +90,22 @@ class MappingHandlerHelper
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
         }
 
-        final ContentResolverResult resolvedContent = contentResolver.resolve( request );
-
-        final Site site = resolvedContent.getNearestSite();
+        final Site site = request.getSite();
 
         final SiteConfigs siteConfigs = site != null
             ? site.getSiteConfigs()
-            : resolvedContent.getProject() != null ? resolvedContent.getProject().getSiteConfigs() : SiteConfigs.empty();
+            : request.getProject() != null ? request.getProject().getSiteConfigs() : SiteConfigs.empty();
 
         if ( siteConfigs.isEmpty() )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
 
-        final Content content = resolvedContent.getContent();
+        final Content content = request.getContent();
 
         final Optional<ControllerMappingDescriptor> optionalControllerMapping =
-            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs,
-                                                getServiceType( request ) );
+            controllerMappingsResolver.resolve( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
+                                                siteConfigs, getServiceType( request ) );
 
         if ( optionalControllerMapping.isPresent() )
         {

@@ -15,18 +15,15 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.FragmentPageResolver;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -51,8 +48,6 @@ public class ComponentHandler
 
     private final ContentService contentService;
 
-    private final ProjectService projectService;
-
     private final PageDescriptorService pageDescriptorService;
 
     private final LayoutDescriptorService layoutDescriptorService;
@@ -61,7 +56,7 @@ public class ComponentHandler
     public ComponentHandler( @Reference final ContentService contentService, @Reference final RendererDelegate rendererDelegate,
                              @Reference final PageTemplateService pageTemplateService, @Reference final PostProcessor postProcessor,
                              @Reference final PageDescriptorService pageDescriptorService,
-                             @Reference final LayoutDescriptorService layoutDescriptorService, @Reference final ProjectService projectService )
+                             @Reference final LayoutDescriptorService layoutDescriptorService )
     {
         this.contentService = contentService;
         this.rendererDelegate = rendererDelegate;
@@ -69,7 +64,6 @@ public class ComponentHandler
         this.postProcessor = postProcessor;
         this.pageDescriptorService = pageDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.projectService = projectService;
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -119,11 +113,8 @@ public class ComponentHandler
     {
         final PortalRequest portalRequest = (PortalRequest) webRequest;
 
-        final ContentResolver contentResolver = new ContentResolver( contentService, projectService );
-        final ContentResolverResult resolvedContent = contentResolver.resolve( portalRequest );
-
-        final Content content = resolvedContent.getContentOrElseThrow();
-        final Site site = resolvedContent.getNearestSiteOrElseThrow();
+        final Content content = PortalRequestHelper.getContentOrElseThrow( portalRequest );
+        final Site site = PortalRequestHelper.getSiteOrElseThrow( portalRequest );
 
         final PageResolver pageResolver = new PageResolver( pageTemplateService, pageDescriptorService, layoutDescriptorService );
         final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
@@ -159,8 +150,6 @@ public class ComponentHandler
 
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
 
-        portalRequest.setSite( site );
-        portalRequest.setProject( resolvedContent.getProject() );
         portalRequest.setContent( effectiveContent );
         portalRequest.setComponent( component );
         portalRequest.setApplicationKey( resolvedPage.getApplicationKey() );

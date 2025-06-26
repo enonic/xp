@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.handler.portal;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -9,14 +10,26 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BaseSiteHandler;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -31,9 +44,29 @@ public class SiteHandler
     extends BaseSiteHandler
 {
     private static final String SITE_BASE = "/site";
+
     private static final String SITE_PREFIX = SITE_BASE + "/";
 
+    private final ContentService contentService;
+
+    private final ProjectService projectService;
+
+    private final ExceptionMapper exceptionMapper;
+
+    private final ExceptionRenderer exceptionRenderer;
+
     private List<PrincipalKey> draftBranchAllowedFor;
+
+    @Activate
+    public SiteHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
+                        @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+    {
+        this.contentService = contentService;
+        this.projectService = projectService;
+        this.exceptionMapper = exceptionMapper;
+        this.exceptionRenderer = exceptionRenderer;
+    }
+
 
     @Activate
     @Modified
@@ -55,7 +88,12 @@ public class SiteHandler
     protected PortalRequest createPortalRequest( final WebRequest webRequest, final WebResponse webResponse )
     {
         final String baseSubPath = webRequest.getRawPath().substring( ( SITE_PREFIX.length() ) );
-        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, SITE_BASE, baseSubPath );
+        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, SITE_BASE, baseSubPath, RenderMode.LIVE );
+
+        final Project project =
+            callInContext( RoleKeys.ADMIN, () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
+
+        portalRequest.setProject( project );
 
         if ( ContentConstants.BRANCH_DRAFT.equals( portalRequest.getBranch() ) )
         {
@@ -71,18 +109,56 @@ public class SiteHandler
             }
         }
 
+        final ContentPath contentPath = portalRequest.getContentPath();
+        if ( contentPath.isRoot() )
+        {
+            return portalRequest;
+        }
+
+        final Content content = callAsContentAdmin( () -> getContentByPath( contentPath ) );
+
+        if ( content != null )
+        {
+            portalRequest.setContent( visibleContent( content ) );
+            portalRequest.setSite(
+                content.isSite() ? (Site) content : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
+        }
+
         return portalRequest;
     }
 
-    @Reference
-    public void setWebExceptionMapper( final ExceptionMapper exceptionMapper )
+    private Content visibleContent( final Content content )
     {
-        this.exceptionMapper = exceptionMapper;
+        return content.getPath().isRoot() ||
+            !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ )
+            ? null
+            : content;
     }
 
-    @Reference
-    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
+
+    private Content getContentByPath( final ContentPath contentPath )
     {
-        this.exceptionRenderer = exceptionRenderer;
+        try
+        {
+            return this.contentService.getByPath( contentPath );
+        }
+        catch ( final ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private static <T> T callAsContentAdmin( final Callable<T> callable )
+    {
+        return callInContext( RoleKeys.CONTENT_MANAGER_ADMIN, callable );
+    }
+
+    private static <T> T callInContext( final PrincipalKey principalKey, final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.copyOf( context )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( principalKey ).build() )
+            .build()
+            .callWith( callable );
     }
 }

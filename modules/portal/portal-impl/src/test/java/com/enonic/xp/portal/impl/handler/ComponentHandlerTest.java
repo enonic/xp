@@ -20,7 +20,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.handler.render.RenderBaseHandlerTest;
 import com.enonic.xp.portal.postprocess.HtmlTag;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -44,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 
 public class ComponentHandlerTest
     extends RenderBaseHandlerTest
@@ -56,7 +54,7 @@ public class ComponentHandlerTest
         throws Exception
     {
         this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor,
-                                             this.pageDescriptorService, this.layoutDescriptorService, mock( ProjectService.class ) );
+                                             this.pageDescriptorService, this.layoutDescriptorService );
 
         this.request.setBaseUri( "/site" );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
@@ -417,8 +415,7 @@ public class ComponentHandlerTest
 
     private void setupContent( final Content content )
     {
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        this.request.setContent( content );
     }
 
     private Content createPageThatIsFragment( final Component fragmentComponent )

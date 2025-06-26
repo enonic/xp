@@ -6,14 +6,11 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.EndpointHandler;
-import com.enonic.xp.portal.impl.ContentResolver;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.web.HttpMethod;
@@ -29,18 +26,16 @@ public final class ImageServiceMappingHandler
     private final MappingHandlerHelper mappingHandlerHelper;
 
     @Activate
-    public ImageServiceMappingHandler( @Reference final ProjectService projectService, @Reference final ResourceService resourceService,
+    public ImageServiceMappingHandler( @Reference final ResourceService resourceService,
                                        @Reference final ControllerScriptFactory controllerScriptFactory,
                                        @Reference final FilterScriptFactory filterScriptFactory,
-                                       @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService,
-                                       @Reference final ContentService contentService )
+                                       @Reference final RendererDelegate rendererDelegate, @Reference final SiteService siteService )
     {
         super( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ), "image" );
 
         this.mappingHandlerHelper =
             new MappingHandlerHelper( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
-                                      new ControllerMappingsResolver( siteService ),
-                                      new ContentResolver( contentService, projectService ) );
+                                      new ControllerMappingsResolver( siteService ) );
     }
 
     @Override

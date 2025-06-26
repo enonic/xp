@@ -17,7 +17,6 @@ import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -28,8 +27,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -78,10 +75,6 @@ public class SlashApiHandlerTest
 
     private ExceptionRenderer exceptionRenderer;
 
-    private ContentService contentService;
-
-    private ProjectService projectService;
-
     private SiteService siteService;
 
     private WebappService webappService;
@@ -99,16 +92,14 @@ public class SlashApiHandlerTest
         controllerScriptFactory = mock( ControllerScriptFactory.class );
         apiDescriptorService = mock( ApiDescriptorService.class );
         exceptionRenderer = mock( ExceptionRenderer.class );
-        contentService = mock( ContentService.class );
-        projectService = mock( ProjectService.class );
         siteService = mock( SiteService.class );
         webappService = mock( WebappService.class );
         adminToolDescriptorService = mock( AdminToolDescriptorService.class );
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
 
         handler =
-            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, contentService, projectService, new ExceptionMapperImpl(),
-                                 exceptionRenderer, siteService, webappService, adminToolDescriptorService, universalApiHandlerRegistry );
+            new SlashApiHandler( controllerScriptFactory, apiDescriptorService, new ExceptionMapperImpl(), exceptionRenderer, siteService,
+                                 webappService, adminToolDescriptorService, universalApiHandlerRegistry );
 
         when( this.exceptionRenderer.render( any(), any() ) ).thenReturn(
             WebResponse.create().status( HttpStatus.INTERNAL_SERVER_ERROR ).build() );
@@ -326,7 +317,7 @@ public class SlashApiHandlerTest
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
         when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
 
-        when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
+        request.setSite( site );
 
         final SiteConfigs projectConfigs = mock( SiteConfigs.class );
         when( projectConfigs.get( eq( applicationKey ) ) ).thenReturn(
@@ -334,7 +325,8 @@ public class SlashApiHandlerTest
 
         final Project project = mock( Project.class );
         when( project.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
-        when( projectService.get( eq( ProjectName.from( request.getRepositoryId() ) ) ) ).thenReturn( project );
+
+        request.setProject( project );
 
         WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
@@ -366,7 +358,7 @@ public class SlashApiHandlerTest
         when( site.getSiteConfigs() ).thenReturn(
             SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
-        when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
+        request.setSite( site );
 
         when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( null );
 
@@ -400,7 +392,7 @@ public class SlashApiHandlerTest
         when( site.getSiteConfigs() ).thenReturn(
             SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
-        when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
+        request.setSite( site );
 
         final DescriptorKeys siteApiMountDescriptors =
             DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
@@ -439,7 +431,7 @@ public class SlashApiHandlerTest
         when( site.getSiteConfigs() ).thenReturn(
             SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
-        when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
+        request.setSite( site );
 
         final DescriptorKeys siteApiMountDescriptors =
             DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
@@ -482,7 +474,7 @@ public class SlashApiHandlerTest
         when( site.getSiteConfigs() ).thenReturn(
             SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
-        when( contentService.findNearestSiteByPath( eq( site.getPath() ) ) ).thenReturn( site );
+        request.setSite( site );
 
         final DescriptorKeys siteApiMountDescriptors =
             DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );

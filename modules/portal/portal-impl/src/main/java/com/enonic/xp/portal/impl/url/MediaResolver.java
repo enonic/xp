@@ -11,6 +11,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.project.ProjectName;
 
 final class MediaResolver
@@ -46,7 +47,13 @@ final class MediaResolver
             {
                 return Objects.requireNonNull( path );
             }
-            return Objects.requireNonNullElseGet( path, () -> portalRequest.getContentPath().toString() );
+            return Objects.requireNonNullElseGet( path, () -> {
+                if ( PortalRequestHelper.isSiteBase( portalRequest ) )
+                {
+                    return portalRequest.getContentPath().toString();
+                }
+                return null;
+            } );
         } );
 
         final Content content = ContextBuilder.copyOf( ContextAccessor.current() )

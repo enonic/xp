@@ -12,8 +12,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -34,8 +33,6 @@ final class PageHandlerWorker
 
     PortalUrlService portalUrlService;
 
-    ContentResolver contentResolver;
-
     PageResolver pageResolver;
 
     PageDescriptorService pageDescriptorService;
@@ -47,24 +44,20 @@ final class PageHandlerWorker
 
     public PortalResponse execute()
     {
-        final ContentResolverResult resolvedContent = contentResolver.resolve( this.request );
-
-        final Content content = resolvedContent.getContentOrElseThrow();
+        final Content content = PortalRequestHelper.getContentOrElseThrow( request );
 
         if ( content.getType().isShortcut() )
         {
             return renderShortcut( content );
         }
 
-        final Site site = resolvedContent.getNearestSiteOrElseThrow();
+        final Site site = PortalRequestHelper.getSiteOrElseThrow( request );
 
         final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
 
         final Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( request.getMode() );
         final Content effectiveContent = Content.create( content ).page( effectivePage ).build();
 
-        this.request.setSite( site );
-        this.request.setProject( resolvedContent.getProject() );
         this.request.setContent( effectiveContent );
         this.request.setPageDescriptor( resolvedPage.getPageDescriptor() );
         this.request.setApplicationKey( resolvedPage.getApplicationKey() );

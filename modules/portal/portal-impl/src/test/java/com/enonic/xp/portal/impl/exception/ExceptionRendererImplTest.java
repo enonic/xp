@@ -28,7 +28,6 @@ import com.enonic.xp.portal.impl.error.ErrorHandlerScript;
 import com.enonic.xp.portal.impl.error.ErrorHandlerScriptFactory;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -50,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -81,8 +79,8 @@ class ExceptionRendererImplTest
         this.idProviderControllerService = mock( IdProviderControllerService.class );
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService,
-                                                   mock( ProjectService.class ), null, postProcessor, RunMode.DEV );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor, RunMode.DEV );
         this.request = new PortalRequest();
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
@@ -121,8 +119,7 @@ class ExceptionRendererImplTest
     @Test
     void render_with_tip()
     {
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService,
-                                                   mock( ProjectService.class ), null, postProcessor );
+        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
 
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         this.request.setBaseUri( "/site" );
@@ -204,8 +201,7 @@ class ExceptionRendererImplTest
         this.request.setContentPath( ContentPath.from( "/site/myproject/draft/mysite/some/long/path" ) );
 
         final Site site = newSite();
-        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/site/myproject/draft/mysite/some/long/path" ) ) ) ).thenReturn(
-            site );
+        this.request.setSite( site );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
         final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> PortalResponse.create()
@@ -312,8 +308,9 @@ class ExceptionRendererImplTest
     void testRenderForbidden()
         throws IOException
     {
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService,
-                                                   mock( ProjectService.class ), idProviderControllerService, postProcessor, RunMode.PROD );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, idProviderControllerService,
+                                       postProcessor, RunMode.PROD );
 
         when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
         when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );

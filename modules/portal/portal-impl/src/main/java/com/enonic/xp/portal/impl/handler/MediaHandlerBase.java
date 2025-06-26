@@ -12,8 +12,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.VirtualHostContextHelper;
@@ -90,15 +88,10 @@ public abstract class MediaHandlerBase
             throw createNotFoundException();
         }
 
-        if ( webRequest.getEndpointPath() != null && webRequest instanceof PortalRequest portalRequest &&
-            PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( webRequest.getEndpointPath() != null && PortalRequestHelper.isSiteBase( webRequest ) &&
+            !"/".equals( PortalRequestHelper.getSiteRelativePath( (PortalRequest) webRequest ) ) )
         {
-            final ContentResolverResult contentResolverResult =
-                new ContentResolver( contentService, projectService ).resolve( portalRequest );
-            if ( !"/".equals( contentResolverResult.getSiteRelativePath() ) )
-            {
-                throw createNotFoundException();
-            }
+            throw createNotFoundException();
         }
     }
 

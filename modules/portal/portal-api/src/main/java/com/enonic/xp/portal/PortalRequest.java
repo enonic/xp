@@ -23,7 +23,7 @@ public final class PortalRequest
 
     private Branch branch;
 
-    private ContentPath contentPath = ContentPath.ROOT;
+    private ContentPath contentPath;
 
     private String baseUri = "";
 

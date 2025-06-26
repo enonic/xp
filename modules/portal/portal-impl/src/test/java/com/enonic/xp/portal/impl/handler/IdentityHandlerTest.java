@@ -7,13 +7,11 @@ import org.mockito.invocation.InvocationOnMock;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.web.HttpMethod;
@@ -47,7 +45,6 @@ public class IdentityHandlerTest
         throws Exception
     {
         this.request = new PortalRequest();
-        final ContentService contentService = mock( ContentService.class );
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
 
@@ -69,7 +66,7 @@ public class IdentityHandlerTest
 
         redirectChecksumService = mock( RedirectChecksumService.class );
 
-        this.handler = new IdentityHandler( contentService, mock( ProjectService.class), idProviderControllerService, redirectChecksumService );
+        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setEndpointPath( "/_/idprovider/myidprovider?param1=value1" );
@@ -92,7 +89,7 @@ public class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( mock( ContentService.class ), mock( ProjectService.class), idProviderControllerService, mock() );
+        this.handler = new IdentityHandler( idProviderControllerService, mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 

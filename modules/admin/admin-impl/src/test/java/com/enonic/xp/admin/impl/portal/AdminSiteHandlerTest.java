@@ -6,8 +6,10 @@ import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -34,12 +36,8 @@ public class AdminSiteHandlerTest
     public final void setup()
         throws Exception
     {
-        final ExceptionMapper exceptionMapper = Mockito.mock( ExceptionMapper.class );
-        final ExceptionRenderer exceptionRenderer = Mockito.mock( ExceptionRenderer.class );
-
-        this.handler = new AdminSiteHandler();
-        this.handler.setExceptionMapper( exceptionMapper );
-        this.handler.setExceptionRenderer( exceptionRenderer );
+        this.handler = new AdminSiteHandler( mock( ContentService.class ), mock( ProjectService.class ), mock( ExceptionMapper.class ),
+                                             mock( ExceptionRenderer.class ) );
         this.handler.activate( mock( AdminConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );

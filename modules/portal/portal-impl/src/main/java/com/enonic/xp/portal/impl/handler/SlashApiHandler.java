@@ -17,7 +17,6 @@ import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -25,13 +24,11 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.portal.impl.websocket.WebSocketApiEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.SiteConfig;
@@ -68,10 +65,6 @@ public class SlashApiHandler
 
     private final ApiDescriptorService apiDescriptorService;
 
-    private final ContentService contentService;
-
-    private final ProjectService projectService;
-
     private final ExceptionMapper exceptionMapper;
 
     private final ExceptionRenderer exceptionRenderer;
@@ -86,8 +79,7 @@ public class SlashApiHandler
 
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
-                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final ContentService contentService,
-                            @Reference final ProjectService projectService, @Reference final ExceptionMapper exceptionMapper,
+                            @Reference final ApiDescriptorService apiDescriptorService, @Reference final ExceptionMapper exceptionMapper,
                             @Reference final ExceptionRenderer exceptionRenderer, @Reference final SiteService siteService,
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
@@ -95,8 +87,6 @@ public class SlashApiHandler
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
-        this.contentService = contentService;
-        this.projectService = projectService;
         this.exceptionMapper = exceptionMapper;
         this.exceptionRenderer = exceptionRenderer;
         this.siteService = siteService;
@@ -252,15 +242,9 @@ public class SlashApiHandler
             return true;
         }
 
-        final ContentResolverResult contentResolverResult = new ContentResolver( contentService, projectService ).resolve( portalRequest );
-
-        portalRequest.setSite( contentResolverResult.getNearestSite() );
-        portalRequest.setProject( contentResolverResult.getProject() );
-        portalRequest.setContent( contentResolverResult.getContent() );
-
-        final SiteConfigs siteConfigs = contentResolverResult.getNearestSite() != null
-            ? contentResolverResult.getNearestSite().getSiteConfigs()
-            : contentResolverResult.getProject() != null ? contentResolverResult.getProject().getSiteConfigs() : SiteConfigs.empty();
+        final SiteConfigs siteConfigs = portalRequest.getSite() != null
+            ? portalRequest.getSite().getSiteConfigs()
+            : portalRequest.getProject() != null ? portalRequest.getProject().getSiteConfigs() : SiteConfigs.empty();
 
         if ( siteConfigs.isEmpty() )
         {
@@ -282,7 +266,7 @@ public class SlashApiHandler
 
                 if ( apiMountDescriptor != null )
                 {
-                    return "/".equals( contentResolverResult.getSiteRelativePath() );
+                    return "/".equals( PortalRequestHelper.getSiteRelativePath( portalRequest ) );
                 }
             }
         }

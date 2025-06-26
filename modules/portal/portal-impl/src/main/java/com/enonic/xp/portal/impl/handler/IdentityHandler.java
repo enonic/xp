@@ -10,17 +10,12 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
-import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -41,21 +36,14 @@ public class IdentityHandler
 
     private static final Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
-    private final ContentService contentService;
-
-    private final ProjectService projectService;
-
     private final IdProviderControllerService idProviderControllerService;
 
     private final RedirectChecksumService redirectChecksumService;
 
     @Activate
-    public IdentityHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                            @Reference final IdProviderControllerService idProviderControllerService,
+    public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
                             @Reference final RedirectChecksumService redirectChecksumService )
     {
-        this.contentService = contentService;
-        this.projectService = projectService;
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
     }
@@ -151,15 +139,6 @@ public class IdentityHandler
         if ( idProviderFunction != null )
         {
             checkTicket( portalRequest );
-        }
-
-        if ( PortalRequestHelper.isSiteBase( portalRequest ) )
-        {
-            final ContentResolverResult resolvedContent = new ContentResolver( contentService, projectService ).resolve( portalRequest );
-
-            portalRequest.setContent( resolvedContent.getContent() );
-            portalRequest.setProject( resolvedContent.getProject() );
-            portalRequest.setSite( resolvedContent.getNearestSite() );
         }
 
         return portalRequest;

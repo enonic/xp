@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -36,10 +38,9 @@ public class SiteHandlerTest
     public final void setup()
         throws Exception
     {
-        this.handler = new SiteHandler();
+        this.handler = new SiteHandler( mock( ContentService.class ), mock( ProjectService.class ), mock( ExceptionMapper.class ),
+                                        mock( ExceptionRenderer.class ) );
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
-        this.handler.setWebExceptionMapper( mock( ExceptionMapper.class ) );
-        this.handler.setExceptionRenderer( mock( ExceptionRenderer.class ) );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
         this.request = new WebRequest();
