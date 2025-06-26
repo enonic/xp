@@ -132,11 +132,8 @@ public class ApplyNodePermissionsCommandTest
                                                                                                       .add( AccessControlEntry.create()
                                                                                                                 .allowAll()
                                                                                                                 .principal(
-
-                                                                                                                    ContextAccessor.current()
-                                                                                                                        .getAuthInfo()
-                                                                                                                        .getUser()
-                                                                                                                        .getKey() )
+                                                                                                                    PrincipalKey.from(
+                                                                                                                        "user:my-provider:my-wwuser" ) )
                                                                                                                 .build() )
                                                                                                       .build() )
                                                                                     .build() );

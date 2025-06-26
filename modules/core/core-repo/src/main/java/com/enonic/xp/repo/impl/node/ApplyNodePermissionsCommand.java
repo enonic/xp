@@ -175,6 +175,12 @@ public class ApplyNodePermissionsCommand
 
         final AccessControlList permissions = mergingStrategy.mergePermissions( node.getPermissions(), params.getPermissions() );
 
+        if ( permissions.equals( node.getPermissions() ) )
+        {
+            results.addResult( node.id(), branch, node );
+            return;
+        }
+
         final NodeVersionData updatedSourceNode =
             updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch, permissions );
 
