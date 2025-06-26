@@ -74,7 +74,7 @@ public class ContentServiceImplTest_applyPermissions
 
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
 
-        verify( listener, times( 2 ) ).permissionsApplied( 1 );
+        verify( listener, times( 1 ) ).permissionsApplied( 1 );
 
         assertEquals( 2, result.getResults().size() );
 
