@@ -171,19 +171,6 @@ public class ApplyNodePermissionsCommand
             return;
         }
 
-        final PermissionsMergingStrategy mergingStrategy =
-            !params.getNodeId().equals( node.id() ) && ApplyPermissionsScope.SINGLE == params.getScope()
-                ? PermissionsMergingStrategy.MERGE
-                : PermissionsMergingStrategy.OVERWRITE;
-
-        final AccessControlList permissions = mergingStrategy.mergePermissions( node.getPermissions(), params.getPermissions() );
-
-//        if ( permissions.equals( node.getPermissions() ) )
-//        {
-//            results.addResult( node.id(), branch, node );
-//            return;
-//        }
-
         final NodeVersionData updatedSourceNode =
             updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch/*, permissions*/ );
 
