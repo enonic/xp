@@ -125,8 +125,11 @@ public class ApplyNodePermissionsCommand
 
         final Context sourceBranchContext = ContextBuilder.from( ContextAccessor.current() ).build();
 
-        result.addAll(
-            findChildrenVersionsToApply( this.nodeStorageService.get( params.getNodeId(), InternalContext.from( sourceBranchContext ) ) ) );
+        if ( ApplyPermissionsScope.SUBTREE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
+        {
+            result.addAll( findChildrenVersionsToApply(
+                this.nodeStorageService.get( params.getNodeId(), InternalContext.from( sourceBranchContext ) ) ) );
+        }
 
         return result;
     }
@@ -168,15 +171,8 @@ public class ApplyNodePermissionsCommand
             return;
         }
 
-        final PermissionsMergingStrategy mergingStrategy =
-            !params.getNodeId().equals( node.id() ) && ApplyPermissionsScope.SINGLE == params.getScope()
-                ? PermissionsMergingStrategy.MERGE
-                : PermissionsMergingStrategy.OVERWRITE;
-
-        final AccessControlList permissions = mergingStrategy.mergePermissions( node.getPermissions(), params.getPermissions() );
-
         final NodeVersionData updatedSourceNode =
-            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch, permissions );
+            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch );
 
         if ( updatedSourceNode != null )
         {
@@ -187,7 +183,7 @@ public class ApplyNodePermissionsCommand
     }
 
     private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
-                                                       final Branch branch, final AccessControlList permissions )
+                                                       final Branch branch )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
@@ -225,7 +221,8 @@ public class ApplyNodePermissionsCommand
             {
                 final Node editedNode = Node.create( persistedNode )
                     .timestamp( Instant.now( CLOCK ) )
-                    .permissions( compileNewPermissions( persistedNode.getPermissions(), permissions, params.getAddPermissions(),
+                    .permissions(
+                        compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
                                                          params.getRemovePermissions() ) )
                     .build();
                 result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
