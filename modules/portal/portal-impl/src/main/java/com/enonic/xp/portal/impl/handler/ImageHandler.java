@@ -39,8 +39,6 @@ public class ImageHandler
 
     private final ImageService imageService;
 
-    private final MediaInfoService mediaInfoService;
-
     private volatile String privateCacheControlHeaderConfig;
 
     private volatile String publicCacheControlHeaderConfig;
@@ -50,12 +48,10 @@ public class ImageHandler
     private volatile String contentSecurityPolicySvg;
 
     @Activate
-    public ImageHandler( @Reference final ContentService contentService, @Reference final ImageService imageService,
-                         @Reference final MediaInfoService mediaInfoService )
+    public ImageHandler( @Reference final ContentService contentService, @Reference final ImageService imageService )
     {
         this.contentService = contentService;
         this.imageService = imageService;
-        this.mediaInfoService = mediaInfoService;
     }
 
     @Activate
@@ -97,7 +93,7 @@ public class ImageHandler
         }
 
         final ImageHandlerWorker worker =
-            new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.mediaInfoService );
+            new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
 
         worker.id = ContentId.from( matcher.group( 1 ) );
         worker.fingerprint = matcher.group( 2 );
