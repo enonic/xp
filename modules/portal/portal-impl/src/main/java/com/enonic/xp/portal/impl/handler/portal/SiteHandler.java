@@ -10,6 +10,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -25,9 +26,9 @@ import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
@@ -50,10 +51,6 @@ public class SiteHandler
     private final ContentService contentService;
 
     private final ProjectService projectService;
-
-    private final ExceptionMapper exceptionMapper;
-
-    private final ExceptionRenderer exceptionRenderer;
 
     private List<PrincipalKey> draftBranchAllowedFor;
 
@@ -90,8 +87,8 @@ public class SiteHandler
         final String baseSubPath = webRequest.getRawPath().substring( ( SITE_PREFIX.length() ) );
         final PortalRequest portalRequest = doCreatePortalRequest( webRequest, SITE_BASE, baseSubPath, RenderMode.LIVE );
 
-        final Project project =
-            callInContext( RoleKeys.ADMIN, () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
+        final Project project = callInContext( portalRequest.getRepositoryId(), portalRequest.getBranch(), RoleKeys.ADMIN,
+                                               () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
 
         portalRequest.setProject( project );
 
@@ -115,24 +112,20 @@ public class SiteHandler
             return portalRequest;
         }
 
-        final Content content = callAsContentAdmin( () -> getContentByPath( contentPath ) );
+        final Content content =
+            callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(), () -> getContentByPath( contentPath ) );
 
         if ( content != null )
         {
-            portalRequest.setContent( visibleContent( content ) );
-            portalRequest.setSite(
-                content.isSite() ? (Site) content : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
+            portalRequest.setContent( content );
+            portalRequest.setContentPath( content.getPath() );
+            portalRequest.setSite( content.isSite()
+                                       ? (Site) content
+                                       : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                             () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
         }
 
         return portalRequest;
-    }
-
-    private Content visibleContent( final Content content )
-    {
-        return content.getPath().isRoot() ||
-            !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ )
-            ? null
-            : content;
     }
 
 
@@ -148,15 +141,18 @@ public class SiteHandler
         }
     }
 
-    private static <T> T callAsContentAdmin( final Callable<T> callable )
+    private static <T> T callAsContentAdmin( final RepositoryId repositoryId, final Branch branch, final Callable<T> callable )
     {
-        return callInContext( RoleKeys.CONTENT_MANAGER_ADMIN, callable );
+        return callInContext( repositoryId, branch, RoleKeys.CONTENT_MANAGER_ADMIN, callable );
     }
 
-    private static <T> T callInContext( final PrincipalKey principalKey, final Callable<T> callable )
+    private static <T> T callInContext( final RepositoryId repositoryId, final Branch branch, final PrincipalKey principalKey,
+                                        final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
-        return ContextBuilder.copyOf( context )
+        return ContextBuilder.from( context )
+            .repositoryId( repositoryId )
+            .branch( branch )
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( principalKey ).build() )
             .build()
             .callWith( callable );

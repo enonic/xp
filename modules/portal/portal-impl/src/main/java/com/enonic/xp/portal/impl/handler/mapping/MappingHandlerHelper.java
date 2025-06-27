@@ -131,7 +131,6 @@ class MappingHandlerHelper
                 }
             }
 
-            request.setSite( site );
             request.setContextPath(
                 request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
                     ( site != null ? site.getPath() : ContentPath.ROOT ) );

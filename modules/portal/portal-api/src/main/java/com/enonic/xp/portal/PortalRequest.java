@@ -146,7 +146,7 @@ public final class PortalRequest
 
     public ContentPath getContentPath()
     {
-        return ( this.content != null ) ? this.content.getPath() : this.contentPath;
+        return contentPath;
     }
 
     public String getBaseUri()

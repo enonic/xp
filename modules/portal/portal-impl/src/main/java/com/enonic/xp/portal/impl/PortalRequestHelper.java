@@ -2,8 +2,10 @@ package com.enonic.xp.portal.impl;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -54,6 +56,11 @@ public final class PortalRequestHelper
         final Content content = portalRequest.getContent();
         if ( content != null )
         {
+            if ( content.getPath().isRoot() ||
+                !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ ) )
+            {
+                throw WebException.forbidden( String.format( "You don't have permission to access [%s]", portalRequest.getContentPath() ) );
+            }
             return content;
         }
         else

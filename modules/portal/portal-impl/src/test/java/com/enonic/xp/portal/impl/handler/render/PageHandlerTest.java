@@ -157,9 +157,8 @@ public class PageHandlerTest
 
         final WebException e =
             assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
-        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-        // TODO to figure out how to resolve this issue
-//        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
+        assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
+        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
     }
 
     @Test
@@ -188,9 +187,8 @@ public class PageHandlerTest
 
         final WebException e = assertThrows( WebException.class, () -> authenticatedContext.callWith(
             () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) ) );
-        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
-        // TODO to figure out how to resolve this issue
-//        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
+        assertEquals( HttpStatus.FORBIDDEN, e.getStatus() );
+        assertEquals( "You don't have permission to access [/site/somepath/content]", e.getMessage() );
     }
 
     @Test

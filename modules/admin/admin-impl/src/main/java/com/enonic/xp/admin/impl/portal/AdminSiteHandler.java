@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -27,9 +28,9 @@ import com.enonic.xp.portal.handler.BaseSiteHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
@@ -54,15 +55,11 @@ public class AdminSiteHandler
 
     private final ProjectService projectService;
 
-    private final ExceptionMapper exceptionMapper;
-
-    private final ExceptionRenderer exceptionRenderer;
-
     private volatile String previewContentSecurityPolicy;
 
     @Activate
     public AdminSiteHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                                @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+                             @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
     {
         this.contentService = contentService;
         this.projectService = projectService;
@@ -97,13 +94,13 @@ public class AdminSiteHandler
 
         final PortalRequest portalRequest = doCreatePortalRequest( webRequest, baseUri, baseSubPath, mode );
 
-        final Project project =
-            callInContext( RoleKeys.ADMIN, () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
+        final Project project = callInContext( portalRequest.getRepositoryId(), portalRequest.getBranch(), RoleKeys.ADMIN,
+                                               () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
 
         portalRequest.setProject( project );
 
         final ContentPath contentPath = portalRequest.getContentPath();
-        if ( contentPath == null || contentPath.isRoot() )
+        if ( contentPath.isRoot() )
         {
             return portalRequest;
         }
@@ -112,27 +109,37 @@ public class AdminSiteHandler
         {
             final ContentId contentId = tryConvertToContentId( contentPath.toString() );
 
-            final Content contentById = contentId != null ? callAsContentAdmin( () -> getContentById( contentId ) ) : null;
+            final Content contentById = contentId != null ? callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                                                () -> getContentById( contentId ) ) : null;
 
-            final Content content = contentById != null ? contentById : callAsContentAdmin( () -> this.getContentByPath( contentPath ) );
+            final Content content = contentById != null
+                ? contentById
+                : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                      () -> this.getContentByPath( contentPath ) );
 
             if ( content != null && !content.getPath().isRoot() )
             {
-                portalRequest.setContent( visibleContent( content ) );
-                portalRequest.setSite(
-                    content.isSite() ? (Site) content : callAsContentAdmin( () -> this.contentService.getNearestSite( content.getId() ) ) );
+                portalRequest.setContent( content );
+                portalRequest.setContentPath( content.getPath() );
+                portalRequest.setSite( content.isSite()
+                                           ? (Site) content
+                                           : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                                 () -> this.contentService.getNearestSite( content.getId() ) ) );
             }
         }
         else
         {
-            final Content content = callAsContentAdmin( () -> getContentByPath( contentPath ) );
+            final Content content =
+                callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(), () -> getContentByPath( contentPath ) );
 
             if ( content != null )
             {
-                portalRequest.setContent( visibleContent( content ) );
+                portalRequest.setContent( content );
+                portalRequest.setContentPath( content.getPath() );
                 portalRequest.setSite( content.isSite()
                                            ? (Site) content
-                                           : callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
+                                           : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                                 () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
             }
         }
 
@@ -171,14 +178,6 @@ public class AdminSiteHandler
         return builder.build();
     }
 
-    private Content visibleContent( final Content content )
-    {
-        return content.getPath().isRoot() ||
-            !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ )
-            ? null
-            : content;
-    }
-
     private static ContentId tryConvertToContentId( final String contentPathString )
     {
         try
@@ -215,15 +214,18 @@ public class AdminSiteHandler
         }
     }
 
-    private static <T> T callAsContentAdmin( final Callable<T> callable )
+    private static <T> T callAsContentAdmin( final RepositoryId repositoryId, final Branch branch, final Callable<T> callable )
     {
-        return callInContext( RoleKeys.CONTENT_MANAGER_ADMIN, callable );
+        return callInContext( repositoryId, branch, RoleKeys.CONTENT_MANAGER_ADMIN, callable );
     }
 
-    private static <T> T callInContext( final PrincipalKey principalKey, final Callable<T> callable )
+    private static <T> T callInContext( final RepositoryId repositoryId, final Branch branch, final PrincipalKey principalKey,
+                                        final Callable<T> callable )
     {
         final Context context = ContextAccessor.current();
-        return ContextBuilder.copyOf( context )
+        return ContextBuilder.from( context )
+            .repositoryId( repositoryId )
+            .branch( branch )
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( principalKey ).build() )
             .build()
             .callWith( callable );
