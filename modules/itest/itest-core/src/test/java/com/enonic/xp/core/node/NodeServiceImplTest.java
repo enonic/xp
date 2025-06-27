@@ -528,11 +528,11 @@ public class NodeServiceImplTest
 
         ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
 
-        verify( eventPublisher, times( 4 ) ).publish( captor.capture() );
+        verify( eventPublisher, times( 2 ) ).publish( captor.capture() );
 
         List<Event> publishedEvents = captor.getAllValues();
 
-        assertEquals( 3,
+        assertEquals( 1,
                       publishedEvents.stream().filter( event -> event.getType().equals( NodeEvents.NODE_PERMISSIONS_UPDATED ) ).count() );
         assertEquals( 1, publishedEvents.stream().filter( event -> event.getType().equals( NodeEvents.NODE_PUSHED_EVENT ) ).count() );
     }

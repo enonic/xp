@@ -267,10 +267,10 @@ public class ApplyNodePermissionsCommand
         {
             return permissions;
         }
-        else if ( addPermissions.isEmpty() && removePermissions.isEmpty() )
-        {
-            return AccessControlList.empty();
-        }
+//        else if ( addPermissions.isEmpty() && removePermissions.isEmpty() )
+//        {
+//            return AccessControlList.empty();
+//        }
 
         final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedPermissions.asMap() );
 
