@@ -171,12 +171,12 @@ public class ApplyNodePermissionsCommand
             return;
         }
 
-//        final PermissionsMergingStrategy mergingStrategy =
-//            !params.getNodeId().equals( node.id() ) && ApplyPermissionsScope.SINGLE == params.getScope()
-//                ? PermissionsMergingStrategy.MERGE
-//                : PermissionsMergingStrategy.OVERWRITE;
+        final PermissionsMergingStrategy mergingStrategy =
+            !params.getNodeId().equals( node.id() ) && ApplyPermissionsScope.SINGLE == params.getScope()
+                ? PermissionsMergingStrategy.MERGE
+                : PermissionsMergingStrategy.OVERWRITE;
 
-//        final AccessControlList permissions = params.getPermissions();
+        final AccessControlList permissions = mergingStrategy.mergePermissions( node.getPermissions(), params.getPermissions() );
 
 //        if ( permissions.equals( node.getPermissions() ) )
 //        {
@@ -267,10 +267,10 @@ public class ApplyNodePermissionsCommand
         {
             return permissions;
         }
-//        else if ( addPermissions.isEmpty() && removePermissions.isEmpty() )
-//        {
-//            return AccessControlList.empty();
-//        }
+        else if ( addPermissions.isEmpty() && removePermissions.isEmpty() )
+        {
+            return AccessControlList.empty();
+        }
 
         final HashMap<PrincipalKey, AccessControlEntry> newPermissions = new HashMap<>( persistedPermissions.asMap() );
 
