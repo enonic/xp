@@ -30,9 +30,9 @@ final class ServiceRequestBaseUrlSupplier
         {
             UrlBuilderHelper.appendSubPath( uriBuilder, ProjectName.from( portalRequest.getRepositoryId() ).toString() );
             UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBranch().getValue() );
+            UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, this.portalRequest.getContentPath().toString() );
         }
 
-        UrlBuilderHelper.appendAndEncodePathParts( uriBuilder, this.portalRequest.getContentPath().toString() );
         UrlBuilderHelper.appendPart( uriBuilder, "_" );
 
         return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, uriBuilder.toString() );

@@ -22,6 +22,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -62,7 +63,7 @@ public class AttachmentMediaHandlerTest
     final void setup()
     {
         this.contentService = mock( ContentService.class );
-        this.handler = new AttachmentMediaHandler( this.contentService );
+        this.handler = new AttachmentMediaHandler( this.contentService, mock( ProjectService.class ) );
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
         this.request = new PortalRequest();
@@ -182,8 +183,7 @@ public class AttachmentMediaHandlerTest
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getByPath( any() ) ).thenReturn( site );
-        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
+        this.request.setSite( site );
 
         final PortalResponse res = (PortalResponse) this.handler.handle( this.request );
         assertNotNull( res );
@@ -205,13 +205,13 @@ public class AttachmentMediaHandlerTest
         this.request.setEndpointPath( "/_/media:attachment/myproject/123456/logo.png" );
         this.request.setRawPath( "/site/myproject1/master/mysite/_/media:attachment/myproject/123456/logo.png" );
 
+
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
 
-        when( contentService.getByPath( any() ) ).thenReturn( site );
-        when( contentService.findNearestSiteByPath( any() ) ).thenReturn( site );
+        this.request.setSite( site );
 
         // mediaService.scope does not specify
         WebResponse webResponse = this.handler.handle( this.request );

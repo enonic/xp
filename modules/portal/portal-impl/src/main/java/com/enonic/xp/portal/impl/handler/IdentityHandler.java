@@ -10,14 +10,11 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Trace;
@@ -39,18 +36,14 @@ public class IdentityHandler
 
     private static final Pattern PATTERN = Pattern.compile( "^([^/^?]+)(?:/(login|logout))?" );
 
-    private final ContentService contentService;
-
     private final IdProviderControllerService idProviderControllerService;
 
     private final RedirectChecksumService redirectChecksumService;
 
     @Activate
-    public IdentityHandler( @Reference final ContentService contentService,
-                            @Reference final IdProviderControllerService idProviderControllerService,
+    public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
                             @Reference final RedirectChecksumService redirectChecksumService )
     {
-        this.contentService = contentService;
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
     }
@@ -147,11 +140,6 @@ public class IdentityHandler
         {
             checkTicket( portalRequest );
         }
-
-        final ContentResolverResult resolvedContent = new ContentResolver( contentService ).resolve( portalRequest );
-
-        portalRequest.setContent( resolvedContent.getContent() );
-        portalRequest.setSite( resolvedContent.getNearestSite() );
 
         return portalRequest;
     }

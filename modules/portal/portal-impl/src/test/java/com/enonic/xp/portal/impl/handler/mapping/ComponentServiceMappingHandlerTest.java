@@ -20,7 +20,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
@@ -77,7 +76,6 @@ class ComponentServiceMappingHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
-        ProjectService projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         RendererDelegate rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -97,9 +95,9 @@ class ComponentServiceMappingHandlerTest
         when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.handler = new ComponentServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory,
-                                                           rendererDelegate, siteService, contentService, pageTemplateService,
-                                                           pageDescriptorService, layoutDescriptorService );
+        this.handler = new ComponentServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                                           siteService, pageTemplateService, pageDescriptorService,
+                                                           layoutDescriptorService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
@@ -113,14 +111,9 @@ class ComponentServiceMappingHandlerTest
         final Site site = Site.create().name( "my-site" ).parentPath( ContentPath.ROOT ).siteConfigs( siteConfigs ).build();
         final Content content = Content.create().name( "my-content" ).parentPath( site.getPath() ).build();
 
-        when( this.contentService.getById( eq( site.getId() ) ) ).thenReturn( site );
-        when( this.contentService.getByPath( eq( site.getPath() ) ) ).thenReturn( site );
-
-        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
-        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-        when( this.contentService.findNearestSiteByPath( eq( content.getPath() ) ) ).thenReturn( site );
-
+        this.request.setContent( content );
         this.request.setContentPath( content.getPath() );
+        this.request.setSite( site );
     }
 
     @Test

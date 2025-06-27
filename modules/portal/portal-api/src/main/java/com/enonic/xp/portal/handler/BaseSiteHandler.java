@@ -3,6 +3,7 @@ package com.enonic.xp.portal.handler;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.web.WebException;
@@ -81,7 +82,8 @@ public abstract class BaseSiteHandler
         return index >= 0 ? repoSubPath.substring( index ) : "";
     }
 
-    protected PortalRequest doCreatePortalRequest( final WebRequest webRequest, final String baseUri, final String baseSubPath )
+    protected PortalRequest doCreatePortalRequest( final WebRequest webRequest, final String baseUri, final String baseSubPath,
+                                                   final RenderMode renderMode )
     {
         final RepositoryId repositoryId = findRepository( baseSubPath );
         final Branch branch = findBranch( baseSubPath );
@@ -92,6 +94,7 @@ public abstract class BaseSiteHandler
         portalRequest.setRepositoryId( repositoryId );
         portalRequest.setBranch( branch );
         portalRequest.setContentPath( contentPath );
+        portalRequest.setMode( renderMode );
 
         return portalRequest;
     }

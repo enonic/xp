@@ -11,7 +11,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -23,6 +22,7 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -47,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,8 +56,6 @@ public class ServiceHandlerTest
     private ServiceHandler handler;
 
     private PortalRequest request;
-
-    protected ContentService contentService;
 
     protected ResourceService resourceService;
 
@@ -90,14 +87,13 @@ public class ServiceHandlerTest
         final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create().key( serviceDescriptorKey ).build();
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
-        this.contentService = mock( ContentService.class );
-
-        this.handler = new ServiceHandler( contentService, serviceDescriptorService, controllerScriptFactory );
+        this.handler = new ServiceHandler( serviceDescriptorService, controllerScriptFactory );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/service/demo/myservice" );
         this.request.setRawPath( "/site/draft/site/somepath/content/_/service/demo/myservice" );
+        this.request.setBaseUri( "/site" );
     }
 
     @Test
@@ -164,6 +160,7 @@ public class ServiceHandlerTest
     public void executeScript_noContent()
         throws Exception
     {
+        this.request.setBaseUri( "/webapp/demo" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request );
@@ -182,6 +179,7 @@ public class ServiceHandlerTest
     {
         setupContentAndSite();
 
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myrepo" ) );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
         final WebResponse response = this.handler.handle( this.request );
@@ -207,6 +205,7 @@ public class ServiceHandlerTest
     public void executeScript_validApplication()
         throws Exception
     {
+        this.request.setBaseUri( "/webapp/demo" );
         this.request.setRawPath( "/webapp/demo/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
@@ -219,6 +218,7 @@ public class ServiceHandlerTest
     @Test
     public void executeScript_invalidApplication()
     {
+        this.request.setBaseUri( "/webapp/forbidden" );
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );
         this.request.setEndpointPath( "/_/service/demo/test" );
 
@@ -243,15 +243,10 @@ public class ServiceHandlerTest
     private void setupContentAndSite()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
-
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
+        request.setContent( content );
 
         final Site site = createSite( "id", "site", "myapplication:contenttypename" );
-        when( this.contentService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( site );
-
-        when( this.contentService.findNearestSiteByPath( isA( ContentPath.class ) ) ).thenReturn( site );
-
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        request.setSite( site );
     }
 
     private Content createPage( final String id, final String path, final String contentTypeName, final boolean withPage )
@@ -259,7 +254,7 @@ public class ServiceHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create()
+        final Content.Builder<?> content = Content.create()
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )

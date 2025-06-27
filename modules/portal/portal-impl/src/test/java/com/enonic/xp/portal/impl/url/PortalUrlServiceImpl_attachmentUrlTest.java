@@ -59,7 +59,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     {
         this.contentService = mock( ContentService.class );
 
-        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( contentService );
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
@@ -418,8 +418,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final AttachmentUrlParams params = new AttachmentUrlParams();
 
@@ -448,8 +447,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final AttachmentUrlParams params = new AttachmentUrlParams();
 
@@ -491,8 +489,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.ABSOLUTE );
 
@@ -521,8 +518,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().type( UrlTypeConstants.SERVER_RELATIVE )
 
@@ -551,8 +547,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-
-        when( contentService.findNearestSiteByPath( eq( media.getPath() ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" ).baseUrl( "baseUrl" );
 

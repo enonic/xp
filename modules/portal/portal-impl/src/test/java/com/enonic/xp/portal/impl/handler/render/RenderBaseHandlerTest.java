@@ -24,6 +24,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
@@ -53,6 +54,8 @@ public abstract class RenderBaseHandlerTest
 
     protected ContentService contentService;
 
+    protected ProjectService projectService;
+
     protected PageTemplateService pageTemplateService;
 
     protected PageDescriptorService pageDescriptorService;
@@ -74,6 +77,7 @@ public abstract class RenderBaseHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
+        this.projectService = mock( ProjectService.class );
         this.pageTemplateService = mock( PageTemplateService.class );
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
@@ -83,8 +87,7 @@ public abstract class RenderBaseHandlerTest
         this.rendererDelegate = mock( RendererDelegate.class );
         this.postProcessor = mock( PostProcessor.class );
 
-        when( rendererDelegate.render( any(), same( request ) ) ).
-            thenReturn( PortalResponse.create().body( "Ok" ).build() );
+        when( rendererDelegate.render( any(), same( request ) ) ).thenReturn( PortalResponse.create().body( "Ok" ).build() );
 
         this.rawRequest = mock( HttpServletRequest.class );
         when( this.rawRequest.isUserInRole( anyString() ) ).thenReturn( Boolean.TRUE );
@@ -95,19 +98,14 @@ public abstract class RenderBaseHandlerTest
     protected void setupSite()
     {
         final Site site = createSite( "id", "site" );
-        when( this.contentService.getNearestSite( isA( ContentId.class ) ) ).thenReturn( site );
-        when( this.contentService.findNearestSiteByPath( isA( ContentPath.class ) ) ).thenReturn( site );
+        this.request.setSite( site );
     }
 
     protected void setupContent()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", true );
 
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( content );
-
-        when( this.contentService.getById( content.getId() ) ).
-            thenReturn( content );
+        this.request.setContent( content );
     }
 
     protected final void setupCustomizedTemplateContentAndSite()
@@ -117,31 +115,25 @@ public abstract class RenderBaseHandlerTest
         Page page = Page.create( content.getPage() ).template( null ).descriptor( controllerDescriptor.getKey() ).build();
         content = Content.create( content ).page( page ).build();
 
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( content );
+        this.request.setContent( content );
 
-        when( this.contentService.getNearestSite( isA( ContentId.class ) ) ).
-            thenReturn( createSite( "id", "site" ) );
-
-        when( this.contentService.getById( content.getId() ) ).
-            thenReturn( content );
+        final Site site = createSite( "id", "site" );
+        this.request.setSite( site );
     }
 
     protected final void setupContentWithoutPage()
     {
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).
-            thenReturn( createPage( "id", "site/somepath/content", "myapplication:ctype", false ) );
+        final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", false );
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
+        this.request.setContent( content );
 
         final Site site = createSite( "id", "site" );
-
-        when( this.contentService.findNearestSiteByPath( isA( ContentPath.class ) ) ).
-            thenReturn( site );
+        this.request.setSite( site );
     }
 
     protected final void setupTemplates()
     {
-        when( this.pageTemplateService.getByKey( eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn(
-            createPageTemplate() );
+        when( this.pageTemplateService.getByKey( eq( PageTemplateKey.from( "my-page" ) ) ) ).thenReturn( createPageTemplate() );
 
         when( this.pageDescriptorService.getByKey( isA( DescriptorKey.class ) ) ).thenReturn( createDescriptor() );
 
@@ -157,31 +149,24 @@ public abstract class RenderBaseHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        final Content.Builder content = Content.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( contentTypeName ) )
+        final Content.Builder content = Content.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( contentTypeName ) )
             .permissions( AccessControlList.create()
                               .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
                               .build() );
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create().
-                add( Region.create().name( "main-region" ).
-                    add( PartComponent.create().descriptor( "myapp:mypart" ).
-                        build() ).
-                    build() ).
-                build();
+            PageRegions pageRegions = PageRegions.create()
+                .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
+                .build();
 
-            Page page = Page.create().
-                template( PageTemplateKey.from( "my-page" ) ).
-                regions( pageRegions ).
-                config( rootDataSet ).
-                build();
+            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
             content.page( page );
         }
         return content.build();
@@ -192,20 +177,17 @@ public abstract class RenderBaseHandlerTest
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.addString( "property1", "value1" );
 
-        Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            config( rootDataSet ).
-            build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
-        return Site.create().
-            id( ContentId.from( id ) ).
-            path( ContentPath.from( path ) ).
-            owner( PrincipalKey.from( "user:myStore:me" ) ).
-            displayName( "My Content" ).
-            modifier( PrincipalKey.from( "user:system:admin" ) ).
-            type( ContentTypeName.from( "portal:site" ) ).
-            page( page ).
-            build();
+        return Site.create()
+            .id( ContentId.from( id ) )
+            .path( ContentPath.from( path ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.from( "portal:site" ) )
+            .page( page )
+            .build();
     }
 
     private PageTemplate createPageTemplate()
@@ -213,18 +195,15 @@ public abstract class RenderBaseHandlerTest
         final PropertyTree pageTemplateConfig = new PropertyTree();
         pageTemplateConfig.addLong( "pause", 10000L );
 
-        PageRegions pageRegions = PageRegions.create().
-            add( Region.create().name( "main-region" ).
-                add( PartComponent.create().descriptor( "myapp:mypart" ).
-                    build() ).
-                build() ).
-            build();
+        PageRegions pageRegions = PageRegions.create()
+            .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
+            .build();
 
-        final PageTemplate.Builder builder = PageTemplate.newPageTemplate().
-            key( PageTemplateKey.from( "abc" ) ).
-            canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) ).
-            regions( pageRegions ).
-            config( pageTemplateConfig );
+        final PageTemplate.Builder builder = PageTemplate.newPageTemplate()
+            .key( PageTemplateKey.from( "abc" ) )
+            .canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) )
+            .regions( pageRegions )
+            .config( pageTemplateConfig );
 
         builder.controller( DescriptorKey.from( "mainapplication:landing-page" ) );
 
@@ -247,10 +226,7 @@ public abstract class RenderBaseHandlerTest
 
         parseXml( applicationKey, builder, xml );
 
-        return builder.
-            key( key ).
-            displayName( "Landing page" ).
-            build();
+        return builder.key( key ).displayName( "Landing page" ).build();
     }
 
     private void parseXml( final ApplicationKey applicationKey, final PageDescriptor.Builder builder, final String xml )

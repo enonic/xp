@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.portal;
 
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,11 +11,28 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.handler.BaseSiteHandler;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -33,7 +51,21 @@ public class AdminSiteHandler
 
     private static final Pattern BASE_URI_PATTERN = Pattern.compile( "^/admin/site/(edit|preview|admin|inline)" );
 
+    private final ContentService contentService;
+
+    private final ProjectService projectService;
+
     private volatile String previewContentSecurityPolicy;
+
+    @Activate
+    public AdminSiteHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
+                             @Reference final ExceptionMapper exceptionMapper, @Reference final ExceptionRenderer exceptionRenderer )
+    {
+        this.contentService = contentService;
+        this.projectService = projectService;
+        this.exceptionMapper = exceptionMapper;
+        this.exceptionRenderer = exceptionRenderer;
+    }
 
     @Activate
     @Modified
@@ -60,8 +92,56 @@ public class AdminSiteHandler
         final RenderMode mode = RenderMode.from( matcher.group( 1 ) );
         final String baseSubPath = webRequest.getRawPath().substring( baseUri.length() + 1 );
 
-        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, baseUri, baseSubPath );
-        portalRequest.setMode( mode );
+        final PortalRequest portalRequest = doCreatePortalRequest( webRequest, baseUri, baseSubPath, mode );
+
+        final Project project = callInContext( portalRequest.getRepositoryId(), portalRequest.getBranch(), RoleKeys.ADMIN,
+                                               () -> projectService.get( ProjectName.from( portalRequest.getRepositoryId() ) ) );
+
+        portalRequest.setProject( project );
+
+        final ContentPath contentPath = portalRequest.getContentPath();
+        if ( contentPath.isRoot() )
+        {
+            return portalRequest;
+        }
+
+        if ( mode == RenderMode.EDIT )
+        {
+            final ContentId contentId = tryConvertToContentId( contentPath.toString() );
+
+            final Content contentById = contentId != null ? callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                                                () -> getContentById( contentId ) ) : null;
+
+            final Content content = contentById != null
+                ? contentById
+                : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                      () -> this.getContentByPath( contentPath ) );
+
+            if ( content != null && !content.getPath().isRoot() )
+            {
+                portalRequest.setContent( content );
+                portalRequest.setContentPath( content.getPath() );
+                portalRequest.setSite( content.isSite()
+                                           ? (Site) content
+                                           : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                                 () -> this.contentService.getNearestSite( content.getId() ) ) );
+            }
+        }
+        else
+        {
+            final Content content =
+                callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(), () -> getContentByPath( contentPath ) );
+
+            if ( content != null )
+            {
+                portalRequest.setContent( content );
+                portalRequest.setContentPath( content.getPath() );
+                portalRequest.setSite( content.isSite()
+                                           ? (Site) content
+                                           : callAsContentAdmin( portalRequest.getRepositoryId(), portalRequest.getBranch(),
+                                                                 () -> this.contentService.findNearestSiteByPath( contentPath ) ) );
+            }
+        }
 
         return portalRequest;
     }
@@ -98,15 +178,56 @@ public class AdminSiteHandler
         return builder.build();
     }
 
-    @Reference
-    public void setExceptionMapper( final ExceptionMapper exceptionMapper )
+    private static ContentId tryConvertToContentId( final String contentPathString )
     {
-        this.exceptionMapper = exceptionMapper;
+        try
+        {
+            return ContentId.from( contentPathString.substring( 1 ) );
+        }
+        catch ( Exception e )
+        {
+            return null;
+        }
     }
 
-    @Reference
-    public void setExceptionRenderer( final ExceptionRenderer exceptionRenderer )
+    private Content getContentById( final ContentId contentId )
     {
-        this.exceptionRenderer = exceptionRenderer;
+        try
+        {
+            return this.contentService.getById( contentId );
+        }
+        catch ( final ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private Content getContentByPath( final ContentPath contentPath )
+    {
+        try
+        {
+            return this.contentService.getByPath( contentPath );
+        }
+        catch ( final ContentNotFoundException e )
+        {
+            return null;
+        }
+    }
+
+    private static <T> T callAsContentAdmin( final RepositoryId repositoryId, final Branch branch, final Callable<T> callable )
+    {
+        return callInContext( repositoryId, branch, RoleKeys.CONTENT_MANAGER_ADMIN, callable );
+    }
+
+    private static <T> T callInContext( final RepositoryId repositoryId, final Branch branch, final PrincipalKey principalKey,
+                                        final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        return ContextBuilder.from( context )
+            .repositoryId( repositoryId )
+            .branch( branch )
+            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( principalKey ).build() )
+            .build()
+            .callWith( callable );
     }
 }

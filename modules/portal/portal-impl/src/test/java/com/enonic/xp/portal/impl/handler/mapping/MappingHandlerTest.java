@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
@@ -65,7 +64,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -130,9 +128,8 @@ public class MappingHandlerTest
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-        this.handler = new MappingHandler( siteService, contentService, resourceService, controllerScriptFactory, filterScriptFactory,
-                                           rendererDelegate, projectService, pageTemplateService, pageDescriptorService,
-                                           layoutDescriptorService );
+        this.handler = new MappingHandler( siteService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                           pageTemplateService, pageDescriptorService, layoutDescriptorService );
         this.request.setMethod( HttpMethod.GET );
     }
 
@@ -351,12 +348,8 @@ public class MappingHandlerTest
         final Content content = createPage( "id", "site/somesite/content", "myapplication:ctype", withPage );
         final Site site = createSite( "id", "site", "myapplication:contenttypename", "myapplication" );
 
-        final ContentPath path = ContentPath.from( "site/somesite/content" ).asAbsolute();
-        when( this.contentService.getByPath( path ) ).thenReturn( content );
-
-        when( this.contentService.findNearestSiteByPath( eq( path ) ) ).thenReturn( site );
-
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        this.request.setContent( content );
+        this.request.setSite( site );
 
         final PageTemplate pageTemplate = createPageTemplate();
 
@@ -376,12 +369,8 @@ public class MappingHandlerTest
         final Project project = createProject( "my-project", ApplicationKeys.from( ApplicationKey.from( "project-app1" ),
                                                                                    ApplicationKey.from( "project-app2" ) ) );
 
-        when( projectService.get( isA( ProjectName.class ) ) ).then( ( answer ) -> {
-            assertTrue( ContextAccessor.current().getAuthInfo().hasRole( RoleKeys.ADMIN ) );
-
-            return project;
-        } );
-
+        this.request.setContent( content );
+        this.request.setProject( project );
         this.request.setRepositoryId( project.getName().getRepoId() );
 
         final ContentPath path = ContentPath.from( contentPath ).asAbsolute();
@@ -393,7 +382,8 @@ public class MappingHandlerTest
         if ( siteMapping != null )
         {
             final Site site = createSite( "id", "mysite", "myapplication:contenttypename", "myapplication" );
-            when( this.contentService.findNearestSiteByPath( eq( path ) ) ).thenReturn( site );
+
+            this.request.setSite( site );
 
             final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
             final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();

@@ -22,17 +22,13 @@ public final class GetCurrentSiteHandler
     private Site getSite()
     {
         final Site site = this.request.getSite();
-        if ( site != null )
+        if ( site != null &&
+            site.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ ) )
         {
-            if ( site.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ ) )
-            {
-                return site;
-            }
-            else
-            {
-                return null;
-            }
-        } else {
+            return site;
+        }
+        else
+        {
             return null;
         }
     }

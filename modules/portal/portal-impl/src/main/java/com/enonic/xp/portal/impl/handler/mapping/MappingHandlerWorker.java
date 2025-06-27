@@ -44,7 +44,7 @@ final class MappingHandlerWorker
         final Trace trace = Tracer.current();
         if ( trace != null )
         {
-            trace.put( "contentPath", this.request.getContentPath().toString() );
+            trace.put( "contentPath", this.request.getContentPath() != null ? this.request.getContentPath().toString() : null );
             trace.put( "type", "mapping" );
         }
 

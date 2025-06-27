@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -77,11 +76,11 @@ class ExceptionRendererImplTest
         this.resourceService = mock( ResourceService.class );
         this.portalUrlService = mock( PortalUrlService.class );
         this.contentService = mock( ContentService.class );
-        this.idProviderControllerService = mock(IdProviderControllerService.class);
+        this.idProviderControllerService = mock( IdProviderControllerService.class );
         this.errorHandlerScriptFactory = mock( ErrorHandlerScriptFactory.class );
         this.postProcessor = new MockPostProcessor();
         this.renderer =
-            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService, null, postProcessor, RunMode.DEV );
+            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor, RunMode.DEV );
         this.request = new PortalRequest();
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
@@ -120,7 +119,7 @@ class ExceptionRendererImplTest
     @Test
     void render_with_tip()
     {
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService, null, postProcessor );
+        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, null, postProcessor );
 
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         this.request.setBaseUri( "/site" );
@@ -172,11 +171,14 @@ class ExceptionRendererImplTest
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
+        this.request.setBaseUri( "/site" );
         this.request.setSite( site );
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
-        final ErrorHandlerScript errorHandlerScript =
-            ( portalError, handlerMethod ) -> PortalResponse.create().body( "Custom message page" ).status(
-                HttpStatus.BAD_REQUEST ).postProcess( false ).build();
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handlerMethod ) -> PortalResponse.create()
+            .body( "Custom message page" )
+            .status( HttpStatus.BAD_REQUEST )
+            .postProcess( false )
+            .build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = mock( Resource.class );
@@ -199,12 +201,14 @@ class ExceptionRendererImplTest
         this.request.setContentPath( ContentPath.from( "/site/myproject/draft/mysite/some/long/path" ) );
 
         final Site site = newSite();
-        when( contentService.findNearestSiteByPath( eq( ContentPath.from( "/site/myproject/draft/mysite/some/long/path" )) )).thenReturn( site );
+        this.request.setSite( site );
 
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
-        final ErrorHandlerScript errorHandlerScript =
-            ( portalError, handleMethod ) -> PortalResponse.create().body( "Custom message page" ).status(
-                HttpStatus.NOT_FOUND ).postProcess( false ).build();
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handleMethod ) -> PortalResponse.create()
+            .body( "Custom message page" )
+            .status( HttpStatus.NOT_FOUND )
+            .postProcess( false )
+            .build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = mock( Resource.class );
@@ -248,10 +252,14 @@ class ExceptionRendererImplTest
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
         final Site site = newSite();
+        this.request.setBaseUri( "/site" );
         this.request.setSite( site );
         final ResourceKey errorResource = ResourceKey.from( ApplicationKey.from( "myapplication" ), "site/error/error.js" );
-        final ErrorHandlerScript errorHandlerScript = ( portalError, handlerMethod ) -> PortalResponse.create().body(
-            "<h1>Custom message page</h1><!--#COMPONENT module:myPart -->" ).status( HttpStatus.BAD_REQUEST ).postProcess( true ).build();
+        final ErrorHandlerScript errorHandlerScript = ( portalError, handlerMethod ) -> PortalResponse.create()
+            .body( "<h1>Custom message page</h1><!--#COMPONENT module:myPart -->" )
+            .status( HttpStatus.BAD_REQUEST )
+            .postProcess( true )
+            .build();
 
         when( this.errorHandlerScriptFactory.errorScript( errorResource ) ).thenReturn( errorHandlerScript );
         final Resource resource = mock( Resource.class );
@@ -300,8 +308,9 @@ class ExceptionRendererImplTest
     void testRenderForbidden()
         throws IOException
     {
-        this.renderer = new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, contentService,
-                                                   idProviderControllerService, postProcessor, RunMode.PROD );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, portalUrlService, errorHandlerScriptFactory, idProviderControllerService,
+                                       postProcessor, RunMode.PROD );
 
         when( idProviderControllerService.execute( any( IdProviderControllerExecutionParams.class ) ) ).thenReturn( null );
         when( portalUrlService.identityUrl( any( IdentityUrlParams.class ) ) ).thenReturn( "logoutUrl" );
@@ -342,10 +351,8 @@ class ExceptionRendererImplTest
         final PropertyTree siteConfigConfig = new PropertyTree();
         siteConfigConfig.setLong( "Field", 42L );
 
-        final SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapplication" ) ).
-            config( siteConfigConfig ).
-            build();
+        final SiteConfig siteConfig =
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
 
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );

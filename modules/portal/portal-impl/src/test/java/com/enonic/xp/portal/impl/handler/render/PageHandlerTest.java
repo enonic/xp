@@ -18,6 +18,7 @@ import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -50,7 +51,6 @@ public class PageHandlerTest
         throws Exception
     {
         this.handler = new PageHandler();
-        this.handler.setContentService( this.contentService );
         this.handler.setPageDescriptorService( this.pageDescriptorService );
         this.handler.setLayoutDescriptorService( this.layoutDescriptorService );
         this.handler.setPageTemplateService( this.pageTemplateService );
@@ -58,6 +58,8 @@ public class PageHandlerTest
         this.handler.setPortalUrlService( this.portalUrlService );
 
         this.request.setMethod( HttpMethod.GET );
+        this.request.setBaseUri( "/site" );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( null );
     }
@@ -150,7 +152,7 @@ public class PageHandlerTest
                               .build() )
             .build();
 
-        when( this.contentService.getByPath( path ) ).thenReturn( content );
+        this.request.setContent( content );
         this.request.setContentPath( path );
 
         final WebException e =
@@ -180,7 +182,7 @@ public class PageHandlerTest
                               .build() )
             .build();
 
-        when( this.contentService.getByPath( path ) ).thenReturn( content );
+        this.request.setContent( content );
         this.request.setContentPath( path );
 
         final WebException e = assertThrows( WebException.class, () -> authenticatedContext.callWith(
@@ -211,8 +213,7 @@ public class PageHandlerTest
         setupSite();
         setupContent();
 
-        when( this.pageTemplateService.getByKey( eq( PageTemplateKey.from( "my-page" ) ) ) )
-            .thenThrow( ContentNotFoundException.class );
+        when( this.pageTemplateService.getByKey( eq( PageTemplateKey.from( "my-page" ) ) ) ).thenThrow( ContentNotFoundException.class );
 
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
 
@@ -265,10 +266,10 @@ public class PageHandlerTest
                               .build() )
             .build();
 
-        when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
         when( this.portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenReturn( "/master/site/otherpath" );
 
-        this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
+        this.request.setContent( content );
+        this.request.setContentPath( content.getPath() );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );
@@ -305,11 +306,12 @@ public class PageHandlerTest
                               .build() )
             .build();
 
-        when( this.contentService.getByPath( content.getPath().asAbsolute() ) ).thenReturn( content );
-        when( this.portalUrlService.pageUrl( any( PageUrlParams.class ) ) )
-            .thenReturn( "/master/site/otherpath?product=123456&order=abcdef" );
+        this.request.setContent( content );
 
-        this.request.setContentPath( ContentPath.from( "/site/somepath/shortcut" ) );
+        when( this.portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenReturn(
+            "/master/site/otherpath?product=123456&order=abcdef" );
+
+        this.request.setContentPath( content.getPath() );
 
         final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
         assertNotNull( res );

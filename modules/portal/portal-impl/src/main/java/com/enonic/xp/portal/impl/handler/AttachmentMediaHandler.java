@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.attachment.AttachmentHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -23,9 +24,9 @@ public class AttachmentMediaHandler
     extends MediaHandlerBase
 {
     @Activate
-    public AttachmentMediaHandler( @Reference final ContentService contentService )
+    public AttachmentMediaHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService )
     {
-        super( contentService );
+        super( contentService, projectService );
     }
 
     @Activate
