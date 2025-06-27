@@ -38,8 +38,6 @@ public final class ImageHandlerWorker
 
     private final ImageService imageService;
 
-    private final MediaInfoService mediaInfoService;
-
     public String filterParam;
 
     public String qualityParam;
@@ -48,12 +46,10 @@ public final class ImageHandlerWorker
 
     public ScaleParams scaleParams;
 
-    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService,
-                               final MediaInfoService mediaInfoService )
+    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService )
     {
         super( request, contentService );
         this.imageService = imageService;
-        this.mediaInfoService = mediaInfoService;
     }
 
     @Override
@@ -107,8 +103,7 @@ public final class ImageHandlerWorker
                                     final MediaType contentType )
         throws IOException
     {
-        final ImageOrientation imageOrientation = Objects.requireNonNullElseGet( content.getOrientation(), () -> Objects.requireNonNullElse(
-            mediaInfoService.getImageOrientation( binary ), ImageOrientation.TopLeft ) );
+        final ImageOrientation imageOrientation = Objects.requireNonNullElse( content.getOrientation(), ImageOrientation.TopLeft );
 
         final int imageQuality = nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
 

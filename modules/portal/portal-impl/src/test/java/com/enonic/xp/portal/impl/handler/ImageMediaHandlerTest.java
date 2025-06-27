@@ -21,8 +21,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.VirtualHostContextHelper;
@@ -47,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -63,16 +60,13 @@ public class ImageMediaHandlerTest
 
     private ImageService imageService;
 
-    private MediaInfoService mediaInfoService;
-
     @BeforeEach
     final void setup()
     {
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
-        this.mediaInfoService = mock( MediaInfoService.class );
 
-        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class), this.imageService, this.mediaInfoService );
+        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class), this.imageService );
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( portalConfig );
 
@@ -239,7 +233,6 @@ public class ImageMediaHandlerTest
         throws Exception
     {
         setupContentSvgz();
-        when( mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setBaseUri( "/admin/site/preview" );
         this.request.setEndpointPath( "/_/media:image/myproject/123456/full/image-name.svgz" );

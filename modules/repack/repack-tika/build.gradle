@@ -1,0 +1,50 @@
+apply plugin: 'java-library'
+
+configurations {
+    origin {
+        transitive = false
+    }
+    extra {
+        transitive = false
+    }
+}
+
+dependencies {
+    origin (libs.tika.bundlestandard)
+    extra "org.apache.pdfbox:pdfbox-io:3.0.5"
+    extra "commons-logging:commons-logging:1.3.5"
+    extra "org.apache.logging.log4j:log4j-api:2.25.0"
+    extra "org.apache.logging.log4j:log4j-to-jul:2.25.0"
+}
+
+tasks.named('jar') {
+    from(zipTree(configurations.origin.files.find()))
+    from(configurations.extra.files)
+
+    doFirst {
+        def jarFile = new java.util.jar.JarFile(configurations.origin.files.find())
+        def manifestAttributes = jarFile.manifest.mainAttributes
+
+        def forceOptional = ["com.github.javaparser","org.apache.pdfbox","net.sf.saxon.str", "org.apache.xerces", "org.apache.commons.logging", "org.apache.logging.log4j", "picocli", "sun.print"]
+
+        def modifiedImportPackage = manifestAttributes.getValue( "Import-Package" ).split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+            .collect {
+                return ( it.startsWithAny( forceOptional as CharSequence[] ) && !it.contains( ";resolution:=" ) ) ? it +
+                    ";resolution:=optional" : it
+            }.join( ',' )
+
+        modifiedImportPackage += ',org.osgi.framework.wiring'
+
+        def modifiedClasspath = manifestAttributes.getValue('Bundle-ClassPath') + ',' + configurations.extra.files.collect { it.name }.join(',')
+
+        manifestAttributes.each { key, value ->
+            manifest.attributes((key.toString()): value.toString())
+        }
+
+        manifest.attributes('Import-Package': modifiedImportPackage)
+        manifest.attributes('Bundle-ClassPath': modifiedClasspath)
+
+    }
+
+    archiveBaseName.set('tika-bundle-standard-repack')
+}

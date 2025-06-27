@@ -21,8 +21,6 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
-import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -45,7 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -59,8 +56,6 @@ public class ImageHandlerTest
 
     private ImageService imageService;
 
-    private MediaInfoService mediaInfoService;
-
     private PortalRequest request;
 
     @BeforeEach
@@ -69,9 +64,8 @@ public class ImageHandlerTest
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
-        this.mediaInfoService = mock( MediaInfoService.class );
 
-        this.handler = new ImageHandler( this.contentService, this.imageService, this.mediaInfoService );
+        this.handler = new ImageHandler( this.contentService, this.imageService );
 
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
@@ -272,7 +266,6 @@ public class ImageHandlerTest
         throws Exception
     {
         setupContent();
-        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
         this.request.getParams().put( "filter", "sepia()" );
@@ -291,7 +284,6 @@ public class ImageHandlerTest
         throws Exception
     {
         setupContent();
-        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/scale-100-100/image-name.jpg" );
         this.request.getParams().put( "quality", "-1" );
@@ -366,7 +358,6 @@ public class ImageHandlerTest
         throws Exception
     {
         setupContentSvg();
-        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/full/image-name.svg" );
 
@@ -385,7 +376,6 @@ public class ImageHandlerTest
         throws Exception
     {
         setupContentSvgz();
-        when( this.mediaInfoService.getImageOrientation( any( ByteSource.class ) ) ).thenReturn( ImageOrientation.LeftBottom );
 
         this.request.setEndpointPath( "/_/image/123456/full/image-name.svgz" );
 

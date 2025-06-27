@@ -1,11 +1,15 @@
 package com.enonic.xp.extractor.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.CharMatcher;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 class ExtractedTextCleaner
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ExtractedTextCleaner.class );
 
     private static final String CONTROL_CHARACTERS_TO_PRESERVE = "\r\n\t";
 
@@ -25,7 +29,20 @@ class ExtractedTextCleaner
 
     private static final String LINE_SEPARATOR = "\n";
 
-    public static String clean( final String value )
+    static String clean( final String value )
+    {
+        try
+        {
+            return cleanAll( value );
+        }
+        catch ( Throwable t )
+        {
+            LOG.warn( "Error cleaning up extracted text", t );
+        }
+        return value;
+    }
+
+    private static String cleanAll( final String value )
     {
         String cleanedText = value;
 

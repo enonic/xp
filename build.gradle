@@ -9,7 +9,7 @@ plugins {
 
 ext {
     leafProjects = subprojects.findAll { p -> p.subprojects.empty }
-    javaProjects = leafProjects - project( ':runtime' )
+    javaProjects = leafProjects - project( ':runtime' ) - project( ':repack:repack-elasticsearch' ) - project( ':repack::repack-tika' )
     apiProjects = rootProject.subprojects.findAll { project -> project.name.endsWith( '-api' ) }
 }
 
