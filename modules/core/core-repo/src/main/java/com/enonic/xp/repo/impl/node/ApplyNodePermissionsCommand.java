@@ -172,7 +172,7 @@ public class ApplyNodePermissionsCommand
         }
 
         final NodeVersionData updatedSourceNode =
-            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch/*, permissions*/ );
+            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch );
 
         if ( updatedSourceNode != null )
         {
@@ -183,7 +183,7 @@ public class ApplyNodePermissionsCommand
     }
 
     private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
-                                                       final Branch branch/*, final AccessControlList permissions */ )
+                                                       final Branch branch )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
