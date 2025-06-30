@@ -67,7 +67,7 @@ findbugs-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2
 guava-guava = { module = "com.google.guava:guava", version = "33.4.8-jre" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.20.1" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.21.1" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
