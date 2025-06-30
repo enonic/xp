@@ -24,7 +24,9 @@ final class ServiceRequestBaseUrlSupplier
     @Override
     public String get()
     {
-        final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
+        final StringBuilder uriBuilder = new StringBuilder();
+
+        UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBaseUri() );
 
         if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
