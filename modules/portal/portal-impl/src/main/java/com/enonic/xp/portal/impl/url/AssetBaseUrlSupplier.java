@@ -28,7 +28,9 @@ final class AssetBaseUrlSupplier
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final StringBuilder uriBuilder = new StringBuilder( portalRequest.getBaseUri() );
+        final StringBuilder uriBuilder = new StringBuilder();
+
+        UrlBuilderHelper.appendSubPath( uriBuilder, portalRequest.getBaseUri() );
 
         if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {

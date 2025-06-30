@@ -75,7 +75,7 @@ final class ApiUrlBaseUrlResolver
         {
             return url.toString();
         }
-        else if ( portalRequest != null && !portalRequest.getBaseUri().isEmpty() )
+        else if ( portalRequest != null && portalRequest.getBaseUri() != null && !portalRequest.getBaseUri().isEmpty() )
         {
             return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, url.toString() );
         }
@@ -94,7 +94,8 @@ final class ApiUrlBaseUrlResolver
             url.append( baseUrl );
             UrlBuilderHelper.appendPart( url, "_" );
         }
-        else if ( portalRequest == null || portalRequest.getBaseUri().isEmpty() || portalRequest.getBaseUri().startsWith( "/api/" ) )
+        else if ( portalRequest == null || portalRequest.getBaseUri() == null || portalRequest.getBaseUri().isEmpty() ||
+            portalRequest.getBaseUri().startsWith( "/api/" ) )
         {
             url.append( "/api" );
         }
@@ -111,13 +112,13 @@ final class ApiUrlBaseUrlResolver
 
             UrlBuilderHelper.appendPart( url, "_" );
         }
-        else if ( portalRequest.getBaseUri().equals( "/admin" ) )
+        else if ( "/admin".equals( portalRequest.getBaseUri() ) )
         {
             url.append( "/admin/com.enonic.xp.app.main/home/_/" );
         }
         else
         {
-            url.append( portalRequest.getBaseUri() );
+            UrlBuilderHelper.appendSubPath( url, portalRequest.getBaseUri() );
             UrlBuilderHelper.appendPart( url, "_" );
         }
 

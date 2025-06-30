@@ -160,7 +160,7 @@ public class PortalRequestAdapterTest
         PortalRequest adaptedRequest = portalRequestAdapter.adapt( mockHttpServletRequest );
 
         assertThat( adaptedRequest ).isNotNull();
-        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( "" );
+        assertThat( adaptedRequest.getBaseUri() ).isEqualTo( null );
     }
 
     @Test

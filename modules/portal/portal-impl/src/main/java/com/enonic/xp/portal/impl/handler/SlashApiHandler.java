@@ -324,6 +324,7 @@ public class SlashApiHandler
         }
         else
         {
+            portalRequest.setBaseUri( "/api/" + descriptorKey );
             portalRequest.setContextPath( "/api/" + descriptorKey );
         }
 

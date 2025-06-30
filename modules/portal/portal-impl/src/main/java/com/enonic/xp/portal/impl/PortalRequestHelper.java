@@ -18,7 +18,7 @@ public final class PortalRequestHelper
 
     public static boolean isSiteBase( final WebRequest webRequest )
     {
-        return webRequest instanceof PortalRequest portalRequest &&
+        return webRequest instanceof PortalRequest portalRequest && portalRequest.getBaseUri() != null &&
             ( portalRequest.getBaseUri().equals( "/site" ) || portalRequest.getBaseUri().startsWith( "/admin/site/" ) );
     }
 

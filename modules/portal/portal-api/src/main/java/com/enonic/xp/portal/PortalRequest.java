@@ -25,7 +25,7 @@ public final class PortalRequest
 
     private ContentPath contentPath;
 
-    private String baseUri = "";
+    private String baseUri;
 
     private String contextPath;
 
