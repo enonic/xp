@@ -78,7 +78,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
 
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
+        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,

@@ -2,12 +2,9 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.concurrent.Callable;
 
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -28,14 +25,6 @@ public class PortalUrlGeneratorServiceImpl
 
     private static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
         DescriptorKey.from( ApplicationKey.from( "media" ), "attachment" );
-
-    private final ContentService contentService;
-
-    @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
 
     @Override
     public String imageUrl( final ImageUrlGeneratorParams params )
@@ -104,7 +93,6 @@ public class PortalUrlGeneratorServiceImpl
 
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
             .setBaseUrl( ApiUrlBaseUrlResolver.create()
-                             .setContentService( contentService )
                              .setBaseUrl( params.getBaseUrl() )
                              .setDescriptorKey( params.getDescriptorKey() )
                              .setUrlType( params.getUrlType() )

@@ -18,7 +18,6 @@ import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -69,7 +68,7 @@ class AttachmentServiceMappingHandlerTest
     {
         this.request = new PortalRequest();
         this.contentService = mock( ContentService.class );
-        ProjectService projectService = mock( ProjectService.class );
+
         this.resourceService = mock( ResourceService.class );
         this.rendererDelegate = mock( RendererDelegate.class );
         this.siteService = mock( SiteService.class );
@@ -86,8 +85,8 @@ class AttachmentServiceMappingHandlerTest
         when( filterScriptFactory.fromScript( Mockito.any() ) ).thenReturn( filterScript );
         when( filterScript.execute( Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( portalResponse );
 
-        this.handler = new AttachmentServiceMappingHandler( projectService, resourceService, controllerScriptFactory, filterScriptFactory,
-                                                            rendererDelegate, siteService, contentService );
+        this.handler = new AttachmentServiceMappingHandler( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate,
+                                                            siteService );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
@@ -101,14 +100,9 @@ class AttachmentServiceMappingHandlerTest
         final Site site = Site.create().name( "my-site" ).parentPath( ContentPath.ROOT ).siteConfigs( siteConfigs ).build();
         final Content content = Content.create().name( "my-content" ).parentPath( site.getPath() ).build();
 
-        when( this.contentService.getById( eq( site.getId() ) ) ).thenReturn( site );
-        when( this.contentService.getByPath( eq( site.getPath() ) ) ).thenReturn( site );
-
-        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
-        when( this.contentService.getByPath( eq( content.getPath() ) ) ).thenReturn( content );
-        when( this.contentService.findNearestSiteByPath( eq( content.getPath() ) ) ).thenReturn( site );
-
+        this.request.setContent( content );
         this.request.setContentPath( content.getPath() );
+        this.request.setSite( site );
     }
 
     @Test

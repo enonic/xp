@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,29 +8,19 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.render.PageResolver;
 import com.enonic.xp.portal.impl.handler.render.PageResolverResult;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
-import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -48,8 +37,6 @@ class MappingHandlerHelper
 {
     private static final Pattern PATTERN = Pattern.compile( "^/_/([^/]+)/.*" );
 
-    private final ProjectService projectService;
-
     private final ResourceService resourceService;
 
     private final ControllerScriptFactory controllerScriptFactory;
@@ -60,43 +47,34 @@ class MappingHandlerHelper
 
     private final ControllerMappingsResolver controllerMappingsResolver;
 
-    private final ContentResolver contentResolver;
-
     private final PageResolver pageResolver;
 
-    MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
-                          final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
-                          final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
-                          final ContentResolver contentResolver )
+    MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
+                          final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
+                          final ControllerMappingsResolver controllerMappingsResolver )
     {
-        this( projectService, resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver,
-              contentResolver, null );
+        this( resourceService, controllerScriptFactory, filterScriptFactory, rendererDelegate, controllerMappingsResolver, null );
     }
 
-    MappingHandlerHelper( final ProjectService projectService, final ResourceService resourceService,
-                          final ControllerScriptFactory controllerScriptFactory, final FilterScriptFactory filterScriptFactory,
-                          final RendererDelegate rendererDelegate, final ControllerMappingsResolver controllerMappingsResolver,
-                          final ContentResolver contentResolver, final PageResolver pageResolver )
+    MappingHandlerHelper( final ResourceService resourceService, final ControllerScriptFactory controllerScriptFactory,
+                          final FilterScriptFactory filterScriptFactory, final RendererDelegate rendererDelegate,
+                          final ControllerMappingsResolver controllerMappingsResolver, final PageResolver pageResolver )
     {
-        this.projectService = projectService;
         this.resourceService = resourceService;
         this.controllerScriptFactory = controllerScriptFactory;
         this.filterScriptFactory = filterScriptFactory;
         this.rendererDelegate = rendererDelegate;
         this.controllerMappingsResolver = controllerMappingsResolver;
-        this.contentResolver = contentResolver;
         this.pageResolver = pageResolver;
     }
 
     public WebResponse handle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
-        if ( !( webRequest instanceof PortalRequest ) )
+        if ( !( webRequest instanceof PortalRequest request ) )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
-
-        final PortalRequest request = (PortalRequest) webRequest;
 
         if ( request.getMode() == RenderMode.ADMIN || !PortalRequestHelper.isSiteBase( request ) )
         {
@@ -112,32 +90,22 @@ class MappingHandlerHelper
             throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
         }
 
-        final ContentResolverResult resolvedContent = contentResolver.resolve( request );
+        final Site site = request.getSite();
 
-        final Site site = resolvedContent.getNearestSite();
-
-        final SiteConfigs siteConfigs;
-
-        if ( site != null )
-        {
-            siteConfigs = site.getSiteConfigs();
-        }
-        else
-        {
-            final Project project = callAsAdmin( () -> projectService.get( ProjectName.from( request.getRepositoryId() ) ) );
-            siteConfigs = Optional.ofNullable( project ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
-        }
+        final SiteConfigs siteConfigs = site != null
+            ? site.getSiteConfigs()
+            : request.getProject() != null ? request.getProject().getSiteConfigs() : SiteConfigs.empty();
 
         if ( siteConfigs.isEmpty() )
         {
             return webHandlerChain.handle( webRequest, webResponse );
         }
 
-        final Content content = resolvedContent.getContent();
+        final Content content = request.getContent();
 
         final Optional<ControllerMappingDescriptor> optionalControllerMapping =
-            controllerMappingsResolver.resolve( resolvedContent.getSiteRelativePath(), request.getParams(), content, siteConfigs,
-                                                getServiceType( request ) );
+            controllerMappingsResolver.resolve( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
+                                                siteConfigs, getServiceType( request ) );
 
         if ( optionalControllerMapping.isPresent() )
         {
@@ -163,7 +131,6 @@ class MappingHandlerHelper
                 }
             }
 
-            request.setSite( site );
             request.setContextPath(
                 request.getBaseUri() + "/" + RepositoryUtils.getContentRepoName( request.getRepositoryId() ) + "/" + request.getBranch() +
                     ( site != null ? site.getPath() : ContentPath.ROOT ) );
@@ -215,16 +182,6 @@ class MappingHandlerHelper
             return worker.execute();
         }
         return Tracer.traceEx( trace, worker::execute );
-    }
-
-    private <T> T callAsAdmin( final Callable<T> callable )
-    {
-        final Context context = ContextAccessor.current();
-
-        final AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
-
-        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 
     private String getServiceType( final PortalRequest req )

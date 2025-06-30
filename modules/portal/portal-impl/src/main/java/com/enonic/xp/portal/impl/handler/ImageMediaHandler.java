@@ -16,6 +16,7 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -30,10 +31,10 @@ public class ImageMediaHandler
     private final MediaInfoService mediaInfoService;
 
     @Activate
-    public ImageMediaHandler( @Reference final ContentService contentService, @Reference final ImageService imageService,
-                              @Reference final MediaInfoService mediaInfoService )
+    public ImageMediaHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
+                              @Reference final ImageService imageService, @Reference final MediaInfoService mediaInfoService )
     {
-        super( contentService );
+        super( contentService, projectService );
         this.imageService = imageService;
         this.mediaInfoService = mediaInfoService;
     }

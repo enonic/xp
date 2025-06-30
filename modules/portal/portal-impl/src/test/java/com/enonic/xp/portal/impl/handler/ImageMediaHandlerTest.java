@@ -27,6 +27,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.VirtualHostContextHelper;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -71,7 +72,7 @@ public class ImageMediaHandlerTest
         this.imageService = mock( ImageService.class );
         this.mediaInfoService = mock( MediaInfoService.class );
 
-        this.handler = new ImageMediaHandler( this.contentService, this.imageService, this.mediaInfoService );
+        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class), this.imageService, this.mediaInfoService );
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( portalConfig );
 

@@ -26,6 +26,7 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.TextComponent;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -55,6 +56,8 @@ public class ComponentHandlerTest
         this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor,
                                              this.pageDescriptorService, this.layoutDescriptorService );
 
+        this.request.setBaseUri( "/site" );
+        this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setMethod( HttpMethod.GET );
         this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
         this.request.setEndpointPath( "/_/component/main" );
@@ -169,7 +172,8 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderAdded() throws Exception
+    public void testHasContributionsHeaderAdded()
+        throws Exception
     {
         setupSite();
         setupContent();
@@ -194,7 +198,8 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderNotAddedInNonEditMode() throws Exception
+    public void testHasContributionsHeaderNotAddedInNonEditMode()
+        throws Exception
     {
         setupSite();
         setupContent();
@@ -218,7 +223,8 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderNotAddedInEditModeWithoutContributions() throws Exception
+    public void testHasContributionsHeaderNotAddedInEditModeWithoutContributions()
+        throws Exception
     {
         setupSite();
         setupContent();
@@ -409,8 +415,7 @@ public class ComponentHandlerTest
 
     private void setupContent( final Content content )
     {
-        Mockito.when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
-        Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+        this.request.setContent( content );
     }
 
     private Content createPageThatIsFragment( final Component fragmentComponent )

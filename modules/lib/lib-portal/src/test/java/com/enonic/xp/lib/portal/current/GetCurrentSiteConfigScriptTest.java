@@ -61,11 +61,9 @@ public class GetCurrentSiteConfigScriptTest
     @Test
     public void configFromProject()
     {
-        final Project project = TestDataFixtures.newDefaultProject().build();
-        ContextBuilder.create().repositoryId( project.getName().getRepoId() ).build().runWith( () -> {
-            when( projectService.get( ProjectName.from( ContextAccessor.current().getRepositoryId() ) ) ).thenReturn( project );
+        this.portalRequest.setSite( null );
+        this.portalRequest.setProject( TestDataFixtures.newDefaultProject().build() );
 
-            runFunction( "/test/getCurrentSiteConfig-test.js", "configFromProject" );
-        } );
+        runFunction( "/test/getCurrentSiteConfig-test.js", "configFromProject" );
     }
 }

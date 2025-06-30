@@ -9,22 +9,22 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
-import com.enonic.xp.portal.impl.ContentResolver;
-import com.enonic.xp.portal.impl.ContentResolverResult;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.app.WebAppHandler;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
+import com.enonic.xp.project.Project;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -43,18 +43,14 @@ public class ServiceHandler
 
     private static final Pattern PATTERN = Pattern.compile( "(?<appKey>[^/]+)/(?<serviceName>[^/]+)" );
 
-    private final ContentService contentService;
-
     private final ServiceDescriptorService serviceDescriptorService;
 
     private final ControllerScriptFactory controllerScriptFactory;
 
     @Activate
-    public ServiceHandler( @Reference final ContentService contentService,
-                           @Reference final ServiceDescriptorService serviceDescriptorService,
+    public ServiceHandler( @Reference final ServiceDescriptorService serviceDescriptorService,
                            @Reference final ControllerScriptFactory controllerScriptFactory )
     {
-        this.contentService = contentService;
         this.serviceDescriptorService = serviceDescriptorService;
         this.controllerScriptFactory = controllerScriptFactory;
     }
@@ -109,8 +105,6 @@ public class ServiceHandler
             webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
         portalRequest.setContextPath( HandlerHelper.findPreRestPath( portalRequest, "service" ) + "/" + servicePath );
 
-        ContentResolver contentResolver = new ContentResolver( this.contentService );
-
         //Retrieves the ServiceDescriptor
         final ServiceDescriptor serviceDescriptor = serviceDescriptorService.getByKey( descriptorKey );
         if ( serviceDescriptor == null )
@@ -125,14 +119,19 @@ public class ServiceHandler
             throw WebException.forbidden( String.format( "You don't have permission to access [%s]", descriptorKey ) );
         }
 
-        final ContentResolverResult resolvedContent = contentResolver.resolve( portalRequest );
-
-        final Site site = resolvedContent.getNearestSite();
-
-        //Checks if the application is set on the current site
-        if ( site != null && site.getSiteConfigs().get( descriptorKey.getApplicationKey() ) == null )
+        if ( PortalRequestHelper.isSiteBase( portalRequest ) )
         {
-            throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
+            final Site site = portalRequest.getSite();
+            final Project project = portalRequest.getProject();
+
+            final SiteConfigs siteConfigs =
+                site != null ? site.getSiteConfigs() : project != null ? project.getSiteConfigs() : SiteConfigs.empty();
+
+            //Checks if the application is set on the current site or project
+            if ( siteConfigs.get( descriptorKey.getApplicationKey() ) == null )
+            {
+                throw WebException.forbidden( String.format( "Service [%s] forbidden for this site", descriptorKey ) );
+            }
         }
 
         //Checks if the application is set on the current application
@@ -144,8 +143,6 @@ public class ServiceHandler
 
         //Prepares the request
         portalRequest.setApplicationKey( descriptorKey.getApplicationKey() );
-        portalRequest.setContent( resolvedContent.getContent() );
-        portalRequest.setSite( site );
 
         return portalRequest;
     }

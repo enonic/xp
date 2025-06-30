@@ -11,8 +11,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
@@ -29,14 +29,11 @@ import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PortalUrlServiceImpl_apiUrlTest
 {
-
-    private ContentService contentService;
 
     private PortalUrlService service;
 
@@ -47,11 +44,9 @@ public class PortalUrlServiceImpl_apiUrlTest
     @BeforeEach
     public void setUp()
     {
-        this.contentService = mock( ContentService.class );
+        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
 
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( this.contentService );
-
-        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
+        this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
                                                  mock( ProjectService.class ), portalUrlGeneratorService );
 
@@ -109,7 +104,7 @@ public class PortalUrlServiceImpl_apiUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( contentPath );
-        when( contentService.findNearestSiteByPath( eq( contentPath ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
@@ -134,7 +129,7 @@ public class PortalUrlServiceImpl_apiUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( contentPath );
-        when( contentService.findNearestSiteByPath( eq( contentPath ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/source" );
@@ -169,7 +164,7 @@ public class PortalUrlServiceImpl_apiUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( contentPath );
-        when( contentService.findNearestSiteByPath( eq( contentPath ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
@@ -199,7 +194,7 @@ public class PortalUrlServiceImpl_apiUrlTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( contentPath );
-        when( contentService.findNearestSiteByPath( eq( contentPath ) ) ).thenReturn( site );
+        portalRequest.setSite( site );
 
         final ApiUrlParams params = ApiUrlParams.create()
             .setDescriptorKey( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )

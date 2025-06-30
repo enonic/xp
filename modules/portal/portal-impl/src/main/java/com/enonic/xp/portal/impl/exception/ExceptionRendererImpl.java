@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -31,8 +30,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -60,8 +59,6 @@ public final class ExceptionRendererImpl
 
     private final ErrorHandlerScriptFactory errorHandlerScriptFactory;
 
-    private final ContentService contentService;
-
     private final IdProviderControllerService idProviderControllerService;
 
     private final PostProcessor postProcessor;
@@ -70,29 +67,25 @@ public final class ExceptionRendererImpl
 
 
     ExceptionRendererImpl( final ResourceService resourceService, final PortalUrlService portalUrlService,
-                           final ErrorHandlerScriptFactory errorHandlerScriptFactory, final ContentService contentService,
+                           final ErrorHandlerScriptFactory errorHandlerScriptFactory,
                            final IdProviderControllerService idProviderControllerService, final PostProcessor postProcessor,
                            final RunMode runMode )
     {
         this.resourceService = resourceService;
         this.portalUrlService = portalUrlService;
         this.errorHandlerScriptFactory = errorHandlerScriptFactory;
-        this.contentService = contentService;
         this.idProviderControllerService = idProviderControllerService;
         this.postProcessor = postProcessor;
         this.runMode = runMode;
     }
 
     @Activate
-    public ExceptionRendererImpl( @Reference final ResourceService resourceService,
-                                  @Reference final PortalUrlService portalUrlService,
+    public ExceptionRendererImpl( @Reference final ResourceService resourceService, @Reference final PortalUrlService portalUrlService,
                                   @Reference final ErrorHandlerScriptFactory errorHandlerScriptFactory,
-                                  @Reference final ContentService contentService,
                                   @Reference final IdProviderControllerService idProviderControllerService,
                                   @Reference final PostProcessor postProcessor )
     {
-        this( resourceService, portalUrlService, errorHandlerScriptFactory, contentService, idProviderControllerService, postProcessor,
-              RunMode.get() );
+        this( resourceService, portalUrlService, errorHandlerScriptFactory, idProviderControllerService, postProcessor, RunMode.get() );
     }
 
     @Override
@@ -164,40 +157,30 @@ public final class ExceptionRendererImpl
 
     private PortalResponse doRenderCustomError( final PortalRequest req, final WebException cause, final String handlerMethod )
     {
-        final PortalError portalError = PortalError.create().
-            status( cause.getStatus() ).
-            message( cause.getMessage() ).
-            exception( cause ).
-            request( req ).build();
+        final PortalError portalError =
+            PortalError.create().status( cause.getStatus() ).message( cause.getMessage() ).exception( cause ).request( req ).build();
 
-        final Site siteInRequest = req.getSite();
-        final Site site = resolveSite( siteInRequest, req );
-        if ( site != null )
+        if ( PortalRequestHelper.isSiteBase( req ) )
         {
-            req.setSite( site );
-            try
+            final SiteConfigs siteConfigs = req.getSite() != null
+                ? req.getSite().getSiteConfigs()
+                : req.getProject() != null ? req.getProject().getSiteConfigs() : SiteConfigs.empty();
+
+            for ( SiteConfig siteConfig : siteConfigs )
             {
-                for ( SiteConfig siteConfig : site.getSiteConfigs() )
+                final ApplicationKey applicationKey = siteConfig.getApplicationKey();
+                for ( final String scriptPath : SITE_ERROR_SCRIPT_PATHS )
                 {
-                    final ApplicationKey applicationKey = siteConfig.getApplicationKey();
-                    for ( final String scriptPath : SITE_ERROR_SCRIPT_PATHS )
+                    final PortalResponse response = renderApplicationCustomError( applicationKey, scriptPath, portalError, handlerMethod );
+                    if ( response != null )
                     {
-                        final PortalResponse response =
-                            renderApplicationCustomError( applicationKey, scriptPath, portalError, handlerMethod );
-                        if ( response != null )
+                        if ( response.isPostProcess() )
                         {
-                            if ( response.isPostProcess() )
-                            {
-                                req.setApplicationKey( applicationKey );
-                            }
-                            return response;
+                            req.setApplicationKey( applicationKey );
                         }
+                        return response;
                     }
                 }
-            }
-            finally
-            {
-                req.setSite( siteInRequest );
             }
         }
         else if ( req.getApplicationKey() != null )
@@ -216,22 +199,6 @@ public final class ExceptionRendererImpl
         }
 
         return null;
-    }
-
-    private Site resolveSite( final Site siteInRequest, final PortalRequest req )
-    {
-        if ( siteInRequest != null )
-        {
-            return siteInRequest;
-        }
-        else if ( PortalRequestHelper.isSiteBase( req ) )
-        {
-            return callAsContentAdmin( () -> this.contentService.findNearestSiteByPath( req.getContentPath() ) );
-        }
-        else
-        {
-            return null;
-        }
     }
 
     private PortalResponse renderApplicationCustomError( final ApplicationKey appKey, final String errorScriptPath,
@@ -261,10 +228,8 @@ public final class ExceptionRendererImpl
     {
         if ( isUnauthorizedError( cause.getStatus() ) )
         {
-            final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-                functionName( "handle401" ).
-                portalRequest( req ).
-                build();
+            final IdProviderControllerExecutionParams executionParams =
+                IdProviderControllerExecutionParams.create().functionName( "handle401" ).portalRequest( req ).build();
             try
             {
                 return idProviderControllerService.execute( executionParams );
@@ -279,12 +244,12 @@ public final class ExceptionRendererImpl
 
     private PortalResponse renderInternalErrorPage( final WebRequest req, String tip, final WebException cause )
     {
-        final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() ).
-            runMode( runMode ).
-            cause( cause ).
-            tip( tip ).
-            resourceService( resourceService ).
-            portalUrlService( portalUrlService );
+        final ExceptionInfo info = ExceptionInfo.create( cause.getStatus() )
+            .runMode( runMode )
+            .cause( cause )
+            .tip( tip )
+            .resourceService( resourceService )
+            .portalUrlService( portalUrlService );
 
         logIfNeeded( info );
         return info.toResponse( req );
@@ -292,11 +257,11 @@ public final class ExceptionRendererImpl
 
     private ExceptionInfo toErrorInfo( final WebException cause )
     {
-        return ExceptionInfo.create( cause.getStatus() ).
-            runMode( runMode ).
-            cause( cause ).
-            resourceService( this.resourceService ).
-            portalUrlService( this.portalUrlService );
+        return ExceptionInfo.create( cause.getStatus() )
+            .runMode( runMode )
+            .cause( cause )
+            .resourceService( this.resourceService )
+            .portalUrlService( this.portalUrlService );
     }
 
     private void logIfNeeded( final ExceptionInfo info )
