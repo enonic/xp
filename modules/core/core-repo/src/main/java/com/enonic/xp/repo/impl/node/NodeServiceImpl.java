@@ -383,10 +383,8 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        final PatchNodeResult result = PatchNodeCommand.create()
-            .params( convertUpdateParams( params ) )
+        final PatchNodeResult result = PatchNodeCommand.create().params( convertUpdateParams( params ) ).binaryService( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
-            .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -412,7 +410,9 @@ public class NodeServiceImpl
         verifyContext();
 
         final PatchNodeResult result = PatchNodeCommand.create()
-            .params( params ).indexServiceInternal( this.indexServiceInternal ).binaryService( this.binaryService )
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
