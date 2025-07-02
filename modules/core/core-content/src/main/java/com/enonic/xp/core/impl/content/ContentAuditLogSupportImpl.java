@@ -17,6 +17,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
@@ -31,6 +32,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -169,6 +172,42 @@ public class ContentAuditLogSupportImpl
         addContent( resultSet, content );
 
         log( "system.content.update", data, content.getId(), rootContext );
+    }
+
+    @Override
+    public void modify( final ModifyContentParams params, final ModifyContentResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doModify( params, result, context ) );
+    }
+
+    private void doModify( final ModifyContentParams params, final ModifyContentResult result, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        final PrincipalKey modifier =
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+
+        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+        paramsSet.addString( "modifier", nullToNull( modifier ) );
+        paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
+        addCreateAttachments( paramsSet, params.getCreateAttachments() );
+
+        result.getResults().forEach( ( branchResult ) -> {
+            final Branch branch = branchResult.branch();
+            final Content content = branchResult.content();
+
+            final PropertySet branchSet = resultSet.addSet( branch.toString() );
+            if ( content != null )
+            {
+                addContent( branchSet, content );
+            }
+        } );
+
+        log( "system.content.modify", data, params.getContentId(), rootContext );
     }
 
     @Override
