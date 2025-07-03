@@ -37,7 +37,9 @@ public class AdminToolPortalHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        return webRequest.getRawPath().equals( ADMIN_TOOL_BASE ) || webRequest.getRawPath().startsWith( ADMIN_TOOL_PREFIX );
+        return !webRequest.getRawPath().startsWith( "/admin/site/" ) &&
+            ( webRequest.getRawPath().equals( AdminToolPortalHandler.ADMIN_TOOL_BASE ) ||
+                webRequest.getRawPath().startsWith( AdminToolPortalHandler.ADMIN_TOOL_PREFIX ) );
     }
 
     @Override
