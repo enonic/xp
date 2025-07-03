@@ -88,10 +88,15 @@ public class ApiHandler
     {
         final List<Map<String, Object>> result = new ArrayList<>();
 
-        universalApiHandlerRegistry.getAllApiDescriptors().forEach( descriptor -> result.add( map( descriptor ) ) );
+        universalApiHandlerRegistry.getAllApiDescriptors()
+            .stream()
+            .filter( ApiDescriptor::isMount )
+            .forEach( descriptor -> result.add( map( descriptor ) ) );
 
         applicationService.getInstalledApplications()
             .forEach( application -> apiDescriptorService.getByApplication( application.getKey() )
+                .stream()
+                .filter( ApiDescriptor::isMount )
                 .forEach( descriptor -> result.add( map( descriptor ) ) ) );
 
         return result;
