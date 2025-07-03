@@ -59,6 +59,8 @@ public final class ContentConstants
 
     public static final String PUBLISH_COMMIT_PREFIX_DELIMITER = " ";
 
+    public static final String ARCHIVE_COMMIT_PREFIX_DELIMITER = " ";
+
     public static final String CONTENT_ROOT_PATH_ATTRIBUTE = "contentRootPath";
 
     private static final PrincipalKey CONTENT_SUPER_USER_KEY = PrincipalKey.ofUser( IdProviderKey.system(), "content-su" );
