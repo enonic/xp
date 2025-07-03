@@ -22,6 +22,11 @@ public final class PrincipalKeys
         super( list );
     }
 
+    public static PrincipalKeys empty()
+    {
+        return EMPTY;
+    }
+
     public static PrincipalKeys from( final PrincipalKey... principalKeys )
     {
         return fromInternal( ImmutableSet.copyOf( principalKeys ) );
@@ -34,12 +39,7 @@ public final class PrincipalKeys
 
     public static PrincipalKeys from( final String... principalKeys )
     {
-        return fromInternal( Stream.of( principalKeys ).map( PrincipalKey::from ).collect( ImmutableSet.toImmutableSet() ) );
-    }
-
-    public static PrincipalKeys empty()
-    {
-        return EMPTY;
+        return Stream.of( principalKeys ).map( PrincipalKey::from ).collect( collecting() );
     }
 
     public static Collector<PrincipalKey, ?, PrincipalKeys> collecting()

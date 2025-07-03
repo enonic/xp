@@ -37,7 +37,7 @@ public final class SuggestionQueries
 
     public static Collector<SuggestionQuery, ?, SuggestionQueries> collecting()
     {
-        return Collectors.collectingAndThen(ImmutableList.toImmutableList(), SuggestionQueries::fromInternal);
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), SuggestionQueries::fromInternal );
     }
 
     private static SuggestionQueries fromInternal( final ImmutableList<SuggestionQuery> suggestionQueries )

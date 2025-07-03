@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -81,8 +82,7 @@ public final class ContentPaths
 
     public static Collector<ContentPath, ?, ContentPaths> collecting()
     {
-        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ),
-                             Builder::build );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentPaths::fromInternal );
     }
 
     public static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )

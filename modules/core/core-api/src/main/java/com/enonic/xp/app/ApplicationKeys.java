@@ -2,6 +2,8 @@ package com.enonic.xp.app;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -36,12 +38,18 @@ public final class ApplicationKeys
 
     public static ApplicationKeys from( final String... applicationKeys )
     {
-        return fromInternal( Arrays.stream( applicationKeys ).map( ApplicationKey::from ).collect( ImmutableSet.toImmutableSet() ) );
+        return Arrays.stream( applicationKeys ).map( ApplicationKey::from ).collect( collecting() );
     }
 
     public static ApplicationKeys empty()
     {
         return EMPTY;
+    }
+
+
+    public static Collector <ApplicationKey, ?, ApplicationKeys> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ApplicationKeys::fromInternal );
     }
 
     private static ApplicationKeys fromInternal( final ImmutableSet<ApplicationKey> applicationKeys )

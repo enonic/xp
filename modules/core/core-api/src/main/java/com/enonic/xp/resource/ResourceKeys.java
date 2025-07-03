@@ -2,6 +2,8 @@ package com.enonic.xp.resource;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -12,38 +14,45 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ResourceKeys
     extends AbstractImmutableEntityList<ResourceKey>
 {
+    public static final ResourceKeys EMPTY = new ResourceKeys( ImmutableList.of() );
+
     private ResourceKeys( final ImmutableList<ResourceKey> list )
     {
         super( list );
     }
 
+    public static ResourceKeys empty()
+    {
+        return EMPTY;
+    }
+
     public static ResourceKeys from( final ResourceKey... resourceKeys )
     {
-        return new ResourceKeys( ImmutableList.copyOf( resourceKeys ) );
+        return fromInternal( ImmutableList.copyOf( resourceKeys ) );
     }
 
     public static ResourceKeys from( final Iterable<? extends ResourceKey> resourceKeys )
     {
-        return new ResourceKeys( ImmutableList.copyOf( resourceKeys ) );
+        return fromInternal( ImmutableList.copyOf( resourceKeys ) );
     }
 
     public static ResourceKeys from( final Iterator<? extends ResourceKey> resourceKeys )
     {
-        return new ResourceKeys( ImmutableList.copyOf( resourceKeys ) );
+        return fromInternal( ImmutableList.copyOf( resourceKeys ) );
     }
 
     public static ResourceKeys from( final String... resourceKeys )
     {
-        return new ResourceKeys( parseResourceKeys( resourceKeys ) );
+        return Arrays.stream( resourceKeys ).map( ResourceKey::from ).collect( collecting() );
     }
 
-    public static ResourceKeys empty()
+    public static Collector<ResourceKey, ?, ResourceKeys> collecting()
     {
-        return new ResourceKeys( ImmutableList.of() );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ResourceKeys::fromInternal );
     }
 
-    private static ImmutableList<ResourceKey> parseResourceKeys( final String... resourceKeys )
+    private static ResourceKeys fromInternal( final ImmutableList<ResourceKey> resourceKeys )
     {
-        return Arrays.stream( resourceKeys ).map( ResourceKey::from ).collect( ImmutableList.toImmutableList() );
+        return resourceKeys.isEmpty() ? EMPTY : new ResourceKeys( resourceKeys );
     }
 }

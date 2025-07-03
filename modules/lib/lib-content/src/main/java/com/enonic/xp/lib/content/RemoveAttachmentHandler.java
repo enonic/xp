@@ -36,7 +36,7 @@ public final class RemoveAttachmentHandler
             updateContent.contentId( contentByPath.getId() );
         }
 
-        BinaryReferences binaryRefs = BinaryReferences.from( Arrays.stream( this.names ).map( BinaryReference::from ).collect( toList() ) );
+        BinaryReferences binaryRefs = Arrays.stream( this.names ).map( BinaryReference::from ).collect( BinaryReferences.collecting() );
         updateContent.removeAttachments( binaryRefs );
         contentService.update( updateContent );
     }

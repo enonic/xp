@@ -34,9 +34,7 @@ public final class ContentTypeNames
 
     public static ContentTypeNames from( final Collection<String> contentTypeNames )
     {
-        return fromInternal( contentTypeNames.stream()
-                                 .map( ContentTypeName::from )
-                                 .collect( ImmutableSortedSet.toImmutableSortedSet( Comparator.naturalOrder() ) ) );
+        return contentTypeNames.stream().map( ContentTypeName::from ).collect( collecting() );
     }
 
     public static ContentTypeNames from( final ContentTypeName... contentTypeNames )

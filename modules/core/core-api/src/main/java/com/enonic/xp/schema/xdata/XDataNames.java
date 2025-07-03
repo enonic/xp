@@ -33,7 +33,7 @@ public final class XDataNames
 
     public static XDataNames from( final Collection<String> xdataNames )
     {
-        return fromInternal( xdataNames.stream().map( XDataName::from ).collect( ImmutableList.toImmutableList() ) );
+        return xdataNames.stream().map( XDataName::from ).collect( collecting() );
     }
 
     public static XDataNames from( final XDataName... xdataNames )

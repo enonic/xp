@@ -1,6 +1,7 @@
 package com.enonic.xp.branch;
 
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -11,6 +12,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Branches
     extends AbstractImmutableEntitySet<Branch>
 {
+    public static final Branches EMPTY = new Branches( ImmutableSet.of() );
+
     private Branches( final ImmutableSet<Branch> set )
     {
         super( set );
@@ -18,22 +21,26 @@ public final class Branches
 
     public static Branches from( final Branch... branches )
     {
-        return new Branches( ImmutableSet.copyOf( branches ) );
+        return fromInternal( ImmutableSet.copyOf( branches ) );
     }
 
     public static Branches from( final Iterable<Branch> branches )
     {
-        return new Branches( ImmutableSet.copyOf( branches ) );
+        return fromInternal( ImmutableSet.copyOf( branches ) );
     }
 
     public static Branches empty()
     {
-        return new Branches( ImmutableSet.of() );
+        return EMPTY;
+    }
+
+    private static Branches fromInternal( final ImmutableSet<Branch> set )
+    {
+        return set.isEmpty() ? EMPTY : new Branches( set );
     }
 
     public static Collector<Branch, ?, Branches> collecting()
     {
-        return Collector.of( ImmutableSet.Builder<Branch>::new, ImmutableSet.Builder::add, ( left, right ) -> left.addAll( right.build() ),
-                             is -> new Branches( is.build() ) );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Branches::fromInternal );
     }
 }

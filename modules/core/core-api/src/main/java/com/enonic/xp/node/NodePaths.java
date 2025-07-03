@@ -42,7 +42,6 @@ public final class NodePaths
         return fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
-    // collecting
     public static Collector<NodePath, ?, NodePaths> collecting()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodePaths::fromInternal );

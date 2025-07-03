@@ -27,7 +27,7 @@ public final class BinaryReferences
 
     public static BinaryReferences from( final String... binaryReferences )
     {
-        return fromInternal( Stream.of( binaryReferences ).map( BinaryReference::from ).collect( ImmutableSet.toImmutableSet() ) );
+        return Stream.of( binaryReferences ).map( BinaryReference::from ).collect( collecting() );
     }
 
     public static BinaryReferences from( final BinaryReference... binaryReferences )
