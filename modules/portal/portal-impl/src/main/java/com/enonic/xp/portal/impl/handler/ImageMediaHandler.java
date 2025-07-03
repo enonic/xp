@@ -12,7 +12,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ScaleParamsParser;
-import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
@@ -28,15 +27,12 @@ public class ImageMediaHandler
 {
     private final ImageService imageService;
 
-    private final MediaInfoService mediaInfoService;
-
     @Activate
     public ImageMediaHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                              @Reference final ImageService imageService, @Reference final MediaInfoService mediaInfoService )
+                              @Reference final ImageService imageService )
     {
         super( contentService, projectService );
         this.imageService = imageService;
-        this.mediaInfoService = mediaInfoService;
     }
 
     @Activate
@@ -66,7 +62,7 @@ public class ImageMediaHandler
             .build()
             .callWith( () -> {
                 final ImageHandlerWorker worker =
-                    new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.mediaInfoService );
+                    new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
 
                 worker.id = pathMetadata.contentId;
                 worker.fingerprint = pathMetadata.fingerprint;

@@ -100,6 +100,28 @@ jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-d
 
 tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
 tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version.ref = "tika" }
+tika-parser-apple = { module = "org.apache.tika:tika-parser-apple-module", version.ref = "tika" }
+tika-parser-audiovideo = { module = "org.apache.tika:tika-parser-audiovideo-module", version.ref = "tika" }
+tika-parser-cad = { module = "org.apache.tika:tika-parser-cad-module", version.ref = "tika" }
+tika-parser-code = { module = "org.apache.tika:tika-parser-code-module", version.ref = "tika" }
+tika-parser-crypto = { module = "org.apache.tika:tika-parser-crypto-module", version.ref = "tika" }
+tika-parser-digestcommons = { module = "org.apache.tika:tika-parser-digest-commons", version.ref = "tika" }
+tika-parser-font = { module = "org.apache.tika:tika-parser-font-module", version.ref = "tika" }
+tika-parser-html = { module = "org.apache.tika:tika-parser-html-module", version.ref = "tika" }
+tika-parser-image = { module = "org.apache.tika:tika-parser-image-module", version.ref = "tika" }
+tika-parser-mail = { module = "org.apache.tika:tika-parser-mail-module", version.ref = "tika" }
+tika-parser-mailcommons = { module = "org.apache.tika:tika-parser-mail-commons", version.ref = "tika" }
+tika-parser-microsoft = { module = "org.apache.tika:tika-parser-microsoft-module", version.ref = "tika" }
+tika-parser-miscoffice = { module = "org.apache.tika:tika-parser-miscoffice-module", version.ref = "tika" }
+tika-parser-news = { module = "org.apache.tika:tika-parser-news-module", version.ref = "tika" }
+tika-parser-ocr = { module = "org.apache.tika:tika-parser-ocr-module", version.ref = "tika" }
+tika-parser-pdf = { module = "org.apache.tika:tika-parser-pdf-module", version.ref = "tika" }
+tika-parser-pkg = { module = "org.apache.tika:tika-parser-pkg-module", version.ref = "tika" }
+tika-parser-text = { module = "org.apache.tika:tika-parser-text-module", version.ref = "tika" }
+tika-parser-webarchive = { module = "org.apache.tika:tika-parser-webarchive-module", version.ref = "tika" }
+tika-parser-xml = { module = "org.apache.tika:tika-parser-xml-module", version.ref = "tika" }
+tika-parser-xmpcommons = { module = "org.apache.tika:tika-parser-xmp-commons", version.ref = "tika" }
+tika-parser-zipcommons = { module = "org.apache.tika:tika-parser-zip-commons", version.ref = "tika" }
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
 
