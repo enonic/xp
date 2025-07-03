@@ -120,6 +120,14 @@ class ContentVersionFactory
             return nodeCommitEntry.getMessage()
                 .substring( ContentConstants.PUBLISH_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
         }
+
+        if ( nodeCommitEntry.getMessage()
+            .startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return nodeCommitEntry.getMessage()
+                .substring( ContentConstants.ARCHIVE_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+
         return null;
     }
 

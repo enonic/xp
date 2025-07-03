@@ -726,7 +726,6 @@ public class ContentServiceImpl
             .translator( translator )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
-            .archiveListener( params.getArchiveContentListener() )
             .build()
             .execute();
 
