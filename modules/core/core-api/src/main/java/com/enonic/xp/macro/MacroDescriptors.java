@@ -1,6 +1,9 @@
 package com.enonic.xp.macro;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -33,6 +36,11 @@ public final class MacroDescriptors
     public static MacroDescriptors from( final Collection<MacroDescriptor> macroDescriptors )
     {
         return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
+    }
+
+    public static Collector<? super MacroDescriptor, ?, MacroDescriptors> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), MacroDescriptors::fromInternal );
     }
 
     private static MacroDescriptors fromInternal( final ImmutableList<MacroDescriptor> list )

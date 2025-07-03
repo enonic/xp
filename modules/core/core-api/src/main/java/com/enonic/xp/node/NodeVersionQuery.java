@@ -43,7 +43,7 @@ public final class NodeVersionQuery
                 nodeId( source.nodeId ).
                 size( source.getSize() ).
                 from( source.getFrom() ).
-                aggregationQueries( source.getAggregationQueries().getSet() ).
+                aggregationQueries( source.getAggregationQueries() ).
                 setOrderExpressions( OrderExpressions.from( source.getOrderBys() ) );
 
             source.getPostFilters().forEach( this::addPostFilter );

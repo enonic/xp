@@ -46,7 +46,7 @@ public final class XDataNames
         return fromInternal( ImmutableList.copyOf( xdataNames ) );
     }
 
-    public static Collector<XDataName, XDataNames, XDataNames> collecting()
+    public static Collector<XDataName, ?, XDataNames> collecting()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), XDataNames::fromInternal );
     }

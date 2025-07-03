@@ -163,9 +163,9 @@ public class AbstractQuery
 
         private final Filters.Builder queryFilters = Filters.create();
 
-        private Set<AggregationQuery> aggregationQueries = new HashSet<>();
+        private List<AggregationQuery> aggregationQueries = new ArrayList<>();
 
-        private Set<SuggestionQuery> suggestionQueries = new HashSet<>();
+        private List<SuggestionQuery> suggestionQueries = new ArrayList<>();
 
         private HighlightQuery highlight;
 
@@ -221,14 +221,14 @@ public class AbstractQuery
         @SuppressWarnings("unchecked")
         public B addAggregationQueries( final AggregationQueries aggregationQueries )
         {
-            this.aggregationQueries.addAll( aggregationQueries.getSet() );
+            this.aggregationQueries.addAll( aggregationQueries.getList() );
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B aggregationQueries( final Set<AggregationQuery> aggregationQueries )
+        public B aggregationQueries( final AggregationQueries aggregationQueries )
         {
-            this.aggregationQueries = aggregationQueries;
+            this.aggregationQueries = new ArrayList<>( aggregationQueries.getList() );
             return (B) this;
         }
 
@@ -242,14 +242,14 @@ public class AbstractQuery
         @SuppressWarnings("unchecked")
         public B addSuggestionQueries( final SuggestionQueries suggestionQueries )
         {
-            this.suggestionQueries.addAll( suggestionQueries.getSet() );
+            this.suggestionQueries.addAll( suggestionQueries.getList() );
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
-        public B suggestionQueries( final Set<SuggestionQuery> suggestionQueries )
+        public B suggestionQueries( final SuggestionQueries suggestionQueries )
         {
-            this.suggestionQueries = suggestionQueries;
+            this.suggestionQueries = new ArrayList<>( suggestionQueries.getList() );
             return (B) this;
         }
 

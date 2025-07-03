@@ -5,10 +5,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class SuggestionQueries
     extends AbstractImmutableEntityList<SuggestionQuery>
