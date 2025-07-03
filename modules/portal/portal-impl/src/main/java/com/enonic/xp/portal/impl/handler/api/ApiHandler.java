@@ -92,6 +92,8 @@ public class ApiHandler
 
         applicationService.getInstalledApplications()
             .forEach( application -> apiDescriptorService.getByApplication( application.getKey() )
+                .stream()
+                .filter( ApiDescriptor::isMount )
                 .forEach( descriptor -> result.add( map( descriptor ) ) ) );
 
         return result;
