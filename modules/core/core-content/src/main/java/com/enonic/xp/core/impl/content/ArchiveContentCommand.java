@@ -52,15 +52,12 @@ final class ArchiveContentCommand
 
     private final ArchiveContentParams params;
 
-    private final ArchiveContentListener archiveContentListener;
-
     private final PathResolver pathResolver;
 
     private ArchiveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.archiveContentListener = builder.archiveContentListener;
         this.pathResolver = new PathResolver();
     }
 
@@ -120,9 +117,9 @@ final class ArchiveContentCommand
     @Override
     public void nodesMoved( final int count )
     {
-        if ( archiveContentListener != null )
+        if ( params.getArchiveContentListener() != null )
         {
-            archiveContentListener.contentArchived( count );
+            params.getArchiveContentListener().contentArchived( count );
         }
     }
 
@@ -169,7 +166,10 @@ final class ArchiveContentCommand
         } ).build() );
         routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
 
-        nodeService.commit( NodeCommitEntry.create().message( ContentConstants.ARCHIVE_COMMIT_PREFIX ).build(),
+        final String commitEntryMessage = params.getMessage() == null
+            ? ContentConstants.ARCHIVE_COMMIT_PREFIX
+            : String.join( ContentConstants.ARCHIVE_COMMIT_PREFIX_DELIMITER, ContentConstants.ARCHIVE_COMMIT_PREFIX, params.getMessage() );
+        nodeService.commit( NodeCommitEntry.create().message( commitEntryMessage ).build(),
                             routableNodeVersionIds.build() );
 
     }
@@ -227,17 +227,9 @@ final class ArchiveContentCommand
     {
         private final ArchiveContentParams params;
 
-        private ArchiveContentListener archiveContentListener;
-
         private Builder( final ArchiveContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder archiveListener( final ArchiveContentListener archiveContentListener )
-        {
-            this.archiveContentListener = archiveContentListener;
-            return this;
         }
 
         @Override
