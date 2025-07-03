@@ -69,6 +69,13 @@ public class AdminToolPortalHandlerTest
     }
 
     @Test
+    void testCanNotHandleAdminSite()
+    {
+        this.request.setRawPath( "/admin/site/edit/repo/branch/mysite" );
+        assertFalse( this.handler.canHandle( request ) );
+    }
+
+    @Test
     void testDoHandleRedirect()
     {
         this.request.setRawPath( "/admin/" );
