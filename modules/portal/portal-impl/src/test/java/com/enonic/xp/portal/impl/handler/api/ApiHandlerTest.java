@@ -119,8 +119,7 @@ public class ApiHandlerTest
                                                                        .key( DescriptorKey.from( applicationKey, "myapi" ) )
                                                                        .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
                                                                        .mount( false )
-                                                                       .build(),
-                                                                   ApiDescriptor.create()
+                                                                       .build(), ApiDescriptor.create()
                                                                        .key( DescriptorKey.from( applicationKey, "myapi2" ) )
                                                                        .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
                                                                        .mount( true )
@@ -133,6 +132,11 @@ public class ApiHandlerTest
                                                            "description", "Brief description", "documentationUrl",
                                                            "https://docs.enonic.com", "mount", "true", "allowedPrincipals",
                                                            RoleKeys.EVERYONE.toString() ) );
+
+        universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
+                                                   Map.of( "applicationKey", "admin", "apiKey", "event", "displayName", "Event API",
+                                                           "description", "Event API", "documentationUrl", "https://docs.enonic.com",
+                                                           "allowedPrincipals", RoleKeys.ADMIN_LOGIN.toString() ) );
 
         WebResponse webResponse =
             this.handler.doHandle( mock( WebRequest.class ), mock( WebResponse.class ), mock( WebHandlerChain.class ) );
