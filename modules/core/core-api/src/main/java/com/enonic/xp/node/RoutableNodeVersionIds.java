@@ -4,16 +4,22 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class RoutableNodeVersionIds
     extends AbstractImmutableEntitySet<RoutableNodeVersionId>
 {
+    private static final RoutableNodeVersionIds EMPTY = new RoutableNodeVersionIds( ImmutableSet.of() );
+
     private RoutableNodeVersionIds( final ImmutableSet<RoutableNodeVersionId> set )
     {
         super( set );
@@ -26,18 +32,22 @@ public final class RoutableNodeVersionIds
 
     public static RoutableNodeVersionIds from( final RoutableNodeVersionId... routableNodeVersionIds )
     {
-        return new RoutableNodeVersionIds( ImmutableSet.copyOf( routableNodeVersionIds ) );
+        return fromInternal( ImmutableSet.copyOf( routableNodeVersionIds ) );
     }
-
 
     public static RoutableNodeVersionIds from( final Collection<RoutableNodeVersionId> routableNodeVersionIds )
     {
-        return new RoutableNodeVersionIds( ImmutableSet.copyOf( routableNodeVersionIds ) );
+        return fromInternal( ImmutableSet.copyOf( routableNodeVersionIds ) );
     }
 
     public static Collector<RoutableNodeVersionId, ?, RoutableNodeVersionIds> collecting()
     {
-        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build().getSet() ), Builder::build );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), RoutableNodeVersionIds::fromInternal );
+    }
+
+    private static RoutableNodeVersionIds fromInternal( final ImmutableSet<RoutableNodeVersionId> set )
+    {
+        return set.isEmpty() ? EMPTY : new RoutableNodeVersionIds( set );
     }
 
     public static Builder create()

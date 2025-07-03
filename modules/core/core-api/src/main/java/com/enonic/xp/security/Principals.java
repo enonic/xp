@@ -56,12 +56,6 @@ public final class Principals
             collect( toList() );
     }
 
-    @Override
-    public String toString()
-    {
-        return this.list.toString();
-    }
-
     public static Principals empty()
     {
         return new Principals( ImmutableList.of() );
@@ -76,5 +70,4 @@ public final class Principals
     {
         return new Principals( ImmutableList.copyOf( principals ) );
     }
-
 }

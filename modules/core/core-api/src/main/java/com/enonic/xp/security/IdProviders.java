@@ -30,12 +30,6 @@ public final class IdProviders
         return new IdProviders( ImmutableList.copyOf( idProviders ) );
     }
 
-    @Override
-    public String toString()
-    {
-        return this.list.toString();
-    }
-
     public static IdProviders from( final Iterable<? extends IdProvider> idProviders )
     {
         return new IdProviders( ImmutableList.copyOf( idProviders ) );

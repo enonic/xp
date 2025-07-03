@@ -600,7 +600,7 @@ public class Content
             {
                 this.extraDatas = ExtraDatas.empty();
             }
-            this.extraDatas = ExtraDatas.from( this.extraDatas, extraData );
+            this.extraDatas = ExtraDatas.create().addAll( this.extraDatas.getList() ).add( extraData ).build();
             return (BUILDER) this;
         }
 

@@ -31,12 +31,6 @@ public final class Applications
         return map.get( applicationKey );
     }
 
-    @Override
-    public String toString()
-    {
-        return this.list.toString();
-    }
-
     public static Applications empty()
     {
         return new Applications( ImmutableList.of() );

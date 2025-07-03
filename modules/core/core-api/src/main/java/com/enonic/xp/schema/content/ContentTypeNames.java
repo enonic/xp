@@ -3,6 +3,8 @@ package com.enonic.xp.schema.content;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSortedSet;
 
@@ -13,6 +15,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class ContentTypeNames
     extends AbstractImmutableEntitySet<ContentTypeName>
 {
+    private static final ContentTypeNames EMPTY = new ContentTypeNames( ImmutableSortedSet.of() );
+
     private ContentTypeNames( final ImmutableSortedSet<ContentTypeName> set )
     {
         super( set );
@@ -20,34 +24,40 @@ public final class ContentTypeNames
 
     public static ContentTypeNames empty()
     {
-        final ImmutableSortedSet<ContentTypeName> set = ImmutableSortedSet.of();
-        return new ContentTypeNames( set );
+        return EMPTY;
     }
 
     public static ContentTypeNames from( final String... contentTypeNames )
     {
-        return new ContentTypeNames( parseQualifiedNames( contentTypeNames ) );
+        return from( Arrays.asList( contentTypeNames ) );
     }
 
     public static ContentTypeNames from( final Collection<String> contentTypeNames )
     {
-        return from( contentTypeNames.toArray( new String[0] ) );
+        return fromInternal( contentTypeNames.stream()
+                                 .map( ContentTypeName::from )
+                                 .collect( ImmutableSortedSet.toImmutableSortedSet( Comparator.naturalOrder() ) ) );
     }
 
     public static ContentTypeNames from( final ContentTypeName... contentTypeNames )
     {
-        return new ContentTypeNames( ImmutableSortedSet.copyOf( contentTypeNames ) );
+        return fromInternal( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
     public static ContentTypeNames from( final Iterable<ContentTypeName> contentTypeNames )
     {
-        return new ContentTypeNames( ImmutableSortedSet.copyOf( contentTypeNames ) );
+        return fromInternal( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
-    private static ImmutableSortedSet<ContentTypeName> parseQualifiedNames( final String... contentTypeNames )
+    public static Collector<ContentTypeName, ?, ContentTypeNames> collecting()
     {
-        return Arrays.stream( contentTypeNames ).map( ContentTypeName::from ).
-            collect( ImmutableSortedSet.toImmutableSortedSet( Comparator.naturalOrder() ) );
+        return Collectors.collectingAndThen( ImmutableSortedSet.toImmutableSortedSet( Comparator.naturalOrder() ),
+                                             ContentTypeNames::fromInternal );
+    }
+
+    private static ContentTypeNames fromInternal( final ImmutableSortedSet<ContentTypeName> set )
+    {
+        return set.isEmpty() ? EMPTY : new ContentTypeNames( set );
     }
 
     public static Builder create()
@@ -80,7 +90,7 @@ public final class ContentTypeNames
 
         public ContentTypeNames build()
         {
-            return new ContentTypeNames( this.set.build() );
+            return fromInternal( this.set.build() );
         }
     }
 }

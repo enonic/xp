@@ -2,6 +2,8 @@ package com.enonic.xp.node;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -38,6 +40,12 @@ public final class NodePaths
     public static NodePaths from( final Iterable<NodePath> paths )
     {
         return fromInternal( ImmutableSet.copyOf( paths ) );
+    }
+
+    // collecting
+    public static Collector<NodePath, ?, NodePaths> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodePaths::fromInternal );
     }
 
     private static NodePaths fromInternal( final ImmutableSet<NodePath> nodePaths )

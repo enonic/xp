@@ -14,12 +14,6 @@ public final class PrincipalRelationships
         super( list );
     }
 
-    @Override
-    public String toString()
-    {
-        return this.list.toString();
-    }
-
     public static PrincipalRelationships empty()
     {
         return new PrincipalRelationships( ImmutableList.of() );

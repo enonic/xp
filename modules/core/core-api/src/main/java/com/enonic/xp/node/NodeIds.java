@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -56,8 +57,7 @@ public final class NodeIds
 
     public static Collector<NodeId, ?, NodeIds> collecting()
     {
-        return Collector.of( NodeIds.Builder::new, NodeIds.Builder::add, ( left, right ) -> left.addAll( right.build() ),
-                             NodeIds.Builder::build );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodeIds::fromInternal );
     }
 
     private static NodeIds fromInternal( final ImmutableSet<NodeId> set )

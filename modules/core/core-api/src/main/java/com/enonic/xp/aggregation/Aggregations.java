@@ -1,8 +1,14 @@
 package com.enonic.xp.aggregation;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplates;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
@@ -31,10 +37,16 @@ public final class Aggregations
         return fromInternal( ImmutableSet.copyOf( aggregations ) );
     }
 
+    public static Collector<Aggregation, ?, Aggregations> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Aggregations::fromInternal );
+    }
+
     public Aggregation get( final String name )
     {
         return this.stream().filter( ( agg ) -> name.equals( agg.getName() ) ).findFirst().orElse( null );
     }
+
 
     private static Aggregations fromInternal( final ImmutableSet<Aggregation> set )
     {

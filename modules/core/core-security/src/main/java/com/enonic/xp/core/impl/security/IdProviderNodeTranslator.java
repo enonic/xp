@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.collect.Streams;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -92,8 +94,9 @@ abstract class IdProviderNodeTranslator
         final AccessControlList usersPermissions = usersNode.getPermissions();
         final AccessControlList groupsPermissions = groupsNode.getPermissions();
 
-        final PrincipalKeys principals = PrincipalKeys.from( idProviderPermissions.getAllPrincipals(), usersPermissions.getAllPrincipals(),
-                                                             groupsPermissions.getAllPrincipals() );
+        final PrincipalKeys principals =
+            Streams.concat( idProviderPermissions.getAllPrincipals().stream(), usersPermissions.getAllPrincipals().stream(),
+                            groupsPermissions.getAllPrincipals().stream() ).collect( PrincipalKeys.collecting() );
         for ( PrincipalKey principal : principals )
         {
             if ( idProviderPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS,

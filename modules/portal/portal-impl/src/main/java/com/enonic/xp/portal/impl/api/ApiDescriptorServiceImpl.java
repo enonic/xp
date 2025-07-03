@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -47,24 +48,8 @@ public final class ApiDescriptorServiceImpl
     @Override
     public ApiDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        final List<ApiDescriptor> list = new ArrayList<>();
-        for ( final DescriptorKey descriptorKey : descriptorKeyLocator.findKeys( applicationKey ) )
-        {
-            try
-            {
-                final ApiDescriptor apiDescriptor = getByKey( descriptorKey );
-                if ( apiDescriptor != null )
-                {
-                    list.add( apiDescriptor );
-                }
-            }
-            catch ( final IllegalArgumentException e )
-            {
-                LOG.error( "Error in api descriptor: {}", descriptorKey.toString(), e );
-            }
-        }
-
-        return ApiDescriptors.from( list );
+        return descriptorKeyLocator.findKeys( applicationKey ).stream().map(
+            this::getByKey ).filter( Objects::nonNull ).collect( ApiDescriptors.collecting() );
     }
 
     private ResourceProcessor<DescriptorKey, ApiDescriptor> newRootProcessor( final DescriptorKey key )

@@ -3,6 +3,8 @@ package com.enonic.xp.page;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -16,29 +18,21 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {
-    private final ImmutableMap<ContentName, PageTemplate> templatesByName;
+    private static PageTemplates EMPTY = new PageTemplates( ImmutableList.of() );
 
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
         super( list );
-        this.templatesByName = list.stream().collect( ImmutableMap.toImmutableMap( PageTemplate::getName, Function.identity() ) );
     }
 
     public PageTemplate getTemplate( final ContentName name )
     {
-        return this.templatesByName.get( name );
+        return this.list.stream().filter( pT -> name.equals( pT.getName() ) ).findAny().orElse( null );
     }
 
     public PageTemplate getTemplate( final PageTemplateKey key )
     {
-        for ( PageTemplate pageTemplate : this.templatesByName.values() )
-        {
-            if ( pageTemplate.getKey().equals( key ) )
-            {
-                return pageTemplate;
-            }
-        }
-        return null;
+        return this.list.stream().filter( pT -> key.equals( pT.getKey() ) ).findAny().orElse( null );
     }
 
     public PageTemplates filter( final Predicate<PageTemplate> predicate )
@@ -46,34 +40,34 @@ public final class PageTemplates
         return PageTemplates.from( this.stream().filter( predicate ).toArray( PageTemplate[]::new ) );
     }
 
-    public Contents toContents()
-    {
-        final Contents.Builder builder = Contents.create();
-        for ( final PageTemplate pageTemplate : this )
-        {
-            builder.add( pageTemplate );
-        }
-        return builder.build();
-    }
-
     public static PageTemplates empty()
     {
-        return new PageTemplates( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static PageTemplates from( final PageTemplate... templates )
     {
-        return new PageTemplates( ImmutableList.copyOf( templates ) );
+        return fromInternal( ImmutableList.copyOf( templates ) );
     }
 
     public static PageTemplates from( final Iterable<? extends PageTemplate> templates )
     {
-        return new PageTemplates( ImmutableList.copyOf( templates ) );
+        return fromInternal( ImmutableList.copyOf( templates ) );
     }
 
     public static PageTemplates from( final Collection<? extends PageTemplate> templates )
     {
-        return new PageTemplates( ImmutableList.copyOf( templates ) );
+        return fromInternal( ImmutableList.copyOf( templates ) );
+    }
+
+    public static Collector<PageTemplate, ?, PageTemplates> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PageTemplates::fromInternal );
+    }
+
+    private static PageTemplates fromInternal( final ImmutableList<PageTemplate> list )
+    {
+        return list.isEmpty() ? EMPTY : new PageTemplates( list );
     }
 
     public static Builder create()

@@ -16,7 +16,6 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 @PublicApi
 public final class AuditLogUris
     extends AbstractImmutableEntitySet<AuditLogUri>
-    implements Iterable<AuditLogUri>
 {
     private AuditLogUris( final ImmutableSet<AuditLogUri> set )
     {

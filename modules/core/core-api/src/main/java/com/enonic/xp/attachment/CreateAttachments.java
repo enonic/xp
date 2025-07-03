@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -15,6 +17,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class CreateAttachments
     extends AbstractImmutableEntitySet<CreateAttachment>
 {
+    private static final CreateAttachments EMPTY = new CreateAttachments( ImmutableSet.of() );
+
     private CreateAttachments( final Set<CreateAttachment> set )
     {
         super( ImmutableSet.copyOf( set ) );
@@ -22,39 +26,37 @@ public final class CreateAttachments
 
     public static CreateAttachments empty()
     {
-        return new CreateAttachments( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static CreateAttachments from( final CreateAttachment... contents )
     {
-        return new CreateAttachments( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableSet.copyOf( contents ) );
     }
 
     public static CreateAttachments from( final Iterable<? extends CreateAttachment> contents )
     {
-        return new CreateAttachments( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableSet.copyOf( contents ) );
     }
 
     public static CreateAttachments from( final Collection<? extends CreateAttachment> contents )
     {
-        return new CreateAttachments( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableSet.copyOf( contents ) );
+    }
+
+    public static Collector<CreateAttachment, ?, CreateAttachments> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), CreateAttachments::fromInternal );
+    }
+
+    private static CreateAttachments fromInternal( final ImmutableSet<CreateAttachment> contents )
+    {
+        return contents.isEmpty() ? EMPTY : new CreateAttachments( contents );
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
     }
 
     public static class Builder

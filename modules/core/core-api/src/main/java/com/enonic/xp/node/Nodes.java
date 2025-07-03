@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -12,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Nodes
     extends AbstractImmutableEntitySet<Node>
 {
+    private static final Nodes EMPTY = new Nodes( ImmutableSet.of() );
+
     private Nodes( final ImmutableSet<Node> set )
     {
         super( set );
@@ -19,32 +22,37 @@ public final class Nodes
 
     public static Nodes empty()
     {
-        return new Nodes( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static Nodes from( final Node... nodes )
     {
-        return new Nodes( ImmutableSet.copyOf( nodes ) );
+        return fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Iterable<? extends Node> nodes )
     {
-        return new Nodes( ImmutableSet.copyOf( nodes ) );
+        return fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Collection<? extends Node> nodes )
     {
-        return new Nodes( ImmutableSet.copyOf( nodes ) );
+        return fromInternal( ImmutableSet.copyOf( nodes ) );
+    }
+
+    public static Collector<Node, ?, Nodes> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Nodes::fromInternal );
+    }
+
+    private static Nodes fromInternal( final ImmutableSet<Node> set )
+    {
+        return set.isEmpty() ? EMPTY : new Nodes( set );
     }
 
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public static Collector<Node, ?, Nodes> collecting()
-    {
-        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
     }
 
     public NodePaths getPaths()

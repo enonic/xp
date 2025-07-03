@@ -2,6 +2,8 @@ package com.enonic.xp.suggester;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -37,6 +39,11 @@ public final class Suggestions
     public Suggestion get( final String name )
     {
         return this.stream().filter( ( suggestion ) -> name.equals( suggestion.getName() ) ).findFirst().orElse( null );
+    }
+
+    public static Collector <Suggestion, ?, Suggestions> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Suggestions::fromInternal );
     }
 
     private static Suggestions fromInternal( final ImmutableSet<Suggestion> set )

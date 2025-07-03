@@ -1,6 +1,7 @@
 package com.enonic.xp.descriptor;
 
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -11,6 +12,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class DescriptorKeys
     extends AbstractImmutableEntitySet<DescriptorKey>
 {
+    private static final DescriptorKeys EMPTY = from( ImmutableSet.of() );
+
     private DescriptorKeys( final ImmutableSet<DescriptorKey> keys )
     {
         super( keys );
@@ -23,26 +26,36 @@ public final class DescriptorKeys
 
     public DescriptorKeys filter( final Predicate<DescriptorKey> predicate )
     {
-        return from( stream().filter( predicate ).collect( Collectors.toList() ) );
+        return fromInternal( stream().filter( predicate ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public DescriptorKeys concat( final DescriptorKeys keys )
     {
-        return from( ImmutableSet.<DescriptorKey>builder().addAll( this ).addAll( keys ).build() );
+        return fromInternal( ImmutableSet.<DescriptorKey>builder().addAll( this ).addAll( keys ).build() );
     }
 
     public static DescriptorKeys empty()
     {
-        return from( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static DescriptorKeys from( final DescriptorKey... keys )
     {
-        return from( ImmutableSet.copyOf( keys ) );
+        return fromInternal( ImmutableSet.copyOf( keys ) );
     }
 
     public static DescriptorKeys from( final Iterable<DescriptorKey> keys )
     {
-        return new DescriptorKeys( ImmutableSet.copyOf( keys ) );
+        return fromInternal( ImmutableSet.copyOf( keys ) );
+    }
+
+    public static Collector<DescriptorKey, ?, DescriptorKeys> collecting()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), DescriptorKeys::fromInternal );
+    }
+
+    private static DescriptorKeys fromInternal( final ImmutableSet<DescriptorKey> keys )
+    {
+        return keys.isEmpty() ? EMPTY : new DescriptorKeys( keys );
     }
 }

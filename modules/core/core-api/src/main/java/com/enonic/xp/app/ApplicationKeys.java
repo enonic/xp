@@ -6,18 +6,17 @@ import java.util.Collection;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class ApplicationKeys
-    extends AbstractImmutableEntityList<ApplicationKey>
+    extends AbstractImmutableEntitySet<ApplicationKey>
 {
     private static final ApplicationKeys EMPTY = new ApplicationKeys( ImmutableSet.of() );
 
     private ApplicationKeys( final ImmutableSet<ApplicationKey> list )
     {
-        // ApplicationKeys is supposed to be set, but it was made as list initially. We deduplicate values and store them in list.
-        super( list.asList() );
+        super( list );
     }
 
     public static ApplicationKeys from( final ApplicationKey... applicationKeys )
@@ -47,13 +46,6 @@ public final class ApplicationKeys
 
     private static ApplicationKeys fromInternal( final ImmutableSet<ApplicationKey> applicationKeys )
     {
-        if ( applicationKeys.isEmpty() )
-        {
-            return EMPTY;
-        }
-        else
-        {
-            return new ApplicationKeys( applicationKeys );
-        }
+        return applicationKeys.isEmpty() ? EMPTY : new ApplicationKeys( applicationKeys );
     }
 }

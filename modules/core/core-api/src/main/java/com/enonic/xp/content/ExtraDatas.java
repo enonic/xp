@@ -1,69 +1,60 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class ExtraDatas
-    extends AbstractImmutableEntitySet<ExtraData>
+    extends AbstractImmutableEntityList<ExtraData>
 {
-    private final ImmutableMap<XDataName, ExtraData> map;
+    private static final ExtraDatas EMPTY = new ExtraDatas( ImmutableList.of() );
 
-    private ExtraDatas( final Set<ExtraData> set )
+    private ExtraDatas( final ImmutableList<ExtraData> list )
     {
-        super( ImmutableSet.copyOf( set ) );
-        this.map = set.stream().collect( ImmutableMap.toImmutableMap( ExtraData::getName, Function.identity() ) );
+        super( list );
     }
 
     public XDataNames getNames()
     {
-        return XDataNames.from( map.keySet() );
+        return list.stream().map( ExtraData::getName ).collect( XDataNames.collecting() );
     }
 
     public ExtraData getMetadata( final XDataName name )
     {
-        return this.map.get( name );
+        return list.stream().filter( xd ->  name.equals( xd.getName() ) ).findAny().orElse( null );
     }
 
     public ExtraDatas copy()
     {
-        return ExtraDatas.from( this.map.values().stream().map( ExtraData::copy ).collect( Collectors.toList() ) );
+        return fromInternal( this.list.stream().map( ExtraData::copy ).collect( ImmutableList.toImmutableList() ) );
     }
 
     public static ExtraDatas empty()
     {
-        final ImmutableSet<ExtraData> set = ImmutableSet.of();
-        return new ExtraDatas( set );
+        return EMPTY;
     }
 
     public static ExtraDatas from( final Iterable<? extends ExtraData> extradatas )
     {
-        return new ExtraDatas( ImmutableSet.copyOf( extradatas ) );
+        return new ExtraDatas( ImmutableList.copyOf( extradatas ) );
     }
 
-    public static ExtraDatas from( final Stream<? extends ExtraData> extradatas )
+    public static Collector<ExtraData, ?, ExtraDatas> collecting()
     {
-        return new ExtraDatas( extradatas.collect( ImmutableSet.toImmutableSet() ) );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ExtraDatas::fromInternal );
     }
 
-    public static ExtraDatas from( final ExtraDatas extraDatas, final ExtraData extraData )
+    private static ExtraDatas fromInternal( final ImmutableList<ExtraData> list )
     {
-        ImmutableSet.Builder<ExtraData> builder = ImmutableSet.builder();
-        builder.addAll( extraDatas );
-        builder.add( extraData );
-        return new ExtraDatas( builder.build() );
+        return list.isEmpty() ? EMPTY : new ExtraDatas( list );
     }
 
     public static Builder create()
@@ -73,23 +64,23 @@ public final class ExtraDatas
 
     public static class Builder
     {
-        private final Set<ExtraData> set = new LinkedHashSet<>();
+        private final ImmutableList.Builder<ExtraData> list = ImmutableList.builder();
 
         public Builder add( final ExtraData value )
         {
-            set.add( value );
+            list.add( value );
             return this;
         }
 
         public Builder addAll( final Collection<ExtraData> value )
         {
-            set.addAll( value );
+            list.addAll( value );
             return this;
         }
 
         public ExtraDatas build()
         {
-            return new ExtraDatas( set );
+            return fromInternal( list.build() );
         }
     }
 }

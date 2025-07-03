@@ -13,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class NodeCommitEntries
     extends AbstractImmutableEntitySet<NodeCommitEntry>
 {
+    private static final NodeCommitEntries EMPTY = new NodeCommitEntries( ImmutableSet.of() );
+
     private NodeCommitEntries( final ImmutableSet<NodeCommitEntry> set )
     {
         super( set );
@@ -20,18 +22,22 @@ public final class NodeCommitEntries
 
     public static NodeCommitEntries empty()
     {
-        return new NodeCommitEntries( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static NodeCommitEntries from( final NodeCommitEntry... nodeCommitEntries )
     {
-        return new NodeCommitEntries( ImmutableSet.copyOf( nodeCommitEntries ) );
+        return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
     }
-
 
     public static NodeCommitEntries from( final Collection<NodeCommitEntry> nodeCommitEntries )
     {
-        return new NodeCommitEntries( ImmutableSet.copyOf( nodeCommitEntries ) );
+        return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
+    }
+
+    private static NodeCommitEntries fromInternal( final ImmutableSet<NodeCommitEntry> set )
+    {
+        return set.isEmpty() ? EMPTY : new NodeCommitEntries( set );
     }
 
     public static Builder create()
@@ -41,7 +47,7 @@ public final class NodeCommitEntries
 
     public static class Builder
     {
-        final Set<NodeCommitEntry> nodeCommitEntries = new LinkedHashSet<>();
+        final ImmutableSet.Builder<NodeCommitEntry> nodeCommitEntries = ImmutableSet.builder();
 
         public Builder add( final NodeCommitEntry nodeCommitEntry )
         {
@@ -57,9 +63,7 @@ public final class NodeCommitEntries
 
         public NodeCommitEntries build()
         {
-            return new NodeCommitEntries( ImmutableSet.copyOf( this.nodeCommitEntries ) );
+            return fromInternal( this.nodeCommitEntries.build() );
         }
-
     }
-
 }

@@ -1,15 +1,21 @@
 package com.enonic.xp.query.suggester;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.support.AbstractImmutableEntityList;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public final class SuggestionQueries
-    extends AbstractImmutableEntitySet<SuggestionQuery>
+    extends AbstractImmutableEntityList<SuggestionQuery>
 {
-    private SuggestionQueries( final ImmutableSet<SuggestionQuery> set )
+    private static final SuggestionQueries EMPTY = new SuggestionQueries( ImmutableList.of() );
+
+    private SuggestionQueries( final ImmutableList<SuggestionQuery> set )
     {
         super( set );
     }
@@ -21,17 +27,27 @@ public final class SuggestionQueries
 
     public static SuggestionQueries empty()
     {
-        return new SuggestionQueries( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static SuggestionQueries fromCollection( final Collection<SuggestionQuery> suggestionQueries )
     {
-        return new SuggestionQueries( ImmutableSet.copyOf( suggestionQueries ) );
+        return fromInternal( ImmutableList.copyOf( suggestionQueries ) );
+    }
+
+    public static Collector<SuggestionQuery, ?, SuggestionQueries> collecting()
+    {
+        return Collectors.collectingAndThen(ImmutableList.toImmutableList(), SuggestionQueries::fromInternal);
+    }
+
+    private static SuggestionQueries fromInternal( final ImmutableList<SuggestionQuery> suggestionQueries )
+    {
+        return suggestionQueries.isEmpty() ? EMPTY : new SuggestionQueries( suggestionQueries );
     }
 
     public static final class Builder
     {
-        private final ImmutableSet.Builder<SuggestionQuery> suggestionQueries = ImmutableSet.builder();
+        private final ImmutableList.Builder<SuggestionQuery> suggestionQueries = ImmutableList.builder();
 
         public Builder add( final SuggestionQuery suggestionQuery )
         {
@@ -41,7 +57,7 @@ public final class SuggestionQueries
 
         public SuggestionQueries build()
         {
-            return new SuggestionQueries( this.suggestionQueries.build() );
+            return fromInternal( this.suggestionQueries.build() );
         }
     }
 }

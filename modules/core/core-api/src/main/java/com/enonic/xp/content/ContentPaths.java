@@ -54,24 +54,6 @@ public final class ContentPaths
         return removePaths( adaptPaths( paths ) );
     }
 
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public String toString()
-    {
-        return super.toString();
-    }
-
     public static ContentPaths empty()
     {
         return EMPTY;
@@ -102,6 +84,12 @@ public final class ContentPaths
         return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ),
                              Builder::build );
     }
+
+    public static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )
+    {
+        return set.isEmpty() ? EMPTY : new ContentPaths( set );
+    }
+
     public static Builder create()
     {
         return new Builder();
