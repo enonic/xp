@@ -65,7 +65,9 @@ public class ModifyContentCommand
         final ModifyContentResult.Builder builder = ModifyContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
 
         result.getResults()
-            .forEach( branchResult -> builder.addResult( branchResult.branch(), translator.fromNode( branchResult.node(), true ) ) );
+            .forEach( branchResult -> builder.addResult( branchResult.branch(), branchResult.node() != null
+                ? translator.fromNode( branchResult.node(), true )
+                : null ) );
 
         return builder.build();
     }

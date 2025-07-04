@@ -1,5 +1,6 @@
 package com.enonic.xp.core.content;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -13,10 +14,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
@@ -29,6 +38,8 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
+import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PushContentParams;
@@ -37,19 +48,26 @@ import com.enonic.xp.content.ReorderChildContentsParams;
 import com.enonic.xp.content.ReorderChildParams;
 import com.enonic.xp.content.SetContentChildOrderParams;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectContentEventListener;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.Region;
@@ -223,6 +241,170 @@ public class ProjectContentEventListenerTest
             assertEquals( "localChild1", duplicatedTargetChild1.getName().toString() );
             assertEquals( "localChild2", duplicatedTargetChild2.getName().toString() );
         } );
+    }
+
+    @Test
+    public void syncModifiedFields()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
+
+        final ModifyContentResult modifiedContent = projectContext.callWith( () -> {
+
+            final ModifyContentResult result =
+                contentService.modify( ModifyContentParams.create().contentId( sourceContent.getId() ).modifier( ( edit -> {
+                    edit.data.setValue( new PropertyTree() );
+                    edit.displayName.setValue( "newDisplayName" );
+                    edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
+                    edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
+                    edit.language.setValue( Locale.forLanguageTag( "no" ) );
+                    edit.page.setValue( createPage() );
+
+                    edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
+                    edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
+                    edit.valid.setValue( false );
+                    edit.validationErrors.setValue( ValidationErrors.create()
+                                                        .add( ValidationError.dataError(
+                                                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "errorCode" ),
+                                                            PropertyPath.from( "/property" ) ).build() )
+                                                        .build() );
+
+                    edit.parentPath.setValue( ContentPath.from( "/localContent" ) );
+
+                    edit.name.setValue( ContentName.from( "newName" ) );
+
+                    edit.childOrder.setValue( ChildOrder.from( "modifiedtime DESC" ) );
+
+                    edit.originProject.setValue( ProjectName.from( "new-origin-project" ) );
+
+                    edit.originalParentPath.setValue( ContentPath.from( "/newOriginalParent" ) );
+
+                    edit.originalName.setValue( ContentName.from( "newOriginalName" ) );
+
+                    edit.archivedTime.setValue( Instant.parse( "2023-10-02T12:00:00Z" ) );
+
+                    edit.archivedBy.setValue( PrincipalKey.from( "user:system:archivedBy" ) );
+                } ) ).build() );
+
+            return result;
+
+        } );
+
+        handleEvents();
+
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        compareSynched( modifiedContent.getResult( ContentConstants.BRANCH_DRAFT ), targetContent );
+    }
+
+    @Test
+    public void syncModifiedCreateAttachments()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
+
+        projectContext.callWith( () -> {
+            return contentService.modify( ModifyContentParams.create()
+                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                              .createAttachments( CreateAttachments.create()
+                                                                      .add( CreateAttachment.create()
+                                                                                .byteSource( ByteSource.wrap( "data".getBytes() ) )
+                                                                                .name( "MyImage.something.gif" )
+                                                                                .build() )
+                                                                      .build() )
+                                              .contentId( sourceContent.getId() )
+                                              .modifier( ( edit -> {
+
+                                                  final Attachment a1 = Attachment.create()
+                                                      .mimeType( "image/gif" )
+                                                      .label( "My Image 1" )
+                                                      .name( "MyImage.something.gif" )
+                                                      .build();
+
+                                                  edit.attachments.setValue( Attachments.create().add( a1 ).build() );
+                                              } ) )
+                                              .build() );
+
+        } );
+
+        handleEvents();
+
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        final Content contentInMaster = ContextBuilder.from( projectContext )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage.something.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage.something.gif" ) );
+    }
+
+    @Test
+    public void syncModifiedRemoveAttachments()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
+
+        projectContext.callWith( () -> {
+            return contentService.modify( ModifyContentParams.create()
+                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                              .createAttachments( CreateAttachments.create()
+                                                                      .add( CreateAttachment.create()
+                                                                                .byteSource( ByteSource.wrap( "data".getBytes() ) )
+                                                                                .name( "MyImage.something.gif" )
+                                                                                .build() )
+                                                                      .build() )
+                                              .contentId( sourceContent.getId() )
+                                              .modifier( ( edit -> {
+
+                                                  final Attachment a1 = Attachment.create()
+                                                      .mimeType( "image/gif" )
+                                                      .label( "My Image 1" )
+                                                      .name( "MyImage.something.gif" )
+                                                      .build();
+
+                                                  edit.attachments.setValue( Attachments.create().add( a1 ).build() );
+                                              } ) )
+                                              .build() );
+
+        } );
+
+        handleEvents();
+
+        Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        Content contentInMaster = ContextBuilder.from( projectContext )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage.something.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage.something.gif" ) );
+
+        //remove attachment
+        projectContext.callWith( () -> {
+            return contentService.modify( ModifyContentParams.create()
+                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                              .contentId( sourceContent.getId() )
+                                              .modifier( ( edit -> {
+                                                  edit.attachments.setValue( Attachments.create().build() );
+                                              } ) )
+                                              .build() );
+
+        } );
+
+        handleEvents();
+
+        targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+        contentInMaster = ContextBuilder.from( projectContext )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertFalse( targetContent.getAttachments().hasByName( "MyImage.something.gif" ) );
+        assertFalse( contentInMaster.getAttachments().hasByName( "MyImage.something.gif" ) );
     }
 
     @Test
@@ -898,8 +1080,7 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        layerContext.runWith(
-            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+        layerContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         handleEvents();
 

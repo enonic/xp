@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -9,8 +10,10 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
+import com.enonic.xp.content.ModifyContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowState;
 
@@ -42,11 +45,32 @@ final class UpdatedEventSyncCommand
                 {
                     if ( needToUpdate( content.getSourceContent(), content.getTargetContent() ) )
                     {
-                        final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
+                        final Boolean patched = Optional.ofNullable( params.getEventMetadata().get( "patched" ) )
+                            .map( f -> Boolean.valueOf( f.toString() ) )
+                            .orElse( false );
 
-                        doSyncAttachments( content, updateParams );
+                        if ( patched )
+                        {
 
-                        contentService.update( updateParams );
+                            final ModifyContentParams modifyParams = modifyParams( content.getSourceContent() );
+
+                            //TODO: attachments?
+                            final Content aa = contentService.modify( modifyParams ).getResult( ContentConstants.BRANCH_DRAFT );
+
+                            aa.getName();
+                        }
+                        else
+                        {
+
+                            final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
+
+                            doSyncAttachments( content, updateParams );
+
+                            final Content aa = contentService.update( updateParams );
+
+                            aa.getName();
+                        }
+
                     }
                 }
             }
@@ -115,20 +139,55 @@ final class UpdatedEventSyncCommand
 
     private UpdateContentParams updateParams( final Content source )
     {
-        return new UpdateContentParams().contentId( source.getId() )
-            .requireValid( false )
-            .stopInherit( false )
-            .editor( edit -> {
-                edit.data = source.getData();
-                edit.extraDatas = source.getAllExtraData();
-                edit.displayName = source.getDisplayName();
-                edit.owner = source.getOwner();
-                edit.language = source.getLanguage();
-                edit.workflowInfo = source.getWorkflowInfo();
-                edit.page = source.getPage();
-                edit.thumbnail = source.getThumbnail();
-                edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
-            } );
+        return new UpdateContentParams().contentId( source.getId() ).requireValid( false ).stopInherit( false ).editor( edit -> {
+            edit.data = source.getData();
+            edit.extraDatas = source.getAllExtraData();
+            edit.displayName = source.getDisplayName();
+            edit.owner = source.getOwner();
+            edit.language = source.getLanguage();
+            edit.workflowInfo = source.getWorkflowInfo();
+            edit.page = source.getPage();
+            edit.thumbnail = source.getThumbnail();
+            edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
+        } );
+    }
+
+    private ModifyContentParams modifyParams( final Content source )
+    {
+        return ModifyContentParams.create().contentId( source.getId() )
+//            .branches( Branches.from( ContentConstants.BRANCH_DRAFT ))
+//                                .createAttachments(  ) TODO: patch binaries?
+            .modifier( modifiable -> {
+                modifiable.displayName.setValue( source.getDisplayName() );
+                modifiable.data.setValue( source.getData() );
+                modifiable.extraDatas.setValue( source.getAllExtraData() );
+                modifiable.page.setValue( source.getPage() );
+                modifiable.valid.setValue( source.isValid() );
+                modifiable.thumbnail.setValue( source.getThumbnail() );
+                modifiable.owner.setValue( source.getOwner() );
+                modifiable.language.setValue( source.getLanguage() );
+                modifiable.creator.setValue( source.getCreator() );
+                modifiable.createdTime.setValue( source.getCreatedTime() );
+                modifiable.modifier.setValue( source.getModifier() );
+                modifiable.modifiedTime.setValue( source.getModifiedTime() );
+                modifiable.publishInfo.setValue( source.getPublishInfo() );
+                modifiable.processedReferences.setValue( source.getProcessedReferences() );
+                modifiable.workflowInfo.setValue( source.getWorkflowInfo() );
+                modifiable.manualOrderValue.setValue( source.getManualOrderValue() );
+                modifiable.inherit.setValue( source.getInherit() );
+                modifiable.variantOf.setValue( source.getVariantOf() );
+                modifiable.attachments.setValue( source.getAttachments() );
+                modifiable.validationErrors.setValue( source.getValidationErrors() );
+                modifiable.type.setValue( source.getType() );
+                modifiable.parentPath.setValue( source.getParentPath() );
+                modifiable.name.setValue( source.getName() );
+                modifiable.childOrder.setValue( source.getChildOrder() );
+                modifiable.originProject.setValue( source.getOriginProject() );
+                modifiable.originalParentPath.setValue( source.getOriginalParentPath() );
+                modifiable.originalName.setValue( source.getOriginalName() );
+                modifiable.archivedTime.setValue( source.getArchivedTime() );
+                modifiable.archivedBy.setValue( source.getArchivedBy() );
+            } ).build();
     }
 
     public static class Builder

@@ -66,6 +66,28 @@ public class EditableContent
         this.variantOf = source.getVariantOf();
     }
 
+    //TODO: to delete!
+    public EditableContent( final ModifiableContent source )
+    {
+        this.source = source.source;
+        this.displayName = source.displayName.produce();
+        this.data = source.data.produce();
+        this.extraDatas = source.extraDatas.produce();
+        this.page = source.page.produce();
+        this.thumbnail = source.thumbnail.produce();
+        this.owner = source.owner.produce();
+        this.language = source.language.produce();
+        this.creator = source.creator.produce();
+        this.createdTime = source.createdTime.produce();
+        this.publishInfo = source.publishInfo.produce();
+        this.processedReferences = ContentIds.create().addAll( source.processedReferences.produce() );
+        this.workflowInfo = source.workflowInfo.produce();
+        this.manualOrderValue = source.manualOrderValue.produce();
+        this.inherit = EnumSet.copyOf( source.inherit.produce() );
+        this.variantOf = source.variantOf.produce();
+
+    }
+
     public Content build()
     {
         return Content.create( this.source ).
