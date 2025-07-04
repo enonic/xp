@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -38,18 +37,12 @@ public class ContentNodeHelper
 
     public static NodePaths translateContentPathsToNodePaths( final ContentPaths contentPaths )
     {
-        final NodePaths.Builder builder = NodePaths.create();
-
-        builder.addNodePaths(
-            contentPaths.stream().map( ContentNodeHelper::translateContentPathToNodePath ).collect( Collectors.toList() ) );
-
-        return builder.build();
+        return contentPaths.stream().map( ContentNodeHelper::translateContentPathToNodePath ).collect( NodePaths.collector() );
     }
 
     public static ContentPaths translateNodePathsToContentPaths( final NodePaths nodePaths )
     {
-        return ContentPaths.from(
-            nodePaths.stream().map( ContentNodeHelper::translateNodePathToContentPath ).collect( Collectors.toList() ) );
+        return nodePaths.stream().map( ContentNodeHelper::translateNodePathToContentPath ).collect( ContentPaths.collector() );
     }
 
     public static ContentPath translateNodePathToContentPath( final NodePath nodePath )

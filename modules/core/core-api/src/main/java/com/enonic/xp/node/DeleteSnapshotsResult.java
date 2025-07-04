@@ -34,7 +34,7 @@ public final class DeleteSnapshotsResult
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<String> deletedSnapshots = ImmutableSet.builder();
 

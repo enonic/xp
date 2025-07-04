@@ -1,8 +1,5 @@
 package com.enonic.xp.aggregation;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -19,7 +16,7 @@ public class Bucket
     {
         this.key = builder.key;
         this.docCount = builder.docCount;
-        this.subAggregations = Aggregations.from( builder.aggregations );
+        this.subAggregations = builder.aggregations.build();
     }
 
     public String getKey()
@@ -44,11 +41,11 @@ public class Bucket
 
     public static class Builder<T extends Builder>
     {
-        String key;
+        private String key;
 
-        long docCount;
+        private long docCount;
 
-        final Set<Aggregation> aggregations = new HashSet<>();
+        final Aggregations.Builder aggregations = Aggregations.create();
 
         @SuppressWarnings("unchecked")
         public T key( final String key )
@@ -67,7 +64,7 @@ public class Bucket
         @SuppressWarnings("unchecked")
         public T addAggregations( final Aggregations aggregations )
         {
-            this.aggregations.addAll( aggregations.getSet() );
+            this.aggregations.addAll( aggregations );
             return (T) this;
         }
 
@@ -76,5 +73,4 @@ public class Bucket
             return new Bucket( this );
         }
     }
-
 }

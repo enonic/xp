@@ -94,7 +94,7 @@ public final class TermSuggestionQuery
         return new Builder( name );
     }
 
-    public static class Builder
+    public static final class Builder
         extends SuggestionQuery.Builder<Builder>
     {
         private Sort sort;

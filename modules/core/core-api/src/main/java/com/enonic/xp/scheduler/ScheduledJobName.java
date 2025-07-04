@@ -52,7 +52,7 @@ public final class ScheduledJobName
         return this.value;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private String value;
 

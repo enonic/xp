@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -26,7 +27,7 @@ public final class ContentPaths
 
     public ContentPaths add( final String... paths )
     {
-        return addPaths( parsePaths( Arrays.asList( paths ) ) );
+        return add( from( paths ) );
     }
 
     public ContentPaths add( final ContentPath... paths )
@@ -41,7 +42,7 @@ public final class ContentPaths
 
     public ContentPaths remove( final String... paths )
     {
-        return removePaths( parsePaths( Arrays.asList( paths ) ) );
+        return remove( from( paths ) );
     }
 
     public ContentPaths remove( final ContentPath... paths )
@@ -54,24 +55,6 @@ public final class ContentPaths
         return removePaths( adaptPaths( paths ) );
     }
 
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public String toString()
-    {
-        return super.toString();
-    }
-
     public static ContentPaths empty()
     {
         return EMPTY;
@@ -79,29 +62,34 @@ public final class ContentPaths
 
     public static ContentPaths from( final String... paths )
     {
-        return new ContentPaths( parsePaths( Arrays.asList( paths ) ) );
+        return from( Arrays.asList( paths ) );
     }
 
     public static ContentPaths from( final Collection<String> contentPaths )
     {
-        return new ContentPaths( parsePaths( contentPaths ) );
+        return contentPaths.stream().map( ContentPath::from ).collect( collector() );
     }
 
     public static ContentPaths from( final ContentPath... paths )
     {
-        return new ContentPaths( ImmutableSet.copyOf( paths ) );
+        return fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
     public static ContentPaths from( final Iterable<ContentPath> paths )
     {
-        return new ContentPaths( ImmutableSet.copyOf( paths ) );
+        return fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
-    public static Collector<ContentPath, ?, ContentPaths> collecting()
+    public static Collector<ContentPath, ?, ContentPaths> collector()
     {
-        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ),
-                             Builder::build );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentPaths::fromInternal );
     }
+
+    public static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )
+    {
+        return set.isEmpty() ? EMPTY : new ContentPaths( set );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -109,14 +97,12 @@ public final class ContentPaths
 
     private ContentPaths addPaths( final Collection<ContentPath> paths )
     {
-        return new ContentPaths( Stream.concat( set.stream(), paths.stream() ).
-            collect( ImmutableSet.toImmutableSet() ) );
+        return Stream.concat( set.stream(), paths.stream() ).collect( collector() );
     }
 
     private ContentPaths removePaths( final Set<ContentPath> paths )
     {
-        return new ContentPaths( set.stream().filter( Predicate.not( paths::contains ) ).
-            collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().filter( Predicate.not( paths::contains ) ).collect( collector() );
     }
 
     private static ContentPath adaptPath( Object item )
@@ -138,14 +124,7 @@ public final class ContentPaths
             collect( ImmutableSet.toImmutableSet() );
     }
 
-    private static ImmutableSet<ContentPath> parsePaths( final Collection<String> paths )
-    {
-        return paths.stream().
-            map( ContentPath::from ).
-            collect( ImmutableSet.toImmutableSet() );
-    }
-
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<ContentPath> paths = ImmutableSet.builder();
 
@@ -155,15 +134,15 @@ public final class ContentPaths
             return this;
         }
 
-        public Builder addAll( final ContentPaths contentPaths )
+        public Builder addAll( final Iterable<? extends ContentPath> contentPaths )
         {
-            this.paths.addAll( contentPaths.getSet() );
+            this.paths.addAll( contentPaths );
             return this;
         }
 
         public ContentPaths build()
         {
-            return new ContentPaths( paths.build() );
+            return fromInternal( paths.build() );
         }
     }
 }

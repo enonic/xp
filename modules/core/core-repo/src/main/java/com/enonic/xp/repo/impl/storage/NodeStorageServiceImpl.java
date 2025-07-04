@@ -373,15 +373,10 @@ public class NodeStorageServiceImpl
 
     private BlobKeys getBinaryBlobKeys( final AttachedBinaries attachedBinaries )
     {
-        final BlobKeys.Builder blobKeys = BlobKeys.create();
-        if ( attachedBinaries != null )
-        {
-            attachedBinaries.stream().
-                map( AttachedBinary::getBlobKey ).
-                map( BlobKey::from ).
-                forEach( blobKeys::add );
-        }
-        return blobKeys.build();
+        return attachedBinaries != null ? attachedBinaries.stream()
+            .map( AttachedBinary::getBlobKey )
+            .map( BlobKey::from )
+            .collect( BlobKeys.collector() ) : BlobKeys.empty();
     }
 
     private Nodes doReturnNodes( final Stream<NodeBranchEntry> nodeBranchEntries, final InternalContext context )

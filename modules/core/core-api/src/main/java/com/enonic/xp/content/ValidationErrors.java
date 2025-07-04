@@ -61,7 +61,7 @@ public final class ValidationErrors
         return Objects.hash( errors );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final List<ValidationError> validationErrors = new ArrayList<>();
 

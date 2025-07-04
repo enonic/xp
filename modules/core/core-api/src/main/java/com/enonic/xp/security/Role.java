@@ -23,7 +23,7 @@ public final class Role
         return new Builder( role );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Principal.Builder<Builder>
     {
         private Builder()

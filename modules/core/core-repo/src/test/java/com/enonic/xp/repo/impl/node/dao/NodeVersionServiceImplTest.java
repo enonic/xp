@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,6 @@ import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersions;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repository.RepositoryId;
@@ -181,13 +181,12 @@ class NodeVersionServiceImplTest
 
         final NodeVersionKey nodeVersionKey2 = executeInContext( () -> nodeDao.store( nodeVersion2, createInternalContext() ) );
 
-        NodeVersions.Builder builder = NodeVersions.create();
+        List<NodeVersion> nodeVersions = new ArrayList<>();
         NodeVersionKeys.from( nodeVersionKey1, nodeVersionKey2 )
-            .forEach( nodeVersionKey -> builder.add( executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) ) );
+            .forEach( nodeVersionKey -> nodeVersions.add( executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) ) );
 
-        final NodeVersions nodeVersions = builder.build();
 
-        assertEquals( 2, nodeVersions.getSize() );
+        assertEquals( 2, nodeVersions.size() );
         assertEquals( nodeVersion1.getId(), nodeVersions.get( 0 ).getId() );
         assertEquals( nodeVersion1.getData(), nodeVersions.get( 0 ).getData() );
         assertEquals( nodeVersion2.getId(), nodeVersions.get( 1 ).getId() );

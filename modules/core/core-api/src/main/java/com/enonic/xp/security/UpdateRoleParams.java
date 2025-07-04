@@ -78,7 +78,7 @@ public final class UpdateRoleParams
         return new Builder( role );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private PrincipalKey principalKey;
 

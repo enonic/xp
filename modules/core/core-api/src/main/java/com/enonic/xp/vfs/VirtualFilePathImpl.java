@@ -152,7 +152,7 @@ class VirtualFilePathImpl
         return this.getPath();
     }
 
-    private static class Builder
+    private static final class Builder
     {
         private final LinkedList<String> elements = new LinkedList<>();
 

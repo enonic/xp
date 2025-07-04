@@ -123,7 +123,7 @@ public final class ReadImageParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ContentId contentId;
 

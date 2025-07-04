@@ -160,7 +160,7 @@ public final class ContentType
         return s.toString();
     }
 
-    public static class Builder
+    public static final class Builder
         extends BaseSchema.Builder<Builder, ContentTypeName>
     {
         private boolean isAbstract;

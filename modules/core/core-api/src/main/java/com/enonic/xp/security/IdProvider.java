@@ -51,7 +51,7 @@ public final class IdProvider
         return key;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private IdProviderKey key;
 

@@ -18,6 +18,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -98,7 +99,8 @@ public class FindNodesByQueryCommandTest
         final NodeQuery query = NodeQuery.create()
             .query( QueryExpr.from( null ) )
             .size( -1 )
-            .aggregationQueries( Set.of( TermsAggregationQuery.create( "parents" ).fieldName( "_parentpath" ).build() ) )
+            .aggregationQueries(
+                AggregationQueries.create().add( TermsAggregationQuery.create( "parents" ).fieldName( "_parentpath" ).build() ).build() )
             .build();
         FindNodesByQueryResult result = doFindByQuery( query );
         printAllIndexContent("_all", "draft");

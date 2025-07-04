@@ -1,6 +1,5 @@
 package com.enonic.xp.app;
 
-import java.net.URL;
 import java.time.Instant;
 import java.util.Set;
 

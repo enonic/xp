@@ -36,24 +36,12 @@ public final class RenameContentParams
         return stopInherit;
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-
     public static Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ContentId contentId;
 

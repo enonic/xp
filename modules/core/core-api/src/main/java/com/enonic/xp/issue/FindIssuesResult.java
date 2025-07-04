@@ -39,7 +39,7 @@ public final class FindIssuesResult
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private List<Issue> issues = Collections.emptyList();
 

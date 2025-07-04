@@ -21,7 +21,7 @@ public final class CreatePublishRequestIssueParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends CreateIssueParams.Builder<Builder>
     {
         private PublishRequestIssueSchedule schedule;

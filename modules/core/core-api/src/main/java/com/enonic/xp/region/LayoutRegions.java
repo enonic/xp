@@ -27,7 +27,7 @@ public final class LayoutRegions
         return LayoutRegions.create( this ).build();
     }
 
-    public static class Builder
+    public static final class Builder
         extends AbstractRegions.Builder<Builder>
     {
         private Builder( final LayoutRegions source )

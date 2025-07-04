@@ -59,7 +59,7 @@ public final class HistogramAggregationQuery
         return new Builder( name );
     }
 
-    public static class Builder
+    public static final class Builder
         extends AbstractHistogramAggregationQuery.Builder<Builder, Long>
     {
         private Long extendedBoundMin;

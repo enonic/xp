@@ -57,7 +57,7 @@ public class TestInitializer
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends Initializer.Builder<Builder>
     {
         private boolean isMaster;

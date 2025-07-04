@@ -21,7 +21,7 @@ public final class TermSuggestionOption
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends SuggestionOption.Builder<Builder>
     {
         private Integer freq;

@@ -212,7 +212,7 @@ public class SnapshotServiceImpl
 
         final GetSnapshotsResponse getSnapshotsResponse = this.client.admin().cluster().getSnapshots( getSnapshotsRequest ).actionGet();
 
-        return SnapshotResultsFactory.create( getSnapshotsResponse );
+        return getSnapshotsResponse.getSnapshots().stream().map( SnapshotResultFactory::create ).collect( SnapshotResults.collector() );
     }
 
     @Override
@@ -402,7 +402,7 @@ public class SnapshotServiceImpl
             throw new SnapshotException( "No snapshots found" );
         }
 
-        final SnapshotResult snapshotResult = snapshotResults.getSet()
+        final SnapshotResult snapshotResult = snapshotResults
             .stream()
             .skip( snapshotResults.getSize() - 1 )
             .findFirst()

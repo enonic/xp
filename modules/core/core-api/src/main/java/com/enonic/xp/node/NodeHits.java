@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
@@ -8,6 +11,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class NodeHits
     extends AbstractImmutableEntityList<NodeHit>
 {
+    private static final NodeHits EMPTY = new NodeHits( ImmutableList.of() );
 
     private NodeHits( final ImmutableList<NodeHit> hits )
     {
@@ -16,7 +20,7 @@ public final class NodeHits
 
     public static NodeHits empty()
     {
-        return new NodeHits( ImmutableList.of() );
+        return EMPTY;
     }
 
     public NodeIds getNodeIds()
@@ -24,12 +28,22 @@ public final class NodeHits
         return NodeIds.from( this.stream().map( NodeHit::getNodeId ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
+    public static Collector<NodeHit, ?, NodeHits> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), NodeHits::fromInternal );
+    }
+
+    private static NodeHits fromInternal( final ImmutableList<NodeHit> hits )
+    {
+        return hits.isEmpty() ? EMPTY : new NodeHits( hits );
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<NodeHit> nodeHits = ImmutableList.builder();
 
@@ -41,7 +55,7 @@ public final class NodeHits
 
         public NodeHits build()
         {
-            return new NodeHits( this.nodeHits.build() );
+            return fromInternal( this.nodeHits.build() );
         }
     }
 }

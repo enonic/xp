@@ -1,45 +1,51 @@
 package com.enonic.xp.audit;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public final class AuditLogs
-    extends AbstractImmutableEntitySet<AuditLog>
+    extends AbstractImmutableEntityList<AuditLog>
 {
-    private final ImmutableMap<AuditLogId, AuditLog> map;
+    public static final AuditLogs EMPTY = new AuditLogs( ImmutableList.of() );
 
-    private AuditLogs( final Set<AuditLog> set )
+    private AuditLogs( final ImmutableList<AuditLog> list )
     {
-        super( ImmutableSet.copyOf( set ) );
-        this.map = set.stream().collect( ImmutableMap.toImmutableMap( AuditLog::getId, Function.identity() ) );
+        super( list );
     }
 
     public static AuditLogs empty()
     {
-        final ImmutableSet<AuditLog> set = ImmutableSet.of();
-        return new AuditLogs( set );
+        return EMPTY;
     }
 
     public static AuditLogs from( final AuditLog... auditLogs )
     {
-        return new AuditLogs( ImmutableSet.copyOf( auditLogs ) );
+        return fromInternal( ImmutableList.copyOf( auditLogs ) );
     }
 
     public static AuditLogs from( final Iterable<? extends AuditLog> auditLogs )
     {
-        return new AuditLogs( ImmutableSet.copyOf( auditLogs ) );
+        return fromInternal( ImmutableList.copyOf( auditLogs ) );
     }
 
     public static AuditLogs from( final Collection<? extends AuditLog> auditLogs )
     {
-        return new AuditLogs( ImmutableSet.copyOf( auditLogs ) );
+        return fromInternal( ImmutableList.copyOf( auditLogs ) );
+    }
+
+    public static Collector<AuditLog, ?, AuditLogs> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), AuditLogs::fromInternal );
+    }
+
+    private static AuditLogs fromInternal( final ImmutableList<AuditLog> list )
+    {
+        return list.isEmpty() ? EMPTY : new AuditLogs( list );
     }
 
     public static Builder create()
@@ -49,28 +55,30 @@ public final class AuditLogs
 
     public AuditLog getAuditLogById( final AuditLogId auditLogId )
     {
-        return this.map.get( auditLogId );
+        return this.list.stream().filter( al -> auditLogId.equals( al.getId() ) )
+            .findFirst()
+            .orElse( null );
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<AuditLog> auditLogs = new LinkedHashSet<>();
+        private final ImmutableList.Builder<AuditLog> auditLogs = ImmutableList.builder();
 
-        public Builder add( AuditLog auditLog )
+        public Builder add( final AuditLog auditLog )
         {
             auditLogs.add( auditLog );
             return this;
         }
 
-        public Builder addAll( AuditLogs auditLogs )
+        public Builder addAll( final Iterable<? extends AuditLog> auditLogs )
         {
-            this.auditLogs.addAll( auditLogs.getSet() );
+            this.auditLogs.addAll( auditLogs );
             return this;
         }
 
         public AuditLogs build()
         {
-            return new AuditLogs( auditLogs );
+            return fromInternal( auditLogs.build() );
         }
     }
 }

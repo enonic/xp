@@ -28,7 +28,7 @@ public final class MinAggregationQuery
         return new Builder( name );
     }
 
-    public static class Builder
+    public static final class Builder
         extends MetricAggregationQuery.Builder<Builder>
     {
         public Builder( final String name )

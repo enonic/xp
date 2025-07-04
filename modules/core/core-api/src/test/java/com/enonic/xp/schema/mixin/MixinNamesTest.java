@@ -18,7 +18,7 @@ public class MixinNamesTest
         MixinNames mixinNames = MixinNames.from( names );
         try
         {
-            mixinNames.getList().add( MixinName.from( "myapplication:my1" ) );
+            mixinNames.getSet().add( MixinName.from( "myapplication:my1" ) );
         }
         catch ( Exception e )
         {
@@ -27,7 +27,7 @@ public class MixinNamesTest
         mixinNames = MixinNames.from( MixinName.from( "myapplication:my1" ) );
         try
         {
-            mixinNames.getList().add( mixinName );
+            mixinNames.getSet().add( mixinName );
         }
         catch ( Exception e )
         {
@@ -36,7 +36,7 @@ public class MixinNamesTest
         mixinNames = MixinNames.from( "myapplication:my1" );
         try
         {
-            mixinNames.getList().add( mixinName );
+            mixinNames.getSet().add( mixinName );
         }
         catch ( Exception e )
         {

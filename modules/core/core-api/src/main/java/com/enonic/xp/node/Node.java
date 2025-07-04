@@ -199,7 +199,7 @@ public final class Node
         return new Builder( ROOT_UUID );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private NodeId id;
 

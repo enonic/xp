@@ -92,7 +92,7 @@ public final class SiteDescriptor
         return new Builder( siteDescriptor );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ApplicationKey applicationKey;
 

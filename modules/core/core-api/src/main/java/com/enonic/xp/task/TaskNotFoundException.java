@@ -3,8 +3,8 @@ package com.enonic.xp.task;
 import java.text.MessageFormat;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.exception.BaseException;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.exception.BaseException;
 
 @PublicApi
 public class TaskNotFoundException

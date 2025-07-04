@@ -105,7 +105,7 @@ public final class ImageComponent
         return Objects.hash( super.hashCode(), image, config );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Component.Builder
     {
         private ContentId image;

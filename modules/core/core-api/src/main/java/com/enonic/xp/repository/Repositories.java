@@ -1,8 +1,8 @@
 package com.enonic.xp.repository;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
@@ -14,35 +14,46 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Repositories
     extends AbstractImmutableEntitySet<Repository>
 {
-    private Repositories( final Set<Repository> set )
+    private static final Repositories EMPTY = new Repositories( ImmutableSet.of() );
+
+    private Repositories( final ImmutableSet<Repository> set )
     {
-        super( ImmutableSet.copyOf( set ) );
+        super( set );
     }
 
     public RepositoryIds getIds()
     {
-        return RepositoryIds.from( set.stream().map( Repository::getId ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Repository::getId ).collect( RepositoryIds.collector() );
     }
 
     public static Repositories empty()
     {
-        final ImmutableSet<Repository> set = ImmutableSet.of();
-        return new Repositories( set );
+        return EMPTY;
     }
 
-    public static Repositories from( final Repository... repositorys )
+    public static Repositories from( final Repository... repositories )
     {
-        return new Repositories( ImmutableSet.copyOf( repositorys ) );
+        return new Repositories( ImmutableSet.copyOf( repositories ) );
     }
 
-    public static Repositories from( final Iterable<? extends Repository> repositorys )
+    public static Repositories from( final Iterable<? extends Repository> repositories )
     {
-        return new Repositories( ImmutableSet.copyOf( repositorys ) );
+        return fromInternal( ImmutableSet.copyOf( repositories ) );
     }
 
-    public static Repositories from( final Collection<? extends Repository> repositorys )
+    public static Repositories from( final Collection<? extends Repository> repositories )
     {
-        return new Repositories( ImmutableSet.copyOf( repositorys ) );
+        return fromInternal( ImmutableSet.copyOf( repositories ) );
+    }
+
+    public static Collector<Repository, ?, Repositories> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Repositories::fromInternal );
+    }
+
+    private static Repositories fromInternal( final ImmutableSet<Repository> set )
+    {
+        return set.isEmpty() ? EMPTY : new Repositories( set );
     }
 
     public static Builder create()
@@ -50,26 +61,25 @@ public final class Repositories
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<Repository> repositorys = new LinkedHashSet<>();
+        private final ImmutableSet.Builder<Repository> repositories = ImmutableSet.builder();
 
         public Builder add( Repository repository )
         {
-            this.repositorys.add( repository );
+            this.repositories.add( repository );
             return this;
         }
 
-        public Builder addAll( Repositories repositorys )
+        public Builder addAll( Iterable<? extends Repository> repositories )
         {
-            this.repositorys.addAll( repositorys.getSet() );
+            this.repositories.addAll( repositories );
             return this;
         }
-
 
         public Repositories build()
         {
-            return new Repositories( repositorys );
+            return fromInternal( repositories.build() );
         }
     }
 

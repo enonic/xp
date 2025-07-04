@@ -10,7 +10,7 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 
 @PublicApi
-public class InlineMixin
+public final class InlineMixin
     extends FormItem
 {
     private final MixinName mixinName;
@@ -82,7 +82,7 @@ public class InlineMixin
         return new Builder( inline );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private MixinName mixinName;
 

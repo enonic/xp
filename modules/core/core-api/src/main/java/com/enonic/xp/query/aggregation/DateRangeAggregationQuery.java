@@ -36,7 +36,7 @@ public final class DateRangeAggregationQuery
         return new Builder( name );
     }
 
-    public static class Builder
+    public static final class Builder
         extends AbstractRangeAggregationQuery.Builder<Builder, DateRange>
     {
         private String format;

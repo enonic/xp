@@ -56,7 +56,7 @@ public final class IssueComment
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private NodeId id;
 

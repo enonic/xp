@@ -27,7 +27,7 @@ public final class UpdateIssueParams
         return new UpdateIssueParams.Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private IssueId id;
 

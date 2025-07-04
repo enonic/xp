@@ -1,8 +1,8 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -13,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class NodeCommitEntries
     extends AbstractImmutableEntitySet<NodeCommitEntry>
 {
+    private static final NodeCommitEntries EMPTY = new NodeCommitEntries( ImmutableSet.of() );
+
     private NodeCommitEntries( final ImmutableSet<NodeCommitEntry> set )
     {
         super( set );
@@ -20,18 +22,27 @@ public final class NodeCommitEntries
 
     public static NodeCommitEntries empty()
     {
-        return new NodeCommitEntries( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static NodeCommitEntries from( final NodeCommitEntry... nodeCommitEntries )
     {
-        return new NodeCommitEntries( ImmutableSet.copyOf( nodeCommitEntries ) );
+        return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
     }
-
 
     public static NodeCommitEntries from( final Collection<NodeCommitEntry> nodeCommitEntries )
     {
-        return new NodeCommitEntries( ImmutableSet.copyOf( nodeCommitEntries ) );
+        return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
+    }
+
+    public static Collector<NodeCommitEntry, ?, NodeCommitEntries> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodeCommitEntries::fromInternal );
+    }
+
+    private static NodeCommitEntries fromInternal( final ImmutableSet<NodeCommitEntry> set )
+    {
+        return set.isEmpty() ? EMPTY : new NodeCommitEntries( set );
     }
 
     public static Builder create()
@@ -39,9 +50,9 @@ public final class NodeCommitEntries
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        final Set<NodeCommitEntry> nodeCommitEntries = new LinkedHashSet<>();
+        final ImmutableSet.Builder<NodeCommitEntry> nodeCommitEntries = ImmutableSet.builder();
 
         public Builder add( final NodeCommitEntry nodeCommitEntry )
         {
@@ -49,7 +60,7 @@ public final class NodeCommitEntries
             return this;
         }
 
-        public Builder addAll( final Collection<NodeCommitEntry> nodeCommitEntries )
+        public Builder addAll( final Iterable<? extends NodeCommitEntry> nodeCommitEntries )
         {
             this.nodeCommitEntries.addAll( nodeCommitEntries );
             return this;
@@ -57,9 +68,7 @@ public final class NodeCommitEntries
 
         public NodeCommitEntries build()
         {
-            return new NodeCommitEntries( ImmutableSet.copyOf( this.nodeCommitEntries ) );
+            return fromInternal( this.nodeCommitEntries.build() );
         }
-
     }
-
 }

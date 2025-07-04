@@ -1,90 +1,81 @@
 package com.enonic.xp.schema.mixin;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class Mixins
     extends AbstractImmutableEntityList<Mixin>
 {
-    private final ImmutableMap<MixinName, Mixin> map;
+    private static final Mixins EMPTY = new Mixins( ImmutableList.of() );
 
     private Mixins( final ImmutableList<Mixin> list )
     {
         super( list );
-        this.map = list.stream().collect( ImmutableMap.toImmutableMap( Mixin::getName, Function.identity() ) );
     }
 
     public Mixins add( final Mixin... mixins )
     {
-        return add( ImmutableList.copyOf( mixins ) );
+        return add( Arrays.asList( mixins ) );
     }
 
     public Mixins add( final Iterable<Mixin> mixins )
     {
-        return add( ImmutableList.copyOf( mixins ) );
+        return fromInternal( ImmutableList.<Mixin>builder().addAll( this.list ).addAll( mixins ).build() );
     }
 
-    private Mixins add( final ImmutableList<Mixin> mixins )
+    public MixinNames getNames()
     {
-        final List<Mixin> tmp = new ArrayList<>();
-        tmp.addAll( this.list );
-        tmp.addAll( mixins );
-
-        return new Mixins( ImmutableList.copyOf( tmp ) );
-    }
-
-    public Set<MixinName> getNames()
-    {
-        return map.keySet();
+        return list.stream().map( BaseSchema::getName ).collect( MixinNames.collector() );
     }
 
     public Mixin getMixin( final MixinName mixinName )
     {
-        return map.get( mixinName );
+        return list.stream().filter( m -> mixinName.equals( m.getName() ) ).findFirst().orElse( null );
     }
 
     public Mixins filter( final Predicate<Mixin> filter )
     {
-        return from( this.map.values().stream().filter( filter ).iterator() );
+        return this.list.stream().filter( filter ).collect( collector() );
     }
 
     public static Mixins empty()
     {
-        return new Mixins( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static Mixins from( final Mixin... mixins )
     {
-        return new Mixins( ImmutableList.copyOf( mixins ) );
+        return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
     public static Mixins from( final Iterable<? extends Mixin> mixins )
     {
-        return new Mixins( ImmutableList.copyOf( mixins ) );
+        return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
     public static Mixins from( final Iterator<? extends Mixin> mixins )
     {
-        return new Mixins( ImmutableList.copyOf( mixins ) );
+        return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Mixins from( final Stream<? extends Mixin> mixins )
+    public static Collector <Mixin, ?, Mixins> collector()
     {
-        return new Mixins( ImmutableList.copyOf( mixins.collect( Collectors.toList() ) ) );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Mixins::fromInternal );
+    }
+
+    private static Mixins fromInternal( final ImmutableList<Mixin> list )
+    {
+        return list.isEmpty() ? EMPTY : new Mixins( list );
     }
 
     public static Builder create()
@@ -92,7 +83,7 @@ public final class Mixins
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
 
@@ -102,13 +93,7 @@ public final class Mixins
             return this;
         }
 
-        public Builder addAll( Mixins nodes )
-        {
-            builder.addAll( nodes );
-            return this;
-        }
-
-        public Builder addAll( Collection<Mixin> nodes )
+        public Builder addAll( Iterable<? extends Mixin> nodes )
         {
             builder.addAll( nodes );
             return this;
@@ -116,7 +101,7 @@ public final class Mixins
 
         public Mixins build()
         {
-            return new Mixins( builder.build() );
+            return fromInternal( builder.build() );
         }
     }
 }

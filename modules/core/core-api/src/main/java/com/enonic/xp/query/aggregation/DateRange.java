@@ -46,7 +46,7 @@ public final class DateRange
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends Range.Builder<Builder>
     {
         private Object from;

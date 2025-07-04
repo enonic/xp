@@ -31,7 +31,7 @@ public class TestExternalInitializer
         return new TestExternalInitializer.Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends ExternalInitializer.Builder<Builder>
     {
         public TestExternalInitializer build()

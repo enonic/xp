@@ -94,7 +94,7 @@ public final class UpdateUserParams
         return new Builder( user );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private PrincipalKey principalKey;
 

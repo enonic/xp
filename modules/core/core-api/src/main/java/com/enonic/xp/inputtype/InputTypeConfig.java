@@ -118,7 +118,7 @@ public final class InputTypeConfig
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final LinkedHashMultimap<String, InputTypeProperty> map;
 

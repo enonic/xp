@@ -1,6 +1,7 @@
 package com.enonic.xp.site;
 
 import java.util.Collection;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -13,6 +14,8 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class XDataMappings
     extends AbstractImmutableEntityList<XDataMapping>
 {
+    private static final XDataMappings EMPTY = new XDataMappings( ImmutableList.of() );
+
     private XDataMappings( final ImmutableList<XDataMapping> list )
     {
         super( list );
@@ -20,22 +23,32 @@ public final class XDataMappings
 
     public static XDataMappings empty()
     {
-        return new XDataMappings( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static XDataMappings from( final XDataMapping... xDataMappings )
     {
-        return new XDataMappings( ImmutableList.copyOf( xDataMappings ) );
+        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
     public static XDataMappings from( final Iterable<? extends XDataMapping> xDataMappings )
     {
-        return new XDataMappings( ImmutableList.copyOf( xDataMappings ) );
+        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
     public static XDataMappings from( final Collection<? extends XDataMapping> xDataMappings )
     {
-        return new XDataMappings( ImmutableList.copyOf( xDataMappings ) );
+        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
+    }
+
+    public static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )
+    {
+        return xDataMappings.isEmpty() ? EMPTY : new XDataMappings( xDataMappings );
+    }
+
+    public static Collector<XDataMapping, ?, XDataMappings> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), XDataMappings::fromInternal );
     }
 
     public static Builder create()
@@ -48,7 +61,7 @@ public final class XDataMappings
         return XDataNames.from( this.stream().map( XDataMapping::getXDataName ).collect( Collectors.toList() ) );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<XDataMapping> builder = ImmutableList.builder();
 
@@ -58,13 +71,7 @@ public final class XDataMappings
             return this;
         }
 
-        public XDataMappings.Builder addAll( XDataMappings xDataMappings )
-        {
-            builder.addAll( xDataMappings );
-            return this;
-        }
-
-        public XDataMappings.Builder addAll( Collection<XDataMapping> xDataMappings )
+        public XDataMappings.Builder addAll( Iterable<? extends XDataMapping> xDataMappings )
         {
             builder.addAll( xDataMappings );
             return this;

@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
 import java.util.Collections;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -211,12 +210,9 @@ public class RepositoryServiceImpl
     public Repositories list()
     {
         requireAdminRole();
-        final Repositories.Builder repositories = Repositories.create();
-        repositoryEntryService.findRepositoryEntryIds().stream().
+        return repositoryEntryService.findRepositoryEntryIds().stream().
             map( this::doGet ).
-            filter( Objects::nonNull ).
-            forEach( repositories::add );
-        return repositories.build();
+            collect( Repositories.collector() );
     }
 
     @Override

@@ -34,7 +34,7 @@ public final class RegionDescriptors
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<RegionDescriptor> regionsDescriptors = new ImmutableSet.Builder<>();
 

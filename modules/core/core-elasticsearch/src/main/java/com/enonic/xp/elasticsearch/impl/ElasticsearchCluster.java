@@ -1,12 +1,13 @@
 package com.enonic.xp.elasticsearch.impl;
 
+import java.util.stream.StreamSupport;
+
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -17,14 +18,13 @@ import com.enonic.xp.cluster.Cluster;
 import com.enonic.xp.cluster.ClusterHealth;
 import com.enonic.xp.cluster.ClusterHealthStatus;
 import com.enonic.xp.cluster.ClusterId;
+import com.enonic.xp.cluster.ClusterNode;
 import com.enonic.xp.cluster.ClusterNodes;
 
 @Component(immediate = true)
 public final class ElasticsearchCluster
     implements Cluster
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ElasticsearchCluster.class );
-
     private static final String CLUSTER_HEALTH_TIMEOUT = "5s";
 
     private final ClusterId id = ClusterId.from( "elasticsearch" );
@@ -74,8 +74,9 @@ public final class ElasticsearchCluster
 
             final ClusterStateResponse response = clusterAdminClient.state( clusterStateRequest ).actionGet();
 
-            final DiscoveryNodes members = response.getState().getNodes();
-            return ClusterNodesFactory.create( members );
+            return StreamSupport.stream( response.getState().getNodes().spliterator(), false )
+                .map( n -> ClusterNode.from( n.getName() ) )
+                .collect( ClusterNodes.collector() );
         }
         catch ( Exception e )
         {

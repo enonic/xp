@@ -51,7 +51,7 @@ public final class MoveNodeResult
             return node;
         }
 
-        public static class Builder
+        public static final class Builder
         {
             private NodePath previousPath;
 

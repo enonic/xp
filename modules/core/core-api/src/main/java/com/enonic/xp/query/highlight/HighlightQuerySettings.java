@@ -65,7 +65,7 @@ public final class HighlightQuerySettings
         return Objects.hash( super.hashCode(), encoder, tagsSchema );
     }
 
-    public static class Builder
+    public static final class Builder
         extends HighlightPropertySettings.Builder<Builder>
     {
         private Encoder encoder;

@@ -103,7 +103,7 @@ public final class CreateAttachment
         return Objects.hash( mimeType, name, label, byteSource, textContent );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ByteSource byteSource;
 

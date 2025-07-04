@@ -13,7 +13,7 @@ public final class TermSuggestionEntry
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends SuggestionEntry.Builder<Builder, TermSuggestionOption>
     {
         @Override

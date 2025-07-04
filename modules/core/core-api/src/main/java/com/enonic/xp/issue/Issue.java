@@ -1,10 +1,6 @@
 package com.enonic.xp.issue;
 
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -49,7 +45,7 @@ public class Issue
         this.issueStatus = builder.issueStatus;
         this.creator = builder.creator;
         this.modifier = builder.modifier;
-        this.approverIds = PrincipalKeys.from( builder.approverIds );
+        this.approverIds = builder.approverIds.build();
         this.publishRequest = builder.publishRequest;
         this.issueType = builder.issueType;
     }
@@ -151,7 +147,7 @@ public class Issue
 
         private PrincipalKey modifier;
 
-        private final Set<PrincipalKey> approverIds;
+        private final PrincipalKeys.Builder approverIds;
 
         private PublishRequest publishRequest;
 
@@ -159,7 +155,7 @@ public class Issue
 
         public Builder()
         {
-            this.approverIds = new LinkedHashSet<>();
+            this.approverIds = PrincipalKeys.create();
             this.issueStatus = IssueStatus.OPEN;
             this.issueType = IssueType.STANDARD;
         }
@@ -176,7 +172,7 @@ public class Issue
             this.issueStatus = source.issueStatus;
             this.creator = source.creator;
             this.modifier = source.modifier;
-            this.approverIds = source.approverIds != null ? source.approverIds.getSet() : ImmutableSet.of();
+            this.approverIds = PrincipalKeys.create().addAll( source.approverIds );
             this.publishRequest = source.publishRequest;
             this.issueType = source.issueType;
         }
@@ -249,7 +245,7 @@ public class Issue
 
         public B addApproverIds( final PrincipalKeys approverIds )
         {
-            this.approverIds.addAll( approverIds.getSet() );
+            this.approverIds.addAll( approverIds );
             return (B) this;
         }
 

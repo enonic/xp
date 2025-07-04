@@ -44,7 +44,7 @@ public final class NumericRange
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends Range.Builder<Builder>
     {
         private Double from;

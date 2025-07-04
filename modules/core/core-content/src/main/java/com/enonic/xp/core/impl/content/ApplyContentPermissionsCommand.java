@@ -72,7 +72,7 @@ final class ApplyContentPermissionsCommand
             .map( ApplyNodePermissionsResult.BranchResult::getNode )
             .filter( Objects::nonNull )
             .map( node -> RoutableNodeVersionId.from( node.id(), node.getNodeVersionId() ) )
-            .collect( RoutableNodeVersionIds.collecting() );
+            .collect( RoutableNodeVersionIds.collector() );
 
         if ( !versionIdsToCommit.isEmpty() )
         {

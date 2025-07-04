@@ -1,9 +1,10 @@
 package com.enonic.xp.security;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Stream;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -13,39 +14,41 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class PrincipalKeys
     extends AbstractImmutableEntitySet<PrincipalKey>
 {
+    private static final PrincipalKeys EMPTY = new PrincipalKeys( ImmutableSet.of() );
+
     private PrincipalKeys( final ImmutableSet<PrincipalKey> list )
     {
         super( list );
     }
 
+    public static PrincipalKeys empty()
+    {
+        return EMPTY;
+    }
+
     public static PrincipalKeys from( final PrincipalKey... principalKeys )
     {
-        return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
+        return fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }
 
     public static PrincipalKeys from( final Collection<PrincipalKey> principalKeys )
     {
-        return new PrincipalKeys( ImmutableSet.copyOf( principalKeys ) );
+        return fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }
 
     public static PrincipalKeys from( final String... principalKeys )
     {
-        return new PrincipalKeys( parsePrincipalKeys( principalKeys ) );
+        return Arrays.stream( principalKeys ).map( PrincipalKey::from ).collect( collector() );
     }
 
-    public static PrincipalKeys from( final Iterable<PrincipalKey>... principalKeys )
+    public static Collector<PrincipalKey, ?, PrincipalKeys> collector()
     {
-        final ImmutableSet.Builder<PrincipalKey> keys = ImmutableSet.builder();
-        for ( Iterable<PrincipalKey> keysParam : principalKeys )
-        {
-            keys.addAll( keysParam );
-        }
-        return new PrincipalKeys( keys.build() );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), PrincipalKeys::fromInternal );
     }
 
-    public static PrincipalKeys empty()
+    public static PrincipalKeys fromInternal( final ImmutableSet<PrincipalKey> set )
     {
-        return new PrincipalKeys( ImmutableSet.of() );
+        return set.isEmpty() ? EMPTY : new PrincipalKeys( set );
     }
 
     public static Builder create()
@@ -53,36 +56,25 @@ public final class PrincipalKeys
         return new Builder();
     }
 
-    private static ImmutableSet<PrincipalKey> parsePrincipalKeys( final String... principalKeys )
+    public static final class Builder
     {
-        return Stream.of( principalKeys ).map( PrincipalKey::from ).collect( ImmutableSet.toImmutableSet() );
-    }
-
-    public static class Builder
-    {
-        private final ImmutableList.Builder<PrincipalKey> principalKeys = new ImmutableList.Builder<>();
+        private final ImmutableSet.Builder<PrincipalKey> principalKeys = new ImmutableSet.Builder<>();
 
         public Builder add( final PrincipalKey principalKey )
         {
-            if ( principalKey != null )
-            {
-                this.principalKeys.add( principalKey );
-            }
+            this.principalKeys.add( principalKey );
             return this;
         }
 
-        public Builder addAll( final PrincipalKeys principalKeys )
+        public Builder addAll( final Iterable<? extends PrincipalKey> principalKeys )
         {
-            if ( principalKeys != null )
-            {
-                this.principalKeys.addAll( principalKeys );
-            }
+            this.principalKeys.addAll( principalKeys );
             return this;
         }
 
         public PrincipalKeys build()
         {
-            return PrincipalKeys.from( principalKeys.build() );
+            return fromInternal( principalKeys.build() );
         }
     }
 }

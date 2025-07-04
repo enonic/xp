@@ -49,7 +49,7 @@ public final class Site
         return new Builder( source );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Content.Builder<Builder>
     {
         private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();

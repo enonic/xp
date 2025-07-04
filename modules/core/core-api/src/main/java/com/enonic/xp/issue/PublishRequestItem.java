@@ -56,7 +56,7 @@ public final class PublishRequestItem
         return Objects.hash( id, includeChildren );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ContentId id;
 

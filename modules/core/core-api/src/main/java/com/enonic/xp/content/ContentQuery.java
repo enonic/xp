@@ -90,7 +90,7 @@ public final class ContentQuery
         return highlight;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private QueryExpr queryExpr;
 

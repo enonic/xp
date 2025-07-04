@@ -56,7 +56,7 @@ final class VirtualFileNonSlashAbsolutePath
         return builder.build();
     }
 
-    private static class Builder
+    private static final class Builder
     {
         private final LinkedList<String> elements = new LinkedList<>();
 

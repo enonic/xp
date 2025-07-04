@@ -36,7 +36,7 @@ public final class DateHistogramAggregationQuery
         return new Builder( name );
     }
 
-    public static class Builder
+    public static final class Builder
         extends AbstractHistogramAggregationQuery.Builder<Builder, String>
     {
         private String format;

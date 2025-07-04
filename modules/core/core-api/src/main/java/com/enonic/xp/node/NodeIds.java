@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -37,7 +38,7 @@ public final class NodeIds
 
     public static NodeIds from( final Collection<String> ids )
     {
-        return fromInternal( ids.stream().map( NodeId::from ).collect( ImmutableSet.toImmutableSet() ) );
+        return ids.stream().map( NodeId::from ).collect( collector() );
     }
 
     public static Builder create()
@@ -47,32 +48,20 @@ public final class NodeIds
 
     public static NodeIds from( final Iterable<NodeId> ids )
     {
-        if ( ids instanceof NodeIds )
-        {
-            return (NodeIds) ids;
-        }
-        return fromInternal( ImmutableSet.copyOf( ids ) );
+        return ids instanceof NodeIds ? (NodeIds) ids : fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
-    public static Collector<NodeId, ?, NodeIds> collecting()
+    public static Collector<NodeId, ?, NodeIds> collector()
     {
-        return Collector.of( NodeIds.Builder::new, NodeIds.Builder::add, ( left, right ) -> left.addAll( right.build() ),
-                             NodeIds.Builder::build );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodeIds::fromInternal );
     }
 
     private static NodeIds fromInternal( final ImmutableSet<NodeId> set )
     {
-        if ( set.isEmpty() )
-        {
-            return EMPTY;
-        }
-        else
-        {
-            return new NodeIds( set );
-        }
+        return set.isEmpty() ? EMPTY : new NodeIds( set );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<NodeId> nodeIds = ImmutableSet.builder();
 
@@ -82,9 +71,9 @@ public final class NodeIds
             return this;
         }
 
-        public Builder addAll( final NodeIds nodeIds )
+        public Builder addAll( final Iterable<? extends NodeId> nodeIds )
         {
-            this.nodeIds.addAll( nodeIds.getSet() );
+            this.nodeIds.addAll( nodeIds );
             return this;
         }
 

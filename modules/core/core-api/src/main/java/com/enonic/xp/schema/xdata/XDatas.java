@@ -1,16 +1,12 @@
 package com.enonic.xp.schema.xdata;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.BaseSchema;
@@ -20,66 +16,66 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class XDatas
     extends AbstractImmutableEntityList<XData>
 {
-    private final ImmutableMap<XDataName, XData> map;
+    private static final XDatas EMPTY = new XDatas( ImmutableList.of() );
 
     private XDatas( final ImmutableList<XData> list )
     {
         super( list );
-        this.map = list.stream().collect( ImmutableMap.toImmutableMap( XData::getName, Function.identity() ) );
     }
 
     public XDatas add( final XData... xDatas )
     {
-        return add( ImmutableList.copyOf( xDatas ) );
+        return add( Arrays.asList( xDatas ) );
     }
 
     public XDatas add( final Iterable<XData> xDatas )
     {
-        return add( ImmutableList.copyOf( xDatas ) );
+        return fromInternal( ImmutableList.<XData>builder().addAll( this.list ).addAll( xDatas ).build() );
     }
 
-    private XDatas add( final ImmutableList<XData> xDatas )
+    public XDataNames getNames()
     {
-        final List<XData> tmp = new ArrayList<>();
-        tmp.addAll( this.list );
-        tmp.addAll( xDatas );
-
-        return new XDatas( ImmutableList.copyOf( tmp ) );
-    }
-
-    public Set<XDataName> getNames()
-    {
-        return this.list.stream().map( BaseSchema::getName ).collect( ImmutableSet.toImmutableSet() );
+        return this.list.stream().map( BaseSchema::getName ).collect( XDataNames.collector() );
     }
 
     public XData getXData( final XDataName xDataName )
     {
-        return map.get( xDataName );
+        return list.stream().filter( x -> xDataName.equals( x.getName() ) ).findFirst().orElse( null );
     }
 
     public XDatas filter( final Predicate<XData> filter )
     {
-        return from( this.map.values().stream().filter( filter ).iterator() );
+        return this.list.stream().filter( filter ).collect( collector() );
     }
 
     public static XDatas empty()
     {
-        return new XDatas( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static XDatas from( final XData... xDatas )
     {
-        return new XDatas( ImmutableList.copyOf( xDatas ) );
+        return fromInternal( ImmutableList.copyOf( xDatas ) );
     }
 
     public static XDatas from( final Iterable<? extends XData> xDatas )
     {
-        return new XDatas( ImmutableList.copyOf( xDatas ) );
+        return fromInternal( ImmutableList.copyOf( xDatas ) );
     }
 
     public static XDatas from( final Iterator<? extends XData> xDatas )
     {
-        return new XDatas( ImmutableList.copyOf( xDatas ) );
+        return fromInternal( ImmutableList.copyOf( xDatas ) );
+    }
+
+    public static Collector<XData, ?, XDatas> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), XDatas::fromInternal );
+    }
+
+    private static XDatas fromInternal( final ImmutableList<XData> list )
+    {
+        return list.isEmpty() ? EMPTY : new XDatas( list );
     }
 
     public static Builder create()
@@ -87,7 +83,7 @@ public final class XDatas
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<XData> builder = ImmutableList.builder();
 
@@ -97,13 +93,7 @@ public final class XDatas
             return this;
         }
 
-        public Builder addAll( XDatas nodes )
-        {
-            builder.addAll( nodes );
-            return this;
-        }
-
-        public Builder addAll( Collection<XData> nodes )
+        public Builder addAll( Iterable<? extends XData> nodes )
         {
             builder.addAll( nodes );
             return this;
@@ -111,7 +101,7 @@ public final class XDatas
 
         public XDatas build()
         {
-            return new XDatas( builder.build() );
+            return fromInternal( builder.build() );
         }
     }
 }

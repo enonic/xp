@@ -99,7 +99,7 @@ public final class UpdateIdProviderParams
         return result.build();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private IdProviderKey idProviderKey;
 

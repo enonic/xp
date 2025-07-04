@@ -69,7 +69,7 @@ public final class FragmentComponent
         return Objects.hash( super.hashCode(), fragment );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Component.Builder
     {
         private ContentId fragment;

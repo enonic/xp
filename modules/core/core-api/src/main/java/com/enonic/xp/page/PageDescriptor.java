@@ -49,7 +49,7 @@ public final class PageDescriptor
         return new Builder( pageDescriptor );
     }
 
-    public static class Builder
+    public static final class Builder
         extends BaseBuilder<Builder>
     {
         private RegionDescriptors regions;

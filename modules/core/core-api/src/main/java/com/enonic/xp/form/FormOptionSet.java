@@ -163,7 +163,7 @@ public final class FormOptionSet
         return new Builder( formOptionSet );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private String name;
 

@@ -24,7 +24,6 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
@@ -344,11 +343,11 @@ public class ProjectServiceImpl
         return callWithListContext( () -> {
             final Projects projects = this.doList();
 
-            return Projects.from( projects.stream()
+            return projects.stream()
                                       .filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
                                           projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
                                                                                               EnumSet.allOf( ProjectRole.class ) ) )
-                                      .collect( ImmutableList.toImmutableList() ) );
+                                      .collect( Projects.collector() );
         } );
     }
 
@@ -396,7 +395,8 @@ public class ProjectServiceImpl
 
         callWithListContext( () -> {
             Stream.concat( doGetParents( targetProject ).stream(), Stream.of( targetProject ) )
-                .forEach( p -> graph.add( ProjectGraphEntry.create().name( p.getName() ).addParents( p.getParents() ).build() ) );
+                .map( p -> ProjectGraphEntry.create().name( p.getName() ).addParents( p.getParents() ).build() )
+                .forEach( graph::add );
 
             final Queue<Project> children = new ArrayDeque<>();
             children.add( targetProject );
@@ -640,10 +640,10 @@ public class ProjectServiceImpl
 
     private Projects doList()
     {
-        return Projects.from( this.repositoryService.list().stream().map( repository -> {
+        return this.repositoryService.list().stream().map( repository -> {
             final ProjectName projectName = ProjectName.from( repository.getId() );
             return projectName != null ? initProject( repository, getProjectSiteConfigs( projectName ) ) : null;
-        } ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+        } ).filter( Objects::nonNull ).collect( Projects.collector() );
     }
 
     private Project doGet( final ProjectName projectName )

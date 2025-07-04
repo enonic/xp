@@ -129,7 +129,7 @@ public final class Attachment
         return new Builder( source );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private String mimeType;
 

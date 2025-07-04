@@ -34,7 +34,7 @@ public final class UpdateAttachmentsParams
         return new Builder( contentId );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ContentId contentId;
 

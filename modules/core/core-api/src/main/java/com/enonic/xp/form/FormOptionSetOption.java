@@ -142,7 +142,7 @@ public final class FormOptionSetOption
         return new Builder( formOptionSetOption );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private String name;
 

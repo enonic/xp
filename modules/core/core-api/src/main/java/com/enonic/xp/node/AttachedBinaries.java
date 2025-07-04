@@ -1,6 +1,8 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -26,20 +28,20 @@ public final class AttachedBinaries
 
     public AttachedBinary getByBinaryReference( final BinaryReference reference )
     {
-        for ( final AttachedBinary attachedBinary : this.set )
-        {
-            if ( attachedBinary.getBinaryReference().equals( reference ) )
-            {
-                return attachedBinary;
-            }
-        }
-
-        return null;
+        return this.set.stream()
+            .filter( attachedBinary -> reference.equals( attachedBinary.getBinaryReference() ) )
+            .findAny()
+            .orElse( null );
     }
 
     public static AttachedBinaries fromCollection( final Collection<AttachedBinary> references )
     {
         return fromInternal( ImmutableSet.copyOf( references ) );
+    }
+
+    public static Collector<AttachedBinary, ?, AttachedBinaries> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), AttachedBinaries::fromInternal );
     }
 
     private static AttachedBinaries fromInternal( final ImmutableSet<AttachedBinary> set )
@@ -52,7 +54,7 @@ public final class AttachedBinaries
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<AttachedBinary> nodeAttachedBinaries = ImmutableSet.builder();
 
@@ -62,10 +64,15 @@ public final class AttachedBinaries
             return this;
         }
 
+        public Builder addAll( final Iterable<AttachedBinary> attachedBinaries )
+        {
+            this.nodeAttachedBinaries.addAll( attachedBinaries );
+            return this;
+        }
+
         public AttachedBinaries build()
         {
             return fromInternal( nodeAttachedBinaries.build() );
         }
     }
-
 }

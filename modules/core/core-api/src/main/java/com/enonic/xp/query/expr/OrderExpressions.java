@@ -1,6 +1,8 @@
 package com.enonic.xp.query.expr;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -33,6 +35,11 @@ public final class OrderExpressions
         return fromInternal( ImmutableList.copyOf( orderExprs ) );
     }
 
+    public static Collector<OrderExpr, ?, OrderExpressions> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), OrderExpressions::fromInternal );
+    }
+
     private static OrderExpressions fromInternal( final ImmutableList<OrderExpr> set )
     {
         return set.isEmpty() ? EMPTY : new OrderExpressions( set );
@@ -43,7 +50,7 @@ public final class OrderExpressions
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         final ImmutableList.Builder<OrderExpr> orderExprs = ImmutableList.builder();
 

@@ -1,9 +1,9 @@
 package com.enonic.xp.repository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -13,8 +13,9 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 @PublicApi
 public final class RepositoryIds
     extends AbstractImmutableEntitySet<RepositoryId>
-    implements Iterable<RepositoryId>
 {
+    private static final RepositoryIds EMPTY = new RepositoryIds( ImmutableSet.of() );
+
     private RepositoryIds( final ImmutableSet<RepositoryId> set )
     {
         super( set );
@@ -22,38 +23,37 @@ public final class RepositoryIds
 
     public static RepositoryIds empty()
     {
-        final ImmutableSet<RepositoryId> set = ImmutableSet.of();
-        return new RepositoryIds( set );
+        return EMPTY;
     }
 
     public static RepositoryIds from( final RepositoryId... ids )
     {
-        return new RepositoryIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static RepositoryIds from( final String... ids )
     {
-        return new RepositoryIds( parseIds( ids ) );
+        return from( Arrays.asList( ids ) );
     }
 
     public static RepositoryIds from( final Collection<String> ids )
     {
-        return new RepositoryIds( doParseIds( ids ) );
+        return fromInternal( ids.stream().map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() ) );
     }
 
     public static RepositoryIds from( final Iterable<RepositoryId> ids )
     {
-        return new RepositoryIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
-    private static ImmutableSet<RepositoryId> parseIds( final String... paths )
+    public static Collector<RepositoryId, ?, RepositoryIds> collector()
     {
-        return doParseIds( Arrays.asList( paths ) );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), RepositoryIds::fromInternal );
     }
 
-    private static ImmutableSet<RepositoryId> doParseIds( final Collection<String> list )
+    private static RepositoryIds fromInternal( final ImmutableSet<RepositoryId> ids )
     {
-        return list.stream().map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() );
+        return ids.isEmpty() ? EMPTY : new RepositoryIds( ids );
     }
 
     public static Builder create()
@@ -61,9 +61,9 @@ public final class RepositoryIds
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final List<RepositoryId> repositories = new ArrayList<>();
+        private final ImmutableSet.Builder<RepositoryId> repositories = ImmutableSet.builder();
 
         public Builder add( final RepositoryId repositoryId )
         {
@@ -71,16 +71,16 @@ public final class RepositoryIds
             return this;
         }
 
-        public Builder addAll( final RepositoryIds repositoryIds )
+        public Builder addAll( final Iterable<? extends RepositoryId> repositoryIds )
         {
-            this.repositories.addAll( repositoryIds.getSet() );
+            this.repositories.addAll( repositoryIds );
             return this;
         }
 
 
         public RepositoryIds build()
         {
-            return RepositoryIds.from( repositories );
+            return fromInternal( repositories.build() );
         }
     }
 }

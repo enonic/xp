@@ -1,6 +1,8 @@
 package com.enonic.xp.site;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -21,7 +23,7 @@ public final class SiteConfigs
 
     public SiteConfig get( final ApplicationKey applicationKey )
     {
-        return list.stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findAny().orElse( null );
+        return list.stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findFirst().orElse( null );
     }
 
     public static SiteConfigs empty()
@@ -42,6 +44,11 @@ public final class SiteConfigs
     public static SiteConfigs from( final Collection<? extends SiteConfig> siteConfigs )
     {
         return fromInternal( ImmutableList.copyOf( siteConfigs ) );
+    }
+
+    public static Collector<SiteConfig, ?, SiteConfigs> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), SiteConfigs::fromInternal );
     }
 
     private static SiteConfigs fromInternal( final ImmutableList<SiteConfig> siteConfigs )

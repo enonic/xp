@@ -78,18 +78,6 @@ public final class PushContentParams
         return message;
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
-
     public static final class Builder
     {
         private ContentIds contentIds;

@@ -1,6 +1,8 @@
 package com.enonic.xp.region;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class PartDescriptors
     extends AbstractImmutableEntityList<PartDescriptor>
 {
+    private static final PartDescriptors EMPTY = new PartDescriptors( ImmutableList.of() );
+
     private PartDescriptors( final ImmutableList<PartDescriptor> list )
     {
         super( list );
@@ -18,21 +22,31 @@ public final class PartDescriptors
 
     public static PartDescriptors empty()
     {
-        return new PartDescriptors( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static PartDescriptors from( final PartDescriptor... descriptors )
     {
-        return descriptors != null ? new PartDescriptors( ImmutableList.copyOf( descriptors ) ) : PartDescriptors.empty();
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static PartDescriptors from( final Iterable<? extends PartDescriptor> descriptors )
     {
-        return descriptors != null ? new PartDescriptors( ImmutableList.copyOf( descriptors ) ) : PartDescriptors.empty();
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static PartDescriptors from( final Collection<? extends PartDescriptor> descriptors )
     {
-        return descriptors != null ? new PartDescriptors( ImmutableList.copyOf( descriptors ) ) : PartDescriptors.empty();
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
+    }
+
+    public static Collector<PartDescriptor, ?, PartDescriptors> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PartDescriptors::fromInternal );
+    }
+
+    private static PartDescriptors fromInternal( final ImmutableList<PartDescriptor> list )
+    {
+        return list.isEmpty() ? EMPTY : new PartDescriptors( list );
     }
 }

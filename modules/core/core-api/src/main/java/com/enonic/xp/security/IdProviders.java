@@ -1,9 +1,9 @@
 package com.enonic.xp.security;
 
-import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -12,43 +12,45 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class IdProviders
     extends AbstractImmutableEntityList<IdProvider>
 {
-    private final ImmutableMap<IdProviderKey, IdProvider> map;
+    private static final IdProviders EMPTY = new IdProviders( ImmutableList.of() );
 
     private IdProviders( final ImmutableList<IdProvider> list )
     {
         super( list );
-        this.map = list.stream().collect( ImmutableMap.toImmutableMap( IdProvider::getKey, Function.identity() ) );
     }
 
     public static IdProviders empty()
     {
-        return new IdProviders( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static IdProviders from( final IdProvider... idProviders )
     {
-        return new IdProviders( ImmutableList.copyOf( idProviders ) );
-    }
-
-    @Override
-    public String toString()
-    {
-        return this.list.toString();
+        return fromInternal( ImmutableList.copyOf( idProviders ) );
     }
 
     public static IdProviders from( final Iterable<? extends IdProvider> idProviders )
     {
-        return new IdProviders( ImmutableList.copyOf( idProviders ) );
+        return fromInternal( ImmutableList.copyOf( idProviders ) );
+    }
+
+    public static Collector<IdProvider, ?, IdProviders> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), IdProviders::fromInternal );
+    }
+
+    private static IdProviders fromInternal( final ImmutableList<IdProvider> list )
+    {
+        return list.isEmpty() ? EMPTY : new IdProviders( list );
     }
 
     public IdProviderKeys getKeys()
     {
-        return IdProviderKeys.from( map.keySet() );
+        return list.stream().map( IdProvider::getKey ).collect( IdProviderKeys.collector() );
     }
 
     public IdProvider getIdProvider( final IdProviderKey idProviderKey )
     {
-        return map.get( idProviderKey );
+        return list.stream().filter( idp -> idProviderKey.equals( idp.getKey() ) ).findFirst().orElse( null );
     }
-
 }

@@ -24,10 +24,10 @@ public final class ExistsFilter
         super( builder );
     }
 
-    public static class Builder
+    public static final class Builder
         extends FieldFilter.Builder<Builder>
     {
-        public final ExistsFilter build()
+        public ExistsFilter build()
         {
             return new ExistsFilter( this );
         }

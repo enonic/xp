@@ -69,7 +69,7 @@ public final class Pre4NodeVersionJson
             .manualOrderValue( this.manualOrderValue )
             .permissions( fromJson( this.permissions ) )
             .nodeType( NodeType.from( this.nodeType ) )
-            .attachedBinaries( fromNodeAttachedBinaryJsonList( attachedBinaries ) )
+            .attachedBinaries( attachedBinaries.stream().map( AttachedBinaryJson::fromJson ).collect( AttachedBinaries.collector() ) )
             .build();
     }
 
@@ -79,17 +79,6 @@ public final class Pre4NodeVersionJson
         for ( final AccessControlEntryJson entryJson : list )
         {
             builder.add( entryJson.fromJson() );
-        }
-
-        return builder.build();
-    }
-
-    private AttachedBinaries fromNodeAttachedBinaryJsonList( final List<AttachedBinaryJson> list )
-    {
-        final AttachedBinaries.Builder builder = AttachedBinaries.create();
-        for ( final AttachedBinaryJson entry : list )
-        {
-            builder.add( AttachedBinaryJson.fromJson( entry ) );
         }
 
         return builder.build();

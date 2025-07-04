@@ -88,7 +88,7 @@ public class QueryBuilderFactory
 
         public Builder addQueryFilters( final Filters filters )
         {
-            filterBuilder.addAll( filters.getList() );
+            filterBuilder.addAll( filters );
             return this;
         }
 

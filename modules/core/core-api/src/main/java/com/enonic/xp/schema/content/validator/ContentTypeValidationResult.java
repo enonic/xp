@@ -78,7 +78,7 @@ public final class ContentTypeValidationResult
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<ContentTypeValidationError> errors = new ImmutableList.Builder<>();
 

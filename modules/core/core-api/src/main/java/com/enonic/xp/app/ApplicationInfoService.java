@@ -1,7 +1,6 @@
 package com.enonic.xp.app;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.macro.MacroDescriptors;

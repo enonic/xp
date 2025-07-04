@@ -1,7 +1,7 @@
 package com.enonic.xp.cluster;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -10,9 +10,14 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class ClusterNodes
     extends AbstractImmutableEntitySet<ClusterNode>
 {
-    private ClusterNodes( final ImmutableSet<ClusterNode> set, boolean ignore )
+    private ClusterNodes( final ImmutableSet<ClusterNode> set )
     {
         super( set );
+    }
+
+    public static Collector<ClusterNode, ?, ClusterNodes> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ClusterNodes::new );
     }
 
     public static Builder create()
@@ -20,9 +25,9 @@ public final class ClusterNodes
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final List<ClusterNode> nodes = new ArrayList<>();
+        private final ImmutableSet.Builder<ClusterNode> nodes = ImmutableSet.builder();
 
         public Builder add( final ClusterNode node )
         {
@@ -32,8 +37,7 @@ public final class ClusterNodes
 
         public ClusterNodes build()
         {
-            return new ClusterNodes( ImmutableSet.copyOf( nodes ), false );
+            return new ClusterNodes( nodes.build() );
         }
     }
-
 }

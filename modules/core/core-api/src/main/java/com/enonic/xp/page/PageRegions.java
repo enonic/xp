@@ -29,7 +29,7 @@ public final class PageRegions
         return PageRegions.create( this ).build();
     }
 
-    public static class Builder
+    public static final class Builder
         extends AbstractRegions.Builder<Builder>
     {
         private Builder( final PageRegions source )

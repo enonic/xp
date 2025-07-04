@@ -19,7 +19,7 @@ public class MixinsTest
         Mixin mixin = Mixin.create().name( mixinName ).build();
         Mixins mixins = Mixins.from( mixin );
 
-        assertTrue( mixins.getNames().size() == 1 );
+        assertTrue( mixins.getNames().getSize() == 1 );
         assertNotNull( mixins.getMixin( mixinName ) );
 
         try
@@ -41,7 +41,7 @@ public class MixinsTest
         }
 
         mixins = Mixins.create().add( mixin ).build();
-        assertEquals( 1, mixins.getNames().size() );
+        assertEquals( 1, mixins.getNames().getSize() );
         assertTrue( Mixins.empty().isEmpty() );
     }
 

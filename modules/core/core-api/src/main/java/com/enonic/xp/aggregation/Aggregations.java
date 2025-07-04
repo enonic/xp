@@ -1,19 +1,22 @@
 package com.enonic.xp.aggregation;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class Aggregations
-    extends AbstractImmutableEntitySet<Aggregation>
+    extends AbstractImmutableEntityList<Aggregation>
 {
-    private static final Aggregations EMPTY = new Aggregations( ImmutableSet.of() );
+    private static final Aggregations EMPTY = new Aggregations( ImmutableList.of() );
 
-    private Aggregations( final ImmutableSet<Aggregation> set )
+    private Aggregations( final ImmutableList<Aggregation> list )
     {
-        super( set );
+        super( list );
     }
 
     public static Aggregations empty()
@@ -23,12 +26,17 @@ public final class Aggregations
 
     public static Aggregations from( final Iterable<Aggregation> aggregations )
     {
-        return fromInternal( ImmutableSet.copyOf( aggregations ) );
+        return fromInternal( ImmutableList.copyOf( aggregations ) );
     }
 
     public static Aggregations from( final Aggregation... aggregations )
     {
-        return fromInternal( ImmutableSet.copyOf( aggregations ) );
+        return fromInternal( ImmutableList.copyOf( aggregations ) );
+    }
+
+    public static Collector<Aggregation, ?, Aggregations> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Aggregations::fromInternal );
     }
 
     public Aggregation get( final String name )
@@ -36,7 +44,7 @@ public final class Aggregations
         return this.stream().filter( ( agg ) -> name.equals( agg.getName() ) ).findFirst().orElse( null );
     }
 
-    private static Aggregations fromInternal( final ImmutableSet<Aggregation> set )
+    private static Aggregations fromInternal( final ImmutableList<Aggregation> set )
     {
         return set.isEmpty() ? EMPTY : new Aggregations( set );
     }
@@ -46,13 +54,19 @@ public final class Aggregations
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final ImmutableSet.Builder<Aggregation> aggregations = ImmutableSet.builder();
+        private final ImmutableList.Builder<Aggregation> aggregations = ImmutableList.builder();
 
         public Builder add( final Aggregation aggregation )
         {
             this.aggregations.add( aggregation );
+            return this;
+        }
+
+        public Builder addAll( final Iterable<? extends Aggregation> aggregations )
+        {
+            this.aggregations.addAll( aggregations );
             return this;
         }
 

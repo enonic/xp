@@ -67,7 +67,7 @@ public final class XDataMapping
         return Objects.hash( xDataName, allowContentTypes, optional );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private XDataName xDataName;
 

@@ -97,7 +97,7 @@ public final class IdProviderAccessControlList
         return this.entries.equals( that.entries );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final Map<PrincipalKey, IdProviderAccessControlEntry> entries;
 

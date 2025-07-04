@@ -87,15 +87,10 @@ public class NodeVersionQueryResultFactory
 
     private static BlobKeys toBlobKeys( final ReturnValue returnValue )
     {
-        final BlobKeys.Builder blobKeys = BlobKeys.create();
-        if ( returnValue != null )
-        {
-            returnValue.getValues().
-                stream().
-                map( value -> BlobKey.from( value.toString() ) ).
-                forEach( blobKeys::add );
-        }
-        return blobKeys.build();
+        return returnValue != null ? returnValue.getValues()
+            .stream()
+            .map( value -> BlobKey.from( value.toString() ) )
+            .collect( BlobKeys.collector() ) : BlobKeys.empty();
     }
 
     private static String getStringValue( final SearchHit hit, final IndexPath indexPath, final boolean required )

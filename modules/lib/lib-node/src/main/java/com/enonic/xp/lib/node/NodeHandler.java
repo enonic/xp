@@ -237,7 +237,7 @@ public class NodeHandler
         return execute( ApplyPermissionsHandler.create()
                             .nodeKey( NodeKey.from( key ) )
                             .branches( Optional.ofNullable( branches )
-                                           .map( b -> b.stream().map( Branch::from ).collect( Branches.collecting() ) )
+                                           .map( b -> b.stream().map( Branch::from ).collect( Branches.collector() ) )
                                            .orElse( Branches.empty() ) )
                             .scope( Optional.ofNullable( scope ).map( ApplyPermissionsScope::valueOf ).orElse( null ) )
                             .permissions( permissionsEntries )
