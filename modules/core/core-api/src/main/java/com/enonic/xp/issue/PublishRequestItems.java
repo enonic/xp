@@ -1,16 +1,12 @@
 package com.enonic.xp.issue;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class PublishRequestItems
@@ -38,7 +34,7 @@ public final class PublishRequestItems
         return fromInternal( ImmutableList.copyOf( items ) );
     }
 
-    public static Collector<PublishRequestItem, ?, PublishRequestItems> collecting()
+    public static Collector<PublishRequestItem, ?, PublishRequestItems> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PublishRequestItems::fromInternal );
     }
@@ -53,7 +49,7 @@ public final class PublishRequestItems
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<PublishRequestItem> items = ImmutableList.builder();
 
@@ -63,9 +59,9 @@ public final class PublishRequestItems
             return this;
         }
 
-        public Builder addAll( final PublishRequestItems items )
+        public Builder addAll( final Iterable<? extends PublishRequestItem> items )
         {
-            this.items.addAll( items.list );
+            this.items.addAll( items );
             return this;
         }
 

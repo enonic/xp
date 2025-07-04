@@ -34,7 +34,7 @@ public final class ContentTypeNames
 
     public static ContentTypeNames from( final Collection<String> contentTypeNames )
     {
-        return contentTypeNames.stream().map( ContentTypeName::from ).collect( collecting() );
+        return contentTypeNames.stream().map( ContentTypeName::from ).collect( collector() );
     }
 
     public static ContentTypeNames from( final ContentTypeName... contentTypeNames )
@@ -47,7 +47,7 @@ public final class ContentTypeNames
         return fromInternal( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
-    public static Collector<ContentTypeName, ?, ContentTypeNames> collecting()
+    public static Collector<ContentTypeName, ?, ContentTypeNames> collector()
     {
         return Collectors.collectingAndThen( ImmutableSortedSet.toImmutableSortedSet( Comparator.naturalOrder() ),
                                              ContentTypeNames::fromInternal );
@@ -63,7 +63,7 @@ public final class ContentTypeNames
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSortedSet.Builder<ContentTypeName> set = ImmutableSortedSet.naturalOrder();
 

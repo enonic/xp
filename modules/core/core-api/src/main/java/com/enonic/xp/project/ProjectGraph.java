@@ -1,5 +1,8 @@
 package com.enonic.xp.project;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -9,9 +12,14 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ProjectGraph
     extends AbstractImmutableEntityList<ProjectGraphEntry>
 {
-    private ProjectGraph( final Builder builder )
+    private ProjectGraph( final ImmutableList<ProjectGraphEntry> projects )
     {
-        super( builder.projects.build() );
+        super( projects );
+    }
+
+    public static Collector<ProjectGraphEntry, ?, ProjectGraph> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ProjectGraph::new );
     }
 
     public static Builder create()
@@ -19,7 +27,7 @@ public final class ProjectGraph
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<ProjectGraphEntry> projects = ImmutableList.builder();
 
@@ -31,7 +39,7 @@ public final class ProjectGraph
 
         public ProjectGraph build()
         {
-            return new ProjectGraph( this );
+            return new ProjectGraph( this.projects.build() );
         }
     }
 }

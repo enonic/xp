@@ -81,7 +81,7 @@ public class ResolveContentsToBePublishedCommand
                                                         .toString()
                                                         .startsWith( ArchiveConstants.ARCHIVE_ROOT_PATH.toString() ) )
                                                     .map( Node::id )
-                                                    .collect( NodeIds.collecting() ) )
+                                                    .collect( NodeIds.collector() ) )
                                                 .build() );
     }
 

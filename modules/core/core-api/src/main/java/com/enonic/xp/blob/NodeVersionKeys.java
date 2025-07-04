@@ -1,8 +1,6 @@
 package com.enonic.xp.blob;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -39,9 +37,9 @@ public final class NodeVersionKeys
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        final Set<NodeVersionKey> keys = new LinkedHashSet<>();
+        final ImmutableSet.Builder<NodeVersionKey> keys = ImmutableSet.builder();
 
         public Builder add( final NodeVersionKey key )
         {
@@ -49,7 +47,7 @@ public final class NodeVersionKeys
             return this;
         }
 
-        public Builder addAll( final Collection<NodeVersionKey> key )
+        public Builder addAll( final Iterable<? extends NodeVersionKey> key )
         {
             this.keys.addAll( key );
             return this;
@@ -57,7 +55,7 @@ public final class NodeVersionKeys
 
         public NodeVersionKeys build()
         {
-            return new NodeVersionKeys( ImmutableSet.copyOf( this.keys ) );
+            return new NodeVersionKeys( this.keys.build() );
         }
     }
 

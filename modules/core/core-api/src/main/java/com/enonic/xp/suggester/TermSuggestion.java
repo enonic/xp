@@ -13,7 +13,7 @@ public final class TermSuggestion
         return new Builder( name );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Suggestion.Builder<Builder, TermSuggestionEntry>
     {
         public Builder( final String name )

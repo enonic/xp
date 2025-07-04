@@ -1,8 +1,7 @@
 package com.enonic.xp.node;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,25 +10,37 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class MultiRepoNodeHits
     extends AbstractImmutableEntityList<MultiRepoNodeHit>
 {
-    private MultiRepoNodeHits( final Collection<MultiRepoNodeHit> hits )
+    private static final MultiRepoNodeHits EMPTY = new MultiRepoNodeHits( ImmutableList.of() );
+
+    private MultiRepoNodeHits( final ImmutableList<MultiRepoNodeHit> hits )
     {
-        super( ImmutableList.copyOf( hits ) );
+        super( hits );
     }
 
     public static MultiRepoNodeHits empty()
     {
-        final List<MultiRepoNodeHit> returnFields = new ArrayList<>();
-        return new MultiRepoNodeHits( returnFields );
+        return EMPTY;
     }
+
+    public static Collector<MultiRepoNodeHit, ?, MultiRepoNodeHits> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), MultiRepoNodeHits::new );
+    }
+
+    private static MultiRepoNodeHits fromInternal( final ImmutableList<MultiRepoNodeHit> hits )
+    {
+        return hits.isEmpty() ? EMPTY : new MultiRepoNodeHits( hits );
+    }
+
 
     public static Builder create()
     {
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final List<MultiRepoNodeHit> nodeHits = new ArrayList<>();
+        private final ImmutableList.Builder<MultiRepoNodeHit> nodeHits = ImmutableList.builder();
 
         public Builder add( final MultiRepoNodeHit nodeHit )
         {
@@ -39,7 +50,7 @@ public final class MultiRepoNodeHits
 
         public MultiRepoNodeHits build()
         {
-            return new MultiRepoNodeHits( this.nodeHits );
+            return fromInternal( this.nodeHits.build() );
         }
     }
 

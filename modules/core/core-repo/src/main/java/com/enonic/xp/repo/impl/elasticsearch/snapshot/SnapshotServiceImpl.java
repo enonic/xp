@@ -212,7 +212,7 @@ public class SnapshotServiceImpl
 
         final GetSnapshotsResponse getSnapshotsResponse = this.client.admin().cluster().getSnapshots( getSnapshotsRequest ).actionGet();
 
-        return getSnapshotsResponse.getSnapshots().stream().map( SnapshotResultFactory::create ).collect( SnapshotResults.collecting() );
+        return getSnapshotsResponse.getSnapshots().stream().map( SnapshotResultFactory::create ).collect( SnapshotResults.collector() );
     }
 
     @Override

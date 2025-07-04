@@ -12,8 +12,6 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.BinaryReferences;
 
-import static java.util.stream.Collectors.toList;
-
 public final class RemoveAttachmentHandler
     implements ScriptBean
 {
@@ -36,7 +34,7 @@ public final class RemoveAttachmentHandler
             updateContent.contentId( contentByPath.getId() );
         }
 
-        BinaryReferences binaryRefs = Arrays.stream( this.names ).map( BinaryReference::from ).collect( BinaryReferences.collecting() );
+        BinaryReferences binaryRefs = Arrays.stream( this.names ).map( BinaryReference::from ).collect( BinaryReferences.collector() );
         updateContent.removeAttachments( binaryRefs );
         contentService.update( updateContent );
     }

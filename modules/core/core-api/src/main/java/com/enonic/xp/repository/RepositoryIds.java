@@ -1,20 +1,13 @@
 package com.enonic.xp.repository;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
@@ -53,7 +46,7 @@ public final class RepositoryIds
         return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
-    public static Collector<RepositoryId, ?, RepositoryIds> collecting()
+    public static Collector<RepositoryId, ?, RepositoryIds> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), RepositoryIds::fromInternal );
     }
@@ -68,7 +61,7 @@ public final class RepositoryIds
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<RepositoryId> repositories = ImmutableSet.builder();
 
@@ -78,9 +71,9 @@ public final class RepositoryIds
             return this;
         }
 
-        public Builder addAll( final RepositoryIds repositoryIds )
+        public Builder addAll( final Iterable<? extends RepositoryId> repositoryIds )
         {
-            this.repositories.addAll( repositoryIds.getSet() );
+            this.repositories.addAll( repositoryIds );
             return this;
         }
 

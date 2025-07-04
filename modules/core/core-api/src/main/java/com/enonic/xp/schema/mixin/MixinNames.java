@@ -5,18 +5,18 @@ import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class MixinNames
-    extends AbstractImmutableEntityList<MixinName>
+    extends AbstractImmutableEntitySet<MixinName>
 {
-    private static final MixinNames EMPTY = new MixinNames( ImmutableList.of() );
+    private static final MixinNames EMPTY = new MixinNames( ImmutableSet.of() );
 
-    private MixinNames( final ImmutableList<MixinName> list )
+    private MixinNames( final ImmutableSet<MixinName> list )
     {
         super( list );
     }
@@ -33,26 +33,26 @@ public final class MixinNames
 
     public static MixinNames from( final Collection<String> mixinNames )
     {
-        return mixinNames.stream().map( MixinName::from ).collect( collecting() );
+        return mixinNames.stream().map( MixinName::from ).collect( collector() );
     }
 
     public static MixinNames from( final MixinName... mixinNames )
     {
-        return fromInternal( ImmutableList.copyOf( mixinNames ) );
+        return fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
     public static MixinNames from( final Iterable<MixinName> mixinNames )
     {
-        return fromInternal( ImmutableList.copyOf( mixinNames ) );
+        return fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
-    private static MixinNames fromInternal( final ImmutableList<MixinName> mixinNames )
+    private static MixinNames fromInternal( final ImmutableSet<MixinName> mixinNames )
     {
         return mixinNames.isEmpty() ? EMPTY : new MixinNames( mixinNames );
     }
 
-    public static Collector<MixinName, ?, MixinNames> collecting()
+    public static Collector<MixinName, ?, MixinNames> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), MixinNames::fromInternal );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), MixinNames::fromInternal );
     }
 }

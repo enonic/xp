@@ -84,7 +84,7 @@ public final class ContentVersionPublishInfo
         PUBLISHED, UNPUBLISHED, ARCHIVED, RESTORED, CUSTOM
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private PrincipalKey publisher;
 

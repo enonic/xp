@@ -31,7 +31,7 @@ public class PatchNodeHandlerParams
 
     public void setBranches( final String[] branches )
     {
-        this.branches = Arrays.stream( branches ).map( Branch::from ).collect( Branches.collecting() );
+        this.branches = Arrays.stream( branches ).map( Branch::from ).collect( Branches.collector() );
     }
 
     public ScriptValue getEditor()

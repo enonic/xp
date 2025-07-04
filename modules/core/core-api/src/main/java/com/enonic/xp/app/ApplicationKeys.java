@@ -38,7 +38,7 @@ public final class ApplicationKeys
 
     public static ApplicationKeys from( final String... applicationKeys )
     {
-        return Arrays.stream( applicationKeys ).map( ApplicationKey::from ).collect( collecting() );
+        return Arrays.stream( applicationKeys ).map( ApplicationKey::from ).collect( collector() );
     }
 
     public static ApplicationKeys empty()
@@ -47,7 +47,7 @@ public final class ApplicationKeys
     }
 
 
-    public static Collector <ApplicationKey, ?, ApplicationKeys> collecting()
+    public static Collector <ApplicationKey, ?, ApplicationKeys> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ApplicationKeys::fromInternal );
     }

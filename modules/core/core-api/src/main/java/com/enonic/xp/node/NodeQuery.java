@@ -50,7 +50,7 @@ public final class NodeQuery
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends AbstractQuery.Builder<Builder>
     {
         private NodePath parent;

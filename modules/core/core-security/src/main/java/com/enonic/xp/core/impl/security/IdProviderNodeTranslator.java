@@ -96,7 +96,7 @@ abstract class IdProviderNodeTranslator
 
         final PrincipalKeys principals =
             Streams.concat( idProviderPermissions.getAllPrincipals().stream(), usersPermissions.getAllPrincipals().stream(),
-                            groupsPermissions.getAllPrincipals().stream() ).collect( PrincipalKeys.collecting() );
+                            groupsPermissions.getAllPrincipals().stream() ).collect( PrincipalKeys.collector() );
         for ( PrincipalKey principal : principals )
         {
             if ( idProviderPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS,

@@ -1,9 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
@@ -57,8 +55,8 @@ public class AbstractQuery
         this.size = builder.size;
         this.batchSize = builder.batchSize;
         this.searchMode = builder.searchMode;
-        this.aggregationQueries = AggregationQueries.fromCollection( builder.aggregationQueries );
-        this.suggestionQueries = SuggestionQueries.fromCollection( builder.suggestionQueries );
+        this.aggregationQueries = builder.aggregationQueries.build();
+        this.suggestionQueries = builder.suggestionQueries.build();
         this.highlight = builder.highlight;
         this.orderBys = setOrderExpressions( builder );
         this.postFilters = builder.postFilters.build();
@@ -163,9 +161,9 @@ public class AbstractQuery
 
         private final Filters.Builder queryFilters = Filters.create();
 
-        private List<AggregationQuery> aggregationQueries = new ArrayList<>();
+        private AggregationQueries.Builder aggregationQueries = AggregationQueries.create();
 
-        private List<SuggestionQuery> suggestionQueries = new ArrayList<>();
+        private SuggestionQueries.Builder suggestionQueries = SuggestionQueries.create();
 
         private HighlightQuery highlight;
 
@@ -206,7 +204,7 @@ public class AbstractQuery
         @SuppressWarnings("unchecked")
         public B addQueryFilters( final Filters queryFilters )
         {
-            this.queryFilters.addAll( queryFilters.getList() );
+            this.queryFilters.addAll( queryFilters );
             return (B) this;
         }
 
@@ -221,14 +219,14 @@ public class AbstractQuery
         @SuppressWarnings("unchecked")
         public B addAggregationQueries( final AggregationQueries aggregationQueries )
         {
-            this.aggregationQueries.addAll( aggregationQueries.getList() );
+            this.aggregationQueries.addAll( aggregationQueries );
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B aggregationQueries( final AggregationQueries aggregationQueries )
         {
-            this.aggregationQueries = new ArrayList<>( aggregationQueries.getList() );
+            this.aggregationQueries = AggregationQueries.create().addAll( aggregationQueries );
             return (B) this;
         }
 
@@ -242,14 +240,14 @@ public class AbstractQuery
         @SuppressWarnings("unchecked")
         public B addSuggestionQueries( final SuggestionQueries suggestionQueries )
         {
-            this.suggestionQueries.addAll( suggestionQueries.getList() );
+            this.suggestionQueries.addAll( suggestionQueries );
             return (B) this;
         }
 
         @SuppressWarnings("unchecked")
         public B suggestionQueries( final SuggestionQueries suggestionQueries )
         {
-            this.suggestionQueries = new ArrayList<>( suggestionQueries.getList() );
+            this.suggestionQueries = SuggestionQueries.create().addAll( suggestionQueries );
             return (B) this;
         }
 

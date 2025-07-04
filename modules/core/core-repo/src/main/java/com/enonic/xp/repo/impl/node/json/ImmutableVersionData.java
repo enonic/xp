@@ -210,14 +210,7 @@ public final class ImmutableVersionData
         public AttachedBinaries deserialize( JsonParser jsonParser, DeserializationContext deserializationContext )
             throws IOException
         {
-            final AttachedBinaries.Builder builder = AttachedBinaries.create();
-            final List<AttachedBinary> list = jsonParser.readValueAs( VALUE_TYPE_REF );
-            for ( final AttachedBinary entry : list )
-            {
-                builder.add( entry );
-            }
-
-            return builder.build();
+            return AttachedBinaries.fromCollection( jsonParser.readValueAs( VALUE_TYPE_REF ) );
         }
     }
 }

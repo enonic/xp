@@ -70,7 +70,7 @@ public final class TextComponent
         return Objects.hash( super.hashCode(), text );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Component.Builder
 
     {

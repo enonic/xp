@@ -19,7 +19,7 @@ public final class BucketAggregation
         return buckets;
     }
 
-    public static class Builder
+    public static final class Builder
         extends Aggregation.Builder<Builder>
     {
         private Buckets buckets;
@@ -39,8 +39,5 @@ public final class BucketAggregation
         {
             return new BucketAggregation( this );
         }
-
     }
-
-
 }

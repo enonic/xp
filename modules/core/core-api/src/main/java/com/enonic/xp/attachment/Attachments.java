@@ -21,12 +21,12 @@ public final class Attachments
 
     public Attachment byName( final String name )
     {
-        return list.stream().filter( a -> a.getName().equals( name ) ).findAny().orElse( null );
+        return list.stream().filter( a -> a.getName().equals( name ) ).findFirst().orElse( null );
     }
 
     public Attachment byLabel( final String label )
     {
-        return list.stream().filter( a -> label.equals( a.getLabel() ) ).findAny().orElse( null );
+        return list.stream().filter( a -> label.equals( a.getLabel() ) ).findFirst().orElse( null );
     }
 
     public boolean hasByName( final String name )
@@ -89,7 +89,7 @@ public final class Attachments
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
 

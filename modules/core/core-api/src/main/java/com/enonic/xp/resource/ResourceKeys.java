@@ -14,7 +14,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ResourceKeys
     extends AbstractImmutableEntityList<ResourceKey>
 {
-    public static final ResourceKeys EMPTY = new ResourceKeys( ImmutableList.of() );
+    private static final ResourceKeys EMPTY = new ResourceKeys( ImmutableList.of() );
 
     private ResourceKeys( final ImmutableList<ResourceKey> list )
     {
@@ -43,10 +43,10 @@ public final class ResourceKeys
 
     public static ResourceKeys from( final String... resourceKeys )
     {
-        return Arrays.stream( resourceKeys ).map( ResourceKey::from ).collect( collecting() );
+        return Arrays.stream( resourceKeys ).map( ResourceKey::from ).collect( collector() );
     }
 
-    public static Collector<ResourceKey, ?, ResourceKeys> collecting()
+    public static Collector<ResourceKey, ?, ResourceKeys> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ResourceKeys::fromInternal );
     }

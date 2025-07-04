@@ -87,7 +87,7 @@ public class NodeVersionDiffQuery
 
         public Builder excludes( final NodePaths excludes )
         {
-            this.excludes.addNodePaths( excludes.getSet() );
+            this.excludes.addNodePaths( excludes );
             return this;
         }
 

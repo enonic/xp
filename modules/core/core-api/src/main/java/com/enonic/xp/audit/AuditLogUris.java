@@ -38,7 +38,7 @@ public final class AuditLogUris
 
     public static AuditLogUris from( final Collection<String> uris )
     {
-        return uris.stream().map( AuditLogUri::from ).collect( collecting() );
+        return uris.stream().map( AuditLogUri::from ).collect( collector() );
     }
 
     public static AuditLogUris from( final Iterable<AuditLogUri> uris )
@@ -46,7 +46,7 @@ public final class AuditLogUris
         return fromInternal( ImmutableSet.copyOf( uris ) );
     }
 
-    public static Collector<AuditLogUri, ?, AuditLogUris> collecting()
+    public static Collector<AuditLogUri, ?, AuditLogUris> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), AuditLogUris::fromInternal );
     }
@@ -61,7 +61,7 @@ public final class AuditLogUris
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<AuditLogUri> contents = ImmutableSet.builder();
 
@@ -71,9 +71,9 @@ public final class AuditLogUris
             return this;
         }
 
-        public Builder addAll( final AuditLogUris auditLogUris )
+        public Builder addAll( final Iterable<? extends AuditLogUri> auditLogUris )
         {
-            this.contents.addAll( auditLogUris.getSet() );
+            this.contents.addAll( auditLogUris );
             return this;
         }
 

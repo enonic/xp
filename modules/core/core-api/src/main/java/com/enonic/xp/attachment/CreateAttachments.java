@@ -1,27 +1,23 @@
 package com.enonic.xp.attachment;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class CreateAttachments
-    extends AbstractImmutableEntitySet<CreateAttachment>
+    extends AbstractImmutableEntityList<CreateAttachment>
 {
-    private static final CreateAttachments EMPTY = new CreateAttachments( ImmutableSet.of() );
+    private static final CreateAttachments EMPTY = new CreateAttachments( ImmutableList.of() );
 
-    private CreateAttachments( final Set<CreateAttachment> set )
+    private CreateAttachments( final ImmutableList<CreateAttachment> list )
     {
-        super( ImmutableSet.copyOf( set ) );
+        super( list );
     }
 
     public static CreateAttachments empty()
@@ -31,25 +27,25 @@ public final class CreateAttachments
 
     public static CreateAttachments from( final CreateAttachment... contents )
     {
-        return fromInternal( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
     public static CreateAttachments from( final Iterable<? extends CreateAttachment> contents )
     {
-        return fromInternal( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
     public static CreateAttachments from( final Collection<? extends CreateAttachment> contents )
     {
-        return fromInternal( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
-    public static Collector<CreateAttachment, ?, CreateAttachments> collecting()
+    public static Collector<CreateAttachment, ?, CreateAttachments> collector()
     {
-        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), CreateAttachments::fromInternal );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), CreateAttachments::fromInternal );
     }
 
-    private static CreateAttachments fromInternal( final ImmutableSet<CreateAttachment> contents )
+    private static CreateAttachments fromInternal( final ImmutableList<CreateAttachment> contents )
     {
         return contents.isEmpty() ? EMPTY : new CreateAttachments( contents );
     }
@@ -59,9 +55,9 @@ public final class CreateAttachments
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<CreateAttachment> contents = new LinkedHashSet<>();
+        private final ImmutableList.Builder<CreateAttachment> contents = ImmutableList.builder();
 
         public Builder add( CreateAttachment value )
         {
@@ -69,15 +65,15 @@ public final class CreateAttachments
             return this;
         }
 
-        public Builder add( CreateAttachments value )
+        public Builder addAll( final Iterable<? extends CreateAttachment> values )
         {
-            contents.addAll( value.set );
+            contents.addAll( values );
             return this;
         }
 
         public CreateAttachments build()
         {
-            return new CreateAttachments( contents );
+            return new CreateAttachments( contents.build() );
         }
     }
 }

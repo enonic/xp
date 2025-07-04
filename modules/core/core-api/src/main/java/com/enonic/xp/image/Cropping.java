@@ -124,7 +124,7 @@ public final class Cropping
         return new Cropping.Builder( cropping );
     }
 
-    public static class Builder
+    public final static class Builder
     {
         private double top;
 

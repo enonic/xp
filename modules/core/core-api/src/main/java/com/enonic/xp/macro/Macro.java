@@ -112,7 +112,7 @@ public final class Macro
         return new Builder( macro );
     }
 
-    public static class Builder
+    public static final class Builder
     {
 
         private String name;

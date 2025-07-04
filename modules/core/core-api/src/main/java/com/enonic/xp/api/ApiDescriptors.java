@@ -4,13 +4,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.aggregation.Aggregation;
-import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
@@ -44,7 +39,7 @@ public final class ApiDescriptors
         return list.isEmpty() ? EMPTY : new ApiDescriptors( list );
     }
 
-    public static Collector<ApiDescriptor, ?, ApiDescriptors> collecting()
+    public static Collector<ApiDescriptor, ?, ApiDescriptors> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ApiDescriptors::fromInternal );
     }

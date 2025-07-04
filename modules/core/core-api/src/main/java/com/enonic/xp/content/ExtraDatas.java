@@ -24,12 +24,12 @@ public final class ExtraDatas
 
     public XDataNames getNames()
     {
-        return list.stream().map( ExtraData::getName ).collect( XDataNames.collecting() );
+        return list.stream().map( ExtraData::getName ).collect( XDataNames.collector() );
     }
 
     public ExtraData getMetadata( final XDataName name )
     {
-        return list.stream().filter( xd ->  name.equals( xd.getName() ) ).findAny().orElse( null );
+        return list.stream().filter( xd ->  name.equals( xd.getName() ) ).findFirst().orElse( null );
     }
 
     public ExtraDatas copy()
@@ -47,7 +47,7 @@ public final class ExtraDatas
         return new ExtraDatas( ImmutableList.copyOf( extradatas ) );
     }
 
-    public static Collector<ExtraData, ?, ExtraDatas> collecting()
+    public static Collector<ExtraData, ?, ExtraDatas> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ExtraDatas::fromInternal );
     }
@@ -62,7 +62,7 @@ public final class ExtraDatas
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<ExtraData> list = ImmutableList.builder();
 

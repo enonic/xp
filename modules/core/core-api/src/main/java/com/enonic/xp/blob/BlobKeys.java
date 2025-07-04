@@ -1,8 +1,8 @@
 package com.enonic.xp.blob;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -13,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class BlobKeys
     extends AbstractImmutableEntitySet<BlobKey>
 {
+    private static final BlobKeys EMPTY = new BlobKeys( ImmutableSet.of() );
+
     private BlobKeys( final ImmutableSet<BlobKey> set )
     {
         super( set );
@@ -20,18 +22,27 @@ public final class BlobKeys
 
     public static BlobKeys empty()
     {
-        return new BlobKeys( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static BlobKeys from( final BlobKey... blobKeys )
     {
-        return new BlobKeys( ImmutableSet.copyOf( blobKeys ) );
+        return fromInternal( ImmutableSet.copyOf( blobKeys ) );
     }
-
 
     public static BlobKeys from( final Collection<BlobKey> blobKeys )
     {
-        return new BlobKeys( ImmutableSet.copyOf( blobKeys ) );
+        return fromInternal( ImmutableSet.copyOf( blobKeys ) );
+    }
+
+    public static Collector<BlobKey, ?, BlobKeys> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), BlobKeys::fromInternal );
+    }
+
+    private static BlobKeys fromInternal( final ImmutableSet<BlobKey> set )
+    {
+        return set.isEmpty() ? EMPTY : new BlobKeys( set );
     }
 
     public static Builder create()
@@ -39,9 +50,9 @@ public final class BlobKeys
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        final Set<BlobKey> blobKeys = new LinkedHashSet<>();
+        final ImmutableSet.Builder<BlobKey> blobKeys = ImmutableSet.builder();
 
         public Builder add( final BlobKey blobKey )
         {
@@ -49,18 +60,15 @@ public final class BlobKeys
             return this;
         }
 
-        public Builder addAll( final Collection<BlobKey> blobKeys )
+        public Builder addAll( final Iterable<? extends BlobKey> blobKeys )
         {
             this.blobKeys.addAll( blobKeys );
             return this;
         }
 
-
         public BlobKeys build()
         {
-            return new BlobKeys( ImmutableSet.copyOf( this.blobKeys ) );
+            return new BlobKeys( this.blobKeys.build() );
         }
-
     }
-
 }

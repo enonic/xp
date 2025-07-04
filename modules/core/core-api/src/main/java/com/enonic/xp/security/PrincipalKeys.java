@@ -1,11 +1,10 @@
 package com.enonic.xp.security;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -39,10 +38,10 @@ public final class PrincipalKeys
 
     public static PrincipalKeys from( final String... principalKeys )
     {
-        return Stream.of( principalKeys ).map( PrincipalKey::from ).collect( collecting() );
+        return Arrays.stream( principalKeys ).map( PrincipalKey::from ).collect( collector() );
     }
 
-    public static Collector<PrincipalKey, ?, PrincipalKeys> collecting()
+    public static Collector<PrincipalKey, ?, PrincipalKeys> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), PrincipalKeys::fromInternal );
     }
@@ -57,25 +56,19 @@ public final class PrincipalKeys
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<PrincipalKey> principalKeys = new ImmutableSet.Builder<>();
 
         public Builder add( final PrincipalKey principalKey )
         {
-            if ( principalKey != null )
-            {
-                this.principalKeys.add( principalKey );
-            }
+            this.principalKeys.add( principalKey );
             return this;
         }
 
-        public Builder addAll( final PrincipalKeys principalKeys )
+        public Builder addAll( final Iterable<? extends PrincipalKey> principalKeys )
         {
-            if ( principalKeys != null )
-            {
-                this.principalKeys.addAll( principalKeys );
-            }
+            this.principalKeys.addAll( principalKeys );
             return this;
         }
 

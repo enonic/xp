@@ -1,6 +1,7 @@
 package com.enonic.xp.query.filter;
 
-import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,6 +12,8 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class Filters
     extends AbstractImmutableEntityList<Filter>
 {
+    private static final Filters EMPTY = new Filters( ImmutableList.of() );
+
     private Filters( final ImmutableList<Filter> set )
     {
         super( set );
@@ -18,17 +21,22 @@ public final class Filters
 
     public static Filters empty()
     {
-        return new Filters( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static Filters from( final Filter... filters )
     {
-        if ( filters == null || filters.length == 0 )
-        {
-            return empty();
-        }
+        return fromInternal( ImmutableList.copyOf( filters ) );
+    }
 
-        return new Filters( ImmutableList.copyOf( filters ) );
+    public static Collector<Filter, ?, Filters> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Filters::fromInternal );
+    }
+
+    private static Filters fromInternal( final ImmutableList<Filter> filters )
+    {
+        return filters.isEmpty() ? EMPTY : new Filters( filters );
     }
 
     public static Builder create()
@@ -38,12 +46,10 @@ public final class Filters
 
     public static Builder create( final Filters filters )
     {
-        return new Builder().
-            addAll( filters.getList() );
+        return new Builder().addAll( filters );
     }
 
-
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<Filter> filters = ImmutableList.builder();
 
@@ -62,7 +68,7 @@ public final class Filters
             return this;
         }
 
-        public Builder addAll( final Collection<Filter> filters )
+        public Builder addAll( final Iterable<? extends Filter> filters )
         {
             this.filters.addAll( filters );
             return this;
@@ -70,7 +76,7 @@ public final class Filters
 
         public Filters build()
         {
-            return new Filters( this.filters.build() );
+            return fromInternal( this.filters.build() );
         }
     }
 }

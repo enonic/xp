@@ -1,19 +1,13 @@
 package com.enonic.xp.impl.macro;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
@@ -23,7 +17,6 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -88,14 +81,14 @@ public final class MacroDescriptorServiceImpl
                 .stream()
                 .map( descriptorKey -> getByKey( MacroKey.from( descriptorKey.getApplicationKey(), descriptorKey.getName() ) ) )
                 .filter( Objects::nonNull )
-                .collect( MacroDescriptors.collecting() );
+                .collect( MacroDescriptors.collector() );
         }
     }
 
     @Override
     public MacroDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
-        return applicationKeys.stream().flatMap( ak -> getByApplication( ak ).stream() ).collect( MacroDescriptors.collecting() );
+        return applicationKeys.stream().flatMap( ak -> getByApplication( ak ).stream() ).collect( MacroDescriptors.collector() );
     }
 
     @Override
@@ -103,7 +96,7 @@ public final class MacroDescriptorServiceImpl
     {
         return Stream.concat( builtinMacrosDescriptors.getAll().stream(), this.applicationService.getInstalledApplications()
             .stream()
-            .flatMap( a -> getByApplication( a.getKey() ).stream() ) ).collect( MacroDescriptors.collecting() );
+            .flatMap( a -> getByApplication( a.getKey() ).stream() ) ).collect( MacroDescriptors.collector() );
     }
 
     private boolean isSystem( ApplicationKey applicationKey )

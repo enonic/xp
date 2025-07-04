@@ -5,13 +5,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.support.AbstractImmutableEntityList;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class AggregationQueries
@@ -39,7 +35,7 @@ public final class AggregationQueries
         return fromInternal( ImmutableList.copyOf( aggregationQueries ) );
     }
 
-    public static Collector<AggregationQuery, ?, AggregationQueries> collecting()
+    public static Collector<AggregationQuery, ?, AggregationQueries> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), AggregationQueries::fromInternal );
     }
@@ -56,6 +52,12 @@ public final class AggregationQueries
         public Builder add( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );
+            return this;
+        }
+
+        public Builder addAll( final Iterable<? extends AggregationQuery> aggregationQueries )
+        {
+            this.aggregationQueries.addAll( aggregationQueries );
             return this;
         }
 

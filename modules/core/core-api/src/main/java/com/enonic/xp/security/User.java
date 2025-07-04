@@ -103,7 +103,7 @@ public final class User
         return new Builder( user );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Principal.Builder<Builder>
     {
         private String email;

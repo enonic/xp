@@ -99,7 +99,7 @@ public final class SendMailParams
         return attachments;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final List<String> to = new ArrayList<>();
 

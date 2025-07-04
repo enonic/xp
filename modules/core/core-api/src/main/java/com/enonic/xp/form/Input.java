@@ -207,7 +207,7 @@ public final class Input
         return new Builder( input );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private String name;
 

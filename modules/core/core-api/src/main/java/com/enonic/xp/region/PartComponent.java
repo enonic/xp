@@ -51,7 +51,7 @@ public final class PartComponent
         return super.equals( o );
     }
 
-    public static class Builder
+    public static final class Builder
         extends DescriptorBasedComponent.Builder
     {
         private Builder()

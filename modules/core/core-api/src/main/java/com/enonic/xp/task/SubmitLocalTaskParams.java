@@ -40,7 +40,7 @@ public final class SubmitLocalTaskParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private RunnableTask runnableTask;
 

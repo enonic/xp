@@ -597,7 +597,7 @@ public class Content
 
         public BUILDER addExtraData( final ExtraData extraData )
         {
-            this.extraDatas = Stream.concat( this.extraDatas.stream(), Stream.of( extraData ) ).collect( ExtraDatas.collecting() );
+            this.extraDatas = Stream.concat( this.extraDatas.stream(), Stream.of( extraData ) ).collect( ExtraDatas.collector() );
             return (BUILDER) this;
         }
 

@@ -1,16 +1,12 @@
 package com.enonic.xp.node;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class SnapshotResults
@@ -21,7 +17,7 @@ public final class SnapshotResults
         super( list );
     }
 
-    public static Collector<SnapshotResult, ?, SnapshotResults> collecting()
+    public static Collector<SnapshotResult, ?, SnapshotResults> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), SnapshotResults::new );
     }
@@ -31,7 +27,7 @@ public final class SnapshotResults
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<SnapshotResult> snapshotResults = ImmutableList.builder();
 

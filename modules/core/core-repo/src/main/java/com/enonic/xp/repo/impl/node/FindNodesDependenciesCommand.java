@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -55,9 +53,9 @@ public class FindNodesDependenciesCommand
 
     private NodeIds resolveDependencies( final NodeIds nodeIds )
     {
-        final NodeIds nonProcessedNodes = NodeIds.from( nodeIds.getSet().stream().
+        final NodeIds nonProcessedNodes = nodeIds.stream().
             filter( ( nodeId ) -> !processed.contains( nodeId ) ).
-            collect( ImmutableSet.toImmutableSet() ) );
+            collect( NodeIds.collector() );
 
         if ( nonProcessedNodes.isEmpty() )
         {

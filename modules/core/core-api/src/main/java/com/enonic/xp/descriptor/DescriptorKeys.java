@@ -12,7 +12,7 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class DescriptorKeys
     extends AbstractImmutableEntitySet<DescriptorKey>
 {
-    private static final DescriptorKeys EMPTY = from( ImmutableSet.of() );
+    private static final DescriptorKeys EMPTY = new DescriptorKeys( ImmutableSet.of() );
 
     private DescriptorKeys( final ImmutableSet<DescriptorKey> keys )
     {
@@ -49,7 +49,7 @@ public final class DescriptorKeys
         return fromInternal( ImmutableSet.copyOf( keys ) );
     }
 
-    public static Collector<DescriptorKey, ?, DescriptorKeys> collecting()
+    public static Collector<DescriptorKey, ?, DescriptorKeys> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), DescriptorKeys::fromInternal );
     }

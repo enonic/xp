@@ -33,7 +33,7 @@ public final class SuggestionQueries
         return fromInternal( ImmutableList.copyOf( suggestionQueries ) );
     }
 
-    public static Collector<SuggestionQuery, ?, SuggestionQueries> collecting()
+    public static Collector<SuggestionQuery, ?, SuggestionQueries> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), SuggestionQueries::fromInternal );
     }
@@ -50,6 +50,12 @@ public final class SuggestionQueries
         public Builder add( final SuggestionQuery suggestionQuery )
         {
             this.suggestionQueries.add( suggestionQuery );
+            return this;
+        }
+
+        public Builder addAll( final Iterable<? extends SuggestionQuery> suggestionQueries )
+        {
+            this.suggestionQueries.addAll( suggestionQueries );
             return this;
         }
 

@@ -1,21 +1,17 @@
 package com.enonic.xp.portal.impl.api;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.api.ApiDescriptors;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -25,8 +21,6 @@ import com.enonic.xp.xml.XmlException;
 public final class ApiDescriptorServiceImpl
     implements ApiDescriptorService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ApiDescriptorServiceImpl.class );
-
     private final ResourceService resourceService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
@@ -49,7 +43,7 @@ public final class ApiDescriptorServiceImpl
     public ApiDescriptors getByApplication( final ApplicationKey applicationKey )
     {
         return descriptorKeyLocator.findKeys( applicationKey ).stream().map(
-            this::getByKey ).filter( Objects::nonNull ).collect( ApiDescriptors.collecting() );
+            this::getByKey ).filter( Objects::nonNull ).collect( ApiDescriptors.collector() );
     }
 
     private ResourceProcessor<DescriptorKey, ApiDescriptor> newRootProcessor( final DescriptorKey key )

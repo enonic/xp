@@ -2,6 +2,8 @@ package com.enonic.xp.schema.content;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -12,6 +14,8 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ContentTypes
     extends AbstractImmutableEntityList<ContentType>
 {
+    private static final ContentTypes EMPTY = new ContentTypes( ImmutableList.of() );
+
     private ContentTypes( final ImmutableList<ContentType> list )
     {
         super( list );
@@ -19,27 +23,37 @@ public final class ContentTypes
 
     public static ContentTypes empty()
     {
-        return new ContentTypes( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static ContentTypes from( final ContentType... contentTypes )
     {
-        return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
+        return fromInternal( ImmutableList.copyOf( contentTypes ) );
     }
 
     public static ContentTypes from( final Iterable<? extends ContentType> contentTypes )
     {
-        return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
+        return fromInternal( ImmutableList.copyOf( contentTypes ) );
     }
 
     public static ContentTypes from( final Iterator<? extends ContentType> contentTypes )
     {
-        return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
+        return fromInternal( ImmutableList.copyOf( contentTypes ) );
     }
 
     public static ContentTypes from( final Collection<? extends ContentType> contentTypes )
     {
-        return new ContentTypes( ImmutableList.copyOf( contentTypes ) );
+        return fromInternal( ImmutableList.copyOf( contentTypes ) );
+    }
+
+    public static Collector<ContentType, ?, ContentTypes> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ContentTypes::fromInternal );
+    }
+
+    private static ContentTypes fromInternal( final ImmutableList<ContentType> contentTypes )
+    {
+        return contentTypes.isEmpty() ? EMPTY : new ContentTypes( contentTypes );
     }
 
     public static Builder create()
@@ -47,7 +61,7 @@ public final class ContentTypes
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<ContentType> contentTypes = ImmutableList.builder();
 
@@ -59,7 +73,7 @@ public final class ContentTypes
 
         public ContentTypes build()
         {
-            return new ContentTypes( contentTypes.build() );
+            return fromInternal( contentTypes.build() );
         }
     }
 }

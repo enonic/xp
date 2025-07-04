@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +9,10 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.Descriptor;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -54,17 +53,7 @@ final class DescriptorFacetImpl<T extends Descriptor>
     @Override
     public Descriptors<T> get( final DescriptorKeys keys )
     {
-        final List<T> list = new ArrayList<>();
-        for ( final DescriptorKey key : keys )
-        {
-            final T descriptor = get( key );
-            if ( descriptor != null )
-            {
-                list.add( descriptor );
-            }
-        }
-
-        return Descriptors.from( list );
+        return keys.stream().map( this::get ).filter( Objects::nonNull ).collect( Descriptors.collector() );
     }
 
     @Override

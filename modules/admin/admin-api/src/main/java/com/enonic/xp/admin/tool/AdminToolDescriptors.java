@@ -39,7 +39,7 @@ public final class AdminToolDescriptors
         return list.isEmpty() ? EMPTY : new AdminToolDescriptors( list );
     }
 
-    public static Collector<AdminToolDescriptor, ?, AdminToolDescriptors> collecting()
+    public static Collector<AdminToolDescriptor, ?, AdminToolDescriptors> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), AdminToolDescriptors::fromInternal );
     }

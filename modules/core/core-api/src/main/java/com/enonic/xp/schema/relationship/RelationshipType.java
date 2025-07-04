@@ -86,7 +86,7 @@ public final class RelationshipType
         return new Builder( relationshipType );
     }
 
-    public static class Builder
+    public static final class Builder
         extends BaseSchema.Builder<Builder, RelationshipTypeName>
     {
         private String fromSemantic;

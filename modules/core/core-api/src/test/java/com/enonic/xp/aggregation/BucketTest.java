@@ -16,10 +16,8 @@ public class BucketTest
         Bucket.Builder builder = Bucket.create();
 
         builder.key( "aaa" );
-        assertEquals( "aaa", builder.key );
 
         builder.docCount( 3 );
-        assertEquals( 3, builder.docCount );
 
         Aggregations aggregations = Aggregations.create().
             add( Aggregation.bucketAggregation( "aaa" ).build() ).
@@ -30,8 +28,6 @@ public class BucketTest
         assertEquals( "aaa", aggregations.first().getName() );
 
         builder.addAggregations( aggregations );
-
-        assertEquals( 3, builder.aggregations.size() );
 
         Bucket bucket = builder.build();
 

@@ -1,8 +1,8 @@
 package com.enonic.xp.util;
 
+import java.util.Arrays;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -27,7 +27,7 @@ public final class BinaryReferences
 
     public static BinaryReferences from( final String... binaryReferences )
     {
-        return Stream.of( binaryReferences ).map( BinaryReference::from ).collect( collecting() );
+        return Arrays.stream( binaryReferences ).map( BinaryReference::from ).collect( collector() );
     }
 
     public static BinaryReferences from( final BinaryReference... binaryReferences )
@@ -40,7 +40,7 @@ public final class BinaryReferences
         return fromInternal( ImmutableSet.copyOf( binaryReferences ) );
     }
 
-    public static Collector<BinaryReference, ?, BinaryReferences> collecting()
+    public static Collector<BinaryReference, ?, BinaryReferences> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), BinaryReferences::fromInternal );
     }

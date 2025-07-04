@@ -45,7 +45,7 @@ public final class ValueFilter
         return values;
     }
 
-    public static class Builder
+    public static final class Builder
         extends FieldFilter.Builder<Builder>
     {
         private final Set<Value> values = new HashSet<>();

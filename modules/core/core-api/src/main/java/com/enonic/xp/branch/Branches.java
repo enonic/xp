@@ -39,7 +39,7 @@ public final class Branches
         return set.isEmpty() ? EMPTY : new Branches( set );
     }
 
-    public static Collector<Branch, ?, Branches> collecting()
+    public static Collector<Branch, ?, Branches> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Branches::fromInternal );
     }

@@ -1,24 +1,21 @@
 package com.enonic.xp.page;
 
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.Contents;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class PageTemplates
     extends AbstractImmutableEntityList<PageTemplate>
 {
-    private static PageTemplates EMPTY = new PageTemplates( ImmutableList.of() );
+    private static final PageTemplates EMPTY = new PageTemplates( ImmutableList.of() );
 
     private PageTemplates( final ImmutableList<PageTemplate> list )
     {
@@ -27,12 +24,12 @@ public final class PageTemplates
 
     public PageTemplate getTemplate( final ContentName name )
     {
-        return this.list.stream().filter( pT -> name.equals( pT.getName() ) ).findAny().orElse( null );
+        return this.list.stream().filter( pT -> name.equals( pT.getName() ) ).findFirst().orElse( null );
     }
 
     public PageTemplate getTemplate( final PageTemplateKey key )
     {
-        return this.list.stream().filter( pT -> key.equals( pT.getKey() ) ).findAny().orElse( null );
+        return this.list.stream().filter( pT -> key.equals( pT.getKey() ) ).findFirst().orElse( null );
     }
 
     public PageTemplates filter( final Predicate<PageTemplate> predicate )
@@ -60,7 +57,7 @@ public final class PageTemplates
         return fromInternal( ImmutableList.copyOf( templates ) );
     }
 
-    public static Collector<PageTemplate, ?, PageTemplates> collecting()
+    public static Collector<PageTemplate, ?, PageTemplates> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PageTemplates::fromInternal );
     }
@@ -75,7 +72,7 @@ public final class PageTemplates
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<PageTemplate> list = new ImmutableList.Builder<>();
 
@@ -85,7 +82,7 @@ public final class PageTemplates
             return this;
         }
 
-        public Builder addAll( Iterable<PageTemplate> templates )
+        public Builder addAll( Iterable<? extends PageTemplate> templates )
         {
             for ( final PageTemplate template : templates )
             {

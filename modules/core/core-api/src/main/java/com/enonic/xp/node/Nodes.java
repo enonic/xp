@@ -32,7 +32,7 @@ public final class Nodes
 
     public static Nodes from( final Iterable<? extends Node> nodes )
     {
-        return fromInternal( ImmutableSet.copyOf( nodes ) );
+        return nodes instanceof Nodes ? (Nodes) nodes : fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Collection<? extends Node> nodes )
@@ -40,7 +40,7 @@ public final class Nodes
         return fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
-    public static Collector<Node, ?, Nodes> collecting()
+    public static Collector<Node, ?, Nodes> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Nodes::fromInternal );
     }
@@ -57,12 +57,12 @@ public final class Nodes
 
     public NodePaths getPaths()
     {
-        return NodePaths.from( set.stream().map( Node::path ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Node::path ).collect( NodePaths.collector() );
     }
 
     public NodeIds getIds()
     {
-        return NodeIds.from( set.stream().map( Node::id ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Node::id ).collect( NodeIds.collector() );
     }
 
     public static final class Builder
@@ -75,9 +75,9 @@ public final class Nodes
             return this;
         }
 
-        public Builder addAll( Nodes nodes )
+        public Builder addAll( Iterable<? extends Node> nodes )
         {
-            this.nodes.addAll( nodes.getSet() );
+            this.nodes.addAll( nodes );
             return this;
         }
 

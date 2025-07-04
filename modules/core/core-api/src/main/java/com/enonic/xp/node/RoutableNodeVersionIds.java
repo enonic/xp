@@ -1,51 +1,46 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.api.ApiDescriptor;
-import com.enonic.xp.api.ApiDescriptors;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class RoutableNodeVersionIds
-    extends AbstractImmutableEntitySet<RoutableNodeVersionId>
+    extends AbstractImmutableEntityList<RoutableNodeVersionId>
 {
-    private static final RoutableNodeVersionIds EMPTY = new RoutableNodeVersionIds( ImmutableSet.of() );
+    private static final RoutableNodeVersionIds EMPTY = new RoutableNodeVersionIds( ImmutableList.of() );
 
-    private RoutableNodeVersionIds( final ImmutableSet<RoutableNodeVersionId> set )
+    private RoutableNodeVersionIds( final ImmutableList<RoutableNodeVersionId> list )
     {
-        super( set );
+        super( list );
     }
 
     public static RoutableNodeVersionIds empty()
     {
-        return new RoutableNodeVersionIds( ImmutableSet.of() );
+        return new RoutableNodeVersionIds( ImmutableList.of() );
     }
 
     public static RoutableNodeVersionIds from( final RoutableNodeVersionId... routableNodeVersionIds )
     {
-        return fromInternal( ImmutableSet.copyOf( routableNodeVersionIds ) );
+        return fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }
 
     public static RoutableNodeVersionIds from( final Collection<RoutableNodeVersionId> routableNodeVersionIds )
     {
-        return fromInternal( ImmutableSet.copyOf( routableNodeVersionIds ) );
+        return fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }
 
-    public static Collector<RoutableNodeVersionId, ?, RoutableNodeVersionIds> collecting()
+    public static Collector<RoutableNodeVersionId, ?, RoutableNodeVersionIds> collector()
     {
-        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), RoutableNodeVersionIds::fromInternal );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), RoutableNodeVersionIds::fromInternal );
     }
 
-    private static RoutableNodeVersionIds fromInternal( final ImmutableSet<RoutableNodeVersionId> set )
+    private static RoutableNodeVersionIds fromInternal( final ImmutableList<RoutableNodeVersionId> set )
     {
         return set.isEmpty() ? EMPTY : new RoutableNodeVersionIds( set );
     }
@@ -55,9 +50,9 @@ public final class RoutableNodeVersionIds
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        final Set<RoutableNodeVersionId> routableNodeVersionIds = new LinkedHashSet<>();
+        final ImmutableList.Builder<RoutableNodeVersionId> routableNodeVersionIds = ImmutableList.builder();
 
         public Builder add( final RoutableNodeVersionId routableNodeVersionId )
         {
@@ -65,7 +60,7 @@ public final class RoutableNodeVersionIds
             return this;
         }
 
-        public Builder addAll( final Collection<RoutableNodeVersionId> routableNodeVersionIds )
+        public Builder addAll( final Iterable<? extends RoutableNodeVersionId> routableNodeVersionIds )
         {
             this.routableNodeVersionIds.addAll( routableNodeVersionIds );
             return this;
@@ -73,9 +68,7 @@ public final class RoutableNodeVersionIds
 
         public RoutableNodeVersionIds build()
         {
-            return new RoutableNodeVersionIds( ImmutableSet.copyOf( this.routableNodeVersionIds ) );
+            return new RoutableNodeVersionIds( routableNodeVersionIds.build() );
         }
-
     }
-
 }

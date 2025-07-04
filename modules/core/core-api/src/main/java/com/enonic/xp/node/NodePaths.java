@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -39,10 +38,10 @@ public final class NodePaths
 
     public static NodePaths from( final Iterable<NodePath> paths )
     {
-        return fromInternal( ImmutableSet.copyOf( paths ) );
+        return paths instanceof NodePaths ? (NodePaths) paths : fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
-    public static Collector<NodePath, ?, NodePaths> collecting()
+    public static Collector<NodePath, ?, NodePaths> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodePaths::fromInternal );
     }
@@ -57,7 +56,7 @@ public final class NodePaths
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableSet.Builder<NodePath> nodePaths = ImmutableSet.builder();
 
@@ -67,7 +66,7 @@ public final class NodePaths
             return this;
         }
 
-        public Builder addNodePaths( final Collection<NodePath> nodePaths )
+        public Builder addNodePaths( final Iterable<? extends NodePath> nodePaths )
         {
             this.nodePaths.addAll( nodePaths );
             return this;

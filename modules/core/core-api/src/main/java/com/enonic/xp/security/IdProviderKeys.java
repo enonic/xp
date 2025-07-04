@@ -1,47 +1,52 @@
 package com.enonic.xp.security;
 
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
-
-import static java.util.stream.Collectors.toList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class IdProviderKeys
-    extends AbstractImmutableEntityList<IdProviderKey>
+    extends AbstractImmutableEntitySet<IdProviderKey>
 {
-    private IdProviderKeys( final ImmutableList<IdProviderKey> list )
+    private static final IdProviderKeys EMPTY = new IdProviderKeys( ImmutableSet.of() );
+
+    private IdProviderKeys( final ImmutableSet<IdProviderKey> list )
     {
         super( list );
     }
 
+    public static IdProviderKeys empty()
+    {
+        return EMPTY;
+    }
+
     public static IdProviderKeys from( final IdProviderKey... idProviderKeys )
     {
-        return new IdProviderKeys( ImmutableList.copyOf( idProviderKeys ) );
+        return fromInternal( ImmutableSet.copyOf( idProviderKeys ) );
     }
 
     public static IdProviderKeys from( final Iterable<? extends IdProviderKey> idProviderKeys )
     {
-        return new IdProviderKeys( ImmutableList.copyOf( idProviderKeys ) );
+        return fromInternal( ImmutableSet.copyOf( idProviderKeys ) );
     }
 
     public static IdProviderKeys from( final String... idProviderKeys )
     {
-        return new IdProviderKeys( parseIdProviderKeys( idProviderKeys ) );
+        return Arrays.stream( idProviderKeys ).map( IdProviderKey::new ).collect( collector() );
     }
 
-    public static IdProviderKeys empty()
+    public static Collector<IdProviderKey, ?, IdProviderKeys> collector()
     {
-        return new IdProviderKeys( ImmutableList.of() );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), IdProviderKeys::fromInternal );
     }
 
-    private static ImmutableList<IdProviderKey> parseIdProviderKeys( final String... idProviderKeys )
+    private static IdProviderKeys fromInternal( final ImmutableSet<IdProviderKey> idProviderKeys )
     {
-        final List<IdProviderKey> idProviderKeyList = Stream.of( idProviderKeys ).map( IdProviderKey::new ).collect( toList() );
-        return ImmutableList.copyOf( idProviderKeyList );
+        return idProviderKeys.isEmpty() ? EMPTY : new IdProviderKeys( idProviderKeys );
     }
 }

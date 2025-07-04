@@ -5,18 +5,18 @@ import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class XDataNames
-    extends AbstractImmutableEntityList<XDataName>
+    extends AbstractImmutableEntitySet<XDataName>
 {
-    private static final XDataNames EMPTY = new XDataNames( ImmutableList.of() );
+    private static final XDataNames EMPTY = new XDataNames( ImmutableSet.of() );
 
-    private XDataNames( final ImmutableList<XDataName> list )
+    private XDataNames( final ImmutableSet<XDataName> list )
     {
         super( list );
     }
@@ -33,25 +33,25 @@ public final class XDataNames
 
     public static XDataNames from( final Collection<String> xdataNames )
     {
-        return xdataNames.stream().map( XDataName::from ).collect( collecting() );
+        return xdataNames.stream().map( XDataName::from ).collect( collector() );
     }
 
     public static XDataNames from( final XDataName... xdataNames )
     {
-        return fromInternal( ImmutableList.copyOf( xdataNames ) );
+        return fromInternal( ImmutableSet.copyOf( xdataNames ) );
     }
 
     public static XDataNames from( final Iterable<XDataName> xdataNames )
     {
-        return fromInternal( ImmutableList.copyOf( xdataNames ) );
+        return fromInternal( ImmutableSet.copyOf( xdataNames ) );
     }
 
-    public static Collector<XDataName, ?, XDataNames> collecting()
+    public static Collector<XDataName, ?, XDataNames> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), XDataNames::fromInternal );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), XDataNames::fromInternal );
     }
 
-    private static XDataNames fromInternal( final ImmutableList<XDataName> xdataNames )
+    private static XDataNames fromInternal( final ImmutableSet<XDataName> xdataNames )
     {
         return xdataNames.isEmpty() ? EMPTY : new XDataNames( xdataNames );
     }

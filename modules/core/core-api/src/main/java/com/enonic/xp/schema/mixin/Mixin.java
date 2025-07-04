@@ -60,7 +60,7 @@ public final class Mixin
         return Objects.hash( super.hashCode(), form );
     }
 
-    public static class Builder
+    public static final class Builder
         extends BaseSchema.Builder<Builder, MixinName>
     {
         private Form.Builder formBuilder = Form.create();

@@ -1,11 +1,5 @@
 package com.enonic.xp.issue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 
@@ -17,7 +11,7 @@ public final class PublishRequest
 
     private PublishRequest( Builder builder )
     {
-        this.items = PublishRequestItems.from( builder.items );
+        this.items = builder.items.build();
         this.excludeIds = builder.exclude.build();
     }
 
@@ -36,34 +30,21 @@ public final class PublishRequest
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final List<PublishRequestItem> items = new ArrayList<>();
+        private final PublishRequestItems.Builder items = PublishRequestItems.create();
 
         private final ContentIds.Builder exclude = ContentIds.create();
 
-        public Builder addItems( final Collection<PublishRequestItem> items )
-        {
-            this.items.addAll( items );
-            return this;
-        }
-
         public Builder addItems( final PublishRequestItems items )
         {
-            this.items.addAll( items.getList() );
+            this.items.addAll( items );
             return this;
         }
 
         public Builder addItem( final PublishRequestItem item )
         {
             this.items.add( item );
-            return this;
-        }
-
-
-        public Builder addExcludeIds( final Collection<ContentId> exclude )
-        {
-            exclude.forEach( this.exclude::add );
             return this;
         }
 

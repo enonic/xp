@@ -112,7 +112,7 @@ public final class LayoutComponent
             toString();
     }
 
-    public static class Builder
+    public static final class Builder
         extends DescriptorBasedComponent.Builder
     {
         private LayoutRegions regions;

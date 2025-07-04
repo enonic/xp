@@ -1,10 +1,8 @@
 package com.enonic.xp.audit;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -17,6 +15,8 @@ public final class AuditLogIds
     extends AbstractImmutableEntitySet<AuditLogId>
     implements Iterable<AuditLogId>
 {
+    private static final AuditLogIds EMPTY = new AuditLogIds( ImmutableSet.of() );
+
     private AuditLogIds( final ImmutableSet<AuditLogId> set )
     {
         super( set );
@@ -24,38 +24,37 @@ public final class AuditLogIds
 
     public static AuditLogIds empty()
     {
-        final ImmutableSet<AuditLogId> set = ImmutableSet.of();
-        return new AuditLogIds( set );
+        return EMPTY;
     }
 
     public static AuditLogIds from( final AuditLogId... ids )
     {
-        return new AuditLogIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static AuditLogIds from( final String... ids )
     {
-        return new AuditLogIds( parseIds( ids ) );
+        return from( Arrays.asList( ids ) );
     }
 
     public static AuditLogIds from( final Collection<String> ids )
     {
-        return new AuditLogIds( doParseIds( ids ) );
+        return ids.stream().map( AuditLogId::from ).collect( collector() );
     }
 
     public static AuditLogIds from( final Iterable<AuditLogId> ids )
     {
-        return new AuditLogIds( ImmutableSet.copyOf( ids ) );
+        return fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
-    private static ImmutableSet<AuditLogId> parseIds( final String... ids )
+    public static Collector<AuditLogId, ?, AuditLogIds> collector()
     {
-        return doParseIds( Arrays.asList( ids ) );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), AuditLogIds::fromInternal );
     }
 
-    private static ImmutableSet<AuditLogId> doParseIds( final Collection<String> list )
+    private static AuditLogIds fromInternal( final ImmutableSet<AuditLogId> set )
     {
-        return list.stream().map( AuditLogId::from ).collect( ImmutableSet.toImmutableSet() );
+        return set.isEmpty() ? EMPTY : new AuditLogIds( set );
     }
 
     public static Builder create()
@@ -63,9 +62,9 @@ public final class AuditLogIds
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final List<AuditLogId> contents = new ArrayList<>();
+        private final ImmutableSet.Builder<AuditLogId> contents = ImmutableSet.builder();
 
         public Builder add( final AuditLogId auditLogId )
         {
@@ -73,16 +72,15 @@ public final class AuditLogIds
             return this;
         }
 
-        public Builder addAll( final AuditLogIds auditLogIds )
+        public Builder addAll( final Iterable<? extends AuditLogId> auditLogIds )
         {
-            this.contents.addAll( auditLogIds.getSet() );
+            this.contents.addAll( auditLogIds );
             return this;
         }
 
-
         public AuditLogIds build()
         {
-            return AuditLogIds.from( contents );
+            return fromInternal( contents.build() );
         }
     }
 }

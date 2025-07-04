@@ -68,7 +68,7 @@ public final class ResourceProblemException
         return getInnerError( cause.getCause() );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private String message;
 
