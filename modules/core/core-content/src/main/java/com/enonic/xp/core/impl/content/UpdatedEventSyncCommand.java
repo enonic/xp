@@ -47,23 +47,23 @@ final class UpdatedEventSyncCommand
                             .map( f -> Boolean.valueOf( f.toString() ) )
                             .orElse( false );
 
-                        if ( patched )
-                        {
+//                        if ( patched )
+//                        {
                             final ModifyContentParams.Builder modifyParams = modifyParams( content.getSourceContent() );
 
                             doSyncAttachments( content, modifyParams );
                             //attachments
 
                             contentService.modify( modifyParams.build() );
-                        }
-                        else
-                        {
-                            final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
-
-                            doSyncAttachments( content, updateParams );
-
-                            contentService.update( updateParams );
-                        }
+//                        }
+//                        else
+//                        {
+//                            final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
+//
+//                            doSyncAttachments( content, updateParams );
+//
+//                            contentService.update( updateParams );
+//                        }
 
                     }
                 }
