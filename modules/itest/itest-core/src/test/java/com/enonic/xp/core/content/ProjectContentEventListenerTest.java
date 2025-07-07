@@ -310,8 +310,12 @@ public class ProjectContentEventListenerTest
                                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                               .createAttachments( CreateAttachments.create()
                                                                       .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "data".getBytes() ) )
-                                                                                .name( "MyImage.something.gif" )
+                                                                                .byteSource( ByteSource.wrap( "data1".getBytes() ) )
+                                                                                .name( "MyImage1.gif" )
+                                                                                .build() )
+                                                                      .add( CreateAttachment.create()
+                                                                                .byteSource( ByteSource.wrap( "data2".getBytes() ) )
+                                                                                .name( "MyImage2.gif" )
                                                                                 .build() )
                                                                       .build() )
                                               .contentId( sourceContent.getId() )
@@ -319,11 +323,14 @@ public class ProjectContentEventListenerTest
 
                                                   final Attachment a1 = Attachment.create()
                                                       .mimeType( "image/gif" )
-                                                      .label( "My Image 1" )
-                                                      .name( "MyImage.something.gif" )
+                                                      .label( "My Image 1" ).name( "MyImage1.gif" ).build();
+                                                  final Attachment a2 = Attachment.create()
+                                                      .mimeType( "image/gif" )
+                                                      .label( "My Image 2" )
+                                                      .name( "MyImage2.gif" )
                                                       .build();
 
-                                                  edit.attachments.setValue( Attachments.create().add( a1 ).build() );
+                                                  edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
                                               } ) )
                                               .build() );
 
@@ -337,8 +344,10 @@ public class ProjectContentEventListenerTest
             .build()
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage.something.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage.something.gif" ) );
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
     }
 
     @Test
@@ -353,8 +362,12 @@ public class ProjectContentEventListenerTest
                                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                               .createAttachments( CreateAttachments.create()
                                                                       .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "data".getBytes() ) )
-                                                                                .name( "MyImage.something.gif" )
+                                                                                .byteSource( ByteSource.wrap( "data1".getBytes() ) )
+                                                                                .name( "MyImage1.gif" )
+                                                                                .build() )
+                                                                      .add( CreateAttachment.create()
+                                                                                .byteSource( ByteSource.wrap( "data2".getBytes() ) )
+                                                                                .name( "MyImage2.gif" )
                                                                                 .build() )
                                                                       .build() )
                                               .contentId( sourceContent.getId() )
@@ -362,11 +375,15 @@ public class ProjectContentEventListenerTest
 
                                                   final Attachment a1 = Attachment.create()
                                                       .mimeType( "image/gif" )
-                                                      .label( "My Image 1" )
-                                                      .name( "MyImage.something.gif" )
+                                                      .label( "My Image 1" ).name( "MyImage1.gif" )
+                                                      .build();
+                                                  final Attachment a2 = Attachment.create()
+                                                      .mimeType( "image/gif" )
+                                                      .label( "My Image 2" )
+                                                      .name( "MyImage2.gif" )
                                                       .build();
 
-                                                  edit.attachments.setValue( Attachments.create().add( a1 ).build() );
+                                                  edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
                                               } ) )
                                               .build() );
 
@@ -380,16 +397,36 @@ public class ProjectContentEventListenerTest
             .build()
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage.something.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage.something.gif" ) );
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage1.gif" ) );
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage2.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
 
         //remove attachment
         projectContext.callWith( () -> {
             return contentService.modify( ModifyContentParams.create()
                                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                               .contentId( sourceContent.getId() )
+                                              .createAttachments( CreateAttachments.create()
+                                                                      .add( CreateAttachment.create()
+                                                                                .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
+                                                                                .name( "MyImage3.gif" )
+                                                                                .build() )
+                                                                      .build() )
                                               .modifier( ( edit -> {
-                                                  edit.attachments.setValue( Attachments.create().build() );
+                                                  final Attachment a2 = Attachment.create()
+                                                      .mimeType( "image/png" )
+                                                      .label( "My Image 2" )
+                                                      .name( "MyImage2.gif" )
+                                                      .build();
+
+                                                  final Attachment a3 = Attachment.create()
+                                                      .mimeType( "image/png" )
+                                                      .label( "My Image 3" )
+                                                      .name( "MyImage3.gif" )
+                                                      .build();
+
+                                                  edit.attachments.setValue( Attachments.create().add( a2 ).add( a3 ).build() );
                                               } ) )
                                               .build() );
 
@@ -403,8 +440,12 @@ public class ProjectContentEventListenerTest
             .build()
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        assertFalse( targetContent.getAttachments().hasByName( "MyImage.something.gif" ) );
-        assertFalse( contentInMaster.getAttachments().hasByName( "MyImage.something.gif" ) );
+        assertFalse( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
+        assertFalse( contentInMaster.getAttachments().hasByName( "MyImage1.gif" ) );
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage2.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
+        assertTrue( targetContent.getAttachments().hasByName( "MyImage3.gif" ) );
+        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage3.gif" ) );
     }
 
     @Test

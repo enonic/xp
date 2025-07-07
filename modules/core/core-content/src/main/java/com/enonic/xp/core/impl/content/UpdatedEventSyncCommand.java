@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
@@ -50,11 +49,12 @@ final class UpdatedEventSyncCommand
 
                         if ( patched )
                         {
-                            final ModifyContentParams modifyParams = modifyParams( content.getSourceContent() );
+                            final ModifyContentParams.Builder modifyParams = modifyParams( content.getSourceContent() );
 
+                            doSyncAttachments( content, modifyParams );
                             //attachments
 
-                            contentService.modify( modifyParams );
+                            contentService.modify( modifyParams.build() );
                         }
                         else
                         {
@@ -71,35 +71,41 @@ final class UpdatedEventSyncCommand
         } );
     }
 
-    private void doSyncAttachments( final ContentToSync content, final UpdateContentParams updateParams )
+    private void doSyncAttachments( ContentToSync content, ModifyContentParams.Builder modifyParams )
     {
-        final Attachments sourceAttachments = content.getSourceContent().getAttachments();
-        final Attachments targetAttachments = content.getTargetContent().getAttachments();
-        if ( !sourceAttachments.equals( targetAttachments ) )
+        if ( !content.getSourceContent().getAttachments().equals( content.getTargetContent().getAttachments() ) )
+        {
+            modifyParams.createAttachments( buildAttachmentsFromSource( content ) );
+        }
+    }
+
+    private void doSyncAttachments( ContentToSync content, UpdateContentParams updateParams )
+    {
+        if ( !content.getSourceContent().getAttachments().equals( content.getTargetContent().getAttachments() ) )
         {
             updateParams.clearAttachments( true );
-
-            final CreateAttachments.Builder createAttachments = CreateAttachments.create();
-
-            sourceAttachments.forEach( ( sourceAttachment ) -> {
-                final ByteSource sourceBinary = content.getSourceContext()
-                    .callWith(
-                        () -> contentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
-
-                final CreateAttachment createAttachment = CreateAttachment.create()
-                    .name( sourceAttachment.getName() )
-                    .mimeType( sourceAttachment.getMimeType() )
-                    .byteSource( sourceBinary )
-                    .text( sourceAttachment.getTextContent() )
-                    .label( sourceAttachment.getLabel() )
-                    .build();
-
-                createAttachments.add( createAttachment );
-
-            } );
-
-            updateParams.createAttachments( createAttachments.build() );
+            updateParams.createAttachments( buildAttachmentsFromSource( content ) );
         }
+    }
+
+    private CreateAttachments buildAttachmentsFromSource( ContentToSync content )
+    {
+        CreateAttachments.Builder attachmentsBuilder = CreateAttachments.create();
+
+        content.getSourceContent().getAttachments().forEach( sourceAttachment -> {
+            ByteSource sourceBinary = content.getSourceContext()
+                .callWith( () -> contentService.getBinary( content.getSourceContent().getId(), sourceAttachment.getBinaryReference() ) );
+
+            attachmentsBuilder.add( CreateAttachment.create()
+                                        .name( sourceAttachment.getName() )
+                                        .mimeType( sourceAttachment.getMimeType() )
+                                        .byteSource( sourceBinary )
+                                        .text( sourceAttachment.getTextContent() )
+                                        .label( sourceAttachment.getLabel() )
+                                        .build() );
+        } );
+
+        return attachmentsBuilder.build();
     }
 
     private boolean isToSyncData( final Content targetContent )
@@ -146,11 +152,9 @@ final class UpdatedEventSyncCommand
         } );
     }
 
-    private ModifyContentParams modifyParams( final Content source )
+    private ModifyContentParams.Builder modifyParams( final Content source )
     {
         return ModifyContentParams.create().contentId( source.getId() )
-//            .branches( Branches.from( ContentConstants.BRANCH_DRAFT ))
-//                                .createAttachments(  ) TODO: patch binaries?
             .modifier( modifiable -> {
                 modifiable.displayName.setValue( source.getDisplayName() );
                 modifiable.data.setValue( source.getData() );
@@ -181,7 +185,7 @@ final class UpdatedEventSyncCommand
                 modifiable.originalName.setValue( source.getOriginalName() );
                 modifiable.archivedTime.setValue( source.getArchivedTime() );
                 modifiable.archivedBy.setValue( source.getArchivedBy() );
-            } ).build();
+            } );
     }
 
     public static class Builder
