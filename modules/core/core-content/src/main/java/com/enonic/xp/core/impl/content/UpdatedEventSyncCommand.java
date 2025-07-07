@@ -10,7 +10,6 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ModifyContentParams;
@@ -51,24 +50,19 @@ final class UpdatedEventSyncCommand
 
                         if ( patched )
                         {
-
                             final ModifyContentParams modifyParams = modifyParams( content.getSourceContent() );
 
-                            //TODO: attachments?
-                            final Content aa = contentService.modify( modifyParams ).getResult( ContentConstants.BRANCH_DRAFT );
+                            //attachments
 
-                            aa.getName();
+                            contentService.modify( modifyParams );
                         }
                         else
                         {
-
                             final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
 
                             doSyncAttachments( content, updateParams );
 
-                            final Content aa = contentService.update( updateParams );
-
-                            aa.getName();
+                            contentService.update( updateParams );
                         }
 
                     }
