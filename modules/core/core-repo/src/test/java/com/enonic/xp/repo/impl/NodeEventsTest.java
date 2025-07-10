@@ -18,12 +18,10 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeEventsTest
 {
-
     @Test
     public void testCreated()
     {
@@ -160,19 +158,6 @@ public class NodeEventsTest
         assertEquals( NodeEvents.NODE_SORTED_EVENT, event.getType() );
         assertEquals( "[{id=myId, path=/mynode1/child1/sorted, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( "nodes" ).get().toString() );
-    }
-
-    @Test
-    public void testNullArguments()
-    {
-        Event eventCreated = NodeEvents.created( null, InternalContext.from( createContext( "draft" ) ) );
-
-        assertNull( eventCreated );
-    }
-
-    private Node createNode( final String name, final NodePath root )
-    {
-        return Node.create().name( NodeName.from( name ) ).parentPath( root ).build();
     }
 
     private Node createNode( final String name, final NodePath root, String id )

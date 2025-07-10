@@ -17,9 +17,8 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repository.RepositoryId;
 
-public class NodeEvents
+public final class NodeEvents
 {
-
     public static final String NODE_CREATED_EVENT = "node.created";
 
     public static final String NODE_DELETED_EVENT = "node.deleted";
@@ -42,7 +41,7 @@ public class NodeEvents
 
     public static Event created( final Node createdNode, final InternalContext internalContext )
     {
-        return event( NODE_CREATED_EVENT, createdNode, internalContext );
+        return event( NODE_CREATED_EVENT, createdNode, internalContext ).build();
     }
 
     public static Event pushed( final Collection<PushNodeEntry> pushNodeEntries, Branch targetBranch, RepositoryId repositoryId )
@@ -52,7 +51,7 @@ public class NodeEvents
 
     public static Event pushed( final Node node, final InternalContext internalContext )
     {
-        return event( NODE_PUSHED_EVENT, node, internalContext );
+        return event( NODE_PUSHED_EVENT, node, internalContext ).build();
     }
 
     public static Event deleted( final NodeBranchEntries deletedNodes, final InternalContext internalContext )
@@ -62,17 +61,22 @@ public class NodeEvents
 
     public static Event duplicated( final Node duplicatedNode, final InternalContext internalContext )
     {
-        return event( NODE_DUPLICATED_EVENT, duplicatedNode, internalContext );
+        return event( NODE_DUPLICATED_EVENT, duplicatedNode, internalContext ).build();
     }
 
     public static Event updated( final Node updatedNode, final InternalContext internalContext )
     {
-        return event( NODE_UPDATED_EVENT, updatedNode, internalContext );
+        return event( NODE_UPDATED_EVENT, updatedNode, internalContext ).build();
+    }
+
+    public static Event patched( final Node updatedNode, final InternalContext internalContext )
+    {
+        return event( NODE_UPDATED_EVENT, updatedNode, internalContext )/*.value( "patched", true )*/.build();
     }
 
     public static Event permissionsUpdated( final Node updatedNode, final InternalContext internalContext )
     {
-        return event( NODE_PERMISSIONS_UPDATED, updatedNode, internalContext );
+        return event( NODE_PERMISSIONS_UPDATED, updatedNode, internalContext ).build();
     }
 
     public static Event moved( final MoveNodeResult result, final InternalContext internalContext )
@@ -96,21 +100,21 @@ public class NodeEvents
 
     public static Event sorted( final Node sortedNode, final InternalContext internalContext )
     {
-        return event( NODE_SORTED_EVENT, sortedNode, internalContext );
+        return event( NODE_SORTED_EVENT, sortedNode, internalContext ).build();
     }
 
     public static Event manualOrderUpdated( final Node sortedNode, final InternalContext internalContext )
     {
-        return event( NODE_MANUAL_ORDER_EVENT, sortedNode, internalContext );
+        return event( NODE_MANUAL_ORDER_EVENT, sortedNode, internalContext ).build();
     }
 
-    private static Event event( String type, Node node, InternalContext internalContext )
+    private static Event.Builder event( String type, Node node, InternalContext internalContext )
     {
-        if ( node != null )
-        {
-            return event( type, Nodes.from( node ), internalContext ).build();
-        }
-        return null;
+//        if ( node != null )
+//        {
+        return event( type, Nodes.from( node ), internalContext );
+//        }
+//        return null;
     }
 
     private static Event.Builder event( String type, Nodes nodes, InternalContext internalContext )

@@ -64,9 +64,9 @@ public class ModifiableContent
 
     public ModifiableField<ContentTypeName> type;
 
-    public ModifiableField<ContentPath> parentPath;
+//    public ModifiableField<ContentPath> parentPath; TODO: verify
 
-    public ModifiableField<ContentName> name;
+//    public ModifiableField<ContentName> name; TODO: verify
 
     public ModifiableField<ChildOrder> childOrder;
 
@@ -107,8 +107,8 @@ public class ModifiableContent
         this.attachments = new ModifiableField<>( source.getAttachments() );
         this.validationErrors = new ModifiableField<>( source.getValidationErrors() );
         this.type = new ModifiableField<>( source.getType() );
-        this.parentPath = new ModifiableField<>( source.getPath().getParentPath() );
-        this.name = new ModifiableField<>( source.getName() );
+//        this.parentPath = new ModifiableField<>( source.getPath().getParentPath() );
+//        this.name = new ModifiableField<>( source.getName() );
         this.childOrder = new ModifiableField<>( source.getChildOrder() );
         this.originProject = new ModifiableField<>( source.getOriginProject() );
         this.originalParentPath = new ModifiableField<>( source.getOriginalParentPath() );
@@ -141,8 +141,8 @@ public class ModifiableContent
             .modifiedTime( modifiedTime.produce() )
             .attachments( attachments.produce() )
             .type( type.produce() )
-            .parentPath( parentPath.produce() )
-            .name( name.produce() )
+//            .parentPath( parentPath.produce() )
+//            .name( name.produce() )
             .childOrder( childOrder.produce() )
             .originProject( originProject.produce() )
             .originalParentPath( originalParentPath.produce() )
