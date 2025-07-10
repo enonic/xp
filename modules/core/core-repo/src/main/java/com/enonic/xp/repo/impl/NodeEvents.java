@@ -71,7 +71,7 @@ public final class NodeEvents
 
     public static Event patched( final Node updatedNode, final InternalContext internalContext )
     {
-        return event( NODE_UPDATED_EVENT, updatedNode, internalContext ).value( "patched", true ).build();
+        return event( NODE_UPDATED_EVENT, updatedNode, internalContext )/*.value( "patched", true )*/.build();
     }
 
     public static Event permissionsUpdated( final Node updatedNode, final InternalContext internalContext )

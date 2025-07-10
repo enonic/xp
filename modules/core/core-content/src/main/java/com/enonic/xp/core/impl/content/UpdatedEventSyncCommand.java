@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.time.Instant;
 import java.util.Objects;
-import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -15,6 +15,10 @@ import com.enonic.xp.content.ModifyContentParams;
 import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.User;
 
 final class UpdatedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -44,9 +48,9 @@ final class UpdatedEventSyncCommand
                 {
                     if ( needToUpdate( content.getSourceContent(), content.getTargetContent() ) )
                     {
-                        final Boolean patched = Optional.ofNullable( params.getEventMetadata().get( "patched" ) )
-                            .map( f -> Boolean.valueOf( f.toString() ) )
-                            .orElse( false );
+//                        final Boolean patched = Optional.ofNullable( params.getEventMetadata().get( "patched" ) )
+//                            .map( f -> Boolean.valueOf( f.toString() ) )
+//                            .orElse( false );
 
 //                        if ( patched )
 //                        {
@@ -64,7 +68,6 @@ final class UpdatedEventSyncCommand
                             doSyncAttachments( content, updateParams );
 
                         final ModifyContentResult c = contentService.modify( updateParams.build() );
-                        c.getContentId();
 //                        }
 
                     }
@@ -157,6 +160,9 @@ final class UpdatedEventSyncCommand
 
             edit.valid.setValue( source.isValid() );
             edit.validationErrors.setValue( source.getValidationErrors() );
+
+            edit.modifier.setValue( getCurrentUser() );
+            edit.modifiedTime.setValue( Instant.now() );
         } );
     }
 
@@ -194,6 +200,13 @@ final class UpdatedEventSyncCommand
                 modifiable.archivedTime.setValue( source.getArchivedTime() );
                 modifiable.archivedBy.setValue( source.getArchivedBy() );
             } );
+    }
+
+    private PrincipalKey getCurrentUser()
+    {
+        final Context context = ContextAccessor.current();
+
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : User.ANONYMOUS.getKey();
     }
 
     public static class Builder
