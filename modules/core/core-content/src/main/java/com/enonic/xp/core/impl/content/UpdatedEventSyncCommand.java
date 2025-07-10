@@ -153,6 +153,8 @@ final class UpdatedEventSyncCommand
             edit.thumbnail.setValue( source.getThumbnail() );
             edit.processedReferences.setValue( ContentIds.create().addAll( source.getProcessedReferences() ).build() );
 
+            edit.attachments.setValue( source.getAttachments() );
+
             edit.valid.setValue( source.isValid() );
             edit.validationErrors.setValue( source.getValidationErrors() );
         } );

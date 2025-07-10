@@ -1251,7 +1251,7 @@ public class ProjectContentEventListenerTest
         Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
         eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
         handledEvents.addAll( eventCaptor.getAllValues() );
-        Thread.sleep( 5000 );
+        Thread.sleep( 1000 );
 
     }
 }
