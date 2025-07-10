@@ -12,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowState;
 
@@ -47,23 +48,24 @@ final class UpdatedEventSyncCommand
                             .map( f -> Boolean.valueOf( f.toString() ) )
                             .orElse( false );
 
-                        if ( patched )
-                        {
-                            final ModifyContentParams.Builder modifyParams = modifyParams( content.getSourceContent() );
-
-                            doSyncAttachments( content, modifyParams );
-                            //attachments
-
-                            contentService.modify( modifyParams.build() );
-                        }
-                        else
-                        {
-                            final UpdateContentParams updateParams = updateParams( content.getSourceContent() );
+//                        if ( patched )
+//                        {
+//                            final ModifyContentParams.Builder modifyParams = modifyParams( content.getSourceContent() );
+//
+//                            doSyncAttachments( content, modifyParams );
+//                            //attachments
+//
+//                            contentService.modify( modifyParams.build() );
+//                        }
+//                        else
+//                        {
+                        final ModifyContentParams.Builder updateParams = updateParams( content.getSourceContent() );
 
                             doSyncAttachments( content, updateParams );
 
-                            contentService.update( updateParams );
-                        }
+                        final ModifyContentResult c = contentService.modify( updateParams.build() );
+                        c.getContentId();
+//                        }
 
                     }
                 }
@@ -134,21 +136,25 @@ final class UpdatedEventSyncCommand
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             !Objects.equals( sourceContent.getAttachments(), targetContent.getAttachments() ) ||
+            !Objects.equals( sourceContent.getValidationErrors(), targetContent.getValidationErrors() ) ||
             sourceContent.isValid() != targetContent.isValid();
     }
 
-    private UpdateContentParams updateParams( final Content source )
+    private ModifyContentParams.Builder updateParams( final Content source )
     {
-        return new UpdateContentParams().contentId( source.getId() ).requireValid( false ).stopInherit( false ).editor( edit -> {
-            edit.data = source.getData();
-            edit.extraDatas = source.getAllExtraData();
-            edit.displayName = source.getDisplayName();
-            edit.owner = source.getOwner();
-            edit.language = source.getLanguage();
-            edit.workflowInfo = source.getWorkflowInfo();
-            edit.page = source.getPage();
-            edit.thumbnail = source.getThumbnail();
-            edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
+        return ModifyContentParams.create().contentId( source.getId() )/*.requireValid( false ).stopInherit( false )*/.modifier( edit -> {
+            edit.data.setValue( source.getData() );
+            edit.extraDatas.setValue( source.getAllExtraData() );
+            edit.displayName.setValue( source.getDisplayName() );
+            edit.owner.setValue( source.getOwner() );
+            edit.language.setValue( source.getLanguage() );
+            edit.workflowInfo.setValue( source.getWorkflowInfo() );
+            edit.page.setValue( source.getPage() );
+            edit.thumbnail.setValue( source.getThumbnail() );
+            edit.processedReferences.setValue( ContentIds.create().addAll( source.getProcessedReferences() ).build() );
+
+            edit.valid.setValue( source.isValid() );
+            edit.validationErrors.setValue( source.getValidationErrors() );
         } );
     }
 
@@ -177,8 +183,8 @@ final class UpdatedEventSyncCommand
                 modifiable.attachments.setValue( source.getAttachments() );
                 modifiable.validationErrors.setValue( source.getValidationErrors() );
                 modifiable.type.setValue( source.getType() );
-                modifiable.parentPath.setValue( source.getParentPath() );
-                modifiable.name.setValue( source.getName() );
+//                modifiable.parentPath.setValue( source.getParentPath() ); TODO: verify
+//                modifiable.name.setValue( source.getName() ); TODO: verify
                 modifiable.childOrder.setValue( source.getChildOrder() );
                 modifiable.originProject.setValue( source.getOriginProject() );
                 modifiable.originalParentPath.setValue( source.getOriginalParentPath() );

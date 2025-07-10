@@ -46,7 +46,7 @@ public class ModifyContentCommand
         final Content contentBeforeChange = getContent( params.getContentId() );
         final Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
 
-        final PatchNodeParams updateNodeParams = PatchNodeParamsFactory.create()
+        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( modifiedContent )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
@@ -60,7 +60,7 @@ public class ModifyContentCommand
             .build()
             .produce();
 
-        final PatchNodeResult result = nodeService.patch( updateNodeParams );
+        final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
         final ModifyContentResult.Builder builder = ModifyContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
 

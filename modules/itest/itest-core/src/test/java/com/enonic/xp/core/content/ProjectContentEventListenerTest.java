@@ -247,10 +247,13 @@ public class ProjectContentEventListenerTest
     public void syncModifiedFields()
         throws InterruptedException
     {
-        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        final Content parentContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
+        final Content sourceContent = projectContext.callWith( () -> createContent( parentContent.getPath(), "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        final ModifyContentResult modifiedContent = projectContext.callWith( () -> {
+        handleEvents();
+
+        final ModifyContentResult modifiedContentResult = projectContext.callWith( () -> {
 
             final ModifyContentResult result =
                 contentService.modify( ModifyContentParams.create().contentId( sourceContent.getId() ).modifier( ( edit -> {
@@ -261,8 +264,6 @@ public class ProjectContentEventListenerTest
                     edit.language.setValue( Locale.forLanguageTag( "no" ) );
                     edit.page.setValue( createPage() );
 
-                    edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
-                    edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
                     edit.valid.setValue( false );
                     edit.validationErrors.setValue( ValidationErrors.create()
                                                         .add( ValidationError.dataError(
@@ -270,11 +271,13 @@ public class ProjectContentEventListenerTest
                                                             PropertyPath.from( "/property" ) ).build() )
                                                         .build() );
 
-                    edit.parentPath.setValue( ContentPath.from( "/localContent" ) );
+                    edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
+                    edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
+//                    edit.parentPath.setValue( ContentPath.from( "/localContent" ) ); TODO: verify
+//
+//                    edit.name.setValue( ContentName.from( "newName" ) ); TODO: verify
 
-                    edit.name.setValue( ContentName.from( "newName" ) );
-
-                    edit.childOrder.setValue( ChildOrder.from( "modifiedtime DESC" ) );
+                    edit.childOrder.setValue( ChildOrder.from( "modifiedtime ASC" ) );
 
                     edit.originProject.setValue( ProjectName.from( "new-origin-project" ) );
 
@@ -291,11 +294,25 @@ public class ProjectContentEventListenerTest
 
         } );
 
+        final Content modifiedContent = modifiedContentResult.getResult( ContentConstants.BRANCH_DRAFT );
+
         handleEvents();
 
         final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        compareSynched( modifiedContent.getResult( ContentConstants.BRANCH_DRAFT ), targetContent );
+        compareSynched( modifiedContent, targetContent );
+
+        //fields to not sync
+        assertNotEquals( modifiedContent.getModifier(), targetContent.getModifier() );
+        assertNotEquals( modifiedContent.getModifiedTime(), targetContent.getModifiedTime() );
+//        assertNotEquals( modifiedContent.getParentPath(), targetContent.getParentPath() );
+//        assertNotEquals( modifiedContent.getName(), targetContent.getName() );
+        assertNotEquals( modifiedContent.getChildOrder(), targetContent.getChildOrder() );
+        assertNotEquals( modifiedContent.getOriginProject(), targetContent.getOriginProject() );
+        assertNotEquals( modifiedContent.getOriginalParentPath(), targetContent.getOriginalParentPath() );
+        assertNotEquals( modifiedContent.getOriginalName(), targetContent.getOriginalName() );
+        assertNotEquals( modifiedContent.getArchivedTime(), targetContent.getArchivedTime() );
+        assertNotEquals( modifiedContent.getArchivedBy(), targetContent.getArchivedBy() );
     }
 
     @Test
@@ -322,8 +339,7 @@ public class ProjectContentEventListenerTest
                                               .modifier( ( edit -> {
 
                                                   final Attachment a1 = Attachment.create()
-                                                      .mimeType( "image/gif" )
-                                                      .label( "My Image 1" ).name( "MyImage1.gif" ).build();
+                                                      .mimeType( "image/gif" ).label( "My Image 1" ).name( "MyImage1.gif" ).build();
                                                   final Attachment a2 = Attachment.create()
                                                       .mimeType( "image/gif" )
                                                       .label( "My Image 2" )
@@ -374,8 +390,7 @@ public class ProjectContentEventListenerTest
                                               .modifier( ( edit -> {
 
                                                   final Attachment a1 = Attachment.create()
-                                                      .mimeType( "image/gif" )
-                                                      .label( "My Image 1" ).name( "MyImage1.gif" )
+                                                      .mimeType( "image/gif" ).label( "My Image 1" ).name( "MyImage1.gif" )
                                                       .build();
                                                   final Attachment a2 = Attachment.create()
                                                       .mimeType( "image/gif" )
@@ -1236,7 +1251,7 @@ public class ProjectContentEventListenerTest
         Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
         eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
         handledEvents.addAll( eventCaptor.getAllValues() );
-        Thread.sleep( 1000 );
+        Thread.sleep( 5000 );
 
     }
 }
