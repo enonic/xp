@@ -67,7 +67,7 @@ final class UpdatedEventSyncCommand
 
                             doSyncAttachments( content, updateParams );
 
-                        final ModifyContentResult c = contentService.modify( updateParams.build() );
+                        contentService.modify( updateParams.build() );
 //                        }
 
                     }
