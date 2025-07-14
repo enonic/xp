@@ -8,13 +8,13 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 
 @PublicApi
-public final class ModifyContentResult
+public final class PatchContentResult
 {
     private final ContentId contentId;
 
     private final List<BranchResult> results;
 
-    private ModifyContentResult( Builder builder )
+    private PatchContentResult( Builder builder )
     {
         this.contentId = builder.contentId;
         this.results = builder.results.build();
@@ -67,9 +67,9 @@ public final class ModifyContentResult
             return this;
         }
 
-        public ModifyContentResult build()
+        public PatchContentResult build()
         {
-            return new ModifyContentResult( this );
+            return new PatchContentResult( this );
         }
     }
 }

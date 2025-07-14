@@ -65,10 +65,10 @@ import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
@@ -350,11 +350,11 @@ public class ContentServiceImpl
     }
 
     @Override
-    public ModifyContentResult modify( final ModifyContentParams params )
+    public PatchContentResult patch( final PatchContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final ModifyContentResult result = ModifyContentCommand.create( params )
+        final PatchContentResult result = PatchContentCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
@@ -370,7 +370,7 @@ public class ContentServiceImpl
             .build()
             .execute();
 
-        contentAuditLogSupport.modify( params, result );
+        contentAuditLogSupport.patch( params, result );
 
         return result;
     }

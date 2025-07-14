@@ -10,20 +10,20 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 
 @PublicApi
-public final class ModifyContentParams
+public final class PatchContentParams
 {
     private final ContentId id;
 
-    private final ContentModifier modifier;
+    private final ContentPatcher patcher;
 
     private final CreateAttachments createAttachments;
 
     private final Branches branches;
 
-    private ModifyContentParams( final Builder builder )
+    private PatchContentParams( final Builder builder )
     {
         this.id = builder.id;
-        this.modifier = builder.modifier;
+        this.patcher = builder.patcher;
         this.createAttachments = builder.createAttachments;
         this.branches = Branches.from( builder.branches.build() );
     }
@@ -43,9 +43,9 @@ public final class ModifyContentParams
         return createAttachments;
     }
 
-    public ContentModifier getModifier()
+    public ContentPatcher getPatcher()
     {
-        return modifier;
+        return patcher;
     }
 
     public Branches getBranches()
@@ -59,7 +59,7 @@ public final class ModifyContentParams
 
         private ContentId id;
 
-        private ContentModifier modifier;
+        private ContentPatcher patcher;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
@@ -73,9 +73,9 @@ public final class ModifyContentParams
             return this;
         }
 
-        public Builder modifier( final ContentModifier modifier )
+        public Builder patcher( final ContentPatcher patcher )
         {
-            this.modifier = modifier;
+            this.patcher = patcher;
             return this;
         }
 
@@ -91,9 +91,9 @@ public final class ModifyContentParams
             return this;
         }
 
-        public ModifyContentParams build()
+        public PatchContentParams build()
         {
-            return new ModifyContentParams( this );
+            return new PatchContentParams( this );
         }
     }
 }

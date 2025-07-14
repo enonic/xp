@@ -13,10 +13,10 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -42,7 +42,7 @@ interface ContentAuditLogSupport
 
     void update( UpdateMediaParams params, Content content );
 
-    void modify( ModifyContentParams params, ModifyContentResult result );
+    void patch( PatchContentParams params, PatchContentResult result );
 
     void delete( DeleteContentParams params, DeleteContentsResult contents );
 
