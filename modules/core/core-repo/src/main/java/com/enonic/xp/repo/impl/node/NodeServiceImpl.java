@@ -431,11 +431,11 @@ public class NodeServiceImpl
                 final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
                 if ( ( br.branch().equals( mainBranch ) ) || !br.node().getNodeVersionId().equals( mainBranchVersion ) )
                 {
-                    eventPublisher.publish( NodeEvents.updated( br.node(), internalContext ) );
+                    eventPublisher.publish( NodeEvents.patched( br.node(), internalContext ) );
                 }
                 else
                 {
-                    eventPublisher.publish( NodeEvents.pushed( br.node(), internalContext ) );
+                    eventPublisher.publish( NodeEvents.pushed( br.node(), internalContext ) ); // TODO: patch == true ?
                 }
             } );
         }

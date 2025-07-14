@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeEventsTest
 {
-
     @Test
     public void testCreated()
     {

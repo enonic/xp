@@ -76,7 +76,7 @@ public final class ProjectContentEventListener
         if ( isContentEvent )
         {
             Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-            this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event.getType() ) ) );
+            this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event ) ) );
         }
     }
 
@@ -87,7 +87,7 @@ public final class ProjectContentEventListener
             "node.deleted".equals( type ) || "node.sorted".equals( type );
     }
 
-    private void doHandleContentEvent( final List<Map<String, String>> nodes, final String type )
+    private void doHandleContentEvent( final List<Map<String, String>> nodes, final Event event )
     {
         createAdminContext().runWith( () -> {
 
@@ -130,9 +130,10 @@ public final class ProjectContentEventListener
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
                         .addContentIds( contentIds )
                         .sourceProject( sourceProject.getName() )
-                        .targetProject( targetProject.getName() );
+                        .targetProject( targetProject.getName() )
+                        .addEventMetadata( event.getData() );
 
-                    switch ( type )
+                    switch ( event.getType() )
                     {
                         case "node.created":
                         case "node.duplicated":
@@ -155,7 +156,7 @@ public final class ProjectContentEventListener
                             paramsBuilder.syncEventType( ContentSyncEventType.DELETED );
                             break;
                         default:
-                            LOG.debug( "Ignoring node type: {}", type );
+                            LOG.debug( "Ignoring node type: {}", event.getType() );
                             break;
                     }
                     final ContentEventsSyncParams params = paramsBuilder.build();
@@ -165,7 +166,7 @@ public final class ProjectContentEventListener
                     }
                 } );
 
-            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( type ) )
+            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( event.getType() ) )
             {
                 sourceProject.getParents()
                     .stream()

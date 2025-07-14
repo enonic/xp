@@ -17,9 +17,8 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repository.RepositoryId;
 
-public class NodeEvents
+public final class NodeEvents
 {
-
     public static final String NODE_CREATED_EVENT = "node.created";
 
     public static final String NODE_DELETED_EVENT = "node.deleted";
@@ -64,6 +63,11 @@ public class NodeEvents
     }
 
     public static Event updated( final Node updatedNode, final InternalContext internalContext )
+    {
+        return event( NODE_UPDATED_EVENT, updatedNode, internalContext );
+    }
+
+    public static Event patched( final Node updatedNode, final InternalContext internalContext )
     {
         return event( NODE_UPDATED_EVENT, updatedNode, internalContext );
     }
