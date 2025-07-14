@@ -2,19 +2,19 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentModifier;
-import com.enonic.xp.content.ModifiableContent;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
+import com.enonic.xp.content.ContentPatcher;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
-public class ModifyContentCommand
+public class PatchContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final ModifyContentParams params;
+    private final PatchContentParams params;
 
-    private ModifyContentCommand( final Builder builder )
+    private PatchContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
@@ -25,7 +25,7 @@ public class ModifyContentCommand
         return new Builder();
     }
 
-    public static Builder create( final ModifyContentParams params )
+    public static Builder create( final PatchContentParams params )
     {
         return create().params( params );
     }
@@ -35,19 +35,18 @@ public class ModifyContentCommand
         return new Builder( source );
     }
 
-    ModifyContentResult execute()
+    PatchContentResult execute()
     {
         validateCreateAttachments( params.getCreateAttachments() );
         return doExecute();
     }
 
-    private ModifyContentResult doExecute()
+    private PatchContentResult doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
-        final Content modifiedContent = modifyContent( params.getModifier(), contentBeforeChange );
+        final Content patchedContent = patchContent( params.getPatcher(), contentBeforeChange );
 
-        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
-            .editedContent( modifiedContent )
+        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create().editedContent( patchedContent )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
@@ -62,7 +61,7 @@ public class ModifyContentCommand
 
         final PatchNodeResult result = nodeService.patch( patchNodeParams );
 
-        final ModifyContentResult.Builder builder = ModifyContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
+        final PatchContentResult.Builder builder = PatchContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
 
         result.getResults()
             .forEach( branchResult -> builder.addResult( branchResult.branch(), branchResult.node() != null
@@ -72,22 +71,22 @@ public class ModifyContentCommand
         return builder.build();
     }
 
-    private Content modifyContent( final ContentModifier modifier, final Content original )
+    private Content patchContent( final ContentPatcher patcher, final Content original )
     {
-        final ModifiableContent modifiableContent = new ModifiableContent( original );
+        final PatchableContent patchableContent = new PatchableContent( original );
 
-        if ( modifier != null )
+        if ( patcher != null )
         {
-            modifier.modify( modifiableContent );
+            patcher.patch( patchableContent );
         }
 
-        return modifiableContent.build();
+        return patchableContent.build();
     }
 
     public static final class Builder
         extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
-        private ModifyContentParams params;
+        private PatchContentParams params;
 
         private Builder()
         {
@@ -98,17 +97,17 @@ public class ModifyContentCommand
             super( source );
         }
 
-        public Builder params( final ModifyContentParams params )
+        public Builder params( final PatchContentParams params )
         {
             this.params = params;
             return this;
         }
 
 
-        public ModifyContentCommand build()
+        public PatchContentCommand build()
         {
             this.validate();
-            return new ModifyContentCommand( this );
+            return new PatchContentCommand( this );
         }
     }
 }

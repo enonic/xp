@@ -25,8 +25,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
@@ -111,10 +111,10 @@ public class ContentAuditLogSupportImplTest
     }
 
     @Test
-    public void testModifyContent()
+    public void testPatchContent()
         throws Exception
     {
-        final ModifyContentParams params = ModifyContentParams.create()
+        final PatchContentParams params = PatchContentParams.create()
             .contentId( ContentId.from( "contentId" ) )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
             .createAttachments( CreateAttachments.from( CreateAttachment.create()
@@ -128,11 +128,10 @@ public class ContentAuditLogSupportImplTest
                                                             .name( "MyText.txp" )
                                                             .byteSource( ByteSource.wrap( "text data".getBytes( StandardCharsets.UTF_8 ) ) )
                                                             .text( "text data" )
-                                                            .build() ) )
-            .modifier( edit -> edit.displayName.setValue( "New Display Name" ) )
+                                                            .build() ) ).patcher( edit -> edit.displayName.setValue( "New Display Name" ) )
             .build();
 
-        final ModifyContentResult result = ModifyContentResult.create()
+        final PatchContentResult result = PatchContentResult.create()
             .contentId( ContentId.from( "contentId" ) )
             .addResult( ContentConstants.BRANCH_DRAFT, Content.create()
                 .id( ContentId.from( "contentId" ) )
@@ -151,7 +150,7 @@ public class ContentAuditLogSupportImplTest
             .build();
 
         //test
-        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::modify, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::patch, params, result );
 
         assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
         assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
