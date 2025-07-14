@@ -62,15 +62,15 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.region.PartComponent;
-import com.enonic.xp.region.PartDescriptor;
-import com.enonic.xp.region.Region;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -249,6 +249,7 @@ public class ProjectContentEventListenerTest
     {
         final Content parentContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
         final Content sourceContent = projectContext.callWith( () -> createContent( parentContent.getPath(), "name" ) );
+
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
         handleEvents();
@@ -319,30 +320,34 @@ public class ProjectContentEventListenerTest
 
         projectContext.callWith( () -> {
             return contentService.patch( PatchContentParams.create()
-                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                              .createAttachments( CreateAttachments.create()
-                                                                      .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "data1".getBytes() ) )
-                                                                                .name( "MyImage1.gif" )
-                                                                                .build() )
-                                                                      .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "data2".getBytes() ) )
-                                                                                .name( "MyImage2.gif" )
-                                                                                .build() )
-                                                                      .build() )
-                                              .contentId( sourceContent.getId() ).patcher( ( edit -> {
+                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                             .createAttachments( CreateAttachments.create()
+                                                                     .add( CreateAttachment.create()
+                                                                               .byteSource( ByteSource.wrap( "data1".getBytes() ) )
+                                                                               .name( "MyImage1.gif" )
+                                                                               .build() )
+                                                                     .add( CreateAttachment.create()
+                                                                               .byteSource( ByteSource.wrap( "data2".getBytes() ) )
+                                                                               .name( "MyImage2.gif" )
+                                                                               .build() )
+                                                                     .build() )
+                                             .contentId( sourceContent.getId() )
+                                             .patcher( ( edit -> {
 
-                                                  final Attachment a1 = Attachment.create()
-                                                      .mimeType( "image/gif" ).label( "My Image 1" ).name( "MyImage1.gif" ).build();
-                                                  final Attachment a2 = Attachment.create()
-                                                      .mimeType( "image/gif" )
-                                                      .label( "My Image 2" )
-                                                      .name( "MyImage2.gif" )
-                                                      .build();
+                                                 final Attachment a1 = Attachment.create()
+                                                     .mimeType( "image/gif" )
+                                                     .label( "My Image 1" )
+                                                     .name( "MyImage1.gif" )
+                                                     .build();
+                                                 final Attachment a2 = Attachment.create()
+                                                     .mimeType( "image/gif" )
+                                                     .label( "My Image 2" )
+                                                     .name( "MyImage2.gif" )
+                                                     .build();
 
-                                                  edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                              } ) )
-                                              .build() );
+                                                 edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
+                                             } ) )
+                                             .build() );
 
         } );
 
@@ -369,31 +374,34 @@ public class ProjectContentEventListenerTest
 
         projectContext.callWith( () -> {
             return contentService.patch( PatchContentParams.create()
-                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                              .createAttachments( CreateAttachments.create()
-                                                                      .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "data1".getBytes() ) )
-                                                                                .name( "MyImage1.gif" )
-                                                                                .build() )
-                                                                      .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "data2".getBytes() ) )
-                                                                                .name( "MyImage2.gif" )
-                                                                                .build() )
-                                                                      .build() )
-                                              .contentId( sourceContent.getId() ).patcher( ( edit -> {
+                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                             .createAttachments( CreateAttachments.create()
+                                                                     .add( CreateAttachment.create()
+                                                                               .byteSource( ByteSource.wrap( "data1".getBytes() ) )
+                                                                               .name( "MyImage1.gif" )
+                                                                               .build() )
+                                                                     .add( CreateAttachment.create()
+                                                                               .byteSource( ByteSource.wrap( "data2".getBytes() ) )
+                                                                               .name( "MyImage2.gif" )
+                                                                               .build() )
+                                                                     .build() )
+                                             .contentId( sourceContent.getId() )
+                                             .patcher( ( edit -> {
 
-                                                  final Attachment a1 = Attachment.create()
-                                                      .mimeType( "image/gif" ).label( "My Image 1" ).name( "MyImage1.gif" )
-                                                      .build();
-                                                  final Attachment a2 = Attachment.create()
-                                                      .mimeType( "image/gif" )
-                                                      .label( "My Image 2" )
-                                                      .name( "MyImage2.gif" )
-                                                      .build();
+                                                 final Attachment a1 = Attachment.create()
+                                                     .mimeType( "image/gif" )
+                                                     .label( "My Image 1" )
+                                                     .name( "MyImage1.gif" )
+                                                     .build();
+                                                 final Attachment a2 = Attachment.create()
+                                                     .mimeType( "image/gif" )
+                                                     .label( "My Image 2" )
+                                                     .name( "MyImage2.gif" )
+                                                     .build();
 
-                                                  edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                              } ) )
-                                              .build() );
+                                                 edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
+                                             } ) )
+                                             .build() );
 
         } );
 
@@ -413,29 +421,30 @@ public class ProjectContentEventListenerTest
         //remove attachment
         projectContext.callWith( () -> {
             return contentService.patch( PatchContentParams.create()
-                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                              .contentId( sourceContent.getId() )
-                                              .createAttachments( CreateAttachments.create()
-                                                                      .add( CreateAttachment.create()
-                                                                                .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
-                                                                                .name( "MyImage3.gif" )
-                                                                                .build() )
-                                                                      .build() ).patcher( ( edit -> {
-                                                  final Attachment a2 = Attachment.create()
-                                                      .mimeType( "image/png" )
-                                                      .label( "My Image 2" )
-                                                      .name( "MyImage2.gif" )
-                                                      .build();
+                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                             .contentId( sourceContent.getId() )
+                                             .createAttachments( CreateAttachments.create()
+                                                                     .add( CreateAttachment.create()
+                                                                               .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
+                                                                               .name( "MyImage3.gif" )
+                                                                               .build() )
+                                                                     .build() )
+                                             .patcher( ( edit -> {
+                                                 final Attachment a2 = Attachment.create()
+                                                     .mimeType( "image/png" )
+                                                     .label( "My Image 2" )
+                                                     .name( "MyImage2.gif" )
+                                                     .build();
 
-                                                  final Attachment a3 = Attachment.create()
-                                                      .mimeType( "image/png" )
-                                                      .label( "My Image 3" )
-                                                      .name( "MyImage3.gif" )
-                                                      .build();
+                                                 final Attachment a3 = Attachment.create()
+                                                     .mimeType( "image/png" )
+                                                     .label( "My Image 3" )
+                                                     .name( "MyImage3.gif" )
+                                                     .build();
 
-                                                  edit.attachments.setValue( Attachments.create().add( a2 ).add( a3 ).build() );
-                                              } ) )
-                                              .build() );
+                                                 edit.attachments.setValue( Attachments.create().add( a2 ).add( a3 ).build() );
+                                             } ) )
+                                             .build() );
 
         } );
 
@@ -1198,27 +1207,24 @@ public class ProjectContentEventListenerTest
 
     private Page createPage()
     {
-        PropertyTree componentConfig = new PropertyTree();
-        componentConfig.setString( "my-prop", "value" );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "some", "line" );
 
-        PartComponent component =
-            PartComponent.create().descriptor( DescriptorKey.from( "mainapplication:partTemplateName" ) ).config( componentConfig ).build();
+        final Form pageDescriptorForm = Form.create()
+            .addFormItem( Input.create().inputType( InputTypeName.TEXT_LINE ).name( "some" ).label( "label" ).build() )
+            .build();
 
-        Region region = Region.create().name( "my-region" ).add( component ).build();
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "abc:abc" );
 
-        PageRegions regions = PageRegions.create().add( region ).build();
-
-        PropertyTree pageConfig = new PropertyTree();
-        pageConfig.setString( "background-color", "blue" );
-
-        Mockito.when( partDescriptorService.getByKey( DescriptorKey.from( "mainapplication:partTemplateName" ) ) )
-            .thenReturn( PartDescriptor.create()
-                             .key( DescriptorKey.from( "mainapplication:partTemplateName" ) )
-                             .displayName( "my-component" )
-                             .config( Form.create().build() )
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) )
+            .thenReturn( PageDescriptor.create()
+                             .displayName( "Landing page" )
+                             .config( pageDescriptorForm )
+                             .regions( RegionDescriptors.create().build() )
+                             .key( DescriptorKey.from( "module:landing-page" ) )
                              .build() );
 
-        return Page.create().template( PageTemplateKey.from( "mypagetemplate" ) ).regions( regions ).build();
+        return Page.create().descriptor( pageDescriptorKey ).config( config ).regions( PageRegions.create().build() ).build();
     }
 
     @Test
