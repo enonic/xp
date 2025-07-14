@@ -35,10 +35,10 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -177,14 +177,14 @@ public class ContentAuditLogSupportImpl
     }
 
     @Override
-    public void modify( final ModifyContentParams params, final ModifyContentResult result )
+    public void patch( final PatchContentParams params, final PatchContentResult result )
     {
         final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
-        executor.execute( () -> doModify( params, result, context ) );
+        executor.execute( () -> doPatch( params, result, context ) );
     }
 
-    private void doModify( final ModifyContentParams params, final ModifyContentResult result, final Context rootContext )
+    private void doPatch( final PatchContentParams params, final PatchContentResult result, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -209,7 +209,7 @@ public class ContentAuditLogSupportImpl
             }
         } );
 
-        log( "system.content.modify", data, params.getContentId(), rootContext );
+        log( "system.content.patch", data, params.getContentId(), rootContext );
     }
 
     @Override

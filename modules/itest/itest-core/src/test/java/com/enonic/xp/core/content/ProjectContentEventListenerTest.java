@@ -33,9 +33,9 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -222,7 +222,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void syncModifiedFields()
+    public void syncPatchedFields()
         throws InterruptedException
     {
         final Content parentContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
@@ -231,10 +231,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final ModifyContentResult modifiedContentResult = projectContext.callWith( () -> {
+        final PatchContentResult patchedContentResult = projectContext.callWith( () -> {
 
-            final ModifyContentResult result =
-                contentService.modify( ModifyContentParams.create().contentId( sourceContent.getId() ).modifier( ( edit -> {
+            final PatchContentResult result =
+                contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
                     edit.data.setValue( new PropertyTree() );
                     edit.displayName.setValue( "newDisplayName" );
                     edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
@@ -251,9 +251,6 @@ public class ProjectContentEventListenerTest
 
                     edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
                     edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
-//                    edit.parentPath.setValue( ContentPath.from( "/localContent" ) ); TODO: verify
-//
-//                    edit.name.setValue( ContentName.from( "newName" ) ); TODO: verify
 
                     edit.childOrder.setValue( ChildOrder.from( "modifiedtime ASC" ) );
 
@@ -272,36 +269,34 @@ public class ProjectContentEventListenerTest
 
         } );
 
-        final Content modifiedContent = modifiedContentResult.getResult( ContentConstants.BRANCH_DRAFT );
+        final Content patchedContent = patchedContentResult.getResult( ContentConstants.BRANCH_DRAFT );
 
         handleEvents();
 
         final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        compareSynched( modifiedContent, targetContent );
+        compareSynched( patchedContent, targetContent );
 
         //fields to not sync
-        assertNotEquals( modifiedContent.getModifier(), targetContent.getModifier() );
-        assertNotEquals( modifiedContent.getModifiedTime(), targetContent.getModifiedTime() );
-//        assertNotEquals( modifiedContent.getParentPath(), targetContent.getParentPath() );
-//        assertNotEquals( modifiedContent.getName(), targetContent.getName() );
-        assertNotEquals( modifiedContent.getChildOrder(), targetContent.getChildOrder() );
-        assertNotEquals( modifiedContent.getOriginProject(), targetContent.getOriginProject() );
-        assertNotEquals( modifiedContent.getOriginalParentPath(), targetContent.getOriginalParentPath() );
-        assertNotEquals( modifiedContent.getOriginalName(), targetContent.getOriginalName() );
-        assertNotEquals( modifiedContent.getArchivedTime(), targetContent.getArchivedTime() );
-        assertNotEquals( modifiedContent.getArchivedBy(), targetContent.getArchivedBy() );
+        assertNotEquals( patchedContent.getModifier(), targetContent.getModifier() );
+        assertNotEquals( patchedContent.getModifiedTime(), targetContent.getModifiedTime() );
+        assertNotEquals( patchedContent.getChildOrder(), targetContent.getChildOrder() );
+        assertNotEquals( patchedContent.getOriginProject(), targetContent.getOriginProject() );
+        assertNotEquals( patchedContent.getOriginalParentPath(), targetContent.getOriginalParentPath() );
+        assertNotEquals( patchedContent.getOriginalName(), targetContent.getOriginalName() );
+        assertNotEquals( patchedContent.getArchivedTime(), targetContent.getArchivedTime() );
+        assertNotEquals( patchedContent.getArchivedBy(), targetContent.getArchivedBy() );
     }
 
     @Test
-    public void syncModifiedCreateAttachments()
+    public void syncPatchedCreateAttachments()
         throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
         projectContext.callWith( () -> {
-            return contentService.modify( ModifyContentParams.create()
+            return contentService.patch( PatchContentParams.create()
                                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                               .createAttachments( CreateAttachments.create()
                                                                       .add( CreateAttachment.create()
@@ -313,8 +308,7 @@ public class ProjectContentEventListenerTest
                                                                                 .name( "MyImage2.gif" )
                                                                                 .build() )
                                                                       .build() )
-                                              .contentId( sourceContent.getId() )
-                                              .modifier( ( edit -> {
+                                              .contentId( sourceContent.getId() ).patcher( ( edit -> {
 
                                                   final Attachment a1 = Attachment.create()
                                                       .mimeType( "image/gif" ).label( "My Image 1" ).name( "MyImage1.gif" ).build();
@@ -345,14 +339,14 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void syncModifiedRemoveAttachments()
+    public void syncPatchedRemoveAttachments()
         throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
         projectContext.callWith( () -> {
-            return contentService.modify( ModifyContentParams.create()
+            return contentService.patch( PatchContentParams.create()
                                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                               .createAttachments( CreateAttachments.create()
                                                                       .add( CreateAttachment.create()
@@ -364,8 +358,7 @@ public class ProjectContentEventListenerTest
                                                                                 .name( "MyImage2.gif" )
                                                                                 .build() )
                                                                       .build() )
-                                              .contentId( sourceContent.getId() )
-                                              .modifier( ( edit -> {
+                                              .contentId( sourceContent.getId() ).patcher( ( edit -> {
 
                                                   final Attachment a1 = Attachment.create()
                                                       .mimeType( "image/gif" ).label( "My Image 1" ).name( "MyImage1.gif" )
@@ -397,7 +390,7 @@ public class ProjectContentEventListenerTest
 
         //remove attachment
         projectContext.callWith( () -> {
-            return contentService.modify( ModifyContentParams.create()
+            return contentService.patch( PatchContentParams.create()
                                               .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                               .contentId( sourceContent.getId() )
                                               .createAttachments( CreateAttachments.create()
@@ -405,8 +398,7 @@ public class ProjectContentEventListenerTest
                                                                                 .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
                                                                                 .name( "MyImage3.gif" )
                                                                                 .build() )
-                                                                      .build() )
-                                              .modifier( ( edit -> {
+                                                                      .build() ).patcher( ( edit -> {
                                                   final Attachment a2 = Attachment.create()
                                                       .mimeType( "image/png" )
                                                       .label( "My Image 2" )
