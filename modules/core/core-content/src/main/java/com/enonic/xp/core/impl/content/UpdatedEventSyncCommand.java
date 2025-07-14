@@ -11,9 +11,7 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ModifyContentParams;
-import com.enonic.xp.content.ModifyContentResult;
-import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -48,26 +46,11 @@ final class UpdatedEventSyncCommand
                 {
                     if ( needToUpdate( content.getSourceContent(), content.getTargetContent() ) )
                     {
-//                        final Boolean patched = Optional.ofNullable( params.getEventMetadata().get( "patched" ) )
-//                            .map( f -> Boolean.valueOf( f.toString() ) )
-//                            .orElse( false );
+                        final PatchContentParams.Builder updateParams = updateParams( content.getSourceContent() );
 
-//                        if ( patched )
-//                        {
-//                            final ModifyContentParams.Builder modifyParams = modifyParams( content.getSourceContent() );
-//
-//                            doSyncAttachments( content, modifyParams );
-//                            //attachments
-//
-//                            contentService.modify( modifyParams.build() );
-//                        }
-//                        else
-//                        {
-                        final ModifyContentParams.Builder updateParams = updateParams( content.getSourceContent() );
+                        doSyncAttachments( content, updateParams );
 
-                            doSyncAttachments( content, updateParams );
-
-                        contentService.modify( updateParams.build() );
+                        contentService.patch( updateParams.build() );
 //                        }
 
                     }
@@ -76,20 +59,11 @@ final class UpdatedEventSyncCommand
         } );
     }
 
-    private void doSyncAttachments( ContentToSync content, ModifyContentParams.Builder modifyParams )
+    private void doSyncAttachments( ContentToSync content, PatchContentParams.Builder patchParams )
     {
         if ( !content.getSourceContent().getAttachments().equals( content.getTargetContent().getAttachments() ) )
         {
-            modifyParams.createAttachments( buildAttachmentsFromSource( content ) );
-        }
-    }
-
-    private void doSyncAttachments( ContentToSync content, UpdateContentParams updateParams )
-    {
-        if ( !content.getSourceContent().getAttachments().equals( content.getTargetContent().getAttachments() ) )
-        {
-            updateParams.clearAttachments( true );
-            updateParams.createAttachments( buildAttachmentsFromSource( content ) );
+            patchParams.createAttachments( buildAttachmentsFromSource( content ) );
         }
     }
 
@@ -143,9 +117,9 @@ final class UpdatedEventSyncCommand
             sourceContent.isValid() != targetContent.isValid();
     }
 
-    private ModifyContentParams.Builder updateParams( final Content source )
+    private PatchContentParams.Builder updateParams( final Content source )
     {
-        return ModifyContentParams.create().contentId( source.getId() )/*.requireValid( false ).stopInherit( false )*/.modifier( edit -> {
+        return PatchContentParams.create().contentId( source.getId() )/*.requireValid( false ).stopInherit( false )*/.patcher( edit -> {
             edit.data.setValue( source.getData() );
             edit.extraDatas.setValue( source.getAllExtraData() );
             edit.displayName.setValue( source.getDisplayName() );
@@ -164,42 +138,6 @@ final class UpdatedEventSyncCommand
             edit.modifier.setValue( getCurrentUser() );
             edit.modifiedTime.setValue( Instant.now() );
         } );
-    }
-
-    private ModifyContentParams.Builder modifyParams( final Content source )
-    {
-        return ModifyContentParams.create().contentId( source.getId() )
-            .modifier( modifiable -> {
-                modifiable.displayName.setValue( source.getDisplayName() );
-                modifiable.data.setValue( source.getData() );
-                modifiable.extraDatas.setValue( source.getAllExtraData() );
-                modifiable.page.setValue( source.getPage() );
-                modifiable.valid.setValue( source.isValid() );
-                modifiable.thumbnail.setValue( source.getThumbnail() );
-                modifiable.owner.setValue( source.getOwner() );
-                modifiable.language.setValue( source.getLanguage() );
-                modifiable.creator.setValue( source.getCreator() );
-                modifiable.createdTime.setValue( source.getCreatedTime() );
-                modifiable.modifier.setValue( source.getModifier() );
-                modifiable.modifiedTime.setValue( source.getModifiedTime() );
-                modifiable.publishInfo.setValue( source.getPublishInfo() );
-                modifiable.processedReferences.setValue( source.getProcessedReferences() );
-                modifiable.workflowInfo.setValue( source.getWorkflowInfo() );
-                modifiable.manualOrderValue.setValue( source.getManualOrderValue() );
-                modifiable.inherit.setValue( source.getInherit() );
-                modifiable.variantOf.setValue( source.getVariantOf() );
-                modifiable.attachments.setValue( source.getAttachments() );
-                modifiable.validationErrors.setValue( source.getValidationErrors() );
-                modifiable.type.setValue( source.getType() );
-//                modifiable.parentPath.setValue( source.getParentPath() ); TODO: verify
-//                modifiable.name.setValue( source.getName() ); TODO: verify
-                modifiable.childOrder.setValue( source.getChildOrder() );
-                modifiable.originProject.setValue( source.getOriginProject() );
-                modifiable.originalParentPath.setValue( source.getOriginalParentPath() );
-                modifiable.originalName.setValue( source.getOriginalName() );
-                modifiable.archivedTime.setValue( source.getArchivedTime() );
-                modifiable.archivedBy.setValue( source.getArchivedBy() );
-            } );
     }
 
     private PrincipalKey getCurrentUser()

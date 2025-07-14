@@ -22,7 +22,7 @@ public interface ContentService
 
     Content update( UpdateMediaParams params );
 
-    ModifyContentResult modify( ModifyContentParams params );
+    PatchContentResult patch( PatchContentParams params );
 
     Content rename( RenameContentParams params );
 

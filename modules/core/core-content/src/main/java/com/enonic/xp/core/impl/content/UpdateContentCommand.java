@@ -25,10 +25,10 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentModifier;
+import com.enonic.xp.content.ContentPatcher;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.ModifiableContent;
+import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.processor.ContentProcessor;
@@ -98,7 +98,7 @@ final class UpdateContentCommand
 
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( contentBeforeChange, editedContent );
-        editedContent = editContentMetadata( getModifier(), editedContent );
+        editedContent = editContentMetadata( getPatcher(), editedContent );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
@@ -133,13 +133,13 @@ final class UpdateContentCommand
 
     }
 
-    private Content editContentMetadata( ContentModifier contentModifier, Content content )
+    private Content editContentMetadata( ContentPatcher contentPatcher, Content content )
     {
-        final ModifiableContent modifiableContent = new ModifiableContent( content );
+        final PatchableContent patchableContent = new PatchableContent( content );
 
-        contentModifier.modify( modifiableContent );
+        contentPatcher.patch( patchableContent );
 
-        return modifiableContent.build();
+        return patchableContent.build();
     }
 
     private BiPredicate<Content, Content> isContentTheSame()
@@ -162,17 +162,17 @@ final class UpdateContentCommand
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
     }
 
-    private ContentModifier getModifier()
+    private ContentPatcher getPatcher()
     {
         return edit -> {
-            edit.inherit.setModifier( c -> stopInherit( c.inherit.originalValue ) );
-            edit.attachments.setModifier( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
+            edit.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
+            edit.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
 
             edit.modifier.setValue( getCurrentUser().getKey() );
             edit.modifiedTime.setValue( Instant.now() );
 
-            edit.validationErrors.setModifier( c -> validateContent( c.source ) );
-            edit.valid.setModifier( c -> !c.validationErrors.getProducedValue().hasErrors() );
+            edit.validationErrors.setPatcher( c -> validateContent( c.source ) );
+            edit.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         };
     }
 

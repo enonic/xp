@@ -5,18 +5,18 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ModifyContentParams;
+import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentServiceImplTest_modify
+public class ContentServiceImplTest_patch
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void modify_content_modified_time_not_changed()
+    public void patch_content_modified_time_not_changed()
         throws Exception
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
@@ -28,11 +28,11 @@ public class ContentServiceImplTest_modify
 
         final Content content = this.contentService.create( createContentParams );
 
-        final ModifyContentParams patchContentParams = ModifyContentParams.create().contentId( content.getId() ).modifier( edit -> {
+        final PatchContentParams patchContentParams = PatchContentParams.create().contentId( content.getId() ).patcher( edit -> {
             edit.displayName.setValue( "new display name" );
         } ).build();
 
-        this.contentService.modify( patchContentParams );
+        this.contentService.patch( patchContentParams );
 
         final Content patchedContent = this.contentService.getById( content.getId() );
 
