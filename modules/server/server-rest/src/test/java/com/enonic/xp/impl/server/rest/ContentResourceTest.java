@@ -5,7 +5,6 @@ import org.mockito.ArgumentCaptor;
 
 import jakarta.ws.rs.core.MediaType;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.jaxrs.impl.MockRestResponse;
@@ -50,14 +49,12 @@ public class ContentResourceTest
     @Override
     protected Object getResourceInstance()
     {
-        ContentService contentService = mock( ContentService.class );
         this.taskService = mock( TaskService.class );
 
         final ProjectService projectService = mock( ProjectService.class );
         final SyncContentService syncContentService = mock( SyncContentService.class );
 
         final ContentResource resource = new ContentResource();
-        resource.setContentService( contentService );
         resource.setTaskService( taskService );
         resource.setProjectService( projectService );
         resource.setSyncContentService( syncContentService );

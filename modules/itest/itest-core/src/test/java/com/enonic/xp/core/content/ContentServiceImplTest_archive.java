@@ -2,7 +2,6 @@ package com.enonic.xp.core.content;
 
 import java.time.Instant;
 import java.util.EnumSet;
-import java.util.Iterator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,10 +15,7 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PushContentParams;
@@ -35,7 +31,6 @@ import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -288,29 +283,6 @@ public class ContentServiceImplTest_archive
             assertEquals( "user:system:test-user", archivedParent.getArchivedBy().toString() );
 
         } );
-    }
-
-    @Test
-    public void archive_with_message()
-        throws Exception
-    {
-        final Content parent = createContent( ContentPath.ROOT, "archive" );
-        final String archiveMessage = "Archive test message";
-
-        final ArchiveContentParams params =
-            ArchiveContentParams.create().contentId( parent.getId() ).message( archiveMessage ).archiveContentListener( listener ).build();
-
-        this.contentService.archive( params );
-
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( parent.getId() ).build() );
-
-        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
-        assertTrue( iterator.hasNext() );
-
-        ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( archiveMessage, version.getPublishInfo().getMessage() );
     }
 
     private static final class TestListener

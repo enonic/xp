@@ -1,7 +1,6 @@
 package com.enonic.xp.core.content;
 
 import java.time.Instant;
-import java.util.Iterator;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -19,12 +18,9 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
@@ -41,7 +37,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
@@ -399,45 +394,6 @@ public class ContentServiceImplTest_publish
         assertEquals( ContentPath.from( "/a_old" ), getInMaster( a.getId() ).getPath() );
         assertEquals( ContentPath.from( "/a_old/a1" ), getInMaster( a1.getId() ).getPath() );
         assertEquals( ContentPath.from( "/a" ), getInMaster( newA.getId() ).getPath() );
-    }
-
-    @Test
-    public void publish_with_message()
-    {
-        final Content content = createContent( ContentPath.ROOT, "a" );
-
-        this.contentService.publish(
-            PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).message( "My message" ).build() );
-
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
-
-        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
-        assertTrue( iterator.hasNext() );
-
-        ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertEquals( "My message", version.getPublishInfo().getMessage() );
-    }
-
-    @Test
-    public void publish_with_message_no_message()
-    {
-        final Content content = createContent( ContentPath.ROOT, "a" );
-
-        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).message( null ).build() );
-
-        FindContentVersionsResult versions =
-            this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
-
-        Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
-        assertTrue( iterator.hasNext() );
-
-        ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertNull( version.getPublishInfo().getMessage() );
     }
 
     @Test

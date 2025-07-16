@@ -2,8 +2,6 @@ package com.enonic.xp.impl.server.rest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.Consumes;
@@ -12,7 +10,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
@@ -32,10 +29,6 @@ import com.enonic.xp.task.TaskService;
 public final class ContentResource
     implements JaxRsComponent
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ContentResource.class );
-
-    private ContentService contentService;
-
     private TaskService taskService;
 
     private ProjectService projectService;
@@ -51,13 +44,6 @@ public final class ContentResource
             SubmitLocalTaskParams.create().runnableTask( runnable ).name( "sync-all-projects" ).description( "Sync all projects" ).build() );
 
         return new TaskResultJson( taskId );
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 
     @SuppressWarnings("WeakerAccess")
