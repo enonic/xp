@@ -37,13 +37,10 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
-import com.enonic.xp.content.FindContentVersionsParams;
-import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -79,6 +76,10 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ProjectName;
@@ -610,26 +611,26 @@ public abstract class AbstractContentServiceTest
 
     protected void assertVersions( final ContentId contentId, final int expected )
     {
-        FindContentVersionsResult versions = this.contentService.getVersions( FindContentVersionsParams.create().
-            contentId( contentId ).
-            build() );
+        final NodeVersionQueryResult versions =
+            this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( NodeId.from( contentId ) ).build() );
+
 
         assertEquals( expected, versions.getHits() );
 
-        final Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
+        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionsMetadata().iterator();
 
         Instant lastModified = null;
 
         while ( iterator.hasNext() )
         {
-            final ContentVersion next = iterator.next();
+            final NodeVersionMetadata next = iterator.next();
 
             if ( lastModified != null )
             {
-                assertFalse( next.getModified().isAfter( lastModified ) );
+                assertFalse( next.getTimestamp().isAfter( lastModified ) );
             }
 
-            lastModified = next.getModified();
+            lastModified = next.getTimestamp();
         }
     }
 
