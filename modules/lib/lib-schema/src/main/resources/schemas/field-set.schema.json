@@ -1,14 +1,26 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "classpath:/schemas/field-set.schema.json",
-  "type": "object",
-  "properties": {
-    "type": {
-      "type": "string"
+  "allOf": [
+    {
+      "$ref": "classpath:/schemas/form-item.schema.json"
     },
-    "label": {
-      "$ref": "classpath:/schemas/i18n.schema.json"
+    {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "classpath:/schemas/i18n.schema.json"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "classpath:/schemas/form-items.schema.json"
+          }
+        },
+        "type": {
+          "const": "FieldSet"
+        }
+      }
     }
-  },
-  "additionalProperties": false
+  ]
 }

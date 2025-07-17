@@ -1,19 +1,30 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "classpath:/schemas/input.schema.json",
-  "type": "object",
-  "properties": {
-    "label": {
-      "$ref": "classpath:/schemas/i18n.schema.json"
+  "allOf": [
+    {
+      "$ref": "classpath:/schemas/form-item.schema.json"
     },
-    "immutable": {
-      "type": "boolean"
-    },
-    "customText": {
-      "type": "string"
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "classpath:/schemas/i18n.schema.json"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "customText": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "label"
+      ]
     }
-  },
-  "required": [
-    "label"
   ]
 }

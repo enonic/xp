@@ -36,14 +36,32 @@ config:
   minLength: 80
 
 form:
-  - type: "HtmlArea"
+  - type: "CustomInput"
+    xType: "CustomContentSelector"
     customText: "Help text"
     immutable: true
     label:
-      text: "TextLine Value"
+      text: "CustomContentSelector Label"
   - type: "TextLine"
     customText: "Help text2"
     label:
       text: "TextLine Value2"
-
-
+  - type: "HtmlArea"
+    customText: "HtmlArea Help text"
+    immutable: false
+    label:
+      text: "HtmlArea Value"
+  - type: "FieldSet"
+    items:
+      - type: "TextLine"
+        label:
+          text: "TextLine inside FieldSet"
+      - type: "FieldSet"
+        label:
+          text: "Nested FieldSet"
+        items:
+          - type: "HtmlArea"
+            customText: "HtmlArea Help text"
+            immutable: false
+            label:
+              text: "HtmlArea Value"

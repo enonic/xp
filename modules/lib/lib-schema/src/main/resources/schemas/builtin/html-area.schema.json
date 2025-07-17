@@ -11,10 +11,7 @@
         "type": {
           "const": "HtmlArea"
         }
-      },
-      "required": [
-        "type"
-      ]
+      }
     }
   ],
   "unevaluatedProperties": false

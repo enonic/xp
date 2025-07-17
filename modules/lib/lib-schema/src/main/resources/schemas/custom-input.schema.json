@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/builtin/text-line.schema.json",
+  "$id": "classpath:/schemas/custom-input.schema.json",
   "allOf": [
     {
       "$ref": "classpath:/schemas/input.schema.json"
@@ -9,9 +9,15 @@
       "type": "object",
       "properties": {
         "type": {
-          "const": "TextLine"
+          "const": "CustomInput"
+        },
+        "xType": {
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "xType"
+      ]
     }
   ],
   "unevaluatedProperties": false
