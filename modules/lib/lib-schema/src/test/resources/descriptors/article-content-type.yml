@@ -36,10 +36,14 @@ config:
   minLength: 80
 
 form:
-  - text: "Text"
-  - name: "meta-data1"
-    allowContentTypes: "portal:site"
-  - type: "field-set"
+  - type: "HtmlArea"
+    customText: "Help text"
+    immutable: true
     label:
-      text: "Authors"
+      text: "TextLine Value"
+  - type: "TextLine"
+    customText: "Help text2"
+    label:
+      text: "TextLine Value2"
+
 

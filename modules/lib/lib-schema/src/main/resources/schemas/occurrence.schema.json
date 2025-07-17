@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/occurrence.schema.json",
+  "type": "object",
+  "properties": {
+    "minimum": {
+      "type": "integer"
+    },
+    "maximum": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "minimum",
+    "maximum"
+  ],
+  "additionalProperties": false
+}
