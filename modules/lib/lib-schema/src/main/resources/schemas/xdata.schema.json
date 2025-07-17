@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/xdata.schema.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "allowContentTypes": {
+      "type": "string"
+    },
+    "optional": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/field-set.schema.json",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string"
+    },
+    "label": {
+      "$ref": "classpath:/schemas/i18n.schema.json"
+    }
+  },
+  "additionalProperties": false
+}

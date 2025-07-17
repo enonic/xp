@@ -1,0 +1,45 @@
+label:
+  text: "Article"
+  i18n: "article.label"
+
+displayName:
+  text: "Article heading"
+  i18n: "article.title"
+  expression: "${expression}"
+
+description:
+  text: "Brief description"
+  i18n: "article.description"
+
+superType: "base:structured"
+
+isAbstract: false
+
+isFinal: false
+
+allowChildContent: false
+
+allowChildContentType:
+  - "person"
+  - "movie"
+
+xData:
+  - name: "meta-data1"
+    optional: true
+    allowContentTypes: "portal:site"
+  - name: "meta-data2"
+    optional: true
+    allowContentTypes: "portal:site"
+
+config:
+  maxLength: 300
+  minLength: 80
+
+form:
+  - text: "Text"
+  - name: "meta-data1"
+    allowContentTypes: "portal:site"
+  - type: "field-set"
+    label:
+      text: "Authors"
+

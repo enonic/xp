@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/form.schema.json",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "$ref": "classpath:/schemas/xdata.schema.json"
+      },
+      {
+        "$ref": "classpath:/schemas/i18n.schema.json"
+      },
+      {
+        "$ref": "classpath:/schemas/field-set.schema.json"
+      }
+    ]
+  },
+  "additionalProperties": false
+}

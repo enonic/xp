@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/display-name.schema.json",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "i18n": {
+      "type": "string"
+    },
+    "expression": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "text"
+  ],
+  "additionalProperties": false
+}

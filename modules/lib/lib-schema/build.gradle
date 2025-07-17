@@ -2,5 +2,10 @@ dependencies {
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
 
+    implementation libs.jackson.dataformat.yaml
+    implementation libs.jackson.datatype.jsr310
+    implementation libs.jackson.core
+    implementation libs.networknt
+
     testImplementation project( ':tools:testing' )
 }
