@@ -20,7 +20,8 @@
         "type": {
           "const": "FieldSet"
         }
-      }
+      },
+      "additionalProperties": false
     }
   ]
 }

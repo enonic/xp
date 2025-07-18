@@ -8,23 +8,67 @@
     {
       "type": "object",
       "properties": {
-        "type": {
-          "type": "string"
-        },
         "label": {
           "$ref": "classpath:/schemas/i18n.schema.json"
         },
         "immutable": {
           "type": "boolean"
         },
+        "indexed": {
+          "type": "boolean"
+        },
         "customText": {
           "type": "string"
+        },
+        "helpText": {
+          "type": "string"
+        },
+        "validationRegexp": {
+          "type": "string"
+        },
+        "occurrences": {
+          "$ref": "classpath:/schemas/occurrence.schema.json"
+        },
+        "config": {
+          "$ref": "classpath:/schemas/config.schema.json"
+        },
+        "maximize": {
+          "type": "boolean"
+        },
+        "default": {
+          "$ref": "classpath:/schemas/default.schema.json"
+        },
+        "type": {
+          "enum": [
+            "ComboBox",
+            "Date",
+            "Time"            ,
+            "DateTime",
+            "CheckBox",
+            "Double",
+            "GeoPoint",
+            "HtmlArea",
+            "ImageUploader",
+            "MediaUploader",
+            "AttachmentUploader",
+            "ImageSelector",
+            "MediaSelector",
+            "ContentSelector",
+            "CustomSelector",
+            "RadioButton",
+            "Tag",
+            "TextArea",
+            "TextLine",
+            "Long",
+            "ContentTypeFilter",
+            "SiteConfigurator"
+          ]
         }
       },
       "required": [
-        "type",
         "label"
       ]
     }
-  ]
+  ],
+  "unevaluatedProperties": false
 }

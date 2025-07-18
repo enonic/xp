@@ -36,12 +36,18 @@ config:
   minLength: 80
 
 form:
-  - type: "CustomInput"
-    xType: "CustomContentSelector"
+  - type: "CustomSelector"
     customText: "Help text"
     immutable: true
     label:
-      text: "CustomContentSelector Label"
+      text: "CustomSelector Label"
+    config:
+      p1: "v1"
+      p2: 123
+    occurrences:
+      minimum: 0
+      maximum: 1
+    default: 123.6
   - type: "TextLine"
     customText: "Help text2"
     label:
@@ -61,6 +67,7 @@ form:
           text: "Nested FieldSet"
         items:
           - type: "HtmlArea"
+            validationRegexp: ".*"
             customText: "HtmlArea Help text"
             immutable: false
             label:

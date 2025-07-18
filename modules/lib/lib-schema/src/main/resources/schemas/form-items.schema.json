@@ -3,16 +3,10 @@
   "$id": "classpath:/schemas/form-items.schema.json",
   "oneOf": [
     {
-      "$ref": "classpath:/schemas/custom-input.schema.json"
-    },
-    {
-      "$ref": "classpath:/schemas/builtin/text-line.schema.json"
-    },
-    {
-      "$ref": "classpath:/schemas/builtin/html-area.schema.json"
-    },
-    {
       "$ref": "classpath:/schemas/field-set.schema.json"
+    },
+    {
+      "$ref": "classpath:/schemas/input.schema.json"
     }
   ]
 }
