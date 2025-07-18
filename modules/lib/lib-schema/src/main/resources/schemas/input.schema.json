@@ -42,7 +42,7 @@
           "enum": [
             "ComboBox",
             "Date",
-            "Time"            ,
+            "Time",
             "DateTime",
             "CheckBox",
             "Double",
