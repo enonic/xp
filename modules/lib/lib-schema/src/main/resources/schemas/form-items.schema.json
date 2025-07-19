@@ -6,7 +6,16 @@
       "$ref": "classpath:/schemas/field-set.schema.json"
     },
     {
+      "$ref": "classpath:/schemas/item-set.schema.json"
+    },
+    {
       "$ref": "classpath:/schemas/input.schema.json"
+    },
+    {
+      "$ref": "classpath:/schemas/inline-mixin.schema.json"
+    },
+    {
+      "$ref": "classpath:/schemas/option-set.schema.json"
     }
   ]
 }

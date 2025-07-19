@@ -24,4 +24,17 @@ public class JsonSchemaValidatorTest
 
         assertTrue( errors.isEmpty(), "Errors: " + errors );
     }
+
+    @Test
+    void test2()
+        throws IOException
+    {
+        String yaml =
+            new String( JsonSchemaValidatorTest.class.getResourceAsStream( "/descriptors/local.yml" ).readAllBytes(),
+                        StandardCharsets.UTF_8 );
+
+        Set<ValidationMessage> errors = JsonSchemaValidator.validate( yaml );
+
+        assertTrue( errors.isEmpty(), "Errors: " + errors );
+    }
 }

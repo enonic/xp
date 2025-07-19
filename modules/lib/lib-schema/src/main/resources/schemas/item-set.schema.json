@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/item-set.schema.json",
+  "allOf": [
+    {
+      "$ref": "classpath:/schemas/form-item.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "classpath:/schemas/i18n.schema.json"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "customText": {
+          "type": "string"
+        },
+        "helpText": {
+          "$ref": "classpath:/schemas/i18n.schema.json"
+        },
+        "occurrences": {
+          "$ref": "classpath:/schemas/occurrence.schema.json"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "classpath:/schemas/form-items.schema.json"
+          }
+        },
+        "type": {
+          "const": "ItemSet"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

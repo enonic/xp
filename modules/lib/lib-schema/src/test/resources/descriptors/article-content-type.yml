@@ -36,39 +36,192 @@ config:
   minLength: 80
 
 form:
-  - type: "CustomSelector"
-    customText: "Help text"
-    immutable: true
-    label:
-      text: "CustomSelector Label"
-    config:
-      p1: "v1"
-      p2: 123
-    occurrences:
-      minimum: 0
-      maximum: 1
-    default: 123.6
-  - type: "TextLine"
-    customText: "Help text2"
-    label:
-      text: "TextLine Value2"
-  - type: "HtmlArea"
-    customText: "HtmlArea Help text"
-    immutable: false
-    label:
-      text: "HtmlArea Value"
   - type: "FieldSet"
+    label:
+      text: "Teaser"
+    items:
+      - type: "ImageSelector"
+        name: "coverimage"
+        label:
+          text: "Cover image"
+          i18n: "article.coverimage"
+        occurrences:
+          minimum: 0
+          maximum: 1
+      - type: "TextArea"
+        name: "preface"
+        label:
+          text: "Preface"
+          i18n: "article.preface"
+        config:
+          max-length: 300
+        occurrences:
+          minimum: 0
+          maximum: 1
+
+  - type: "FieldSet"
+    label:
+      text: "Body"
     items:
       - type: "TextLine"
+        name: "author"
         label:
-          text: "TextLine inside FieldSet"
-      - type: "FieldSet"
+          text: "Author byline"
+          i18n: "article.author"
+        occurrences:
+          minimum: 0
+          maximum: 1
+      - type: "OptionSet"
+        name: "blocks"
         label:
-          text: "Nested FieldSet"
-        items:
-          - type: "HtmlArea"
-            validationRegexp: ".*"
-            customText: "HtmlArea Help text"
-            immutable: false
-            label:
-              text: "HtmlArea Value"
+          text: "Content blocks"
+          i18n: "article.blocks"
+        helpText:
+          text: "Compose your article from a selection of blocks"
+          i18n: "article.blocks.help"
+        expanded: true
+        occurrences:
+          minimum: 1
+          maximum: 0
+        options:
+          minimum: 1
+          maximum: 1
+          option:
+            - name: "text"
+              label:
+                text: "Text"
+                i18n: "article.text"
+              items:
+                - type: "HtmlArea"
+                  name: "text"
+                  label:
+                    text: "Text"
+                    i18n: "article.text"
+                  occurrences:
+                    minimum: 1
+                    maximum: 1
+                  config:
+                    exclude:
+                      - "Code"
+                      - "Blockquote"
+                      - "Table"
+                      - "Anchor"
+                    allowHeadings:
+                      - "h2"
+                      - "h3"
+
+            - name: "story"
+              label:
+                text: "Story"
+                i18n: "article.story"
+              helpText:
+                text: "Add panels with images and text for a scrolling story"
+              items:
+                - type: "ItemSet"
+                  name: "panel"
+                  label:
+                    text: "Panel"
+                    i18n: "article.storypanel"
+                  occurrences:
+                    minimum: 1
+                    maximum: 5
+                  items:
+                    - type: "MediaSelector"
+                      name: "image"
+                      label:
+                        text: "Media"
+                        i18n: "article.media"
+                      helpText:
+                        text: "Select image or video for the panel"
+                      occurrences:
+                        minimum: 1
+                        maximum: 1
+                      config:
+                        allowContentType:
+                          - "media:image"
+                          - "media:video"
+
+                    - type: "TextArea"
+                      name: "storyline"
+                      label:
+                        text: "Tekst"
+                        i18n: "article.storyline"
+                      occurrences:
+                        minimum: 0
+                        maximum: 1
+
+            - name: "banner"
+              label:
+                text: "Banner"
+                i18n: "article.banner"
+              helpText:
+                text: "Big image with text in front of it"
+              items:
+                - type: "ImageSelector"
+                  name: "image"
+                  label:
+                    text: "Image"
+                    i18n: "article.image"
+                  occurrences:
+                    minimum: 1
+                    maximum: 1
+                - type: "TextArea"
+                  name: "text"
+                  label:
+                    text: "Text in front of image"
+                    i18n: "article.bannertext"
+                  indexed: true
+                  config:
+                    maxLength: 80
+                  occurrences:
+                    minimum: 0
+                    maximum: 1
+
+            - name: "quote"
+              label:
+                text: "Quote"
+                i18n: "article.quote"
+              helpText:
+                text: "Choose this block to add a highlighted quote"
+              items:
+                - type: "TextArea"
+                  name: "text"
+                  label:
+                    text: "Quote"
+                    i18n: "article.quote"
+                  occurrences:
+                    minimum: 1
+                    maximum: 1
+                - type: "TextArea"
+                  name: "byline"
+                  label:
+                    text: "Quoted by"
+                    i18n: "article.quoted"
+                  occurrences:
+                    minimum: 0
+                    maximum: 1
+
+  - type: "FieldSet"
+    label:
+      text: "Tagging"
+    items:
+      - type: "Tag"
+        name: "tags"
+        label:
+          text: "Tags"
+        occurrences:
+          minimum: 0
+          maximum: 0
+
+      - type: "ContentSelector"
+        name: "spotlight"
+        label:
+          text: "Spotlight content"
+        occurrences:
+          minimum: 0
+          maximum: 0
+        config:
+          allowContentType:
+            - "person"
+            - "movie"
+
