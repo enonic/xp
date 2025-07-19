@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/default.schema.json",
+  "oneOf": [
+    {
+      "type": "string"
+    },
+    {
+      "type": "boolean"
+    },
+    {
+      "type": "number"
+    }
+  ],
+  "additionalProperties": false
+}

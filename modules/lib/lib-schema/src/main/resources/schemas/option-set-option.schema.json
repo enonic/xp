@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/option-set-option.schema.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "default": {
+      "type": "boolean"
+    },
+    "label": {
+      "$ref": "classpath:/schemas/i18n.schema.json"
+    },
+    "helpText": {
+      "$ref": "classpath:/schemas/i18n.schema.json"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "classpath:/schemas/form-items.schema.json"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "label"
+  ],
+  "additionalProperties": false
+}

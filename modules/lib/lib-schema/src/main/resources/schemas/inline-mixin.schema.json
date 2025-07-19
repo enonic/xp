@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/inline-mixin.schema.json",
+  "allOf": [
+    {
+      "$ref": "classpath:/schemas/form-item.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "const": "Mixin"
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false
+}

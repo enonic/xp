@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "classpath:/schemas/content-type.schema.json",
+  "type": "object",
+  "properties": {
+    "label": {
+      "$ref": "classpath:/schemas/i18n.schema.json"
+    },
+    "description": {
+      "$ref": "classpath:/schemas/i18n.schema.json"
+    },
+    "displayName": {
+      "$ref": "classpath:/schemas/display-name.schema.json"
+    },
+    "superType": {
+      "type": "string"
+    },
+    "isAbstract": {
+      "type": "boolean"
+    },
+    "isFinal": {
+      "type": "boolean"
+    },
+    "allowChildContent": {
+      "type": "boolean"
+    },
+    "allowChildContentType": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "xData": {
+      "type": "array",
+      "items": {
+        "$ref": "classpath:/schemas/xdata.schema.json"
+      }
+    },
+    "config": {
+      "$ref": "classpath:/schemas/config.schema.json"
+    },
+    "form": {
+      "$ref": "classpath:/schemas/form.schema.json"
+    }
+  },
+  "additionalProperties": false
+}
