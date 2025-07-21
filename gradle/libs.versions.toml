@@ -16,7 +16,7 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.0.3" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.0.6" }
 
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.3" }
 
