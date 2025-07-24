@@ -703,7 +703,7 @@ export interface UpdateContentParams<Data, Type extends string> {
 
 export interface PatchContentParams {
     key: string;
-    patcher: (v: PatchableContent) => never;
+    patcher: (v: PatchableContent) => PatchableContent;
     branches?: string[];
 }
 
@@ -809,10 +809,10 @@ export function update<Data extends Record<string, unknown> = Record<string, unk
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
- * @param {function} params.editor Editor callback function.
- * @param {boolean} [params.requireValid=true] The content has to be valid, according to the content type, to be updated. If requireValid=true and the content is not strictly valid, an error will be thrown.
+ * @param {function} params.patcher Patcher callback function.
+ * @param {string[]} [params.branches=[]] List of branches to patch the content in. If not specified, the context's branch is used.
  *
- * @returns {object} Modified content as JSON.
+ * @returns {object} Patched content as JSON.
  */
 export function patch(params: PatchContentParams): PatchContentResult {
     checkRequired(params, 'key');

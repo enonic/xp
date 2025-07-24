@@ -181,12 +181,6 @@ public final class PatchContentHandler
         return null;
     }
 
-//    @Override
-//    protected boolean strictDataValidation()
-//    {
-//        return this.requireValid;
-//    }
-
     public void setKey( final String key )
     {
         this.key = key;

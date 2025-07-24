@@ -85,7 +85,7 @@ var expectedJson = {
                                         'text': ''
                                     }
                                 ],
-                                name: 'left'
+                                'name': 'left'
                             },
                             'right': {
                                 'components': [
@@ -100,7 +100,7 @@ var expectedJson = {
                                         'fragment': '213sda-ss222'
                                     }
                                 ],
-                                name: 'right'
+                                'name': 'right'
                             }
                         }
                     },
@@ -133,7 +133,7 @@ var expectedJson = {
                         'type': 'image'
                     }
                 ],
-                name: 'bottom'
+                'name': 'bottom'
             }
         }
     },

@@ -206,14 +206,6 @@ public class PatchContentHandlerTest
 
         mockXData();
 
-//        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create()
-//            .form( Form.create()
-//                       .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.TEXT_LINE ).build() )
-//                       .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
-//                       .build() )
-//            .build();
-//
-//        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
         runFunction( "/test/PatchContentHandlerTest.js", "patchWorkflowInfo" );
     }
 
