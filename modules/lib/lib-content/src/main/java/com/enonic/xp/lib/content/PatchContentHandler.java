@@ -121,7 +121,7 @@ public final class PatchContentHandler
         parse( map, "publish", Map.class, val -> target.publishInfo.setValue( createContentPublishInfo( val ) ) );
         parse( map, "workflow", Map.class, val -> target.workflowInfo.setValue( createWorkflowInfo( val ) ) );
 
-//        requires https://github.com/enonic/xp/issues/11209
+// TODO: Implement the following functionality once https://github.com/enonic/xp/issues/11209 is resolved.
 //        parse(map, "page", Map.class, val -> target.page.setValue( new ContentDataSerializer createPropertyTree( val, existingContent.getType() ) ) );
 //        parse(map, "validationErrors", Map.class, target.validationErrors::setValue);
 //        parse(map, "attachments", Map.class, val -> target.attachments::setValue);
