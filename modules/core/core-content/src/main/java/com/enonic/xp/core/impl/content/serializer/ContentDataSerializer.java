@@ -62,7 +62,7 @@ import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class ContentDataSerializer
+public final class ContentDataSerializer
 {
     private final PageDataSerializer pageDataSerializer;
 
@@ -79,7 +79,7 @@ public class ContentDataSerializer
         this( new PageDataSerializer() );
     }
 
-    protected ContentDataSerializer( final PageDataSerializer pageDataSerializer )
+    private ContentDataSerializer( final PageDataSerializer pageDataSerializer )
     {
         this.pageDataSerializer = pageDataSerializer;
         this.extraDataSerializer = new ExtraDataSerializer();
