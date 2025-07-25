@@ -4,7 +4,6 @@ import com.enonic.xp.region.ComponentType;
 import com.enonic.xp.region.FragmentComponentType;
 import com.enonic.xp.region.ImageComponentType;
 import com.enonic.xp.region.LayoutComponentType;
-import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponentType;
 import com.enonic.xp.region.TextComponentType;
 
@@ -24,20 +23,12 @@ public final class ComponentDataSerializerProvider
 
     public ComponentDataSerializerProvider()
     {
-        this( null );
-    }
-
-    public ComponentDataSerializerProvider( final LayoutDescriptorService layoutDescriptorService )
-    {
         this.regionDataSerializer = new RegionDataSerializer( this );
         this.partDataSerializer = new PartComponentDataSerializer();
         this.textDataSerializer = new TextComponentDataSerializer();
         this.imageDataSerializer = new ImageComponentDataSerializer();
         this.fragmentDataSerializer = new FragmentComponentDataSerializer();
-
-        this.layoutDataSerializer = layoutDescriptorService == null
-            ? new LayoutComponentDataSerializer( this.regionDataSerializer )
-            : new FullLayoutComponentDataSerializer( layoutDescriptorService, regionDataSerializer );
+        this.layoutDataSerializer = new LayoutComponentDataSerializer( this.regionDataSerializer );
     }
 
     public ComponentDataSerializer getDataSerializer( final ComponentType componentType )
