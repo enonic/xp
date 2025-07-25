@@ -57,7 +57,6 @@ repackBundle( libs.micrometer.registry.prometheus, 7 )
 // Library dependencies
 addBundle( libs.guava.guava, 8 )
 addBundle( libs.guava.failureaccess, 8 )
-addBundle( libs.commons.lang3, 8 )
 addBundle( libs.commons.io, 8 )
 addBundle( libs.commons.compress, 8 )
 addBundle( libs.jackson.core, 8 )
