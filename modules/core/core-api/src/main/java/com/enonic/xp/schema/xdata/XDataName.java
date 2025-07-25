@@ -31,7 +31,7 @@ public final class XDataName
 
     public String getApplicationPrefix()
     {
-        return this.getApplicationKey() == null ? "" : this.getApplicationKey().toString().replace( '.', '-' );
+        return this.getApplicationKey().toString().replace( '.', '-' );
     }
 
     @Override

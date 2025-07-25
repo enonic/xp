@@ -317,7 +317,7 @@ public class ContentDataSerializer
     {
         final ExtraDatas extraData = extraDataSerializer.fromData( contentAsSet.getSet( EXTRA_DATA ) );
 
-        if ( extraData != null && extraData.isNotEmpty() )
+        if ( extraData != null && !extraData.isEmpty() )
         {
             builder.extraDatas( extraData );
         }

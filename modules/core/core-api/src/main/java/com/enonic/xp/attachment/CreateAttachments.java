@@ -35,11 +35,6 @@ public final class CreateAttachments
         return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
-    public static CreateAttachments from( final Collection<? extends CreateAttachment> contents )
-    {
-        return fromInternal( ImmutableList.copyOf( contents ) );
-    }
-
     public static Collector<CreateAttachment, ?, CreateAttachments> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), CreateAttachments::fromInternal );

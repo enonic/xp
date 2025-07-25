@@ -1,6 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -42,11 +41,6 @@ public final class Contents
     }
 
     public static Contents from( final Iterable<? extends Content> contents )
-    {
-        return fromInternal( ImmutableSet.copyOf( contents ) );
-    }
-
-    public static Contents from( final Collection<? extends Content> contents )
     {
         return fromInternal( ImmutableSet.copyOf( contents ) );
     }

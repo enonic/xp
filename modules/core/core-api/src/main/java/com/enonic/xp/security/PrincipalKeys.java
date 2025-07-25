@@ -31,7 +31,7 @@ public final class PrincipalKeys
         return fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }
 
-    public static PrincipalKeys from( final Collection<PrincipalKey> principalKeys )
+    public static PrincipalKeys from( final Iterable<? extends PrincipalKey> principalKeys )
     {
         return fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }

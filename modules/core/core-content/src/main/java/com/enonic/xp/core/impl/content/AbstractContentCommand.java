@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +101,7 @@ abstract class AbstractContentCommand
     protected Contents filterScheduledPublished( Contents contents )
     {
         final Instant now = Instant.now();
-        final List<Content> filteredContentList =
-            contents.stream().filter( content -> !this.contentPendingOrExpired( content, now ) ).collect( Collectors.toList() );
-        return Contents.from( filteredContentList );
+        return contents.stream().filter( content -> !this.contentPendingOrExpired( content, now ) ).collect( Contents.collector() );
     }
 
     protected Content filterScheduledPublished( Content content )

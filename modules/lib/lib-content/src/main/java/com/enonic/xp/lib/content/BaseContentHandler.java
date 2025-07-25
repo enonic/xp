@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.google.common.collect.ImmutableMap;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
@@ -203,7 +201,8 @@ public abstract class BaseContentHandler
 
         Object state = map.get( "state" );
         Object checks = map.get( "checks" );
-        ImmutableMap.Builder<String, WorkflowCheckState> checkMapBuilder = ImmutableMap.builder();
+
+        Map<String, WorkflowCheckState> checkMapBuilder = new LinkedHashMap<>();
 
         if ( checks != null )
         {
@@ -212,7 +211,7 @@ public abstract class BaseContentHandler
 
         return WorkflowInfo.create().
             state( state instanceof String ? (String) state : null ).
-            checks( checkMapBuilder.build() ).
+            checks( checkMapBuilder ).
             build();
     }
 

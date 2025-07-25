@@ -1,7 +1,5 @@
 package com.enonic.xp.xml.parser;
 
-import java.util.stream.Collectors;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -31,8 +29,7 @@ public final class ApiMountDescriptorParser
     {
         if ( apisElement != null )
         {
-            return DescriptorKeys.from(
-                apisElement.getChildren( API_DESCRIPTOR_TAG_NAME ).stream().map( this::toDescriptorKey ).collect( Collectors.toList() ) );
+            return apisElement.getChildren( API_DESCRIPTOR_TAG_NAME ).stream().map( this::toDescriptorKey ).collect( DescriptorKeys.collector() );
         }
         return DescriptorKeys.empty();
     }

@@ -58,7 +58,7 @@ class ContentOutboundDependenciesIdsResolver
                 }
             } );
 
-        if ( content.getProcessedReferences() != null && content.getProcessedReferences().getSize() > 0 )
+        if ( content.getProcessedReferences() != null && !content.getProcessedReferences().isEmpty() )
         {
             contentIds.addAll( content.getProcessedReferences() );
         }

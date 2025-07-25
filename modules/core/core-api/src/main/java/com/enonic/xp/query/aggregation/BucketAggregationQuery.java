@@ -13,7 +13,7 @@ public abstract class BucketAggregationQuery
     public BucketAggregationQuery( final Builder<?> builder )
     {
         super( builder );
-        this.subQueries = AggregationQueries.fromCollection( builder.aggregationQueries.build() );
+        this.subQueries = AggregationQueries.from( builder.aggregationQueries.build() );
     }
 
     public AggregationQueries getSubQueries()

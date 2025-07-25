@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.ArchiveContentException;
-import com.enonic.xp.archive.ArchiveContentListener;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentAccessException;

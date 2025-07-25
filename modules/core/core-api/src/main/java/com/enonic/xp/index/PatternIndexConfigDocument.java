@@ -51,7 +51,7 @@ public final class PatternIndexConfigDocument
         return new Builder( source );
     }
 
-    public ImmutableSortedSet<PathIndexConfig> getPathIndexConfigs()
+    public SortedSet<PathIndexConfig> getPathIndexConfigs()
     {
         return pathIndexConfigs;
     }

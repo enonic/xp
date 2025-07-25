@@ -20,7 +20,7 @@ public class NodeCommitQueryResultFactory
     {
         final NodeCommitQueryResult.Builder nodeCommitQueryResult = NodeCommitQueryResult.create();
 
-        nodeCommitQueryResult.hits( searchResult.getHits().getSize() );
+        nodeCommitQueryResult.hits( searchResult.getHits().size() );
         nodeCommitQueryResult.totalHits( searchResult.getTotalHits() );
         nodeCommitQueryResult.from( query.getFrom() );
         nodeCommitQueryResult.to( query.getSize() );

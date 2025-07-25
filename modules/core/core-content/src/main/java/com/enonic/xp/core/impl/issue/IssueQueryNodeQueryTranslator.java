@@ -55,7 +55,7 @@ final class IssueQueryNodeQueryTranslator
         }
 
         final PrincipalKeys approvers = issueQuery.getApprovers();
-        if ( approvers != null && approvers.isNotEmpty() )
+        if ( approvers != null && !approvers.isEmpty() )
         {
             builder.addQueryFilter( ValueFilter.create().
                 fieldName( APPROVERS ).
@@ -64,7 +64,7 @@ final class IssueQueryNodeQueryTranslator
         }
 
         final ContentIds items = issueQuery.getItems();
-        if ( items != null && items.isNotEmpty() )
+        if ( items != null && !items.isEmpty() )
         {
             builder.addQueryFilter( ValueFilter.create().
                 fieldName( PUBLISH_REQUEST_ITEM_ID ).

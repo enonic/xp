@@ -13,7 +13,6 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 @PublicApi
 public final class AuditLogIds
     extends AbstractImmutableEntitySet<AuditLogId>
-    implements Iterable<AuditLogId>
 {
     private static final AuditLogIds EMPTY = new AuditLogIds( ImmutableSet.of() );
 

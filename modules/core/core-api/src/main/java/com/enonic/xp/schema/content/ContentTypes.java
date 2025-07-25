@@ -36,16 +36,6 @@ public final class ContentTypes
         return fromInternal( ImmutableList.copyOf( contentTypes ) );
     }
 
-    public static ContentTypes from( final Iterator<? extends ContentType> contentTypes )
-    {
-        return fromInternal( ImmutableList.copyOf( contentTypes ) );
-    }
-
-    public static ContentTypes from( final Collection<? extends ContentType> contentTypes )
-    {
-        return fromInternal( ImmutableList.copyOf( contentTypes ) );
-    }
-
     public static Collector<ContentType, ?, ContentTypes> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ContentTypes::fromInternal );

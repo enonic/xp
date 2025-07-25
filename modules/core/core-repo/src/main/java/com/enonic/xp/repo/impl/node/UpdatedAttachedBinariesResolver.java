@@ -73,7 +73,7 @@ class UpdatedAttachedBinariesResolver
 
         updateAttachedBinaries( resolvedAttachedBinaries );
 
-        return AttachedBinaries.fromCollection( resolvedAttachedBinaries.values() );
+        return AttachedBinaries.from( resolvedAttachedBinaries.values() );
     }
 
     private void verifyAllNewGivenAsBinaryAttachment( final Set<BinaryReference> changedBinaryReferences )

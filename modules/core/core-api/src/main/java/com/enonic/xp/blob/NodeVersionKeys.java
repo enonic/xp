@@ -1,7 +1,5 @@
 package com.enonic.xp.blob;
 
-import java.util.Collection;
-
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -27,7 +25,7 @@ public final class NodeVersionKeys
     }
 
 
-    public static NodeVersionKeys from( final Collection<NodeVersionKey> keys )
+    public static NodeVersionKeys from( final Iterable<? extends NodeVersionKey> keys )
     {
         return new NodeVersionKeys( ImmutableSet.copyOf( keys ) );
     }

@@ -2,8 +2,6 @@ package com.enonic.xp.lib.repo;
 
 import java.util.function.Supplier;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.repo.mapper.RepositoryMapper;
 import com.enonic.xp.lib.value.ScriptValueTranslator;
@@ -58,7 +56,7 @@ public class ModifyRepositoryHandler
         if ( value != null )
         {
             final ScriptValueTranslatorResult scriptValueTranslatorResult = new ScriptValueTranslator().create( value );
-            target.binaryAttachments = ImmutableList.copyOf( scriptValueTranslatorResult.getBinaryAttachments() );
+            target.binaryAttachments = scriptValueTranslatorResult.getBinaryAttachments().getList();
 
             final PropertyTree propertyTree = scriptValueTranslatorResult.getPropertyTree();
             target.data = propertyTree.getRoot().getSet( "data" ).toTree();

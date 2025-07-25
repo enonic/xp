@@ -69,7 +69,7 @@ public abstract class AbstractDumpReader
 
         try (Stream<String> stream = listDirectories( repoRootPath ))
         {
-            return RepositoryIds.from( stream.map( RepositoryId::from ).collect( ImmutableSet.toImmutableSet() ) );
+            return stream.map( RepositoryId::from ).collect( RepositoryIds.collector() );
         }
         catch ( IOException e )
         {
@@ -84,7 +84,7 @@ public abstract class AbstractDumpReader
 
         try (Stream<String> stream = listDirectories( branchRootPath ))
         {
-            return Branches.from( stream.map( Branch::from ).collect( ImmutableSet.toImmutableSet() ) );
+            return stream.map( Branch::from ).collect( Branches.collector() );
         }
         catch ( IOException e )
         {

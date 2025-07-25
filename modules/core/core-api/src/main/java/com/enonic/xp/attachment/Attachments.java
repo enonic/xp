@@ -67,11 +67,6 @@ public final class Attachments
         return fromInternal( ImmutableList.copyOf( contents ) );
     }
 
-    public static Attachments from( final Collection<? extends Attachment> contents )
-    {
-        return fromInternal( ImmutableList.copyOf( contents ) );
-    }
-
     private static Attachments fromInternal( final ImmutableList<Attachment> list )
     {
         if ( list.isEmpty() )

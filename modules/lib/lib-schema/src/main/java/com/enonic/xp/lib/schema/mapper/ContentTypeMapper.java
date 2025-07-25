@@ -25,7 +25,7 @@ public final class ContentTypeMapper
 
     private void serializeXDatas( final MapGenerator gen, final XDataNames xDataNames )
     {
-        if ( xDataNames != null && xDataNames.getSize() > 0 )
+        if ( xDataNames != null && !xDataNames.isEmpty() )
         {
             gen.array( "xDataNames" );
 

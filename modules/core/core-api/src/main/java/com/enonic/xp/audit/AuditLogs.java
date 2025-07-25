@@ -33,11 +33,6 @@ public final class AuditLogs
         return fromInternal( ImmutableList.copyOf( auditLogs ) );
     }
 
-    public static AuditLogs from( final Collection<? extends AuditLog> auditLogs )
-    {
-        return fromInternal( ImmutableList.copyOf( auditLogs ) );
-    }
-
     public static Collector<AuditLog, ?, AuditLogs> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), AuditLogs::fromInternal );

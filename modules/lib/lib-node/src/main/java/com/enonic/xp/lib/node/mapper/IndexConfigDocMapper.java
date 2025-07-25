@@ -1,9 +1,8 @@
 package com.enonic.xp.lib.node.mapper;
 
 import java.util.List;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -53,7 +52,7 @@ class IndexConfigDocMapper
 
         gen.array( CONFIG_ARRAY );
 
-        final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs = document.getPathIndexConfigs();
+        final SortedSet<PathIndexConfig> pathIndexConfigs = document.getPathIndexConfigs();
 
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {

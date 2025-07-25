@@ -20,7 +20,7 @@ public final class NodeBranchEntries
         this.branchNodeVersionMap = Collections.unmodifiableMap( builder.map );
     }
 
-    private NodeBranchEntries( final Collection<NodeBranchEntry> entries )
+    private NodeBranchEntries( final Iterable<? extends NodeBranchEntry> entries )
     {
         Map<NodeId, NodeBranchEntry> builder = new LinkedHashMap<>();
         for ( NodeBranchEntry entry : entries )
@@ -30,7 +30,7 @@ public final class NodeBranchEntries
         this.branchNodeVersionMap = Collections.unmodifiableMap( builder );
     }
 
-    public static NodeBranchEntries from( final Collection<NodeBranchEntry> nodeBranchEntries )
+    public static NodeBranchEntries from( final Iterable<? extends NodeBranchEntry> nodeBranchEntries )
     {
         return new NodeBranchEntries( nodeBranchEntries );
     }

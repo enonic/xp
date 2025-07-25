@@ -36,11 +36,6 @@ public final class XDataMappings
         return fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
-    public static XDataMappings from( final Collection<? extends XDataMapping> xDataMappings )
-    {
-        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
-    }
-
     public static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )
     {
         return xDataMappings.isEmpty() ? EMPTY : new XDataMappings( xDataMappings );
@@ -58,7 +53,7 @@ public final class XDataMappings
 
     public XDataNames getNames()
     {
-        return XDataNames.from( this.stream().map( XDataMapping::getXDataName ).collect( Collectors.toList() ) );
+        return this.stream().map( XDataMapping::getXDataName ).collect( XDataNames.collector() );
     }
 
     public static final class Builder

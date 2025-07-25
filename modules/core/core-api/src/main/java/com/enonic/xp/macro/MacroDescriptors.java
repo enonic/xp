@@ -1,6 +1,5 @@
 package com.enonic.xp.macro;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class MacroDescriptors
         return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }
 
-    public static MacroDescriptors from( final Collection<MacroDescriptor> macroDescriptors )
+    public static MacroDescriptors from( final Iterable<? extends MacroDescriptor> macroDescriptors )
     {
         return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }

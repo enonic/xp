@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;

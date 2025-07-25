@@ -101,12 +101,6 @@ public final class WorkflowInfo
             return this;
         }
 
-        public Builder checks( ImmutableMap<String, WorkflowCheckState> checks )
-        {
-            this.checks = checks;
-            return this;
-        }
-
         public Builder checks( Map<String, WorkflowCheckState> checks )
         {
             this.checks = ImmutableMap.copyOf( checks );

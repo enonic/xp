@@ -1,6 +1,5 @@
 package com.enonic.xp.query.expr;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class OrderExpressions
         return fromInternal( ImmutableList.copyOf( orderExprs ) );
     }
 
-    public static OrderExpressions from( final Collection<OrderExpr> orderExprs )
+    public static OrderExpressions from( final Iterable<OrderExpr> orderExprs )
     {
         return fromInternal( ImmutableList.copyOf( orderExprs ) );
     }

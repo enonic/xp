@@ -41,11 +41,6 @@ public final class SiteConfigs
         return fromInternal( ImmutableList.copyOf( siteConfigs ) );
     }
 
-    public static SiteConfigs from( final Collection<? extends SiteConfig> siteConfigs )
-    {
-        return fromInternal( ImmutableList.copyOf( siteConfigs ) );
-    }
-
     public static Collector<SiteConfig, ?, SiteConfigs> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), SiteConfigs::fromInternal );
