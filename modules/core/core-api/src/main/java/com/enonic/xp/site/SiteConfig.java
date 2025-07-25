@@ -62,7 +62,7 @@ public final class SiteConfig
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ApplicationKey applicationKey;
 

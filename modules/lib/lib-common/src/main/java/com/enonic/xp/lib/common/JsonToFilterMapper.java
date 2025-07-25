@@ -82,7 +82,7 @@ public class JsonToFilterMapper
 
         for ( final Object o : collection )
         {
-            builder.addAll( createFilters( o ).getList() );
+            builder.addAll( createFilters( o ) );
         }
 
         return builder.build();

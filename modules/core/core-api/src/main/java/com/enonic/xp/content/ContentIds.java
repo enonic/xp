@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -38,7 +38,7 @@ public final class ContentIds
 
     public static ContentIds from( final Collection<String> ids )
     {
-        return fromInternal( ids.stream().map( ContentId::from ).collect( ImmutableSet.toImmutableSet() ) );
+        return ids.stream().map( ContentId::from ).collect( collector() );
     }
 
     public static ContentIds from( final Iterable<ContentId> ids )
@@ -49,6 +49,11 @@ public final class ContentIds
         }
 
         return fromInternal( ImmutableSet.copyOf( ids ) );
+    }
+
+    public static Collector<ContentId, ?, ContentIds> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentIds::fromInternal );
     }
 
     private static ContentIds fromInternal( final ImmutableSet<ContentId> set )
@@ -78,9 +83,9 @@ public final class ContentIds
             return this;
         }
 
-        public Builder addAll( final ContentIds contentIds )
+        public Builder addAll( final Iterable<? extends ContentId> contentIds )
         {
-            this.contents.addAll( contentIds.getSet() );
+            this.contents.addAll( contentIds );
             return this;
         }
 

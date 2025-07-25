@@ -2,49 +2,57 @@ package com.enonic.xp.schema.xdata;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class XDataNames
-    extends AbstractImmutableEntityList<XDataName>
+    extends AbstractImmutableEntitySet<XDataName>
 {
-    private XDataNames( final ImmutableList<XDataName> list )
+    private static final XDataNames EMPTY = new XDataNames( ImmutableSet.of() );
+
+    private XDataNames( final ImmutableSet<XDataName> list )
     {
         super( list );
     }
 
     public static XDataNames empty()
     {
-        return new XDataNames( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static XDataNames from( final String... xdataNames )
     {
-        return new XDataNames( parseQualifiedNames( xdataNames ) );
+        return from( Arrays.asList( xdataNames ) );
     }
 
     public static XDataNames from( final Collection<String> xdataNames )
     {
-        return from( xdataNames.toArray( new String[0] ) );
+        return xdataNames.stream().map( XDataName::from ).collect( collector() );
     }
 
     public static XDataNames from( final XDataName... xdataNames )
     {
-        return new XDataNames( ImmutableList.copyOf( xdataNames ) );
+        return fromInternal( ImmutableSet.copyOf( xdataNames ) );
     }
 
     public static XDataNames from( final Iterable<XDataName> xdataNames )
     {
-        return new XDataNames( ImmutableList.copyOf( xdataNames ) );
+        return fromInternal( ImmutableSet.copyOf( xdataNames ) );
     }
 
-    private static ImmutableList<XDataName> parseQualifiedNames( final String... xdataNames )
+    public static Collector<XDataName, ?, XDataNames> collector()
     {
-        return ImmutableList.copyOf( Arrays.stream( xdataNames ).map( XDataName::from ).iterator() );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), XDataNames::fromInternal );
     }
 
+    private static XDataNames fromInternal( final ImmutableSet<XDataName> xdataNames )
+    {
+        return xdataNames.isEmpty() ? EMPTY : new XDataNames( xdataNames );
+    }
 }

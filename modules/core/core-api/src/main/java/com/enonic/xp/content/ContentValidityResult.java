@@ -53,7 +53,7 @@ public final class ContentValidityResult
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
 
         private ContentIds notValidContentIds;

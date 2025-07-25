@@ -74,7 +74,7 @@ public final class PageTemplate
         return new Builder( pageTemplate );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Content.Builder<Builder>
     {
         private Builder()

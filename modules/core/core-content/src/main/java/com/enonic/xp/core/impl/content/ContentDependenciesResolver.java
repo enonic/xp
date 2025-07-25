@@ -67,7 +67,7 @@ class ContentDependenciesResolver
 
         final BucketAggregation bucketAggregation = (BucketAggregation) result.getAggregations().get( "type" );
 
-        return bucketAggregation.getBuckets().getSet().stream().map( ContentDependenciesAggregation::new ).collect( toList() );
+        return bucketAggregation.getBuckets().stream().map( ContentDependenciesAggregation::new ).collect( toList() );
     }
 
     private Collection<ContentDependenciesAggregation> resolveOutboundDependenciesAggregation( final ContentId contentId )

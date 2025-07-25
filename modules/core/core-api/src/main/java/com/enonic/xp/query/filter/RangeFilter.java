@@ -64,7 +64,7 @@ public final class RangeFilter
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends FieldFilter.Builder<Builder>
     {
         private Value from;

@@ -545,7 +545,7 @@ public class ContentAuditLogSupportImpl
                                                                                                  .branch( branchResult.getBranch() )
                                                                                                  .build() ) : null )
                 .filter( Objects::nonNull ) )
-            .collect( AuditLogUris.collecting() );
+            .collect( AuditLogUris.collector() );
 
         log( "system.content.applyPermissions", data, auditLogUris, rootContext );
     }

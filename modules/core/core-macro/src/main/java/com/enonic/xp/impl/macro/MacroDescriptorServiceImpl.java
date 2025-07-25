@@ -1,16 +1,13 @@
 package com.enonic.xp.impl.macro;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
@@ -20,7 +17,6 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -75,51 +71,32 @@ public final class MacroDescriptorServiceImpl
     @Override
     public MacroDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        final List<MacroDescriptor> list = new ArrayList<>();
         if ( isSystem( applicationKey ) )
         {
-            list.addAll( builtinMacrosDescriptors.getAll().getSet() );
+            return builtinMacrosDescriptors.getAll();
         }
         else
         {
-            for ( final DescriptorKey descriptorKey : descriptorKeyLocator.findKeys( applicationKey ) )
-            {
-                final MacroKey macroKey = MacroKey.from( descriptorKey.getApplicationKey(), descriptorKey.getName() );
-                final MacroDescriptor descriptor = getByKey( macroKey );
-                if ( descriptor != null )
-                {
-                    list.add( descriptor );
-                }
-            }
+            return descriptorKeyLocator.findKeys( applicationKey )
+                .stream()
+                .map( descriptorKey -> getByKey( MacroKey.from( descriptorKey.getApplicationKey(), descriptorKey.getName() ) ) )
+                .filter( Objects::nonNull )
+                .collect( MacroDescriptors.collector() );
         }
-
-        return MacroDescriptors.from( list );
     }
 
     @Override
     public MacroDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
-        final List<MacroDescriptor> list = new ArrayList<>();
-        for ( final ApplicationKey key : applicationKeys )
-        {
-            list.addAll( getByApplication( key ).getSet() );
-        }
-
-        return MacroDescriptors.from( list );
+        return applicationKeys.stream().flatMap( ak -> getByApplication( ak ).stream() ).collect( MacroDescriptors.collector() );
     }
 
     @Override
     public MacroDescriptors getAll()
     {
-        final Set<MacroDescriptor> set = new LinkedHashSet<>( builtinMacrosDescriptors.getAll().getSet() );
-
-        for ( final Application application : this.applicationService.getInstalledApplications() )
-        {
-            final MacroDescriptors macroDescriptors = getByApplication( application.getKey() );
-            set.addAll( macroDescriptors.getSet() );
-        }
-
-        return MacroDescriptors.from( set );
+        return Stream.concat( builtinMacrosDescriptors.getAll().stream(), this.applicationService.getInstalledApplications()
+            .stream()
+            .flatMap( a -> getByApplication( a.getKey() ).stream() ) ).collect( MacroDescriptors.collector() );
     }
 
     private boolean isSystem( ApplicationKey applicationKey )

@@ -43,7 +43,7 @@ public final class SubmitTaskParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private DescriptorKey descriptorKey;
 

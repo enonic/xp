@@ -49,19 +49,8 @@ public final class NodeVersionDataJson
             .childOrder( ChildOrder.from( json.childOrder ) )
             .manualOrderValue( json.manualOrderValue )
             .nodeType( NodeType.from( json.nodeType ) )
-            .attachedBinaries( fromNodeAttachedBinaryJsonList( json.attachedBinaries ) )
+            .attachedBinaries( json.attachedBinaries.stream().map( AttachedBinaryJson::fromJson ).collect( AttachedBinaries.collector() ) )
             .build();
-    }
-
-    private static AttachedBinaries fromNodeAttachedBinaryJsonList( final List<AttachedBinaryJson> list )
-    {
-        final AttachedBinaries.Builder builder = AttachedBinaries.create();
-        for ( final AttachedBinaryJson entry : list )
-        {
-            builder.add( AttachedBinaryJson.fromJson( entry ) );
-        }
-
-        return builder.build();
     }
 
     public static NodeVersionDataJson toJson( final NodeVersion nodeVersion )

@@ -70,7 +70,7 @@ public final class ClusterHealth
         return create().status( ClusterHealthStatus.RED ).build();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ClusterHealthStatus status;
 

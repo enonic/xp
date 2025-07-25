@@ -75,7 +75,7 @@ public final class CreateScheduledJobParams
         return user;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ScheduledJobName name;
 

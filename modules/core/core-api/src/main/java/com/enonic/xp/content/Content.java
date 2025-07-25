@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -488,9 +489,9 @@ public class Content
             this.parentPath = source.parentPath;
             this.name = source.name;
             this.type = source.type;
-            this.data = source.data != null ? source.data.copy() : null;
+            this.data = source.data.copy();
             this.attachments = source.attachments;
-            this.extraDatas = source.extraDatas != null ? source.extraDatas.copy() : null;
+            this.extraDatas = source.extraDatas.copy();
             this.displayName = source.displayName;
             this.owner = source.owner;
             this.createdTime = source.createdTime;
@@ -577,7 +578,7 @@ public class Content
 
         public BUILDER data( final PropertyTree data )
         {
-            this.data = data;
+            this.data = Objects.requireNonNull( data );
             return (BUILDER) this;
         }
 
@@ -596,17 +597,13 @@ public class Content
 
         public BUILDER addExtraData( final ExtraData extraData )
         {
-            if ( this.extraDatas == null )
-            {
-                this.extraDatas = ExtraDatas.empty();
-            }
-            this.extraDatas = ExtraDatas.from( this.extraDatas, extraData );
+            this.extraDatas = Stream.concat( this.extraDatas.stream(), Stream.of( extraData ) ).collect( ExtraDatas.collector() );
             return (BUILDER) this;
         }
 
         public BUILDER extraDatas( final ExtraDatas extraDatas )
         {
-            this.extraDatas = extraDatas;
+            this.extraDatas = Objects.requireNonNull( extraDatas );
             return (BUILDER) this;
         }
 

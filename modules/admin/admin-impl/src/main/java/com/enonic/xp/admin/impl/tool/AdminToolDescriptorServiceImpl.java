@@ -4,15 +4,13 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.collect.ImmutableList;
-
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -43,19 +41,18 @@ public final class AdminToolDescriptorServiceImpl
     @Override
     public AdminToolDescriptors getAllowedAdminToolDescriptors( final PrincipalKeys principalKeys )
     {
-        return AdminToolDescriptors.from( applicationService.getInstalledApplications()
+        return applicationService.getInstalledApplications()
             .stream()
             .flatMap( application -> descriptorKeyLocator.findKeys( application.getKey() ).stream() )
             .map( this::getByKey )
             .filter( adminToolDescriptor -> adminToolDescriptor.isAccessAllowed( principalKeys ) )
-            .collect( ImmutableList.toImmutableList() ) );
+            .collect( AdminToolDescriptors.collector() );
     }
 
     @Override
     public AdminToolDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        return AdminToolDescriptors.from(
-            descriptorKeyLocator.findKeys( applicationKey ).stream().map( this::getByKey ).collect( ImmutableList.toImmutableList() ) );
+        return descriptorKeyLocator.findKeys( applicationKey ).stream().map( this::getByKey ).collect( AdminToolDescriptors.collector() );
     }
 
     @Override

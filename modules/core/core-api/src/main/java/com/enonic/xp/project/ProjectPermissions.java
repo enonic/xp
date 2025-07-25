@@ -7,6 +7,8 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
+import static java.util.Objects.requireNonNullElse;
+
 @PublicApi
 public final class ProjectPermissions
 {
@@ -56,23 +58,14 @@ public final class ProjectPermissions
 
     public PrincipalKeys getPermission( final ProjectRole projectRole )
     {
-        return doGetPermission( projectRole );
+        return permissions.get( projectRole );
     }
 
     public PrincipalKeys getPermissions( final Collection<ProjectRole> projectRoles )
     {
-        {
-            final PrincipalKeys.Builder result = PrincipalKeys.create();
-            projectRoles.forEach( permission -> result.addAll( doGetPermission( permission ) ) );
-
-            return result.build();
-        }
-    }
-
-
-    private PrincipalKeys doGetPermission( final ProjectRole projectRole )
-    {
-        return this.permissions.get( projectRole );
+        return projectRoles.stream()
+            .flatMap( role -> requireNonNullElse( permissions.get( role ), PrincipalKeys.empty() ).stream() )
+            .collect( PrincipalKeys.collector() );
     }
 
     public static final class Builder

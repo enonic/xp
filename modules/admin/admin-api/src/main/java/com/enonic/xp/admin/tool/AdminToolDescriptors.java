@@ -1,6 +1,7 @@
 package com.enonic.xp.admin.tool;
 
-import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -11,6 +12,7 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class AdminToolDescriptors
     extends AbstractImmutableEntityList<AdminToolDescriptor>
 {
+    private static final AdminToolDescriptors EMPTY = new AdminToolDescriptors( ImmutableList.of() );
 
     private AdminToolDescriptors( final ImmutableList<AdminToolDescriptor> list )
     {
@@ -19,22 +21,26 @@ public final class AdminToolDescriptors
 
     public static AdminToolDescriptors empty()
     {
-        return new AdminToolDescriptors( ImmutableList.of() );
+        return EMPTY;
     }
 
-    public static AdminToolDescriptors from( final AdminToolDescriptor... adminToolDescriptors )
+    public static AdminToolDescriptors from( final AdminToolDescriptor... descriptors )
     {
-        return new AdminToolDescriptors( ImmutableList.copyOf( adminToolDescriptors ) );
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static AdminToolDescriptors from( final Iterable<? extends AdminToolDescriptor> adminToolDescriptors )
+    public static AdminToolDescriptors from( final Iterable<AdminToolDescriptor> descriptors )
     {
-        return new AdminToolDescriptors( ImmutableList.copyOf( adminToolDescriptors ) );
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static AdminToolDescriptors from( final Collection<? extends AdminToolDescriptor> adminToolDescriptors )
+    private static AdminToolDescriptors fromInternal( final ImmutableList<AdminToolDescriptor> list )
     {
-        return new AdminToolDescriptors( ImmutableList.copyOf( adminToolDescriptors ) );
+        return list.isEmpty() ? EMPTY : new AdminToolDescriptors( list );
     }
 
+    public static Collector<AdminToolDescriptor, ?, AdminToolDescriptors> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), AdminToolDescriptors::fromInternal );
+    }
 }

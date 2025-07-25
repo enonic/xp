@@ -21,7 +21,7 @@ public final class DeleteNodeResult
         return nodeBranchEntries;
     }
 
-    public static class Builder
+    public static final class Builder
     {
 
         private NodeBranchEntries nodeBranchEntries;

@@ -151,7 +151,7 @@ public final class Form
         return formItems.size();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private FormItems formItems;
 

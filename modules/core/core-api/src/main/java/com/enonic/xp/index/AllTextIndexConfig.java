@@ -41,7 +41,7 @@ public final class AllTextIndexConfig
         return languages.hashCode();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<String> languages;
 

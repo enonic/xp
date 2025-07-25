@@ -57,7 +57,7 @@ public final class XData
         return Objects.hash( super.hashCode(), form );
     }
 
-    public static class Builder
+    public static final class Builder
         extends BaseSchema.Builder<Builder, XDataName>
     {
         private Form.Builder formBuilder = Form.create();

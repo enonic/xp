@@ -1,37 +1,47 @@
 package com.enonic.xp.issue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class PublishRequestItems
-    extends AbstractImmutableEntitySet<PublishRequestItem>
-    implements Iterable<PublishRequestItem>
+    extends AbstractImmutableEntityList<PublishRequestItem>
 {
-    private PublishRequestItems( final ImmutableSet<PublishRequestItem> set )
+    public static final PublishRequestItems EMPTY = new PublishRequestItems( ImmutableList.of() );
+
+    private PublishRequestItems( final ImmutableList<PublishRequestItem> list )
     {
-        super( set );
+        super( list );
     }
 
     public static PublishRequestItems empty()
     {
-        final ImmutableSet<PublishRequestItem> set = ImmutableSet.of();
-        return new PublishRequestItems( set );
+        return EMPTY;
     }
 
     public static PublishRequestItems from( final PublishRequestItem... items )
     {
-        return new PublishRequestItems( ImmutableSet.copyOf( items ) );
+        return fromInternal( ImmutableList.copyOf( items ) );
     }
 
     public static PublishRequestItems from( final Iterable<PublishRequestItem> items )
     {
-        return new PublishRequestItems( ImmutableSet.copyOf( items ) );
+        return fromInternal( ImmutableList.copyOf( items ) );
+    }
+
+    public static Collector<PublishRequestItem, ?, PublishRequestItems> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PublishRequestItems::fromInternal );
+    }
+
+    private static PublishRequestItems fromInternal( final ImmutableList<PublishRequestItem> items )
+    {
+        return items.isEmpty() ? EMPTY : new PublishRequestItems( items );
     }
 
     public static Builder create()
@@ -39,9 +49,9 @@ public final class PublishRequestItems
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final List<PublishRequestItem> items = new ArrayList<>();
+        private final ImmutableList.Builder<PublishRequestItem> items = ImmutableList.builder();
 
         public Builder add( final PublishRequestItem item )
         {
@@ -49,16 +59,15 @@ public final class PublishRequestItems
             return this;
         }
 
-        public Builder addAll( final PublishRequestItems items )
+        public Builder addAll( final Iterable<? extends PublishRequestItem> items )
         {
-            this.items.addAll( items.getSet() );
+            this.items.addAll( items );
             return this;
         }
 
-
         public PublishRequestItems build()
         {
-            return PublishRequestItems.from( items );
+            return fromInternal( items.build() );
         }
     }
 }

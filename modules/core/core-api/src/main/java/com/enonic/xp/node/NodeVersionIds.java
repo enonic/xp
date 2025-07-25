@@ -1,8 +1,8 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -13,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class NodeVersionIds
     extends AbstractImmutableEntitySet<NodeVersionId>
 {
+    private static final NodeVersionIds EMPTY = new NodeVersionIds( ImmutableSet.of() );
+
     private NodeVersionIds( final ImmutableSet<NodeVersionId> set )
     {
         super( set );
@@ -20,18 +22,27 @@ public final class NodeVersionIds
 
     public static NodeVersionIds empty()
     {
-        return new NodeVersionIds( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static NodeVersionIds from( final NodeVersionId... nodeVersionIds )
     {
-        return new NodeVersionIds( ImmutableSet.copyOf( nodeVersionIds ) );
+        return fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
     }
-
 
     public static NodeVersionIds from( final Collection<NodeVersionId> nodeVersionIds )
     {
-        return new NodeVersionIds( ImmutableSet.copyOf( nodeVersionIds ) );
+        return fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
+    }
+
+    public static Collector<NodeVersionId, ?, NodeVersionIds> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), NodeVersionIds::fromInternal );
+    }
+
+    private static NodeVersionIds fromInternal( final ImmutableSet<NodeVersionId> nodeVersionIds )
+    {
+        return nodeVersionIds.isEmpty() ? EMPTY : new NodeVersionIds( nodeVersionIds );
     }
 
     public static Builder create()
@@ -39,9 +50,9 @@ public final class NodeVersionIds
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        final Set<NodeVersionId> nodeVersionIds = new LinkedHashSet<>();
+        private final ImmutableSet.Builder<NodeVersionId> nodeVersionIds = ImmutableSet.builder();
 
         public Builder add( final NodeVersionId nodeVersionId )
         {
@@ -49,18 +60,15 @@ public final class NodeVersionIds
             return this;
         }
 
-        public Builder addAll( final Collection<NodeVersionId> nodeVersionIds )
+        public Builder addAll( final Iterable<? extends NodeVersionId> nodeVersionIds )
         {
             this.nodeVersionIds.addAll( nodeVersionIds );
             return this;
         }
 
-
         public NodeVersionIds build()
         {
-            return new NodeVersionIds( ImmutableSet.copyOf( this.nodeVersionIds ) );
+            return new NodeVersionIds( this.nodeVersionIds.build() );
         }
-
     }
-
 }

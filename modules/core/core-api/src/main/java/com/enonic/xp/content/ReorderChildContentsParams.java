@@ -35,7 +35,7 @@ public final class ReorderChildContentsParams
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<ReorderChildParams> orderChildContentParamsList = ImmutableList.builder();
 

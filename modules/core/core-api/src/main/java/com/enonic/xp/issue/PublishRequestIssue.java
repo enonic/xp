@@ -21,7 +21,7 @@ public final class PublishRequestIssue
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends Issue.Builder<Builder>
     {
         private PublishRequestIssueSchedule schedule;

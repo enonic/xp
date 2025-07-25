@@ -2,48 +2,57 @@ package com.enonic.xp.schema.mixin;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class MixinNames
-    extends AbstractImmutableEntityList<MixinName>
+    extends AbstractImmutableEntitySet<MixinName>
 {
-    private MixinNames( final ImmutableList<MixinName> list )
+    private static final MixinNames EMPTY = new MixinNames( ImmutableSet.of() );
+
+    private MixinNames( final ImmutableSet<MixinName> list )
     {
         super( list );
     }
 
     public static MixinNames empty()
     {
-        return new MixinNames( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static MixinNames from( final String... mixinNames )
     {
-        return new MixinNames( parseQualifiedNames( mixinNames ) );
+        return from(  Arrays.asList( mixinNames ) );
     }
 
     public static MixinNames from( final Collection<String> mixinNames )
     {
-        return from( mixinNames.toArray( new String[0] ) );
+        return mixinNames.stream().map( MixinName::from ).collect( collector() );
     }
 
     public static MixinNames from( final MixinName... mixinNames )
     {
-        return new MixinNames( ImmutableList.copyOf( mixinNames ) );
+        return fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
     public static MixinNames from( final Iterable<MixinName> mixinNames )
     {
-        return new MixinNames( ImmutableList.copyOf( mixinNames ) );
+        return fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
-    private static ImmutableList<MixinName> parseQualifiedNames( final String... mixinNames )
+    private static MixinNames fromInternal( final ImmutableSet<MixinName> mixinNames )
     {
-        return Arrays.stream( mixinNames ).map( MixinName::from ).collect( ImmutableList.toImmutableList() );
+        return mixinNames.isEmpty() ? EMPTY : new MixinNames( mixinNames );
+    }
+
+    public static Collector<MixinName, ?, MixinNames> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), MixinNames::fromInternal );
     }
 }

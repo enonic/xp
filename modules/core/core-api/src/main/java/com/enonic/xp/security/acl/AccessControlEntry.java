@@ -150,7 +150,7 @@ public final class AccessControlEntry
         return new Builder( ace );
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private PrincipalKey principal;
 

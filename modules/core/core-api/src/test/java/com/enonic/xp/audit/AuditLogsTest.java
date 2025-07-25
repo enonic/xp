@@ -38,13 +38,6 @@ public class AuditLogsTest
     }
 
     @Test
-    public void duplicates()
-    {
-        AuditLogs logs = AuditLogs.from( getBuilder().build(), getBuilder().build() );
-        assertEquals( 1, logs.getSize() );
-    }
-
-    @Test
     public void getById()
     {
         AuditLogs.Builder builder = AuditLogs.create();

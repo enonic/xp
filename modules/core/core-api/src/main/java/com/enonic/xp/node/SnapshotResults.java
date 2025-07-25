@@ -1,32 +1,35 @@
 package com.enonic.xp.node;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class SnapshotResults
-    extends AbstractImmutableEntitySet<SnapshotResult>
+    extends AbstractImmutableEntityList<SnapshotResult>
 {
-    private SnapshotResults( final Builder builder )
+    private SnapshotResults( final ImmutableList<SnapshotResult> list )
     {
-        super( ImmutableSet.copyOf( builder.snapshotResults ) );
+        super( list );
+    }
+
+    public static Collector<SnapshotResult, ?, SnapshotResults> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), SnapshotResults::new );
     }
 
     public static Builder create()
     {
-
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<SnapshotResult> snapshotResults = new LinkedHashSet<>();
-
+        private final ImmutableList.Builder<SnapshotResult> snapshotResults = ImmutableList.builder();
 
         public Builder add( final SnapshotResult snapshotResult )
         {
@@ -36,9 +39,7 @@ public final class SnapshotResults
 
         public SnapshotResults build()
         {
-            return new SnapshotResults( this );
+            return new SnapshotResults( snapshotResults.build() );
         }
-
     }
-
 }

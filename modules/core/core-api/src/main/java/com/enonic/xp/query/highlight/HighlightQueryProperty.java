@@ -73,7 +73,7 @@ public final class HighlightQueryProperty
         return doGetSettings().getRequireFieldMatch();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final String name;
 

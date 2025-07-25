@@ -67,7 +67,7 @@ public final class IdProviderAccessControlEntry
         return this.principal.equals( that.principal ) && this.access == that.access;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private PrincipalKey principal;
 

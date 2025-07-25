@@ -1,6 +1,8 @@
 package com.enonic.xp.content;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
@@ -12,6 +14,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Contents
     extends AbstractImmutableEntitySet<Content>
 {
+    private static final Contents EMPTY = new Contents( ImmutableSet.of() );
+
     private Contents( final ImmutableSet<Content> set )
     {
         super( set );
@@ -19,32 +23,42 @@ public final class Contents
 
     public ContentPaths getPaths()
     {
-        return ContentPaths.from( set.stream().map( Content::getPath ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Content::getPath ).collect( ContentPaths.collector() );
     }
 
     public ContentIds getIds()
     {
-        return ContentIds.from( set.stream().map( Content::getId ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Content::getId ).collect( ContentIds.collector() );
     }
 
     public static Contents empty()
     {
-        return new Contents( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static Contents from( final Content... contents )
     {
-        return new Contents( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableSet.copyOf( contents ) );
     }
 
     public static Contents from( final Iterable<? extends Content> contents )
     {
-        return new Contents( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableSet.copyOf( contents ) );
     }
 
     public static Contents from( final Collection<? extends Content> contents )
     {
-        return new Contents( ImmutableSet.copyOf( contents ) );
+        return fromInternal( ImmutableSet.copyOf( contents ) );
+    }
+
+    public static Collector<Content, ?, Contents> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Contents::fromInternal );
+    }
+
+    private static Contents fromInternal( final ImmutableSet<Content> set )
+    {
+        return set.isEmpty() ? EMPTY : new Contents( set );
     }
 
     public static Builder create()
@@ -62,16 +76,15 @@ public final class Contents
             return this;
         }
 
-        public Builder addAll( Contents contents )
+        public Builder addAll( Iterable<? extends Content> contents )
         {
-            this.contents.addAll( contents.getSet() );
+            this.contents.addAll( contents );
             return this;
         }
 
-
         public Contents build()
         {
-            return new Contents( contents.build() );
+            return fromInternal( contents.build() );
         }
     }
 

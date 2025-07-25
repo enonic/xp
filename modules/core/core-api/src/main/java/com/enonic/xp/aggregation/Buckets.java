@@ -1,20 +1,25 @@
 package com.enonic.xp.aggregation;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class Buckets
-    extends AbstractImmutableEntitySet<Bucket>
+    extends AbstractImmutableEntityList<Bucket>
 {
-    private Buckets( final Builder builder )
+    private Buckets( final ImmutableList<Bucket> list )
     {
-        super( ImmutableSet.copyOf( builder.buckets ) );
+        super( list );
+    }
+
+    public static Collector<Bucket, ?, Buckets> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Buckets::new );
     }
 
     public static Builder create()
@@ -22,9 +27,9 @@ public final class Buckets
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
     {
-        private final Set<Bucket> buckets = new LinkedHashSet<>();
+        private final ImmutableList.Builder<Bucket> buckets = ImmutableList.builder();
 
         public Builder add( final Bucket bucket )
         {
@@ -34,9 +39,7 @@ public final class Buckets
 
         public Buckets build()
         {
-            return new Buckets( this );
+            return new Buckets( buckets.build() );
         }
     }
-
-
 }

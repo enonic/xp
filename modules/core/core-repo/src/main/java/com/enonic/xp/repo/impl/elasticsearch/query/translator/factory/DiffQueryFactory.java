@@ -92,7 +92,7 @@ public class DiffQueryFactory
     private QueryBuilder hasPaths( final NodePaths excludePaths, final boolean recursive )
     {
         final BoolQueryBuilder pathQuery = new BoolQueryBuilder().should( new TermsQueryBuilder( BranchIndexPath.PATH.getPath(),
-                                                                                                 excludePaths.getSet()
+                                                                                                 excludePaths
                                                                                                      .stream()
                                                                                                      .map( excludeEntry -> excludeEntry
                                                                                                              .toString()

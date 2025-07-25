@@ -37,7 +37,7 @@ public final class HighlightQuery
         return properties;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final ImmutableList.Builder<HighlightQueryProperty> properties = ImmutableList.builder();
 

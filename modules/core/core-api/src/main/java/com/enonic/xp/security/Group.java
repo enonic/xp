@@ -23,7 +23,7 @@ public final class Group
         return new Builder( group );
     }
 
-    public static class Builder
+    public static final class Builder
         extends Principal.Builder<Builder>
     {
         private Builder()

@@ -32,7 +32,7 @@ public final class ModifyScheduledJobParams
         return editor;
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private ScheduledJobName name;
 

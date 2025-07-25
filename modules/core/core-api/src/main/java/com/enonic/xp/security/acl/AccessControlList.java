@@ -157,7 +157,7 @@ public final class AccessControlList
         return this.entries.hashCode();
     }
 
-    public static class Builder
+    public static final class Builder
     {
         private final Map<PrincipalKey, AccessControlEntry> entries;
 

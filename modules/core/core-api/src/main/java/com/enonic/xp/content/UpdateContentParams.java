@@ -109,16 +109,4 @@ public final class UpdateContentParams
     {
         return stopInherit;
     }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return super.hashCode();
-    }
 }

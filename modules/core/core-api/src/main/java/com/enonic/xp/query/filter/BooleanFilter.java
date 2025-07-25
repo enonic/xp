@@ -57,7 +57,7 @@ public final class BooleanFilter
         return new Builder();
     }
 
-    public static class Builder
+    public static final class Builder
         extends Filter.Builder<Builder>
     {
         List<Filter> must = new ArrayList<>();

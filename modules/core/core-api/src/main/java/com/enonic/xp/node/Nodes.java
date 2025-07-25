@@ -2,6 +2,7 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -12,6 +13,8 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 public final class Nodes
     extends AbstractImmutableEntitySet<Node>
 {
+    private static final Nodes EMPTY = new Nodes( ImmutableSet.of() );
+
     private Nodes( final ImmutableSet<Node> set )
     {
         super( set );
@@ -19,22 +22,32 @@ public final class Nodes
 
     public static Nodes empty()
     {
-        return new Nodes( ImmutableSet.of() );
+        return EMPTY;
     }
 
     public static Nodes from( final Node... nodes )
     {
-        return new Nodes( ImmutableSet.copyOf( nodes ) );
+        return fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Iterable<? extends Node> nodes )
     {
-        return new Nodes( ImmutableSet.copyOf( nodes ) );
+        return nodes instanceof Nodes ? (Nodes) nodes : fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Nodes from( final Collection<? extends Node> nodes )
     {
-        return new Nodes( ImmutableSet.copyOf( nodes ) );
+        return fromInternal( ImmutableSet.copyOf( nodes ) );
+    }
+
+    public static Collector<Node, ?, Nodes> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Nodes::fromInternal );
+    }
+
+    private static Nodes fromInternal( final ImmutableSet<Node> set )
+    {
+        return set.isEmpty() ? EMPTY : new Nodes( set );
     }
 
     public static Builder create()
@@ -42,19 +55,14 @@ public final class Nodes
         return new Builder();
     }
 
-    public static Collector<Node, ?, Nodes> collecting()
-    {
-        return Collector.of( Builder::new, Builder::add, ( left, right ) -> left.addAll( right.build() ), Builder::build );
-    }
-
     public NodePaths getPaths()
     {
-        return NodePaths.from( set.stream().map( Node::path ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Node::path ).collect( NodePaths.collector() );
     }
 
     public NodeIds getIds()
     {
-        return NodeIds.from( set.stream().map( Node::id ).collect( ImmutableSet.toImmutableSet() ) );
+        return set.stream().map( Node::id ).collect( NodeIds.collector() );
     }
 
     public static final class Builder
@@ -67,9 +75,9 @@ public final class Nodes
             return this;
         }
 
-        public Builder addAll( Nodes nodes )
+        public Builder addAll( Iterable<? extends Node> nodes )
         {
-            this.nodes.addAll( nodes.getSet() );
+            this.nodes.addAll( nodes );
             return this;
         }
 

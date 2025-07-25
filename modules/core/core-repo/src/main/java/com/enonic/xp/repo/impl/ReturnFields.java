@@ -1,21 +1,20 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 public class ReturnFields
-    extends AbstractImmutableEntitySet<ReturnField>
 {
     private static final ReturnFields EMPTY = new ReturnFields( ImmutableSet.of() );
 
-    private ReturnFields( final ImmutableSet<ReturnField> set )
+    private final ImmutableSet<String> indexPaths;
+
+    private ReturnFields( final ImmutableSet<String> set )
     {
-        super( set );
+        indexPaths = set;
     }
 
     public static ReturnFields empty()
@@ -25,43 +24,21 @@ public class ReturnFields
 
     public static ReturnFields from( final IndexPath... indexPath )
     {
-        final ReturnFields.Builder result = ReturnFields.create();
+        return new ReturnFields( Arrays.stream( indexPath ).map( IndexPath::getPath ).collect( ImmutableSet.toImmutableSet() ) );
+    }
 
-        Arrays.stream( indexPath ).
-            forEach( result::add );
-
-        return result.build();
+    public ReturnFields add( final IndexPath indexPath )
+    {
+        return new ReturnFields( ImmutableSet.<String>builder().addAll( this.indexPaths ).add( indexPath.getPath() ).build() );
     }
 
     public String[] getReturnFieldNames()
     {
-        return this.set.stream().map( ReturnField::getPath ).toArray( String[]::new );
+        return this.indexPaths.toArray( String[]::new );
     }
 
-    public static Builder create()
+    public boolean isNotEmpty()
     {
-        return new Builder();
-    }
-
-    public static class Builder
-    {
-        private final ImmutableSet.Builder<ReturnField> set = ImmutableSet.builder();
-
-        public Builder add( final IndexPath indexPath )
-        {
-            this.set.add( new ReturnField( indexPath ) );
-            return this;
-        }
-
-        public Builder addAll( final Collection<ReturnField> returnFields )
-        {
-            this.set.addAll( returnFields );
-            return this;
-        }
-
-        public ReturnFields build()
-        {
-            return new ReturnFields( set.build() );
-        }
+        return !indexPaths.isEmpty();
     }
 }

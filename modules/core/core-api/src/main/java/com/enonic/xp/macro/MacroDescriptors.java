@@ -1,44 +1,47 @@
 package com.enonic.xp.macro;
 
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class MacroDescriptors
-    extends AbstractImmutableEntitySet<MacroDescriptor>
+    extends AbstractImmutableEntityList<MacroDescriptor>
 {
-    private MacroDescriptors( final ImmutableSet<MacroDescriptor> list )
+    private static final MacroDescriptors EMPTY = new MacroDescriptors( ImmutableList.of() );
+
+    private MacroDescriptors( final ImmutableList<MacroDescriptor> list )
     {
         super( list );
     }
 
+    public static MacroDescriptors empty()
+    {
+        return EMPTY;
+    }
+
     public static MacroDescriptors from( final MacroDescriptor... macroDescriptors )
     {
-        return new MacroDescriptors( ImmutableSet.copyOf( macroDescriptors ) );
+        return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }
 
     public static MacroDescriptors from( final Collection<MacroDescriptor> macroDescriptors )
     {
-        return new MacroDescriptors( ImmutableSet.copyOf( macroDescriptors ) );
+        return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }
 
-    public static MacroDescriptors from( final Iterable<MacroDescriptor>... macroDescriptors )
+    public static Collector<? super MacroDescriptor, ?, MacroDescriptors> collector()
     {
-        final ImmutableSet.Builder<MacroDescriptor> keys = ImmutableSet.builder();
-        for ( Iterable<MacroDescriptor> keysParam : macroDescriptors )
-        {
-            keys.addAll( keysParam );
-        }
-        return new MacroDescriptors( keys.build() );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), MacroDescriptors::fromInternal );
     }
 
-    public static MacroDescriptors empty()
+    private static MacroDescriptors fromInternal( final ImmutableList<MacroDescriptor> list )
     {
-        return new MacroDescriptors( ImmutableSet.of() );
+        return list.isEmpty() ? EMPTY : new MacroDescriptors( list );
     }
-
 }

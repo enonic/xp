@@ -1,6 +1,8 @@
 package com.enonic.xp.descriptor;
 
 import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -39,5 +41,10 @@ public final class Descriptors<T extends Descriptor>
     public static <T extends Descriptor> Descriptors<T> from( final Iterable<? extends T> descriptors )
     {
         return new Descriptors<>( descriptors );
+    }
+
+    public static <T extends Descriptor> Collector<T, ?, Descriptors<T>> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Descriptors::new );
     }
 }

@@ -1,7 +1,6 @@
 package com.enonic.xp.index;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
@@ -23,7 +22,7 @@ public final class ReindexParams
     {
         initialize = builder.initialize;
         repositoryId = builder.repositoryId;
-        branches = Branches.from( builder.branches );
+        branches = Branches.from( builder.branches.build() );
         listener = builder.listener;
     }
 
@@ -55,7 +54,7 @@ public final class ReindexParams
 
     public static final class Builder
     {
-        private final Set<Branch> branches = new HashSet<>();
+        private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
         private boolean initialize;
 
@@ -87,7 +86,7 @@ public final class ReindexParams
 
         public Builder setBranches( final Branches branches )
         {
-            this.branches.addAll( branches.getSet() );
+            this.branches.addAll( branches );
             return this;
         }
 

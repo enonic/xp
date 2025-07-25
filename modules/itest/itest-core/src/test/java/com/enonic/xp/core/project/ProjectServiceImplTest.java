@@ -884,7 +884,7 @@ class ProjectServiceImplTest
         final ProjectGraph graph1 = adminContext().callWith( () -> projectService.graph( project1.getName() ) );
 
         assertEquals( 5, graph1.getSize() );
-        assertThat( graph1.getList() ).extracting( "name", "parents" )
+        assertThat( graph1 ).extracting( "name", "parents" )
             .containsExactly( tuple( project1.getName(), List.of() ), tuple( project2.getName(), List.of( project1.getName() ) ),
                               tuple( project4.getName(), List.of( project2.getName() ) ),
                               tuple( project3.getName(), List.of( project2.getName() ) ),
@@ -893,7 +893,7 @@ class ProjectServiceImplTest
         final ProjectGraph graph2 = adminContext().callWith( () -> projectService.graph( project4.getName() ) );
 
         assertEquals( 4, graph2.getSize() );
-        assertThat( graph2.getList() ).extracting( "name", "parents" )
+        assertThat( graph2 ).extracting( "name", "parents" )
             .containsExactly( tuple( project1.getName(), List.of() ), tuple( project2.getName(), List.of( project1.getName() ) ),
                               tuple( project4.getName(), List.of( project2.getName() ) ),
                               tuple( project5.getName(), List.of( project4.getName() ) ) );
@@ -947,14 +947,8 @@ class ProjectServiceImplTest
         final ApplicationKeys childAvailableApplications =
             adminContext().callWith( () -> projectService.getAvailableApplications( child.getName() ) );
 
-        assertEquals( 2, parentAvailableApplications.getSize() );
-        assertEquals( "app1", parentAvailableApplications.get( 0 ).toString() );
-        assertEquals( "app2", parentAvailableApplications.get( 1 ).toString() );
-
-        assertEquals( 3, childAvailableApplications.getSize() );
-        assertEquals( "app2", childAvailableApplications.get( 0 ).toString() );
-        assertEquals( "app3", childAvailableApplications.get( 1 ).toString() );
-        assertEquals( "app1", childAvailableApplications.get( 2 ).toString() );
+        assertThat( parentAvailableApplications ).map( ApplicationKey::getName ).containsExactly( "app1", "app2" );
+        assertThat( childAvailableApplications ).map( ApplicationKey::getName ).containsExactly(  "app2", "app3", "app1" );
     }
 
     @Test
@@ -986,14 +980,8 @@ class ProjectServiceImplTest
             contextWithAuthInfo( getAccessForProject( child.getName(), List.of( ProjectRole.VIEWER ) ) ).callWith(
                 () -> projectService.getAvailableApplications( child.getName() ) );
 
-        assertEquals( 2, parentAvailableApplications.getSize() );
-        assertEquals( "app1", parentAvailableApplications.get( 0 ).toString() );
-        assertEquals( "app2", parentAvailableApplications.get( 1 ).toString() );
-
-        assertEquals( 3, childAvailableApplications.getSize() );
-        assertEquals( "app2", childAvailableApplications.get( 0 ).toString() );
-        assertEquals( "app3", childAvailableApplications.get( 1 ).toString() );
-        assertEquals( "app1", childAvailableApplications.get( 2 ).toString() );
+        assertThat( parentAvailableApplications ).map( ApplicationKey::getName ).containsExactly( "app1", "app2" );
+        assertThat( childAvailableApplications ).map( ApplicationKey::getName ).containsExactly(  "app2", "app3", "app1" );
     }
 
     @Test

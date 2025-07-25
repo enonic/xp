@@ -61,11 +61,7 @@ public class NodeSearchServiceImpl
     {
         final SearchRequest searchRequest = SearchRequest.create().
             searchSource( source ).
-            query( query ).
-            returnFields( query.isWithPath() ? ReturnFields.create().
-                addAll( returnFields.getSet() ).
-                add( NodeIndexPath.PATH ).
-                build() : returnFields ).
+            query( query ).returnFields( query.isWithPath() ? returnFields.add( NodeIndexPath.PATH ) : returnFields ).
             build();
 
         return searchDao.search( searchRequest );
