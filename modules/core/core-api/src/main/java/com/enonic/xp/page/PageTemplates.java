@@ -52,11 +52,6 @@ public final class PageTemplates
         return fromInternal( ImmutableList.copyOf( templates ) );
     }
 
-    public static PageTemplates from( final Collection<? extends PageTemplate> templates )
-    {
-        return fromInternal( ImmutableList.copyOf( templates ) );
-    }
-
     public static Collector<PageTemplate, ?, PageTemplates> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PageTemplates::fromInternal );

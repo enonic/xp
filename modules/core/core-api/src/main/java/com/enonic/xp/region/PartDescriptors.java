@@ -35,11 +35,6 @@ public final class PartDescriptors
         return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static PartDescriptors from( final Collection<? extends PartDescriptor> descriptors )
-    {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
-    }
-
     public static Collector<PartDescriptor, ?, PartDescriptors> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PartDescriptors::fromInternal );

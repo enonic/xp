@@ -154,7 +154,7 @@ public final class ParentContentSynchronizer
                                                                   .size( -1 )
                                                                   .build() ) );
 
-            if ( result.getContents().isNotEmpty() )
+            if ( !result.getContents().isEmpty() )
             {
                 this.sync( ContentSyncParams.create()
                                .sourceProject( ProjectName.from( currentContentToSync.getSourceContext().getRepositoryId() ) )

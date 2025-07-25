@@ -1,6 +1,5 @@
 package com.enonic.xp.style;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public final class StyleDescriptors
         return fromInternal( ImmutableList.copyOf( styleDescriptors ) );
     }
 
-    public static StyleDescriptors from( final Collection<StyleDescriptor> styleDescriptors )
+    public static StyleDescriptors from( final Iterable<? extends StyleDescriptor> styleDescriptors )
     {
         return fromInternal( ImmutableList.copyOf( styleDescriptors ) );
     }

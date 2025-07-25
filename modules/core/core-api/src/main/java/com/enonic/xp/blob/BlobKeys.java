@@ -1,6 +1,5 @@
 package com.enonic.xp.blob;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class BlobKeys
         return fromInternal( ImmutableSet.copyOf( blobKeys ) );
     }
 
-    public static BlobKeys from( final Collection<BlobKey> blobKeys )
+    public static BlobKeys from( final Iterable<? extends BlobKey> blobKeys )
     {
         return fromInternal( ImmutableSet.copyOf( blobKeys ) );
     }

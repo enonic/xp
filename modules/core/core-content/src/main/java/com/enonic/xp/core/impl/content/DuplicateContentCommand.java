@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.DuplicateContentException;

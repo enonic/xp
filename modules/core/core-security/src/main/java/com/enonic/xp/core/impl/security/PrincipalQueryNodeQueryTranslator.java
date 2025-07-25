@@ -35,7 +35,7 @@ final class PrincipalQueryNodeQueryTranslator
             size( principalQuery.getSize() );
 
         final IdProviderKeys idProviders = principalQuery.getIdProviders();
-        if ( idProviders.isNotEmpty() )
+        if ( !idProviders.isEmpty() )
         {
             nodeQueryBuilder.addQueryFilter( ValueFilter.create().
                 fieldName( ID_PROVIDER_KEY ).

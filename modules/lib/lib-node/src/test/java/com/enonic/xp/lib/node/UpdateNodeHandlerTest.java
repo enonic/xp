@@ -2,8 +2,6 @@ package com.enonic.xp.lib.node;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +12,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.data.PropertyPath;
@@ -41,6 +38,7 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -124,9 +122,7 @@ public class UpdateNodeHandlerTest
         assertEquals( new GeoPoint( 0, 0 ), editedNode.data.getGeoPoint( "mySet.myGeoPoint" ) );
         final Iterable<String> myArray = editedNode.data.getStrings( "myArray" );
         assertNotNull( myArray );
-        final ArrayList<String> myArrayValues = Lists.newArrayList( myArray );
-        assertEquals( 3, myArrayValues.size() );
-        assertTrue( myArrayValues.containsAll( List.of( "modified1", "modified2", "modified3" ) ) );
+        assertThat( myArray ).containsExactly( "modified1", "modified2", "modified3" );
 
         final IndexConfigDocument indexConfigDocument = editedNode.indexConfigDocument;
         assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( "displayName" ) ).isEnabled() );

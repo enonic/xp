@@ -4,7 +4,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
@@ -25,7 +24,7 @@ public final class NodeHits
 
     public NodeIds getNodeIds()
     {
-        return NodeIds.from( this.stream().map( NodeHit::getNodeId ).collect( ImmutableSet.toImmutableSet() ) );
+        return this.stream().map( NodeHit::getNodeId ).collect( NodeIds.collector() );
     }
 
     public static Collector<NodeHit, ?, NodeHits> collector()

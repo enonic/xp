@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.search.result;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.aggregation.Aggregations;
@@ -8,7 +9,7 @@ import com.enonic.xp.suggester.Suggestions;
 
 public class SearchResult
 {
-    private final SearchHits hits;
+    private final List<SearchHit> hits;
 
     private final Aggregations aggregations;
 
@@ -29,10 +30,10 @@ public class SearchResult
 
     public boolean isEmpty()
     {
-        return hits.getSize() == 0;
+        return hits.isEmpty();
     }
 
-    public SearchHits getHits()
+    public List<SearchHit> getHits()
     {
         return hits;
     }
@@ -44,7 +45,7 @@ public class SearchResult
 
     public long getNumberOfHits()
     {
-        return hits.getSize();
+        return hits.size();
     }
 
     public Collection<String> getIds()
@@ -74,7 +75,7 @@ public class SearchResult
 
     public static class Builder
     {
-        private SearchHits searchHits;
+        private List<SearchHit> searchHits;
 
         private Aggregations aggregations = Aggregations.empty();
 
@@ -84,7 +85,7 @@ public class SearchResult
 
         private float maxScore = 0;
 
-        public Builder hits( final SearchHits searchHits )
+        public Builder hits( final List<SearchHit> searchHits )
         {
             this.searchHits = searchHits;
             return this;

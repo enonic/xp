@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.content.ContentDependencies;
@@ -20,7 +21,6 @@ import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-import static java.util.stream.Collectors.toList;
 
 class ContentDependenciesResolver
 {
@@ -67,7 +67,7 @@ class ContentDependenciesResolver
 
         final BucketAggregation bucketAggregation = (BucketAggregation) result.getAggregations().get( "type" );
 
-        return bucketAggregation.getBuckets().stream().map( ContentDependenciesAggregation::new ).collect( toList() );
+        return bucketAggregation.getBuckets().stream().map( ContentDependenciesAggregation::new ).collect( Collectors.toList() );
     }
 
     private Collection<ContentDependenciesAggregation> resolveOutboundDependenciesAggregation( final ContentId contentId )
@@ -86,7 +86,7 @@ class ContentDependenciesResolver
         return aggregationJsonMap.entrySet().
             stream().
             map( entry -> new ContentDependenciesAggregation( entry.getKey(), entry.getValue() ) ).
-            collect( toList() );
+            collect( Collectors.toList() );
     }
 
 }

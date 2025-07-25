@@ -48,7 +48,7 @@ class ContentQueryNodeQueryTranslator
     {
         final ContentTypeNames contentTypeNames = contentQuery.getContentTypes();
 
-        if ( contentTypeNames != null && contentTypeNames.isNotEmpty() )
+        if ( contentTypeNames != null && !contentTypeNames.isEmpty() )
         {
             final ValueFilter.Builder contentTypeFilterBuilder =
                 ValueFilter.create().fieldName( ContentPropertyNames.TYPE ).setCache( true );
@@ -66,7 +66,7 @@ class ContentQueryNodeQueryTranslator
     {
         final ContentIds contentIds = contentQuery.getFilterContentIds();
 
-        if ( contentIds != null && contentIds.isNotEmpty() )
+        if ( contentIds != null && !contentIds.isEmpty() )
         {
             final IdFilter.Builder contentTypeFilterBuilder = IdFilter.create()
                 .fieldName( ContentIndexPath.ID.getPath() )

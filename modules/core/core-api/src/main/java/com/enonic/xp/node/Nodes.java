@@ -35,11 +35,6 @@ public final class Nodes
         return nodes instanceof Nodes ? (Nodes) nodes : fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
-    public static Nodes from( final Collection<? extends Node> nodes )
-    {
-        return fromInternal( ImmutableSet.copyOf( nodes ) );
-    }
-
     public static Collector<Node, ?, Nodes> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Nodes::fromInternal );

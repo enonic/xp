@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ContentPathsTest
@@ -70,7 +71,7 @@ class ContentPathsTest
     void empty()
     {
         ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 );
-        assertTrue( pathsFromSet.isNotEmpty() );
+        assertFalse( pathsFromSet.isEmpty() );
 
         pathsFromSet = pathsFromSet.remove( CONTENT_PATH1 );
         assertTrue( pathsFromSet.isEmpty() );

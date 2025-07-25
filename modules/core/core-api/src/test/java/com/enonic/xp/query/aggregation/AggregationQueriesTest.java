@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,7 +25,7 @@ public class AggregationQueriesTest
             build();
 
         assertNotNull( queries );
-        assertTrue( queries.isNotEmpty() );
+        assertFalse( queries.isEmpty() );
         assertTrue( queries.contains( query ) );
     }
 

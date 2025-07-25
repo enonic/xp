@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class NodeVersionIds
         return fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
     }
 
-    public static NodeVersionIds from( final Collection<NodeVersionId> nodeVersionIds )
+    public static NodeVersionIds from( final Iterable<? extends NodeVersionId> nodeVersionIds )
     {
         return fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
     }

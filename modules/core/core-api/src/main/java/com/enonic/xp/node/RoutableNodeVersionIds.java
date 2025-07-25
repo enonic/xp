@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class RoutableNodeVersionIds
         return fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }
 
-    public static RoutableNodeVersionIds from( final Collection<RoutableNodeVersionId> routableNodeVersionIds )
+    public static RoutableNodeVersionIds from( final Iterable<? extends RoutableNodeVersionId> routableNodeVersionIds )
     {
         return fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }

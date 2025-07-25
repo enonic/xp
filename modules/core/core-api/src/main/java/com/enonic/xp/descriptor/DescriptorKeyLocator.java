@@ -1,9 +1,5 @@
 package com.enonic.xp.descriptor;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceService;
 
@@ -19,12 +15,12 @@ public final class DescriptorKeyLocator
         this.pattern = "^" + path + "/(?<name>[^/]+)/\\k<name>\\.(?:xml" + ( optional ? "|js" : "" ) + ")$";
     }
 
-    public Set<DescriptorKey> findKeys( final ApplicationKey key )
+    public DescriptorKeys findKeys( final ApplicationKey key )
     {
         return this.service.findFiles( key, this.pattern )
             .stream()
             .map( resource -> DescriptorKey.from( key, getNameWithoutExtension( resource.getName() ) ) )
-            .collect( ImmutableSet.toImmutableSet() );
+            .collect( DescriptorKeys.collector() );
     }
 
     private static String getNameWithoutExtension( final String name )

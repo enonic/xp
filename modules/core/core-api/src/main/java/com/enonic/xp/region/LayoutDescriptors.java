@@ -35,11 +35,6 @@ public final class LayoutDescriptors
         return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static LayoutDescriptors from( final Collection<? extends LayoutDescriptor> descriptors )
-    {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
-    }
-
     public static Collector<LayoutDescriptor, ?, LayoutDescriptors> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), LayoutDescriptors::fromInternal );

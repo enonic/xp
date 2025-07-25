@@ -1,6 +1,5 @@
 package com.enonic.xp.query.aggregation;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class AggregationQueries
         return EMPTY;
     }
 
-    public static AggregationQueries fromCollection( final Collection<AggregationQuery> aggregationQueries )
+    public static AggregationQueries from( final Iterable<AggregationQuery> aggregationQueries )
     {
         return fromInternal( ImmutableList.copyOf( aggregationQueries ) );
     }

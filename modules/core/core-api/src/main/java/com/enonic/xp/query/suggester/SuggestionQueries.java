@@ -1,6 +1,5 @@
 package com.enonic.xp.query.suggester;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public final class SuggestionQueries
         return EMPTY;
     }
 
-    public static SuggestionQueries fromCollection( final Collection<SuggestionQuery> suggestionQueries )
+    public static SuggestionQueries from( final Iterable<SuggestionQuery> suggestionQueries )
     {
         return fromInternal( ImmutableList.copyOf( suggestionQueries ) );
     }

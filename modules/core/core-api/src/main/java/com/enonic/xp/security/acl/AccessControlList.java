@@ -91,11 +91,11 @@ public final class AccessControlList
 
     public PrincipalKeys getPrincipalsWithPermission( final Permission permission )
     {
-        return PrincipalKeys.from( this.entries.values()
+        return this.entries.values()
                                        .stream()
                                        .filter( ( entry ) -> entry.isAllowed( permission ) )
                                        .map( AccessControlEntry::getPrincipal )
-                                       .collect( ImmutableSet.toImmutableSet() ) );
+                                       .collect( PrincipalKeys.collector() );
     }
 
     public AccessControlEntry getEntry( final PrincipalKey principalKey )

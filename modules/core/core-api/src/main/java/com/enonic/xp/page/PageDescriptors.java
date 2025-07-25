@@ -35,11 +35,6 @@ public final class PageDescriptors
             : fromInternal( ImmutableList.copyOf( pageDescriptors ) );
     }
 
-    public static PageDescriptors from( final Collection<? extends PageDescriptor> pageDescriptors )
-    {
-        return fromInternal( ImmutableList.copyOf( pageDescriptors ) );
-    }
-
     private static PageDescriptors fromInternal( final ImmutableList<PageDescriptor> list )
     {
         return list.isEmpty() ? EMPTY : new PageDescriptors( list );

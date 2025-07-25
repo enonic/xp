@@ -61,8 +61,7 @@ public final class NodeComparisons
 
     public NodePaths getSourcePaths()
     {
-        return NodePaths.from(
-            this.comparisonMap.values().stream().map( NodeComparison::getSourcePath ).collect( ImmutableSet.toImmutableSet() ) );
+        return this.comparisonMap.values().stream().map( NodeComparison::getSourcePath ).collect( NodePaths.collector() );
     }
 
     public Set<NodeComparison> getWithStatus( final CompareStatus status )

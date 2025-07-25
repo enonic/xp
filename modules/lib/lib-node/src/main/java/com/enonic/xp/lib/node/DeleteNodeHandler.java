@@ -1,8 +1,7 @@
 package com.enonic.xp.lib.node;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
-import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.NodeId;
@@ -28,7 +27,7 @@ public final class DeleteNodeHandler
     @Override
     public Collection<String> execute()
     {
-        final ImmutableList.Builder<String> deletedNodeIds = ImmutableList.builder();
+        final ArrayList<String> deletedNodeIds = new ArrayList<>();
 
         if ( keys.singleValue() )
         {
@@ -46,7 +45,7 @@ public final class DeleteNodeHandler
                 forEach( deletedNodeIds::add );
         }
 
-        return deletedNodeIds.build();
+        return deletedNodeIds;
     }
 
     private NodeIds deleteByKey( final NodeKey key )

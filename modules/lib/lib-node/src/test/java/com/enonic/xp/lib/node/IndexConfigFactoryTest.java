@@ -1,11 +1,11 @@
 package com.enonic.xp.lib.node;
 
 import java.util.List;
+import java.util.SortedSet;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
-
+import com.enonic.xp.core.internal.json.JsonHelper;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -14,7 +14,6 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.core.internal.json.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -63,7 +62,7 @@ public class IndexConfigFactoryTest
     {
         final PatternIndexConfigDocument fullConfig = createFullConfig();
 
-        final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs = fullConfig.getPathIndexConfigs();
+        final SortedSet<PathIndexConfig> pathIndexConfigs = fullConfig.getPathIndexConfigs();
 
         assertEquals( 3, pathIndexConfigs.size() );
         assertEquals( IndexConfig.FULLTEXT, fullConfig.getConfigForPath( PropertyPath.from( "displayName" ) ) );

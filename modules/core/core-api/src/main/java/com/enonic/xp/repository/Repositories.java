@@ -41,11 +41,6 @@ public final class Repositories
         return fromInternal( ImmutableSet.copyOf( repositories ) );
     }
 
-    public static Repositories from( final Collection<? extends Repository> repositories )
-    {
-        return fromInternal( ImmutableSet.copyOf( repositories ) );
-    }
-
     public static Collector<Repository, ?, Repositories> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Repositories::fromInternal );

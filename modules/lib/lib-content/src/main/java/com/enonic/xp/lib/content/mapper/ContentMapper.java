@@ -1,18 +1,16 @@
 package com.enonic.xp.lib.content.mapper;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
@@ -121,32 +119,22 @@ public final class ContentMapper
         gen.end();
     }
 
-    private void serializeExtraData( final MapGenerator gen, final Iterable<ExtraData> values )
+    private void serializeExtraData( final MapGenerator gen, final ExtraDatas extraDatas )
     {
         gen.map( "x" );
 
-        final ListMultimap<ApplicationKey, ExtraData> extradatasByModule = ArrayListMultimap.create();
-        for ( ExtraData extraData : values )
-        {
-            extradatasByModule.put( extraData.getName().getApplicationKey(), extraData );
-        }
-
-        for ( final ApplicationKey applicationKey : extradatasByModule.keys() )
-        {
-            final List<ExtraData> extraDatas = extradatasByModule.get( applicationKey );
-            if ( extraDatas.isEmpty() )
-            {
-                continue;
-            }
-            gen.map( extraDatas.get( 0 ).getApplicationPrefix() );
-            for ( final ExtraData extraData : extraDatas )
-            {
-                gen.map( extraData.getName().getLocalName() );
-                new PropertyTreeMapper( extraData.getData() ).serialize( gen );
+        extraDatas.stream()
+            .collect( Collectors.groupingBy( ExtraData::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
+            .forEach( ( appPrefix, appExtraDatas ) -> {
+                gen.map( appPrefix );
+                for ( final ExtraData extraData : appExtraDatas )
+                {
+                    gen.map( extraData.getName().getLocalName() );
+                    new PropertyTreeMapper( extraData.getData() ).serialize( gen );
+                    gen.end();
+                }
                 gen.end();
-            }
-            gen.end();
-        }
+            } );
         gen.end();
     }
 

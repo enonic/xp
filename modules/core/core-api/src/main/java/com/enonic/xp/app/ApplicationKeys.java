@@ -31,11 +31,6 @@ public final class ApplicationKeys
         return fromInternal( ImmutableSet.copyOf( applicationKeys ) );
     }
 
-    public static ApplicationKeys from( final Collection<? extends ApplicationKey> applicationKeys )
-    {
-        return fromInternal( ImmutableSet.copyOf( applicationKeys ) );
-    }
-
     public static ApplicationKeys from( final String... applicationKeys )
     {
         return Arrays.stream( applicationKeys ).map( ApplicationKey::from ).collect( collector() );

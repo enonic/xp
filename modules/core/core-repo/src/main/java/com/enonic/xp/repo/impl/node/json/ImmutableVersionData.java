@@ -210,7 +210,7 @@ public final class ImmutableVersionData
         public AttachedBinaries deserialize( JsonParser jsonParser, DeserializationContext deserializationContext )
             throws IOException
         {
-            return AttachedBinaries.fromCollection( jsonParser.readValueAs( VALUE_TYPE_REF ) );
+            return AttachedBinaries.from( jsonParser.readValueAs( VALUE_TYPE_REF ) );
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.enonic.xp.lib.content;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.Content;
@@ -96,14 +96,14 @@ public class UpdateMediaHandler
 
         Object state = map.get( "state" );
         Object checks = map.get( "checks" );
-        ImmutableMap.Builder<String, WorkflowCheckState> checkMapBuilder = ImmutableMap.builder();
+        Map<String, WorkflowCheckState> checkMapBuilder = new LinkedHashMap<>();
 
         if ( checks != null )
         {
             ( (Map<String, String>) checks ).forEach( ( key, value ) -> checkMapBuilder.put( key, WorkflowCheckState.valueOf( value ) ) );
         }
 
-        return WorkflowInfo.create().state( state instanceof String ? (String) state : null ).checks( checkMapBuilder.build() ).build();
+        return WorkflowInfo.create().state( state instanceof String ? (String) state : null ).checks( checkMapBuilder ).build();
     }
 
     public void setKey( final String key )

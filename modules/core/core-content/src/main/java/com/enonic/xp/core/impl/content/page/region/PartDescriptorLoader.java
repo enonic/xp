@@ -51,7 +51,7 @@ public class PartDescriptorLoader
     public DescriptorKeys find( final ApplicationKey key )
     {
 
-        return DescriptorKeys.from( descriptorKeyLocator.findKeys( key ) );
+        return descriptorKeyLocator.findKeys( key );
     }
 
     @Override

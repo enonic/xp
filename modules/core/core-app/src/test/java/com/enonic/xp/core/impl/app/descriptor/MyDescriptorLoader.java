@@ -29,7 +29,7 @@ public class MyDescriptorLoader
     @Override
     public DescriptorKeys find( final ApplicationKey key )
     {
-        return DescriptorKeys.from( new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key ) );
+        return new DescriptorKeyLocator( this.resourceService, PATH, true ).findKeys( key );
     }
 
     @Override

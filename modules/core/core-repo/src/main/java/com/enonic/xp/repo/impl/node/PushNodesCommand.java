@@ -98,10 +98,8 @@ public class PushNodesCommand
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
 
-        final List<NodeBranchEntry> list = nodeBranchEntries.getSet()
-            .stream()
-            .sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) )
-            .collect( Collectors.toList() );
+        final List<NodeBranchEntry> list =
+            nodeBranchEntries.stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) ).collect( Collectors.toList() );
 
         final Set<NodePath> alreadyAdded = new HashSet<>();
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();

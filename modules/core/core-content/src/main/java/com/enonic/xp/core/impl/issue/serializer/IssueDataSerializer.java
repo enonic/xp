@@ -50,7 +50,7 @@ public class IssueDataSerializer
         issueAsData.ifNotNull().addString( STATUS, params.getStatus().toString() );
         issueAsData.addString( DESCRIPTION, params.getDescription() );
 
-        if ( params.getApproverIds().getSize() > 0 )
+        if ( !params.getApproverIds().isEmpty() )
         {
             issueAsData.addStrings( APPROVERS, params.getApproverIds().
                 stream().map( PrincipalKey::toString ).collect( Collectors.toList() ) );
