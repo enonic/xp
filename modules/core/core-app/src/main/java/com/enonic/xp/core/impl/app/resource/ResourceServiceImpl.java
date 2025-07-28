@@ -56,12 +56,12 @@ public final class ResourceServiceImpl
     {
         final Pattern compiled = Pattern.compile( pattern );
 
-        return ResourceKeys.from( findApplicationUrlResolver( key ).map( ApplicationUrlResolver::findFiles )
+        return findApplicationUrlResolver( key ).map( ApplicationUrlResolver::findFiles )
                                       .orElse( Set.of() )
                                       .stream()
                                       .map( name -> ResourceKey.from( key, name ) )
                                       .filter( rk -> compiled.matcher( rk.getPath() ).find() )
-                                      .iterator() );
+            .collect( ResourceKeys.collector() );
     }
 
     private Optional<ApplicationUrlResolver> findApplicationUrlResolver( final ApplicationKey key )
