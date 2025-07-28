@@ -85,7 +85,6 @@ import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
-import com.enonic.xp.core.impl.content.serializer.FullContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -167,7 +166,7 @@ public class ContentServiceImpl
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.translator = new ContentNodeTranslator( nodeService, getContentDataSerializer() );
+        this.translator = new ContentNodeTranslator( nodeService, new ContentDataSerializer() );
     }
 
     @Override
@@ -1051,19 +1050,6 @@ public class ContentServiceImpl
             translator( translator ).
             build().
             execute();
-    }
-
-    private ContentDataSerializer getContentDataSerializer()
-    {
-        return config.resolveEmptyRegions() ? createFullContentDataSerializer() : new ContentDataSerializer();
-    }
-
-    private FullContentDataSerializer createFullContentDataSerializer()
-    {
-        return FullContentDataSerializer.create()
-            .layoutDescriptorService( layoutDescriptorService )
-            .pageDescriptorService( pageDescriptorService )
-            .build();
     }
 
     private static void verifyContextBranch( final Branch branch )

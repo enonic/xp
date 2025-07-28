@@ -15,10 +15,10 @@ import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
 
-class LayoutComponentDataSerializer
+final class LayoutComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<LayoutComponent>
 {
-    protected final RegionDataSerializer regionDataSerializer;
+    private final RegionDataSerializer regionDataSerializer;
 
     LayoutComponentDataSerializer( final RegionDataSerializer regionDataSerializer )
     {
