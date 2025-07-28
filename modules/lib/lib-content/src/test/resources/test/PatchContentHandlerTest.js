@@ -111,7 +111,7 @@ var expectedJson = {
                         'regions': {}
                     }
                 ],
-                name: 'top'
+                'name': 'top'
             },
             'bottom': {
                 'components': [
@@ -150,7 +150,7 @@ var expectedJson = {
     }
 };
 
-function globalEditor(c) {
+function globalPatcher(c) {
     c.displayName = 'Modified';
     c.data.a++;
     c.data.z = '99';
@@ -177,38 +177,38 @@ function globalEditor(c) {
     return c;
 }
 
-exports.update_notFound = function () {
-    var result = content.update({
+exports.patch_notFound = function () {
+    var result = content.patch({
         key: '123456',
-        editor: globalEditor
+        patcher: globalPatcher
     });
 
     assert.assertNull(result);
 };
 
-exports.updateById = function () {
-    var result = content.update({
+exports.patchById = function () {
+    var result = content.patch({
         key: '123456',
-        editor: globalEditor
+        patcher: globalPatcher
     });
 
-    assert.assertJsonEquals(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result.results[0].content);
 };
 
-exports.updateByPath = function () {
-    var result = content.update({
+exports.patchByPath = function () {
+    var result = content.patch({
         key: '/a/b/mycontent',
-        editor: globalEditor
+        patcher: globalPatcher
     });
 
-    assert.assertJsonEquals(expectedJson, result);
+    assert.assertJsonEquals(expectedJson, result.results[0].content);
 };
 
-exports.updateSiteConfig = function () {
+exports.patchSiteConfig = function () {
 
-    var result = content.update({
+    var result = content.patch({
         key: '/a/b/mycontent',
-        editor(c) {
+        patcher(c) {
             c.data.siteConfig = [];
             c.data.siteConfig[0] = {};
             c.data.siteConfig[0].applicationKey = 'appKey1';
@@ -240,14 +240,14 @@ exports.updateSiteConfig = function () {
         }
     ];
 
-    assert.assertJsonEquals(expect, result.data.siteConfig);
+    assert.assertJsonEquals(expect, result.results[0].content.data.siteConfig);
 };
 
-exports.updateSiteSingleDescriptor = function () {
+exports.patchSiteSingleDescriptor = function () {
 
-    var result = content.update({
+    var result = content.patch({
         key: '/a/b/mycontent',
-        editor(c) {
+        patcher(c) {
             c.data.siteConfig = {};
             c.data.siteConfig.applicationKey = 'appKey1';
             c.data.siteConfig.config = {};
@@ -268,61 +268,15 @@ exports.updateSiteSingleDescriptor = function () {
         }
     ;
 
-    assert.assertJsonEquals(expect, result.data.siteConfig);
+    assert.assertJsonEquals(expect, result.results[0].content.data.siteConfig);
 };
 
-exports.updateSiteConfig_strict = function () {
+exports.patchNotMappedXDataFieldName = function () {
 
-    try {
-        content.update({
-            key: '/a/b/mycontent',
-            editor(c) {
-                c.data.siteConfig = [];
-                c.data.siteConfig[0] = {};
-                c.data.siteConfig[0].applicationKey = 'appKey1';
-                c.data.siteConfig[0].config = {};
-                c.data.siteConfig[0].config.invalidField = 'a';
-
-                return c;
-            }
-        });
-        throw new Error();
-    } catch (e) {
-        assert.assertEquals('No mapping defined for property invalidField with value a', e.getMessage());
-    }
-};
-
-exports.updateNotMappedXDataFieldName_stricted = function () {
-
-    try {
-        var result = content.update({
-            key: '/a/b/mycontent',
-            editor(c) {
-                globalEditor(c);
-                c.x['com-enonic-myapplication'].other = {
-                    name: 'test',
-                    notMappedField: 'value'
-                };
-
-                return c;
-            }
-        });
-
-        throw new Error();
-    } catch (e) {
-        assert.assertEquals('No mapping defined for property notMappedField with value value', e.getMessage());
-    }
-
-
-};
-
-exports.updateNotMappedXDataFieldName_notStricted = function () {
-
-    var result = content.update({
+    var result = content.patch({
         key: '/a/b/mycontent',
-        requireValid: false,
-        editor(c) {
-            globalEditor(c);
+        patcher(c) {
+            globalPatcher(c);
             c.x['com-enonic-myapplication'].other = {
                 name: 'test',
                 notMappedField: 'value'
@@ -332,5 +286,39 @@ exports.updateNotMappedXDataFieldName_notStricted = function () {
         }
     });
 
-    assert.assertNotNull(result);
+    assert.assertJsonEquals("test", result.results[0].content.x['com-enonic-myapplication'].other.name);
+    assert.assertJsonEquals("value", result.results[0].content.x['com-enonic-myapplication'].other.notMappedField);
+
+
 };
+
+
+exports.patchWorkflowInfo = function () {
+
+    var expected = {
+        "state": "IN_PROGRESS",
+        "checks": {
+            "a": "PENDING",
+            "b": "APPROVED"
+        }
+    };
+
+    var result = content.patch({
+        key: '/a/b/mycontent',
+        patcher(c) {
+            globalPatcher(c);
+            c.workflow = {
+                state: 'IN_PROGRESS',
+                checks: {
+                    a: 'PENDING',
+                    b: 'APPROVED'
+                }
+            };
+
+            return c;
+        }
+    });
+
+    assert.assertJsonEquals(expected, result.results[0].content.workflow);
+};
+

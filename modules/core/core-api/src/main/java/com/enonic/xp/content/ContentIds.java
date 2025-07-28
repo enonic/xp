@@ -2,7 +2,7 @@ package com.enonic.xp.content;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
@@ -49,6 +49,11 @@ public final class ContentIds
         }
 
         return fromInternal( ImmutableSet.copyOf( ids ) );
+    }
+
+    public static Collector<ContentId, ?, ContentIds> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentIds::fromInternal );
     }
 
     private static ContentIds fromInternal( final ImmutableSet<ContentId> set )
