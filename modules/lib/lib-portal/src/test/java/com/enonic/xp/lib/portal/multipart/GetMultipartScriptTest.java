@@ -1,7 +1,7 @@
 package com.enonic.xp.lib.portal.multipart;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Spliterators;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -36,7 +36,7 @@ public class GetMultipartScriptTest
         final MultipartItem item1 = createItem( "item1", 10, "jpg", "image/png" );
         final MultipartItem item2 = createItem( "item2", 20, "jpg", "image/png" );
 
-        Mockito.when( form.iterator() ).thenReturn( List.of( item1, item2 ).iterator() );
+        Mockito.when( form.spliterator() ).thenReturn( List.of( item1, item2 ).spliterator() );
         Mockito.when( form.get( "item1", 0 ) ).thenReturn( item1 );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
     }
@@ -52,7 +52,7 @@ public class GetMultipartScriptTest
         Mockito.when( item1A.getAsString() ).thenReturn( "Some text" );
         Mockito.when( item1B.getAsString() ).thenReturn( "Other stuff" );
 
-        Mockito.when( form.iterator() ).thenReturn( List.of( item1A, item1B, item2 ).iterator() );
+        Mockito.when( form.spliterator() ).thenReturn( List.of( item1A, item1B, item2 ).spliterator() );
         Mockito.when( form.get( "file1", 0 ) ).thenReturn( item1A );
         Mockito.when( form.get( "file1", 1 ) ).thenReturn( item1B );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
@@ -66,7 +66,7 @@ public class GetMultipartScriptTest
         final MultipartItem item2A = createItem( "item2", "image1", 123, "png", "image/png" );
         final MultipartItem item2B = createItem( "item2", "image2", 456, "jpg", "image/jpeg" );
 
-        Mockito.when( form.iterator() ).thenReturn( List.of( item1, item2A, item2B ).iterator() );
+        Mockito.when( form.spliterator() ).thenReturn( List.of( item1, item2A, item2B ).spliterator() );
         Mockito.when( form.get( "item2", 0 ) ).thenReturn( item2A );
         Mockito.when( form.get( "item2", 1 ) ).thenReturn( item2B );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
@@ -216,6 +216,6 @@ public class GetMultipartScriptTest
     {
         MultipartForm form = Mockito.mock( MultipartForm.class );
         Mockito.when( this.multipartService.parse( Mockito.any() ) ).thenReturn( form );
-        Mockito.when( form.iterator() ).thenReturn( Collections.emptyIterator() );
+        Mockito.when( form.spliterator() ).thenReturn( Spliterators.emptySpliterator() );
     }
 }

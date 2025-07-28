@@ -2,6 +2,7 @@ package com.enonic.xp.media;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
@@ -57,7 +58,7 @@ public final class MediaInfo
         return textContent;
     }
 
-    public ImmutableMultimap<String, String> getMetadata()
+    public Multimap<String, String> getMetadata()
     {
         return metadata;
     }

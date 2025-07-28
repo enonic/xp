@@ -46,7 +46,7 @@ public final class PrincipalKeys
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), PrincipalKeys::fromInternal );
     }
 
-    public static PrincipalKeys fromInternal( final ImmutableSet<PrincipalKey> set )
+    private static PrincipalKeys fromInternal( final ImmutableSet<PrincipalKey> set )
     {
         return set.isEmpty() ? EMPTY : new PrincipalKeys( set );
     }

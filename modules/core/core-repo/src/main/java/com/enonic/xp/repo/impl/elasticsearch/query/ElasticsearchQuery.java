@@ -13,7 +13,7 @@ import org.elasticsearch.search.aggregations.AbstractAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.node.SearchOptimizer;
@@ -34,7 +34,7 @@ public class ElasticsearchQuery
 
     private final boolean explain;
 
-    private final ImmutableSet<SortBuilder> sortBuilders;
+    private final ImmutableList<SortBuilder> sortBuilders;
 
     private final int from;
 
@@ -42,9 +42,9 @@ public class ElasticsearchQuery
 
     private final int batchSize;
 
-    private final ImmutableSet<AbstractAggregationBuilder> aggregations;
+    private final ImmutableList<AbstractAggregationBuilder> aggregations;
 
-    private final ImmutableSet<SuggestBuilder.SuggestionBuilder> suggestions;
+    private final ImmutableList<SuggestBuilder.SuggestionBuilder> suggestions;
 
     private final ElasticHighlightQuery highlight;
 
@@ -62,12 +62,12 @@ public class ElasticsearchQuery
         this.filter = builder.filter;
         this.indexTypes = builder.indexTypes;
         this.indexNames = builder.indexNames;
-        this.sortBuilders = ImmutableSet.copyOf( builder.sortBuilders );
+        this.sortBuilders = ImmutableList.copyOf( builder.sortBuilders );
         this.size = builder.size;
         this.batchSize = builder.batchSize;
         this.from = builder.from;
-        this.aggregations = ImmutableSet.copyOf( builder.aggregations );
-        this.suggestions = ImmutableSet.copyOf( builder.suggestions );
+        this.aggregations = ImmutableList.copyOf( builder.aggregations );
+        this.suggestions = ImmutableList.copyOf( builder.suggestions );
         this.highlight = builder.highlight;
         this.returnFields = builder.returnFields;
         this.searchMode = builder.searchMode;
@@ -81,12 +81,12 @@ public class ElasticsearchQuery
         return new Builder();
     }
 
-    public ImmutableSet<AbstractAggregationBuilder> getAggregations()
+    public List<AbstractAggregationBuilder> getAggregations()
     {
         return aggregations;
     }
 
-    public ImmutableSet<SuggestBuilder.SuggestionBuilder> getSuggestions()
+    public List<SuggestBuilder.SuggestionBuilder> getSuggestions()
     {
         return suggestions;
     }
@@ -131,7 +131,7 @@ public class ElasticsearchQuery
         return returnFields;
     }
 
-    public ImmutableSet<SortBuilder> getSortBuilders()
+    public List<SortBuilder> getSortBuilders()
     {
         return sortBuilders;
     }

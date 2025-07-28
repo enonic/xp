@@ -85,7 +85,7 @@ public final class ContentPaths
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentPaths::fromInternal );
     }
 
-    public static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )
+    private static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )
     {
         return set.isEmpty() ? EMPTY : new ContentPaths( set );
     }

@@ -39,7 +39,7 @@ public final class PrincipalRelationships
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PrincipalRelationships::fromInternal );
     }
 
-    public static PrincipalRelationships fromInternal( final ImmutableList<PrincipalRelationship> list )
+    private static PrincipalRelationships fromInternal( final ImmutableList<PrincipalRelationship> list )
     {
         return list.isEmpty() ? EMPTY : new PrincipalRelationships( list );
     }

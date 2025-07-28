@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -21,7 +23,7 @@ final class Instruction
         return id;
     }
 
-    ImmutableList<String> attributes( final String name )
+    List<String> attributes( final String name )
     {
         return attributes.get( name );
     }

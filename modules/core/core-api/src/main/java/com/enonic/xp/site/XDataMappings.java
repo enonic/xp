@@ -36,7 +36,7 @@ public final class XDataMappings
         return xDataMappings instanceof XDataMappings x ? x : fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
-    public static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )
+    private static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )
     {
         return xDataMappings.isEmpty() ? EMPTY : new XDataMappings( xDataMappings );
     }

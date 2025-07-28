@@ -2,10 +2,7 @@ package com.enonic.xp.portal;
 
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.portal.postprocess.HtmlTag;
@@ -86,19 +83,13 @@ public final class PortalResponse
         {
             super( source );
             this.postProcess = source.postProcess;
-            putAllContributions( source.contributions );
+            this.contributions.putAll( source.contributions );
             this.applyFilters = source.applyFilters;
         }
 
         public Builder postProcess( final boolean postProcess )
         {
             this.postProcess = postProcess;
-            return this;
-        }
-
-        public Builder contributions( final ListMultimap<HtmlTag, String> contributions )
-        {
-            putAllContributions( contributions );
             return this;
         }
 
@@ -110,7 +101,7 @@ public final class PortalResponse
 
         public Builder contributionsFrom( final PortalResponse portalResponse )
         {
-            putAllContributions( portalResponse.contributions );
+            this.contributions.putAll( portalResponse.contributions );
             return this;
         }
 
@@ -132,9 +123,5 @@ public final class PortalResponse
             return new PortalResponse( this );
         }
 
-        private void putAllContributions( final Multimap<HtmlTag, String> contributions )
-        {
-            this.contributions.putAll( contributions );
-        }
     }
 }
