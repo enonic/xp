@@ -14,20 +14,10 @@ class CompareResultTranslator
 
         for ( final NodeComparison nodeComparison : nodeComparisons )
         {
-            builder.add( doTranslate( nodeComparison ) );
+            builder.add( new CompareContentResult( nodeComparison.getCompareStatus(), ContentId.from( nodeComparison.getNodeId() ) ) );
         }
 
         return builder.build();
-    }
-
-    public static CompareContentResult translate( final NodeComparison nodeComparison )
-    {
-        return doTranslate( nodeComparison );
-    }
-
-    private static CompareContentResult doTranslate( final NodeComparison nodeComparison )
-    {
-        return new CompareContentResult( nodeComparison.getCompareStatus(), ContentId.from( nodeComparison.getNodeId() ) );
     }
 
 }

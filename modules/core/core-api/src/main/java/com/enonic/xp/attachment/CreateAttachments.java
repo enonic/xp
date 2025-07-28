@@ -25,14 +25,14 @@ public final class CreateAttachments
         return EMPTY;
     }
 
-    public static CreateAttachments from( final CreateAttachment... contents )
+    public static CreateAttachments from( final CreateAttachment... attachments )
     {
-        return fromInternal( ImmutableList.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( attachments ) );
     }
 
-    public static CreateAttachments from( final Iterable<? extends CreateAttachment> contents )
+    public static CreateAttachments from( final Iterable<? extends CreateAttachment> attachments )
     {
-        return fromInternal( ImmutableList.copyOf( contents ) );
+        return attachments instanceof CreateAttachments a ? a : fromInternal( ImmutableList.copyOf( attachments ) );
     }
 
     public static Collector<CreateAttachment, ?, CreateAttachments> collector()

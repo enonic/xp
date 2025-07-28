@@ -33,7 +33,7 @@ public final class ResourceKeys
 
     public static ResourceKeys from( final Iterable<? extends ResourceKey> resourceKeys )
     {
-        return fromInternal( ImmutableList.copyOf( resourceKeys ) );
+        return resourceKeys instanceof ResourceKeys r ? r : fromInternal( ImmutableList.copyOf( resourceKeys ) );
     }
 
     public static ResourceKeys from( final Iterator<? extends ResourceKey> resourceKeys )

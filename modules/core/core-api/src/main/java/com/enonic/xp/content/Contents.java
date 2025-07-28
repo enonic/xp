@@ -42,7 +42,7 @@ public final class Contents
 
     public static Contents from( final Iterable<? extends Content> contents )
     {
-        return fromInternal( ImmutableSet.copyOf( contents ) );
+        return contents instanceof Contents c ? c : fromInternal( ImmutableSet.copyOf( contents ) );
     }
 
     public static Collector<Content, ?, Contents> collector()

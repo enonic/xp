@@ -60,7 +60,7 @@ public final class Mixins
 
     public static Mixins from( final Iterable<? extends Mixin> mixins )
     {
-        return fromInternal( ImmutableList.copyOf( mixins ) );
+        return mixins instanceof Mixins m ? m : fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
     public static Mixins from( final Iterator<? extends Mixin> mixins )

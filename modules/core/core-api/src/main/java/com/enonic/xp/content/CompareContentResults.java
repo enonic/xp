@@ -1,8 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
@@ -13,11 +11,11 @@ import com.enonic.xp.annotation.PublicApi;
 public final class CompareContentResults
     implements Iterable<CompareContentResult>
 {
-    private final Map<ContentId, CompareContentResult> compareContentResultsMap;
+    private final ImmutableMap<ContentId, CompareContentResult> compareContentResultsMap;
 
-    private CompareContentResults( Builder builder )
+    private CompareContentResults( ImmutableMap<ContentId, CompareContentResult> builder )
     {
-        compareContentResultsMap = ImmutableMap.copyOf( builder.compareResultsMap );
+        compareContentResultsMap = builder;
     }
 
     public static Builder create()
@@ -36,11 +34,6 @@ public final class CompareContentResults
         return compareContentResultsMap.values().iterator();
     }
 
-    public Map<ContentId, CompareContentResult> getCompareContentResultsMap()
-    {
-        return compareContentResultsMap;
-    }
-
     public ContentIds contentIds()
     {
         return ContentIds.from( compareContentResultsMap.keySet() );
@@ -53,7 +46,7 @@ public final class CompareContentResults
 
     public static final class Builder
     {
-        private final Map<ContentId, CompareContentResult> compareResultsMap = new LinkedHashMap<>();
+        private final ImmutableMap.Builder<ContentId, CompareContentResult> compareResultsMap = ImmutableMap.builder();
 
         private Builder()
         {
@@ -73,7 +66,7 @@ public final class CompareContentResults
 
         public CompareContentResults build()
         {
-            return new CompareContentResults( this );
+            return new CompareContentResults( compareResultsMap.buildKeepingLast() );
         }
     }
 }

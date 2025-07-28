@@ -31,7 +31,7 @@ public final class NodeCommitEntries
 
     public static NodeCommitEntries from( final Iterable<NodeCommitEntry> nodeCommitEntries )
     {
-        return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
+        return nodeCommitEntries instanceof NodeCommitEntries n ? n : fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
     }
 
     public static Collector<NodeCommitEntry, ?, NodeCommitEntries> collector()

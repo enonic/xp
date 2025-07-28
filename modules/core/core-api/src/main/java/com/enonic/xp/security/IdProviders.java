@@ -31,7 +31,7 @@ public final class IdProviders
 
     public static IdProviders from( final Iterable<? extends IdProvider> idProviders )
     {
-        return fromInternal( ImmutableList.copyOf( idProviders ) );
+        return idProviders instanceof IdProviders i ? i : fromInternal( ImmutableList.copyOf( idProviders ) );
     }
 
     public static Collector<IdProvider, ?, IdProviders> collector()

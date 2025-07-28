@@ -27,7 +27,7 @@ public class NodeVersionQueryResultFactory
     {
         final NodeVersionQueryResult.Builder findNodeVersionsResult = NodeVersionQueryResult.create();
 
-        findNodeVersionsResult.hits( searchResult.getHits().getSize() );
+        findNodeVersionsResult.hits( searchResult.getHits().size() );
         findNodeVersionsResult.totalHits( searchResult.getTotalHits() );
         findNodeVersionsResult.from( query.getFrom() );
         findNodeVersionsResult.to( query.getSize() );

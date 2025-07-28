@@ -60,7 +60,7 @@ public final class XDatas
 
     public static XDatas from( final Iterable<? extends XData> xDatas )
     {
-        return fromInternal( ImmutableList.copyOf( xDatas ) );
+        return xDatas instanceof XDatas x ? x : fromInternal( ImmutableList.copyOf( xDatas ) );
     }
 
     public static XDatas from( final Iterator<? extends XData> xDatas )

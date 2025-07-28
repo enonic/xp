@@ -33,7 +33,7 @@ public final class ContentTypes
 
     public static ContentTypes from( final Iterable<? extends ContentType> contentTypes )
     {
-        return fromInternal( ImmutableList.copyOf( contentTypes ) );
+        return contentTypes instanceof ContentTypes c ? c : fromInternal( ImmutableList.copyOf( contentTypes ) );
     }
 
     public static Collector<ContentType, ?, ContentTypes> collector()

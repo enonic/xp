@@ -31,7 +31,7 @@ public final class OrderExpressions
 
     public static OrderExpressions from( final Iterable<OrderExpr> orderExprs )
     {
-        return fromInternal( ImmutableList.copyOf( orderExprs ) );
+        return orderExprs instanceof OrderExpressions o ? o : fromInternal( ImmutableList.copyOf( orderExprs ) );
     }
 
     public static Collector<OrderExpr, ?, OrderExpressions> collector()

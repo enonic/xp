@@ -33,7 +33,7 @@ public final class XDataMappings
 
     public static XDataMappings from( final Iterable<? extends XDataMapping> xDataMappings )
     {
-        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
+        return xDataMappings instanceof XDataMappings x ? x : fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
     public static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )

@@ -30,9 +30,7 @@ public final class PageDescriptors
 
     public static PageDescriptors from( final Iterable<? extends PageDescriptor> pageDescriptors )
     {
-        return pageDescriptors instanceof PageDescriptors
-            ? (PageDescriptors) pageDescriptors
-            : fromInternal( ImmutableList.copyOf( pageDescriptors ) );
+        return pageDescriptors instanceof PageDescriptors p ? p : fromInternal( ImmutableList.copyOf( pageDescriptors ) );
     }
 
     private static PageDescriptors fromInternal( final ImmutableList<PageDescriptor> list )

@@ -1,38 +1,27 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import com.google.common.collect.ImmutableMap;
 
 public final class NodeBranchEntries
     implements Iterable<NodeBranchEntry>
 {
-    private static final NodeBranchEntries EMPTY = new NodeBranchEntries( Collections.emptySet() );
+    private static final NodeBranchEntries EMPTY = new NodeBranchEntries( ImmutableMap.of() );
 
-    private final Map<NodeId, NodeBranchEntry> branchNodeVersionMap;
+    private final ImmutableMap<NodeId, NodeBranchEntry> branchNodeVersionMap;
 
-    private NodeBranchEntries( final Builder builder )
+    private NodeBranchEntries( final ImmutableMap<NodeId, NodeBranchEntry> entries )
     {
-        this.branchNodeVersionMap = Collections.unmodifiableMap( builder.map );
+        this.branchNodeVersionMap = entries;
     }
 
-    private NodeBranchEntries( final Iterable<? extends NodeBranchEntry> entries )
+    private static NodeBranchEntries fromInternal( final ImmutableMap<NodeId, NodeBranchEntry> entries )
     {
-        Map<NodeId, NodeBranchEntry> builder = new LinkedHashMap<>();
-        for ( NodeBranchEntry entry : entries )
-        {
-            builder.put( entry.getNodeId(), entry );
-        }
-        this.branchNodeVersionMap = Collections.unmodifiableMap( builder );
-    }
-
-    public static NodeBranchEntries from( final Iterable<? extends NodeBranchEntry> nodeBranchEntries )
-    {
-        return new NodeBranchEntries( nodeBranchEntries );
+        return entries.isEmpty() ? EMPTY : new NodeBranchEntries( entries );
     }
 
     public static NodeBranchEntries empty()
@@ -83,7 +72,7 @@ public final class NodeBranchEntries
 
     public static final class Builder
     {
-        private final Map<NodeId, NodeBranchEntry> map = new LinkedHashMap<>();
+        private final ImmutableMap.Builder<NodeId, NodeBranchEntry> map = ImmutableMap.builder();
 
         public Builder add( final NodeBranchEntry nodeBranchEntry )
         {
@@ -99,7 +88,7 @@ public final class NodeBranchEntries
 
         public NodeBranchEntries build()
         {
-            return this.map.isEmpty() ? EMPTY : new NodeBranchEntries( this );
+            return fromInternal( map.buildKeepingLast() );
         }
     }
 }

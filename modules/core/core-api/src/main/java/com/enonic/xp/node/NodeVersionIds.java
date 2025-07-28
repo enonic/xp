@@ -31,7 +31,7 @@ public final class NodeVersionIds
 
     public static NodeVersionIds from( final Iterable<? extends NodeVersionId> nodeVersionIds )
     {
-        return fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
+        return nodeVersionIds instanceof NodeVersionIds n ? n : fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
     }
 
     public static Collector<NodeVersionId, ?, NodeVersionIds> collector()

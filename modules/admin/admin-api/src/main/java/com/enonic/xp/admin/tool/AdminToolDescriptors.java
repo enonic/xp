@@ -31,7 +31,7 @@ public final class AdminToolDescriptors
 
     public static AdminToolDescriptors from( final Iterable<AdminToolDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof AdminToolDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     private static AdminToolDescriptors fromInternal( final ImmutableList<AdminToolDescriptor> list )

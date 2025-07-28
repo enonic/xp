@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;

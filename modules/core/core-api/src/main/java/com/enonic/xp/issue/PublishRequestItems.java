@@ -31,7 +31,7 @@ public final class PublishRequestItems
 
     public static PublishRequestItems from( final Iterable<PublishRequestItem> items )
     {
-        return fromInternal( ImmutableList.copyOf( items ) );
+        return items instanceof PublishRequestItems p ? p : fromInternal( ImmutableList.copyOf( items ) );
     }
 
     public static Collector<PublishRequestItem, ?, PublishRequestItems> collector()

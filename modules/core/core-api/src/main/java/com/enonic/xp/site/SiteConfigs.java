@@ -38,7 +38,7 @@ public final class SiteConfigs
 
     public static SiteConfigs from( final Iterable<? extends SiteConfig> siteConfigs )
     {
-        return fromInternal( ImmutableList.copyOf( siteConfigs ) );
+        return siteConfigs instanceof SiteConfigs s ? s : fromInternal( ImmutableList.copyOf( siteConfigs ) );
     }
 
     public static Collector<SiteConfig, ?, SiteConfigs> collector()

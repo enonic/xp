@@ -32,7 +32,7 @@ public final class Nodes
 
     public static Nodes from( final Iterable<? extends Node> nodes )
     {
-        return nodes instanceof Nodes ? (Nodes) nodes : fromInternal( ImmutableSet.copyOf( nodes ) );
+        return nodes instanceof Nodes n ? n : fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
     public static Collector<Node, ?, Nodes> collector()

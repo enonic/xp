@@ -26,7 +26,7 @@ public final class Aggregations
 
     public static Aggregations from( final Iterable<Aggregation> aggregations )
     {
-        return fromInternal( ImmutableList.copyOf( aggregations ) );
+        return aggregations instanceof Aggregations a ? a : fromInternal( ImmutableList.copyOf( aggregations ) );
     }
 
     public static Aggregations from( final Aggregation... aggregations )

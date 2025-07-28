@@ -29,7 +29,7 @@ public final class SuggestionQueries
 
     public static SuggestionQueries from( final Iterable<SuggestionQuery> suggestionQueries )
     {
-        return fromInternal( ImmutableList.copyOf( suggestionQueries ) );
+        return suggestionQueries instanceof SuggestionQueries s ? s : fromInternal( ImmutableList.copyOf( suggestionQueries ) );
     }
 
     public static Collector<SuggestionQuery, ?, SuggestionQueries> collector()

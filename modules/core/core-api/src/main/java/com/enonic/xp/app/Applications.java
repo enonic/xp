@@ -1,10 +1,6 @@
 package com.enonic.xp.app;
 
-import java.util.Collection;
-import java.util.function.Function;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -13,41 +9,35 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class Applications
     extends AbstractImmutableEntityList<Application>
 {
-    private final ImmutableMap<ApplicationKey, Application> map;
+    private static final Applications EMPTY = new Applications( ImmutableList.of() );
 
     private Applications( final ImmutableList<Application> list )
     {
         super( list );
-        this.map = list.stream().collect( ImmutableMap.toImmutableMap( Application::getKey, Function.identity() ) );
     }
 
     public ApplicationKeys getApplicationKeys()
     {
-        return ApplicationKeys.from( map.keySet() );
-    }
-
-    public Application getApplication( final ApplicationKey applicationKey )
-    {
-        return map.get( applicationKey );
+        return list.stream().map( Application::getKey ).collect( ApplicationKeys.collector() );
     }
 
     public static Applications empty()
     {
-        return new Applications( ImmutableList.of() );
+        return EMPTY;
     }
 
     public static Applications from( final Application... applications )
     {
-        return new Applications( ImmutableList.copyOf( applications ) );
+        return fromInternal( ImmutableList.copyOf( applications ) );
     }
 
     public static Applications from( final Iterable<? extends Application> applications )
     {
-        return new Applications( ImmutableList.copyOf( applications ) );
+        return applications instanceof Applications a ? a : fromInternal( ImmutableList.copyOf( applications ) );
     }
 
-    public static Applications from( final Collection<? extends Application> applications )
+    private static Applications fromInternal( ImmutableList<Application> list )
     {
-        return new Applications( ImmutableList.copyOf( applications ) );
+        return list.isEmpty() ? EMPTY : new Applications( list );
     }
 }

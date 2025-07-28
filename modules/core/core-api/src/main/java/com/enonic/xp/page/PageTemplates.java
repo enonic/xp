@@ -49,7 +49,7 @@ public final class PageTemplates
 
     public static PageTemplates from( final Iterable<? extends PageTemplate> templates )
     {
-        return fromInternal( ImmutableList.copyOf( templates ) );
+        return templates instanceof PageTemplates t ? t : fromInternal( ImmutableList.copyOf( templates ) );
     }
 
     public static Collector<PageTemplate, ?, PageTemplates> collector()

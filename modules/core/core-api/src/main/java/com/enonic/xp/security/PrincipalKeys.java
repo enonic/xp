@@ -33,7 +33,7 @@ public final class PrincipalKeys
 
     public static PrincipalKeys from( final Iterable<? extends PrincipalKey> principalKeys )
     {
-        return fromInternal( ImmutableSet.copyOf( principalKeys ) );
+        return principalKeys instanceof PrincipalKeys p ? p : fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }
 
     public static PrincipalKeys from( final String... principalKeys )

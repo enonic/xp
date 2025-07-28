@@ -38,7 +38,7 @@ public final class Repositories
 
     public static Repositories from( final Iterable<? extends Repository> repositories )
     {
-        return fromInternal( ImmutableSet.copyOf( repositories ) );
+        return repositories instanceof Repositories r ? r : fromInternal( ImmutableSet.copyOf( repositories ) );
     }
 
     public static Collector<Repository, ?, Repositories> collector()

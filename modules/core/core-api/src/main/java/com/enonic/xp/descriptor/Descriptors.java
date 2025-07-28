@@ -40,7 +40,7 @@ public final class Descriptors<T extends Descriptor>
 
     public static <T extends Descriptor> Descriptors<T> from( final Iterable<? extends T> descriptors )
     {
-        return new Descriptors<>( descriptors );
+        return descriptors instanceof Descriptors<? extends T> ? (Descriptors<T>) descriptors : new Descriptors<>( descriptors );
     }
 
     public static <T extends Descriptor> Collector<T, ?, Descriptors<T>> collector()

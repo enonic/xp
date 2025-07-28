@@ -31,7 +31,7 @@ public final class RoutableNodeVersionIds
 
     public static RoutableNodeVersionIds from( final Iterable<? extends RoutableNodeVersionId> routableNodeVersionIds )
     {
-        return fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
+        return routableNodeVersionIds instanceof RoutableNodeVersionIds r ? r : fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }
 
     public static Collector<RoutableNodeVersionId, ?, RoutableNodeVersionIds> collector()

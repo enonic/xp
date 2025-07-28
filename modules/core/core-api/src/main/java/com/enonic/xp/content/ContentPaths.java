@@ -77,7 +77,7 @@ public final class ContentPaths
 
     public static ContentPaths from( final Iterable<ContentPath> paths )
     {
-        return fromInternal( ImmutableSet.copyOf( paths ) );
+        return paths instanceof ContentPaths p ? p : fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
     public static Collector<ContentPath, ?, ContentPaths> collector()

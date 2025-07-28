@@ -48,7 +48,7 @@ public final class NodeIds
 
     public static NodeIds from( final Iterable<NodeId> ids )
     {
-        return ids instanceof NodeIds ? (NodeIds) ids : fromInternal( ImmutableSet.copyOf( ids ) );
+        return ids instanceof NodeIds i ? i : fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static Collector<NodeId, ?, NodeIds> collector()

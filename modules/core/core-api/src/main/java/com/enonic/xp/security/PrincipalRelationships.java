@@ -31,7 +31,7 @@ public final class PrincipalRelationships
 
     public static PrincipalRelationships from( final Iterable<? extends PrincipalRelationship> principalRelationships )
     {
-        return fromInternal( ImmutableList.copyOf( principalRelationships ) );
+        return principalRelationships instanceof PrincipalRelationships p ? p : fromInternal( ImmutableList.copyOf( principalRelationships ) );
     }
 
     public static Collector<PrincipalRelationship, ?, PrincipalRelationships> collector()

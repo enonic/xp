@@ -29,7 +29,7 @@ public final class ResponseProcessorDescriptors
 
     public static ResponseProcessorDescriptors from( final Iterable<ResponseProcessorDescriptor> responseDescriptors )
     {
-        return fromInternal( ImmutableList.copyOf( responseDescriptors ) );
+        return responseDescriptors instanceof ResponseProcessorDescriptors r ? r : fromInternal( ImmutableList.copyOf( responseDescriptors ) );
     }
 
     private static ResponseProcessorDescriptors fromInternal( final ImmutableList<ResponseProcessorDescriptor> xDataMappings )

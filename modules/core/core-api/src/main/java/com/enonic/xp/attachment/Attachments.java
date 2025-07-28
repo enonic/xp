@@ -57,14 +57,14 @@ public final class Attachments
         return EMPTY;
     }
 
-    public static Attachments from( final Attachment... contents )
+    public static Attachments from( final Attachment... attachments )
     {
-        return fromInternal( ImmutableList.copyOf( contents ) );
+        return fromInternal( ImmutableList.copyOf( attachments ) );
     }
 
-    public static Attachments from( final Iterable<? extends Attachment> contents )
+    public static Attachments from( final Iterable<? extends Attachment> attachments )
     {
-        return fromInternal( ImmutableList.copyOf( contents ) );
+        return attachments instanceof Attachments a ? a : fromInternal( ImmutableList.copyOf( attachments ) );
     }
 
     private static Attachments fromInternal( final ImmutableList<Attachment> list )

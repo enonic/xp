@@ -43,7 +43,7 @@ public final class MixinNames
 
     public static MixinNames from( final Iterable<MixinName> mixinNames )
     {
-        return fromInternal( ImmutableSet.copyOf( mixinNames ) );
+        return mixinNames instanceof MixinNames m ? m : fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
     private static MixinNames fromInternal( final ImmutableSet<MixinName> mixinNames )

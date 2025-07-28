@@ -32,7 +32,7 @@ public final class PartDescriptors
 
     public static PartDescriptors from( final Iterable<? extends PartDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof PartDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static Collector<PartDescriptor, ?, PartDescriptors> collector()

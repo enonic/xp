@@ -28,7 +28,7 @@ public final class ApplicationKeys
 
     public static ApplicationKeys from( final Iterable<? extends ApplicationKey> applicationKeys )
     {
-        return fromInternal( ImmutableSet.copyOf( applicationKeys ) );
+        return applicationKeys instanceof ApplicationKeys a ? a : fromInternal( ImmutableSet.copyOf( applicationKeys ) );
     }
 
     public static ApplicationKeys from( final String... applicationKeys )

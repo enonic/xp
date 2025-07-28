@@ -31,7 +31,7 @@ public final class AggregationQueries
 
     public static AggregationQueries from( final Iterable<AggregationQuery> aggregationQueries )
     {
-        return fromInternal( ImmutableList.copyOf( aggregationQueries ) );
+        return aggregationQueries instanceof AggregationQueries a ? a : fromInternal( ImmutableList.copyOf( aggregationQueries ) );
     }
 
     public static Collector<AggregationQuery, ?, AggregationQueries> collector()

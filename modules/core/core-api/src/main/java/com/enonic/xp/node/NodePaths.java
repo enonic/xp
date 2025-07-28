@@ -38,7 +38,7 @@ public final class NodePaths
 
     public static NodePaths from( final Iterable<NodePath> paths )
     {
-        return paths instanceof NodePaths ? (NodePaths) paths : fromInternal( ImmutableSet.copyOf( paths ) );
+        return paths instanceof NodePaths p ? p : fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
     public static Collector<NodePath, ?, NodePaths> collector()

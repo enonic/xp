@@ -32,7 +32,7 @@ public final class LayoutDescriptors
 
     public static LayoutDescriptors from( final Iterable<? extends LayoutDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof LayoutDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static Collector<LayoutDescriptor, ?, LayoutDescriptors> collector()

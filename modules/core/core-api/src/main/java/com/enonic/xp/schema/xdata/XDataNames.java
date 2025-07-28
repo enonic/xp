@@ -43,7 +43,7 @@ public final class XDataNames
 
     public static XDataNames from( final Iterable<XDataName> xdataNames )
     {
-        return fromInternal( ImmutableSet.copyOf( xdataNames ) );
+        return xdataNames instanceof XDataNames x ? x : fromInternal( ImmutableSet.copyOf( xdataNames ) );
     }
 
     public static Collector<XDataName, ?, XDataNames> collector()

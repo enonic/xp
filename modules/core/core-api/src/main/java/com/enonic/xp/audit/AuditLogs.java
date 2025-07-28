@@ -30,7 +30,7 @@ public final class AuditLogs
 
     public static AuditLogs from( final Iterable<? extends AuditLog> auditLogs )
     {
-        return fromInternal( ImmutableList.copyOf( auditLogs ) );
+        return auditLogs instanceof AuditLogs a ? a : fromInternal( ImmutableList.copyOf( auditLogs ) );
     }
 
     public static Collector<AuditLog, ?, AuditLogs> collector()

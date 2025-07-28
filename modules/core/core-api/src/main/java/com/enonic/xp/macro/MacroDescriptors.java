@@ -31,7 +31,7 @@ public final class MacroDescriptors
 
     public static MacroDescriptors from( final Iterable<? extends MacroDescriptor> macroDescriptors )
     {
-        return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
+        return macroDescriptors instanceof MacroDescriptors m ? m : fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }
 
     public static Collector<? super MacroDescriptor, ?, MacroDescriptors> collector()

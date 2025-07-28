@@ -43,7 +43,7 @@ public final class AuditLogUris
 
     public static AuditLogUris from( final Iterable<AuditLogUri> uris )
     {
-        return fromInternal( ImmutableSet.copyOf( uris ) );
+        return uris instanceof AuditLogUris u ? u : fromInternal( ImmutableSet.copyOf( uris ) );
     }
 
     public static Collector<AuditLogUri, ?, AuditLogUris> collector()

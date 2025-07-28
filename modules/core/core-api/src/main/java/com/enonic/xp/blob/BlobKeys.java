@@ -31,7 +31,7 @@ public final class BlobKeys
 
     public static BlobKeys from( final Iterable<? extends BlobKey> blobKeys )
     {
-        return fromInternal( ImmutableSet.copyOf( blobKeys ) );
+        return blobKeys instanceof BlobKeys b ? b : fromInternal( ImmutableSet.copyOf( blobKeys ) );
     }
 
     public static Collector<BlobKey, ?, BlobKeys> collector()
