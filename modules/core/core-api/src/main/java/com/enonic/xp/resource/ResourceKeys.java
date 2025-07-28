@@ -1,7 +1,6 @@
 package com.enonic.xp.resource;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -31,14 +30,9 @@ public final class ResourceKeys
         return fromInternal( ImmutableList.copyOf( resourceKeys ) );
     }
 
-    public static ResourceKeys from( final Iterable<? extends ResourceKey> resourceKeys )
+    public static ResourceKeys from( final Iterable<ResourceKey> resourceKeys )
     {
         return resourceKeys instanceof ResourceKeys r ? r : fromInternal( ImmutableList.copyOf( resourceKeys ) );
-    }
-
-    public static ResourceKeys from( final Iterator<? extends ResourceKey> resourceKeys )
-    {
-        return fromInternal( ImmutableList.copyOf( resourceKeys ) );
     }
 
     public static ResourceKeys from( final String... resourceKeys )

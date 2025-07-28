@@ -71,7 +71,7 @@ public final class AuditLogUris
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends AuditLogUri> auditLogUris )
+        public Builder addAll( final Iterable<AuditLogUri> auditLogUris )
         {
             this.contents.addAll( auditLogUris );
             return this;

@@ -71,7 +71,7 @@ public final class AuditLogIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends AuditLogId> auditLogIds )
+        public Builder addAll( final Iterable<AuditLogId> auditLogIds )
         {
             this.contents.addAll( auditLogIds );
             return this;

@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class Nodes
         return fromInternal( ImmutableSet.copyOf( nodes ) );
     }
 
-    public static Nodes from( final Iterable<? extends Node> nodes )
+    public static Nodes from( final Iterable<Node> nodes )
     {
         return nodes instanceof Nodes n ? n : fromInternal( ImmutableSet.copyOf( nodes ) );
     }
@@ -70,7 +69,7 @@ public final class Nodes
             return this;
         }
 
-        public Builder addAll( Iterable<? extends Node> nodes )
+        public Builder addAll( Iterable<Node> nodes )
         {
             this.nodes.addAll( nodes );
             return this;

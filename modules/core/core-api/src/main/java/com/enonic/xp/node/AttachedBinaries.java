@@ -33,7 +33,7 @@ public final class AttachedBinaries
             .orElse( null );
     }
 
-    public static AttachedBinaries from( final Iterable<? extends AttachedBinary> attachedBinaries )
+    public static AttachedBinaries from( final Iterable<AttachedBinary> attachedBinaries )
     {
         return attachedBinaries instanceof AttachedBinaries a ? a : fromInternal( ImmutableSet.copyOf( attachedBinaries ) );
     }
@@ -63,7 +63,7 @@ public final class AttachedBinaries
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends AttachedBinary> attachedBinaries )
+        public Builder addAll( final Iterable<AttachedBinary> attachedBinaries )
         {
             this.nodeAttachedBinaries.addAll( attachedBinaries );
             return this;

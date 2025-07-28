@@ -71,7 +71,7 @@ public final class NodeIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends NodeId> nodeIds )
+        public Builder addAll( final Iterable<NodeId> nodeIds )
         {
             this.nodeIds.addAll( nodeIds );
             return this;

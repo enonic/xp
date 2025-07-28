@@ -1,7 +1,5 @@
 package com.enonic.xp.page;
 
-import java.util.Collection;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -28,7 +26,7 @@ public final class PageDescriptors
         return fromInternal( ImmutableList.copyOf( pageDescriptors ) );
     }
 
-    public static PageDescriptors from( final Iterable<? extends PageDescriptor> pageDescriptors )
+    public static PageDescriptors from( final Iterable<PageDescriptor> pageDescriptors )
     {
         return pageDescriptors instanceof PageDescriptors p ? p : fromInternal( ImmutableList.copyOf( pageDescriptors ) );
     }

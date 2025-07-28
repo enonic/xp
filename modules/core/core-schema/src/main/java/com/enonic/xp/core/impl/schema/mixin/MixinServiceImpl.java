@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -62,7 +61,7 @@ public final class MixinServiceImpl
             return Mixins.empty();
         }
 
-        return Mixins.from( names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+        return names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( Mixins.collector() );
     }
 
     @Override

@@ -27,7 +27,7 @@ public final class StyleDescriptors
         return fromInternal( ImmutableList.copyOf( styleDescriptors ) );
     }
 
-    public static StyleDescriptors from( final Iterable<? extends StyleDescriptor> styleDescriptors )
+    public static StyleDescriptors from( final Iterable<StyleDescriptor> styleDescriptors )
     {
         return styleDescriptors instanceof StyleDescriptors s ? s : fromInternal( ImmutableList.copyOf( styleDescriptors ) );
     }

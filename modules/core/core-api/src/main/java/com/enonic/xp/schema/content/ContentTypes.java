@@ -1,7 +1,5 @@
 package com.enonic.xp.schema.content;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -31,7 +29,7 @@ public final class ContentTypes
         return fromInternal( ImmutableList.copyOf( contentTypes ) );
     }
 
-    public static ContentTypes from( final Iterable<? extends ContentType> contentTypes )
+    public static ContentTypes from( final Iterable<ContentType> contentTypes )
     {
         return contentTypes instanceof ContentTypes c ? c : fromInternal( ImmutableList.copyOf( contentTypes ) );
     }

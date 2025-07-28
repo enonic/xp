@@ -54,7 +54,7 @@ public final class AggregationQueries
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends AggregationQuery> aggregationQueries )
+        public Builder addAll( final Iterable<AggregationQuery> aggregationQueries )
         {
             this.aggregationQueries.addAll( aggregationQueries );
             return this;

@@ -29,7 +29,7 @@ public final class PrincipalRelationships
         return fromInternal( ImmutableList.copyOf( principalRelationships ) );
     }
 
-    public static PrincipalRelationships from( final Iterable<? extends PrincipalRelationship> principalRelationships )
+    public static PrincipalRelationships from( final Iterable<PrincipalRelationship> principalRelationships )
     {
         return principalRelationships instanceof PrincipalRelationships p ? p : fromInternal( ImmutableList.copyOf( principalRelationships ) );
     }

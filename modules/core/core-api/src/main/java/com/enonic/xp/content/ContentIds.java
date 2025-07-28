@@ -78,7 +78,7 @@ public final class ContentIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends ContentId> contentIds )
+        public Builder addAll( final Iterable<ContentId> contentIds )
         {
             this.contents.addAll( contentIds );
             return this;

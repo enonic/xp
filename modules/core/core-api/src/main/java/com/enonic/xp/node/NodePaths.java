@@ -66,7 +66,7 @@ public final class NodePaths
             return this;
         }
 
-        public Builder addNodePaths( final Iterable<? extends NodePath> nodePaths )
+        public Builder addNodePaths( final Iterable<NodePath> nodePaths )
         {
             this.nodePaths.addAll( nodePaths );
             return this;

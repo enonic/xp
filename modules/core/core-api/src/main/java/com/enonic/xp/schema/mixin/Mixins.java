@@ -1,7 +1,6 @@
 package com.enonic.xp.schema.mixin;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -58,14 +57,9 @@ public final class Mixins
         return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Mixins from( final Iterable<? extends Mixin> mixins )
+    public static Mixins from( final Iterable<Mixin> mixins )
     {
         return mixins instanceof Mixins m ? m : fromInternal( ImmutableList.copyOf( mixins ) );
-    }
-
-    public static Mixins from( final Iterator<? extends Mixin> mixins )
-    {
-        return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
     public static Collector <Mixin, ?, Mixins> collector()
@@ -93,7 +87,7 @@ public final class Mixins
             return this;
         }
 
-        public Builder addAll( Iterable<? extends Mixin> nodes )
+        public Builder addAll( Iterable<Mixin> nodes )
         {
             builder.addAll( nodes );
             return this;

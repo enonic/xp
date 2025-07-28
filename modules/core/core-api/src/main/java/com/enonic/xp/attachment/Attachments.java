@@ -1,7 +1,6 @@
 package com.enonic.xp.attachment;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import com.google.common.collect.ImmutableList;
 
@@ -62,7 +61,7 @@ public final class Attachments
         return fromInternal( ImmutableList.copyOf( attachments ) );
     }
 
-    public static Attachments from( final Iterable<? extends Attachment> attachments )
+    public static Attachments from( final Iterable<Attachment> attachments )
     {
         return attachments instanceof Attachments a ? a : fromInternal( ImmutableList.copyOf( attachments ) );
     }

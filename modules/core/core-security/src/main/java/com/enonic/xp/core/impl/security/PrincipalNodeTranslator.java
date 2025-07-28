@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,14 +30,7 @@ abstract class PrincipalNodeTranslator
 {
     static Principals fromNodes( final Nodes nodes )
     {
-        final LinkedHashSet<Principal> principals = new LinkedHashSet<>();
-
-        for ( final Node node : nodes )
-        {
-            principals.add( doCreatePrincipalFromNode( node ) );
-        }
-
-        return Principals.from( principals );
+        return nodes.stream().map( PrincipalNodeTranslator::doCreatePrincipalFromNode ).collect( Principals.collector() );
     }
 
     static Principal fromNode( final Node node )

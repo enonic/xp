@@ -1,6 +1,5 @@
 package com.enonic.xp.audit;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public final class AuditLogs
         return fromInternal( ImmutableList.copyOf( auditLogs ) );
     }
 
-    public static AuditLogs from( final Iterable<? extends AuditLog> auditLogs )
+    public static AuditLogs from( final Iterable<AuditLog> auditLogs )
     {
         return auditLogs instanceof AuditLogs a ? a : fromInternal( ImmutableList.copyOf( auditLogs ) );
     }
@@ -65,7 +64,7 @@ public final class AuditLogs
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends AuditLog> auditLogs )
+        public Builder addAll( final Iterable<AuditLog> auditLogs )
         {
             this.auditLogs.addAll( auditLogs );
             return this;

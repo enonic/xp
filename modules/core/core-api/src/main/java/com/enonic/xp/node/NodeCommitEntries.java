@@ -59,7 +59,7 @@ public final class NodeCommitEntries
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends NodeCommitEntry> nodeCommitEntries )
+        public Builder addAll( final Iterable<NodeCommitEntry> nodeCommitEntries )
         {
             this.nodeCommitEntries.addAll( nodeCommitEntries );
             return this;

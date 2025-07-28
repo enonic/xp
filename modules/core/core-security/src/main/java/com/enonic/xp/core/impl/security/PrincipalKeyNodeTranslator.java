@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.security;
 
-import java.util.LinkedHashSet;
-
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -43,11 +41,6 @@ class PrincipalKeyNodeTranslator
 
     static PrincipalKeys fromNodes( final Nodes nodes )
     {
-        final LinkedHashSet<PrincipalKey> principals = new LinkedHashSet<>();
-        for ( final Node node : nodes )
-        {
-            principals.add( toKey( node ) );
-        }
-        return PrincipalKeys.from( principals );
+        return nodes.stream().map( PrincipalKeyNodeTranslator::toKey ).collect( PrincipalKeys.collector() );
     }
 }

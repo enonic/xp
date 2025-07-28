@@ -35,7 +35,7 @@ public final class Repositories
         return new Repositories( ImmutableList.copyOf( repositories ) );
     }
 
-    public static Repositories from( final Iterable<? extends Repository> repositories )
+    public static Repositories from( final Iterable<Repository> repositories )
     {
         return repositories instanceof Repositories r ? r : fromInternal( ImmutableList.copyOf( repositories ) );
     }
@@ -65,7 +65,7 @@ public final class Repositories
             return this;
         }
 
-        public Builder addAll( Iterable<? extends Repository> repositories )
+        public Builder addAll( Iterable<Repository> repositories )
         {
             this.repositories.addAll( repositories );
             return this;

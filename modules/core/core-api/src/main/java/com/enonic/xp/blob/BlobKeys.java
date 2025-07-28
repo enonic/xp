@@ -29,7 +29,7 @@ public final class BlobKeys
         return fromInternal( ImmutableSet.copyOf( blobKeys ) );
     }
 
-    public static BlobKeys from( final Iterable<? extends BlobKey> blobKeys )
+    public static BlobKeys from( final Iterable<BlobKey> blobKeys )
     {
         return blobKeys instanceof BlobKeys b ? b : fromInternal( ImmutableSet.copyOf( blobKeys ) );
     }
@@ -59,7 +59,7 @@ public final class BlobKeys
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends BlobKey> blobKeys )
+        public Builder addAll( final Iterable<BlobKey> blobKeys )
         {
             this.blobKeys.addAll( blobKeys );
             return this;

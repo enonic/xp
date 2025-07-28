@@ -41,7 +41,7 @@ public final class ExtraDatas
         return EMPTY;
     }
 
-    public static ExtraDatas from( final Iterable<? extends ExtraData> extradatas )
+    public static ExtraDatas from( final Iterable<ExtraData> extradatas )
     {
         return extradatas instanceof ExtraDatas e ? e : new ExtraDatas( ImmutableList.copyOf( extradatas ) );
     }
@@ -71,7 +71,7 @@ public final class ExtraDatas
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends ExtraData> value )
+        public Builder addAll( final Iterable<ExtraData> value )
         {
             list.addAll( value );
             return this;

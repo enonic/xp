@@ -29,9 +29,9 @@ public final class GetMembersHandler
     public List<PrincipalMapper> getMembers()
     {
         final PrincipalRelationships relationships = this.securityService.get().getRelationships( this.principalKey );
-        final PrincipalKeys principalKeys = PrincipalKeys.from( relationships.stream().
+        final PrincipalKeys principalKeys = relationships.stream().
             map( PrincipalRelationship::getTo ).
-            toArray( PrincipalKey[]::new ) );
+            collect( PrincipalKeys.collector() );
         final Principals principals = this.securityService.get().getPrincipals( principalKeys );
         return principals.stream().map( PrincipalMapper::new ).collect( Collectors.toList() );
     }

@@ -29,7 +29,7 @@ public final class NodeVersionIds
         return fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
     }
 
-    public static NodeVersionIds from( final Iterable<? extends NodeVersionId> nodeVersionIds )
+    public static NodeVersionIds from( final Iterable<NodeVersionId> nodeVersionIds )
     {
         return nodeVersionIds instanceof NodeVersionIds n ? n : fromInternal( ImmutableSet.copyOf( nodeVersionIds ) );
     }
@@ -59,7 +59,7 @@ public final class NodeVersionIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends NodeVersionId> nodeVersionIds )
+        public Builder addAll( final Iterable<NodeVersionId> nodeVersionIds )
         {
             this.nodeVersionIds.addAll( nodeVersionIds );
             return this;

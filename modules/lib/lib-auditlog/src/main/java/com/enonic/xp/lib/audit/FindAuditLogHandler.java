@@ -1,9 +1,8 @@
 package com.enonic.xp.lib.audit;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.stream.Collectors;
 
+import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.audit.AuditLogIds;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
@@ -71,7 +70,7 @@ public class FindAuditLogHandler
         {
             return;
         }
-        this.ids = AuditLogIds.from( ids.getList().stream().map( Object::toString ).collect( Collectors.toList() ) );
+        this.ids = ids.getList().stream().map( Object::toString ).map( AuditLogId::from ).collect( AuditLogIds.collector() );
     }
 
     public void setFrom( final String from )
@@ -100,10 +99,9 @@ public class FindAuditLogHandler
         {
             return;
         }
-        final List<PrincipalKey> userList = users.getList().
+        this.users = users.getList().
             stream().map( o -> PrincipalKey.from( o.toString() ) ).
-            collect( Collectors.toList() );
-        this.users = PrincipalKeys.from( userList );
+            collect( PrincipalKeys.collector() );
     }
 
     public void setObjectUris( final ScriptValue objectUris )
@@ -112,9 +110,8 @@ public class FindAuditLogHandler
         {
             return;
         }
-        final List<AuditLogUri> userList = objectUris.getList().
+        this.objectUris = objectUris.getList().
             stream().map( o -> AuditLogUri.from( o.toString() ) ).
-            collect( Collectors.toList() );
-        this.objectUris = AuditLogUris.from( userList );
+            collect( AuditLogUris.collector() );
     }
 }

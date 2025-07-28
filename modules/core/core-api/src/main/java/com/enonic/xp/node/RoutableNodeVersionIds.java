@@ -29,7 +29,7 @@ public final class RoutableNodeVersionIds
         return fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }
 
-    public static RoutableNodeVersionIds from( final Iterable<? extends RoutableNodeVersionId> routableNodeVersionIds )
+    public static RoutableNodeVersionIds from( final Iterable<RoutableNodeVersionId> routableNodeVersionIds )
     {
         return routableNodeVersionIds instanceof RoutableNodeVersionIds r ? r : fromInternal( ImmutableList.copyOf( routableNodeVersionIds ) );
     }
@@ -59,7 +59,7 @@ public final class RoutableNodeVersionIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends RoutableNodeVersionId> routableNodeVersionIds )
+        public Builder addAll( final Iterable<RoutableNodeVersionId> routableNodeVersionIds )
         {
             this.routableNodeVersionIds.addAll( routableNodeVersionIds );
             return this;

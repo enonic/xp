@@ -68,7 +68,7 @@ public final class Projects
             return this;
         }
 
-        public Builder addAll( Iterable<? extends Project> projects )
+        public Builder addAll( Iterable<Project> projects )
         {
             this.projects.addAll( projects );
             return this;

@@ -29,7 +29,7 @@ public final class MacroDescriptors
         return fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }
 
-    public static MacroDescriptors from( final Iterable<? extends MacroDescriptor> macroDescriptors )
+    public static MacroDescriptors from( final Iterable<MacroDescriptor> macroDescriptors )
     {
         return macroDescriptors instanceof MacroDescriptors m ? m : fromInternal( ImmutableList.copyOf( macroDescriptors ) );
     }

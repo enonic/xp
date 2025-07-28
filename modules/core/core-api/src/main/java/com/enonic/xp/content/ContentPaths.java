@@ -134,7 +134,7 @@ public final class ContentPaths
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends ContentPath> contentPaths )
+        public Builder addAll( final Iterable<ContentPath> contentPaths )
         {
             this.paths.addAll( contentPaths );
             return this;

@@ -59,7 +59,7 @@ public final class PublishRequestItems
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends PublishRequestItem> items )
+        public Builder addAll( final Iterable<PublishRequestItem> items )
         {
             this.items.addAll( items );
             return this;

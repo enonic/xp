@@ -1,6 +1,5 @@
 package com.enonic.xp.page;
 
-import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -47,7 +46,7 @@ public final class PageTemplates
         return fromInternal( ImmutableList.copyOf( templates ) );
     }
 
-    public static PageTemplates from( final Iterable<? extends PageTemplate> templates )
+    public static PageTemplates from( final Iterable<PageTemplate> templates )
     {
         return templates instanceof PageTemplates t ? t : fromInternal( ImmutableList.copyOf( templates ) );
     }
@@ -77,7 +76,7 @@ public final class PageTemplates
             return this;
         }
 
-        public Builder addAll( Iterable<? extends PageTemplate> templates )
+        public Builder addAll( Iterable<PageTemplate> templates )
         {
             for ( final PageTemplate template : templates )
             {

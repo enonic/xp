@@ -69,7 +69,7 @@ public final class PushNodeHandler
         }
         else
         {
-            return NodeIds.from( getNodeIds( this.nodeKeys ) );
+            return getNodeIds( this.nodeKeys );
         }
     }
 
@@ -84,9 +84,7 @@ public final class PushNodeHandler
                                                                                        .includeChildren( includeChildren )
                                                                                        .build() );
 
-            result.getNodeComparisons().forEach( nodeComparison -> {
-                toBePushed.add( nodeComparison.getNodeId() );
-            } );
+            result.getNodeComparisons().forEach( nodeComparison -> toBePushed.add( nodeComparison.getNodeId() ) );
         }
     }
 

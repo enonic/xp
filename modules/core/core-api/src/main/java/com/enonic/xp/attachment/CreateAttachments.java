@@ -1,6 +1,5 @@
 package com.enonic.xp.attachment;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public final class CreateAttachments
         return fromInternal( ImmutableList.copyOf( attachments ) );
     }
 
-    public static CreateAttachments from( final Iterable<? extends CreateAttachment> attachments )
+    public static CreateAttachments from( final Iterable<CreateAttachment> attachments )
     {
         return attachments instanceof CreateAttachments a ? a : fromInternal( ImmutableList.copyOf( attachments ) );
     }
@@ -60,7 +59,7 @@ public final class CreateAttachments
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends CreateAttachment> values )
+        public Builder addAll( final Iterable<CreateAttachment> values )
         {
             contents.addAll( values );
             return this;

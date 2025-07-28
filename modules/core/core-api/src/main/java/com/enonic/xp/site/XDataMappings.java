@@ -1,6 +1,5 @@
 package com.enonic.xp.site;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public final class XDataMappings
         return fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
-    public static XDataMappings from( final Iterable<? extends XDataMapping> xDataMappings )
+    public static XDataMappings from( final Iterable<XDataMapping> xDataMappings )
     {
         return xDataMappings instanceof XDataMappings x ? x : fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
@@ -66,7 +65,7 @@ public final class XDataMappings
             return this;
         }
 
-        public XDataMappings.Builder addAll( Iterable<? extends XDataMapping> xDataMappings )
+        public XDataMappings.Builder addAll( Iterable<XDataMapping> xDataMappings )
         {
             builder.addAll( xDataMappings );
             return this;
