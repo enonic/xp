@@ -31,7 +31,7 @@ public final class Applications
         return fromInternal( ImmutableList.copyOf( applications ) );
     }
 
-    public static Applications from( final Iterable<Application> applications )
+    public static Applications from( final Iterable<? extends Application> applications )
     {
         return applications instanceof Applications a ? a : fromInternal( ImmutableList.copyOf( applications ) );
     }
