@@ -381,15 +381,11 @@ public class NodeStorageServiceImpl
 
     private Nodes doReturnNodes( final Stream<NodeBranchEntry> nodeBranchEntries, final InternalContext context )
     {
-        final Nodes.Builder filteredNodes = Nodes.create();
-
-        nodeBranchEntries.map(
+        return nodeBranchEntries.map(
                 nodeBranchEntry -> Map.entry( nodeBranchEntry, nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context ) ) )
             .filter( entry -> canRead( entry.getValue().getPermissions(), context ) )
             .map( entry -> NodeFactory.create( entry.getValue(), entry.getKey() ) )
-            .forEach( filteredNodes::add );
-
-        return filteredNodes.build();
+            .collect( Nodes.collector() );
     }
 
     private boolean canRead( final AccessControlList permissions, final InternalContext context )

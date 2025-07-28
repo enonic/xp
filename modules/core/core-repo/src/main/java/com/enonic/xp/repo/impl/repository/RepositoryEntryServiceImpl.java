@@ -80,8 +80,6 @@ public class RepositoryEntryServiceImpl
     @Override
     public RepositoryIds findRepositoryEntryIds()
     {
-        final RepositoryIds.Builder repositoryIds = RepositoryIds.create();
-
         final SearchResult searchResult = this.nodeSearchService.query( NodeQuery.create()
                                                                             .size( NodeSearchService.GET_ALL_SIZE_FLAG )
                                                                             .parent( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
@@ -90,9 +88,7 @@ public class RepositoryEntryServiceImpl
                                                                             .build(),
                                                                         SingleRepoSearchSource.from( createInternalContext() ) );
 
-        searchResult.getHits().stream().map( hit -> RepositoryId.from( hit.getId() ) ).forEach( repositoryIds::add );
-
-        return repositoryIds.build();
+        return searchResult.getHits().stream().map( hit -> RepositoryId.from( hit.getId() ) ).collect( RepositoryIds.collector() );
     }
 
     @Override
