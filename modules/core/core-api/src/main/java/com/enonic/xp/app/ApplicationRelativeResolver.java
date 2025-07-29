@@ -20,16 +20,7 @@ public final class ApplicationRelativeResolver
     {
         if ( name.contains( ":" ) )
         {
-            if ( name.startsWith( "http" ) )
-            {
-                // points to external location
-                return name;
-            }
-            else
-            {
-                // points to other app
-                return name.replace( ":", "/" );
-            }
+            return name.replace( ":", "/" );
         }
 
         if ( this.current == null )
