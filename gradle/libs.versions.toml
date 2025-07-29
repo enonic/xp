@@ -84,7 +84,6 @@ graalvm-polyglot = { module = "org.graalvm.polyglot:polyglot", version = "23.1.7
 graalvm-js = { module = "org.graalvm.polyglot:js", version = "23.1.7" }
 graalvm-jsse = { module = "org.graalvm.js:js-scriptengine", version = "23.1.7" }
 
-commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.17.0" }
 commons-io = { module = "commons-io:commons-io", version = "2.20.0" }
 commons-compress = { module = "org.apache.commons:commons-compress", version = "1.27.1" }
 
