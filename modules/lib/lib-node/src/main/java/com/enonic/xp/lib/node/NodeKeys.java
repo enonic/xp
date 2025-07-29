@@ -3,18 +3,17 @@ package com.enonic.xp.lib.node;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
-
-import com.google.common.collect.ImmutableList;
 
 public class NodeKeys
     implements Iterable<NodeKey>
 {
-    private final ImmutableList<NodeKey> keys;
+    private final List<NodeKey> keys;
 
     private NodeKeys( final Collection<NodeKey> keys )
     {
-        this.keys = ImmutableList.copyOf( keys );
+        this.keys = List.copyOf( keys );
     }
 
     public final Stream<NodeKey> stream()
@@ -24,7 +23,7 @@ public class NodeKeys
 
     public static NodeKeys empty()
     {
-        return new NodeKeys( ImmutableList.of() );
+        return new NodeKeys( List.of() );
     }
 
     public int size()
@@ -50,17 +49,12 @@ public class NodeKeys
 
     public static NodeKeys from( final Collection<NodeKey> keys )
     {
-        if ( keys == null )
-        {
-            return NodeKeys.empty();
-        }
-
         return new NodeKeys( keys );
     }
 
     public static NodeKeys from( final NodeKey nodeKey )
     {
-        return new NodeKeys( ImmutableList.of( nodeKey ) );
+        return new NodeKeys( List.of( nodeKey ) );
     }
 
     public static NodeKeys from( final String[] keys )
@@ -70,6 +64,6 @@ public class NodeKeys
             return NodeKeys.empty();
         }
 
-        return new NodeKeys( Arrays.stream( keys ).map( NodeKey::from ).collect( ImmutableList.toImmutableList() ) );
+        return new NodeKeys( Arrays.stream( keys ).map( NodeKey::from ).toList() );
     }
 }

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachment;
@@ -374,7 +374,7 @@ public final class ImageContentProcessor
 
     private ExtraData extractGeoLocation( final MediaInfo mediaInfo, final XDatas xDatas )
     {
-        final ImmutableMultimap<String, String> mediaItems = mediaInfo.getMetadata();
+        final Multimap<String, String> mediaItems = mediaInfo.getMetadata();
         final Double geoLat = parseDouble( mediaItems.get( GEO_LATITUDE ).stream().findFirst().orElse( null ) );
         final Double geoLong = parseDouble( mediaItems.get( GEO_LONGITUDE ).stream().findFirst().orElse( null ) );
         if ( geoLat == null || geoLong == null )

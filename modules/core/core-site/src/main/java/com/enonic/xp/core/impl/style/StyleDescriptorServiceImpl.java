@@ -8,8 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
-
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
@@ -42,27 +41,18 @@ public class StyleDescriptorServiceImpl
     @Override
     public StyleDescriptors getByApplications( final ApplicationKeys applicationKeys )
     {
-        final ImmutableList.Builder<StyleDescriptor> list = new ImmutableList.Builder<>();
-        for ( final ApplicationKey key : applicationKeys )
-        {
-            final StyleDescriptor desc = getByApplication( key );
-            if ( desc != null )
-            {
-                list.add( desc );
-            }
-        }
-        return StyleDescriptors.from( list.build() );
+        return applicationKeys.stream().
+            map( this::getByApplication ).
+            filter( Objects::nonNull ).collect( StyleDescriptors.collector() );
     }
 
     @Override
     public StyleDescriptors getAll()
     {
-        final ImmutableList.Builder<StyleDescriptor> list = new ImmutableList.Builder<>();
-        this.applicationService.getInstalledApplications().stream().
-            map( ( app ) -> getByApplication( app.getKey() ) ).
-            filter( Objects::nonNull ).
-            forEach( list::add );
-        return StyleDescriptors.from( list.build() );
+        return this.applicationService.getInstalledApplications().stream().
+            map( Application::getKey).
+            map( this::getByApplication ).
+            filter( Objects::nonNull ).collect( StyleDescriptors.collector() );
     }
 
     private ResourceProcessor<ApplicationKey, StyleDescriptor> newProcessor( final ApplicationKey applicationKey )

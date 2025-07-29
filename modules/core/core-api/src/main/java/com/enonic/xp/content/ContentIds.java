@@ -43,12 +43,7 @@ public final class ContentIds
 
     public static ContentIds from( final Iterable<ContentId> ids )
     {
-        if ( ids instanceof ContentIds )
-        {
-            return (ContentIds) ids;
-        }
-
-        return fromInternal( ImmutableSet.copyOf( ids ) );
+        return ids instanceof ContentIds i ? i : fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static Collector<ContentId, ?, ContentIds> collector()
@@ -83,7 +78,7 @@ public final class ContentIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends ContentId> contentIds )
+        public Builder addAll( final Iterable<ContentId> contentIds )
         {
             this.contents.addAll( contentIds );
             return this;

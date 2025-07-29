@@ -58,7 +58,7 @@ public final class ServiceDescriptorServiceImpl
     public ServiceDescriptors getByApplication( final ApplicationKey key )
     {
         final List<ServiceDescriptor> list = new ArrayList<>();
-        for ( final DescriptorKey descriptorKey : findDescriptorKeys( key ) )
+        for ( final DescriptorKey descriptorKey : descriptorKeyLocator.findKeys( key ) )
         {
             try
             {
@@ -119,8 +119,4 @@ public final class ServiceDescriptorServiceImpl
             build();
     }
 
-    private Iterable<DescriptorKey> findDescriptorKeys( final ApplicationKey key )
-    {
-        return descriptorKeyLocator.findKeys( key );
-    }
 }

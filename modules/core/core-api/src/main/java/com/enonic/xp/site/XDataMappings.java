@@ -1,6 +1,5 @@
 package com.enonic.xp.site;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -31,17 +30,12 @@ public final class XDataMappings
         return fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
-    public static XDataMappings from( final Iterable<? extends XDataMapping> xDataMappings )
+    public static XDataMappings from( final Iterable<XDataMapping> xDataMappings )
     {
-        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
+        return xDataMappings instanceof XDataMappings x ? x : fromInternal( ImmutableList.copyOf( xDataMappings ) );
     }
 
-    public static XDataMappings from( final Collection<? extends XDataMapping> xDataMappings )
-    {
-        return fromInternal( ImmutableList.copyOf( xDataMappings ) );
-    }
-
-    public static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )
+    private static XDataMappings fromInternal( final ImmutableList<XDataMapping> xDataMappings )
     {
         return xDataMappings.isEmpty() ? EMPTY : new XDataMappings( xDataMappings );
     }
@@ -58,7 +52,7 @@ public final class XDataMappings
 
     public XDataNames getNames()
     {
-        return XDataNames.from( this.stream().map( XDataMapping::getXDataName ).collect( Collectors.toList() ) );
+        return this.stream().map( XDataMapping::getXDataName ).collect( XDataNames.collector() );
     }
 
     public static final class Builder
@@ -71,7 +65,7 @@ public final class XDataMappings
             return this;
         }
 
-        public XDataMappings.Builder addAll( Iterable<? extends XDataMapping> xDataMappings )
+        public XDataMappings.Builder addAll( Iterable<XDataMapping> xDataMappings )
         {
             builder.addAll( xDataMappings );
             return this;

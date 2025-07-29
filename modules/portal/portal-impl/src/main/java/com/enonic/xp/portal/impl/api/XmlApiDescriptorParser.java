@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.impl.api;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -53,11 +50,11 @@ public final class XmlApiDescriptorParser
 
         if ( allowedPrincipals != null )
         {
-            List<PrincipalKey> allowedPrincipalKeys = allowedPrincipals.getChildren( PRINCIPAL_TAG_NAME )
+            PrincipalKeys allowedPrincipalKeys = allowedPrincipals.getChildren( PRINCIPAL_TAG_NAME )
                 .stream()
                 .map( allowedPrincipal -> PrincipalKey.from( allowedPrincipal.getValue().trim() ) )
-                .collect( Collectors.toList() );
-            this.builder.allowedPrincipals( PrincipalKeys.from( allowedPrincipalKeys ) );
+                .collect( PrincipalKeys.collector() );
+            this.builder.allowedPrincipals( allowedPrincipalKeys );
         }
     }
 }

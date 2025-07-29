@@ -77,7 +77,7 @@ public final class ContentPaths
 
     public static ContentPaths from( final Iterable<ContentPath> paths )
     {
-        return fromInternal( ImmutableSet.copyOf( paths ) );
+        return paths instanceof ContentPaths p ? p : fromInternal( ImmutableSet.copyOf( paths ) );
     }
 
     public static Collector<ContentPath, ?, ContentPaths> collector()
@@ -85,7 +85,7 @@ public final class ContentPaths
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentPaths::fromInternal );
     }
 
-    public static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )
+    private static ContentPaths fromInternal( final ImmutableSet<ContentPath> set )
     {
         return set.isEmpty() ? EMPTY : new ContentPaths( set );
     }
@@ -134,7 +134,7 @@ public final class ContentPaths
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends ContentPath> contentPaths )
+        public Builder addAll( final Iterable<ContentPath> contentPaths )
         {
             this.paths.addAll( contentPaths );
             return this;

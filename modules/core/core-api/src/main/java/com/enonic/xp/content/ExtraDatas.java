@@ -1,6 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -42,9 +41,9 @@ public final class ExtraDatas
         return EMPTY;
     }
 
-    public static ExtraDatas from( final Iterable<? extends ExtraData> extradatas )
+    public static ExtraDatas from( final Iterable<ExtraData> extradatas )
     {
-        return new ExtraDatas( ImmutableList.copyOf( extradatas ) );
+        return extradatas instanceof ExtraDatas e ? e : new ExtraDatas( ImmutableList.copyOf( extradatas ) );
     }
 
     public static Collector<ExtraData, ?, ExtraDatas> collector()
@@ -72,7 +71,7 @@ public final class ExtraDatas
             return this;
         }
 
-        public Builder addAll( final Collection<ExtraData> value )
+        public Builder addAll( final Iterable<ExtraData> value )
         {
             list.addAll( value );
             return this;

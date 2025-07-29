@@ -1,14 +1,15 @@
 package com.enonic.xp.repo.impl.elasticsearch.result;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchHits;
 
 public class SearchHitsFactory
 {
-
-    public static SearchHits create( final org.elasticsearch.search.SearchHits searchHits )
+    public static List<SearchHit> create( final org.elasticsearch.search.SearchHits searchHits )
     {
-        final SearchHits.Builder builder = SearchHits.create();
+        final List<SearchHit> builder = new ArrayList<>();
 
         for ( final org.elasticsearch.search.SearchHit hit : searchHits )
         {
@@ -19,16 +20,12 @@ public class SearchHitsFactory
                 indexType( hit.type() ).
                 returnValues( ReturnValuesFactory.create( hit ) ).
                 sortValues( SortValuesPropertyFactory.create( hit.sortValues() ) ).
-                highlightedFields( HighlightedPropertiesFactory.create( hit.highlightFields() ) );
-
-            if ( hit.getExplanation() != null )
-            {
-                hitBuilder.explanation( SearchExplanationFactory.create( hit ) );
-            }
+                highlightedFields( HighlightedPropertiesFactory.create( hit.highlightFields() ) )
+                .explanation( SearchExplanationFactory.create( hit ) );
 
             builder.add( hitBuilder.build() );
         }
 
-        return builder.build();
+        return builder;
     }
 }

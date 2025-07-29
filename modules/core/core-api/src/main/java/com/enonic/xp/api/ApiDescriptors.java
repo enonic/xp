@@ -31,7 +31,7 @@ public final class ApiDescriptors
 
     public static ApiDescriptors from( final Iterable<ApiDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof ApiDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     private static ApiDescriptors fromInternal( final ImmutableList<ApiDescriptor> list )

@@ -1,6 +1,5 @@
 package com.enonic.xp.query.suggester;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 public abstract class SuggestionQuery
@@ -51,16 +50,6 @@ public abstract class SuggestionQuery
     public String getAnalyzer()
     {
         return analyzer;
-    }
-
-    protected MoreObjects.ToStringHelper doToString()
-    {
-        return MoreObjects.toStringHelper( this ).
-            omitNullValues().
-            add( "field", getField() ).
-            add( "text", getText() ).
-            add( "size", getSize() ).
-            add( "analyzer", getAnalyzer() );
     }
 
     public static class Builder<T extends SuggestionQuery.Builder>

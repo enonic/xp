@@ -1,11 +1,7 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogs;
 import com.enonic.xp.audit.FindAuditLogParams;
@@ -48,15 +44,15 @@ public class FindAuditLogCommand
 
         FindNodesByQueryResult result = nodeService.findByQuery( query );
 
-        List<AuditLog> logs = result.getNodeIds().
+        AuditLogs logs = result.getNodeIds().
             stream().
             map( nodeService::getById ).
             map( AuditLogSerializer::fromNode ).
-            collect( Collectors.toList() );
+            collect( AuditLogs.collector() );
 
         return FindAuditLogResult.create().
             total( result.getTotalHits() ).
-            hits( AuditLogs.from( logs ) ).
+            hits( logs ).
             build();
     }
 

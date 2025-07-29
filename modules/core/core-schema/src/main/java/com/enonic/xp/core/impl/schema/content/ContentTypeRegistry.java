@@ -40,20 +40,22 @@ final class ContentTypeRegistry
     {
         if ( SchemaHelper.isSystem( key ) )
         {
-            return ContentTypes.from(
-                builtInTypes.getAll().stream().filter( type -> type.getName().getApplicationKey().equals( key ) ).iterator() );
+            return builtInTypes.getAll()
+                .stream()
+                .filter( type -> type.getName().getApplicationKey().equals( key ) )
+                .collect( ContentTypes.collector() );
         }
         else
         {
-            return ContentTypes.from( loadByApplication( key ).iterator() );
+            return loadByApplication( key ).collect( ContentTypes.collector() );
         }
     }
 
     public ContentTypes getAll()
     {
         final ApplicationKeys applicationKeys = applicationService.list().getApplicationKeys();
-        return ContentTypes.from(
-            Stream.concat( builtInTypes.getAll().stream(), applicationKeys.stream().flatMap( this::loadByApplication ) ).iterator() );
+        return Stream.concat( builtInTypes.getAll().stream(), applicationKeys.stream().flatMap( this::loadByApplication ) )
+            .collect( ContentTypes.collector() );
     }
 
     private Stream<ContentType> loadByApplication( final ApplicationKey key )

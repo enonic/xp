@@ -1,29 +1,28 @@
 package com.enonic.xp.repository;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntitySet;
+import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class Repositories
-    extends AbstractImmutableEntitySet<Repository>
+    extends AbstractImmutableEntityList<Repository>
 {
-    private static final Repositories EMPTY = new Repositories( ImmutableSet.of() );
+    private static final Repositories EMPTY = new Repositories( ImmutableList.of() );
 
-    private Repositories( final ImmutableSet<Repository> set )
+    private Repositories( final ImmutableList<Repository> set )
     {
         super( set );
     }
 
     public RepositoryIds getIds()
     {
-        return set.stream().map( Repository::getId ).collect( RepositoryIds.collector() );
+        return list.stream().map( Repository::getId ).collect( RepositoryIds.collector() );
     }
 
     public static Repositories empty()
@@ -33,27 +32,22 @@ public final class Repositories
 
     public static Repositories from( final Repository... repositories )
     {
-        return new Repositories( ImmutableSet.copyOf( repositories ) );
+        return new Repositories( ImmutableList.copyOf( repositories ) );
     }
 
-    public static Repositories from( final Iterable<? extends Repository> repositories )
+    public static Repositories from( final Iterable<Repository> repositories )
     {
-        return fromInternal( ImmutableSet.copyOf( repositories ) );
-    }
-
-    public static Repositories from( final Collection<? extends Repository> repositories )
-    {
-        return fromInternal( ImmutableSet.copyOf( repositories ) );
+        return repositories instanceof Repositories r ? r : fromInternal( ImmutableList.copyOf( repositories ) );
     }
 
     public static Collector<Repository, ?, Repositories> collector()
     {
-        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), Repositories::fromInternal );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Repositories::fromInternal );
     }
 
-    private static Repositories fromInternal( final ImmutableSet<Repository> set )
+    private static Repositories fromInternal( final ImmutableList<Repository> list )
     {
-        return set.isEmpty() ? EMPTY : new Repositories( set );
+        return list.isEmpty() ? EMPTY : new Repositories( list );
     }
 
     public static Builder create()
@@ -63,7 +57,7 @@ public final class Repositories
 
     public static final class Builder
     {
-        private final ImmutableSet.Builder<Repository> repositories = ImmutableSet.builder();
+        private final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
 
         public Builder add( Repository repository )
         {
@@ -71,7 +65,7 @@ public final class Repositories
             return this;
         }
 
-        public Builder addAll( Iterable<? extends Repository> repositories )
+        public Builder addAll( Iterable<Repository> repositories )
         {
             this.repositories.addAll( repositories );
             return this;

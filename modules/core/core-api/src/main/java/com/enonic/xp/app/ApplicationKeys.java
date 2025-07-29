@@ -1,7 +1,6 @@
 package com.enonic.xp.app;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -26,14 +25,9 @@ public final class ApplicationKeys
         return fromInternal( ImmutableSet.copyOf( applicationKeys ) );
     }
 
-    public static ApplicationKeys from( final Iterable<? extends ApplicationKey> applicationKeys )
+    public static ApplicationKeys from( final Iterable<ApplicationKey> applicationKeys )
     {
-        return fromInternal( ImmutableSet.copyOf( applicationKeys ) );
-    }
-
-    public static ApplicationKeys from( final Collection<? extends ApplicationKey> applicationKeys )
-    {
-        return fromInternal( ImmutableSet.copyOf( applicationKeys ) );
+        return applicationKeys instanceof ApplicationKeys a ? a : fromInternal( ImmutableSet.copyOf( applicationKeys ) );
     }
 
     public static ApplicationKeys from( final String... applicationKeys )

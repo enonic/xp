@@ -1,9 +1,8 @@
 package com.enonic.xp.lib.portal.multipart;
 
-import java.util.List;
-
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
+import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -20,39 +19,28 @@ public final class MultipartFormMapper
         this.form = form;
     }
 
-    private Iterable<MultipartItem> getItems()
-    {
-        return this.form;
-    }
-
     @Override
     public void serialize( final MapGenerator gen )
     {
-        final ListMultimap<String, MultipartItem> items = LinkedListMultimap.create();
-        for ( MultipartItem item : this.getItems() )
-        {
-            items.put( item.getName(), item );
-        }
-
-        for ( final String name : items.keySet() )
-        {
-            final List<MultipartItem> values = items.get( name );
-            if ( values.size() == 1 )
-            {
-                gen.map( name );
-                MultipartItemMapper.serialize( gen, values.get( 0 ) );
-                gen.end();
-            }
-            else
-            {
-                gen.array( name );
-                values.forEach( ( item ) -> {
-                    gen.map();
-                    MultipartItemMapper.serialize( gen, item );
+        StreamSupport.stream( this.form.spliterator(), false )
+            .collect( Collectors.groupingBy( MultipartItem::getName, LinkedHashMap::new, Collectors.toList() ) )
+            .forEach( ( name, values ) -> {
+                if ( values.size() == 1 )
+                {
+                    gen.map( name );
+                    MultipartItemMapper.serialize( gen, values.getFirst() );
                     gen.end();
-                } );
-                gen.end();
-            }
-        }
+                }
+                else
+                {
+                    gen.array( name );
+                    values.forEach( ( item ) -> {
+                        gen.map();
+                        MultipartItemMapper.serialize( gen, item );
+                        gen.end();
+                    } );
+                    gen.end();
+                }
+            } );
     }
 }

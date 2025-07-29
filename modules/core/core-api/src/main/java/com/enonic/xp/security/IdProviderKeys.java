@@ -30,9 +30,9 @@ public final class IdProviderKeys
         return fromInternal( ImmutableSet.copyOf( idProviderKeys ) );
     }
 
-    public static IdProviderKeys from( final Iterable<? extends IdProviderKey> idProviderKeys )
+    public static IdProviderKeys from( final Iterable<IdProviderKey> idProviderKeys )
     {
-        return fromInternal( ImmutableSet.copyOf( idProviderKeys ) );
+        return idProviderKeys instanceof IdProviderKeys i ? i : fromInternal( ImmutableSet.copyOf( idProviderKeys ) );
     }
 
     public static IdProviderKeys from( final String... idProviderKeys )

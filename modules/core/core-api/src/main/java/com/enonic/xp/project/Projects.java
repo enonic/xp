@@ -1,6 +1,5 @@
 package com.enonic.xp.project;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -26,9 +25,9 @@ public final class Projects
         return EMPTY;
     }
 
-    public static Projects from( Collection<Project> projects )
+    public static Projects from( final Iterable<Project> projects )
     {
-        return fromInternal( ImmutableList.copyOf( projects ) );
+        return projects instanceof Projects p ? p : fromInternal( ImmutableList.copyOf( projects ) );
     }
 
     public static Collector<Project, ?, Projects> collector()
@@ -69,7 +68,7 @@ public final class Projects
             return this;
         }
 
-        public Builder addAll( Iterable<? extends Project> projects )
+        public Builder addAll( Iterable<Project> projects )
         {
             this.projects.addAll( projects );
             return this;

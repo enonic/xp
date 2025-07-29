@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
@@ -143,9 +142,9 @@ public class ResolveSyncWorkCommand
 
         LOG.debug( "Diff-query result in " + timer.stop() );
 
-        final NodeIds nodeIds = NodeIds.from( nodesWithVersionDifference.getNodesWithDifferences().stream().
+        final NodeIds nodeIds = nodesWithVersionDifference.getNodesWithDifferences().stream().
             filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
-            collect( ImmutableSet.toImmutableSet() ) );
+            collect( NodeIds.collector() );
 
         return initialDiff.addAll( nodeIds ).
             build();

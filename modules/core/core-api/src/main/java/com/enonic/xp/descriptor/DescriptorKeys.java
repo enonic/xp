@@ -46,7 +46,7 @@ public final class DescriptorKeys
 
     public static DescriptorKeys from( final Iterable<DescriptorKey> keys )
     {
-        return fromInternal( ImmutableSet.copyOf( keys ) );
+        return keys instanceof DescriptorKeys d ? d : fromInternal( ImmutableSet.copyOf( keys ) );
     }
 
     public static Collector<DescriptorKey, ?, DescriptorKeys> collector()

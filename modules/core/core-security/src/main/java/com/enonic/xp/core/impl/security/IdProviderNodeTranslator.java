@@ -73,11 +73,10 @@ abstract class IdProviderNodeTranslator
 
     static IdProviders fromNodes( final Nodes nodes )
     {
-        final IdProvider[] idProviders = nodes.stream().
+        return nodes.stream().
             map( IdProviderNodeTranslator::createIdProviderFromNode ).
             filter( Objects::nonNull ).
-            toArray( IdProvider[]::new );
-        return IdProviders.from( idProviders );
+            collect( IdProviders.collector() );
     }
 
     static IdProvider fromNode( final Node node )

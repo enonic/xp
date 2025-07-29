@@ -24,7 +24,6 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKeys;
@@ -361,11 +360,11 @@ public class ProjectServiceImpl
             throw new ProjectNotFoundException( projectName );
         }
 
-        return callWithListContext( () -> ApplicationKeys.from( Stream.concat( Stream.of( project ), doGetParents( project ).stream() )
+        return callWithListContext( () -> Stream.concat( Stream.of( project ), doGetParents( project ).stream() )
                                                                     .map( Project::getSiteConfigs )
                                                                     .flatMap( SiteConfigs::stream )
                                                                     .map( SiteConfig::getApplicationKey )
-                                                                    .collect( ImmutableSet.toImmutableSet() ) ) );
+                                                                    .collect( ApplicationKeys.collector() ) );
     }
 
     @Override

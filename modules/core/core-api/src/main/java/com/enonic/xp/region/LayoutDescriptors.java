@@ -1,6 +1,5 @@
 package com.enonic.xp.region;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,14 +29,9 @@ public final class LayoutDescriptors
         return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static LayoutDescriptors from( final Iterable<? extends LayoutDescriptor> descriptors )
+    public static LayoutDescriptors from( final Iterable<LayoutDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
-    }
-
-    public static LayoutDescriptors from( final Collection<? extends LayoutDescriptor> descriptors )
-    {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof LayoutDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static Collector<LayoutDescriptor, ?, LayoutDescriptors> collector()

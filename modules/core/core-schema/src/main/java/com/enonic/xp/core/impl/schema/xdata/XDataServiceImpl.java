@@ -60,7 +60,7 @@ public final class XDataServiceImpl
             return XDatas.empty();
         }
 
-        return XDatas.from( names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+        return names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( XDatas.collector() );
     }
 
     @Override

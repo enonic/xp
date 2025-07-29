@@ -37,7 +37,7 @@ public final class BinaryReferences
 
     public static BinaryReferences from( final Iterable<BinaryReference> binaryReferences )
     {
-        return fromInternal( ImmutableSet.copyOf( binaryReferences ) );
+        return binaryReferences instanceof BinaryReferences b ? b : fromInternal( ImmutableSet.copyOf( binaryReferences ) );
     }
 
     public static Collector<BinaryReference, ?, BinaryReferences> collector()

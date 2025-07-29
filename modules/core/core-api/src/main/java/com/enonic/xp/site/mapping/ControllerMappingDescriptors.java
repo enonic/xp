@@ -29,9 +29,9 @@ public final class ControllerMappingDescriptors
         return fromInternal( ImmutableList.copyOf( controllerMappingDescriptors ) );
     }
 
-    public static ControllerMappingDescriptors from( final Iterable<? extends ControllerMappingDescriptor> controllerMappingDescriptors )
+    public static ControllerMappingDescriptors from( final Iterable<ControllerMappingDescriptor> controllerMappingDescriptors )
     {
-        return fromInternal( ImmutableList.copyOf( controllerMappingDescriptors ) );
+        return controllerMappingDescriptors instanceof ControllerMappingDescriptors c ? c : fromInternal( ImmutableList.copyOf( controllerMappingDescriptors ) );
     }
 
     private static ControllerMappingDescriptors fromInternal( final ImmutableList<ControllerMappingDescriptor> list )

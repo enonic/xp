@@ -29,9 +29,9 @@ public final class PrincipalRelationships
         return fromInternal( ImmutableList.copyOf( principalRelationships ) );
     }
 
-    public static PrincipalRelationships from( final Iterable<? extends PrincipalRelationship> principalRelationships )
+    public static PrincipalRelationships from( final Iterable<PrincipalRelationship> principalRelationships )
     {
-        return fromInternal( ImmutableList.copyOf( principalRelationships ) );
+        return principalRelationships instanceof PrincipalRelationships p ? p : fromInternal( ImmutableList.copyOf( principalRelationships ) );
     }
 
     public static Collector<PrincipalRelationship, ?, PrincipalRelationships> collector()
@@ -39,7 +39,7 @@ public final class PrincipalRelationships
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), PrincipalRelationships::fromInternal );
     }
 
-    public static PrincipalRelationships fromInternal( final ImmutableList<PrincipalRelationship> list )
+    private static PrincipalRelationships fromInternal( final ImmutableList<PrincipalRelationship> list )
     {
         return list.isEmpty() ? EMPTY : new PrincipalRelationships( list );
     }

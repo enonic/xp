@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.api;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +16,6 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 @Component(service = DynamicUniversalApiHandlerRegistry.class)
@@ -91,8 +89,7 @@ public class DynamicUniversalApiHandlerRegistry
         {
             case null -> null;
             case String s -> PrincipalKeys.from( s );
-            case String[] strings ->
-                PrincipalKeys.from( Arrays.stream( strings ).map( PrincipalKey::from ).collect( Collectors.toList() ) );
+            case String[] strings -> PrincipalKeys.from( strings );
             default -> throw new IllegalArgumentException( "Invalid allowedPrincipals. Value must be string or string array." );
         };
     }

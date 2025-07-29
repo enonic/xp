@@ -29,7 +29,7 @@ public class AttachmentsTest
 
         Attachments attachments = Attachments.from( a1, a2 );
 
-        assertTrue( attachments.isNotEmpty() );
+        assertFalse( attachments.isEmpty() );
 
         assertTrue( attachments.hasByLabel( "My Image 1" ) );
         assertFalse( attachments.hasByLabel( "My Image 3" ) );

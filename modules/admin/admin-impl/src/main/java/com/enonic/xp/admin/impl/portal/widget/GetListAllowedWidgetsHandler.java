@@ -62,7 +62,7 @@ public class GetListAllowedWidgetsHandler
             .filter( widgetDescriptor -> widgetDescriptor.isAccessAllowed( userPrincipalKeys ) );
 
         final List<ObjectNode> result = new ArrayList<>();
-        if ( widgetDescriptors.isNotEmpty() )
+        if ( !widgetDescriptors.isEmpty() )
         {
             final PortalRequest portalRequest = (PortalRequest) webRequest;
             widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, portalRequest.getLocales() ) ) );
@@ -80,7 +80,7 @@ public class GetListAllowedWidgetsHandler
         json.put( "description", widgetDescriptor.getDescription() );
         json.put( "iconUrl", resolveIconUrl( widgetDescriptor ) );
 
-        json.put( "url", widgetDescriptor.getApplicationKey().toString() + "/" + widgetDescriptor.getName() );
+        json.put( "url", widgetDescriptor.getApplicationKey() + "/" + widgetDescriptor.getName() );
 
         if ( !isNullOrEmpty( widgetDescriptor.getDisplayNameI18nKey() ) || !isNullOrEmpty( widgetDescriptor.getDescriptionI18nKey() ) )
         {

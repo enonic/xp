@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -34,9 +33,9 @@ public final class AttachedBinaries
             .orElse( null );
     }
 
-    public static AttachedBinaries fromCollection( final Collection<AttachedBinary> references )
+    public static AttachedBinaries from( final Iterable<AttachedBinary> attachedBinaries )
     {
-        return fromInternal( ImmutableSet.copyOf( references ) );
+        return attachedBinaries instanceof AttachedBinaries a ? a : fromInternal( ImmutableSet.copyOf( attachedBinaries ) );
     }
 
     public static Collector<AttachedBinary, ?, AttachedBinaries> collector()

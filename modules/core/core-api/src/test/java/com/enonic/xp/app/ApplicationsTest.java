@@ -6,8 +6,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ApplicationsTest
 {
@@ -41,39 +41,12 @@ public class ApplicationsTest
     @Test
     public void fromIterable()
     {
-        final Applications applications = Applications.from( (Iterable<Application>) ApplicationsTest.list );
-
-        assertEquals( 3, applications.getSize() );
-        assertEquals( "aaa", applications.first().getDisplayName() );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "aaa" ) ) );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "bbb" ) ) );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "ccc" ) ) );
-    }
-
-    @Test
-    public void fromCollection()
-    {
         final Applications applications = Applications.from( ApplicationsTest.list );
 
-        assertEquals( 3, applications.getSize() );
         assertEquals( "aaa", applications.first().getDisplayName() );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "aaa" ) ) );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "bbb" ) ) );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "ccc" ) ) );
+        assertThat( applications ).containsExactly( list.toArray( ApplicationsTest.list.toArray( Application[]::new ) ) );
     }
 
-    @Test
-    public void fromArrayList()
-    {
-        Applications applications =
-            Applications.from( ApplicationsTest.list.get( 0 ), ApplicationsTest.list.get( 1 ), ApplicationsTest.list.get( 2 ) );
-
-        assertEquals( 3, applications.getSize() );
-        assertEquals( "aaa", applications.first().getDisplayName() );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "aaa" ) ) );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "bbb" ) ) );
-        assertNotNull( applications.getApplication( ApplicationKey.from( "ccc" ) ) );
-    }
 
     @Test
     public void getApplicationKeys()

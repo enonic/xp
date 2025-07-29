@@ -12,7 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 public abstract class AbstractImmutableEntitySet<T>
     implements Iterable<T>
 {
-    protected final ImmutableSet<T> set;
+    protected final Set<T> set;
 
     protected AbstractImmutableEntitySet( final Set<T> set )
     {

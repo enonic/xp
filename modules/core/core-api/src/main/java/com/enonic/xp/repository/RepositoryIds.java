@@ -43,7 +43,7 @@ public final class RepositoryIds
 
     public static RepositoryIds from( final Iterable<RepositoryId> ids )
     {
-        return fromInternal( ImmutableSet.copyOf( ids ) );
+        return ids instanceof RepositoryIds i ? i : fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static Collector<RepositoryId, ?, RepositoryIds> collector()
@@ -71,7 +71,7 @@ public final class RepositoryIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends RepositoryId> repositoryIds )
+        public Builder addAll( final Iterable<RepositoryId> repositoryIds )
         {
             this.repositories.addAll( repositoryIds );
             return this;

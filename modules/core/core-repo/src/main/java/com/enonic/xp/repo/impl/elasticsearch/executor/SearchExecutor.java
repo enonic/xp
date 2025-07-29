@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.executor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchTimeoutException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -20,7 +23,7 @@ import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchHits;
+import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repository.IndexException;
 
@@ -93,7 +96,7 @@ public class SearchExecutor
 
         final SearchResponse initialResponse = scrollResp;
 
-        final SearchHits.Builder searchHitsBuilder = SearchHits.create();
+        final List<SearchHit> searchHitsBuilder = new ArrayList<>( Math.toIntExact( scrollResp.getHits().getTotalHits() ) );
 
         do
         {
@@ -109,7 +112,7 @@ public class SearchExecutor
         clearScroll( scrollResp.getScrollId() );
 
         return SearchResult.create().
-            hits( searchHitsBuilder.build() ).
+            hits( searchHitsBuilder ).
             totalHits( scrollResp.getHits().getTotalHits() ).
             maxScore( scrollResp.getHits().maxScore() ).
             aggregations( AggregationsFactory.create( initialResponse.getAggregations() ) ).

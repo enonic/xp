@@ -1,6 +1,5 @@
 package com.enonic.xp.site;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -36,14 +35,9 @@ public final class SiteConfigs
         return fromInternal( ImmutableList.copyOf( siteConfigs ) );
     }
 
-    public static SiteConfigs from( final Iterable<? extends SiteConfig> siteConfigs )
+    public static SiteConfigs from( final Iterable<SiteConfig> siteConfigs )
     {
-        return fromInternal( ImmutableList.copyOf( siteConfigs ) );
-    }
-
-    public static SiteConfigs from( final Collection<? extends SiteConfig> siteConfigs )
-    {
-        return fromInternal( ImmutableList.copyOf( siteConfigs ) );
+        return siteConfigs instanceof SiteConfigs s ? s : fromInternal( ImmutableList.copyOf( siteConfigs ) );
     }
 
     public static Collector<SiteConfig, ?, SiteConfigs> collector()

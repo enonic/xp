@@ -40,7 +40,7 @@ public final class ContentQuery
         this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
         this.size = builder.size;
-        this.aggregationQueries = AggregationQueries.fromCollection( builder.aggregationQueries.build() );
+        this.aggregationQueries = AggregationQueries.from( builder.aggregationQueries.build() );
         this.queryFilters = builder.queryFilters.build();
         this.highlight = builder.highlight;
     }

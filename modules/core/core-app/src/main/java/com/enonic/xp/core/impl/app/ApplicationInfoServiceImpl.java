@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.util.stream.Collectors;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -96,10 +94,10 @@ public final class ApplicationInfoServiceImpl
     @Override
     public IdProviders getIdProviderReferences( final ApplicationKey applicationKey )
     {
-        return IdProviders.from( securityService.getIdProviders().
+        return securityService.getIdProviders().
             stream().
             filter( idProvider -> idProvider.getIdProviderConfig() != null &&
-                idProvider.getIdProviderConfig().getApplicationKey().equals( applicationKey ) ).collect( Collectors.toList() ) );
+                idProvider.getIdProviderConfig().getApplicationKey().equals( applicationKey ) ).collect( IdProviders.collector() );
 
     }
 

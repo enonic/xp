@@ -1,6 +1,5 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,9 +29,9 @@ public final class NodeCommitEntries
         return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
     }
 
-    public static NodeCommitEntries from( final Collection<NodeCommitEntry> nodeCommitEntries )
+    public static NodeCommitEntries from( final Iterable<NodeCommitEntry> nodeCommitEntries )
     {
-        return fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
+        return nodeCommitEntries instanceof NodeCommitEntries n ? n : fromInternal( ImmutableSet.copyOf( nodeCommitEntries ) );
     }
 
     public static Collector<NodeCommitEntry, ?, NodeCommitEntries> collector()
@@ -60,7 +59,7 @@ public final class NodeCommitEntries
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends NodeCommitEntry> nodeCommitEntries )
+        public Builder addAll( final Iterable<NodeCommitEntry> nodeCommitEntries )
         {
             this.nodeCommitEntries.addAll( nodeCommitEntries );
             return this;

@@ -26,7 +26,7 @@ public final class Suggestions
 
     public static Suggestions from( final Iterable<Suggestion> suggestions )
     {
-        return fromInternal( ImmutableList.copyOf( suggestions ) );
+        return suggestions instanceof Suggestions s ? s : fromInternal( ImmutableList.copyOf( suggestions ) );
     }
 
     public static Suggestions from( final Suggestion... suggestions )

@@ -10,7 +10,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @PublicApi
 public final class NodeCommitEntry
-    implements Comparable<NodeCommitEntry>
 {
     private final NodeCommitId nodeCommitId;
 
@@ -46,22 +45,6 @@ public final class NodeCommitEntry
     public PrincipalKey getCommitter()
     {
         return committer;
-    }
-
-    @Override
-    public int compareTo( final NodeCommitEntry o )
-    {
-        if ( this.timestamp.equals( o.timestamp ) )
-        {
-            return 0;
-        }
-
-        if ( this.timestamp.isBefore( o.timestamp ) )
-        {
-            return 1;
-        }
-
-        return -1;
     }
 
     private PrincipalKey getCurrentUserKey()

@@ -44,7 +44,7 @@ public final class ContentTypeNames
 
     public static ContentTypeNames from( final Iterable<ContentTypeName> contentTypeNames )
     {
-        return fromInternal( ImmutableSortedSet.copyOf( contentTypeNames ) );
+        return contentTypeNames instanceof ContentTypeNames c ? c : fromInternal( ImmutableSortedSet.copyOf( contentTypeNames ) );
     }
 
     public static Collector<ContentTypeName, ?, ContentTypeNames> collector()

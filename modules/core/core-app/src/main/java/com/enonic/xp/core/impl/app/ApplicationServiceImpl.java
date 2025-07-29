@@ -24,9 +24,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInstallationParams;
-import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;

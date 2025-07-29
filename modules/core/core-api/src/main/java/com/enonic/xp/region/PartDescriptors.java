@@ -1,6 +1,5 @@
 package com.enonic.xp.region;
 
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -30,14 +29,9 @@ public final class PartDescriptors
         return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static PartDescriptors from( final Iterable<? extends PartDescriptor> descriptors )
+    public static PartDescriptors from( final Iterable<PartDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
-    }
-
-    public static PartDescriptors from( final Collection<? extends PartDescriptor> descriptors )
-    {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof PartDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static Collector<PartDescriptor, ?, PartDescriptors> collector()

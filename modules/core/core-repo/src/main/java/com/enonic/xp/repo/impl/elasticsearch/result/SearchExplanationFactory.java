@@ -11,7 +11,7 @@ class SearchExplanationFactory
     {
         final Explanation explanation = searchHit.getExplanation();
 
-        if ( searchHit.getExplanation() != null )
+        if ( explanation != null )
         {
             return doCreate( explanation );
         }

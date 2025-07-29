@@ -1,14 +1,12 @@
 package com.enonic.xp.repo.impl.elasticsearch.query;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.search.highlight.HighlightBuilder;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.query.highlight.HighlightQuerySettings;
 import com.enonic.xp.query.highlight.constants.Encoder;
@@ -18,17 +16,17 @@ import com.enonic.xp.query.highlight.constants.TagsSchema;
 
 public class ElasticHighlightQuery
 {
-    private final ImmutableSet<HighlightBuilder.Field> fields;
+    private final ImmutableList<HighlightBuilder.Field> fields;
 
     private final HighlightQuerySettings settings;
 
     private ElasticHighlightQuery( final Builder builder )
     {
-        this.fields = ImmutableSet.copyOf( builder.fields );
+        this.fields = builder.fields.build();
         this.settings = builder.settings;
     }
 
-    public ImmutableSet<HighlightBuilder.Field> getFields()
+    public List<HighlightBuilder.Field> getFields()
     {
         return fields;
     }
@@ -128,7 +126,7 @@ public class ElasticHighlightQuery
 
     public static class Builder
     {
-        private final Set<HighlightBuilder.Field> fields = new HashSet<>();
+        private final ImmutableList.Builder<HighlightBuilder.Field> fields = ImmutableList.builder();
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 

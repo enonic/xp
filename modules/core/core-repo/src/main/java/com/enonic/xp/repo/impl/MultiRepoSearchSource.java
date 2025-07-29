@@ -30,13 +30,12 @@ public class MultiRepoSearchSource
 
     public RepositoryIds getRepositoryIds()
     {
-        return RepositoryIds.from(
-            sources.stream().map( SingleRepoSearchSource::getRepositoryId ).collect( ImmutableSet.toImmutableSet() ) );
+        return sources.stream().map( SingleRepoSearchSource::getRepositoryId ).collect( RepositoryIds.collector() );
     }
 
     public Branches getAllBranches()
     {
-        return Branches.from( sources.stream().map( SingleRepoSearchSource::getBranch ).collect( ImmutableSet.toImmutableSet() ) );
+        return sources.stream().map( SingleRepoSearchSource::getBranch ).collect( Branches.collector() );
     }
 
     @Override

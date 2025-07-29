@@ -13,7 +13,6 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 @PublicApi
 public final class AuditLogIds
     extends AbstractImmutableEntitySet<AuditLogId>
-    implements Iterable<AuditLogId>
 {
     private static final AuditLogIds EMPTY = new AuditLogIds( ImmutableSet.of() );
 
@@ -44,7 +43,7 @@ public final class AuditLogIds
 
     public static AuditLogIds from( final Iterable<AuditLogId> ids )
     {
-        return fromInternal( ImmutableSet.copyOf( ids ) );
+        return ids instanceof AuditLogIds i ? i : fromInternal( ImmutableSet.copyOf( ids ) );
     }
 
     public static Collector<AuditLogId, ?, AuditLogIds> collector()
@@ -72,7 +71,7 @@ public final class AuditLogIds
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends AuditLogId> auditLogIds )
+        public Builder addAll( final Iterable<AuditLogId> auditLogIds )
         {
             this.contents.addAll( auditLogIds );
             return this;

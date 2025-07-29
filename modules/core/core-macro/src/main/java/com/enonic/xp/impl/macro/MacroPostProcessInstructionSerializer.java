@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.macro;
 
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.macro.Macro;

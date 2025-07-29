@@ -14,7 +14,6 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.blob.NodeVersionKeys;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.content.ContentConstants;
@@ -182,7 +181,7 @@ class NodeVersionServiceImplTest
         final NodeVersionKey nodeVersionKey2 = executeInContext( () -> nodeDao.store( nodeVersion2, createInternalContext() ) );
 
         List<NodeVersion> nodeVersions = new ArrayList<>();
-        NodeVersionKeys.from( nodeVersionKey1, nodeVersionKey2 )
+        List.of( nodeVersionKey1, nodeVersionKey2 )
             .forEach( nodeVersionKey -> nodeVersions.add( executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) ) );
 
 

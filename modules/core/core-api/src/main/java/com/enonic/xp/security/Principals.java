@@ -57,7 +57,7 @@ public final class Principals
 
     public static Principals from( final Iterable<? extends Principal> principals )
     {
-        return fromInternal( ImmutableList.copyOf( principals ) );
+        return principals instanceof Principals p ? p : fromInternal( ImmutableList.copyOf( principals ) );
     }
 
     public static Collector<Principal, ?, Principals> collector()

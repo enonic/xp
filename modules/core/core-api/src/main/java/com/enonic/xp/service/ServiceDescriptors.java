@@ -29,7 +29,7 @@ public final class ServiceDescriptors
 
     public static ServiceDescriptors from( final Iterable<ServiceDescriptor> descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( descriptors ) );
+        return descriptors instanceof ServiceDescriptors d ? d : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static Collector<ServiceDescriptor, ?, ServiceDescriptors> collector()

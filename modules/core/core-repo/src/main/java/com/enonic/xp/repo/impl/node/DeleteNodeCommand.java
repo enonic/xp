@@ -113,7 +113,7 @@ public class DeleteNodeCommand
             }
         }
 
-        for ( final List<NodeBranchEntry> batch : Iterables.partition( nodeBranchEntries.getSet(), BATCH_SIZE ) )
+        for ( final List<NodeBranchEntry> batch : Iterables.partition( nodeBranchEntries, BATCH_SIZE ) )
         {
             this.nodeStorageService.delete( batch, internalContext );
             this.deleteNodeListener.nodesDeleted( batch.size() );

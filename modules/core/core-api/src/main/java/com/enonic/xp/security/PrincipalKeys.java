@@ -1,7 +1,6 @@
 package com.enonic.xp.security;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -31,9 +30,9 @@ public final class PrincipalKeys
         return fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }
 
-    public static PrincipalKeys from( final Collection<PrincipalKey> principalKeys )
+    public static PrincipalKeys from( final Iterable<PrincipalKey> principalKeys )
     {
-        return fromInternal( ImmutableSet.copyOf( principalKeys ) );
+        return principalKeys instanceof PrincipalKeys p ? p : fromInternal( ImmutableSet.copyOf( principalKeys ) );
     }
 
     public static PrincipalKeys from( final String... principalKeys )
@@ -46,7 +45,7 @@ public final class PrincipalKeys
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), PrincipalKeys::fromInternal );
     }
 
-    public static PrincipalKeys fromInternal( final ImmutableSet<PrincipalKey> set )
+    private static PrincipalKeys fromInternal( final ImmutableSet<PrincipalKey> set )
     {
         return set.isEmpty() ? EMPTY : new PrincipalKeys( set );
     }
@@ -66,7 +65,7 @@ public final class PrincipalKeys
             return this;
         }
 
-        public Builder addAll( final Iterable<? extends PrincipalKey> principalKeys )
+        public Builder addAll( final Iterable<PrincipalKey> principalKeys )
         {
             this.principalKeys.addAll( principalKeys );
             return this;

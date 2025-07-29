@@ -1,7 +1,6 @@
 package com.enonic.xp.schema.xdata;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -58,14 +57,9 @@ public final class XDatas
         return fromInternal( ImmutableList.copyOf( xDatas ) );
     }
 
-    public static XDatas from( final Iterable<? extends XData> xDatas )
+    public static XDatas from( final Iterable<XData> xDatas )
     {
-        return fromInternal( ImmutableList.copyOf( xDatas ) );
-    }
-
-    public static XDatas from( final Iterator<? extends XData> xDatas )
-    {
-        return fromInternal( ImmutableList.copyOf( xDatas ) );
+        return xDatas instanceof XDatas x ? x : fromInternal( ImmutableList.copyOf( xDatas ) );
     }
 
     public static Collector<XData, ?, XDatas> collector()
@@ -93,7 +87,7 @@ public final class XDatas
             return this;
         }
 
-        public Builder addAll( Iterable<? extends XData> nodes )
+        public Builder addAll( Iterable<XData> nodes )
         {
             builder.addAll( nodes );
             return this;

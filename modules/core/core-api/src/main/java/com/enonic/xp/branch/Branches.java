@@ -26,7 +26,7 @@ public final class Branches
 
     public static Branches from( final Iterable<Branch> branches )
     {
-        return fromInternal( ImmutableSet.copyOf( branches ) );
+        return branches instanceof Branches b ? b : fromInternal( ImmutableSet.copyOf( branches ) );
     }
 
     public static Branches empty()

@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.project;
 
 import java.util.Collection;
 
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
@@ -23,9 +21,9 @@ public class ProjectAccessHelper
 
     public static PrincipalKeys createRoleKeys( final ProjectName projectName, final Collection<ProjectRole> projectRoles )
     {
-        return PrincipalKeys.from( projectRoles.stream()
+        return projectRoles.stream()
                                        .map( projectRole -> doCreateRoleKey( projectName, projectRole ) )
-                                       .collect( ImmutableSet.toImmutableSet() ) );
+                                       .collect( PrincipalKeys.collector() );
     }
 
     public static boolean hasAdminAccess( final AuthenticationInfo authenticationInfo )

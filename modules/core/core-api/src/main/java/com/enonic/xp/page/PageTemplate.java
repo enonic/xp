@@ -1,9 +1,6 @@
 package com.enonic.xp.page;
 
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -43,10 +40,8 @@ public final class PageTemplate
 
     public ContentTypeNames getCanRender()
     {
-        final List<ContentTypeName> list =
-            this.getData().getProperties( "supports" ).stream().filter( property -> !property.hasNullValue() ).map(
-                property -> ContentTypeName.from( property.getString() ) ).collect( Collectors.toList() );
-        return ContentTypeNames.from( list );
+        return this.getData().getProperties( "supports" ).stream().filter( property -> !property.hasNullValue() ).map(
+                property -> ContentTypeName.from( property.getString() ) ).collect( ContentTypeNames.collector() );
     }
 
     public boolean canRender( ContentTypeName name )

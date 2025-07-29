@@ -112,18 +112,10 @@ public final class GetNodeHandler
     public static final class Builder
         extends AbstractNodeHandler.Builder<Builder>
     {
-        private NodeKey key;
-
         private NodeKeys keys;
 
         private Builder()
         {
-        }
-
-        public Builder key( final NodeKey val )
-        {
-            key = val;
-            return this;
         }
 
         public Builder keys( final NodeKeys val )

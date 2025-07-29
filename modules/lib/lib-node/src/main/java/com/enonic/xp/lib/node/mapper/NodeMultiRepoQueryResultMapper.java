@@ -55,7 +55,7 @@ public final class NodeMultiRepoQueryResultMapper
 
     private void serialize( final MapGenerator gen, final Suggestions suggestions )
     {
-        if ( suggestions != null && suggestions.isNotEmpty() )
+        if ( suggestions != null && !suggestions.isEmpty() )
         {
             gen.map( "suggestions" );
             new SuggestionsMapper( suggestions ).serialize( gen );

@@ -1,11 +1,9 @@
 package com.enonic.xp.lib.audit;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogUri;
@@ -75,10 +73,9 @@ public class CreateAuditLogHandler
         {
             return;
         }
-        final List<AuditLogUri> userList = objectUris.getList().
-            stream().map( o -> AuditLogUri.from( o.toString() ) ).
-            collect( Collectors.toList() );
-        this.objectUris = AuditLogUris.from( userList );
+        this.objectUris = objectUris.getList().
+            stream().map( Object::toString ).map( AuditLogUri::from ).
+            collect( AuditLogUris.collector() );
     }
 
     public void setData( final ScriptValue data )
