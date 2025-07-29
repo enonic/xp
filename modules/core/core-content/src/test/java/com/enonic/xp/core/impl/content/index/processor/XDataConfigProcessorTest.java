@@ -16,7 +16,6 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
 
@@ -85,13 +84,10 @@ public class XDataConfigProcessorTest
 
         final XDatas xDatas = xDatasBuilder.build();
 
-        final ContentType contentType =
-            ContentType.create().superType( ContentTypeName.folder() ).xData( XDataNames.from( xDatas.getNames() ) ).name(
-                "contentType" ).build();
+        final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "contentType" ).build();
 
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
             contentType );
-        Mockito.when( xDataService.getFromContentType( contentType ) ).thenReturn( xDatasBuilder.build() );
 
         final XDataConfigProcessor configProcessor = new XDataConfigProcessor( xDatas );
 

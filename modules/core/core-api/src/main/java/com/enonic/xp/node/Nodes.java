@@ -63,13 +63,13 @@ public final class Nodes
     {
         private final ImmutableSet.Builder<Node> nodes = new ImmutableSet.Builder<>();
 
-        public Builder add( Node node )
+        public Builder add( final Node node )
         {
             nodes.add( node );
             return this;
         }
 
-        public Builder addAll( Iterable<Node> nodes )
+        public Builder addAll( final Iterable<Node> nodes )
         {
             this.nodes.addAll( nodes );
             return this;
@@ -77,7 +77,7 @@ public final class Nodes
 
         public Nodes build()
         {
-            return new Nodes( nodes.build() );
+            return fromInternal( nodes.build() );
         }
     }
 }

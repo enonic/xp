@@ -16,16 +16,18 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallResultJson;
-import com.enonic.xp.impl.server.rest.model.ApplicationInstalledJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ApplicationResourceTest
     extends JaxRsResourceTestSupport
@@ -45,9 +47,7 @@ public class ApplicationResourceTest
 
     @Test
     public void install()
-        throws Exception
     {
-
         ApplicationResource resource = getResourceInstance();
 
         ByteSource byteSource = ByteSource.wrap( "bytes".getBytes() );
@@ -55,25 +55,25 @@ public class ApplicationResourceTest
         Application application = createApplication();
 
         MultipartItem multipartItem = mock( MultipartItem.class );
-        Mockito.when( multipartItem.getBytes() ).thenReturn( byteSource );
+        when( multipartItem.getBytes() ).thenReturn( byteSource );
         String fileName = application.getDisplayName();
-        Mockito.when( multipartItem.getFileName() ).thenReturn( fileName );
+        when( multipartItem.getFileName() ).thenReturn( fileName );
 
         MultipartForm multipartForm = mock( MultipartForm.class );
 
-        Mockito.when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( fileName ) ) ).thenReturn(
+        when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( fileName ) ) ).thenReturn(
             application );
 
-        Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
+        when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
         ApplicationInstallResultJson result = resource.install( multipartForm );
 
-        assertEquals( new ApplicationInstalledJson( application, false ), result.getApplicationInstalledJson() );
+        assertEquals( application.getKey().toString(), result.getApplicationInstalledJson().getApplication().getKey() );
+        assertFalse( result.getApplicationInstalledJson().getApplication().getLocal() );
     }
 
     @Test
     public void install_exception()
-        throws Exception
     {
         ApplicationResource resource = getResourceInstance();
 
@@ -82,15 +82,15 @@ public class ApplicationResourceTest
         ByteSource byteSource = ByteSource.wrap( "bytes".getBytes() );
         String fileName = "app-name";
 
-        Mockito.when( multipartItem.getBytes() ).thenReturn( byteSource );
-        Mockito.when( multipartItem.getFileName() ).thenReturn( fileName );
+        when( multipartItem.getBytes() ).thenReturn( byteSource );
+        when( multipartItem.getFileName() ).thenReturn( fileName );
 
         MultipartForm multipartForm = mock( MultipartForm.class );
 
-        Mockito.when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( "app-name" ) ) ).thenThrow(
+        when( this.applicationService.installGlobalApplication( any( ByteSource.class ), eq( "app-name" ) ) ).thenThrow(
             new RuntimeException() );
 
-        Mockito.when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
+        when( multipartForm.get( "file" ) ).thenReturn( multipartItem );
 
         ApplicationInstallResultJson result = resource.install( multipartForm );
 
@@ -117,8 +117,9 @@ public class ApplicationResourceTest
     {
         Application application = createApplication();
 
-        Mockito.when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenReturn(
-            application );
+        when(
+            this.applicationService.installGlobalApplication( (URL) argThat( arg -> arg.toString().equals( application.getUrl() ) ),
+                                                              any() ) ).thenReturn( application );
 
         String jsonString = request().path( "app/installUrl" ).
             entity( "{\"URL\":\"http://enonic.net\"}", MediaType.APPLICATION_JSON_TYPE ).
@@ -133,7 +134,8 @@ public class ApplicationResourceTest
     {
         Application application = createApplication( "ftp://enonic.jar" );
 
-        Mockito.when( this.applicationService.installGlobalApplication( new URL( application.getUrl() ) ) ).thenReturn( application );
+        when( this.applicationService.installGlobalApplication( argThat( arg -> arg.toString().equals( application.getUrl() ) ) ) )
+            .thenReturn( application );
 
         String jsonString = request().path( "app/installUrl" ).
             entity( "{\"URL\":\"" + application.getUrl() + "\"}", MediaType.APPLICATION_JSON_TYPE ).
@@ -148,7 +150,7 @@ public class ApplicationResourceTest
     {
         Application application = createApplication();
 
-        Mockito.when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenThrow(
+        when( this.applicationService.installGlobalApplication( eq( new URL( application.getUrl() ) ), any() ) ).thenThrow(
             new RuntimeException() );
 
         String jsonString = request().path( "app/installUrl" ).
@@ -225,16 +227,16 @@ public class ApplicationResourceTest
     private Application createApplication( final String url )
     {
         final Application application = mock( Application.class );
-        Mockito.when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
-        Mockito.when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
-        Mockito.when( application.getDisplayName() ).thenReturn( "application name" );
-        Mockito.when( application.getUrl() ).thenReturn( url );
-        Mockito.when( application.getVendorName() ).thenReturn( "Enonic" );
-        Mockito.when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
-        Mockito.when( application.getMinSystemVersion() ).thenReturn( "5.0" );
-        Mockito.when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "testapplication" ) );
+        when( application.getVersion() ).thenReturn( new Version( 1, 0, 0 ) );
+        when( application.getDisplayName() ).thenReturn( "application name" );
+        when( application.getUrl() ).thenReturn( url );
+        when( application.getVendorName() ).thenReturn( "Enonic" );
+        when( application.getVendorUrl() ).thenReturn( "https://www.enonic.com" );
+        when( application.getMinSystemVersion() ).thenReturn( "5.0" );
+        when( application.getMaxSystemVersion() ).thenReturn( "5.1" );
+        when( application.isStarted() ).thenReturn( true );
+        when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
 
         return application;
     }

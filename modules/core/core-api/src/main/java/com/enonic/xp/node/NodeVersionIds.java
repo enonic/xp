@@ -67,7 +67,7 @@ public final class NodeVersionIds
 
         public NodeVersionIds build()
         {
-            return new NodeVersionIds( this.nodeVersionIds.build() );
+            return fromInternal( this.nodeVersionIds.build() );
         }
     }
 }

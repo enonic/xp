@@ -67,7 +67,7 @@ public final class BlobKeys
 
         public BlobKeys build()
         {
-            return new BlobKeys( this.blobKeys.build() );
+            return fromInternal( this.blobKeys.build() );
         }
     }
 }

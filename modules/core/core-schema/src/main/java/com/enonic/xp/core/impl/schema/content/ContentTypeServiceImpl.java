@@ -37,30 +37,26 @@ public final class ContentTypeServiceImpl
     @Override
     public ContentType getByName( final GetContentTypeParams params )
     {
-        final GetContentTypeCommand command = new GetContentTypeCommand();
-        command.registry = this.registry;
-        command.mixinService = this.mixinService;
-        command.params = params;
-        return command.execute();
+        params.validate();
+        final ContentType contentType = this.registry.get( params.getContentTypeName() );
+        if ( contentType == null )
+        {
+            return null;
+        }
+
+        return transformInlineMixins( contentType );
     }
 
     @Override
     public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        final GetApplicationContentTypesCommand command = new GetApplicationContentTypesCommand();
-        command.registry = this.registry;
-        command.mixinService = this.mixinService;
-        command.applicationKey = applicationKey;
-        return command.execute();
+        return transformInlineMixins( this.registry.getByApplication( applicationKey ) );
     }
 
     @Override
     public ContentTypes getAll()
     {
-        final GetAllContentTypesCommand command = new GetAllContentTypesCommand();
-        command.registry = this.registry;
-        command.mixinService = this.mixinService;
-        return command.execute();
+        return transformInlineMixins( this.registry.getAll() );
     }
 
     @Override
@@ -76,5 +72,15 @@ public final class ContentTypeServiceImpl
 
         validator.validate( type.getName(), type.getSuperType() );
         return validator.getResult();
+    }
+
+    private ContentType transformInlineMixins( final ContentType contentType )
+    {
+        return ContentType.create( contentType ).form( mixinService.inlineFormItems( contentType.getForm() ) ).build();
+    }
+
+    private ContentTypes transformInlineMixins( final ContentTypes contentTypes )
+    {
+        return contentTypes.stream().map( this::transformInlineMixins ).collect( ContentTypes.collector() );
     }
 }

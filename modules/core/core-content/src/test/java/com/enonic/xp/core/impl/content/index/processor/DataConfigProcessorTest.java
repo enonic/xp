@@ -17,6 +17,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 public class DataConfigProcessorTest
 {
@@ -34,7 +35,6 @@ public class DataConfigProcessorTest
 
     @Test
     public void test_data()
-        throws Exception
     {
         final PatternIndexConfigDocument result = processForm(Form.create().build());
 
@@ -45,7 +45,6 @@ public class DataConfigProcessorTest
 
     @Test
     public void test_data_form_with_html_area()
-        throws Exception
     {
         Input myTextLine = Input.create().
             name( "htmlArea" ).
@@ -76,8 +75,7 @@ public class DataConfigProcessorTest
     {
         final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "typeName" ).form( form ).build();
 
-        Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
-            contentType );
+        Mockito.when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         final DataConfigProcessor configProcessor =
             new DataConfigProcessor( getDataForm( contentTypeService, contentTypeName) );

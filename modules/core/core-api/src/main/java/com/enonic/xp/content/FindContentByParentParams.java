@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -78,30 +76,6 @@ public final class FindContentByParentParams
     public Boolean isRecursive()
     {
         return recursive;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof FindContentByParentParams ) )
-        {
-            return false;
-        }
-        final FindContentByParentParams that = (FindContentByParentParams) o;
-        return Objects.equals( this.parentPath, that.parentPath ) && Objects.equals( this.parentId, that.parentId ) &&
-            Objects.equals( this.queryFilters, that.queryFilters ) && Objects.equals( this.size, that.size ) &&
-            Objects.equals( this.from, that.from ) && Objects.equals( this.childOrder, that.childOrder ) &&
-            Objects.equals( this.recursive, that.recursive );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( parentPath, parentId, size, from, childOrder, recursive );
     }
 
     public static Builder create()

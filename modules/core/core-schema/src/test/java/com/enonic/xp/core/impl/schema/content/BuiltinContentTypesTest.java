@@ -12,7 +12,7 @@ public class BuiltinContentTypesTest
     @Test
     public void testBuiltin()
     {
-        final ContentTypes types = ContentTypes.from( new BuiltinContentTypes().getAll() );
+        final ContentTypes types = new BuiltinContentTypes().getAll();
         assertEquals( 22, types.getSize() );
 
         assertType( types.get( 0 ), "base:unstructured", true );

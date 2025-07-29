@@ -1,7 +1,5 @@
 package com.enonic.xp.dump;
 
-import java.util.Objects;
-
 public final class SystemLoadParams
 {
     private final String dumpName;
@@ -51,28 +49,6 @@ public final class SystemLoadParams
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final SystemLoadParams that = (SystemLoadParams) o;
-        return includeVersions == that.includeVersions && upgrade == that.upgrade && archive == that.archive &&
-            Objects.equals( dumpName, that.dumpName ) && Objects.equals( listener, that.listener );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( dumpName, includeVersions, upgrade, listener, archive );
     }
 
     public static final class Builder

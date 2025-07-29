@@ -21,7 +21,7 @@ public enum ImageOrientation
     public static final ImageOrientation DEFAULT = ImageOrientation.TopLeft; // no rotation needed
 
     private static final Map<Integer, ImageOrientation> LOOKUP_TABLE =
-        Arrays.stream( values() ).collect( Collectors.toMap( e -> e.value, Function.identity() ) );
+        Arrays.stream( values() ).collect( Collectors.toUnmodifiableMap( e -> e.value, Function.identity() ) );
 
     private final int value;
 

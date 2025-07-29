@@ -6,8 +6,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -65,20 +63,6 @@ public class XDataServiceImplTest
 
         xData = service.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
         assertNotNull( xData );
-    }
-
-    @Test
-    public void testGetByContentType()
-    {
-        initializeApps();
-        final ContentType contentType = ContentType.create()
-            .superType( ContentTypeName.structured() )
-            .name( "myapp2:address" )
-            .xData( XDataNames.from( "myapp2:address", "myapp2:address1" ) )
-            .build();
-        final XDatas xDatas = service.getFromContentType( contentType );
-        assertNotNull( xDatas );
-        assertEquals( 1, xDatas.getSize() );
     }
 
     @Test

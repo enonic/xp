@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -24,12 +25,12 @@ import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -63,6 +64,10 @@ import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class HtmlAreaContentProcessorTest
 {
@@ -111,8 +116,8 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().contentType( contentType ).build();
 
-        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
-        Mockito.when( xDataService.getByNames( Mockito.isA( XDataNames.class ) ) ).thenReturn( XDatas.empty() );
+        when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
+        when( xDataService.getByNames( Mockito.isA( XDataNames.class ) ) ).thenReturn( XDatas.empty() );
 
         ContentConfig contentConfig = Mockito.mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
@@ -169,8 +174,6 @@ public class HtmlAreaContentProcessorTest
 
         final ContentTypeName deepTypeName = ContentTypeName.from( "deepContentType" );
 
-        final GetContentTypeParams params = GetContentTypeParams.from( deepTypeName );
-
         final ContentType deepContentType = ContentType.create()
             .name( deepTypeName )
             .superType( ContentTypeName.folder() )
@@ -189,7 +192,8 @@ public class HtmlAreaContentProcessorTest
                        .build() )
             .build();
 
-        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( deepContentType );
+        reset( contentTypeService );
+        when( contentTypeService.getByName( any() ) ).thenReturn( deepContentType );
 
         final PropertyTree data = new PropertyTree();
         PropertySet set1 = data.addSet( "set" );
@@ -224,12 +228,7 @@ public class HtmlAreaContentProcessorTest
     public void site_config_data()
         throws IOException
     {
-
-        final ContentType contentType =
-            ContentType.create().name( ContentTypeName.site() ).superType( ContentTypeName.folder() ).form( Form.create().build() ).build();
-
-        Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentType.getName() ) ) ).thenReturn( contentType );
-        Mockito.when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
+        when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
             .thenReturn( SiteDescriptor.create()
                              .form( Form.create()
                                         .addFormItem( Input.create()
@@ -274,14 +273,7 @@ public class HtmlAreaContentProcessorTest
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
-        final ContentType contentType = ContentType.create()
-            .name( contentTypeName )
-            .superType( ContentTypeName.folder() )
-            .xData( XDataNames.from( xDataName ) )
-            .build();
-        Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( ContentTypeName.site() ) ) ).thenReturn( contentType );
-
-        Mockito.when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
+        when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -320,7 +312,7 @@ public class HtmlAreaContentProcessorTest
             .regions( RegionDescriptors.create().build() )
             .key( DescriptorKey.from( "aaa:bbb" ) )
             .build();
-        Mockito.when( pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( pageDescriptor );
+        when( pageDescriptorService.getByKey( Mockito.isA( DescriptorKey.class ) ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create().config( data ).descriptor( pageDescriptor.getKey() ).build();
 
@@ -351,7 +343,7 @@ public class HtmlAreaContentProcessorTest
             .build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
-        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
+        when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
 
         final PartComponent partComponent =
             PartComponent.create().descriptor( "myapp:part" ).descriptor( partDescriptor.getKey() ).config( data ).build();
@@ -361,7 +353,7 @@ public class HtmlAreaContentProcessorTest
             .key( DescriptorKey.from( "app:page" ) )
             .config( Form.create().build() )
             .build();
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+        when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create()
             .config( new PropertyTree() )
@@ -401,7 +393,7 @@ public class HtmlAreaContentProcessorTest
             .build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
-        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
+        when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
 
         final PartComponent partComponent =
             PartComponent.create().descriptor( "myapp:partest" ).descriptor( partDescriptor.getKey() ).config( data2 ).build();
@@ -411,7 +403,7 @@ public class HtmlAreaContentProcessorTest
             .config( form )
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "part" ).build() ).build() )
             .build();
-        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptor.getKey() ) ).thenReturn( layoutDescriptor );
+        when( layoutDescriptorService.getByKey( layoutDescriptor.getKey() ) ).thenReturn( layoutDescriptor );
 
         final LayoutComponent layoutComponent = LayoutComponent.create()
             .descriptor( "myapp:layout" )
@@ -425,7 +417,7 @@ public class HtmlAreaContentProcessorTest
             .key( DescriptorKey.from( "app:page" ) )
             .config( Form.create().build() )
             .build();
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+        when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create()
             .config( new PropertyTree() )
@@ -461,7 +453,7 @@ public class HtmlAreaContentProcessorTest
             .config( Form.create().build() )
             .build();
 
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+        when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create()
             .config( new PropertyTree() )
@@ -506,7 +498,7 @@ public class HtmlAreaContentProcessorTest
             .config( Form.create().build() )
             .build();
 
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+        when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create()
             .config( new PropertyTree() )
@@ -551,7 +543,7 @@ public class HtmlAreaContentProcessorTest
             .build();
 
         final PartDescriptor partDescriptor = PartDescriptor.create().key( DescriptorKey.from( "app:part" ) ).config( form ).build();
-        Mockito.when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
+        when( partDescriptorService.getByKey( partDescriptor.getKey() ) ).thenReturn( partDescriptor );
 
         final PartComponent partComponent =
             PartComponent.create().descriptor( "myapp:part" ).descriptor( partDescriptor.getKey() ).config( data ).build();
@@ -561,7 +553,7 @@ public class HtmlAreaContentProcessorTest
             .key( DescriptorKey.from( "app:page" ) )
             .config( Form.create().build() )
             .build();
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
+        when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
         final Page page = Page.create()
             .config( new PropertyTree() )
@@ -624,7 +616,7 @@ public class HtmlAreaContentProcessorTest
         extraData.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\" src=\"/admin/rest-v2/cs/cms/features/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b\"/>" ) );
 
-        Mockito.when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
+        when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
 
         final ProcessCreateParams processCreateParams = Mockito.mock( ProcessCreateParams.class );
         final CreateContentParams createContentParams = CreateContentParams.create()
@@ -634,13 +626,14 @@ public class HtmlAreaContentProcessorTest
             .type( contentTypeName )
             .build();
 
-        contentType = ContentType.create( contentType ).xData( XDataNames.from( XDataName.from( "xDataName" ) ) ).build();
-
-        Mockito.when( contentTypeService.getByName( GetContentTypeParams.from( contentTypeName ) ) ).thenReturn( contentType );
-        Mockito.when( processCreateParams.getCreateContentParams() ).thenReturn( createContentParams );
+        when( processCreateParams.getCreateContentParams() ).thenReturn( createContentParams );
 
         final ProcessCreateResult result = htmlAreaContentProcessor.processCreate( processCreateParams );
 
+        var captor = ArgumentCaptor.forClass( GetContentTypeParams.class );
+
+        verify( contentTypeService ).getByName( captor.capture() );
+        assertEquals( contentTypeName, captor.getValue().getContentTypeName() );
         assertEquals( 2, result.getCreateContentParams().getProcessedIds().getSize() );
         assertTrue( result.getCreateContentParams().getProcessedIds().contains( ContentId.from( "image-id1" ) ) );
         assertTrue( result.getCreateContentParams().getProcessedIds().contains( ContentId.from( "image-id2" ) ) );

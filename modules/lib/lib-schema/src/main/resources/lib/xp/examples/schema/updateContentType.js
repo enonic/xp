@@ -87,9 +87,6 @@ assert.assertJsonEquals({
             'config': {}
         }
     ],
-    config: {},
-    xDataNames: [
-        'myapp:address'
-    ]
+    config: {}
 }, result);
 

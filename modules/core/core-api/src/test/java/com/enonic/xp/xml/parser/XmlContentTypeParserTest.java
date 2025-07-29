@@ -18,8 +18,6 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataNames;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -116,20 +114,6 @@ public class XmlContentTypeParserTest
     {
         parseRemoveNs( this.parser, "-optionSet.xml" );
         assertOptionSetResult();
-    }
-
-    @Test
-    public void testMixinRefFormats()
-        throws Exception
-    {
-        parse( this.parser, "-mixins.xml" );
-        final ContentType result = this.builder.build();
-
-        final XDataNames xDataNames = result.getXData();
-
-        assertEquals( 2, xDataNames.getSize() );
-        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata1" ) ) );
-        assertTrue( xDataNames.contains( XDataName.from( "myapplication:metadata2" ) ) );
     }
 
     @Test

@@ -1,11 +1,6 @@
 package com.enonic.xp.core.impl.schema.xdata;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -16,7 +11,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -46,7 +40,7 @@ public final class XDataServiceImpl
     {
         if ( SchemaHelper.isSystem( name.getApplicationKey() ) )
         {
-            return this.builtInTypes.getAll().getXData( name );
+            return this.builtInTypes.getXData( name );
         }
 
         return xDataLoader.get( name );
@@ -55,26 +49,21 @@ public final class XDataServiceImpl
     @Override
     public XDatas getByNames( final XDataNames names )
     {
-        if ( names == null )
-        {
-            return XDatas.empty();
-        }
-
         return names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( XDatas.collector() );
     }
 
     @Override
     public XDatas getAll()
     {
-        final Set<XData> list = new LinkedHashSet<>( this.builtInTypes.getAll().getList() );
+        final XDatas.Builder builder = XDatas.create();
+        builder.addAll( this.builtInTypes.getAll() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {
-            final XDatas types = getByApplication( application.getKey() );
-            list.addAll( types.getList() );
+            builder.addAll( getByApplication( application.getKey() ) );
         }
 
-        return XDatas.from( list );
+        return builder.build();
     }
 
     @Override
@@ -82,27 +71,12 @@ public final class XDataServiceImpl
     {
         if ( SchemaHelper.isSystem( key ) )
         {
-            return this.builtInTypes.getByApplication( key );
+            return this.builtInTypes.getAll()
+                .stream()
+                .filter( type -> type.getName().getApplicationKey().equals( key ) )
+                .collect( XDatas.collector() );
         }
 
-        final List<XData> list = new ArrayList<>();
-        for ( final XDataName name : xDataLoader.findNames( key ) )
-        {
-            final XData type = getByName( name );
-            if ( type != null )
-            {
-                list.add( type );
-            }
-
-        }
-
-        return XDatas.from( list );
-    }
-
-    @Override
-    public XDatas getFromContentType( final ContentType contentType )
-    {
-        return XDatas.from(
-            contentType.getXData().stream().map( this::getByName ).filter( Objects::nonNull ).collect( Collectors.toSet() ) );
+        return xDataLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect(  XDatas.collector() );
     }
 }

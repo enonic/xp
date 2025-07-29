@@ -53,11 +53,11 @@ import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -309,7 +309,6 @@ public class DynamicSchemaServiceImplTest
         assertFalse( contentType.allowChildContent() );
         assertFalse( contentType.isAbstract() );
         assertTrue( contentType.isFinal() );
-        assertTrue( contentType.getXData().contains( XDataName.from( "myapplication:metadata" ) ) );
         assertNotNull( contentType.getModifiedTime() );
 
         assertEquals( "node", result.getResource().getResolverName() );
@@ -363,7 +362,6 @@ public class DynamicSchemaServiceImplTest
         assertFalse( contentType.allowChildContent() );
         assertFalse( contentType.isAbstract() );
         assertTrue( contentType.isFinal() );
-        assertTrue( contentType.getXData().contains( XDataName.from( "myapplication:metadata" ) ) );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );

@@ -56,7 +56,7 @@ class ApplicationClusterEventListenerTest
             build() );
 
         verify( this.applicationService, times( 1 ) ).
-            installStoredApplication( node.id(), ApplicationInstallationParams.create().start( false ).build() );
+            installStoredApplication( eq( node.id() ), any(ApplicationInstallationParams.class) );
     }
 
     @Test

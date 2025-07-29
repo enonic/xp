@@ -72,7 +72,7 @@ public final class Aggregations
 
         public Aggregations build()
         {
-            return Aggregations.fromInternal( aggregations.build() );
+            return fromInternal( aggregations.build() );
         }
     }
 }

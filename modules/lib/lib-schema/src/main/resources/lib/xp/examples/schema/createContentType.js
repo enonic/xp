@@ -90,9 +90,6 @@ assert.assertJsonEquals({
                 'value': 'bottom'
             }
         ]
-    },
-    xDataNames: [
-        'myapp:address'
-    ]
+    }
 }, result);
 

@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -84,29 +83,6 @@ public final class FindContentIdsByQueryResult
         return hits;
     }
 
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final FindContentIdsByQueryResult that = (FindContentIdsByQueryResult) o;
-        return totalHits == that.totalHits && hits == that.hits && Objects.equals( aggregations, that.aggregations ) &&
-            Objects.equals( contentIds, that.contentIds ) && Objects.equals( highlight, that.highlight ) &&
-            Objects.equals( sort, that.sort ) && Objects.equals( score, that.score );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( aggregations, contentIds, totalHits, hits, highlight, sort, score );
-    }
 
     public static final class Builder
     {

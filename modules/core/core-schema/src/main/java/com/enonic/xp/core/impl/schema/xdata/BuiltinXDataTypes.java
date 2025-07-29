@@ -1,15 +1,17 @@
 package com.enonic.xp.core.impl.schema.xdata;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDatas;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
@@ -46,14 +48,16 @@ final class BuiltinXDataTypes
         form( createGpsInfoXDataForm() ).
         build();
 
-    private static final XDatas MIXINS = XDatas.from( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA );
+    private final XDatas xDatas;
 
-    private final XDatas mixins;
+    private final Map<XDataName, XData> map;
 
     BuiltinXDataTypes()
     {
-        final List<XData> generatedSystemXDatas = generateSystemXDatas( MIXINS );
-        this.mixins = XDatas.from( generatedSystemXDatas );
+        this.xDatas = Stream.of( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA )
+            .map( mixin -> XData.create( mixin ).icon( loadSchemaIcon( XDATA_FOLDER, mixin.getName().getLocalName() ) ).build() )
+            .collect( XDatas.collector() );
+        this.map = this.xDatas.stream().collect( Collectors.toUnmodifiableMap( XData::getName, Function.identity() ) );
     }
 
     private static Form createImageInfoXDataForm()
@@ -134,27 +138,14 @@ final class BuiltinXDataTypes
         return form.build();
     }
 
-    private List<XData> generateSystemXDatas( Iterable<XData> systemXDatas )
-    {
-        final List<XData> generatedSystemXDatas = new ArrayList<>();
-        for ( XData mixin : systemXDatas )
-        {
-            mixin = XData.create( mixin ).
-                icon( loadSchemaIcon( XDATA_FOLDER, mixin.getName().getLocalName() ) ).
-                build();
-            generatedSystemXDatas.add( mixin );
-        }
-        return generatedSystemXDatas;
-    }
-
     public XDatas getAll()
     {
-        return this.mixins;
+        return this.xDatas;
     }
 
-    public XDatas getByApplication( final ApplicationKey key )
+    public XData getXData( final XDataName xDataName )
     {
-        return this.mixins.filter( ( type ) -> type.getName().getApplicationKey().equals( key ) );
+        return this.map.get( xDataName );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

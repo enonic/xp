@@ -48,8 +48,6 @@ public final class XmlContentTypeParser
         this.builder.setFinal( root.getChildValueAs( "is-final", Boolean.class, false ) );
         this.builder.allowChildContent( root.getChildValueAs( "allow-child-content", Boolean.class, true ) );
 
-        this.builder.xData( buildMetaData( root ) );
-
         this.builder.displayNameLabel( root.getChildValueTrimmed( "display-name-label" ) );
         this.builder.displayNameLabelI18nKey(
             root.getChild( "display-name-label" ) != null ? root.getChild( "display-name-label" ).getAttribute( "i18n" ) : null );

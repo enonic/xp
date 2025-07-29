@@ -1,9 +1,12 @@
 package com.enonic.xp.content;
 
+import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.xdata.XDataName;
@@ -14,11 +17,14 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ExtraDatas
     extends AbstractImmutableEntityList<ExtraData>
 {
-    private static final ExtraDatas EMPTY = new ExtraDatas( ImmutableList.of() );
+    private static final ExtraDatas EMPTY = new ExtraDatas( ImmutableMap.of() );
 
-    private ExtraDatas( final ImmutableList<ExtraData> list )
+    private final ImmutableMap<XDataName, ExtraData> map;
+
+    private ExtraDatas( final ImmutableMap<XDataName, ExtraData> map )
     {
-        super( list );
+        super( map.values().asList() );
+        this.map = map;
     }
 
     public XDataNames getNames()
@@ -28,12 +34,12 @@ public final class ExtraDatas
 
     public ExtraData getMetadata( final XDataName name )
     {
-        return list.stream().filter( xd ->  name.equals( xd.getName() ) ).findFirst().orElse( null );
+        return map.get( name );
     }
 
     public ExtraDatas copy()
     {
-        return fromInternal( this.list.stream().map( ExtraData::copy ).collect( ImmutableList.toImmutableList() ) );
+        return toMap( list.stream().map( ExtraData::copy ).collect( ImmutableList.toImmutableList() ) );
     }
 
     public static ExtraDatas empty()
@@ -43,17 +49,22 @@ public final class ExtraDatas
 
     public static ExtraDatas from( final Iterable<ExtraData> extradatas )
     {
-        return extradatas instanceof ExtraDatas e ? e : new ExtraDatas( ImmutableList.copyOf( extradatas ) );
+        return extradatas instanceof ExtraDatas e ? e : ExtraDatas.create().addAll( extradatas ).build();
     }
 
     public static Collector<ExtraData, ?, ExtraDatas> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ExtraDatas::fromInternal );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ExtraDatas::toMap );
     }
 
-    private static ExtraDatas fromInternal( final ImmutableList<ExtraData> list )
+    private static ExtraDatas fromInternal( final ImmutableMap<XDataName, ExtraData> map )
     {
-        return list.isEmpty() ? EMPTY : new ExtraDatas( list );
+        return map.isEmpty() ? EMPTY : new ExtraDatas( map );
+    }
+
+    private static ExtraDatas toMap( final List<ExtraData> list )
+    {
+        return fromInternal( list.stream().collect( ImmutableMap.toImmutableMap( ExtraData::getName, Function.identity() ) ) );
     }
 
     public static Builder create()
@@ -63,23 +74,31 @@ public final class ExtraDatas
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<ExtraData> list = ImmutableList.builder();
+        private final ImmutableMap.Builder<XDataName, ExtraData> map = ImmutableMap.builder();
 
         public Builder add( final ExtraData value )
         {
-            list.add( value );
+            map.put( value.getName(), value );
             return this;
         }
 
         public Builder addAll( final Iterable<ExtraData> value )
         {
-            list.addAll( value );
+            for ( ExtraData extraData : value )
+            {
+                map.put( extraData.getName(), extraData );
+            }
             return this;
         }
 
         public ExtraDatas build()
         {
-            return fromInternal( list.build() );
+            return fromInternal( map.buildOrThrow() );
+        }
+
+        public ExtraDatas buildKeepingLast()
+        {
+            return fromInternal( map.buildKeepingLast() );
         }
     }
 }

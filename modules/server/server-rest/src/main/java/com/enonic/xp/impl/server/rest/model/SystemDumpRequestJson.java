@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SystemDumpRequestJson
@@ -51,27 +49,5 @@ public class SystemDumpRequestJson
     public boolean isArchive()
     {
         return archive;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final SystemDumpRequestJson that = (SystemDumpRequestJson) o;
-        return includeVersions == that.includeVersions && archive == that.archive && Objects.equals( name, that.name ) &&
-            Objects.equals( maxAge, that.maxAge ) && Objects.equals( maxVersions, that.maxVersions );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( name, includeVersions, maxAge, maxVersions, archive );
     }
 }

@@ -414,9 +414,6 @@ exports.updateWithForm = function () {
             }
         ],
         'config': {},
-        'xDataNames': [
-            'myapp:address'
-        ]
     }, result);
 };
 

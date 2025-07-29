@@ -15,7 +15,6 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
@@ -24,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -33,8 +33,7 @@ public class UpdateContentHandlerTest
     @Test
     public void testExample()
     {
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.unstructured() );
-        when( this.contentTypeService.getByName( getContentType ) ).thenReturn(
+        when( this.contentTypeService.getByName( any() ) ).thenReturn(
             ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
 
         final Content content = TestDataFixtures.newExampleContent();
@@ -103,7 +102,6 @@ public class UpdateContentHandlerTest
 
     @Test
     public void updateById()
-        throws Exception
     {
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
@@ -119,7 +117,6 @@ public class UpdateContentHandlerTest
 
     @Test
     public void updateByPath()
-        throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -135,7 +132,6 @@ public class UpdateContentHandlerTest
 
     @Test
     public void updateNotMappedXDataFieldNameStricted()
-        throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -151,7 +147,6 @@ public class UpdateContentHandlerTest
 
     @Test
     public void updateNotMappedXDataFieldNameNotStricted()
-        throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -167,7 +162,6 @@ public class UpdateContentHandlerTest
 
     @Test
     public void updateNotFound()
-        throws Exception
     {
         runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" );
     }
@@ -191,8 +185,9 @@ public class UpdateContentHandlerTest
             .addFormItem( Input.create().label( "z" ).name( "z" ).occurrences( 0, 10 ).inputType( InputTypeName.TEXT_LINE ).build() )
             .build();
 
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName(
+            argThat( argument -> argument.getContentTypeName().equals( ContentTypeName.from( "test:myContentType" ) ) ) ) ).thenReturn(
+            contentType );
 
         final XData xData1 = XData.create()
             .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
