@@ -211,6 +211,12 @@ def repackBundle( depProvider, level, Closure config = null ) {
                 return it;
             }.join( ',' )
 
+        def modifiedDynamicImportPackage = (originalManifest.getMainAttributes().getValue("DynamicImport-Package") ?: "").split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+            .collect {
+                it = it.startsWithAny( "org.slf4j" ) ? it.replace( "version=\"[1.7,2)", "version=\"[1.7,3)" ) : it
+                return it;
+            }.join( ',' )
+
         from {
             zipTree(artifact)
         }
@@ -223,6 +229,8 @@ def repackBundle( depProvider, level, Closure config = null ) {
             attributes originalManifest.mainAttributes.collectEntries { key, value ->
                 if (key.toString() == "Import-Package") {
                     ["Import-Package": modifiedImportPackage]
+                } else if (key.toString() == "DynamicImport-Package") {
+                    ["DynamicImport-Package": modifiedDynamicImportPackage]
                 } else {
                     [(key.toString()): value.toString()]
                 }
