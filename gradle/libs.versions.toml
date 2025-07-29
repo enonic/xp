@@ -82,7 +82,7 @@ attoparser = { module = "org.attoparser:attoparser", version = "1.3" }
 nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.6" }
 graalvm-polyglot = { module = "org.graalvm.polyglot:polyglot", version = "23.1.7" }
 graalvm-js = { module = "org.graalvm.polyglot:js", version = "23.1.7" }
-graalvm-jsse = { module = "org.graalvm.js:js-scriptengine", version = "23.1.7" }
+graalvm-jsse = { module = "org.graalvm.js:js-scriptengine", version = "24.2.2" }
 
 commons-io = { module = "commons-io:commons-io", version = "2.20.0" }
 commons-compress = { module = "org.apache.commons:commons-compress", version = "1.27.1" }
