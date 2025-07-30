@@ -40,7 +40,7 @@ public final class ValidationErrorsDeserializer
             final List<Object> args = (List<Object>) errorMap.get( "args" );
 
             final ValidationError.Builder errorBuilder =
-                ValidationError.generalError( errorCode ).message( message != null ? message : null ).i18n( i18n );
+                ValidationError.generalError( errorCode ).message( message ).i18n( i18n );
 
             if ( args != null )
             {
