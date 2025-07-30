@@ -157,6 +157,38 @@ public class PatchContentHandlerTest
         runFunction( "/test/PatchContentHandlerTest.js", "patch_notFound" );
     }
 
+    @Test
+    public void patchWorkflowInfo()
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
+                                             TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/PatchContentHandlerTest.js", "patchWorkflowInfo" );
+    }
+
+    @Test
+    public void patchPageAllComponents()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
+                                             TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/PatchContentHandlerTest.js", "patchPageAllComponents" );
+    }
+
     private void mockXData()
     {
         final FormItemSet cSet = FormItemSet.create()
@@ -192,21 +224,6 @@ public class PatchContentHandlerTest
         when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
         when( this.xDataService.getByName( eq( xData2.getName() ) ) ).thenReturn( xData2 );
         when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
-    }
-
-    @Test
-    public void patchWorkflowInfo()
-    {
-        final Content content = TestDataFixtures.newSmallContent();
-        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
-
-        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
-                                             TestDataFixtures.newSmallContent() ) );
-
-        mockXData();
-
-        runFunction( "/test/PatchContentHandlerTest.js", "patchWorkflowInfo" );
     }
 
     private PatchContentResult invokePatch( final PatchContentParams params, final Content content )
