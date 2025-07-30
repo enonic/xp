@@ -189,6 +189,21 @@ public class PatchContentHandlerTest
         runFunction( "/test/PatchContentHandlerTest.js", "patchPageAllComponents" );
     }
 
+    @Test
+    public void patchValidationErrors()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocation -> invokePatch( invocation.getArgument( 0 ), content ) );
+
+        mockXData();
+
+        runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
+    }
+
     private void mockXData()
     {
         final FormItemSet cSet = FormItemSet.create()

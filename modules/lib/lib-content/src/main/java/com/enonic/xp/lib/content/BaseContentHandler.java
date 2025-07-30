@@ -1,8 +1,10 @@
 package com.enonic.xp.lib.content;
 
+import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
@@ -10,6 +12,7 @@ import com.enonic.xp.lib.content.deserializer.ContentDataDeserializer;
 import com.enonic.xp.lib.content.deserializer.PageDeserializer;
 import com.enonic.xp.lib.content.deserializer.PropertyTreeTranslator;
 import com.enonic.xp.lib.content.deserializer.SiteConfigDeserializer;
+import com.enonic.xp.lib.content.deserializer.ValidationErrorsDeserializer;
 import com.enonic.xp.lib.content.deserializer.WorkflowDeserializer;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -39,7 +42,7 @@ public abstract class BaseContentHandler
 
         this.contentDataDeserializer =
             new ContentDataDeserializer( translator, new SiteConfigDeserializer( translator ), new WorkflowDeserializer(),
-                                         new PageDeserializer( translator ) );
+                                         new PageDeserializer( translator ), new ValidationErrorsDeserializer() );
     }
 
     protected PropertyTree createPropertyTree( final Map<String, Object> data, final ContentTypeName contentTypeName )
@@ -55,6 +58,11 @@ public abstract class BaseContentHandler
     protected Page createPage( final Map<String, Object> pageMap )
     {
         return contentDataDeserializer.toPage( pageMap );
+    }
+
+    protected ValidationErrors createValidationErrors( final List<Object> validationErrors )
+    {
+        return contentDataDeserializer.toValidationErrors( validationErrors );
     }
 
     protected WorkflowInfo createWorkflowInfo( final Map<String, Object> workflowMap )
