@@ -1,12 +1,14 @@
 package com.enonic.xp.lib.content.deserializer;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
@@ -23,14 +25,18 @@ public final class ContentDataDeserializer
 
     private final PageDeserializer pageDeserializer;
 
+    private final ValidationErrorsDeserializer validationErrorsDeserializer;
+
     public ContentDataDeserializer( final PropertyTreeTranslator propertyTreeTranslator,
                                     final SiteConfigDeserializer siteConfigDeserializer, final WorkflowDeserializer workflowDeserializer,
-                                    final PageDeserializer pageDeserializer )
+                                    final PageDeserializer pageDeserializer,
+                                    final ValidationErrorsDeserializer validationErrorsDeserializer )
     {
         this.propertyTreeTranslator = propertyTreeTranslator;
         this.siteConfigDeserializer = siteConfigDeserializer;
         this.workflowDeserializer = workflowDeserializer;
         this.pageDeserializer = pageDeserializer;
+        this.validationErrorsDeserializer = validationErrorsDeserializer;
     }
 
     public PropertyTree toPropertyTree( Map<String, Object> source, ContentTypeName contentTypeName )
@@ -90,6 +96,11 @@ public final class ContentDataDeserializer
     public WorkflowInfo toWorkflowInfo( Map<String, Object> workflowMap )
     {
         return workflowDeserializer.deserialize( workflowMap );
+    }
+
+    public ValidationErrors toValidationErrors( List<Object> validationErrors )
+    {
+        return validationErrorsDeserializer.deserialize( validationErrors );
     }
 }
 

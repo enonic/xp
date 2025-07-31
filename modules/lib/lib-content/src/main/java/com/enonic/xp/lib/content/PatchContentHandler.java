@@ -3,6 +3,7 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -122,7 +123,7 @@ public final class PatchContentHandler
         parse( map, "workflow", Map.class, val -> target.workflowInfo.setValue( createWorkflowInfo( val ) ) );
 
         parse( map, "page", Map.class, val -> target.page.setValue( createPage( val ) ) );
-//        parse(map, "validationErrors", Map.class, target.validationErrors::setValue);
+        parse( map, "validationErrors", List.class, val -> target.validationErrors.setValue( createValidationErrors( val ) ) );
 //        parse(map, "attachments", Map.class, val -> target.attachments::setValue);
 
         parse( map, "valid", Boolean.class, target.valid::setValue );

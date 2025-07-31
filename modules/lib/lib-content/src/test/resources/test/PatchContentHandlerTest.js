@@ -445,3 +445,43 @@ exports.patchPageAllComponents = function () {
     assert.assertJsonEquals(expected, result.results[0].content.page);
 };
 
+exports.patchValidationErrors = function () {
+    var result = content.patch({
+        key: '/a/b/mycontent',
+        patcher: function (c) {
+            c.validationErrors = [
+                {
+                    errorCode: 'com.enonic.myapp:REQUIRED',
+                    message: 'Missing value',
+                    i18n: 'my.error.required',
+                    args: ['field1']
+                },
+                {
+                    errorCode: 'com.enonic.myapp:INVALID',
+                    message: 'Invalid value: {0}',
+                    args: ['field2']
+                }
+            ];
+            return c;
+        }
+    });
+
+    var expectedErrors = [
+        {
+            errorCode: 'com.enonic.myapp:REQUIRED',
+            message: 'Missing value',
+            i18n: 'my.error.required',
+            args: ['field1']
+        },
+        {
+            errorCode: 'com.enonic.myapp:INVALID',
+            message: 'Invalid value: field2',
+            args: ['field2']
+        }
+    ];
+
+    assert.assertJsonEquals(expectedErrors, result.results[0].content.validationErrors);
+};
+
+
+
