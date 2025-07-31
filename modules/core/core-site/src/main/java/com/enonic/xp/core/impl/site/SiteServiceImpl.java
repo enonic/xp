@@ -45,9 +45,9 @@ public class SiteServiceImpl
         return SiteDescriptor.copyOf( descriptor ).
             form( form ).
             xDataMappings( XDataMappings.create().addAll( descriptor.getXDataMappings() )
-                               .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "image:media" ).build() )
-                               .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "image:media" ).build() )
-                               .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "image:media" ).build() ).build() )
+                               .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                               .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                               .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() ).build() )
             .build();
     }
 
