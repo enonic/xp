@@ -13,8 +13,14 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMapping;
+import com.enonic.xp.site.XDataMappings;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlSiteParser;
+
+import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 
 @Component(immediate = true)
 public class SiteServiceImpl
@@ -38,7 +44,11 @@ public class SiteServiceImpl
         final Form form = mixinService.inlineFormItems( descriptor.getForm() );
         return SiteDescriptor.copyOf( descriptor ).
             form( form ).
-            build();
+            xDataMappings( XDataMappings.create().addAll( descriptor.getXDataMappings() )
+                               .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "image:media" ).build() )
+                               .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "image:media" ).build() )
+                               .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "image:media" ).build() ).build() )
+            .build();
     }
 
     private ResourceProcessor<ApplicationKey, SiteDescriptor> newProcessor( final ApplicationKey applicationKey )

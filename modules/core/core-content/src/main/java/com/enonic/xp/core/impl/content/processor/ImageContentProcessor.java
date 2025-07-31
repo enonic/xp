@@ -413,24 +413,18 @@ public final class ImageContentProcessor
         final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
         if ( !tiffImageLengths.isEmpty() && !tiffImageWidths.isEmpty() )
         {
-            final long tiffImageLength = Long.parseLong( tiffImageLengths.toArray()[0].toString() );
-            final long tiffImageWidth = Long.parseLong( tiffImageWidths.toArray()[0].toString() );
+            final long tiffImageLength = Long.parseLong( tiffImageLengths.stream().findFirst().orElseThrow() );
+            final long tiffImageWidth = Long.parseLong( tiffImageWidths.stream().findFirst().orElseThrow() );
             xData.setLong( IMAGE_INFO_PIXEL_SIZE, tiffImageLength * tiffImageWidth );
             xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
             xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
         }
-        if ( sourceAttachment != null )
+        final Collection<String> imageSize = mediaInfo.getMetadata().get( "bytesize" );
+        if ( !imageSize.isEmpty() )
         {
-            try
-            {
-                long mediaInfoByteSize = sourceAttachment.getByteSource().size();
-                xData.setLong( MEDIA_INFO_BYTE_SIZE, mediaInfoByteSize );
-            }
-            catch ( IOException e )
-            {
-                throw new RuntimeException( "Failed to read BufferedImage from InputStream", e );
-            }
+            xData.setLong( MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
         }
+
         return extraData;
     }
 
