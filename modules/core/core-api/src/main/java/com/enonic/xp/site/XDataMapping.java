@@ -75,6 +75,10 @@ public final class XDataMapping
 
         private Boolean optional = false;
 
+        private Builder()
+        {
+        }
+
         public Builder xDataName( final XDataName xDataName )
         {
             this.xDataName = xDataName;

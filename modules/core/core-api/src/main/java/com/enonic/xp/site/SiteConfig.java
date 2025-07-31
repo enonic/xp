@@ -68,6 +68,10 @@ public final class SiteConfig
 
         private PropertyTree config;
 
+        private Builder()
+        {
+        }
+
         public Builder application( ApplicationKey value )
         {
             this.applicationKey = value;

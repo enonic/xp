@@ -130,7 +130,6 @@ public final class FieldSet
 
         private Builder()
         {
-            // default
         }
 
         private Builder( final FieldSet source )

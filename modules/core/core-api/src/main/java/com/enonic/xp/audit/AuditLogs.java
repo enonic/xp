@@ -49,7 +49,7 @@ public final class AuditLogs
 
     public AuditLog getAuditLogById( final AuditLogId auditLogId )
     {
-        return this.list.stream().filter( al -> auditLogId.equals( al.getId() ) )
+        return stream().filter( al -> auditLogId.equals( al.getId() ) )
             .findFirst()
             .orElse( null );
     }
@@ -57,6 +57,10 @@ public final class AuditLogs
     public static final class Builder
     {
         private final ImmutableList.Builder<AuditLog> auditLogs = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final AuditLog auditLog )
         {

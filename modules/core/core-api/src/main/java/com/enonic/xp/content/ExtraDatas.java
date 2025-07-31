@@ -1,6 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public final class ExtraDatas
 
     public XDataNames getNames()
     {
-        return list.stream().map( ExtraData::getName ).collect( XDataNames.collector() );
+        return XDataNames.from( map.keySet() );
     }
 
     public ExtraData getMetadata( final XDataName name )
@@ -39,7 +38,7 @@ public final class ExtraDatas
 
     public ExtraDatas copy()
     {
-        return toMap( list.stream().map( ExtraData::copy ).collect( ImmutableList.toImmutableList() ) );
+        return stream().map( ExtraData::copy ).collect( collector() );
     }
 
     public static ExtraDatas empty()
@@ -49,12 +48,12 @@ public final class ExtraDatas
 
     public static ExtraDatas from( final Iterable<ExtraData> extradatas )
     {
-        return extradatas instanceof ExtraDatas e ? e : ExtraDatas.create().addAll( extradatas ).build();
+        return extradatas instanceof ExtraDatas e ? e : checkDistinct( ImmutableList.copyOf( extradatas ) );
     }
 
     public static Collector<ExtraData, ?, ExtraDatas> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ExtraDatas::toMap );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ExtraDatas::checkDistinct );
     }
 
     private static ExtraDatas fromInternal( final ImmutableMap<XDataName, ExtraData> map )
@@ -62,7 +61,7 @@ public final class ExtraDatas
         return map.isEmpty() ? EMPTY : new ExtraDatas( map );
     }
 
-    private static ExtraDatas toMap( final List<ExtraData> list )
+    private static ExtraDatas checkDistinct( final ImmutableList<ExtraData> list )
     {
         return fromInternal( list.stream().collect( ImmutableMap.toImmutableMap( ExtraData::getName, Function.identity() ) ) );
     }
@@ -75,6 +74,10 @@ public final class ExtraDatas
     public static final class Builder
     {
         private final ImmutableMap.Builder<XDataName, ExtraData> map = ImmutableMap.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final ExtraData value )
         {

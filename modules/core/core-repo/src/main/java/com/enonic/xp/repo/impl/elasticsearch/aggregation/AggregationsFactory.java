@@ -36,7 +36,7 @@ public class AggregationsFactory
             return Aggregations.empty();
         }
 
-        Aggregations.Builder aggregationsBuilder = new Aggregations.Builder();
+        Aggregations.Builder aggregationsBuilder = Aggregations.create();
 
         for ( final org.elasticsearch.search.aggregations.Aggregation aggregation : aggregations )
         {

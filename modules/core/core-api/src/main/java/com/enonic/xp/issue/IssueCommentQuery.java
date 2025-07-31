@@ -68,7 +68,6 @@ public final class IssueCommentQuery
 
     public static final class Builder
     {
-
         private PrincipalKey creator;
 
         private IssueId issue;
@@ -80,6 +79,10 @@ public final class IssueCommentQuery
         private boolean count = false;
 
         private ChildOrder order = DEFAULT_ORDER;
+
+        private Builder()
+        {
+        }
 
         public Builder creator( final PrincipalKey creator )
         {

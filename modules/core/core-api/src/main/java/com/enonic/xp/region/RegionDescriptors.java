@@ -38,6 +38,10 @@ public final class RegionDescriptors
     {
         private final ImmutableSet.Builder<RegionDescriptor> regionsDescriptors = new ImmutableSet.Builder<>();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final RegionDescriptor value )
         {
             regionsDescriptors.add( value );

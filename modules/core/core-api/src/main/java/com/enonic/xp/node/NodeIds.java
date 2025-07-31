@@ -65,6 +65,10 @@ public final class NodeIds
     {
         private final ImmutableSet.Builder<NodeId> nodeIds = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final NodeId nodeId )
         {
             this.nodeIds.add( nodeId );

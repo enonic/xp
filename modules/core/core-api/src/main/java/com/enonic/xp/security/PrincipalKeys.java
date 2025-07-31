@@ -59,6 +59,10 @@ public final class PrincipalKeys
     {
         private final ImmutableSet.Builder<PrincipalKey> principalKeys = new ImmutableSet.Builder<>();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final PrincipalKey principalKey )
         {
             this.principalKeys.add( principalKey );

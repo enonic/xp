@@ -66,6 +66,10 @@ public final class BooleanFilter
 
         List<Filter> should = new ArrayList<>();
 
+        private Builder()
+        {
+        }
+
         public Builder must( final Filter filter )
         {
             this.must.add( filter );

@@ -215,13 +215,7 @@ public final class NodePath
 
         private final ArrayList<String> elementListBuilder;
 
-        public Builder()
-        {
-            this.absolute = true;
-            this.elementListBuilder = new ArrayList<>();
-        }
-
-        public Builder( final NodePath source )
+        private Builder( final NodePath source )
         {
             Preconditions.checkNotNull( source, "source to build copy from not given" );
             this.absolute = isAbsolute( source.path );

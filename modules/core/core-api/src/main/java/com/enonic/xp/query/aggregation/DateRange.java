@@ -53,6 +53,10 @@ public final class DateRange
 
         private Object to;
 
+        private Builder()
+        {
+        }
+
         public Builder from( final Instant from )
         {
             this.from = from;

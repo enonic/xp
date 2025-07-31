@@ -16,7 +16,7 @@ public final class TermSuggestion
     public static final class Builder
         extends Suggestion.Builder<Builder, TermSuggestionEntry>
     {
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

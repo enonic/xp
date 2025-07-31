@@ -53,6 +53,10 @@ public final class ContentTypes
     {
         private final ImmutableList.Builder<ContentType> contentTypes = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final ContentType value )
         {
             contentTypes.add( value );

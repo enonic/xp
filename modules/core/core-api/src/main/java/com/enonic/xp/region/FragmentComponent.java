@@ -76,7 +76,6 @@ public final class FragmentComponent
 
         private Builder()
         {
-            // Default
         }
 
         private Builder( final FragmentComponent source )

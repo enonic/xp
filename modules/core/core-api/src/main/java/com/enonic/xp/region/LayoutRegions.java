@@ -37,7 +37,6 @@ public final class LayoutRegions
 
         private Builder()
         {
-            // Default
         }
 
         public LayoutRegions build()

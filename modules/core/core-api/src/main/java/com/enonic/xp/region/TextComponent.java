@@ -76,9 +76,8 @@ public final class TextComponent
     {
         private String text;
 
-        Builder()
+        private Builder()
         {
-            // Default
         }
 
         private Builder( final TextComponent source )

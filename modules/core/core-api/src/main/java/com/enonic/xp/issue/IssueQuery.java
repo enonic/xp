@@ -83,7 +83,6 @@ public final class IssueQuery
 
     public static final class Builder
     {
-
         private PrincipalKey creator;
 
         private PrincipalKeys approvers;
@@ -99,6 +98,10 @@ public final class IssueQuery
         private int size = DEFAULT_FETCH_SIZE;
 
         private boolean count = false;
+
+        private Builder()
+        {
+        }
 
         public Builder creator( final PrincipalKey creator )
         {

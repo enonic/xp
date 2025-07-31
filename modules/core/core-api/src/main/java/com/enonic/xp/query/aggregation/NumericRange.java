@@ -51,6 +51,10 @@ public final class NumericRange
 
         private Double to;
 
+        private Builder()
+        {
+        }
+
         public Builder from( final Double from )
         {
             this.from = from;

@@ -61,6 +61,10 @@ public final class RegionDescriptor
     {
         private String name;
 
+        private Builder()
+        {
+        }
+
         public Builder name( final String value )
         {
             this.name = value;

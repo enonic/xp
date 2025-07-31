@@ -29,6 +29,10 @@ public final class ClusterNodes
     {
         private final ImmutableList.Builder<ClusterNode> nodes = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final ClusterNode node )
         {
             this.nodes.add( node );

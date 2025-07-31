@@ -91,7 +91,7 @@ public final class CreateAttachment
 
         private String text;
 
-        public Builder()
+        private Builder()
         {
         }
 

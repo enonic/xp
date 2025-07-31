@@ -78,6 +78,10 @@ public final class Segment
     {
         private final ArrayList<SegmentLevel> levels = new ArrayList<>();
 
+        private Builder()
+        {
+        }
+
         public Builder level( SegmentLevel level )
         {
             this.levels.add( level );

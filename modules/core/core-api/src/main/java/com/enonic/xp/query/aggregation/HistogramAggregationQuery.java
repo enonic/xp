@@ -68,7 +68,7 @@ public final class HistogramAggregationQuery
 
         private Order order;
 
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

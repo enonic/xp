@@ -53,6 +53,10 @@ public final class RoutableNodeVersionIds
     {
         final ImmutableList.Builder<RoutableNodeVersionId> routableNodeVersionIds = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final RoutableNodeVersionId routableNodeVersionId )
         {
             this.routableNodeVersionIds.add( routableNodeVersionId );

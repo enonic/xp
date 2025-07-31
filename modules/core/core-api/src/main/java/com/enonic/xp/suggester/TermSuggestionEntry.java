@@ -16,6 +16,10 @@ public final class TermSuggestionEntry
     public static final class Builder
         extends SuggestionEntry.Builder<Builder, TermSuggestionOption>
     {
+        private Builder()
+        {
+        }
+
         @Override
         public TermSuggestionEntry build()
         {

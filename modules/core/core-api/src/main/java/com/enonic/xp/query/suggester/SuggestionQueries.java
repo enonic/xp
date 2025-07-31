@@ -46,6 +46,10 @@ public final class SuggestionQueries
     {
         private final ImmutableList.Builder<SuggestionQuery> suggestionQueries = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final SuggestionQuery suggestionQuery )
         {
             this.suggestionQueries.add( suggestionQuery );

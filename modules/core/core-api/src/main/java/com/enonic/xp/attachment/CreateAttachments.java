@@ -1,6 +1,5 @@
 package com.enonic.xp.attachment;
 
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -29,17 +28,17 @@ public final class CreateAttachments
 
     public static CreateAttachments from( final CreateAttachment... attachments )
     {
-        return toMap( ImmutableList.copyOf( attachments ) );
+        return checkDistinct( ImmutableList.copyOf( attachments ) );
     }
 
     public static CreateAttachments from( final Iterable<CreateAttachment> attachments )
     {
-        return attachments instanceof CreateAttachments a ? a : toMap( ImmutableList.copyOf( attachments ) );
+        return attachments instanceof CreateAttachments a ? a : checkDistinct( ImmutableList.copyOf( attachments ) );
     }
 
     public static Collector<CreateAttachment, ?, CreateAttachments> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), CreateAttachments::toMap );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), CreateAttachments::checkDistinct );
     }
 
     private static CreateAttachments fromInternal( final ImmutableMap<String, CreateAttachment> map )
@@ -47,7 +46,7 @@ public final class CreateAttachments
         return map.isEmpty() ? EMPTY : new CreateAttachments( map );
     }
 
-    private static CreateAttachments toMap( final List<CreateAttachment> list )
+    private static CreateAttachments checkDistinct( final ImmutableList<CreateAttachment> list )
     {
         return fromInternal( list.stream().collect( ImmutableMap.toImmutableMap( CreateAttachment::getName, Function.identity() ) ) );
     }
@@ -60,6 +59,10 @@ public final class CreateAttachments
     public static final class Builder
     {
         private final ImmutableMap.Builder<String, CreateAttachment> map = ImmutableMap.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( CreateAttachment value )
         {
@@ -78,7 +81,7 @@ public final class CreateAttachments
 
         public CreateAttachments build()
         {
-            return fromInternal( map.build() );
+            return fromInternal( map.buildOrThrow() );
         }
 
         public CreateAttachments buildKeepingLast()

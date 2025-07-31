@@ -59,6 +59,10 @@ public final class XDataMappings
     {
         private final ImmutableList.Builder<XDataMapping> builder = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public XDataMappings.Builder add( final XDataMapping xDataMapping )
         {
             builder.add( xDataMapping );

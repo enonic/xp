@@ -20,7 +20,7 @@ class NumericRangeAggregationFactory
 
     private static Buckets createBuckets( final Collection<? extends Range.Bucket> buckets )
     {
-        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+        final Buckets.Builder bucketsBuilder = Buckets.create();
 
         for ( final Range.Bucket bucket : buckets )
         {

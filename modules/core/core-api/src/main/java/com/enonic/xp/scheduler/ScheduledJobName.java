@@ -56,6 +56,10 @@ public final class ScheduledJobName
     {
         private String value;
 
+        private Builder()
+        {
+        }
+
         public Builder value( final String value )
         {
             this.value = value;

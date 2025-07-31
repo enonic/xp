@@ -58,6 +58,10 @@ public final class Aggregations
     {
         private final ImmutableList.Builder<Aggregation> aggregations = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final Aggregation aggregation )
         {
             this.aggregations.add( aggregation );

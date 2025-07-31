@@ -49,6 +49,10 @@ public final class UpdateDynamicContentSchemaParams
 
         private String resource;
 
+        private Builder()
+        {
+        }
+
         public Builder name( final BaseSchemaName name )
         {
             this.name = name;

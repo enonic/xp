@@ -21,7 +21,7 @@ class DateRangeAggregationFactory
 
     private static Buckets createBuckets( final Collection<? extends InternalDateRange.Bucket> buckets )
     {
-        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+        final Buckets.Builder bucketsBuilder = Buckets.create();
 
         for ( final InternalDateRange.Bucket bucket : buckets )
         {

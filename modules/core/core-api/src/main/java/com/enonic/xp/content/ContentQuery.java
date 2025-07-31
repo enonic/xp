@@ -108,6 +108,10 @@ public final class ContentQuery
 
         private HighlightQuery highlight;
 
+        private Builder()
+        {
+        }
+
         public Builder queryExpr( final QueryExpr queryExpr )
         {
             this.queryExpr = queryExpr;

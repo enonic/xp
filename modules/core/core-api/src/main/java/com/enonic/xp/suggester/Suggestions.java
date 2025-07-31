@@ -58,6 +58,10 @@ public final class Suggestions
     {
         private final ImmutableList.Builder<Suggestion> suggestions = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final Suggestion suggestion )
         {
             this.suggestions.add( suggestion );

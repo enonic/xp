@@ -143,12 +143,11 @@ public final class Region
 
         private final List<Component> components = new ArrayList<>();
 
-        public Builder()
+        private Builder()
         {
-
         }
 
-        public Builder( final Region source )
+        private Builder( final Region source )
         {
             this.name = source.name;
             for ( final Component component : source.components )

@@ -48,8 +48,8 @@ import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -224,18 +224,13 @@ public class HtmlAreaContentProcessor
     {
         if ( extraDatas != null )
         {
-            final XDatas xDatas = xDataService.getByNames( extraDatas.getNames() );
-
-            if ( xDatas.getSize() > 0 )
+            for ( ExtraData extraData : extraDatas )
             {
-                xDatas.forEach( xData -> {
-                    final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
-                    if ( extraData != null )
-                    {
-                        final Collection<Property> properties = getProperties( extraData.getData(), xData.getForm().getFormItems() );
-                        processDataTree( properties, processedIds );
-                    }
-                } );
+                final XData xData = xDataService.getByName( extraData.getName() );
+                if ( xData != null )
+                {
+                    processDataTree( getProperties( extraData.getData(), xData.getForm().getFormItems() ), processedIds );
+                }
             }
         }
     }

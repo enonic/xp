@@ -50,6 +50,10 @@ public final class ValueFilter
     {
         private final Set<Value> values = new HashSet<>();
 
+        private Builder()
+        {
+        }
+
         public Builder addValue( final Value value )
         {
             this.values.add( value );

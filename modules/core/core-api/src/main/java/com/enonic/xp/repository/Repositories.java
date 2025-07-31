@@ -22,7 +22,7 @@ public final class Repositories
 
     public RepositoryIds getIds()
     {
-        return list.stream().map( Repository::getId ).collect( RepositoryIds.collector() );
+        return stream().map( Repository::getId ).collect( RepositoryIds.collector() );
     }
 
     public static Repositories empty()
@@ -58,6 +58,10 @@ public final class Repositories
     public static final class Builder
     {
         private final ImmutableList.Builder<Repository> repositories = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( Repository repository )
         {

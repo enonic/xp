@@ -53,6 +53,10 @@ public final class PublishRequestItems
     {
         private final ImmutableList.Builder<PublishRequestItem> items = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final PublishRequestItem item )
         {
             this.items.add( item );

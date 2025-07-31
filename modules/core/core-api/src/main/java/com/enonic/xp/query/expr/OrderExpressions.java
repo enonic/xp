@@ -53,6 +53,10 @@ public final class OrderExpressions
     {
         final ImmutableList.Builder<OrderExpr> orderExprs = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final OrderExpr orderExpr )
         {
             this.orderExprs.add( orderExpr );

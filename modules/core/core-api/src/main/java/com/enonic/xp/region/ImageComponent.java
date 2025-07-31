@@ -114,7 +114,6 @@ public final class ImageComponent
 
         private Builder()
         {
-            // Default
         }
 
         private Builder( final ImageComponent source )

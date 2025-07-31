@@ -97,12 +97,12 @@ public final class ContentPaths
 
     private ContentPaths addPaths( final Collection<ContentPath> paths )
     {
-        return Stream.concat( set.stream(), paths.stream() ).collect( collector() );
+        return Stream.concat( stream(), paths.stream() ).collect( collector() );
     }
 
     private ContentPaths removePaths( final Set<ContentPath> paths )
     {
-        return set.stream().filter( Predicate.not( paths::contains ) ).collect( collector() );
+        return stream().filter( Predicate.not( paths::contains ) ).collect( collector() );
     }
 
     private static ContentPath adaptPath( Object item )
@@ -127,6 +127,10 @@ public final class ContentPaths
     public static final class Builder
     {
         private final ImmutableSet.Builder<ContentPath> paths = ImmutableSet.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final ContentPath contentPath )
         {

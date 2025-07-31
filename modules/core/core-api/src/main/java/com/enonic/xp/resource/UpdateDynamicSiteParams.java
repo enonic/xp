@@ -39,6 +39,10 @@ public final class UpdateDynamicSiteParams
 
         private String resource;
 
+        private Builder()
+        {
+        }
+
         public Builder key( final ApplicationKey key )
         {
             this.key = key;

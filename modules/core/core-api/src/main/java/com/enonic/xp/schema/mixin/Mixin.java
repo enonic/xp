@@ -65,12 +65,12 @@ public final class Mixin
     {
         private Form.Builder formBuilder = Form.create();
 
-        public Builder()
+        private Builder()
         {
             super();
         }
 
-        public Builder( final Mixin mixin )
+        private Builder( final Mixin mixin )
         {
             super( mixin );
             this.formBuilder = Form.create( mixin.getForm() );

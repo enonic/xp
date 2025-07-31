@@ -22,12 +22,12 @@ public final class Contents
 
     public ContentPaths getPaths()
     {
-        return set.stream().map( Content::getPath ).collect( ContentPaths.collector() );
+        return stream().map( Content::getPath ).collect( ContentPaths.collector() );
     }
 
     public ContentIds getIds()
     {
-        return set.stream().map( Content::getId ).collect( ContentIds.collector() );
+        return stream().map( Content::getId ).collect( ContentIds.collector() );
     }
 
     public static Contents empty()
@@ -63,6 +63,10 @@ public final class Contents
     public static final class Builder
     {
         private final ImmutableSet.Builder<Content> contents = new ImmutableSet.Builder<>();
+
+        private Builder()
+        {
+        }
 
         public Builder add( Content content )
         {

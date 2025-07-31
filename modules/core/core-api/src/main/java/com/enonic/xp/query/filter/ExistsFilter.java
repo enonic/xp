@@ -27,6 +27,10 @@ public final class ExistsFilter
     public static final class Builder
         extends FieldFilter.Builder<Builder>
     {
+        private Builder()
+        {
+        }
+
         public ExistsFilter build()
         {
             return new ExistsFilter( this );

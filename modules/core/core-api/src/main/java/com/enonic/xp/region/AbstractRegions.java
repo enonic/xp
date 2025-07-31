@@ -104,7 +104,6 @@ public abstract class AbstractRegions
 
         protected Builder()
         {
-            // Default
         }
 
         protected Builder( final AbstractRegions source )

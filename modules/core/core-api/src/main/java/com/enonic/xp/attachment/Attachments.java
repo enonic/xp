@@ -1,7 +1,5 @@
 package com.enonic.xp.attachment;
 
-import java.util.Arrays;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -20,12 +18,12 @@ public final class Attachments
 
     public Attachment byName( final String name )
     {
-        return list.stream().filter( a -> a.getName().equals( name ) ).findFirst().orElse( null );
+        return stream().filter( a -> a.getName().equals( name ) ).findFirst().orElse( null );
     }
 
     public Attachment byLabel( final String label )
     {
-        return list.stream().filter( a -> label.equals( a.getLabel() ) ).findFirst().orElse( null );
+        return stream().filter( a -> label.equals( a.getLabel() ) ).findFirst().orElse( null );
     }
 
     public boolean hasByName( final String name )
@@ -36,19 +34,6 @@ public final class Attachments
     public boolean hasByLabel( final String label )
     {
         return byLabel( label ) != null;
-    }
-
-    public Attachments add( final Attachment... attachments )
-    {
-        return add( Arrays.asList( attachments ) );
-    }
-
-    public Attachments add( final Iterable<Attachment> attachments )
-    {
-        final ImmutableList.Builder<Attachment> listBuilder = ImmutableList.builder();
-        listBuilder.addAll( this.list );
-        listBuilder.addAll( attachments );
-        return fromInternal( listBuilder.build() );
     }
 
     public static Attachments empty()
@@ -68,14 +53,7 @@ public final class Attachments
 
     private static Attachments fromInternal( final ImmutableList<Attachment> list )
     {
-        if ( list.isEmpty() )
-        {
-            return EMPTY;
-        }
-        else
-        {
-            return new Attachments( list );
-        }
+        return list.isEmpty() ? EMPTY : new Attachments( list );
     }
 
     public static Builder create()
@@ -86,6 +64,10 @@ public final class Attachments
     public static final class Builder
     {
         private final ImmutableList.Builder<Attachment> builder = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( Attachment attachment )
         {

@@ -43,6 +43,10 @@ public final class ReorderChildContentsParams
 
         private boolean stopInherit = true;
 
+        private Builder()
+        {
+        }
+
         public Builder add( final ReorderChildParams orderChildNodeParams )
         {
             this.orderChildContentParamsList.add( orderChildNodeParams );

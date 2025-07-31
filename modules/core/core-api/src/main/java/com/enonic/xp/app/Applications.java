@@ -18,7 +18,7 @@ public final class Applications
 
     public ApplicationKeys getApplicationKeys()
     {
-        return list.stream().map( Application::getKey ).collect( ApplicationKeys.collector() );
+        return stream().map( Application::getKey ).collect( ApplicationKeys.collector() );
     }
 
     public static Applications empty()

@@ -19,7 +19,7 @@ class HistogramAggregationFactory
 
     private static Buckets createBuckets( final Collection<? extends Histogram.Bucket> buckets )
     {
-        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+        final Buckets.Builder bucketsBuilder = Buckets.create();
 
         for ( final Histogram.Bucket bucket : buckets )
         {

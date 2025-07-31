@@ -67,6 +67,10 @@ public final class IdProviderConfig
 
         private PropertyTree config;
 
+        private Builder()
+        {
+        }
+
         public Builder applicationKey( ApplicationKey value )
         {
             this.applicationKey = value;

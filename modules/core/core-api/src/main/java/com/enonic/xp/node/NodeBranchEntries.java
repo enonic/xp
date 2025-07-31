@@ -74,6 +74,10 @@ public final class NodeBranchEntries
     {
         private final ImmutableMap.Builder<NodeId, NodeBranchEntry> map = ImmutableMap.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final NodeBranchEntry nodeBranchEntry )
         {
             this.map.put( nodeBranchEntry.getNodeId(), nodeBranchEntry );

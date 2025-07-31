@@ -21,7 +21,7 @@ public final class XDatas
 
     public XData getXData( final XDataName xDataName )
     {
-        return list.stream().filter( x -> xDataName.equals( x.getName() ) ).findFirst().orElse( null );
+        return stream().filter( x -> xDataName.equals( x.getName() ) ).findFirst().orElse( null );
     }
 
     public static XDatas empty()
@@ -57,6 +57,10 @@ public final class XDatas
     public static final class Builder
     {
         private final ImmutableList.Builder<XData> builder = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( XData node )
         {

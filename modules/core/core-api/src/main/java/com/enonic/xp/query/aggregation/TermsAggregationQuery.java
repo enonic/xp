@@ -84,7 +84,7 @@ public final class TermsAggregationQuery
 
         private long minDocCount = 1;
 
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

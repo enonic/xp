@@ -57,6 +57,10 @@ public final class MoveNodeResult
 
             private Node node;
 
+            private Builder()
+            {
+            }
+
             public Builder node( final Node node )
             {
                 this.node = node;

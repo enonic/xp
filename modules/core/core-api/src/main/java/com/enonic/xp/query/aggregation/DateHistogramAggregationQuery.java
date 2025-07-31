@@ -41,7 +41,7 @@ public final class DateHistogramAggregationQuery
     {
         private String format;
 
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

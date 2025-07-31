@@ -26,7 +26,7 @@ public final class CreatePublishRequestIssueParams
     {
         private PublishRequestIssueSchedule schedule;
 
-        public Builder()
+        private Builder()
         {
             super();
             this.issueType = IssueType.PUBLISH_REQUEST;

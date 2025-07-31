@@ -53,9 +53,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataNames;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.schema.xdata.XDatas;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -105,7 +103,6 @@ public class HtmlAreaContentProcessorTest
 
         contentTypeName = ContentTypeName.from( "myContentType" );
 
-        final GetContentTypeParams params = GetContentTypeParams.from( contentTypeName );
         contentType = ContentType.create()
             .name( contentTypeName )
             .superType( ContentTypeName.folder() )
@@ -117,7 +114,6 @@ public class HtmlAreaContentProcessorTest
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().contentType( contentType ).build();
 
         when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
-        when( xDataService.getByNames( Mockito.isA( XDataNames.class ) ) ).thenReturn( XDatas.empty() );
 
         ContentConfig contentConfig = Mockito.mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
@@ -273,7 +269,7 @@ public class HtmlAreaContentProcessorTest
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
-        when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
+        when( xDataService.getByName( xDataName ) ).thenReturn( xData );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -616,7 +612,7 @@ public class HtmlAreaContentProcessorTest
         extraData.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\" src=\"/admin/rest-v2/cs/cms/features/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b\"/>" ) );
 
-        when( xDataService.getByNames( XDataNames.from( xDataName ) ) ).thenReturn( XDatas.from( xData ) );
+        when( xDataService.getByName( xDataName ) ).thenReturn( xData );
 
         final ProcessCreateParams processCreateParams = Mockito.mock( ProcessCreateParams.class );
         final CreateContentParams createContentParams = CreateContentParams.create()

@@ -51,17 +51,21 @@ public final class Nodes
 
     public NodePaths getPaths()
     {
-        return set.stream().map( Node::path ).collect( NodePaths.collector() );
+        return stream().map( Node::path ).collect( NodePaths.collector() );
     }
 
     public NodeIds getIds()
     {
-        return set.stream().map( Node::id ).collect( NodeIds.collector() );
+        return stream().map( Node::id ).collect( NodeIds.collector() );
     }
 
     public static final class Builder
     {
         private final ImmutableSet.Builder<Node> nodes = new ImmutableSet.Builder<>();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final Node node )
         {

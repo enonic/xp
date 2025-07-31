@@ -53,6 +53,10 @@ public final class NodeVersionIds
     {
         private final ImmutableSet.Builder<NodeVersionId> nodeVersionIds = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final NodeVersionId nodeVersionId )
         {
             this.nodeVersionIds.add( nodeVersionId );

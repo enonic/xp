@@ -20,7 +20,7 @@ class TermsAggregationFactory
 
     private static Buckets createBuckets( final Collection<Terms.Bucket> buckets )
     {
-        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+        final Buckets.Builder bucketsBuilder = Buckets.create();
 
         for ( final Terms.Bucket bucket : buckets )
         {
