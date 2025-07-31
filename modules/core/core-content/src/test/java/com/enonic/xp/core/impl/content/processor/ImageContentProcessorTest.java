@@ -127,7 +127,7 @@ public class ImageContentProcessorTest
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() );
+            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final ExtraDatas extraDatas = result.getCreateContentParams().getExtraDatas();
         assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
@@ -223,7 +223,7 @@ public class ImageContentProcessorTest
                 name( "myContent" ).
                 build() ).
             mediaInfo( MediaInfo.create().
-                addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).build() ).
+                addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() ).
             createAttachments( createAttachments ).
             build();
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );

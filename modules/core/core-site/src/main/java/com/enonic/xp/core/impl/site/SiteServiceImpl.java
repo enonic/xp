@@ -33,6 +33,26 @@ public class SiteServiceImpl
     @Override
     public SiteDescriptor getDescriptor( final ApplicationKey applicationKey )
     {
+        if ( ApplicationKey.PORTAL.equals( applicationKey ) )
+        {
+            return SiteDescriptor.create()
+                .xDataMappings( XDataMappings.create()
+                                    .add( XDataMapping.create()
+                                              .xDataName( IMAGE_INFO_METADATA_NAME )
+                                              .allowContentTypes( "media:image" )
+                                              .build() )
+                                    .add( XDataMapping.create()
+                                              .xDataName( CAMERA_INFO_METADATA_NAME )
+                                              .allowContentTypes( "media:image" )
+                                              .build() )
+                                    .add( XDataMapping.create()
+                                              .xDataName( GPS_INFO_METADATA_NAME )
+                                              .allowContentTypes( "media:image" )
+                                              .build() )
+                                    .build() )
+                .build();
+        }
+
         final ResourceProcessor<ApplicationKey, SiteDescriptor> processor = newProcessor( applicationKey );
         final SiteDescriptor descriptor = this.resourceService.processResource( processor );
 
@@ -42,13 +62,7 @@ public class SiteServiceImpl
         }
 
         final Form form = mixinService.inlineFormItems( descriptor.getForm() );
-        return SiteDescriptor.copyOf( descriptor ).
-            form( form ).
-            xDataMappings( XDataMappings.create().addAll( descriptor.getXDataMappings() )
-                               .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
-                               .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
-                               .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() ).build() )
-            .build();
+        return SiteDescriptor.copyOf( descriptor ).form( form ).build();
     }
 
     private ResourceProcessor<ApplicationKey, SiteDescriptor> newProcessor( final ApplicationKey applicationKey )

@@ -25,7 +25,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentService;
@@ -232,17 +231,15 @@ public final class ImageContentProcessor
         final CreateAttachments originalAttachments = createContentParams.getCreateAttachments();
         Preconditions.checkArgument( originalAttachments.getSize() == 1, "Expected only one attachment" );
 
-        final CreateAttachment sourceAttachment = originalAttachments.first();
-
         ExtraDatas extraDatas = null;
 
         if ( mediaInfo != null )
         {
-            extraDatas = extractMetadata( mediaInfo, sourceAttachment );
+            extraDatas = extractMetadata( mediaInfo );
         }
 
         return new ProcessCreateResult( CreateContentParams.create( createContentParams )
-                                            .createAttachments( CreateAttachments.from( sourceAttachment ) )
+                                            .createAttachments( originalAttachments )
                                             .extraDatas( extraDatas )
                                             .build() );
     }
@@ -334,8 +331,6 @@ public final class ImageContentProcessor
     {
         final MediaInfo mediaInfo = params.getMediaInfo();
 
-        final CreateAttachment sourceAttachment = params.getCreateAttachments() == null ? null : params.getCreateAttachments().first();
-
         final ContentEditor editor;
         if ( mediaInfo != null )
         {
@@ -343,7 +338,7 @@ public final class ImageContentProcessor
                 final ExtraDatas.Builder builder = ExtraDatas.create();
                 builder.addAll( editable.extraDatas );
 
-                extractMetadata( mediaInfo, sourceAttachment ).forEach( builder::add );
+                extractMetadata( mediaInfo ).forEach( builder::add );
 
                 editable.extraDatas = builder.buildKeepingLast();
             };
@@ -405,35 +400,9 @@ public final class ImageContentProcessor
         }
     }
 
-    private ExtraData extractSize( MediaInfo mediaInfo, final CreateAttachment sourceAttachment )
-    {
-        final ExtraData extraData = new ExtraData( IMAGE_INFO_METADATA_NAME, new PropertyTree() );
-        final PropertyTree xData = extraData.getData();
-        final Collection<String> tiffImageLengths = mediaInfo.getMetadata().get( "tiffImagelength" );
-        final Collection<String> tiffImageWidths = mediaInfo.getMetadata().get( "tiffImagewidth" );
-        if ( !tiffImageLengths.isEmpty() && !tiffImageWidths.isEmpty() )
-        {
-            final long tiffImageLength = Long.parseLong( tiffImageLengths.stream().findFirst().orElseThrow() );
-            final long tiffImageWidth = Long.parseLong( tiffImageWidths.stream().findFirst().orElseThrow() );
-            xData.setLong( IMAGE_INFO_PIXEL_SIZE, tiffImageLength * tiffImageWidth );
-            xData.setLong( IMAGE_INFO_IMAGE_HEIGHT, tiffImageLength );
-            xData.setLong( IMAGE_INFO_IMAGE_WIDTH, tiffImageWidth );
-        }
-        final Collection<String> imageSize = mediaInfo.getMetadata().get( "bytesize" );
-        if ( !imageSize.isEmpty() )
-        {
-            xData.setLong( MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
-        }
-
-        return extraData;
-    }
-
-    private ExtraDatas extractMetadata( final MediaInfo mediaInfo, final CreateAttachment sourceAttachment )
+    private ExtraDatas extractMetadata( final MediaInfo mediaInfo )
     {
         final Map<XDataName, ExtraData> metadataMap = new LinkedHashMap<>();
-
-        final ExtraData sizeData = extractSize( mediaInfo, sourceAttachment );
-        metadataMap.put( IMAGE_INFO_METADATA_NAME, sizeData );
 
         final ExtraData geoData = extractGeoLocation( mediaInfo );
         if ( geoData != null )
@@ -478,7 +447,7 @@ public final class ImageContentProcessor
                 {
                     continue;
                 }
-                ExtraData extraData = metadataMap.get( xData.getName() );
+                ExtraData extraData = getOrCreate( metadataMap, xData.getName() );
                 if ( extraData == null )
                 {
                     extraData = new ExtraData( xData.getName(), new PropertyTree() );
@@ -504,6 +473,28 @@ public final class ImageContentProcessor
                 }
             }
         }
+
+        final ExtraData imageInfoExtraData = getOrCreate( metadataMap, IMAGE_INFO_METADATA_NAME );
+        if ( imageInfoExtraData != null )
+        {
+            final PropertyTree imageInfoExtraDataData = imageInfoExtraData.getData();
+            final Long imageHeight = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
+            final Long tiffImageWidth = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_WIDTH );
+            if ( imageHeight != null && tiffImageWidth != null )
+            {
+                imageInfoExtraDataData.setLong( IMAGE_INFO_PIXEL_SIZE, imageHeight * tiffImageWidth );
+            }
+            final Collection<String> imageSize = mediaInfo.getMetadata().get( "bytesize" );
+            if ( !imageSize.isEmpty() )
+            {
+                imageInfoExtraDataData.setLong( MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
+            }
+        }
+
         return metadataMap.values().stream().collect( ExtraDatas.collector() );
+    }
+
+    private static ExtraData getOrCreate(Map<XDataName, ExtraData> metadataMap, XDataName name) {
+        return metadataMap.computeIfAbsent( name, n -> new ExtraData( n, new PropertyTree() ) );
     }
 }
