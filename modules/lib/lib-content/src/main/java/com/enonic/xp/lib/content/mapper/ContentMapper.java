@@ -10,6 +10,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
@@ -78,6 +79,7 @@ public final class ContentMapper
         serializeData( gen, value.getData() );
         serializeExtraData( gen, value.getAllExtraData() );
         serializePage( gen, value.getPage() );
+        serializeValidationErrors( gen, value.getValidationErrors() );
         serializeAttachments( gen, value.getAttachments() );
         serializePublishInfo( gen, value.getPublishInfo() );
         serializeWorkflowInfo( gen, value.getWorkflowInfo() );
@@ -148,6 +150,14 @@ public final class ContentMapper
         {
             gen.map( PAGE );
             gen.end();
+        }
+    }
+
+    private void serializeValidationErrors( final MapGenerator gen, final ValidationErrors value )
+    {
+        if ( value != null )
+        {
+            new ValidationErrorsMapper( value ).serialize( gen );
         }
     }
 
