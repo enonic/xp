@@ -8,7 +8,6 @@ import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.task.TaskDescriptor;
 
@@ -22,8 +21,6 @@ public interface ApplicationInfoService
     PartDescriptors getPartDescriptors( ApplicationKey applicationKey );
 
     LayoutDescriptors getLayoutDescriptors( ApplicationKey applicationKey );
-
-    RelationshipTypes getRelationshipTypes( ApplicationKey applicationKey );
 
     MacroDescriptors getMacroDescriptors( ApplicationKey applicationKey );
 

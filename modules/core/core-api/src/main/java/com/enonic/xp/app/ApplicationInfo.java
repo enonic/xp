@@ -7,7 +7,6 @@ import com.enonic.xp.page.PageDescriptors;
 import com.enonic.xp.region.LayoutDescriptors;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.task.TaskDescriptor;
 
@@ -21,8 +20,6 @@ public final class ApplicationInfo
     private final PartDescriptors parts;
 
     private final LayoutDescriptors layouts;
-
-    private final RelationshipTypes relations;
 
     private final MacroDescriptors macros;
 
@@ -39,7 +36,6 @@ public final class ApplicationInfo
         this.pages = builder.pages;
         this.parts = builder.parts;
         this.layouts = builder.layouts;
-        this.relations = builder.relations;
         this.macros = builder.macros;
         this.tasks = builder.tasks;
         this.idProviderReferences = builder.idProviderReferences;
@@ -64,11 +60,6 @@ public final class ApplicationInfo
     public LayoutDescriptors getLayouts()
     {
         return layouts;
-    }
-
-    public RelationshipTypes getRelations()
-    {
-        return relations;
     }
 
     public MacroDescriptors getMacros()
@@ -107,8 +98,6 @@ public final class ApplicationInfo
 
         private LayoutDescriptors layouts;
 
-        private RelationshipTypes relations;
-
         private MacroDescriptors macros;
 
         private Descriptors<TaskDescriptor> tasks;
@@ -142,12 +131,6 @@ public final class ApplicationInfo
         public Builder setLayouts( final LayoutDescriptors layouts )
         {
             this.layouts = layouts;
-            return this;
-        }
-
-        public Builder setRelations( final RelationshipTypes relations )
-        {
-            this.relations = relations;
             return this;
         }
 

@@ -3,7 +3,6 @@ package com.enonic.xp.app;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 
 @PublicApi
@@ -77,18 +76,4 @@ public final class ApplicationRelativeResolver
         return XDataName.from( this.current, name );
     }
 
-    public RelationshipTypeName toRelationshipTypeName( final String name )
-    {
-        if ( name.contains( ":" ) )
-        {
-            return RelationshipTypeName.from( name );
-        }
-
-        if ( this.current == null )
-        {
-            throw new IllegalArgumentException( "Unable to resolve application for RelationshipType [" + name + "]" );
-        }
-
-        return RelationshipTypeName.from( this.current, name );
-    }
 }

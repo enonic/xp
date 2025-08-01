@@ -13,11 +13,7 @@ final class ContentSelectorAliasConverter
     @Override
     public String convert( final String alias )
     {
-        if ( alias.equals( "relationship" ) )
-        {
-            return "relationship-type";
-        }
-        else if ( alias.equals( "allowType" ) )
+        if ( alias.equals( "allowType" ) )
         {
             return "allow-content-type";
         }

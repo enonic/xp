@@ -110,20 +110,11 @@
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
   </input>
-  <input name="myRelationship" type="Relationship">
-    <immutable>false</immutable>
-    <indexed>false</indexed>
-    <occurrences minimum="0" maximum="1"/>
-    <config>
-      <relationship-type>system:reference</relationship-type>
-    </config>
-  </input>
   <input name="myImage" type="ImageSelector">
     <immutable>false</immutable>
     <indexed>false</indexed>
     <occurrences minimum="0" maximum="1"/>
     <config>
-      <relationship-type>system:reference</relationship-type>
     </config>
   </input>
   <input name="myCustomInput" type="custom:DummyCustomInputType">

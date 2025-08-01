@@ -103,10 +103,6 @@ final class XmlInputTypeConfigMapper
             {
                 return relativeResolver.toMixinName( value ).toString();
             }
-            else if ( lowerCasedName.endsWith( "relationshiptype" ) )
-            {
-                return relativeResolver.toRelationshipTypeName( value ).toString();
-            }
             else
             {
                 return value;

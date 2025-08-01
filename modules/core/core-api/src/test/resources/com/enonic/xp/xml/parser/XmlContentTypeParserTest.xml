@@ -20,7 +20,6 @@
       <label>Someones parent</label>
       <occurrences minimum="0" maximum="1"/>
       <config>
-        <relationship>system:reference</relationship>
         <allowType>mytype</allowType>
         <allowType>mytype2</allowType>
         <allowPath>path1</allowPath>

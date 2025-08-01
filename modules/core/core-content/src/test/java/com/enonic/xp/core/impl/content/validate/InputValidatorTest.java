@@ -20,7 +20,6 @@ import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -242,7 +241,6 @@ public class InputValidatorTest
                 name( "contentSelector" ).
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
                 inputTypeProperty( InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() ).
                 build() ).
             addFormItem( Input.create().

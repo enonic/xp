@@ -10,6 +10,7 @@ import com.enonic.xp.app.ApplicationInfo;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
@@ -19,7 +20,6 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageDescriptors;
@@ -35,9 +35,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.relationship.RelationshipType;
-import com.enonic.xp.schema.relationship.RelationshipTypeService;
-import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
@@ -55,8 +52,6 @@ public class ApplicationInfoServiceImplTest
     private PageDescriptorService pageDescriptorService;
 
     private PartDescriptorService partDescriptorService;
-
-    private RelationshipTypeService relationshipTypeService;
 
     private LayoutDescriptorService layoutDescriptorService;
 
@@ -83,7 +78,6 @@ public class ApplicationInfoServiceImplTest
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        this.relationshipTypeService = Mockito.mock( RelationshipTypeService.class );
         this.macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         this.taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         this.securityService = Mockito.mock( SecurityService.class );
@@ -93,7 +87,6 @@ public class ApplicationInfoServiceImplTest
         this.service.setPageDescriptorService( this.pageDescriptorService );
         this.service.setPartDescriptorService( this.partDescriptorService );
         this.service.setLayoutDescriptorService( this.layoutDescriptorService );
-        this.service.setRelationshipTypeService( this.relationshipTypeService );
         this.service.setMacroDescriptorService( this.macroDescriptorService );
         this.service.setTaskDescriptorService( this.taskDescriptorService );
         this.service.setSecurityService( this.securityService );
@@ -144,15 +137,6 @@ public class ApplicationInfoServiceImplTest
     }
 
     @Test
-    public void testRelationshipTypes()
-    {
-        mockRelationshipTypes( this.applicationKey );
-        final RelationshipTypes relationshipTypes = this.service.getRelationshipTypes( this.applicationKey );
-
-        assertEquals( relationshipTypes.getSize(), 2 );
-    }
-
-    @Test
     public void testTasks()
     {
         mockTasks( this.applicationKey );
@@ -193,7 +177,6 @@ public class ApplicationInfoServiceImplTest
         assertEquals( applicationInfo.getPages().getSize(), 2 );
         assertEquals( applicationInfo.getParts().getSize(), 2 );
         assertEquals( applicationInfo.getLayouts().getSize(), 2 );
-        assertEquals( applicationInfo.getRelations().getSize(), 2 );
         assertEquals( applicationInfo.getTasks().getSize(), 2 );
         assertEquals( applicationInfo.getMacros().getSize(), 2 );
         assertEquals( applicationInfo.getIdProviderReferences().getSize(), 2 );
@@ -288,15 +271,6 @@ public class ApplicationInfoServiceImplTest
 
     }
 
-    private void mockRelationshipTypes( final ApplicationKey applicationKey )
-    {
-        final RelationshipTypes relationshipTypes =
-            RelationshipTypes.from( RelationshipType.create().name( "myapplication:person" ).build(),
-                                    RelationshipType.create().name( "myapplication:site" ).build() );
-
-        Mockito.when( this.relationshipTypeService.getByApplication( applicationKey ) ).thenReturn( relationshipTypes );
-    }
-
     private void mockMacros( final ApplicationKey applicationKey )
     {
         final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().
@@ -378,7 +352,6 @@ public class ApplicationInfoServiceImplTest
         mockPageDescriptors( applicationKey );
         mockPartDescriptors( applicationKey );
         mockLayoutDescriptors( applicationKey );
-        mockRelationshipTypes( applicationKey );
         mockMacros( applicationKey );
         mockTasks( applicationKey );
         mockIdProviderApplication( applicationKey );

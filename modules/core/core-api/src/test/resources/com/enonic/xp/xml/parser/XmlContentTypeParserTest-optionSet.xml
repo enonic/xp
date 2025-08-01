@@ -98,7 +98,6 @@
               <indexed>true</indexed>
               <occurrences minimum="1" maximum="1"/>
               <config>
-                <relationship>system:reference</relationship>
                 <allowType>mytype</allowType>
                 <allowType>mytype2</allowType>
                 <allowPath>path1</allowPath>
