@@ -7,6 +7,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -26,6 +28,22 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 public class SiteServiceImpl
     implements SiteService
 {
+    private static final SiteDescriptor PORTAL_SITE_DESCRIPTOR = SiteDescriptor.create()
+        .xDataMappings( XDataMappings.create()
+                            .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .build() )
+        .form( Form.create()
+                   .addFormItem( Input.create()
+                                     .name( "baseUrl" )
+                                     .label( "Base URL" )
+                                     .labelI18nKey( "portal.baseUrl.label" )
+                                     .inputType( InputTypeName.TEXT_LINE )
+                                     .build() )
+                   .build() )
+        .build();
+
     private ResourceService resourceService;
 
     private MixinService mixinService;
@@ -35,22 +53,7 @@ public class SiteServiceImpl
     {
         if ( ApplicationKey.PORTAL.equals( applicationKey ) )
         {
-            return SiteDescriptor.create()
-                .xDataMappings( XDataMappings.create()
-                                    .add( XDataMapping.create()
-                                              .xDataName( IMAGE_INFO_METADATA_NAME )
-                                              .allowContentTypes( "media:image" )
-                                              .build() )
-                                    .add( XDataMapping.create()
-                                              .xDataName( CAMERA_INFO_METADATA_NAME )
-                                              .allowContentTypes( "media:image" )
-                                              .build() )
-                                    .add( XDataMapping.create()
-                                              .xDataName( GPS_INFO_METADATA_NAME )
-                                              .allowContentTypes( "media:image" )
-                                              .build() )
-                                    .build() )
-                .build();
+            return PORTAL_SITE_DESCRIPTOR;
         }
 
         final ResourceProcessor<ApplicationKey, SiteDescriptor> processor = newProcessor( applicationKey );

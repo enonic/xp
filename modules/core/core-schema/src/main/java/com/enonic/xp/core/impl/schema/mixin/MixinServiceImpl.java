@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
@@ -54,32 +54,20 @@ public final class MixinServiceImpl
     @Override
     public Mixins getAll()
     {
-        final Set<Mixin> list = new LinkedHashSet<>();
+        final Mixins.Builder builder = Mixins.create();
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {
-            final Mixins types = getByApplication( application.getKey() );
-            list.addAll( types.getList() );
+            builder.addAll( getByApplication( application.getKey() ) );
         }
 
-        return Mixins.from( list );
+        return builder.build();
     }
 
     @Override
     public Mixins getByApplication( final ApplicationKey key )
     {
-        final List<Mixin> list = new ArrayList<>();
-        for ( final MixinName name : mixinLoader.findNames( key ) )
-        {
-            final Mixin type = getByName( name );
-            if ( type != null )
-            {
-                list.add( type );
-            }
-
-        }
-
-        return Mixins.from( list );
+        return mixinLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect( Mixins.collector() );
     }
 
     @Override
