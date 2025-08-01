@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,23 +45,5 @@ public class ApplicationRelativeResolverTest
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
         assertThrows(IllegalArgumentException.class, () -> resolver.toMixinName( "aaa" ) );
-    }
-
-    @Test
-    public void toRelationshipTypeName()
-    {
-        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
-        RelationshipTypeName relationshipTypeName = resolver.toRelationshipTypeName( "bbb" );
-        assertEquals( relationshipTypeName.getLocalName(), "bbb" );
-
-        relationshipTypeName = resolver.toRelationshipTypeName( "ccc:ddd" );
-        assertEquals( relationshipTypeName.getLocalName(), "ddd" );
-    }
-
-    @Test
-    public void toRelationshipTypeNameEmpty()
-    {
-        final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
-        assertThrows(IllegalArgumentException.class, () ->  resolver.toRelationshipTypeName( "aaa" ) );
     }
 }

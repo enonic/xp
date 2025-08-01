@@ -10,11 +10,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -45,7 +45,6 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.relationship.RelationshipType;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
@@ -462,10 +461,6 @@ public class DynamicSchemaServiceImpl
         if ( baseSchema instanceof Mixin )
         {
             return Mixin.create( (Mixin) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
-        }
-        if ( baseSchema instanceof RelationshipType )
-        {
-            return RelationshipType.create( (RelationshipType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
         }
         if ( baseSchema instanceof XData )
         {

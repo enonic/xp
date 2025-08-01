@@ -14,7 +14,6 @@
   <xs:element name="widget" type="widgetDescriptor"/>
   <xs:element name="tool" type="adminToolDescriptor"/>
   <xs:element name="id-provider" type="idProviderDescriptor"/>
-  <xs:element name="relationship-type" type="relationshipType"/>
   <xs:element name="macro" type="macroType"/>
   <xs:element name="application" type="applicationType"/>
   <xs:element name="task" type="taskDescriptor"/>
@@ -323,28 +322,6 @@
         </xs:simpleType>
       </xs:element>
       <xs:element minOccurs="0" name="form" type="form"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="relationshipType">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="description" type="xs:string"/>
-      <xs:element minOccurs="0" name="from-semantic" type="xs:string"/>
-      <xs:element minOccurs="0" name="to-semantic" type="xs:string"/>
-      <xs:element minOccurs="0" name="allowed-from-types">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="content-type" type="xs:string"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element minOccurs="0" name="allowed-to-types">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="content-type" type="xs:string"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
