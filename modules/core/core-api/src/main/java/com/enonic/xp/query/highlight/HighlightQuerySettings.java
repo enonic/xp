@@ -72,6 +72,10 @@ public final class HighlightQuerySettings
 
         private TagsSchema tagsSchema;
 
+        private Builder()
+        {
+        }
+
         public Builder encoder( final Encoder encoder )
         {
             this.encoder = encoder;

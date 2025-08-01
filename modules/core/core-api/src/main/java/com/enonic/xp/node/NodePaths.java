@@ -60,6 +60,10 @@ public final class NodePaths
     {
         private final ImmutableSet.Builder<NodePath> nodePaths = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder addNodePath( final NodePath nodePath )
         {
             this.nodePaths.add( nodePath );

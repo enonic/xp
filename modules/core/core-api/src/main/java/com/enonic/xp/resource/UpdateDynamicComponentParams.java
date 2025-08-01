@@ -49,6 +49,10 @@ public final class UpdateDynamicComponentParams
 
         private String resource;
 
+        private Builder()
+        {
+        }
+
         public Builder descriptorKey( final DescriptorKey key )
         {
             this.key = key;

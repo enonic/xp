@@ -61,6 +61,9 @@ public final class Projects
     {
         private final ImmutableList.Builder<Project> projects = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
 
         public Builder add( final Project project )
         {

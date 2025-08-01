@@ -40,6 +40,10 @@ public final class DeleteSnapshotsResult
 
         private final ImmutableSet.Builder<String> failedSnapshots = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final String snapshotName )
         {
             this.deletedSnapshots.add( snapshotName );

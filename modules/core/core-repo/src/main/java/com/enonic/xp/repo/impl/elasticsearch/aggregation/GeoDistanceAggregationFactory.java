@@ -21,7 +21,7 @@ class GeoDistanceAggregationFactory
 
     private static Buckets createBuckets( final Collection<? extends InternalRange.Bucket> buckets )
     {
-        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+        final Buckets.Builder bucketsBuilder = Buckets.create();
 
         for ( final InternalRange.Bucket bucket : buckets )
         {

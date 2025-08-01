@@ -2,7 +2,6 @@ package com.enonic.xp.schema.xdata;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.schema.content.ContentType;
 
 @PublicApi
 public interface XDataService
@@ -14,6 +13,4 @@ public interface XDataService
     XDatas getAll();
 
     XDatas getByApplication( ApplicationKey applicationKey );
-
-    XDatas getFromContentType( ContentType contentType );
 }

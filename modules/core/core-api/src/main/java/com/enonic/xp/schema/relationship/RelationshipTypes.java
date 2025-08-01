@@ -1,8 +1,6 @@
 package com.enonic.xp.schema.relationship;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,25 +21,6 @@ public final class RelationshipTypes
     {
         super( list );
         this.map = list.stream().collect( ImmutableMap.toImmutableMap( RelationshipType::getName, Function.identity() ) );
-    }
-
-    public RelationshipTypes add( final RelationshipType... relationshipTypes )
-    {
-        return add( ImmutableList.copyOf( relationshipTypes ) );
-    }
-
-    public RelationshipTypes add( final Iterable<RelationshipType> relationshipTypes )
-    {
-        return add( ImmutableList.copyOf( relationshipTypes ) );
-    }
-
-    private RelationshipTypes add( final ImmutableList<RelationshipType> relationshipTypes )
-    {
-        final List<RelationshipType> tmp = new ArrayList<>();
-        tmp.addAll( this.list );
-        tmp.addAll( relationshipTypes );
-
-        return new RelationshipTypes( ImmutableList.copyOf( tmp ) );
     }
 
     public Set<RelationshipTypeName> getNames()

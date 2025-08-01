@@ -60,7 +60,7 @@ public class CreateDynamicContentSchemaHandlerTest
             builder.icon( icon );
             builder.creator( PrincipalKey.ofAnonymous() );
 
-            return new DynamicSchemaResult<ContentType>( builder.build(), resource );
+            return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
         runScript( "/lib/xp/examples/schema/createContentType.js" );
@@ -91,7 +91,7 @@ public class CreateDynamicContentSchemaHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );
 
-            return new DynamicSchemaResult<Mixin>( builder.build(), resource );
+            return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
         runScript( "/lib/xp/examples/schema/createMixin.js" );
@@ -122,7 +122,7 @@ public class CreateDynamicContentSchemaHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );
 
-            return new DynamicSchemaResult<XData>( builder.build(), resource );
+            return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
         runScript( "/lib/xp/examples/schema/createXData.js" );

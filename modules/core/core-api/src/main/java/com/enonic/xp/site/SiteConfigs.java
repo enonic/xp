@@ -22,7 +22,7 @@ public final class SiteConfigs
 
     public SiteConfig get( final ApplicationKey applicationKey )
     {
-        return list.stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findFirst().orElse( null );
+        return stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findFirst().orElse( null );
     }
 
     public static SiteConfigs empty()
@@ -65,6 +65,10 @@ public final class SiteConfigs
     public static final class Builder
     {
         private final ImmutableList.Builder<SiteConfig> builder = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final SiteConfig siteConfig )
         {

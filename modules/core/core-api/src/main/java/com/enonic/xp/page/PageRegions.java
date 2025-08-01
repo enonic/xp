@@ -39,7 +39,6 @@ public final class PageRegions
 
         private Builder()
         {
-            // Default
         }
 
         public PageRegions build()

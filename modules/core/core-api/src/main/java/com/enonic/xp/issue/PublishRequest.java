@@ -36,6 +36,10 @@ public final class PublishRequest
 
         private final ContentIds.Builder exclude = ContentIds.create();
 
+        private Builder()
+        {
+        }
+
         public Builder addItems( final PublishRequestItems items )
         {
             this.items.addAll( items );

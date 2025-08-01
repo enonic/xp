@@ -23,7 +23,6 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
@@ -73,8 +72,7 @@ public class CreateContentHandlerTest
             .addFormItem( timeSet )
             .build();
 
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         final PropertyTree extraData = new PropertyTree();
         extraData.addDouble( "a", 1.0 );
@@ -113,7 +111,6 @@ public class CreateContentHandlerTest
 
     @Test
     public void createContent()
-        throws Exception
     {
         mockCreateContent();
         runFunction( "/test/CreateContentHandlerTest.js", "createContent" );
@@ -121,7 +118,6 @@ public class CreateContentHandlerTest
 
     @Test
     public void createContentWithChildOrder()
-        throws Exception
     {
         mockCreateContent();
         runFunction( "/test/CreateContentHandlerTest.js", "createContentWithChildOrder" );
@@ -129,7 +125,6 @@ public class CreateContentHandlerTest
 
     @Test
     public void createContentAlreadyExists()
-        throws Exception
     {
         final Exception alreadyExistException =
             new ContentAlreadyExistsException( ContentPath.from( "/a/b/mycontent" ), RepositoryId.from( "some.repo" ),
@@ -138,30 +133,26 @@ public class CreateContentHandlerTest
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runFunction( "/test/CreateContentHandlerTest.js", "createContentNameAlreadyExists" );
     }
 
     @Test
     public void createContentAutoGenerateName()
-        throws Exception
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName(any() ) ).thenReturn( contentType );
 
         runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
     }
 
     @Test
     public void createContentAutoGenerateNameWithExistingName()
-        throws Exception
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
@@ -172,23 +163,20 @@ public class CreateContentHandlerTest
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateNameWithExistingName" );
     }
 
     @Test
     public void createContentWithWorkflow()
-        throws Exception
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
-        when( this.contentTypeService.getByName( Mockito.eq( getContentType ) ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runFunction( "/test/CreateContentHandlerTest.js", "createContentWithWorkflow" );
     }

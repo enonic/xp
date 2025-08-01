@@ -91,6 +91,10 @@ public final class CreateScheduledJobParams
 
         private PrincipalKey user;
 
+        private Builder()
+        {
+        }
+
         public Builder name( final ScheduledJobName name )
         {
             this.name = name;

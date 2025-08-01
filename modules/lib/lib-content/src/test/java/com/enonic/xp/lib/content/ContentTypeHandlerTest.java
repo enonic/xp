@@ -23,6 +23,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 
+import static org.mockito.ArgumentMatchers.any;
+
 public class ContentTypeHandlerTest
     extends BaseContentHandlerTest
 {
@@ -34,8 +36,7 @@ public class ContentTypeHandlerTest
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = exampleContentType();
-        final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
-        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runScript( "/lib/xp/examples/content/getType.js" );
     }
@@ -61,7 +62,7 @@ public class ContentTypeHandlerTest
 
         final ContentType contentType = testContentType();
         final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
-        Mockito.when( contentTypeService.getByName( params ) ).thenReturn( contentType );
+        Mockito.when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runFunction( "/test/ContentTypeHandlerTest.js", "testGet" );
     }

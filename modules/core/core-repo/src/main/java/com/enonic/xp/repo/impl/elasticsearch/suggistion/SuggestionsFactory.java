@@ -22,7 +22,7 @@ public class SuggestionsFactory
             return Suggestions.empty();
         }
 
-        Suggestions.Builder suggestionsBuilder = new Suggestions.Builder();
+        Suggestions.Builder suggestionsBuilder = Suggestions.create();
 
         for ( final Suggest.Suggestion suggestion : suggest )
         {

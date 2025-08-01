@@ -23,17 +23,17 @@ public final class PageTemplates
 
     public PageTemplate getTemplate( final ContentName name )
     {
-        return this.list.stream().filter( pT -> name.equals( pT.getName() ) ).findFirst().orElse( null );
+        return stream().filter( pT -> name.equals( pT.getName() ) ).findFirst().orElse( null );
     }
 
     public PageTemplate getTemplate( final PageTemplateKey key )
     {
-        return this.list.stream().filter( pT -> key.equals( pT.getKey() ) ).findFirst().orElse( null );
+        return stream().filter( pT -> key.equals( pT.getKey() ) ).findFirst().orElse( null );
     }
 
     public PageTemplates filter( final Predicate<PageTemplate> predicate )
     {
-        return PageTemplates.from( this.stream().filter( predicate ).toArray( PageTemplate[]::new ) );
+        return PageTemplates.from( stream().filter( predicate ).toArray( PageTemplate[]::new ) );
     }
 
     public static PageTemplates empty()
@@ -69,6 +69,10 @@ public final class PageTemplates
     public static final class Builder
     {
         private final ImmutableList.Builder<PageTemplate> list = new ImmutableList.Builder<>();
+
+        private Builder()
+        {
+        }
 
         public Builder add( PageTemplate template )
         {

@@ -158,6 +158,10 @@ public final class ScheduledJob
 
         private TaskId lastTaskId;
 
+        private Builder()
+        {
+        }
+
         public Builder name( final ScheduledJobName name )
         {
             this.name = name;

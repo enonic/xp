@@ -31,6 +31,10 @@ public final class Buckets
     {
         private final ImmutableList.Builder<Bucket> buckets = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final Bucket bucket )
         {
             this.buckets.add( bucket );

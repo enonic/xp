@@ -1,7 +1,5 @@
 package com.enonic.xp.attachment;
 
-import java.util.Objects;
-
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
@@ -81,28 +79,6 @@ public final class CreateAttachment
         return new Builder( source );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final CreateAttachment that = (CreateAttachment) o;
-        return Objects.equals( mimeType, that.mimeType ) && Objects.equals( name, that.name ) && Objects.equals( label, that.label ) &&
-            Objects.equals( byteSource, that.byteSource ) && Objects.equals( textContent, that.textContent );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( mimeType, name, label, byteSource, textContent );
-    }
-
     public static final class Builder
     {
         private ByteSource byteSource;
@@ -115,7 +91,7 @@ public final class CreateAttachment
 
         private String text;
 
-        public Builder()
+        private Builder()
         {
         }
 

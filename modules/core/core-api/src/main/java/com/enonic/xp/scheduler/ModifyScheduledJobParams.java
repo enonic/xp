@@ -38,6 +38,10 @@ public final class ModifyScheduledJobParams
 
         private ScheduledJobEditor editor;
 
+        private Builder()
+        {
+        }
+
         public Builder name( final ScheduledJobName name )
         {
             this.name = name;

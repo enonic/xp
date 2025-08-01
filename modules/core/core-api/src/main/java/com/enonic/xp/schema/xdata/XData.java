@@ -62,12 +62,12 @@ public final class XData
     {
         private Form.Builder formBuilder = Form.create();
 
-        public Builder()
+        private Builder()
         {
             super();
         }
 
-        public Builder( final XData xData )
+        private Builder( final XData xData )
         {
             super( xData );
             this.formBuilder = Form.create( xData.getForm() );

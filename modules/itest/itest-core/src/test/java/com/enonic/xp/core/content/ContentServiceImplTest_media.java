@@ -14,9 +14,6 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.core.impl.content.ContentConfig;
-import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.xdata.XDatas;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,8 +36,6 @@ public class ContentServiceImplTest_media
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
             name( "Small cat" ).
             parent( ContentPath.ROOT );
-
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final Content content = this.contentService.create( createMediaParams );
 
@@ -67,8 +61,6 @@ public class ContentServiceImplTest_media
             name( "cat-small." ).
             parent( ContentPath.ROOT );
 
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
-
         assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createMediaParams ) );
     }
 
@@ -81,8 +73,6 @@ public class ContentServiceImplTest_media
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
             name( "cat-small." ).
             parent( ContentPath.ROOT );
-
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         when( config.attachments_allowUnsafeNames() ).thenReturn( true );
 
@@ -104,8 +94,6 @@ public class ContentServiceImplTest_media
             name( "Small cat.jpg" ).
             parent( ContentPath.ROOT );
 
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
-
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -121,8 +109,6 @@ public class ContentServiceImplTest_media
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
-
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final Content content = this.contentService.create( createMediaParams );
 
@@ -158,8 +144,6 @@ public class ContentServiceImplTest_media
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
 
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
-
         final Content content = this.contentService.create( createMediaParams );
 
         final Content storedContent = this.contentService.getById( content.getId() );
@@ -182,8 +166,6 @@ public class ContentServiceImplTest_media
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
             name( "Small cat" ).
             parent( ContentPath.ROOT );
-
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final Content content = this.contentService.create( createMediaParams );
 
@@ -233,8 +215,6 @@ public class ContentServiceImplTest_media
             name( "document.pdf" ).
             mimeType( "application/pdf" ).
             parent( ContentPath.ROOT );
-
-        Mockito.when( this.xDataService.getFromContentType( Mockito.any( ContentType.class ) ) ).thenReturn( XDatas.empty() );
 
         final Content content = this.contentService.create( createMediaParams );
 

@@ -62,7 +62,7 @@ public final class PublishRequestItem
 
         private boolean includeChildren = false;
 
-        public Builder()
+        private Builder()
         {
         }
 

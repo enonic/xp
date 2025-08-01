@@ -79,7 +79,7 @@ public final class HighlightQueryProperty
 
         private HighlightPropertySettings settings = HighlightPropertySettings.empty();
 
-        public Builder( final String name )
+        private Builder( final String name )
         {
             this.name = name;
         }

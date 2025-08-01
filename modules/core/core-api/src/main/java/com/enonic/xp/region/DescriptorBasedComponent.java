@@ -77,7 +77,6 @@ public abstract class DescriptorBasedComponent
 
         protected Builder()
         {
-            // Default
         }
 
         protected Builder( final DescriptorBasedComponent source )

@@ -72,6 +72,10 @@ public final class ContentIds
     {
         private final ImmutableSet.Builder<ContentId> contents = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final ContentId contentId )
         {
             this.contents.add( contentId );

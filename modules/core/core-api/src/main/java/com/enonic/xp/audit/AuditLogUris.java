@@ -65,6 +65,10 @@ public final class AuditLogUris
     {
         private final ImmutableSet.Builder<AuditLogUri> contents = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final AuditLogUri auditLogUri )
         {
             this.contents.add( auditLogUri );

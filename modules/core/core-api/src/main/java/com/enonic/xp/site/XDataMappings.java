@@ -59,13 +59,17 @@ public final class XDataMappings
     {
         private final ImmutableList.Builder<XDataMapping> builder = ImmutableList.builder();
 
-        public XDataMappings.Builder add( XDataMapping xDataMapping )
+        private Builder()
+        {
+        }
+
+        public XDataMappings.Builder add( final XDataMapping xDataMapping )
         {
             builder.add( xDataMapping );
             return this;
         }
 
-        public XDataMappings.Builder addAll( Iterable<XDataMapping> xDataMappings )
+        public XDataMappings.Builder addAll( final Iterable<XDataMapping> xDataMappings )
         {
             builder.addAll( xDataMappings );
             return this;
@@ -73,7 +77,7 @@ public final class XDataMappings
 
         public XDataMappings build()
         {
-            return new XDataMappings( builder.build() );
+            return fromInternal( builder.build() );
         }
     }
 }

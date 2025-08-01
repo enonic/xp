@@ -76,6 +76,10 @@ public final class MediaInfo
 
         private String textContent;
 
+        private Builder()
+        {
+        }
+
         public Builder mediaType( final String value )
         {
             this.mediaType = value;

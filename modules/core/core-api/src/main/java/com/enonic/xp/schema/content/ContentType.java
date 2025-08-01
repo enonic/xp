@@ -10,7 +10,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.schema.BaseSchema;
-import com.enonic.xp.schema.xdata.XDataNames;
 
 @PublicApi
 public final class ContentType
@@ -29,8 +28,6 @@ public final class ContentType
     private final Form form;
 
     private final String displayNameExpression;
-
-    private final XDataNames xData;
 
     private final String displayNameLabel;
 
@@ -58,7 +55,6 @@ public final class ContentType
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
         this.displayNameExpression = builder.displayNameExpression;
-        this.xData = builder.xData;
         this.displayNameLabel = builder.displayNameLabel;
         this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
         this.schemaConfig = builder.schemaConfig.build();
@@ -115,11 +111,6 @@ public final class ContentType
         return displayNameExpression;
     }
 
-    public XDataNames getXData()
-    {
-        return xData;
-    }
-
     public String getDisplayNameLabel()
     {
         return displayNameLabel;
@@ -148,7 +139,6 @@ public final class ContentType
         s.add( "displayName", getDisplayName() );
         s.add( "displayNameLabel", getDisplayNameLabel() );
         s.add( "description", getDescription() );
-        s.add( "metadata", xData );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
         s.add( "isFinal", isFinal );
@@ -177,8 +167,6 @@ public final class ContentType
 
         private String displayNameExpression;
 
-        private XDataNames xData;
-
         private String displayNameLabel;
 
         private String displayNameLabelI18nKey;
@@ -195,7 +183,6 @@ public final class ContentType
             isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
-            xData = XDataNames.empty();
         }
 
         private Builder( final ContentType source )
@@ -211,7 +198,6 @@ public final class ContentType
                 this.formBuilder = Form.create( source.getForm() );
             }
             this.displayNameExpression = source.getDisplayNameExpression();
-            this.xData = source.xData;
             this.displayNameLabel = source.displayNameLabel;
             this.displayNameLabelI18nKey = source.displayNameLabelI18nKey;
             if ( source.schemaConfig != null )
@@ -296,12 +282,6 @@ public final class ContentType
         public Builder displayNameExpression( final String displayNameExpression )
         {
             this.displayNameExpression = displayNameExpression;
-            return this;
-        }
-
-        public Builder xData( final XDataNames xData )
-        {
-            this.xData = xData;
             return this;
         }
 

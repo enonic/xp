@@ -53,6 +53,10 @@ public final class NodeCommitEntries
     {
         final ImmutableSet.Builder<NodeCommitEntry> nodeCommitEntries = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final NodeCommitEntry nodeCommitEntry )
         {
             this.nodeCommitEntries.add( nodeCommitEntry );

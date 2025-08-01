@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -26,7 +25,6 @@ import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
@@ -54,45 +52,22 @@ public final class MixinServiceImpl
     }
 
     @Override
-    public Mixins getByNames( final MixinNames names )
-    {
-        if ( names == null )
-        {
-            return Mixins.empty();
-        }
-
-        return names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( Mixins.collector() );
-    }
-
-    @Override
     public Mixins getAll()
     {
-        final Set<Mixin> list = new LinkedHashSet<>();
+        final Mixins.Builder builder = Mixins.create();
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {
-            final Mixins types = getByApplication( application.getKey() );
-            list.addAll( types.getList() );
+            builder.addAll( getByApplication( application.getKey() ) );
         }
 
-        return Mixins.from( list );
+        return builder.build();
     }
 
     @Override
     public Mixins getByApplication( final ApplicationKey key )
     {
-        final List<Mixin> list = new ArrayList<>();
-        for ( final MixinName name : mixinLoader.findNames( key ) )
-        {
-            final Mixin type = getByName( name );
-            if ( type != null )
-            {
-                list.add( type );
-            }
-
-        }
-
-        return Mixins.from( list );
+        return mixinLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect( Mixins.collector() );
     }
 
     @Override

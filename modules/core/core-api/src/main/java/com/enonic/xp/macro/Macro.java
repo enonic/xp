@@ -121,7 +121,7 @@ public final class Macro
 
         private final ImmutableListMultimap.Builder<String, String> paramsBuilder;
 
-        public Builder()
+        private Builder()
         {
             this.paramsBuilder = ImmutableListMultimap.builder();
         }

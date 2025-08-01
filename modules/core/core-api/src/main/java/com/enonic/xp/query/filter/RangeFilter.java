@@ -75,6 +75,10 @@ public final class RangeFilter
 
         private boolean includeUpper;
 
+        private Builder()
+        {
+        }
+
         public Builder from( final Value from )
         {
             this.from = from;

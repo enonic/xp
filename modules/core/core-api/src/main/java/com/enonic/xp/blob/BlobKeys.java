@@ -51,7 +51,11 @@ public final class BlobKeys
 
     public static final class Builder
     {
-        final ImmutableSet.Builder<BlobKey> blobKeys = ImmutableSet.builder();
+        private final ImmutableSet.Builder<BlobKey> blobKeys = ImmutableSet.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final BlobKey blobKey )
         {
@@ -67,7 +71,7 @@ public final class BlobKeys
 
         public BlobKeys build()
         {
-            return new BlobKeys( this.blobKeys.build() );
+            return fromInternal( this.blobKeys.build() );
         }
     }
 }

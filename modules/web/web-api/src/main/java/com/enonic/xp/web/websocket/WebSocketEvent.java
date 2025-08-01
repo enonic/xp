@@ -78,6 +78,10 @@ public final class WebSocketEvent
 
         private Map<String, String> data;
 
+        private Builder()
+        {
+        }
+
         public Builder type( final WebSocketEventType type )
         {
             this.type = type;

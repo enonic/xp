@@ -26,16 +26,6 @@ public class MoveContentParamsTest
         assertEquals( contentId, params.getContentId() );
         assertEquals( parentPath, params.getParentContentPath() );
         assertEquals( PrincipalKey.ofAnonymous(), params.getCreator() );
-
-        MoveContentParams params2 = MoveContentParams.create().
-            contentId( contentId ).
-            creator( PrincipalKey.ofAnonymous() ).
-            parentContentPath( parentPath ).
-            build();
-
-        assertEquals( params, params2 );
-        assertEquals( params.hashCode(), params2.hashCode() );
-
     }
 
     @Test

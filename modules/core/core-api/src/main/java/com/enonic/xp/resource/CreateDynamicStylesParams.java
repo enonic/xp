@@ -39,6 +39,10 @@ public final class CreateDynamicStylesParams
 
         private String resource;
 
+        private Builder()
+        {
+        }
+
         public Builder key( final ApplicationKey key )
         {
             this.key = key;

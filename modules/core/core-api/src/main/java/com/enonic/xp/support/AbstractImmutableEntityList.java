@@ -12,7 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 public abstract class AbstractImmutableEntityList<T>
     implements Iterable<T>
 {
-    protected final List<T> list;
+    private final ImmutableList<T> list;
 
     protected AbstractImmutableEntityList( final List<T> list )
     {

@@ -2,8 +2,6 @@ package com.enonic.xp.schema.content;
 
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -16,9 +14,6 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentTypeTest
 {
@@ -165,34 +160,5 @@ public class ContentTypeTest
         GetChildContentTypesParams params2 = new GetChildContentTypesParams();
         params2.parentName( ContentTypeName.archiveMedia() );
         assertEquals( params1.getParentName(), params2.getParentName() );
-        assertEquals( params1, params2 );
-        assertTrue( params1.hashCode() == params2.hashCode() );
-        assertTrue( params1.equals( params1 ) );
-        assertFalse( params1.equals( null ) );
-    }
-
-    @Test
-    public void getContentTypeParams()
-    {
-        GetContentTypeParams params1 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
-        GetContentTypeParams params2 = GetContentTypeParams.from( ContentTypeName.archiveMedia() );
-        assertEquals( params1, params2 );
-    }
-
-    @Test
-    public void getContentTypesParams()
-    {
-        List<ContentTypeName> list = Collections.singletonList( ContentTypeName.audioMedia() );
-        GetContentTypesParams params1 = new GetContentTypesParams();
-        params1.contentTypeNames( ContentTypeNames.create().add( ContentTypeName.archiveMedia() ).addAll( list ).build() );
-        GetContentTypesParams params2 = new GetContentTypesParams();
-        params2.contentTypeNames( ContentTypeNames.empty() );
-        params2.inlineMixinsToFormItems( true );
-        params1.validate();
-        assertTrue( params1.getContentTypeNames().getSize() == 2 );
-        assertFalse( params1.hashCode() == params2.hashCode() );
-        assertEquals( params1, params1 );
-        assertNotEquals( params1.isInlineMixinsToFormItems(), params2.isInlineMixinsToFormItems() );
-        assertNotEquals( params1, null );
     }
 }

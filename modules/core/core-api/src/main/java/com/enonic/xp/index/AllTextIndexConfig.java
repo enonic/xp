@@ -45,12 +45,12 @@ public final class AllTextIndexConfig
     {
         private final ImmutableList.Builder<String> languages;
 
-        Builder()
+        private Builder()
         {
             languages = ImmutableList.builder();
         }
 
-        Builder( final AllTextIndexConfig source )
+        private Builder( final AllTextIndexConfig source )
         {
             this.languages = ImmutableList.<String>builder().addAll( source.languages );
         }

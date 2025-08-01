@@ -65,6 +65,10 @@ public final class RepositoryIds
     {
         private final ImmutableSet.Builder<RepositoryId> repositories = ImmutableSet.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final RepositoryId repositoryId )
         {
             this.repositories.add( repositoryId );

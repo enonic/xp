@@ -24,15 +24,15 @@ public final class BlobKey
     }
 
     @Override
-    public int hashCode()
+    public boolean equals( final Object o )
     {
-        return this.key.hashCode();
+        return ( o instanceof BlobKey ) && this.key.equals( ( (BlobKey) o ).key );
     }
 
     @Override
-    public boolean equals( final Object object )
+    public int hashCode()
     {
-        return ( object instanceof BlobKey ) && this.key.equals( ( (BlobKey) object ).key );
+        return this.key.hashCode();
     }
 
     public static BlobKey from( final String key )

@@ -1,9 +1,11 @@
 package com.enonic.xp.attachment;
 
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.support.AbstractImmutableEntityList;
@@ -12,11 +14,11 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class CreateAttachments
     extends AbstractImmutableEntityList<CreateAttachment>
 {
-    private static final CreateAttachments EMPTY = new CreateAttachments( ImmutableList.of() );
+    private static final CreateAttachments EMPTY = new CreateAttachments( ImmutableMap.of() );
 
-    private CreateAttachments( final ImmutableList<CreateAttachment> list )
+    private CreateAttachments( final ImmutableMap<String, CreateAttachment> map )
     {
-        super( list );
+        super( map.values().asList() );
     }
 
     public static CreateAttachments empty()
@@ -26,22 +28,27 @@ public final class CreateAttachments
 
     public static CreateAttachments from( final CreateAttachment... attachments )
     {
-        return fromInternal( ImmutableList.copyOf( attachments ) );
+        return checkDistinct( ImmutableList.copyOf( attachments ) );
     }
 
     public static CreateAttachments from( final Iterable<CreateAttachment> attachments )
     {
-        return attachments instanceof CreateAttachments a ? a : fromInternal( ImmutableList.copyOf( attachments ) );
+        return attachments instanceof CreateAttachments a ? a : checkDistinct( ImmutableList.copyOf( attachments ) );
     }
 
     public static Collector<CreateAttachment, ?, CreateAttachments> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), CreateAttachments::fromInternal );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), CreateAttachments::checkDistinct );
     }
 
-    private static CreateAttachments fromInternal( final ImmutableList<CreateAttachment> contents )
+    private static CreateAttachments fromInternal( final ImmutableMap<String, CreateAttachment> map )
     {
-        return contents.isEmpty() ? EMPTY : new CreateAttachments( contents );
+        return map.isEmpty() ? EMPTY : new CreateAttachments( map );
+    }
+
+    private static CreateAttachments checkDistinct( final ImmutableList<CreateAttachment> list )
+    {
+        return fromInternal( list.stream().collect( ImmutableMap.toImmutableMap( CreateAttachment::getName, Function.identity() ) ) );
     }
 
     public static Builder create()
@@ -51,23 +58,35 @@ public final class CreateAttachments
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<CreateAttachment> contents = ImmutableList.builder();
+        private final ImmutableMap.Builder<String, CreateAttachment> map = ImmutableMap.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( CreateAttachment value )
         {
-            contents.add( value );
+            map.put(  value.getName(), value );
             return this;
         }
 
         public Builder addAll( final Iterable<CreateAttachment> values )
         {
-            contents.addAll( values );
+            for ( CreateAttachment value : values )
+            {
+                map.put( value.getName(), value );
+            }
             return this;
         }
 
         public CreateAttachments build()
         {
-            return new CreateAttachments( contents.build() );
+            return fromInternal( map.buildOrThrow() );
+        }
+
+        public CreateAttachments buildKeepingLast()
+        {
+            return fromInternal( map.buildKeepingLast() );
         }
     }
 }

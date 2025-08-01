@@ -266,12 +266,11 @@ public final class FormItemSet
 
         private final List<FormItem> formItems = new ArrayList<>();
 
-        public Builder()
+        private Builder()
         {
-            // default
         }
 
-        public Builder( final FormItemSet source )
+        private Builder( final FormItemSet source )
         {
             this.name = source.name;
             this.label = source.label;

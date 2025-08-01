@@ -44,6 +44,10 @@ public final class ReorderChildNodesParams
 
         private RefreshMode refresh;
 
+        private Builder()
+        {
+        }
+
         public Builder add( final ReorderChildNodeParams reorderChildNodeParams )
         {
             this.orderChildNodeParamsList.add( reorderChildNodeParams );

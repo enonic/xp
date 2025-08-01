@@ -9,6 +9,10 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.index.ChildOrder;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+
 public class GetChildContentHandlerTest
     extends BaseContentHandlerTest
 {
@@ -26,7 +30,6 @@ public class GetChildContentHandlerTest
 
     @Test
     public void getChildrenById()
-        throws Exception
     {
         final Contents contents = TestDataFixtures.newContents( 3 );
 
@@ -39,7 +42,6 @@ public class GetChildContentHandlerTest
 
     @Test
     public void getChildrenByPath()
-        throws Exception
     {
         final Contents contents = TestDataFixtures.newContents( 3 );
 
@@ -52,7 +54,6 @@ public class GetChildContentHandlerTest
 
     @Test
     public void getChildrenById_notFound()
-        throws Exception
     {
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().hits( 0 ).totalHits( 0 ).contents( Contents.empty() ).build();
@@ -63,7 +64,6 @@ public class GetChildContentHandlerTest
 
     @Test
     public void getChildrenByPath_notFound()
-        throws Exception
     {
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().hits( 0 ).totalHits( 0 ).contents( Contents.empty() ).build();
@@ -74,21 +74,21 @@ public class GetChildContentHandlerTest
 
     @Test
     public void getChildrenByPath_allParameters()
-        throws Exception
     {
         final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
 
-        final FindContentByParentParams expectedFindParams = FindContentByParentParams.create().
-            parentPath( ContentPath.from( "/a/b/mycontent" ) ).
-            from( 5 ).
-            size( 3 ).
-            childOrder( ChildOrder.from( "_modifiedTime ASC" ) ).
-            build();
-        Mockito.when( this.contentService.findByParent( Mockito.eq( expectedFindParams ) ) ).thenReturn( findResult );
+        Mockito.when( this.contentService.findByParent( any() ) ).thenReturn( findResult );
 
         runFunction( "/test/GetChildContentHandlerTest.js", "getChildrenByPath_allParameters" );
+        verify( this.contentService ).findByParent( Mockito.argThat( params -> {
+            assertEquals( ContentPath.from( "/a/b/mycontent" ), params.getParentPath() );
+            assertEquals( 5, params.getFrom() );
+            assertEquals( 3, params.getSize() );
+            assertEquals( ChildOrder.from( "_modifiedTime ASC" ), params.getChildOrder() );
+            return true;
+        } ) );
     }
 }

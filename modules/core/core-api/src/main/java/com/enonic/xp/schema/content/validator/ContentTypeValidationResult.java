@@ -1,7 +1,6 @@
 package com.enonic.xp.schema.content.validator;
 
 import java.util.Iterator;
-import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
@@ -58,6 +57,10 @@ public final class ContentTypeValidationResult
     public static final class Builder
     {
         private final ImmutableList.Builder<ContentTypeValidationError> errors = new ImmutableList.Builder<>();
+
+        private Builder()
+        {
+        }
 
         public Builder addError( ContentTypeValidationError error )
         {

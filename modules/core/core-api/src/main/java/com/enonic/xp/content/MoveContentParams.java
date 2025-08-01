@@ -62,36 +62,6 @@ public final class MoveContentParams
         Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof MoveContentParams ) )
-        {
-            return false;
-        }
-
-        final MoveContentParams that = (MoveContentParams) o;
-
-        if ( !contentId.equals( that.contentId ) )
-        {
-            return false;
-        }
-        else return parentContentPath.equals( that.parentContentPath );
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = contentId != null ? contentId.hashCode() : 0;
-        result = 31 * result + ( parentContentPath != null ? parentContentPath.hashCode() : 0 );
-        return result;
-    }
-
     public static final class Builder
     {
 

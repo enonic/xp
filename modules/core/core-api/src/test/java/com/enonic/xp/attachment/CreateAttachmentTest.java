@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateAttachmentTest
@@ -70,10 +68,5 @@ public class CreateAttachmentTest
             byteSource( ByteSource.empty() ).
             name( "MyImage.something.gif" ).
             build().getBinaryReference().toString() );
-    }
-
-    @Test
-    void equalsContract() {
-        EqualsVerifier.forClass( CreateAttachment.class ).verify();
     }
 }

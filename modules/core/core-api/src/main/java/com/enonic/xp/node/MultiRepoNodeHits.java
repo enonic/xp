@@ -42,6 +42,10 @@ public final class MultiRepoNodeHits
     {
         private final ImmutableList.Builder<MultiRepoNodeHit> nodeHits = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final MultiRepoNodeHit nodeHit )
         {
             this.nodeHits.add( nodeHit );

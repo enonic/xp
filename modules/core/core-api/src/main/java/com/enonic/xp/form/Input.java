@@ -237,12 +237,11 @@ public final class Input
 
         private boolean maximizeUIInputWidth = true;
 
-        public Builder()
+        private Builder()
         {
-            // default
         }
 
-        public Builder( final Input source )
+        private Builder( final Input source )
         {
             this.name = source.name;
             this.inputType = source.type;

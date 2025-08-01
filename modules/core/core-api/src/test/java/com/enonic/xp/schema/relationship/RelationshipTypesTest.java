@@ -11,34 +11,6 @@ public class RelationshipTypesTest
 {
 
     @Test
-    public void add_array()
-    {
-        RelationshipTypes relationshipTypes = RelationshipTypes.empty();
-
-        RelationshipType[] relationshipTypesArray = {RelationshipType.create().name( "myapplication:like" ).build(),
-            RelationshipType.create().name( "myapplication:person" ).build()};
-
-        RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesArray );
-
-        assertEquals( 0, relationshipTypes.getSize() );
-        assertEquals( 2, newRelationshipTypes.getSize() );
-    }
-
-    @Test
-    public void add_iterable()
-    {
-        RelationshipTypes relationshipTypes = RelationshipTypes.empty();
-
-        List<RelationshipType> relationshipTypesList = List.of( RelationshipType.create().name( "myapplication:like" ).build(),
-                                                                RelationshipType.create().name( "myapplication:person" ).build() );
-
-        RelationshipTypes newRelationshipTypes = relationshipTypes.add( relationshipTypesList );
-
-        assertEquals( 0, relationshipTypes.getSize() );
-        assertEquals( 2, newRelationshipTypes.getSize() );
-    }
-
-    @Test
     public void test_equals()
     {
         RelationshipTypes relTypes = RelationshipTypes.from( RelationshipType.create().name( "myapplication:like" ).build() );

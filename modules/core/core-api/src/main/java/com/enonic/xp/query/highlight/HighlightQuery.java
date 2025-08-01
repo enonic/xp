@@ -43,7 +43,7 @@ public final class HighlightQuery
 
         private HighlightQuerySettings settings = HighlightQuerySettings.empty();
 
-        public Builder()
+        private Builder()
         {
         }
 

@@ -39,6 +39,10 @@ public final class GetDynamicContentSchemaParams
 
         private DynamicContentSchemaType type;
 
+        private Builder()
+        {
+        }
+
         public Builder name( final BaseSchemaName name )
         {
             this.name = name;

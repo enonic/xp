@@ -24,7 +24,7 @@ public final class BinaryAttachments
 
     public BinaryAttachment get( final BinaryReference binaryReference )
     {
-        return this.list.stream().filter( ba -> ba.getReference().equals( binaryReference ) ).findFirst().orElse( null );
+        return stream().filter( ba -> ba.getReference().equals( binaryReference ) ).findFirst().orElse( null );
     }
 
     private static BinaryAttachments fromInternal( final ImmutableList<BinaryAttachment> list )
@@ -40,6 +40,10 @@ public final class BinaryAttachments
     public static final class Builder
     {
         private final ImmutableList.Builder<BinaryAttachment> binaryAttachments = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final BinaryAttachment binaryAttachment )
         {

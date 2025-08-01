@@ -65,6 +65,10 @@ public final class ValidationErrors
     {
         private final List<ValidationError> validationErrors = new ArrayList<>();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final ValidationError dataValidationError )
         {
             this.validationErrors.add( dataValidationError );

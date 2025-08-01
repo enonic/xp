@@ -46,20 +46,6 @@ public class MixinsTest
     }
 
     @Test
-    public void add_array()
-    {
-        Mixins mixins = Mixins.empty();
-
-        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build();
-        Mixin mixin2 = Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build();
-
-        Mixins newMixins = mixins.add( mixin1, mixin2 );
-
-        assertEquals( 0, mixins.getSize() );
-        assertEquals( 2, newMixins.getSize() );
-    }
-
-    @Test
     public void add_multiple()
     {
         Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build();
@@ -70,20 +56,6 @@ public class MixinsTest
 
         assertEquals( 2, mixinsFromList.getSize() );
         assertEquals( 2, mixinsFromMixins.getSize() );
-    }
-
-    @Test
-    public void add_iterable()
-    {
-        Mixins mixins = Mixins.empty();
-
-        List<Mixin> mixinList = List.of( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
-                                         Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
-
-        Mixins newMixins = mixins.add( mixinList );
-
-        assertEquals( 0, mixins.getSize() );
-        assertEquals( 2, newMixins.getSize() );
     }
 
     @Test

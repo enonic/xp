@@ -50,6 +50,10 @@ public final class GetDefaultPageTemplateParams
 
         private ContentTypeName contentType;
 
+        private Builder()
+        {
+        }
+
         public Builder site( final ContentId site )
         {
             this.site = site;

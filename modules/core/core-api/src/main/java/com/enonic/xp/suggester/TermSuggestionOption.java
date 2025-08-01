@@ -26,6 +26,10 @@ public final class TermSuggestionOption
     {
         private Integer freq;
 
+        private Builder()
+        {
+        }
+
         public Builder freq( final Integer freq )
         {
             this.freq = freq;

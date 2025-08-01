@@ -27,7 +27,7 @@ public final class AttachedBinaries
 
     public AttachedBinary getByBinaryReference( final BinaryReference reference )
     {
-        return this.set.stream()
+        return this.stream()
             .filter( attachedBinary -> reference.equals( attachedBinary.getBinaryReference() ) )
             .findAny()
             .orElse( null );
@@ -56,6 +56,10 @@ public final class AttachedBinaries
     public static final class Builder
     {
         private final ImmutableSet.Builder<AttachedBinary> nodeAttachedBinaries = ImmutableSet.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( final AttachedBinary attachedBinary )
         {

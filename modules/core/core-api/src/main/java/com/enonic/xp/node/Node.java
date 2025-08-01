@@ -225,17 +225,17 @@ public final class Node
 
         private NodeVersionId nodeVersionId;
 
-        public Builder()
+        private Builder()
         {
             super();
         }
 
-        public Builder( final NodeId id )
+        private Builder( final NodeId id )
         {
             this.id = id;
         }
 
-        public Builder( final Node node )
+        private Builder( final Node node )
         {
             this.id = node.id;
             this.name = node.name;

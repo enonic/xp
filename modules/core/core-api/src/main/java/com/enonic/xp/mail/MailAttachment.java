@@ -62,6 +62,10 @@ public final class MailAttachment
 
         private Map<String, String> headers;
 
+        private Builder()
+        {
+        }
+
         public Builder fileName( final String fileName )
         {
             this.fileName = fileName;

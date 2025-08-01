@@ -115,7 +115,7 @@ public final class TermSuggestionQuery
 
         private StringDistance stringDistance;
 
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

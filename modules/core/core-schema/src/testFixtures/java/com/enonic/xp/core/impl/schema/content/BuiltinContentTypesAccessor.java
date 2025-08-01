@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import java.util.Collection;
-
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypes;
 
 public class BuiltinContentTypesAccessor
 {
@@ -13,7 +12,7 @@ public class BuiltinContentTypesAccessor
     {
     }
 
-    public static Collection<ContentType> getAll()
+    public static ContentTypes getAll()
     {
         return BUILTIN_CONTENT_TYPES.getAll();
     }

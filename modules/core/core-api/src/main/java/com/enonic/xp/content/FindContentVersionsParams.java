@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -41,28 +39,6 @@ public final class FindContentVersionsParams
     public static Builder create()
     {
         return new Builder();
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final FindContentVersionsParams that = (FindContentVersionsParams) o;
-        return from == that.from && size == that.size && Objects.equals( contentId, that.contentId );
-    }
-
-    @Override
-    public int hashCode()
-    {
-
-        return Objects.hash( contentId, from, size );
     }
 
     public static final class Builder

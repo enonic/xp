@@ -22,27 +22,27 @@ public final class Principals
 
     public PrincipalKeys getKeys()
     {
-        return list.stream().map( Principal::getKey ).collect( PrincipalKeys.collector() );
+        return stream().map( Principal::getKey ).collect( PrincipalKeys.collector() );
     }
 
     public Principal getPrincipal( final PrincipalKey principalKey )
     {
-        return list.stream().filter( p -> principalKey.equals( p.getKey() ) ).findFirst().orElse( null );
+        return stream().filter( p -> principalKey.equals( p.getKey() ) ).findFirst().orElse( null );
     }
 
     public Iterable<User> getUsers()
     {
-        return list.stream().filter( p -> p.getKey().isUser() ).map( p -> (User) p ).collect( ImmutableSet.toImmutableSet() );
+        return stream().filter( p -> p.getKey().isUser() ).map( p -> (User) p ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public Iterable<Group> getGroups()
     {
-        return list.stream().filter( p -> p.getKey().isGroup() ).map( p -> (Group) p ).collect( ImmutableSet.toImmutableSet() );
+        return stream().filter( p -> p.getKey().isGroup() ).map( p -> (Group) p ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public Iterable<Role> getRoles()
     {
-        return list.stream().filter( p -> p.getKey().isRole() ).map( p -> (Role) p ).collect( ImmutableSet.toImmutableSet() );
+        return stream().filter( p -> p.getKey().isRole() ).map( p -> (Role) p ).collect( ImmutableSet.toImmutableSet() );
     }
 
     public static Principals empty()

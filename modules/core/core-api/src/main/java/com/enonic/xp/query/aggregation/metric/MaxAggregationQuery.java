@@ -32,7 +32,7 @@ public final class MaxAggregationQuery
     public static final class Builder
         extends MetricAggregationQuery.Builder<Builder>
     {
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

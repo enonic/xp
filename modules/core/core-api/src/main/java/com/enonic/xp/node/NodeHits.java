@@ -46,6 +46,10 @@ public final class NodeHits
     {
         private final ImmutableList.Builder<NodeHit> nodeHits = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final NodeHit nodeHit )
         {
             this.nodeHits.add( nodeHit );

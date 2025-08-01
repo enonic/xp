@@ -121,6 +121,10 @@ public final class SendMailParams
 
         private String body;
 
+        private Builder()
+        {
+        }
+
         public Builder to( final String... to )
         {
             this.to.addAll( List.of( to ) );

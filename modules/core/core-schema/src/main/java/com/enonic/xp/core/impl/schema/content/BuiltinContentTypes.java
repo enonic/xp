@@ -1,11 +1,10 @@
 package com.enonic.xp.core.impl.schema.content;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.google.common.collect.ImmutableMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -17,12 +16,10 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.relationship.RelationshipTypeName;
-import com.enonic.xp.schema.xdata.XDataNames;
 
 final class BuiltinContentTypes
 {
@@ -318,8 +315,6 @@ final class BuiltinContentTypes
         .setAbstract( false )
         .allowChildContent( false )
         .form( MEDIA_IMAGE_FORM )
-        .xData(
-            XDataNames.from( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME, MediaInfo.GPS_INFO_METADATA_NAME ) )
         .build();
 
     private static final ContentType MEDIA_VECTOR = createSystemType( ContentTypeName.vectorMedia() ).superType( ContentTypeName.media() )
@@ -382,10 +377,41 @@ final class BuiltinContentTypes
         .form( MEDIA_DEFAULT_FORM )
         .build();
 
-    private static final ContentTypes CONTENT_TYPES =
-        ContentTypes.from( UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
-                           MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE,
-                           MEDIA_UNKNOWN, SITE, TEMPLATE_FOLDER, PAGE_TEMPLATE, FRAGMENT );
+    private final ContentTypes contentTypes;
+
+    private final Map<ContentTypeName, ContentType> map;
+
+    BuiltinContentTypes()
+    {
+        contentTypes =
+            Stream.of( UNSTRUCTURED, STRUCTURED, FOLDER, SHORTCUT, MEDIA, MEDIA_TEXT, MEDIA_DATA, MEDIA_AUDIO, MEDIA_VIDEO, MEDIA_IMAGE,
+                       MEDIA_VECTOR, MEDIA_ARCHIVE, MEDIA_DOCUMENT, MEDIA_SPREADSHEET, MEDIA_PRESENTATION, MEDIA_CODE, MEDIA_EXECUTABLE,
+                       MEDIA_UNKNOWN, SITE, TEMPLATE_FOLDER, PAGE_TEMPLATE, FRAGMENT ).map( this::processType )
+
+                .collect( ContentTypes.collector() );
+
+        this.map = contentTypes.stream().collect( Collectors.toUnmodifiableMap( ContentType::getName, Function.identity() ) );
+    }
+
+    private ContentType processType( final ContentType type )
+    {
+        return ContentType.create( type ).icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, type.getName().getLocalName() ) ).build();
+    }
+
+    public ContentTypes getAll()
+    {
+        return contentTypes;
+    }
+
+    public ContentType getContentType( final ContentTypeName contentTypeName )
+    {
+        return this.map.get( contentTypeName );
+    }
+
+    private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
+    {
+        return SchemaHelper.loadIcon( getClass(), metaInfFolderName, name );
+    }
 
     private static ContentType.Builder createSystemType( final ContentTypeName contentTypeName )
     {
@@ -397,34 +423,5 @@ final class BuiltinContentTypes
             .displayName( displayName )
             .displayNameI18nKey( app + "." + localName + ".displayName" )
             .setBuiltIn();
-    }
-
-    private final Map<ContentTypeName, ContentType> map;
-
-    BuiltinContentTypes()
-    {
-        this.map = CONTENT_TYPES.stream()
-            .map( this::processType )
-            .collect( ImmutableMap.toImmutableMap( ContentType::getName, Function.identity() ) );
-    }
-
-    private ContentType processType( final ContentType type )
-    {
-        return ContentType.create( type ).icon( loadSchemaIcon( CONTENT_TYPES_FOLDER, type.getName().getLocalName() ) ).build();
-    }
-
-    public Collection<ContentType> getAll()
-    {
-        return this.map.values();
-    }
-
-    public ContentType getContentType( final ContentTypeName contentTypeName )
-    {
-        return this.map.get( contentTypeName );
-    }
-
-    private Icon loadSchemaIcon( final String metaInfFolderName, final String name )
-    {
-        return SchemaHelper.loadIcon( getClass(), metaInfFolderName, name );
     }
 }

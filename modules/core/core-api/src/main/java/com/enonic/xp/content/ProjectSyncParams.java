@@ -27,6 +27,10 @@ public final class ProjectSyncParams
     {
         private ProjectName targetProject;
 
+        private Builder()
+        {
+        }
+
         public Builder targetProject( final ProjectName targetProject )
         {
             this.targetProject = targetProject;

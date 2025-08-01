@@ -65,7 +65,6 @@ public abstract class Component
     {
         protected Builder()
         {
-            // Default
         }
 
         protected Builder( Component source )

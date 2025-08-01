@@ -1,7 +1,5 @@
 package com.enonic.xp.app;
 
-import java.util.Objects;
-
 public final class ApplicationInstallationParams
 {
     private final boolean start;
@@ -22,27 +20,6 @@ public final class ApplicationInstallationParams
     public boolean isTriggerEvent()
     {
         return triggerEvent;
-    }
-
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        final ApplicationInstallationParams that = (ApplicationInstallationParams) o;
-        return start == that.start && triggerEvent == that.triggerEvent;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( start, triggerEvent );
     }
 
     public static Builder create()

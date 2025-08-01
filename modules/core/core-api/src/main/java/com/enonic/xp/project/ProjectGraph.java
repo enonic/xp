@@ -31,6 +31,10 @@ public final class ProjectGraph
     {
         private final ImmutableList.Builder<ProjectGraphEntry> projects = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( ProjectGraphEntry project )
         {
             this.projects.add( project );

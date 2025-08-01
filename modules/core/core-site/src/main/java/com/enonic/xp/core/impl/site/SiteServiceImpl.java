@@ -7,19 +7,43 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMapping;
+import com.enonic.xp.site.XDataMappings;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlSiteParser;
+
+import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 
 @Component(immediate = true)
 public class SiteServiceImpl
     implements SiteService
 {
+    private static final SiteDescriptor PORTAL_SITE_DESCRIPTOR = SiteDescriptor.create()
+        .xDataMappings( XDataMappings.create()
+                            .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .build() )
+        .form( Form.create()
+                   .addFormItem( Input.create()
+                                     .name( "baseUrl" )
+                                     .label( "Base URL" )
+                                     .labelI18nKey( "portal.baseUrl.label" )
+                                     .inputType( InputTypeName.TEXT_LINE )
+                                     .build() )
+                   .build() )
+        .build();
+
     private ResourceService resourceService;
 
     private MixinService mixinService;
@@ -27,6 +51,11 @@ public class SiteServiceImpl
     @Override
     public SiteDescriptor getDescriptor( final ApplicationKey applicationKey )
     {
+        if ( ApplicationKey.PORTAL.equals( applicationKey ) )
+        {
+            return PORTAL_SITE_DESCRIPTOR;
+        }
+
         final ResourceProcessor<ApplicationKey, SiteDescriptor> processor = newProcessor( applicationKey );
         final SiteDescriptor descriptor = this.resourceService.processResource( processor );
 
@@ -36,9 +65,7 @@ public class SiteServiceImpl
         }
 
         final Form form = mixinService.inlineFormItems( descriptor.getForm() );
-        return SiteDescriptor.copyOf( descriptor ).
-            form( form ).
-            build();
+        return SiteDescriptor.copyOf( descriptor ).form( form ).build();
     }
 
     private ResourceProcessor<ApplicationKey, SiteDescriptor> newProcessor( final ApplicationKey applicationKey )

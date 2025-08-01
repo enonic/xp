@@ -48,6 +48,10 @@ public final class AggregationQueries
     {
         private final ImmutableList.Builder<AggregationQuery> aggregationQueries = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final AggregationQuery aggregationQuery )
         {
             this.aggregationQueries.add( aggregationQuery );

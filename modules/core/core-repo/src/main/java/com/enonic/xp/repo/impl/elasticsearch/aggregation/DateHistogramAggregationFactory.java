@@ -21,7 +21,7 @@ class DateHistogramAggregationFactory
 
     private static Buckets createBuckets( final Collection<? extends InternalHistogram.Bucket> buckets )
     {
-        final Buckets.Builder bucketsBuilder = new Buckets.Builder();
+        final Buckets.Builder bucketsBuilder = Buckets.create();
 
         for ( final InternalHistogram.Bucket bucket : buckets )
         {

@@ -39,6 +39,10 @@ public final class ListDynamicContentSchemasParams
 
         private DynamicContentSchemaType type;
 
+        private Builder()
+        {
+        }
+
         public Builder applicationKey( final ApplicationKey key )
         {
             this.key = key;

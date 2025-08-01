@@ -61,7 +61,7 @@ public final class NodeQuery
 
         private boolean withPath = false;
 
-        public Builder()
+        private Builder()
         {
             super();
         }

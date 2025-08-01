@@ -1,7 +1,5 @@
 package com.enonic.xp.schema.mixin;
 
-import java.util.Arrays;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -22,29 +20,14 @@ public final class Mixins
         super( list );
     }
 
-    public Mixins add( final Mixin... mixins )
-    {
-        return add( Arrays.asList( mixins ) );
-    }
-
-    public Mixins add( final Iterable<Mixin> mixins )
-    {
-        return fromInternal( ImmutableList.<Mixin>builder().addAll( this.list ).addAll( mixins ).build() );
-    }
-
     public MixinNames getNames()
     {
-        return list.stream().map( BaseSchema::getName ).collect( MixinNames.collector() );
+        return stream().map( BaseSchema::getName ).collect( MixinNames.collector() );
     }
 
     public Mixin getMixin( final MixinName mixinName )
     {
-        return list.stream().filter( m -> mixinName.equals( m.getName() ) ).findFirst().orElse( null );
-    }
-
-    public Mixins filter( final Predicate<Mixin> filter )
-    {
-        return this.list.stream().filter( filter ).collect( collector() );
+        return stream().filter( m -> mixinName.equals( m.getName() ) ).findFirst().orElse( null );
     }
 
     public static Mixins empty()
@@ -80,6 +63,10 @@ public final class Mixins
     public static final class Builder
     {
         private final ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( Mixin node )
         {

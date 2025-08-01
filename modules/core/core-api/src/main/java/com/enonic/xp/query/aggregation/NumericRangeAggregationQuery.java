@@ -33,7 +33,7 @@ public final class NumericRangeAggregationQuery
         extends AbstractRangeAggregationQuery.Builder<Builder, NumericRange>
     {
 
-        public Builder( final String name )
+        private Builder( final String name )
         {
             super( name );
         }

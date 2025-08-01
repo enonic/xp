@@ -13,7 +13,7 @@ public enum HtmlTag
     BODY_END( "bodyEnd" );
 
     private static final Map<String, HtmlTag> LOOKUP_TABLE =
-        Arrays.stream( values() ).collect( Collectors.toMap( e -> e.id, Function.identity() ) );
+        Arrays.stream( values() ).collect( Collectors.toUnmodifiableMap( e -> e.id, Function.identity() ) );
 
     private final String id;
 

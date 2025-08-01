@@ -31,6 +31,10 @@ public final class SnapshotResults
     {
         private final ImmutableList.Builder<SnapshotResult> snapshotResults = ImmutableList.builder();
 
+        private Builder()
+        {
+        }
+
         public Builder add( final SnapshotResult snapshotResult )
         {
             this.snapshotResults.add( snapshotResult );

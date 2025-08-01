@@ -86,17 +86,16 @@ public final class InlineMixin
     {
         private MixinName mixinName;
 
-        public Builder()
+        private Builder()
         {
-            // default;
         }
 
-        public Builder( InlineMixin source )
+        private Builder( InlineMixin source )
         {
             this.mixinName = source.mixinName;
         }
 
-        public Builder( final Mixin mixin )
+        private Builder( final Mixin mixin )
         {
             this.mixinName = mixin.getName();
         }

@@ -39,6 +39,10 @@ public final class GetDynamicComponentParams
 
         private DynamicComponentType type;
 
+        private Builder()
+        {
+        }
+
         public Builder descriptorKey( final DescriptorKey key )
         {
             this.key = key;

@@ -96,6 +96,10 @@ public final class ContentVersionPublishInfo
 
         private CommitType type;
 
+        private Builder()
+        {
+        }
+
         public Builder publisher( final PrincipalKey publisher )
         {
             this.publisher = publisher;

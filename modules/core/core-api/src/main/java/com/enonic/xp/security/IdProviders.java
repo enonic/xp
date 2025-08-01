@@ -46,11 +46,11 @@ public final class IdProviders
 
     public IdProviderKeys getKeys()
     {
-        return list.stream().map( IdProvider::getKey ).collect( IdProviderKeys.collector() );
+        return stream().map( IdProvider::getKey ).collect( IdProviderKeys.collector() );
     }
 
     public IdProvider getIdProvider( final IdProviderKey idProviderKey )
     {
-        return list.stream().filter( idp -> idProviderKey.equals( idp.getKey() ) ).findFirst().orElse( null );
+        return stream().filter( idp -> idProviderKey.equals( idp.getKey() ) ).findFirst().orElse( null );
     }
 }

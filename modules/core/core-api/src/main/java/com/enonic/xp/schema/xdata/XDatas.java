@@ -1,14 +1,11 @@
 package com.enonic.xp.schema.xdata;
 
-import java.util.Arrays;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
@@ -22,29 +19,9 @@ public final class XDatas
         super( list );
     }
 
-    public XDatas add( final XData... xDatas )
-    {
-        return add( Arrays.asList( xDatas ) );
-    }
-
-    public XDatas add( final Iterable<XData> xDatas )
-    {
-        return fromInternal( ImmutableList.<XData>builder().addAll( this.list ).addAll( xDatas ).build() );
-    }
-
-    public XDataNames getNames()
-    {
-        return this.list.stream().map( BaseSchema::getName ).collect( XDataNames.collector() );
-    }
-
     public XData getXData( final XDataName xDataName )
     {
-        return list.stream().filter( x -> xDataName.equals( x.getName() ) ).findFirst().orElse( null );
-    }
-
-    public XDatas filter( final Predicate<XData> filter )
-    {
-        return this.list.stream().filter( filter ).collect( collector() );
+        return stream().filter( x -> xDataName.equals( x.getName() ) ).findFirst().orElse( null );
     }
 
     public static XDatas empty()
@@ -80,6 +57,10 @@ public final class XDatas
     public static final class Builder
     {
         private final ImmutableList.Builder<XData> builder = ImmutableList.builder();
+
+        private Builder()
+        {
+        }
 
         public Builder add( XData node )
         {

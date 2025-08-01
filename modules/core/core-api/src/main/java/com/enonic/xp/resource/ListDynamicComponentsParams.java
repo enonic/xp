@@ -39,6 +39,10 @@ public final class ListDynamicComponentsParams
 
         private DynamicComponentType type;
 
+        private Builder()
+        {
+        }
+
         public Builder applicationKey( final ApplicationKey key )
         {
             this.key = key;

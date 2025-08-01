@@ -114,6 +114,11 @@ public final class AuditLog
 
         private PropertyTree data;
 
+        private Builder()
+        {
+        }
+
+
         public Builder id( final AuditLogId val )
         {
             id = val;
