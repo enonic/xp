@@ -475,20 +475,17 @@ public final class ImageContentProcessor
         }
 
         final ExtraData imageInfoExtraData = getOrCreate( metadataMap, IMAGE_INFO_METADATA_NAME );
-        if ( imageInfoExtraData != null )
+        final PropertyTree imageInfoExtraDataData = imageInfoExtraData.getData();
+        final Long imageHeight = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
+        final Long imageWidth = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_WIDTH );
+        if ( imageHeight != null && imageWidth != null )
         {
-            final PropertyTree imageInfoExtraDataData = imageInfoExtraData.getData();
-            final Long imageHeight = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
-            final Long tiffImageWidth = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_WIDTH );
-            if ( imageHeight != null && tiffImageWidth != null )
-            {
-                imageInfoExtraDataData.setLong( IMAGE_INFO_PIXEL_SIZE, imageHeight * tiffImageWidth );
-            }
-            final Collection<String> imageSize = mediaInfo.getMetadata().get( "bytesize" );
-            if ( !imageSize.isEmpty() )
-            {
-                imageInfoExtraDataData.setLong( MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
-            }
+            imageInfoExtraDataData.setLong( IMAGE_INFO_PIXEL_SIZE, imageHeight * imageWidth );
+        }
+        final Collection<String> imageSize = mediaInfo.getMetadata().get( "bytesize" );
+        if ( !imageSize.isEmpty() )
+        {
+            imageInfoExtraDataData.setLong( MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
         }
 
         return metadataMap.values().stream().collect( ExtraDatas.collector() );
