@@ -3,21 +3,21 @@ package com.enonic.xp.cluster;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.support.AbstractImmutableEntityList;
+import com.enonic.xp.support.AbstractImmutableEntitySet;
 
-public final class ClusterNodes
-    extends AbstractImmutableEntityList<ClusterNode>
+public final class  ClusterNodes
+    extends AbstractImmutableEntitySet<ClusterNode>
 {
-    private ClusterNodes( final ImmutableList<ClusterNode> set )
+    private ClusterNodes( final ImmutableSet<ClusterNode> set )
     {
         super( set );
     }
 
     public static Collector<ClusterNode, ?, ClusterNodes> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), ClusterNodes::new );
+        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ClusterNodes::new );
     }
 
     public static Builder create()
@@ -27,7 +27,7 @@ public final class ClusterNodes
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<ClusterNode> nodes = ImmutableList.builder();
+        private final ImmutableSet.Builder<ClusterNode> nodes = ImmutableSet.builder();
 
         private Builder()
         {
