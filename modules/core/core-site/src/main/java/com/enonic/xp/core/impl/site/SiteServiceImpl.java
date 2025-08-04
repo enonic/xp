@@ -64,8 +64,7 @@ public class SiteServiceImpl
             return null;
         }
 
-        final Form form = mixinService.inlineFormItems( descriptor.getForm() );
-        return SiteDescriptor.copyOf( descriptor ).form( form ).build();
+        return SiteDescriptor.copyOf( descriptor ).form( mixinService.inlineFormItems( descriptor.getForm() ) ).build();
     }
 
     private ResourceProcessor<ApplicationKey, SiteDescriptor> newProcessor( final ApplicationKey applicationKey )

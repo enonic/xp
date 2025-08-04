@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
@@ -18,7 +18,9 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 class SubmitTaskHandlerTest
     extends ScriptTestSupport
@@ -57,9 +59,9 @@ class SubmitTaskHandlerTest
         final TaskDescriptor desc1 = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:job42" ) ).config( cfg1 ).build();
         final TaskDescriptor desc2 = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:my-task" ) ).config( cfg2 ).build();
         final TaskDescriptor desc3 = TaskDescriptor.create().key( DescriptorKey.from( "other-app:some-task" ) ).build();
-        Mockito.when( taskDescriptorService.getTasks() ).thenReturn( Descriptors.from( desc1, desc2, desc3 ) );
+        when( taskDescriptorService.getTasks() ).thenReturn( Descriptors.from( desc1, desc2, desc3 ) );
 
-        Mockito.when( mixinService.inlineFormItems( any( Form.class ) ) ).thenAnswer( invocation -> invocation.getArguments()[0] );
+        when( mixinService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
 
         addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance( mixinService ) );
     }
@@ -68,7 +70,7 @@ class SubmitTaskHandlerTest
     void testExample()
     {
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        Mockito.when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).
+        when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).
             thenReturn( taskId );
 
         runScript( "/lib/xp/examples/task/submitTask.js" );
@@ -77,7 +79,7 @@ class SubmitTaskHandlerTest
     @Test
     void testSubmitTask()
     {
-        Mockito.when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
+        when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
 
         runFunction( "/test/submitTask-test.js", "submitTask" );
     }

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.AdditionalAnswers;
 import org.osgi.framework.Bundle;
 
 import com.google.common.io.ByteSource;
@@ -46,7 +45,6 @@ import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.impl.task.LocalTaskManagerImpl;
 import com.enonic.xp.impl.task.TaskManagerCleanupScheduler;
 import com.enonic.xp.impl.task.TaskServiceImpl;
@@ -71,6 +69,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -285,7 +285,7 @@ public abstract class AbstractContentSynchronizerTest
         XDataService xDataService = mock( XDataService.class );
 
         MixinService mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         pageDescriptorService = mock( PageDescriptorService.class );
         partDescriptorService = mock( PartDescriptorService.class );

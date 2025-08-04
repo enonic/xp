@@ -34,7 +34,7 @@ public class SiteDescriptorMapper
 
     private void serializeXDataMappings( final MapGenerator gen, final XDataMappings xDataMappings )
     {
-        if ( xDataMappings != null && xDataMappings.getSize() > 0 )
+        if ( !xDataMappings.isEmpty() )
         {
             gen.array( "xDataMappings" );
             for ( XDataMapping xDataMapping : xDataMappings )

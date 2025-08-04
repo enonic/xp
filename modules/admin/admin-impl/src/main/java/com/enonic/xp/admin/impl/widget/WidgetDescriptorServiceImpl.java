@@ -10,9 +10,9 @@ import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
 
 @Component(immediate = true)
 public final class WidgetDescriptorServiceImpl
@@ -30,7 +30,9 @@ public final class WidgetDescriptorServiceImpl
     public Descriptors<WidgetDescriptor> getByInterfaces( final String... interfaceNames )
     {
         return this.descriptorService.getAll( WidgetDescriptor.class )
-            .filter( widgetDescriptor -> Arrays.stream( interfaceNames ).anyMatch( widgetDescriptor::hasInterface ) );
+            .stream()
+            .filter( widgetDescriptor -> Arrays.stream( interfaceNames ).anyMatch( widgetDescriptor::hasInterface ) )
+            .collect( Descriptors.collector() );
     }
 
     @Override

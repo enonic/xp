@@ -5,12 +5,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
-import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -28,9 +26,10 @@ public final class TaskDescriptorLoader
     private final MixinService mixinService;
 
     @Activate
-    public TaskDescriptorLoader( @Reference final ResourceService resourceService )
+    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
     {
-        descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
+        this.mixinService = mixinService;
     }
 
     @Override
@@ -74,7 +73,7 @@ public final class TaskDescriptorLoader
         return TaskDescriptor.create()
             .key( descriptor.getKey() )
             .description( descriptor.getDescription() )
-            .config( this.mixinService.inlineFormItems( Form.create( descriptor.getConfig() ).build() ) )
+            .config( this.mixinService.inlineFormItems( descriptor.getConfig() ) )
             .build();
     }
 
