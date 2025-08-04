@@ -37,7 +37,7 @@ public abstract class BaseContentHandlerTest
         this.mixinService = Mockito.mock( MixinService.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.siteService = Mockito.mock( SiteService.class );
-        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance( mixinService );
+        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance();
         addService( ContentService.class, this.contentService );
         addService( MixinService.class, this.mixinService );
         addService( ContentTypeService.class, this.contentTypeService );

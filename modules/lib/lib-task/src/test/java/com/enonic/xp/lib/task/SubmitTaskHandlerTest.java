@@ -63,7 +63,7 @@ class SubmitTaskHandlerTest
 
         when( mixinService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
 
-        addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance( mixinService ) );
+        addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance() );
     }
 
     @Test
