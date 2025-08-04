@@ -20,8 +20,6 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.PartDescriptors;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.relationship.RelationshipTypeService;
-import com.enonic.xp.schema.relationship.RelationshipTypes;
 import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.task.TaskDescriptor;
@@ -34,8 +32,6 @@ public final class ApplicationInfoServiceImpl
     private PageDescriptorService pageDescriptorService;
 
     private PartDescriptorService partDescriptorService;
-
-    private RelationshipTypeService relationshipTypeService;
 
     private LayoutDescriptorService layoutDescriptorService;
 
@@ -74,12 +70,6 @@ public final class ApplicationInfoServiceImpl
     }
 
     @Override
-    public RelationshipTypes getRelationshipTypes( final ApplicationKey applicationKey )
-    {
-        return this.relationshipTypeService.getByApplication( applicationKey );
-    }
-
-    @Override
     public MacroDescriptors getMacroDescriptors( final ApplicationKey applicationKey )
     {
         return this.macroDescriptorService.getByApplications( ApplicationKeys.from( applicationKey, ApplicationKey.SYSTEM ) );
@@ -115,7 +105,6 @@ public final class ApplicationInfoServiceImpl
             setPages( this.getPageDescriptors( applicationKey ) ).
             setParts( this.getPartDescriptors( applicationKey ) ).
             setLayouts( this.getLayoutDescriptors( applicationKey ) ).
-            setRelations( this.getRelationshipTypes( applicationKey ) ).
             setIdProviderReferences( this.getIdProviderReferences( applicationKey ) ).
             setMacros( this.getMacroDescriptors( applicationKey ) ).
             setTasks( this.getTaskDescriptors( applicationKey ) ).
@@ -163,12 +152,6 @@ public final class ApplicationInfoServiceImpl
     public void setMacroDescriptorService( final MacroDescriptorService macroDescriptorService )
     {
         this.macroDescriptorService = macroDescriptorService;
-    }
-
-    @Reference
-    public void setRelationshipTypeService( final RelationshipTypeService relationshipTypeService )
-    {
-        this.relationshipTypeService = relationshipTypeService;
     }
 
     @Reference

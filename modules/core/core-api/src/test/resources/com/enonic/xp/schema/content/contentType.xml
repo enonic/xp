@@ -21,7 +21,6 @@
               <indexed>false</indexed>
               <occurrences minimum="0" maximum="1"/>
               <config>
-                <relationship-type/>
               </config>
             </input>
           </items>

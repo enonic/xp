@@ -89,7 +89,6 @@ public class XmlContentTypeParserTest
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).size() );
         assertEquals( "path1", contentSelectorInput.getInputTypeConfig().getProperty( "allowPath" ).getValue() );
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).size() );
-        assertEquals( "system:reference", contentSelectorInput.getInputTypeConfig().getProperty( "relationshipType" ).getValue() );
 
         final InputTypeConfig config = input.getInputTypeConfig();
         assertNotNull( config );
@@ -396,7 +395,6 @@ public class XmlContentTypeParserTest
         assertEquals( 2, imageSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).size() );
         assertEquals( "path1", imageSelectorInput.getInputTypeConfig().getProperty( "allowPath" ).getValue() );
         assertEquals( 2, imageSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).size() );
-        assertEquals( "system:reference", imageSelectorInput.getInputTypeConfig().getProperty( "relationshipType" ).getValue() );
 
         final Occurrences imageSelectorOccurrences = imageSelectorInput.getOccurrences();
         assertEquals( 1, imageSelectorOccurrences.getMinimum() );

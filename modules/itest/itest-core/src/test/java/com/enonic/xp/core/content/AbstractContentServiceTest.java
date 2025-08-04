@@ -107,7 +107,6 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -555,7 +554,6 @@ public abstract class AbstractContentServiceTest
                 label( "Content selector" ).
                 inputType( InputTypeName.CONTENT_SELECTOR ).
                 inputTypeProperty( InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() ).
-                inputTypeProperty( InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() ).
                 build() ).
             addFormItem( Input.create().
                 name( "contentTypeFilter" ).

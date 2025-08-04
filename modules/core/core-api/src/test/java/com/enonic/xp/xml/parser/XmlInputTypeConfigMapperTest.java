@@ -86,7 +86,7 @@ public class XmlInputTypeConfigMapperTest
     {
         final InputTypeConfig config = build( "resolve.xml" );
         assertNotNull( config );
-        assertEquals( 12, config.getSize() );
+        assertEquals( 8, config.getSize() );
 
         assertEquals( "contentType=test[]", toString( config.getProperties( "contentType" ) ) );
         assertEquals( "myContentType=test[]", toString( config.getProperties( "myContentType" ) ) );
@@ -94,15 +94,10 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "mixinType=myapp:test[]", toString( config.getProperties( "mixinType" ) ) );
         assertEquals( "myMixinType=myapp:test[]", toString( config.getProperties( "myMixinType" ) ) );
 
-        assertEquals( "relationshipType=myapp:test[]", toString( config.getProperties( "relationshipType" ) ) );
-        assertEquals( "myRelationshipType=myapp:test[]", toString( config.getProperties( "myRelationshipType" ) ) );
-
         assertEquals( "other1=[mixinType=myapp:test]", toString( config.getProperties( "other1" ) ) );
         assertEquals( "other2=[contentType=test]", toString( config.getProperties( "other2" ) ) );
-        assertEquals( "other3=[relationshipType=myapp:test]", toString( config.getProperties( "other3" ) ) );
         assertEquals( "other4=[myMixinType=myapp:test]", toString( config.getProperties( "other4" ) ) );
         assertEquals( "other5=[myContentType=test]", toString( config.getProperties( "other5" ) ) );
-        assertEquals( "other6=[myRelationshipType=myapp:test]", toString( config.getProperties( "other6" ) ) );
     }
 
     @Test
@@ -110,10 +105,9 @@ public class XmlInputTypeConfigMapperTest
     {
         final InputTypeConfig config = build( "aliased.xml", InputTypeName.CONTENT_SELECTOR );
         assertNotNull( config );
-        assertEquals( 2, config.getSize() );
+        assertEquals( 1, config.getSize() );
 
         assertEquals( "allowContentType=contentTypeTest[]", toString( config.getProperties( "allowContentType" ) ) );
-        assertEquals( "relationshipType=myapp:relationshipTypeTest[]", toString( config.getProperties( "relationshipType" ) ) );
     }
 
     @Test
@@ -121,7 +115,7 @@ public class XmlInputTypeConfigMapperTest
     {
         final InputTypeConfig config = build( "camelcase.xml" );
         assertNotNull( config );
-        assertEquals( 12, config.getSize() );
+        assertEquals( 8, config.getSize() );
 
         assertEquals( "contentType=test[]", toString( config.getProperties( "contentType" ) ) );
         assertEquals( "myContentType=test[]", toString( config.getProperties( "myContentType" ) ) );
@@ -129,15 +123,10 @@ public class XmlInputTypeConfigMapperTest
         assertEquals( "mixinType=myapp:test[]", toString( config.getProperties( "mixinType" ) ) );
         assertEquals( "myMixinType=myapp:test[]", toString( config.getProperties( "myMixinType" ) ) );
 
-        assertEquals( "relationshipType=myapp:test[]", toString( config.getProperties( "relationshipType" ) ) );
-        assertEquals( "myRelationshipType=myapp:test[]", toString( config.getProperties( "myRelationshipType" ) ) );
-
         assertEquals( "other1=[mixinType=myapp:test]", toString( config.getProperties( "other1" ) ) );
         assertEquals( "other2=[contentType=test]", toString( config.getProperties( "other2" ) ) );
-        assertEquals( "other3=[relationshipType=myapp:test]", toString( config.getProperties( "other3" ) ) );
         assertEquals( "other4=[myMixinType=myapp:test]", toString( config.getProperties( "other4" ) ) );
         assertEquals( "other5=[myContentType=test]", toString( config.getProperties( "other5" ) ) );
-        assertEquals( "other6=[myRelationshipType=myapp:test]", toString( config.getProperties( "other6" ) ) );
     }
 
     @Test

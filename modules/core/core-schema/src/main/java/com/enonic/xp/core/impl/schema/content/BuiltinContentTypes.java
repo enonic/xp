@@ -19,7 +19,6 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
-import com.enonic.xp.schema.relationship.RelationshipTypeName;
 
 final class BuiltinContentTypes
 {
@@ -66,8 +65,6 @@ final class BuiltinContentTypes
                           .helpText( "Choose shortcut target" )
                           .helpTextI18nKey( "base.shortcut.target.helpText" )
                           .inputType( InputTypeName.CONTENT_SELECTOR )
-                          .inputTypeProperty(
-                              InputTypeProperty.create( "relationshipType", RelationshipTypeName.REFERENCE.toString() ).build() )
                           .inputTypeConfig(
                               InputTypeConfig.create().property( InputTypeProperty.create( "allowPath", "*" ).build() ).build() )
                           .required( true )

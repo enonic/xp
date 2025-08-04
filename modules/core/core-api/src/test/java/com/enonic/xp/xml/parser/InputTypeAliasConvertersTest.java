@@ -21,14 +21,11 @@ public class InputTypeAliasConvertersTest
     public void testContentSelectorConverters()
     {
         final String contentType = "allowType";
-        final String relationshipType = "relationship";
         final String shouldBeUnchanged = "relationshipX";
         final String result1 = convert( InputTypeName.CONTENT_SELECTOR, contentType );
-        final String result2 = convert( InputTypeName.CONTENT_SELECTOR, relationshipType );
         final String result3 = convert( InputTypeName.CONTENT_SELECTOR, shouldBeUnchanged );
 
         assertEquals( "allow-content-type", result1 );
-        assertEquals( "relationship-type", result2 );
         assertEquals( shouldBeUnchanged, result3 );
     }
 
@@ -36,14 +33,11 @@ public class InputTypeAliasConvertersTest
     public void testMediaSelectorConverters()
     {
         final String contentType = "allowType";
-        final String relationshipType = "relationship";
         final String shouldBeUnchanged = "relationshipX";
         final String result1 = convert( InputTypeName.MEDIA_SELECTOR, contentType );
-        final String result2 = convert( InputTypeName.MEDIA_SELECTOR, relationshipType );
         final String result3 = convert( InputTypeName.MEDIA_SELECTOR, shouldBeUnchanged );
 
         assertEquals( "allow-content-type", result1 );
-        assertEquals( "relationship-type", result2 );
         assertEquals( shouldBeUnchanged, result3 );
     }
 
@@ -51,14 +45,11 @@ public class InputTypeAliasConvertersTest
     public void testImageSelectorConverters()
     {
         final String contentType = "allowType";
-        final String relationshipType = "relationship";
-        final String shouldBeUnchanged = "relationshipX";
+        final String shouldBeUnchanged = "shouldBeUnchanged";
         final String result1 = convert( InputTypeName.IMAGE_SELECTOR, contentType );
-        final String result2 = convert( InputTypeName.IMAGE_SELECTOR, relationshipType );
         final String result3 = convert( InputTypeName.IMAGE_SELECTOR, shouldBeUnchanged );
 
         assertEquals( "allow-content-type", result1 );
-        assertEquals( "relationship-type", result2 );
         assertEquals( shouldBeUnchanged, result3 );
     }
 
