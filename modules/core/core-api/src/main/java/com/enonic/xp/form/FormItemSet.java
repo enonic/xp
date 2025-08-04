@@ -56,7 +56,6 @@ public final class FormItemSet
         {
             this.formItems.add( formItem );
         }
-
     }
 
     @Override
@@ -69,11 +68,6 @@ public final class FormItemSet
     public FormItemType getType()
     {
         return FormItemType.FORM_ITEM_SET;
-    }
-
-    public void add( final FormItem formItem )
-    {
-        this.formItems.add( formItem );
     }
 
     public String getLabel()

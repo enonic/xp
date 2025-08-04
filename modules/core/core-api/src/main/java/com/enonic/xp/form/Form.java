@@ -18,10 +18,12 @@ public final class Form
 {
     private final FormItems formItems;
 
-    private Form( final Builder builder )
+    private static final Form EMPTY = new Form( List.of() );
+
+    private Form( final List<FormItem> formItemsList )
     {
         this.formItems = new FormItems( null );
-        for ( final FormItem formItem : builder.formItemsList )
+        for ( final FormItem formItem : formItemsList )
         {
             this.formItems.add( formItem );
         }
@@ -120,7 +122,7 @@ public final class Form
 
     public static Form empty()
     {
-        return create().build();
+        return EMPTY;
     }
 
     public static Builder create()
@@ -181,7 +183,7 @@ public final class Form
 
         public Form build()
         {
-            return new Form( this );
+            return formItemsList.isEmpty() ? EMPTY : new Form( formItemsList );
         }
     }
 }

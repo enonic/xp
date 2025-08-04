@@ -7,6 +7,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -17,8 +18,12 @@ public class FormItemSetTest
     public void getInput()
     {
         // setup
-        FormItemSet formItemSet = FormItemSet.create().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.create()
+            .name( "mySet" )
+            .label( "Label" )
+            .multiple( true )
+            .addFormItem( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
 
         // exercise
 
@@ -31,8 +36,12 @@ public class FormItemSetTest
     public void getInlineMixin()
     {
         // setup
-        FormItemSet formItemSet = FormItemSet.create().name( "mySet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( InlineMixin.create().mixin( "myapplication:mymixin" ).build() );
+        FormItemSet formItemSet = FormItemSet.create()
+            .name( "mySet" )
+            .label( "Label" )
+            .multiple( true )
+            .addFormItem( InlineMixin.create().mixin( "myapplication:mymixin" ).build() )
+            .build();
 
         // exercise
 
@@ -46,11 +55,11 @@ public class FormItemSetTest
     public void getFormItemSet()
     {
         // setup
-        FormItemSet myOuterSet = FormItemSet.create().name( "myOuterSet" ).label( "Label" ).multiple( true ).build();
-        FormItemSet myInnerSet = FormItemSet.create().name( "myInnerSet" ).label( "Label" ).multiple( true ).build();
         FormItemSet myInnermostSet = FormItemSet.create().name( "myInnermostSet" ).label( "Label" ).multiple( true ).build();
-        myInnerSet.add( myInnermostSet );
-        myOuterSet.add( myInnerSet );
+        FormItemSet myInnerSet =
+            FormItemSet.create().name( "myInnerSet" ).label( "Label" ).multiple( true ).addFormItem( myInnermostSet ).build();
+        FormItemSet myOuterSet =
+            FormItemSet.create().name( "myOuterSet" ).label( "Label" ).multiple( true ).addFormItem( myInnerSet ).build();
 
         // exercise
         assertEquals( "myOuterSet.myInnerSet", myOuterSet.getFormItemSet( "myInnerSet" ).getPath().toString() );
@@ -65,32 +74,12 @@ public class FormItemSetTest
     public void given_FormItemSet_with_child_Input_when_getInput_with_name_of_child_then_child_is_returned()
     {
         // exercise
-        FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" ).build();
-        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" )
+            .addFormItem( Input.create().name( "child" ).label( "child" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
 
         // verify
         assertEquals( "parent.child", parent.getInput( "child" ).getPath().toString() );
-    }
-
-    @Test
-    public void given_FormItemSet_with_child_Input_when_getInput_with_name_of_child_then_child_is_returned2()
-    {
-
-        FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" ).build();
-        parent.add( Input.create().name( "child" ).label( "child" ).inputType( InputTypeName.TEXT_LINE ).build() );
-
-        // exercise
-        FormItemSet newParent = FormItemSet.create().name( "newParent" ).label( "New Parent" ).build();
-        try
-        {
-            newParent.add( parent.getInput( "child" ) );
-            fail( "Expected exception" );
-        }
-        catch ( Exception e )
-        {
-            assertTrue( e instanceof IllegalArgumentException );
-            assertEquals( "formItem [child] already added to: parent", e.getMessage() );
-        }
     }
 
     @Test
@@ -130,14 +119,16 @@ public class FormItemSetTest
     public void copy()
     {
         // setup
-        FormItemSet formItemSet = FormItemSet.create().name( "myFormItemSet" ).label( "Label" ).multiple( true ).build();
-        formItemSet.add( Input.create().name( "myField" ).label( "my field" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        FormItemSet formItemSet = FormItemSet.create().name( "myFormItemSet" ).label( "Label" ).multiple( true )
+            .addFormItem( Input.create().name( "myField" ).label( "my field" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
 
         // exercise
         FormItemSet copy = formItemSet.copy();
 
         // verify
         assertNotSame( formItemSet, copy );
+        assertNull( copy.getParent() );
         assertEquals( "myFormItemSet", copy.getName() );
         assertSame( formItemSet.getName(), copy.getName() );
         assertSame( formItemSet.getLabel(), copy.getLabel() );

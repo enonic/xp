@@ -19,7 +19,7 @@ public abstract class FormItem
         this.parent = parent;
     }
 
-    public FormItems getParent()
+    FormItems getParent()
     {
         return parent;
     }

@@ -342,13 +342,18 @@ public class OccurrenceValidatorTest
     @Test
     public void given_required_set_with_no_data_and_other_set_with_data_when_validate_then_MinimumOccurrencesValidationError()
     {
-        FormItemSet personalia = FormItemSet.create().name( "personalia" ).multiple( false ).required( true ).build();
-        personalia.add( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() );
-        personalia.add( Input.create().name( "hairColour" ).label( "Hair color" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        FormItemSet personalia = FormItemSet.create()
+            .name( "personalia" )
+            .multiple( false )
+            .required( true )
+            .addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "hairColour" ).label( "Hair color" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
 
-        FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
-        crimes.add( Input.create().name( "description" ).label( "Description" ).inputType( InputTypeName.TEXT_LINE ).build() );
-        crimes.add( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true )
+            .addFormItem( Input.create().name( "description" ).label( "Description" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
             .superType( ContentTypeName.structured() )
@@ -502,14 +507,17 @@ public class OccurrenceValidatorTest
     @Test
     public void given_formitemset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
     {
-        FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
-        crimes.add( Input.create()
-                        .name( "description" )
-                        .label( "Description" )
-                        .minimumOccurrences( 1 )
-                        .inputType( InputTypeName.TEXT_LINE )
-                        .build() );
-        crimes.add( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() );
+        FormItemSet crimes = FormItemSet.create()
+            .name( "crimes" )
+            .multiple( true )
+            .addFormItem( Input.create()
+                              .name( "description" )
+                              .label( "Description" )
+                              .minimumOccurrences( 1 )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .build() )
+            .addFormItem( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
 
         final ContentType contentType =
             ContentType.create().name( "myapplication:my_type" ).superType( ContentTypeName.structured() ).addFormItem( crimes ).build();
@@ -526,20 +534,23 @@ public class OccurrenceValidatorTest
     @Test
     public void given_formitemset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false()
     {
-        FormItemSet crimes = FormItemSet.create().name( "crimes" ).multiple( true ).build();
-        crimes.add( Input.create()
-                        .name( "description" )
-                        .label( "Description" )
-                        .minimumOccurrences( 1 )
-                        .inputType( InputTypeName.TEXT_LINE )
-                        .build() );
-        crimes.add( Input.create()
-                        .name( "year" )
-                        .label( "Year" )
-                        .minimumOccurrences( 2 )
-                        .maximumOccurrences( 0 )
-                        .inputType( InputTypeName.TEXT_LINE )
-                        .build() );
+        FormItemSet crimes = FormItemSet.create()
+            .name( "crimes" )
+            .multiple( true )
+            .addFormItem( Input.create()
+                              .name( "description" )
+                              .label( "Description" )
+                              .minimumOccurrences( 1 )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "year" )
+                              .label( "Year" )
+                              .minimumOccurrences( 2 )
+                              .maximumOccurrences( 0 )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .build() )
+            .build();
 
         final ContentType contentType =
             ContentType.create().name( "myapplication:my_type" ).superType( ContentTypeName.structured() ).addFormItem( crimes ).build();
@@ -773,7 +784,7 @@ public class OccurrenceValidatorTest
         FormOptionSet crimes = FormOptionSet.create().multiple( false ).name( "crimes" ).build();
 
         FormOptionSetOption crimesOption1 = FormOptionSetOption.create()
-            .name( "option1" )
+            .name( "crimesOption1" )
             .defaultOption( true )
             .addFormItem( Input.create().name( "description" ).label( "Description" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .addFormItem( Input.create().name( "year" ).label( "Year" ).inputType( InputTypeName.TEXT_LINE ).build() )
@@ -789,10 +800,10 @@ public class OccurrenceValidatorTest
             .build();
         final PropertyTree content = new PropertyTree();
         content.setString( "name", "Thomas" );
-        content.setString( "crimes[0].option1.description", "Stole tomatoes from neighbour" );
-        content.setString( "crimes[0].option1..year", "1989" );
-        content.setString( "crimes[1].option1..description", "Stole a chocolate from the Matbua shop" );
-        content.setString( "crimes[1].option1..year", "1990" );
+        content.setString( "crimes[0].crimesOption1.description", "Stole tomatoes from neighbour" );
+        content.setString( "crimes[0].crimesOption1..year", "1989" );
+        content.setString( "crimes[1].crimesOption1..description", "Stole a chocolate from the Matbua shop" );
+        content.setString( "crimes[1].crimesOption1..year", "1990" );
 
         // exercise
         final ValidationErrors validationResults = validate( content, contentType );

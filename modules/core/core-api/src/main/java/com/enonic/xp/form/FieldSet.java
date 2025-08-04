@@ -59,11 +59,6 @@ public final class FieldSet
         return create( this ).build();
     }
 
-    public void addFormItem( final FormItem formItem )
-    {
-        this.formItems.add( formItem );
-    }
-
     public FormItems getFormItems()
     {
         return formItems;

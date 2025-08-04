@@ -11,6 +11,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FormOptionSetTest
@@ -71,12 +73,14 @@ public class FormOptionSetTest
     {
         final FormOptionSet copy = (FormOptionSet) this.set.copy();
 
+        assertNotSame( this.set, copy );
+        assertNull( copy.getParent() );
         assertEquals( this.set.getName(), copy.getName() );
         assertEquals( this.set.getLabel(), copy.getLabel() );
         assertEquals( this.set.getHelpText(), copy.getHelpText() );
         assertEquals( this.set.getOccurrences(), copy.getOccurrences() );
         assertEquals( this.set.getFormItems(), copy.getFormItems() );
-        assertTrue( this.set.equals( copy ) );
+        assertEquals( this.set, copy );
     }
 
 }
