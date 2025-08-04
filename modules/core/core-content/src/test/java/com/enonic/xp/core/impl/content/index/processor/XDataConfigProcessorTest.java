@@ -43,7 +43,7 @@ public class XDataConfigProcessorTest
     public void test_data()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processForms( Form.create().build() );
+        final PatternIndexConfigDocument result = processForms( Form.empty() );
 
         assertEquals( 1, result.getPathIndexConfigs().size() );
         assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( EXTRA_DATA ) ) );

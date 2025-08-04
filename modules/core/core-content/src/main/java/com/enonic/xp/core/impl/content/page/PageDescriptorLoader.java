@@ -71,7 +71,7 @@ public class PageDescriptorLoader
         return PageDescriptor.create()
             .key( key )
             .displayName( key.getName() )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .build();
     }

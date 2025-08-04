@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.EditableScheduledJob;
@@ -80,7 +81,7 @@ public final class ModifyScheduledJobHandler
             {
                 throw new IllegalArgumentException( "config cannot be null" );
             }
-            target.config = propertyTreeMarshallerService.get().marshal( params.getMember( "config" ).getMap() );
+            target.config = PropertyTree.fromMap( params.getMember( "config" ).getMap() );
         }
     }
 

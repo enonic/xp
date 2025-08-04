@@ -20,17 +20,10 @@ public final class Form
 
     private Form( final Builder builder )
     {
-        if ( builder.formItems != null )
+        this.formItems = new FormItems( null );
+        for ( final FormItem formItem : builder.formItemsList )
         {
-            this.formItems = builder.formItems;
-        }
-        else
-        {
-            this.formItems = new FormItems( null );
-            for ( final FormItem formItem : builder.formItemsList )
-            {
-                this.formItems.add( formItem );
-            }
+            this.formItems.add( formItem );
         }
         FormValidator.validate( this );
     }
@@ -125,9 +118,9 @@ public final class Form
         return s.toString();
     }
 
-    public Form copy()
+    public static Form empty()
     {
-        return create( this ).build();
+        return create().build();
     }
 
     public static Builder create()
@@ -153,8 +146,6 @@ public final class Form
 
     public static final class Builder
     {
-        private FormItems formItems;
-
         private final List<FormItem> formItemsList;
 
         private Builder()
@@ -185,12 +176,6 @@ public final class Form
             {
                 addFormItem( formItem );
             }
-            return this;
-        }
-
-        public Builder addFormItems( final FormItems formItems )
-        {
-            this.formItems = formItems;
             return this;
         }
 

@@ -29,20 +29,9 @@ public class PropertyTreeMarshallerServiceImpl
     }
 
     @Override
-    public PropertyTree marshal( final Map<String, ?> values )
-    {
-        return marshal( values, Form.create().build(), false );
-    }
-
-    @Override
     public PropertyTree marshal( final Map<String, ?> values, final Form form, final boolean strict )
     {
-        return new FormJsonToPropertyTreeTranslator( inlineMixins( form ), strict ).
+        return new FormJsonToPropertyTreeTranslator( mixinService.inlineFormItems( form ), strict ).
             translate( MAPPER.valueToTree( values ) );
-    }
-
-    private Form inlineMixins( final Form form )
-    {
-        return mixinService.inlineFormItems( form );
     }
 }

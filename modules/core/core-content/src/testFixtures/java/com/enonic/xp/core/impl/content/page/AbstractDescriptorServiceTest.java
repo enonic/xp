@@ -23,7 +23,7 @@ public abstract class AbstractDescriptorServiceTest
         throws Exception
     {
         this.mixinService = Mockito.mock( MixinService.class );
-        Mockito.when( this.mixinService.inlineFormItems( Mockito.any() ) ).thenReturn( Form.create().build() );
+        Mockito.when( this.mixinService.inlineFormItems( Mockito.any() ) ).thenReturn( Form.empty() );
 
         final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( this.applicationService, this.resourceService );
 

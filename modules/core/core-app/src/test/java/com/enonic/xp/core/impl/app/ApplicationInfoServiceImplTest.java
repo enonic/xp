@@ -188,7 +188,7 @@ public class ApplicationInfoServiceImplTest
             ContentType.
                 create().
                 name( ContentTypeName.media() ).
-                form( Form.create().build() ).
+                form( Form.empty() ).
                 setAbstract().
                 setFinal().
                 allowChildContent( true ).
@@ -210,14 +210,14 @@ public class ApplicationInfoServiceImplTest
     {
         final PageDescriptor pageDescriptor1 = PageDescriptor.create().
             displayName( "Landing page" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:landing-page" ) ).
             build();
 
         final PageDescriptor pageDescriptor2 = PageDescriptor.create().
             displayName( "Log out" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             regions( RegionDescriptors.create().build() ).
             key( DescriptorKey.from( "module:logout-page" ) ).
             build();
@@ -230,13 +230,13 @@ public class ApplicationInfoServiceImplTest
     {
         final PartDescriptor partDescriptor1 = PartDescriptor.create().
             displayName( "News part" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         final PartDescriptor partDescriptor2 = PartDescriptor.create().
             displayName( "News part2" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part2" ) ).
             build();
 
@@ -248,7 +248,7 @@ public class ApplicationInfoServiceImplTest
     {
         final LayoutDescriptor layoutDescriptor1 = LayoutDescriptor.create().
             displayName( "Fancy layout" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "left" ).build() ).
                 add( RegionDescriptor.create().name( "right" ).build() ).
@@ -258,7 +258,7 @@ public class ApplicationInfoServiceImplTest
 
         final LayoutDescriptor layoutDescriptor2 = LayoutDescriptor.create().
             displayName( "Putty layout" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             regions( RegionDescriptors.create().
                 add( RegionDescriptor.create().name( "top" ).build() ).
                 add( RegionDescriptor.create().name( "bottom" ).build() ).
@@ -277,14 +277,14 @@ public class ApplicationInfoServiceImplTest
             key( MacroKey.from( "my-app1:macro1" ) ).
             description( "my description" ).
             displayName( "A macro" ).
-            form( Form.create().build() ).
+            form( Form.empty() ).
             build();
 
         final MacroDescriptor macroDescriptor2 = MacroDescriptor.create().
             key( MacroKey.from( "my-app2:macro2" ) ).
             description( "my description" ).
             displayName( "B macro" ).
-            form( Form.create().build() ).
+            form( Form.empty() ).
             build();
 
         final MacroDescriptors macroDescriptors = MacroDescriptors.from( macroDescriptor1, macroDescriptor2 );
@@ -299,13 +299,13 @@ public class ApplicationInfoServiceImplTest
         final TaskDescriptor taskDescriptor1 = TaskDescriptor.create().
             key( DescriptorKey.from( ApplicationKey.SYSTEM, "task1" ) ).
             description( "description1" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             build();
 
         final TaskDescriptor taskDescriptor2 = TaskDescriptor.create().
             key( DescriptorKey.from( ApplicationKey.SYSTEM, "task2" ) ).
             description( "description2" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             build();
 
         final Descriptors<TaskDescriptor> descriptors = Descriptors.from( taskDescriptor1, taskDescriptor2 );
@@ -316,7 +316,7 @@ public class ApplicationInfoServiceImplTest
     private void mockIdProviderApplication( final ApplicationKey applicationKey )
     {
         final IdProviderDescriptor idProviderDescriptor = IdProviderDescriptor.create().
-            config( Form.create().build() ).
+            config( Form.empty() ).
             key( applicationKey ).
             mode( IdProviderDescriptorMode.EXTERNAL ).
             build();

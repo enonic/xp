@@ -1,50 +1,49 @@
 package com.enonic.xp.descriptor;
 
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 public final class Descriptors<T extends Descriptor>
     extends AbstractImmutableEntityList<T>
 {
+    private static final Descriptors<Descriptor> EMPTY = new Descriptors<>( ImmutableList.of() );
+
     private Descriptors( final Iterable<? extends T> descriptors )
     {
         super( ImmutableList.copyOf( descriptors ) );
     }
 
-    public Descriptors<T> filter( final ApplicationKey key )
-    {
-        return filter( t -> t.getApplicationKey().equals( key ) );
-    }
-
-    public Descriptors<T> filter( final Predicate<T> predicate )
-    {
-        return from( stream().filter( predicate ).collect( ImmutableList.toImmutableList() ) );
-    }
-
+    @SuppressWarnings("unchecked")
     public static <T extends Descriptor> Descriptors<T> empty()
     {
-        return from();
+        return (Descriptors<T>) EMPTY;
     }
 
     @SafeVarargs
     public static <T extends Descriptor> Descriptors<T> from( final T... descriptors )
     {
-        return from( ImmutableList.copyOf( descriptors ) );
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Descriptor> Descriptors<T> from( final Iterable<? extends T> descriptors )
     {
-        return descriptors instanceof Descriptors<? extends T> ? (Descriptors<T>) descriptors : new Descriptors<>( descriptors );
+        return descriptors instanceof Descriptors<? extends T>
+            ? (Descriptors<T>) descriptors
+            : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
     public static <T extends Descriptor> Collector<T, ?, Descriptors<T>> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Descriptors::new );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Descriptors::fromInternal );
+    }
+
+    private static <T extends Descriptor> Descriptors<T> fromInternal( final ImmutableList<T> list )
+    {
+        return list.isEmpty() ? empty() : new Descriptors<>( list );
     }
 }

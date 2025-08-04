@@ -25,14 +25,11 @@ public abstract class QueryBuilderTest
 
     private static final ObjectWriter OBJECT_WRITER = MAPPER.writerWithDefaultPrettyPrinter();
 
-    private static final PropertyTreeMarshallerService MARSHALLER_SERVICE =
-        PropertyTreeMarshallerServiceFactory.newInstance( Mockito.mock( MixinService.class ) );
-
     protected PropertyTree readJson( final String value )
     {
         final JsonNode jsonNode = JsonHelper.from( value );
 
-        return MARSHALLER_SERVICE.marshal( MAPPER.convertValue( jsonNode, new TypeReference<Map<String, Object>>()
+        return PropertyTree.fromMap( MAPPER.convertValue( jsonNode, new TypeReference<Map<String, Object>>()
         {
 
         } ) );

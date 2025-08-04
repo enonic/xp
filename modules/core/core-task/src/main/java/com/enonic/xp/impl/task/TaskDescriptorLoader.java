@@ -9,9 +9,12 @@ import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.TaskDescriptor;
 
 @Component(immediate = true)
@@ -21,6 +24,8 @@ public final class TaskDescriptorLoader
     private static final String PATH = "/tasks";
 
     private final DescriptorKeyLocator descriptorKeyLocator;
+
+    private final MixinService mixinService;
 
     @Activate
     public TaskDescriptorLoader( @Reference final ResourceService resourceService )
@@ -66,7 +71,11 @@ public final class TaskDescriptorLoader
     @Override
     public TaskDescriptor postProcess( final TaskDescriptor descriptor )
     {
-        return descriptor;
+        return TaskDescriptor.create()
+            .key( descriptor.getKey() )
+            .description( descriptor.getDescription() )
+            .config( this.mixinService.inlineFormItems( Form.create( descriptor.getConfig() ).build() ) )
+            .build();
     }
 
     private void parseXml( final ApplicationKey applicationKey, final TaskDescriptor.Builder builder, final String xml )

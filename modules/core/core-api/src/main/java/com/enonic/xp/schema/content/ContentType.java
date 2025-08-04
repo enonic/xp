@@ -53,12 +53,12 @@ public final class ContentType
         this.isFinal = builder.isFinal;
         this.allowChildContent = builder.allowChildContent;
         this.isBuiltIn = builder.isBuiltIn;
-        this.form = builder.formBuilder != null ? builder.formBuilder.build() : Form.create().build();
+        this.form = builder.formBuilder.build();
         this.displayNameExpression = builder.displayNameExpression;
         this.displayNameLabel = builder.displayNameLabel;
         this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
         this.schemaConfig = builder.schemaConfig.build();
-        this.allowChildContentType = List.copyOf( builder.allowChildContentType );
+        this.allowChildContentType = builder.allowChildContentType;
     }
 
     public static Builder create()
@@ -161,7 +161,7 @@ public final class ContentType
 
         private boolean isBuiltIn;
 
-        private Form.Builder formBuilder = Form.create();
+        private Form.Builder formBuilder;
 
         private ContentTypeName superType;
 
@@ -171,7 +171,7 @@ public final class ContentType
 
         private String displayNameLabelI18nKey;
 
-        private List<String> allowChildContentType = List.of();
+        private List<String> allowChildContentType;
 
         private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
 
@@ -183,6 +183,7 @@ public final class ContentType
             isFinal = true;
             allowChildContent = true;
             isBuiltIn = false;
+            allowChildContentType = List.of();
         }
 
         private Builder( final ContentType source )
@@ -193,10 +194,7 @@ public final class ContentType
             this.allowChildContent = source.allowChildContent();
             this.isBuiltIn = source.isBuiltIn();
             this.superType = source.getSuperType();
-            if ( source.getForm() != null )
-            {
-                this.formBuilder = Form.create( source.getForm() );
-            }
+            this.formBuilder = Form.create( source.getForm() );
             this.displayNameExpression = source.getDisplayNameExpression();
             this.displayNameLabel = source.displayNameLabel;
             this.displayNameLabelI18nKey = source.displayNameLabelI18nKey;
@@ -305,7 +303,7 @@ public final class ContentType
 
         public Builder allowChildContentType( final List<String> allowChildContentType )
         {
-            this.allowChildContentType = allowChildContentType;
+            this.allowChildContentType = List.copyOf( allowChildContentType );
             return this;
         }
 

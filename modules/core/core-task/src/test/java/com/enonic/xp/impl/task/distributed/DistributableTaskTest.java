@@ -102,7 +102,7 @@ class DistributableTaskTest
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "app:a" );
         final TaskDescriptor descriptor =
-            TaskDescriptor.create().key( descriptorKey ).description( "task description" ).config( Form.create().build() ).build();
+            TaskDescriptor.create().key( descriptorKey ).description( "task description" ).config( Form.empty() ).build();
 
         final PropertyTree config = new PropertyTree();
 
@@ -124,7 +124,7 @@ class DistributableTaskTest
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "app:a" );
         final TaskDescriptor descriptor =
-            TaskDescriptor.create().key( descriptorKey ).description( "task description" ).config( Form.create().build() ).build();
+            TaskDescriptor.create().key( descriptorKey ).description( "task description" ).config( Form.empty() ).build();
 
         final PropertyTree config = new PropertyTree();
 

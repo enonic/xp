@@ -3,14 +3,12 @@ package com.enonic.xp.lib.audit;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.lib.audit.mapper.AuditLogMapper;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -30,8 +28,6 @@ public class CreateAuditLogHandler
     private AuditLogUris objectUris;
 
     private PropertyTree data;
-
-    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerServiceSupplier;
 
     @Override
     protected Object doExecute()
@@ -80,14 +76,12 @@ public class CreateAuditLogHandler
 
     public void setData( final ScriptValue data )
     {
-        this.data = propertyTreeMarshallerServiceSupplier.get().
-            marshal( Optional.ofNullable( data ).map( ScriptValue::getMap ).orElse( Map.of() ) );
+        this.data = PropertyTree.fromMap( Optional.ofNullable( data ).map( ScriptValue::getMap ).orElse( Map.of() ) );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
         super.initialize( context );
-        propertyTreeMarshallerServiceSupplier = context.getService( PropertyTreeMarshallerService.class );
     }
 }

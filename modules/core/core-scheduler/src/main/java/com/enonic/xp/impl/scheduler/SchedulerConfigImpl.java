@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
@@ -38,17 +38,13 @@ public class SchedulerConfigImpl
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final PropertyTreeMarshallerService treeMarshallerService;
-
     private final CalendarService calendarService;
 
     private Configuration config;
 
     @Activate
-    public SchedulerConfigImpl( final Map<String, String> map, @Reference final PropertyTreeMarshallerService treeMarshallerService,
-                                @Reference final CalendarService calendarService )
+    public SchedulerConfigImpl( final Map<String, String> map, @Reference final CalendarService calendarService )
     {
-        this.treeMarshallerService = treeMarshallerService;
         this.calendarService = calendarService;
 
         this.config = ConfigBuilder.create().
@@ -121,7 +117,7 @@ public class SchedulerConfigImpl
                     case ScheduledJobPropertyNames.CONFIG:
                         try
                         {
-                            job.config( treeMarshallerService.marshal( MAPPER.readValue( value, HashMap.class ) ) );
+                            job.config( PropertyTree.fromMap( MAPPER.readValue( value, HashMap.class ) ) );
                         }
                         catch ( JsonProcessingException e )
                         {

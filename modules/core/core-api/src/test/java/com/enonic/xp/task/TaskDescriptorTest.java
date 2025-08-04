@@ -16,7 +16,7 @@ public class TaskDescriptorTest
     public void testDescriptor()
     {
         final DescriptorKey key = DescriptorKey.from( ApplicationKey.SYSTEM, "test" );
-        final Form form = Form.create().build();
+        final Form form = Form.empty();
 
         final TaskDescriptor descriptor = TaskDescriptor.create().
             key( key ).

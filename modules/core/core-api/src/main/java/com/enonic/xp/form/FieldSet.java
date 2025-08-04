@@ -80,11 +80,6 @@ public final class FieldSet
         return formItems.getInput( FormItemPath.from( name ) );
     }
 
-    public Iterable<FormItem> formItemIterable()
-    {
-        return formItems;
-    }
-
     @Override
     public boolean equals( final Object o )
     {

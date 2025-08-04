@@ -26,9 +26,6 @@ public abstract class BaseProjectHandler
 
     protected Supplier<ProjectService> projectService;
 
-    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerService;
-
-
     public final Object execute()
     {
         validate();
@@ -90,7 +87,7 @@ public abstract class BaseProjectHandler
             final Map<String, Object> config =
                 Optional.ofNullable( configValue.getMember( "config" ) ).map( ScriptValue::getMap ).orElse( null );
 
-            final PropertyTree siteConfig = propertyTreeMarshallerService.get().marshal( config );
+            final PropertyTree siteConfig = PropertyTree.fromMap( config );
 
             return SiteConfig.create().config( siteConfig ).application( applicationKey ).build();
 
@@ -102,6 +99,5 @@ public abstract class BaseProjectHandler
     {
         this.contentService = context.getService( ContentService.class );
         this.projectService = context.getService( ProjectService.class );
-        this.propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class );
     }
 }

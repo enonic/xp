@@ -36,7 +36,7 @@ public class DataConfigProcessorTest
     @Test
     public void test_data()
     {
-        final PatternIndexConfigDocument result = processForm(Form.create().build());
+        final PatternIndexConfigDocument result = processForm( Form.empty() );
 
         assertEquals( 1, result.getPathIndexConfigs().size() );
         assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( DATA ) ) );

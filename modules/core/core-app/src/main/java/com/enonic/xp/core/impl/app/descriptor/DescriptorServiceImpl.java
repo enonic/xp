@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.app.descriptor;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -18,12 +21,14 @@ import com.enonic.xp.descriptor.DescriptorKey;
 public final class DescriptorServiceImpl
     implements DescriptorService
 {
-    private final DescriptorLoaderMap map = new DescriptorLoaderMap();
+    private final Map<Class<?>, DescriptorLoader<?>> map = new ConcurrentHashMap<>();
+
+    private final DescriptorFacetFactory facetFactory;
 
     @Activate
     public DescriptorServiceImpl( @Reference final DescriptorFacetFactory facetFactory )
     {
-        this.map.facetFactory = facetFactory;
+        this.facetFactory = facetFactory;
     }
 
     @Override
@@ -64,17 +69,23 @@ public final class DescriptorServiceImpl
 
     private <T extends Descriptor> DescriptorFacet<T> getFacet( final Class<T> type )
     {
-        return this.map.facet( type );
+        final DescriptorLoader<T> loader = (DescriptorLoader<T>) this.map.get( type );
+        if ( loader == null )
+        {
+            return new NopDescriptorFacet<>();
+        }
+
+        return this.facetFactory.create( loader );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addLoader( final DescriptorLoader loader )
     {
-        this.map.add( loader );
+        this.map.put( loader.getType(), loader );
     }
 
     public void removeLoader( final DescriptorLoader loader )
     {
-        this.map.remove( loader );
+        this.map.remove( loader.getType() );
     }
 }

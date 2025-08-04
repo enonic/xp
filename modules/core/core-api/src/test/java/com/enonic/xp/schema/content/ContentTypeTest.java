@@ -26,14 +26,16 @@ public class ContentTypeTest
     @Test
     public void layout()
     {
-        ContentType contentType = ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test" ).build();
-        FieldSet layout = FieldSet.create().
-            label( "Personalia" ).
-            name( "personalia" ).
-            addFormItem( Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-            build();
-
-        contentType.getForm().getFormItems().add( layout );
+        ContentType contentType = ContentType.create()
+            .superType( ContentTypeName.structured() )
+            .name( "myapplication:test" )
+            .addFormItem( FieldSet.create()
+                              .label( "Personalia" )
+                              .name( "personalia" )
+                              .addFormItem(
+                                  Input.create().name( "eyeColour" ).label( "Eye color" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                              .build() )
+            .build();
 
         assertEquals( "eyeColour", contentType.getForm().getInput( "eyeColour" ).getPath().toString() );
     }
@@ -41,8 +43,6 @@ public class ContentTypeTest
     @Test
     public void layout_inside_formItemSet()
     {
-        ContentType contentType = ContentType.create().name( "myapplication:test" ).superType( ContentTypeName.structured() ).build();
-
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
             name( "personalia" ).
@@ -50,7 +50,8 @@ public class ContentTypeTest
             build();
 
         FormItemSet myFormItemSet = FormItemSet.create().name( "mySet" ).addFormItem( layout ).build();
-        contentType.getForm().getFormItems().add( myFormItemSet );
+
+        ContentType contentType = ContentType.create().name( "myapplication:test" ).superType( ContentTypeName.structured() ).addFormItem( myFormItemSet ).build();
 
         assertEquals( "mySet.eyeColour", contentType.getForm().getInput( "mySet.eyeColour" ).getPath().toString() );
     }

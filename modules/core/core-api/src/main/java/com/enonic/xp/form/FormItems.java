@@ -1,6 +1,7 @@
 package com.enonic.xp.form;
 
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Objects;
@@ -9,9 +10,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 
-/**
- * Mutable.
- */
 @PublicApi
 public final class FormItems
     implements Iterable<FormItem>
@@ -20,13 +18,6 @@ public final class FormItems
 
     private final LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<>();
 
-    private final LinkedHashMap<String, Layout> layoutByName = new LinkedHashMap<>();
-
-    public FormItems()
-    {
-        this.containerFormItem = null;
-    }
-
     public FormItems( final FormItem containerFormItem )
     {
         this.containerFormItem = containerFormItem;
@@ -34,11 +25,7 @@ public final class FormItems
 
     public FormItemPath getPath()
     {
-        if ( containerFormItem == null )
-        {
-            return FormItemPath.ROOT;
-        }
-        return containerFormItem.getPath();
+        return containerFormItem == null ? FormItemPath.ROOT : containerFormItem.getPath();
     }
 
     public FormItem getItemByName( String name )
@@ -46,7 +33,7 @@ public final class FormItems
         return this.formItemByName.get( name );
     }
 
-    public void add( final FormItem formItem )
+    void add( final FormItem formItem )
     {
         if ( formItem.getParent() != null )
         {
@@ -57,11 +44,6 @@ public final class FormItems
         Preconditions.checkArgument( previous == null, "FormItem already added: " + formItem );
 
         formItem.setParent( this );
-
-        if ( formItem instanceof Layout )
-        {
-            layoutByName.put( formItem.getName(), (Layout) formItem );
-        }
     }
 
     FormItem getFormItem( final FormItemPath path )
@@ -168,7 +150,7 @@ public final class FormItems
     @Override
     public Iterator<FormItem> iterator()
     {
-        return formItemByName.values().iterator();
+        return Collections.unmodifiableCollection( formItemByName.values() ).iterator();
     }
 
     public int size()
@@ -218,17 +200,14 @@ public final class FormItems
 
     private FormItem searchFormItemInLayouts( final String name )
     {
-        FormItem foundFormItem = null;
-
-        for ( final Layout layout : layoutByName.values() )
-        {
-            foundFormItem = layout.getFormItem( name );
-            if ( foundFormItem != null )
-            {
-                break;
-            }
-        }
-        return foundFormItem;
+        return formItemByName.values()
+            .stream()
+            .filter( formItem -> formItem instanceof Layout )
+            .map( formItem -> (Layout) formItem )
+            .map( layout -> layout.getFormItem( name ) )
+            .filter( Objects::nonNull )
+            .findFirst()
+            .orElse( null );
     }
 
     private <T extends FormItem> T typeCast( final FormItem formItem, final Class<T> type )

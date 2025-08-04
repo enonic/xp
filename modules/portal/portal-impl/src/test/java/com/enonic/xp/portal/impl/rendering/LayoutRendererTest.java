@@ -122,7 +122,7 @@ public class LayoutRendererTest
         // setup
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
             .displayName( "My layout component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myLayoutComponent" ) )
             .regions( RegionDescriptors.create()
                           .add( RegionDescriptor.create().name( "left" ).build() )
@@ -153,7 +153,7 @@ public class LayoutRendererTest
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
             .displayName( "My layout component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myLayoutComponent" ) )
             .regions( RegionDescriptors.create()
                           .add( RegionDescriptor.create().name( "left" ).build() )
@@ -198,7 +198,7 @@ public class LayoutRendererTest
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
             .displayName( "My layout component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myLayoutComponent" ) )
             .regions( RegionDescriptors.create()
                           .add( RegionDescriptor.create().name( "left" ).build() )

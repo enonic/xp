@@ -35,7 +35,7 @@ public final class MacroDescriptor
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
-        this.form = builder.form == null ? Form.create().build() : builder.form;
+        this.form = builder.form == null ? Form.empty() : builder.form;
         this.icon = builder.icon;
         this.modifiedTime = builder.modifiedTime;
     }

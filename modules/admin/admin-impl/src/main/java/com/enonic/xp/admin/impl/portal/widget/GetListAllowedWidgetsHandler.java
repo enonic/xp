@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.impl.portal.widget;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -21,11 +20,9 @@ import com.google.common.net.UrlEscapers;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -58,16 +55,11 @@ public class GetListAllowedWidgetsHandler
         final Collection<String> values = webRequest.getParams().get( "widgetInterface" );
 
         final PrincipalKeys userPrincipalKeys = ContextAccessor.current().getAuthInfo().getPrincipals();
-        final Descriptors<WidgetDescriptor> widgetDescriptors = widgetDescriptorService.getByInterfaces( values.toArray( String[]::new ) )
-            .filter( widgetDescriptor -> widgetDescriptor.isAccessAllowed( userPrincipalKeys ) );
-
-        final List<ObjectNode> result = new ArrayList<>();
-        if ( !widgetDescriptors.isEmpty() )
-        {
-            final PortalRequest portalRequest = (PortalRequest) webRequest;
-            widgetDescriptors.forEach( widgetDescriptor -> result.add( convertToJson( widgetDescriptor, portalRequest.getLocales() ) ) );
-        }
-
+        final List<ObjectNode> result =  widgetDescriptorService.getByInterfaces( values.toArray( String[]::new ) )
+            .stream()
+            .filter( wd -> wd.isAccessAllowed( userPrincipalKeys ) )
+            .map( wd -> convertToJson( wd, webRequest.getLocales() ) )
+            .toList();
         return WebResponse.create().contentType( MediaType.JSON_UTF_8 ).body( result ).build();
     }
 

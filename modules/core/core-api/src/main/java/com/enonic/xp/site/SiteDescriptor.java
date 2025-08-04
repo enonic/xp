@@ -34,7 +34,7 @@ public final class SiteDescriptor
     private SiteDescriptor( final Builder builder )
     {
         this.applicationKey = builder.applicationKey;
-        this.form = builder.form;
+        this.form = builder.form == null ? Form.empty() : builder.form;
         this.xDataMappings = builder.xDataMappings;
         this.modifiedTime = builder.modifiedTime;
         this.responseProcessors = Objects.requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
@@ -115,7 +115,7 @@ public final class SiteDescriptor
         private Builder( final SiteDescriptor siteDescriptor )
         {
             this.applicationKey = siteDescriptor.applicationKey;
-            this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
+            this.form = siteDescriptor.form != null ? siteDescriptor.form : null;
             this.xDataMappings = siteDescriptor.xDataMappings;
             this.modifiedTime = siteDescriptor.modifiedTime;
             this.responseProcessors = siteDescriptor.responseProcessors;

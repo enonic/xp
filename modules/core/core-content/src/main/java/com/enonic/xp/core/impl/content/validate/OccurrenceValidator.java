@@ -57,7 +57,7 @@ public final class OccurrenceValidator
             }
             else if ( formItem instanceof FieldSet )
             {
-                validate( ( (FieldSet) formItem ).formItemIterable(), parentDataSets, validationErrorsBuilder );
+                validate( ( (FieldSet) formItem ), parentDataSets, validationErrorsBuilder );
             }
             else if ( formItem instanceof FormOptionSet )
             {

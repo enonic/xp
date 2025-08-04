@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.form;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,7 +31,7 @@ public final class FormJsonToPropertyTreeTranslator
 
     public FormJsonToPropertyTreeTranslator( final Form form, final boolean strict )
     {
-        this.form = form != null ? form : Form.create().build();
+        this.form = form != null ? form : Form.empty();
         this.strictMode = strict;
         this.propertyTree = new PropertyTree();
         this.inputTypeResolver = InputTypes.BUILTIN;
@@ -40,34 +39,29 @@ public final class FormJsonToPropertyTreeTranslator
 
     public PropertyTree translate( final JsonNode json )
     {
-        traverse( json, this.propertyTree.getRoot() );
+        for ( Map.Entry<String, JsonNode> property : json.properties() )
+        {
+            addValue( property.getKey(), property.getValue(), this.propertyTree.getRoot() );
+        }
         return this.propertyTree;
     }
 
-    private void traverse( final JsonNode json, final PropertySet parent )
-    {
-        final Iterator<Map.Entry<String, JsonNode>> fields = json.fields();
-
-        while ( fields.hasNext() )
-        {
-            final Map.Entry<String, JsonNode> next = fields.next();
-            addValue( parent, next.getKey(), next.getValue() );
-        }
-    }
-
-    private void addValue( final PropertySet parent, final String key, final JsonNode value )
+    private void addValue( final String key, final JsonNode value, final PropertySet parent )
     {
         if ( value.isArray() )
         {
             for ( final JsonNode objNode : value )
             {
-                addValue( parent, key, objNode );
+                addValue( key, objNode, parent );
             }
         }
         else if ( value.isObject() && !hasInput( parent.getProperty(), key ) )
         {
             final PropertySet parentSet = parent.addSet( key );
-            value.fields().forEachRemaining( ( objectValue ) -> addValue( parentSet, objectValue.getKey(), objectValue.getValue() ) );
+            for ( Map.Entry<String, JsonNode> property : value.properties() )
+            {
+                addValue( property.getKey(), property.getValue(), parentSet );
+            }
         }
         else
         {
@@ -129,20 +123,20 @@ public final class FormJsonToPropertyTreeTranslator
         if ( value.isObject() )
         {
             PropertySet propertySet = propertyTree.newSet();
-            value.fields().
-                forEachRemaining( ( field ) -> {
-                    if ( field.getValue().isArray() )
+            for ( Map.Entry<String, JsonNode> field : value.properties() )
+            {
+                if ( field.getValue().isArray() )
+                {
+                    for ( final JsonNode arrayNode : field.getValue() )
                     {
-                        for ( final JsonNode arrayNode : field.getValue() )
-                        {
-                            propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
-                        }
+                        propertySet.addProperty( field.getKey(), resolveCoreValue( arrayNode ) );
                     }
-                    else
-                    {
-                        propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
-                    }
-                } );
+                }
+                else
+                {
+                    propertySet.addProperty( field.getKey(), resolveCoreValue( field.getValue() ) );
+                }
+            }
             return ValueFactory.newPropertySet( propertySet );
         }
 
