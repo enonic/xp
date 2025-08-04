@@ -86,7 +86,7 @@ graalvm-js = { module = "org.graalvm.polyglot:js", version.ref = "graalvm" }
 graalvm-jsse = { module = "org.graalvm.js:js-scriptengine", version.ref = "graalvm" }
 
 commons-io = { module = "commons-io:commons-io", version = "2.20.0" }
-commons-compress = { module = "org.apache.commons:commons-compress", version = "1.27.1" }
+commons-compress = { module = "org.apache.commons:commons-compress", version = "1.28.0" }
 
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
