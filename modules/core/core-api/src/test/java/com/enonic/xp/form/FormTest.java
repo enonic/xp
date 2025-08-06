@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -15,19 +16,10 @@ public class FormTest
     @Test
     public void duplicatedItemNames()
     {
-        try
-        {
-            Form.create().
-                addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
-                addFormItem( FormItemSet.create().name( "myInput" ).label( "my input" ).build() ).
-                build();
-
-            fail( "Expected exception" );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            assertTrue( e.getMessage().equals( "FormItem already added: myInput" ) );
-        }
+        assertThrows( IllegalArgumentException.class, () -> Form.create().
+            addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
+            addFormItem( FormItemSet.create().name( "myInput" ).label( "my input" ).build() ).
+            build() );
     }
 
     @Test

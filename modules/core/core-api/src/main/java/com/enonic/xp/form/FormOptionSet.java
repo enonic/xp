@@ -48,11 +48,7 @@ public final class FormOptionSet
         this.expanded = builder.expanded;
         this.occurrences = builder.occurrences;
         this.multiselection = builder.multiselection;
-        this.optionSetOptions = new FormItems( this );
-        for ( final FormItem formItem : builder.setOptionsList )
-        {
-            this.optionSetOptions.add( formItem );
-        }
+        this.optionSetOptions = new FormItems( this, builder.setOptionsList );
     }
 
     @Override
@@ -67,9 +63,14 @@ public final class FormOptionSet
         return FormItemType.FORM_OPTION_SET;
     }
 
-    public FormItems getFormItems()
+    FormItem getFormItem( final FormItemPath path )
     {
-        return optionSetOptions;
+        return optionSetOptions.getFormItem( path );
+    }
+
+    public FormOptionSetOption getOption( final String name )
+    {
+        return optionSetOptions.getItemByName( name ).toFormOptionSetOption();
     }
 
     public String getLabel()

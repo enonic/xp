@@ -35,7 +35,7 @@ final class FormValidator
                     items.put( item.getPath(), item );
                     for ( final FormOptionSetOption formOptionSetOption : item.toFormOptionSet() )
                     {
-                        validateFormItems( formOptionSetOption.getFormItems(), items );
+                        validateFormItems( formOptionSetOption, items );
                     }
                     break;
 

@@ -9,12 +9,16 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 
 @PublicApi
 public final class FieldSet
-    extends Layout
+    extends FormItem
     implements Iterable<FormItem>
 {
+    private final String name;
+
     private final String label;
 
     private final String labelI18nKey;
@@ -23,18 +27,26 @@ public final class FieldSet
 
     private FieldSet( final Builder builder )
     {
-        super( builder.name );
+        Preconditions.checkNotNull( builder.name, "a name is required for a Layout" );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a Layout" );
+        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
+        this.name = builder.name;
 
-        Preconditions.checkNotNull( builder.label, "label is required" );
-
-        this.label = builder.label;
+        this.label = Preconditions.checkNotNull( builder.label, "label is required" );
         this.labelI18nKey = builder.labelI18nKey;
+        this.formItems = new FormItems( this, builder.formItems );
+    }
 
-        this.formItems = new FormItems( this );
-        for ( final FormItem formItem : builder.formItems )
-        {
-            this.formItems.add( formItem );
-        }
+    @Override
+    public String getName()
+    {
+        return this.name;
+    }
+
+    @Override
+    public FormItemType getType()
+    {
+        return FormItemType.LAYOUT;
     }
 
     public String getLabel()
@@ -59,20 +71,10 @@ public final class FieldSet
         return create( this ).build();
     }
 
-    public FormItems getFormItems()
-    {
-        return formItems;
-    }
-
     @Override
-    public FormItem getFormItem( final String name )
+    FormItemPath resolvePath()
     {
-        return formItems.getFormItem( FormItemPath.from( name ) );
-    }
-
-    public Input getInput( final String name )
-    {
-        return formItems.getInput( FormItemPath.from( name ) );
+        return resolveParentPath();
     }
 
     @Override
@@ -106,6 +108,11 @@ public final class FieldSet
     public static Builder create( final FieldSet fieldSet )
     {
         return new Builder( fieldSet );
+    }
+
+    FormItem getFormItem( final String path )
+    {
+        return formItems.getFormItem( FormItemPath.from(  path ) );
     }
 
     public static final class Builder

@@ -13,7 +13,6 @@ public final class FormOptionSetOption
     extends FormItem
     implements Iterable<FormItem>
 {
-
     private final String name;
 
     private final String label;
@@ -42,12 +41,7 @@ public final class FormOptionSetOption
         this.helpText = builder.helpText;
         this.labelI18nKey = builder.labelI18nKey;
         this.helpTextI18nKey = builder.helpTextI18nKey;
-
-        this.formItems = new FormItems( this );
-        for ( final FormItem formItem : builder.formItemsList )
-        {
-            this.formItems.add( formItem );
-        }
+        this.formItems = new FormItems( this, builder.formItemsList );
     }
 
     @Override
@@ -71,9 +65,24 @@ public final class FormOptionSetOption
         return helpText;
     }
 
-    public FormItems getFormItems()
+    public FormItem getFormItem( final FormItemPath path )
     {
-        return formItems;
+        return formItems.getFormItem( path );
+    }
+
+    public Input getInput( final String path )
+    {
+        return formItems.getInput( FormItemPath.from( path ) );
+    }
+
+    public FormOptionSet getOptionSet( final String path )
+    {
+        return formItems.getOptionSet( FormItemPath.from( path ) );
+    }
+
+    public FormItemSet getFormItemSet( final String path )
+    {
+        return formItems.getFormItemSet( FormItemPath.from( path ) );
     }
 
     @Override

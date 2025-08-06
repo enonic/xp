@@ -60,12 +60,12 @@ public class XmlPartDescriptorParserTest
 
         final Form config = result.getConfig();
         assertNotNull( config );
-        assertEquals( InputTypeName.DOUBLE, config.getFormItem( "width" ).toInput().getInputType() );
-        assertEquals( "Column width", config.getFormItem( "width" ).toInput().getLabel() );
+        assertEquals( InputTypeName.DOUBLE, config.getInput( "width" ).getInputType() );
+        assertEquals( "Column width", config.getInput( "width" ).getLabel() );
 
-        assertEquals( "key.label", config.getFormItem( "width" ).toInput().getLabelI18nKey() );
-        assertEquals( "key.help-text", config.getFormItem( "width" ).toInput().getHelpTextI18nKey() );
+        assertEquals( "key.label", config.getInput( "width" ).getLabelI18nKey() );
+        assertEquals( "key.help-text", config.getInput( "width" ).getHelpTextI18nKey() );
 
-        assertEquals( "link-urls", config.getFormItem( "link-urls" ).toInlineMixin().getName() );
+        assertEquals( "link-urls", config.getInlineMixin( "link-urls" ).getName() );
     }
 }

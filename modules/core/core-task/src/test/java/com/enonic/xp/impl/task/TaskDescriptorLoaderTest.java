@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinService;
@@ -80,7 +80,7 @@ public class TaskDescriptorLoaderTest
 
         assertEquals( "MyTask", descriptor.getDescription() );
 
-        FormItem formItem = descriptor.getConfig().getFormItem( "param1" );
-        assertEquals( " something ", formItem.toInput().getDefaultValue().getRootValue() );
+        Input formItem = descriptor.getConfig().getInput( "param1" );
+        assertEquals( " something ", formItem.getDefaultValue().getRootValue() );
     }
 }

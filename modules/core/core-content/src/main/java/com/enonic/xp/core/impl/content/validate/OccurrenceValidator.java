@@ -100,7 +100,7 @@ public final class OccurrenceValidator
             {
                 if ( hasSelectionArray && optionIsSelected( option, selectedItems ) )
                 {
-                    validate( option.getFormItems(),
+                    validate( option,
                               Optional.ofNullable( propertySet.getSet( option.getName() ) ).map( List::of ).orElse( List.of() ),
                               validationErrorsBuilder );
                 }

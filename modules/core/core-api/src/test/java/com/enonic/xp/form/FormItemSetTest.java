@@ -132,9 +132,9 @@ public class FormItemSetTest
         assertEquals( "myFormItemSet", copy.getName() );
         assertSame( formItemSet.getName(), copy.getName() );
         assertSame( formItemSet.getLabel(), copy.getLabel() );
-        assertNotSame( formItemSet.getFormItems(), copy.getFormItems() );
         assertNotSame( formItemSet.getInput( "myField" ), copy.getInput( "myField" ) );
         assertEquals( "myFormItemSet.myField", copy.getInput( "myField" ).getPath().toString() );
         assertEquals( formItemSet.getPath(), copy.getInput( "myField" ).getParent().getPath() );
+        assertEquals( formItemSet, copy );
     }
 }

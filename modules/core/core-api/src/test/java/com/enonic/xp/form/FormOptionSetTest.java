@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -50,9 +51,8 @@ public class FormOptionSetTest
         FormOptionSetOption option1 = options.get( 0 );
         assertFalse( option1.isDefaultOption() );
 
-        FormItems option1Items = option1.getFormItems();
-        assertEquals( 1, option1Items.size() );
-        Input option1Input = (Input) option1Items.getItemByName( "myTextLine1" );
+        assertThat( option1 ).size().isEqualTo( 1 );
+        Input option1Input = (Input) option1.getInput( "myTextLine1" );
         assertEquals( "myTextLine1", option1Input.getName() );
         assertEquals( "My text line 1", option1Input.getLabel() );
         assertEquals( "My text line 1 help text", option1Input.getHelpText() );
@@ -60,9 +60,9 @@ public class FormOptionSetTest
         FormOptionSetOption option2 = options.get( 1 );
         assertTrue( option2.isDefaultOption() );
 
-        FormItems option2Items = option2.getFormItems();
-        assertEquals( 1, option2Items.size() );
-        Input option2Input = (Input) option2Items.getItemByName( "myTextLine2" );
+        assertThat( option2 ).size().isEqualTo( 1 );
+
+        Input option2Input = option2.getInput( "myTextLine2" );
         assertEquals( "myTextLine2", option2Input.getName() );
         assertEquals( "My text line 2", option2Input.getLabel() );
         assertEquals( "My text line 2 help text", option2Input.getHelpText() );
@@ -79,7 +79,6 @@ public class FormOptionSetTest
         assertEquals( this.set.getLabel(), copy.getLabel() );
         assertEquals( this.set.getHelpText(), copy.getHelpText() );
         assertEquals( this.set.getOccurrences(), copy.getOccurrences() );
-        assertEquals( this.set.getFormItems(), copy.getFormItems() );
         assertEquals( this.set, copy );
     }
 

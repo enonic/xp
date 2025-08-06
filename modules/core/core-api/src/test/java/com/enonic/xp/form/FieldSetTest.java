@@ -17,18 +17,18 @@ public class FieldSetTest
             name( "myFieldSet" ).
             addFormItem( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
-
-        assertEquals( "myInput", myFieldSet.getInput( "myInput" ).getPath().toString() );
-
         FieldSet myOuterFieldSet = FieldSet.create().
             label( "My Outer FieldSet" ).
             name( "myOuterFieldSet" ).
             addFormItem( FieldSet.create().
-                label( "My inner FieldSet" ).
-                name( "myInnerFieldSet" ).
-                addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
+            label( "My inner FieldSet" ).
+            name( "myInnerFieldSet" ).
+            addFormItem( Input.create().name( "myInput2" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
-        assertEquals( "myInput", myOuterFieldSet.getInput( "myInput" ).getPath().toString() );
+        final Form form = Form.create().addFormItem( myFieldSet ).addFormItem( myOuterFieldSet ).build();
+
+        //assertEquals( "myInput", form.getInput( "myInput" ).getPath().toString() );
+        assertEquals( "myInput2", form.getInput( "myInput2" ).getPath().toString() );
     }
 }

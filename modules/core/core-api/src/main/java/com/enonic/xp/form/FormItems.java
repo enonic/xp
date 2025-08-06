@@ -1,49 +1,47 @@
 package com.enonic.xp.form;
 
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
-public final class FormItems
+final class FormItems
     implements Iterable<FormItem>
 {
     private final FormItem containerFormItem;
 
-    private final LinkedHashMap<String, FormItem> formItemByName = new LinkedHashMap<>();
+    private final ImmutableMap<String, FormItem> formItemByName;
 
-    public FormItems( final FormItem containerFormItem )
+    FormItems( final FormItem containerFormItem, final Collection<? extends FormItem> formItems )
     {
         this.containerFormItem = containerFormItem;
+        this.formItemByName =
+            formItems.stream().map( this::setParent ).collect( ImmutableMap.toImmutableMap( FormItem::getName, Function.identity() ) );
     }
 
-    public FormItemPath getPath()
+    FormItemPath getPath()
     {
         return containerFormItem == null ? FormItemPath.ROOT : containerFormItem.getPath();
     }
 
-    public FormItem getItemByName( String name )
+    FormItem getItemByName( String name )
     {
         return this.formItemByName.get( name );
     }
 
-    void add( final FormItem formItem )
+    private FormItem setParent( final FormItem formItem )
     {
         if ( formItem.getParent() != null )
         {
             throw new IllegalArgumentException(
                 "formItem [" + formItem.getName() + "] already added to: " + formItem.getParent().getPath().toString() );
         }
-        Object previous = formItemByName.put( formItem.getName(), formItem );
-        Preconditions.checkArgument( previous == null, "FormItem already added: " + formItem );
-
         formItem.setParent( this );
+        return formItem;
     }
 
     FormItem getFormItem( final FormItemPath path )
@@ -74,20 +72,17 @@ public final class FormItems
             return null;
         }
 
-        if ( foundFormItem instanceof FormItemSet )
+        if ( foundFormItem instanceof final FormItemSet formItemSet )
         {
-            FormItemSet formItemSet = (FormItemSet) foundFormItem;
             return formItemSet.getFormItem( path.asNewWithoutFirstPathElement() );
         }
-        else if ( foundFormItem instanceof FormOptionSet )
+        else if ( foundFormItem instanceof final FormOptionSet formOptionSet )
         {
-            FormOptionSet formOptionSet = (FormOptionSet) foundFormItem;
-            return formOptionSet.getFormItems().getFormItem( path.asNewWithoutFirstPathElement() );
+            return formOptionSet.getFormItem( path.asNewWithoutFirstPathElement() );
         }
-        else if ( foundFormItem instanceof FormOptionSetOption )
+        else if ( foundFormItem instanceof final FormOptionSetOption formOptionSetOption )
         {
-            FormOptionSetOption formOptionSetOption = (FormOptionSetOption) foundFormItem;
-            return formOptionSetOption.getFormItems().getFormItem( path.asNewWithoutFirstPathElement() );
+            return formOptionSetOption.getFormItem( path.asNewWithoutFirstPathElement() );
         }
         else if ( foundFormItem instanceof InlineMixin )
         {
@@ -107,17 +102,17 @@ public final class FormItems
         FormItem foundFormItem = formItemByName.get( name );
         if ( foundFormItem == null || ( skipLayout && foundFormItem.getType() == FormItemType.LAYOUT ) )
         {
-            foundFormItem = searchFormItemInLayouts( name );
+            return searchFormItemInLayouts( name );
         }
         return foundFormItem;
     }
 
-    public Input getInput( final FormItemPath path )
+    Input getInput( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), Input.class );
     }
 
-    public Input getInput( final FormItemPath path, final boolean skipLayout )
+    Input getInput( final FormItemPath path, final boolean skipLayout )
     {
         return typeCast( getFormItem( path, skipLayout ), Input.class );
     }
@@ -132,28 +127,18 @@ public final class FormItems
         return typeCast( getFormItem( path ), InlineMixin.class );
     }
 
-    public Layout getLayout( final FormItemPath path )
-    {
-        return typeCast( getFormItem( path ), Layout.class );
-    }
-
     FormOptionSet getOptionSet( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), FormOptionSet.class );
     }
 
-    FormOptionSetOption getOptionSetOption( final FormItemPath path )
-    {
-        return typeCast( getFormItem( path ), FormOptionSetOption.class );
-    }
-
     @Override
     public Iterator<FormItem> iterator()
     {
-        return Collections.unmodifiableCollection( formItemByName.values() ).iterator();
+        return formItemByName.values().iterator();
     }
 
-    public int size()
+    int size()
     {
         return formItemByName.size();
     }
@@ -202,8 +187,8 @@ public final class FormItems
     {
         return formItemByName.values()
             .stream()
-            .filter( formItem -> formItem instanceof Layout )
-            .map( formItem -> (Layout) formItem )
+            .filter( formItem -> formItem instanceof FieldSet )
+            .map( formItem -> (FieldSet) formItem )
             .map( layout -> layout.getFormItem( name ) )
             .filter( Objects::nonNull )
             .findFirst()

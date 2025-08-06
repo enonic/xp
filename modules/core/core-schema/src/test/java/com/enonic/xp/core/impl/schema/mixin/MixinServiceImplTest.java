@@ -196,12 +196,10 @@ public class MixinServiceImplTest
 
         assertNotNull( transformedForm.getInput( "title" ) );
         assertNotNull( transformedForm.getOptionSet( "myOptionSet" ) );
-        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption1" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.label" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.street" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.postalNo" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.country" ) );
-        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption2" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption2.myTextLine2" ) );
     }
 }

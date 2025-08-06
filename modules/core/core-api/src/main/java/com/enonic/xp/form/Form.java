@@ -22,17 +22,8 @@ public final class Form
 
     private Form( final List<FormItem> formItemsList )
     {
-        this.formItems = new FormItems( null );
-        for ( final FormItem formItem : formItemsList )
-        {
-            this.formItems.add( formItem );
-        }
+        this.formItems = new FormItems( null, formItemsList );
         FormValidator.validate( this );
-    }
-
-    public FormItem getFormItem( final String path )
-    {
-        return formItems.getFormItem( FormItemPath.from( path ) );
     }
 
     public FormItem getFormItem( final FormItemPath path )
@@ -78,16 +69,6 @@ public final class Form
     public FormOptionSet getOptionSet( final String path )
     {
         return formItems.getOptionSet( FormItemPath.from( path ) );
-    }
-
-    public FormOptionSetOption getOptionSetOption( final String path )
-    {
-        return formItems.getOptionSetOption( FormItemPath.from( path ) );
-    }
-
-    public FormItems getFormItems()
-    {
-        return formItems;
     }
 
     @Override

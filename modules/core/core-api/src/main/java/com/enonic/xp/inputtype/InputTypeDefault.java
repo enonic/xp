@@ -1,6 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -8,7 +7,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.SetMultimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
@@ -17,7 +15,7 @@ import com.enonic.xp.convert.Converters;
 public final class InputTypeDefault
     implements Iterable<InputTypeProperty>
 {
-    private final SetMultimap<String, InputTypeProperty> map;
+    private final ImmutableSetMultimap<String, InputTypeProperty> map;
 
     private InputTypeDefault( final Builder builder )
     {
@@ -91,7 +89,7 @@ public final class InputTypeDefault
     @Override
     public Iterator<InputTypeProperty> iterator()
     {
-        return Collections.unmodifiableCollection( this.map.values() ).iterator();
+        return this.map.values().iterator();
     }
 
     @Override

@@ -10,11 +10,9 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
-import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
@@ -35,12 +33,13 @@ public final class FormDefaultValuesProcessorImpl
     @Override
     public void setDefaultValues( final Form form, final PropertyTree data )
     {
-        processFormItems( form.getFormItems(), data.getRoot() );
+        processFormItems( form, data.getRoot() );
     }
 
-    private void processFormItems( final Iterable<FormItem> formItems, final PropertySet dataSet )
+    private void processFormItems( final Iterable<? extends FormItem> formItems, final PropertySet dataSet )
     {
-        StreamSupport.stream( formItems.spliterator(), false ).forEach( formItem -> {
+        for ( FormItem formItem : formItems )
+        {
             if ( formItem.getType() == INPUT )
             {
                 Input input = formItem.toInput();
@@ -48,8 +47,7 @@ public final class FormDefaultValuesProcessorImpl
                 {
                     try
                     {
-                        final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
-                            createDefaultValue( input );
+                        final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
 
                         final PropertyPath propertyPath = PropertyPath.from( input.getName() );
 
@@ -78,12 +76,12 @@ public final class FormDefaultValuesProcessorImpl
             }
             else if ( formItem.getType() == FORM_ITEM_SET )
             {
-                processFormItems( formItem.getName(), formItem.toFormItemSet().getFormItems(), dataSet,
+                processFormItems( formItem.getName(), formItem.toFormItemSet(), dataSet,
                                   formItem.toFormItemSet().getOccurrences().getMinimum() );
             }
-            else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
+            else if ( formItem.getType() == LAYOUT )
             {
-                processFormItems( (FieldSet) formItem.toLayout(), dataSet );
+                processFormItems( formItem.toLayout(), dataSet );
             }
             else if ( formItem.getType() == FORM_OPTION_SET_OPTION )
             {
@@ -95,19 +93,19 @@ public final class FormDefaultValuesProcessorImpl
                     {
                         final PropertySet propertySet = dataSet.getTree().newSet();
                         dataSet.setSet( formItem.getName(), propertySet );
-                        processFormItems( option.getFormItems(), propertySet );
+                        processFormItems( option, propertySet );
                     }
                 }
             }
             else if ( formItem.getType() == FORM_OPTION_SET )
             {
-                processFormItems( formItem.getName(), formItem.toFormOptionSet().getFormItems(), dataSet,
+                processFormItems( formItem.getName(), formItem.toFormOptionSet(), dataSet,
                                   formItem.toFormOptionSet().getOccurrences().getMinimum() );
             }
-        } );
+        }
     }
 
-    private void processFormItems( String formItemName, FormItems formItems, PropertySet dataSet, int minOccurrences )
+    private void processFormItems( String formItemName, Iterable<? extends FormItem> formItems, PropertySet dataSet, int minOccurrences )
     {
         if ( minOccurrences > 0 )
         {
@@ -118,7 +116,7 @@ public final class FormDefaultValuesProcessorImpl
         }
     }
 
-    private void setProperty( String formItemName, FormItems formItems, int index, PropertySet dataSet )
+    private void setProperty( String formItemName, Iterable<? extends FormItem> formItems, int index, PropertySet dataSet )
     {
         if ( dataSet.getProperty( formItemName, index ) == null )
         {
@@ -131,7 +129,7 @@ public final class FormDefaultValuesProcessorImpl
         }
     }
 
-    private boolean existsDefaultValuesOrMinOccurrencesGreaterThanZero( FormItems formItems )
+    private boolean existsDefaultValuesOrMinOccurrencesGreaterThanZero( Iterable<? extends FormItem> formItems )
     {
         return StreamSupport.stream( formItems.spliterator(), false ).anyMatch( formItem -> {
             if ( formItem.getType() == INPUT )
@@ -146,11 +144,11 @@ public final class FormDefaultValuesProcessorImpl
                 {
                     return false;
                 }
-                return occurrences.getMinimum() > 0 || existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItem.toFormItemSet().getFormItems() );
+                return occurrences.getMinimum() > 0 || existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItem.toFormItemSet() );
             }
-            else if ( formItem.getType() == LAYOUT && formItem.toLayout() instanceof FieldSet )
+            else if ( formItem.getType() == LAYOUT )
             {
-                return existsDefaultValuesOrMinOccurrencesGreaterThanZero( ( (FieldSet) formItem.toLayout() ).getFormItems() );
+                return existsDefaultValuesOrMinOccurrencesGreaterThanZero( ( formItem.toLayout() ) );
             }
             else if ( formItem.getType() == FORM_OPTION_SET_OPTION )
             {
@@ -164,7 +162,7 @@ public final class FormDefaultValuesProcessorImpl
                 {
                     return false;
                 }
-                return occurrences.getMinimum() > 0 || existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItem.toFormOptionSet().getFormItems() );
+                return occurrences.getMinimum() > 0 || existsDefaultValuesOrMinOccurrencesGreaterThanZero( formItem.toFormOptionSet() );
             }
             return false;
         } );

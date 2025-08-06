@@ -41,6 +41,7 @@ import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.image.Cropping;
@@ -371,7 +372,7 @@ public final class ImageContentProcessor
         }
         final XData geoMixin = xDatas.getXData( GPS_INFO_METADATA_NAME );
         final ExtraData extraData = new ExtraData( GPS_INFO_METADATA_NAME, new PropertyTree() );
-        final FormItem formItem = geoMixin.getForm().getFormItems().getItemByName( MediaInfo.GPS_INFO_GEO_POINT );
+        final FormItem formItem = geoMixin.getForm().getFormItem( FormItemPath.from( MediaInfo.GPS_INFO_GEO_POINT ) );
         if ( FormItemType.INPUT.equals( formItem.getType() ) )
         {
             final Input input = (Input) formItem;
@@ -442,7 +443,7 @@ public final class ImageContentProcessor
 
             for ( XData xData : xDatas )
             {
-                final FormItem formItem = xData.getForm().getFormItems().getItemByName( formItemName );
+                final FormItem formItem = xData.getForm().getFormItem( FormItemPath.from( formItemName ) );
                 if ( formItem == null )
                 {
                     continue;
