@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.ImmutableSetMultimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
@@ -15,11 +15,11 @@ import com.enonic.xp.convert.Converters;
 public final class InputTypeDefault
     implements Iterable<InputTypeProperty>
 {
-    private final LinkedHashMultimap<String, InputTypeProperty> map;
+    private final ImmutableSetMultimap<String, InputTypeProperty> map;
 
     private InputTypeDefault( final Builder builder )
     {
-        this.map = builder.map;
+        this.map = builder.map.build();
     }
 
     public Set<String> getNames()
@@ -123,14 +123,12 @@ public final class InputTypeDefault
         return new Builder();
     }
 
-
     public static final class Builder
     {
-        private final LinkedHashMultimap<String, InputTypeProperty> map;
+        private final ImmutableSetMultimap.Builder<String, InputTypeProperty> map = ImmutableSetMultimap.builder();
 
         private Builder()
         {
-            this.map = LinkedHashMultimap.create();
         }
 
         public Builder config( final InputTypeDefault config )

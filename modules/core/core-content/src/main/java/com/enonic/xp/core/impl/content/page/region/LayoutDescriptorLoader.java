@@ -69,7 +69,7 @@ public class LayoutDescriptorLoader
     @Override
     public LayoutDescriptor createDefault( final DescriptorKey key )
     {
-        return LayoutDescriptor.create().key( key ).displayName( key.getName() ).config( Form.create().build() ).regions(
+        return LayoutDescriptor.create().key( key ).displayName( key.getName() ).config( Form.empty() ).regions(
             RegionDescriptors.create().build() ).build();
     }
 

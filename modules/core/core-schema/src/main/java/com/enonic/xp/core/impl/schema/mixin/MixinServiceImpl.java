@@ -140,7 +140,7 @@ public final class MixinServiceImpl
                 {
                     final FormOptionSetOption.Builder optionBuilder = FormOptionSetOption.create( option );
                     optionBuilder.clearFormItems();
-                    optionBuilder.addFormItems( transformFormItems( option.getFormItems(), inlineMixinStack ) );
+                    optionBuilder.addFormItems( transformFormItems( option, inlineMixinStack ) );
                     formOptionSetBuilder.addOptionSetOption( optionBuilder.build() );
                 }
                 formItems.add( formOptionSetBuilder.build() );

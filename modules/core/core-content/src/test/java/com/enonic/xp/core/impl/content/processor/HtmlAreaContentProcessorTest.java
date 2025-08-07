@@ -214,9 +214,8 @@ public class HtmlAreaContentProcessorTest
 
         result.getEditor().edit( editableContent );
 
-        assertEquals( 4, editableContent.processedReferences.build().getSize() );
         Assertions.assertThat( editableContent.processedReferences.build() )
-            .contains( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
+            .containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
                        ContentId.from( "image-id4" ) );
     }
 
@@ -347,7 +346,7 @@ public class HtmlAreaContentProcessorTest
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() )
             .key( DescriptorKey.from( "app:page" ) )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .build();
         when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
@@ -411,7 +410,7 @@ public class HtmlAreaContentProcessorTest
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() )
             .key( DescriptorKey.from( "app:page" ) )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .build();
         when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 
@@ -446,7 +445,7 @@ public class HtmlAreaContentProcessorTest
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() )
             .key( DescriptorKey.from( "app:page" ) )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .build();
 
         when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
@@ -491,7 +490,7 @@ public class HtmlAreaContentProcessorTest
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() )
             .key( DescriptorKey.from( "app:page" ) )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .build();
 
         when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
@@ -547,7 +546,7 @@ public class HtmlAreaContentProcessorTest
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region" ).build() ).build() )
             .key( DescriptorKey.from( "app:page" ) )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .build();
         when( pageDescriptorService.getByKey( pageDescriptor.getKey() ) ).thenReturn( pageDescriptor );
 

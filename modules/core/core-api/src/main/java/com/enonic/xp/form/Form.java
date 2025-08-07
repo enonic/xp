@@ -18,26 +18,12 @@ public final class Form
 {
     private final FormItems formItems;
 
-    private Form( final Builder builder )
-    {
-        if ( builder.formItems != null )
-        {
-            this.formItems = builder.formItems;
-        }
-        else
-        {
-            this.formItems = new FormItems( null );
-            for ( final FormItem formItem : builder.formItemsList )
-            {
-                this.formItems.add( formItem );
-            }
-        }
-        FormValidator.validate( this );
-    }
+    private static final Form EMPTY = new Form( List.of() );
 
-    public FormItem getFormItem( final String path )
+    private Form( final List<FormItem> formItemsList )
     {
-        return formItems.getFormItem( FormItemPath.from( path ) );
+        this.formItems = new FormItems( null, formItemsList );
+        FormValidator.validate( this );
     }
 
     public FormItem getFormItem( final FormItemPath path )
@@ -85,16 +71,6 @@ public final class Form
         return formItems.getOptionSet( FormItemPath.from( path ) );
     }
 
-    public FormOptionSetOption getOptionSetOption( final String path )
-    {
-        return formItems.getOptionSetOption( FormItemPath.from( path ) );
-    }
-
-    public FormItems getFormItems()
-    {
-        return formItems;
-    }
-
     @Override
     public boolean equals( final Object o )
     {
@@ -125,9 +101,9 @@ public final class Form
         return s.toString();
     }
 
-    public Form copy()
+    public static Form empty()
     {
-        return create( this ).build();
+        return EMPTY;
     }
 
     public static Builder create()
@@ -153,8 +129,6 @@ public final class Form
 
     public static final class Builder
     {
-        private FormItems formItems;
-
         private final List<FormItem> formItemsList;
 
         private Builder()
@@ -188,15 +162,9 @@ public final class Form
             return this;
         }
 
-        public Builder addFormItems( final FormItems formItems )
-        {
-            this.formItems = formItems;
-            return this;
-        }
-
         public Form build()
         {
-            return new Form( this );
+            return formItemsList.isEmpty() ? EMPTY : new Form( formItemsList );
         }
     }
 }

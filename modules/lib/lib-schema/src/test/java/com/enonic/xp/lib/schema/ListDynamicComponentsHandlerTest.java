@@ -42,7 +42,7 @@ public class ListDynamicComponentsHandlerTest
 
             final PartDescriptor otherPartDescriptor = PartDescriptor.create()
                 .displayName( "Other part" )
-                .config( Form.create().build() )
+                .config( Form.empty() )
                 .key( DescriptorKey.from( componentsParams.getKey(), "part2" ) )
                 .modifiedTime( Instant.parse( "2022-02-25T10:44:33.170079900Z" ) )
                 .build();

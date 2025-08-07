@@ -8,17 +8,13 @@ import java.util.TimeZone;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,14 +28,12 @@ class SchedulerConfigImplTest
 {
     private SchedulerConfig schedulerConfig;
 
-    private PropertyTreeMarshallerService propertyTreeMarshallerService;
 
     private CalendarService calendarService;
 
     @BeforeEach
     void setUp()
     {
-        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance( Mockito.mock( MixinService.class ) );
         this.calendarService = new CalendarServiceImpl();
     }
 
@@ -56,7 +50,7 @@ class SchedulerConfigImplTest
         properties.put( "init-job.landing1.cron", "* * * * *" );
         properties.put( "init-job.landing1.timezone", "GMT+5:30" );
 
-        schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
+        schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
         final Set<CreateScheduledJobParams> jobs = schedulerConfig.jobs();
 
         assertEquals( 2, jobs.size() );
@@ -80,7 +74,7 @@ class SchedulerConfigImplTest
     {
         final Map<String, String> properties = new HashMap<>();
 
-        schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
+        schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
         final Set<CreateScheduledJobParams> jobs = schedulerConfig.jobs();
 
         assertEquals( 1, jobs.size() );
@@ -109,7 +103,7 @@ class SchedulerConfigImplTest
         properties.put( "init-job.landing1.calendar.value", "2012-01-01T00:00:00.00Z" );
         properties.put( "init-job.landing1.invalid", "some value" );
 
-        schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
+        schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
 
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
         assertEquals( "[invalid] is invalid job property.", ex.getMessage() );
@@ -126,7 +120,7 @@ class SchedulerConfigImplTest
         properties.put( "init-job.landing1.cron", "* * * * *" );
         properties.put( "init-job.landing1.config", "{'a':'b'}" );
 
-        schedulerConfig = new SchedulerConfigImpl( properties, propertyTreeMarshallerService, calendarService );
+        schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
 
         assertThat( ex.getCause().getMessage() ).contains(

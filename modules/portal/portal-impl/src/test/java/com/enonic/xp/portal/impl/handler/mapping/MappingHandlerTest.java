@@ -474,7 +474,7 @@ public class MappingHandlerTest
     {
         return PageDescriptor.create()
             .displayName( "Landing page" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .key( DescriptorKey.from( "module:landing-page" ) )
             .build();

@@ -12,7 +12,7 @@ public class DataConfigProcessor
 {
     private final Form dataForm;
 
-    public DataConfigProcessor( final Form dataFrom) {
+    public DataConfigProcessor( final Form dataFrom ) {
         this.dataForm = dataFrom;
     }
 
@@ -21,7 +21,7 @@ public class DataConfigProcessor
     {
         builder.add( DATA, IndexConfig.BY_TYPE );
 
-        if(this.dataForm != null && this.dataForm.getFormItems().size() > 0)
+        if ( this.dataForm != null && this.dataForm.size() > 0 )
         {
             final IndexConfigVisitor indexConfigVisitor = new IndexConfigVisitor( DATA, builder );
             indexConfigVisitor.traverse( this.dataForm );

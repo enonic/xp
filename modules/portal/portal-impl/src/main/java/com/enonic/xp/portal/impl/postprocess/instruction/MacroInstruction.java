@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
@@ -164,7 +165,7 @@ public final class MacroInstruction
             }
 
             String contextParamName = name;
-            if ( macroForm.getFormItems().getItemByName( name ) == null )
+            if ( macroForm.getFormItem( FormItemPath.from( name ) ) == null )
             {
                 final String normalizedName = paramCaseTranslator.get( name.toLowerCase() );
                 if ( normalizedName != null )

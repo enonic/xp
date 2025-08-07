@@ -19,7 +19,7 @@ public abstract class FormItem
         this.parent = parent;
     }
 
-    public FormItems getParent()
+    FormItems getParent()
     {
         return parent;
     }
@@ -77,13 +77,13 @@ public abstract class FormItem
         return (FormItemSet) this;
     }
 
-    public Layout toLayout()
+    public FieldSet toLayout()
     {
-        if ( !( this instanceof Layout ) )
+        if ( !( this instanceof FieldSet ) )
         {
             throw new IllegalArgumentException( "This FormItem [" + getName() + "] is not a Layout: " + this.getClass().getSimpleName() );
         }
-        return (Layout) this;
+        return (FieldSet) this;
     }
 
     public FormOptionSetOption toFormOptionSetOption()
@@ -132,24 +132,5 @@ public abstract class FormItem
     public String toString()
     {
         return getName();
-    }
-
-    static FormItem from( final FormItem formItem )
-    {
-        final FormItem newFormItem;
-        if ( formItem instanceof FormItemSet )
-        {
-            newFormItem = FormItemSet.create( (FormItemSet) formItem ).build();
-        }
-        else if ( formItem instanceof Input )
-        {
-            newFormItem = Input.create( (Input) formItem ).build();
-        }
-        else
-        {
-            throw new IllegalArgumentException(
-                "Cannot create FormItem [" + formItem.getPath().toString() + "] of type: " + formItem.getClass().getSimpleName() );
-        }
-        return newFormItem;
     }
 }

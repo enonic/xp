@@ -33,7 +33,6 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 public abstract class BaseProjectHandlerTest
@@ -120,15 +119,6 @@ public abstract class BaseProjectHandlerTest
         } );
     }
 
-    protected void mockMarshaller()
-    {
-        when( this.propertyTreeMarshallerService.marshal( isA( Map.class ) ) ).thenAnswer( mock -> {
-
-            final Map<String, ?> map = (Map<String, ?>) mock.getArguments()[0];
-            return PropertyTree.fromMap( map );
-        } );
-    }
-
     private Project createProject( final ModifyProjectParams params )
     {
         final Project.Builder builder = Project.create();
@@ -171,6 +161,5 @@ public abstract class BaseProjectHandlerTest
 
         mockProject();
         mockRootContent();
-        mockMarshaller();
     }
 }

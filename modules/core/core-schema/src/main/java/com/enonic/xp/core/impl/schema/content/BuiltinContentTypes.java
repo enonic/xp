@@ -248,7 +248,7 @@ final class BuiltinContentTypes
                           .build() )
         .build();
 
-    private static final Form FRAGMENT_FORM = Form.create().build();
+    private static final Form FRAGMENT_FORM = Form.empty();
 
     private static final ContentType PAGE_TEMPLATE =
         createSystemType( ContentTypeName.pageTemplate() ).description( "Predesigned customizable page" )

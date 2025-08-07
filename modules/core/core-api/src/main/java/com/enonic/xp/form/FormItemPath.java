@@ -14,13 +14,13 @@ import com.enonic.xp.annotation.PublicApi;
 public final class FormItemPath
     implements Iterable<String>
 {
-    public static final FormItemPath ROOT = new FormItemPath( ImmutableList.of(), false );
+    public static final FormItemPath ROOT = new FormItemPath( ImmutableList.of() );
 
     private static final String ELEMENT_DIVIDER = ".";
 
     private final ImmutableList<String> elements;
 
-    private FormItemPath( final ImmutableList<String> elementNames, boolean ignore )
+    private FormItemPath( final ImmutableList<String> elementNames )
     {
         this.elements = elementNames;
     }
@@ -49,7 +49,7 @@ public final class FormItemPath
 
     private static FormItemPath fromInternal( final ImmutableList<String> elementNames )
     {
-        return elementNames.isEmpty() ? ROOT : new FormItemPath( elementNames, false );
+        return elementNames.isEmpty() ? ROOT : new FormItemPath( elementNames );
     }
 
     public FormItemPath getParent()

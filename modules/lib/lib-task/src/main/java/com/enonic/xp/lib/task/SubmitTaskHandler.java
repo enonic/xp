@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.ScriptValue;
@@ -22,8 +21,6 @@ public final class SubmitTaskHandler
     private Supplier<TaskService> taskServiceSupplier;
 
     private Supplier<PortalRequest> requestSupplier;
-
-    private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerServiceSupplier;
 
     private String descriptor;
 
@@ -69,8 +66,7 @@ public final class SubmitTaskHandler
 
         final TaskService taskService = taskServiceSupplier.get();
 
-        PropertyTree data = propertyTreeMarshallerServiceSupplier.get().
-            marshal( Optional.ofNullable( config ).map( ScriptValue::getMap ).orElse( Map.of() ) );
+        PropertyTree data = PropertyTree.fromMap( Optional.ofNullable( config ).map( ScriptValue::getMap ).orElse( Map.of() ) );
 
         final SubmitTaskParams params = SubmitTaskParams.create().descriptorKey( taskKey ).name( name ).data( data ).build();
         final TaskId taskId = taskService.submitTask( params );
@@ -90,6 +86,5 @@ public final class SubmitTaskHandler
         applicationKey = context.getApplicationKey();
         requestSupplier = context.getBinding( PortalRequest.class );
         taskServiceSupplier = context.getService( TaskService.class );
-        propertyTreeMarshallerServiceSupplier = context.getService( PropertyTreeMarshallerService.class );
     }
 }

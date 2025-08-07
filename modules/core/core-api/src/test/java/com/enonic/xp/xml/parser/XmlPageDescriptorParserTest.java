@@ -61,19 +61,19 @@ public class XmlPageDescriptorParserTest
 
         final Form config = result.getConfig();
         assertNotNull( config );
-        assertEquals( InputTypeName.DOUBLE, config.getFormItem( "pause" ).toInput().getInputType() );
-        assertEquals( "Pause parameter", config.getFormItem( "pause" ).toInput().getLabel() );
+        assertEquals( InputTypeName.DOUBLE, config.getInput( "pause" ).getInputType() );
+        assertEquals( "Pause parameter", config.getInput( "pause" ).getLabel() );
 
-        assertEquals( "key1.label", config.getFormItem( "pause" ).toInput().getLabelI18nKey() );
-        assertEquals( "key1.help-text", config.getFormItem( "pause" ).toInput().getHelpTextI18nKey() );
+        assertEquals( "key1.label", config.getInput( "pause" ).getLabelI18nKey() );
+        assertEquals( "key1.help-text", config.getInput( "pause" ).getHelpTextI18nKey() );
 
-        assertNotNull( config.getFormItem( "myFormItemSet" ).toFormItemSet() );
-        assertEquals( "My form item set", config.getFormItem( "myFormItemSet" ).toFormItemSet().getLabel() );
-        assertEquals( InputTypeName.TEXT_LINE, config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getInputType() );
-        assertEquals( "Field set Item", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabel() );
+        assertNotNull( config.getFormItemSet( "myFormItemSet" ) );
+        assertEquals( "My form item set", config.getFormItemSet( "myFormItemSet" ).getLabel() );
+        assertEquals( InputTypeName.TEXT_LINE, config.getInput( "myFormItemSet.fieldSetItem" ).getInputType() );
+        assertEquals( "Field set Item", config.getInput( "myFormItemSet.fieldSetItem" ).getLabel() );
 
-        assertEquals( "key2.label", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getLabelI18nKey() );
-        assertEquals( "key2.help-text", config.getFormItem( "myFormItemSet.fieldSetItem" ).toInput().getHelpTextI18nKey() );
+        assertEquals( "key2.label", config.getInput( "myFormItemSet.fieldSetItem" ).getLabelI18nKey() );
+        assertEquals( "key2.help-text", config.getInput( "myFormItemSet.fieldSetItem" ).getHelpTextI18nKey() );
 
         final RegionDescriptors regions = result.getRegions();
         assertNotNull( regions );

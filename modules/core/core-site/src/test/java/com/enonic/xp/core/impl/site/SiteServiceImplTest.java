@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.form.FormItems;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
@@ -47,7 +47,7 @@ public class SiteServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
-        assertEquals( 1, siteDescriptor.getForm().getFormItems().size() );
+        assertEquals( 1, siteDescriptor.getForm().size() );
         assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( "filter1", siteDescriptor.getResponseProcessors().get( 0 ).getName() );
@@ -61,9 +61,9 @@ public class SiteServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.PORTAL;
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
 
-        final FormItems formItems = siteDescriptor.getForm().getFormItems();
+        final Form formItems = siteDescriptor.getForm();
         assertEquals( 1, formItems.size() );
-        final Input baseUrl = formItems.getItemByName( "baseUrl" ).toInput();
+        final Input baseUrl = formItems.getInput( "baseUrl" );
         assertThat( baseUrl ).extracting( Input::getInputType, Input::getLabel, Input::getLabelI18nKey )
             .containsExactly( InputTypeName.TEXT_LINE, "Base URL", "portal.baseUrl.label" );
 

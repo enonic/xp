@@ -177,7 +177,7 @@ public class RendererDelegateImplTest
         return LayoutDescriptor.create()
             .key( descriptorKey )
             .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "r1" ).build() ).build() )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .modifiedTime( Instant.now() )
             .build();
     }

@@ -222,7 +222,7 @@ public class PageResolverTest
             .build();
 
         final PageDescriptor defaultPageDescriptor =
-            PageDescriptor.create().config( Form.create().build() ).regions( RegionDescriptors.create().build() ).key( descriptor ).build();
+            PageDescriptor.create().config( Form.empty() ).regions( RegionDescriptors.create().build() ).key( descriptor ).build();
 
         when( pageDescriptorService.getByKey( descriptor ) ).thenReturn( defaultPageDescriptor );
         when( pageTemplateService.getByKey( template.getKey() ) ).thenReturn( template );
@@ -350,7 +350,7 @@ public class PageResolverTest
         final PageDescriptor pageDescriptor = PageDescriptor.create()
             .key( descriptorKey )
             .regions( regionDescriptors )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .modifiedTime( Instant.now() )
             .build();
 
@@ -535,7 +535,7 @@ public class PageResolverTest
             .regions( regionDescriptors )
             .modifiedTime( Instant.now() )
             .key( key )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .build();
 
         Content content = Content.create()

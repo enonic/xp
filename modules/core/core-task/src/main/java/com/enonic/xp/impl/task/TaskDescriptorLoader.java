@@ -5,13 +5,14 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.TaskDescriptor;
 
 @Component(immediate = true)
@@ -22,10 +23,13 @@ public final class TaskDescriptorLoader
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
+    private final MixinService mixinService;
+
     @Activate
-    public TaskDescriptorLoader( @Reference final ResourceService resourceService )
+    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
     {
-        descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
+        this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
+        this.mixinService = mixinService;
     }
 
     @Override
@@ -66,7 +70,11 @@ public final class TaskDescriptorLoader
     @Override
     public TaskDescriptor postProcess( final TaskDescriptor descriptor )
     {
-        return descriptor;
+        return TaskDescriptor.create()
+            .key( descriptor.getKey() )
+            .description( descriptor.getDescription() )
+            .config( this.mixinService.inlineFormItems( descriptor.getConfig() ) )
+            .build();
     }
 
     private void parseXml( final ApplicationKey applicationKey, final TaskDescriptor.Builder builder, final String xml )

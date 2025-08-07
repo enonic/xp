@@ -22,8 +22,6 @@ public abstract class BaseSchedulerHandler
 
     protected Supplier<CalendarService> calendarService;
 
-    protected Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerService;
-
     public final Object execute()
     {
         validate();
@@ -57,6 +55,5 @@ public abstract class BaseSchedulerHandler
     {
         this.schedulerService = context.getService( SchedulerService.class );
         this.calendarService = context.getService( CalendarService.class );
-        this.propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class );
     }
 }

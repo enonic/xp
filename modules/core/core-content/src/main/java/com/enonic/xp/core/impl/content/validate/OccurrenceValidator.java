@@ -50,14 +50,14 @@ public final class OccurrenceValidator
         {
             validateOccurrences( formItem, parentDataSets, validationErrorsBuilder );
 
-            if ( formItem instanceof FormItemSet )
+            if ( formItem instanceof FormItemSet formItemSet )
             {
                 final List<PropertySet> dataSets = getDataSets( formItem.getName(), parentDataSets );
-                validate( ( (FormItemSet) formItem ).getFormItems(), dataSets, validationErrorsBuilder );
+                validate( formItemSet, dataSets, validationErrorsBuilder );
             }
-            else if ( formItem instanceof FieldSet )
+            else if ( formItem instanceof FieldSet fieldSet )
             {
-                validate( ( (FieldSet) formItem ).formItemIterable(), parentDataSets, validationErrorsBuilder );
+                validate( fieldSet, parentDataSets, validationErrorsBuilder );
             }
             else if ( formItem instanceof FormOptionSet )
             {
@@ -100,7 +100,7 @@ public final class OccurrenceValidator
             {
                 if ( hasSelectionArray && optionIsSelected( option, selectedItems ) )
                 {
-                    validate( option.getFormItems(),
+                    validate( option,
                               Optional.ofNullable( propertySet.getSet( option.getName() ) ).map( List::of ).orElse( List.of() ),
                               validationErrorsBuilder );
                 }

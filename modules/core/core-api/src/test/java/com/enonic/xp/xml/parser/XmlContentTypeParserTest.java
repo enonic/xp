@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormItemType;
-import com.enonic.xp.form.FormItems;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
@@ -19,6 +19,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -73,16 +74,13 @@ public class XmlContentTypeParserTest
 
         assertEquals( 4, result.getForm().size() );
 
-        final FormItem item = result.getForm().getFormItem( "myDate" );
-        assertNotNull( item );
+        final Input item = result.getForm().getInput( "myDate" );
 
-        final Input input = (Input) item;
-        assertEquals( InputTypeName.DATE.toString(), input.getInputType().toString() );
+        assertEquals( InputTypeName.DATE.toString(), item.getInputType().toString() );
 
-        final FormItem contentSelectorItem = result.getForm().getFormItem( "someonesParent" );
-        assertNotNull( contentSelectorItem );
+        final Input contentSelectorInput = result.getForm().getInput( "someonesParent" );
+        assertNotNull( contentSelectorInput );
 
-        final Input contentSelectorInput = (Input) contentSelectorItem;
         assertEquals( InputTypeName.CONTENT_SELECTOR.toString(), contentSelectorInput.getInputType().toString() );
 
         assertEquals( "mytype", contentSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
@@ -90,7 +88,7 @@ public class XmlContentTypeParserTest
         assertEquals( "path1", contentSelectorInput.getInputTypeConfig().getProperty( "allowPath" ).getValue() );
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).size() );
 
-        final InputTypeConfig config = input.getInputTypeConfig();
+        final InputTypeConfig config = item.getInputTypeConfig();
         assertNotNull( config );
 
         final Input defaultOccurrencesInput = result.getForm().getInput( "defaultOccurrences" );
@@ -135,7 +133,7 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final Input input = (Input) result.getForm().getFormItem( "textLine" );
+        final Input input = result.getForm().getInput( "textLine" );
 
         assertEquals( "translated.label", input.getLabelI18nKey() );
         assertEquals( "translated.help-text", input.getHelpTextI18nKey() );
@@ -149,21 +147,20 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final FormItem item = result.getForm().getFormItem( "radioOptionSet" );
-        assertNotNull( item );
+        final Form form = result.getForm();
+        FormOptionSet radioOptionSet = form.getOptionSet( "radioOptionSet" );
 
-        final FormOptionSet radioOptionSet = (FormOptionSet) item;
         assertEquals( FormItemType.FORM_OPTION_SET, radioOptionSet.getType() );
 
         assertEquals( "translated.help-text", radioOptionSet.getHelpTextI18nKey() );
         assertEquals( "translated.label", radioOptionSet.getLabelI18nKey() );
 
-        final Input inputInsideOption = radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1.text-input" ) );
+        final Input inputInsideOption = form.getInput( "radioOptionSet.option_1.text-input" );
 
         assertEquals( "translated.help-text", inputInsideOption.getHelpTextI18nKey() );
         assertEquals( "translated.label", inputInsideOption.getLabelI18nKey() );
 
-        final FormOptionSetOption radioOption = radioOptionSet.getFormItems().getItemByName( "option_1" ).toFormOptionSetOption();
+        final FormOptionSetOption radioOption = radioOptionSet.getOption( "option_1" );
 
         assertEquals( "translated.help-text", radioOption.getHelpTextI18nKey() );
         assertEquals( "translated.label", radioOption.getLabelI18nKey() );
@@ -176,25 +173,23 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        FormItem item = null;
-        for ( final FormItem next : result.getForm().getFormItems() )
+        FieldSet fieldSet = null;
+        for ( FormItem formItem : result.getForm() )
         {
-            if ( next.getName().startsWith( "fieldSet" ) )
+            if (formItem.getName().startsWith( "fieldSet" ))
             {
-                item = next;
+                fieldSet = (FieldSet) formItem;
+                break;
             }
         }
-        assertNotNull( item );
-
-        final FieldSet fieldSet = (FieldSet) item;
+        assertNotNull( fieldSet );
 
         assertEquals( "translated.label", fieldSet.getLabelI18nKey() );
 
-        final Input inputInsideFieldSet = fieldSet.getFormItems().getInput( FormItemPath.from( "textLine2" ) );
+        final Input inputInsideFieldSet = result.getForm().getInput( "textLine2" );
 
         assertEquals( "translated.help-text", inputInsideFieldSet.getHelpTextI18nKey() );
         assertEquals( "translated.label", inputInsideFieldSet.getLabelI18nKey() );
-
     }
 
     @Test
@@ -204,19 +199,16 @@ public class XmlContentTypeParserTest
         parse( this.parser, "-i18n.xml" );
         final ContentType result = this.builder.build();
 
-        final FormItem item = result.getForm().getFormItem( "item-set" );
-        assertNotNull( item );
-
-        final FormItemSet formItemSet = (FormItemSet) item;
+        final FormItemSet formItemSet = result.getForm().getFormItemSet( "item-set" );
+        assertNotNull( formItemSet );
 
         assertEquals( "translated.label", formItemSet.getLabelI18nKey() );
         assertEquals( "translated.help-text", formItemSet.getHelpTextI18nKey() );
 
-        final Input inputInsideFormItemSet = formItemSet.getFormItems().getInput( FormItemPath.from( "textLine1" ) );
+        final Input inputInsideFormItemSet = formItemSet.getInput( FormItemPath.from( "textLine1" ) );
 
         assertEquals( "translated.help-text", inputInsideFormItemSet.getHelpTextI18nKey() );
         assertEquals( "translated.label", inputInsideFormItemSet.getLabelI18nKey() );
-
     }
 
     @Test
@@ -230,7 +222,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.description", result.getDescriptionI18nKey() );
 
         // input type
-        final Input input = (Input) result.getForm().getFormItem( "textLine" );
+        final Input input = result.getForm().getInput( "textLine" );
 
         assertEquals( "translated.label", input.getLabelI18nKey() );
         assertEquals( "translated.label", input.getLabel() );
@@ -238,10 +230,9 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.help-text", input.getHelpText() );
 
         // option set
-        final FormItem item = result.getForm().getFormItem( "radioOptionSet" );
-        assertNotNull( item );
+        final FormOptionSet radioOptionSet = result.getForm().getOptionSet( "radioOptionSet" );
+        assertNotNull( radioOptionSet );
 
-        final FormOptionSet radioOptionSet = (FormOptionSet) item;
         assertEquals( FormItemType.FORM_OPTION_SET, radioOptionSet.getType() );
 
         assertEquals( "translated.help-text", radioOptionSet.getHelpTextI18nKey() );
@@ -249,23 +240,24 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOptionSet.getLabelI18nKey() );
         assertEquals( "translated.label", radioOptionSet.getLabel() );
 
-        final Input inputInsideOption = radioOptionSet.getFormItems().getInput( FormItemPath.from( "option_1.text-input" ) );
-
-        assertEquals( "translated.help-text", inputInsideOption.getHelpTextI18nKey() );
-        assertEquals( "translated.help-text", inputInsideOption.getHelpText() );
-        assertEquals( "translated.label", inputInsideOption.getLabelI18nKey() );
-        assertEquals( "translated.label", inputInsideOption.getLabel() );
-
-        final FormOptionSetOption radioOption = radioOptionSet.getFormItems().getItemByName( "option_1" ).toFormOptionSetOption();
+        final FormOptionSetOption radioOption = radioOptionSet.getOption( "option_1" );;
 
         assertEquals( "translated.help-text", radioOption.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", radioOption.getHelpText() );
         assertEquals( "translated.label", radioOption.getLabelI18nKey() );
         assertEquals( "translated.label", radioOption.getLabel() );
 
+        final Input inputInsideOption = radioOptionSet.getOption( "option_1" ).getInput( "text-input" );
+
+        assertEquals( "translated.help-text", inputInsideOption.getHelpTextI18nKey() );
+        assertEquals( "translated.help-text", inputInsideOption.getHelpText() );
+        assertEquals( "translated.label", inputInsideOption.getLabelI18nKey() );
+        assertEquals( "translated.label", inputInsideOption.getLabel() );
+
+
         // field set
         FormItem fieldSetItem = null;
-        for ( final FormItem next : result.getForm().getFormItems() )
+        for ( final FormItem next : result.getForm() )
         {
             if ( next.getName().startsWith( "fieldSet" ) )
             {
@@ -279,7 +271,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", fieldSet.getLabelI18nKey() );
         assertEquals( "translated.label", fieldSet.getLabel() );
 
-        final Input inputInsideFieldSet = fieldSet.getFormItems().getInput( FormItemPath.from( "textLine2" ) );
+        final Input inputInsideFieldSet = result.getForm().getInput( "textLine2" );
 
         assertEquals( "translated.help-text", inputInsideFieldSet.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", inputInsideFieldSet.getHelpText() );
@@ -287,17 +279,15 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", inputInsideFieldSet.getLabel() );
 
         // item set
-        final FormItem itemSet = result.getForm().getFormItem( "item-set" );
-        assertNotNull( item );
-
-        final FormItemSet formItemSet = (FormItemSet) itemSet;
+        final FormItemSet formItemSet = result.getForm().getFormItemSet( "item-set" );
+        assertNotNull( formItemSet );
 
         assertEquals( "translated.label", formItemSet.getLabelI18nKey() );
         assertEquals( "translated.label", formItemSet.getLabel() );
         assertEquals( "translated.help-text", formItemSet.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", formItemSet.getHelpText() );
 
-        final Input inputInsideFormItemSet = formItemSet.getFormItems().getInput( FormItemPath.from( "textLine1" ) );
+        final Input inputInsideFormItemSet = formItemSet.getInput( "textLine1" );
 
         assertEquals( "translated.help-text", inputInsideFormItemSet.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", inputInsideFormItemSet.getHelpText() );
@@ -318,17 +308,16 @@ public class XmlContentTypeParserTest
 
         assertEquals( 2, result.getForm().size() );
 
-        final FormItem item = result.getForm().getFormItem( "radioOptionSet" );
+        final FormOptionSet item = result.getForm().getOptionSet( "radioOptionSet" );
         assertNotNull( item );
 
         final FormOptionSet radioOptionSet = (FormOptionSet) item;
         assertEquals( FormItemType.FORM_OPTION_SET, radioOptionSet.getType() );
 
-        final FormItems radioOptions = radioOptionSet.getFormItems();
-        assertEquals( 2, radioOptions.size() );
+        assertThat( radioOptionSet ).size().isEqualTo( 2 );
 
-        FormOptionSetOption radioOption1 = radioOptions.getItemByName( "option_1" ).toFormOptionSetOption();
-        FormOptionSetOption radioOption2 = radioOptions.getItemByName( "option_2" ).toFormOptionSetOption();
+        FormOptionSetOption radioOption1 = radioOptionSet.getOption("option_1");
+        FormOptionSetOption radioOption2 = radioOptionSet.getOption( "option_2" );
 
         assertEquals( FormItemType.FORM_OPTION_SET_OPTION, radioOption1.getType() );
         assertEquals( FormItemType.FORM_OPTION_SET_OPTION, radioOption2.getType() );
@@ -336,18 +325,17 @@ public class XmlContentTypeParserTest
         assertFalse( radioOption1.isDefaultOption() );
         assertFalse( radioOption2.isDefaultOption() );
 
-        assertEquals( 0, radioOption2.getFormItems().size() );
+        assertThat( radioOption2 ).isEmpty();
+        assertThat( radioOption1 ).size().isEqualTo( 2 );
 
-        assertEquals( 2, radioOption1.getFormItems().size() );
-
-        final Input textInput = radioOption1.getFormItems().getItemByName( "text-input" ).toInput();
+        final Input textInput = radioOption1.getInput("text-input" );
         assertEquals( InputTypeName.TEXT_LINE.toString(), textInput.getInputType().toString() );
         assertEquals( "Text input", textInput.getHelpText() );
 
-        final FormItemSet formItemSet = radioOption1.getFormItems().getItemByName( "minimum3" ).toFormItemSet();
-        assertEquals( 2, formItemSet.getFormItems().size() );
+        final FormItemSet formItemSet = radioOption1.getFormItemSet( "minimum3" ).toFormItemSet();
+        assertThat( formItemSet ).size().isEqualTo( 2 );
 
-        final FormOptionSet checkOptionSet = result.getForm().getFormItem( "checkOptionSet" ).toFormOptionSet();
+        final FormOptionSet checkOptionSet = result.getForm().getOptionSet( "checkOptionSet" );
         assertEquals( FormItemType.FORM_OPTION_SET, checkOptionSet.getType() );
 
         assertEquals( "Multi selection", checkOptionSet.getLabel() );
@@ -357,39 +345,40 @@ public class XmlContentTypeParserTest
         assertEquals( 0, checkOptionSetOccurrences.getMinimum() );
         assertEquals( 1, checkOptionSetOccurrences.getMaximum() );
 
-        final FormItems checkOptions = checkOptionSet.getFormItems();
-        assertEquals( 4, checkOptions.size() );
+        assertThat( checkOptionSet ).size().isEqualTo( 4 );
 
         //check option set 1st option
-        final FormOptionSetOption checkOption1 = checkOptions.getItemByName( "option_1" ).toFormOptionSetOption();
+        final FormOptionSetOption checkOption1 = checkOptionSet.getOption( "option_1" );
         assertTrue( checkOption1.isDefaultOption() );
-        assertEquals( 0, checkOption1.getFormItems().size() );
+        assertThat( checkOption1 ).isEmpty();
 
         //check option set 2nd option
-        final FormOptionSetOption checkOption2 = checkOptions.getItemByName( "option_2" ).toFormOptionSetOption();
+        final FormOptionSetOption checkOption2 = checkOptionSet.getOption( "option_2" );
         assertTrue( checkOption2.isDefaultOption() );
-        assertEquals( 1, checkOption2.getFormItems().size() );
+
+        assertThat( checkOption2 ).size().isEqualTo( 1 );
 
         // nested option set
-        final FormOptionSet nestedOptionSet = checkOption2.getFormItems().getItemByName( "nestedOptionSet" ).toFormOptionSet();
-        final FormItems nestedSetOptions = nestedOptionSet.getFormItems();
-        assertEquals( 2, nestedSetOptions.size() );
+        final FormOptionSet nestedOptionSet = checkOption2.getOptionSet( "nestedOptionSet" );
+
+        assertThat( nestedOptionSet ).size().isEqualTo( 2 );
         assertFalse( nestedOptionSet.isExpanded() );
 
-        final FormOptionSetOption nestedSetOption1 = nestedSetOptions.getItemByName( "option2_1" ).toFormOptionSetOption();
+        final FormOptionSetOption nestedSetOption1 = nestedOptionSet.getOption( "option2_1" );
         assertFalse( nestedSetOption1.isDefaultOption() );
-        assertEquals( 1, nestedSetOption1.getFormItems().size() );
+        assertThat( nestedSetOption1 ).size().isEqualTo( 1 );
 
-        final FormOptionSetOption nestedSetOption2 = nestedSetOptions.getItemByName( "option2_2" ).toFormOptionSetOption();
+        final FormOptionSetOption nestedSetOption2 = nestedOptionSet.getOption( "option2_2" );
         assertTrue( nestedSetOption2.isDefaultOption() );
-        assertEquals( 1, nestedSetOption2.getFormItems().size() );
+        assertThat( nestedSetOption2 ).size().isEqualTo( 1 );
 
         //check option set 3rd option
-        final FormOptionSetOption checkOption3 = checkOptions.getItemByName( "option_3" ).toFormOptionSetOption();
+        final FormOptionSetOption checkOption3 = checkOptionSet.getOption( "option_3" );
         assertFalse( checkOption3.isDefaultOption() );
-        assertEquals( 1, checkOption3.getFormItems().size() );
 
-        final Input imageSelectorInput = checkOption3.getFormItems().getItemByName( "imageselector" ).toInput();
+        assertThat( checkOption3 ).size().isEqualTo( 1 );
+
+        final Input imageSelectorInput = checkOption3.getInput( "imageselector" );
 
         assertEquals( "mytype", imageSelectorInput.getInputTypeConfig().getProperty( "allowContentType" ).getValue() );
         assertEquals( 2, imageSelectorInput.getInputTypeConfig().getProperties( "allowContentType" ).size() );
@@ -401,12 +390,12 @@ public class XmlContentTypeParserTest
         assertEquals( 1, imageSelectorOccurrences.getMaximum() );
 
         //check option set 4th option
-        final FormOptionSetOption checkOption4 = checkOptions.getItemByName( "option_4" ).toFormOptionSetOption();
+        final FormOptionSetOption checkOption4 = checkOptionSet.getOption( "option_4" );
         assertFalse( checkOption4.isDefaultOption() );
-        assertEquals( 2, checkOption4.getFormItems().size() );
+        assertThat( checkOption4 ).size().isEqualTo( 2 );
 
-        final Input doubleInput = checkOption4.getFormItems().getItemByName( "double" ).toInput();
-        final Input longInput = checkOption4.getFormItems().getItemByName( "long" ).toInput();
+        final Input doubleInput = checkOption4.getInput( "double" );
+        final Input longInput = checkOption4.getInput( "long" );
         assertEquals( InputTypeName.DOUBLE.toString(), doubleInput.getInputType().toString() );
         assertEquals( InputTypeName.LONG.toString(), longInput.getInputType().toString() );
 

@@ -4,27 +4,34 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.form.FormItem;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TaskDescriptorLoaderTest
     extends ApplicationTestSupport
 {
     private TaskDescriptorLoader loader;
 
+
     @Override
     protected void initialize()
     {
-        this.loader = new TaskDescriptorLoader( this.resourceService );
+        MixinService mixinService = mock( MixinService.class );
+        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
+        this.loader = new TaskDescriptorLoader( this.resourceService, mixinService );
         addApplication( "myapp1", "/apps/myapp1" );
     }
 
@@ -38,7 +45,7 @@ public class TaskDescriptorLoaderTest
     public void testPostProcess()
     {
         final TaskDescriptor descriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapp:a" ) ).build();
-        assertSame( descriptor, this.loader.postProcess( descriptor ) );
+        assertEquals( descriptor.getKey(), this.loader.postProcess( descriptor ).getKey() );
     }
 
     @Test
@@ -73,7 +80,7 @@ public class TaskDescriptorLoaderTest
 
         assertEquals( "MyTask", descriptor.getDescription() );
 
-        FormItem formItem = descriptor.getConfig().getFormItem( "param1" );
-        assertEquals( " something ", formItem.toInput().getDefaultValue().getRootValue() );
+        Input formItem = descriptor.getConfig().getInput( "param1" );
+        assertEquals( " something ", formItem.getDefaultValue().getRootValue() );
     }
 }

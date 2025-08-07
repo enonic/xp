@@ -8,8 +8,11 @@ import com.enonic.xp.core.impl.app.descriptor.DescriptorServiceImpl;
 import com.enonic.xp.core.impl.content.page.region.LayoutDescriptorLoader;
 import com.enonic.xp.core.impl.content.page.region.PartDescriptorLoader;
 import com.enonic.xp.descriptor.DescriptorService;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.mixin.MixinService;
+
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractDescriptorServiceTest
     extends ApplicationTestSupport
@@ -23,7 +26,7 @@ public abstract class AbstractDescriptorServiceTest
         throws Exception
     {
         this.mixinService = Mockito.mock( MixinService.class );
-        Mockito.when( this.mixinService.inlineFormItems( Mockito.any() ) ).thenReturn( Form.create().build() );
+        when( this.mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         final DescriptorFacetFactoryImpl facetFactory = new DescriptorFacetFactoryImpl( this.applicationService, this.resourceService );
 

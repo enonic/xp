@@ -49,14 +49,9 @@ public final class FormItemSet
         this.occurrences = builder.occurrences;
         this.customText = builder.customText;
         this.helpText = builder.helpText;
-        this.formItems = new FormItems( this );
+        this.formItems = new FormItems( this, builder.formItems );
         this.labelI18nKey = builder.labelI18nKey;
         this.helpTextI18nKey = builder.helpTextI18nKey;
-        for ( final FormItem formItem : builder.formItems )
-        {
-            this.formItems.add( formItem );
-        }
-
     }
 
     @Override
@@ -69,11 +64,6 @@ public final class FormItemSet
     public FormItemType getType()
     {
         return FormItemType.FORM_ITEM_SET;
-    }
-
-    public void add( final FormItem formItem )
-    {
-        this.formItems.add( formItem );
     }
 
     public String getLabel()
@@ -109,11 +99,6 @@ public final class FormItemSet
     public String getHelpText()
     {
         return helpText;
-    }
-
-    public FormItems getFormItems()
-    {
-        return formItems;
     }
 
     public String getLabelI18nKey()
@@ -191,11 +176,6 @@ public final class FormItemSet
         return create( this ).build();
     }
 
-    public FormItem getFormItem( final String path )
-    {
-        return formItems.getFormItem( FormItemPath.from( path ) );
-    }
-
     public FormItem getFormItem( final FormItemPath path )
     {
         return formItems.getFormItem( path );
@@ -229,11 +209,6 @@ public final class FormItemSet
     public InlineMixin getInlineMixin( final FormItemPath formItemPath )
     {
         return formItems.getInlineMixin( formItemPath );
-    }
-
-    public Layout getLayout( final String name )
-    {
-        return formItems.getLayout( FormItemPath.from( name ) );
     }
 
     public static Builder create()

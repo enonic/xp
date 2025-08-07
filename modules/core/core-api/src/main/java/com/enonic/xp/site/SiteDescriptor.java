@@ -2,7 +2,6 @@ package com.enonic.xp.site;
 
 
 import java.time.Instant;
-import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
@@ -11,6 +10,8 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
+
+import static java.util.Objects.requireNonNullElse;
 
 @PublicApi
 public final class SiteDescriptor
@@ -34,12 +35,12 @@ public final class SiteDescriptor
     private SiteDescriptor( final Builder builder )
     {
         this.applicationKey = builder.applicationKey;
-        this.form = builder.form;
-        this.xDataMappings = builder.xDataMappings;
+        this.form = requireNonNullElse( builder.form, Form.empty() );
+        this.xDataMappings = requireNonNullElse( builder.xDataMappings, XDataMappings.empty() );
         this.modifiedTime = builder.modifiedTime;
-        this.responseProcessors = Objects.requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
-        this.mappingDescriptors = Objects.requireNonNullElse( builder.mappingDescriptors, ControllerMappingDescriptors.empty() );
-        this.apiMounts = Objects.requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
+        this.responseProcessors = requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
+        this.mappingDescriptors = requireNonNullElse( builder.mappingDescriptors, ControllerMappingDescriptors.empty() );
+        this.apiMounts = requireNonNullElse( builder.apiMounts, DescriptorKeys.empty() );
     }
 
     public ApplicationKey getApplicationKey()
@@ -115,7 +116,7 @@ public final class SiteDescriptor
         private Builder( final SiteDescriptor siteDescriptor )
         {
             this.applicationKey = siteDescriptor.applicationKey;
-            this.form = siteDescriptor.form != null ? siteDescriptor.form.copy() : null;
+            this.form = siteDescriptor.form != null ? siteDescriptor.form : null;
             this.xDataMappings = siteDescriptor.xDataMappings;
             this.modifiedTime = siteDescriptor.modifiedTime;
             this.responseProcessors = siteDescriptor.responseProcessors;

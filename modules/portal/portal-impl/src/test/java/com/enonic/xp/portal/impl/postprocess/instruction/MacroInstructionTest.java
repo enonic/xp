@@ -159,7 +159,7 @@ public class MacroInstructionTest
         throws Exception
     {
         MacroKey key = MacroKey.from( "myapp:somemacro" );
-        Form form = Form.create().build();
+        Form form = Form.empty();
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).form( form ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
         when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );

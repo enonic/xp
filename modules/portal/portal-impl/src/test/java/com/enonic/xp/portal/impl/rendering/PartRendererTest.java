@@ -119,7 +119,7 @@ public class PartRendererTest
         // setup
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
         portalRequest.setMode( RenderMode.EDIT );
@@ -143,7 +143,7 @@ public class PartRendererTest
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
         final ControllerScript controllerScript = new ControllerScript()
@@ -182,7 +182,7 @@ public class PartRendererTest
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
         final ControllerScript controllerScript = new ControllerScript()
@@ -218,7 +218,7 @@ public class PartRendererTest
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .key( DescriptorKey.from( "module:myPartComponent" ) )
             .build();
         final ControllerScript controllerScript = new ControllerScript()

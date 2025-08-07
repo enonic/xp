@@ -11,7 +11,6 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.Layout;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -76,7 +75,7 @@ public final class ContentTypeMapper
         {
             serializeFormItemSet( gen, (FormItemSet) item );
         }
-        else if ( item instanceof Layout )
+        else if ( item instanceof FieldSet )
         {
             serializeLayout( gen, (FieldSet) item );
         }
@@ -132,7 +131,7 @@ public final class ContentTypeMapper
         gen.value( "default", option.isDefaultOption() );
 
         gen.array( "items" );
-        for ( FormItem formItem : option.getFormItems() )
+        for ( FormItem formItem : option )
         {
             serializeItem( gen, formItem );
         }

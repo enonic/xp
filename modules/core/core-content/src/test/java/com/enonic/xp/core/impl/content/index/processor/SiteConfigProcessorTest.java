@@ -44,7 +44,7 @@ public class SiteConfigProcessorTest
     public void test_empty_site_config()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processConfigs( SiteConfigs.create().build(), Form.create().build(), null );
+        final PatternIndexConfigDocument result = processConfigs( SiteConfigs.create().build(), Form.empty(), null );
         assertEquals( 0, result.getPathIndexConfigs().size() );
     }
 

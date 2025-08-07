@@ -22,19 +22,19 @@ public class PartDescriptorsTest
     {
         final PartDescriptor partDescriptor1 = PartDescriptor.create().
             displayName( "News part" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part" ) ).
             build();
 
         final PartDescriptor partDescriptor2 = PartDescriptor.create().
             displayName( "News part2" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part2" ) ).
             build();
 
         final PartDescriptor partDescriptor3 = PartDescriptor.create().
             displayName( "News part3" ).
-            config( Form.create().build() ).
+            config( Form.empty() ).
             key( DescriptorKey.from( "module:new-part3" ) ).
             build();
 

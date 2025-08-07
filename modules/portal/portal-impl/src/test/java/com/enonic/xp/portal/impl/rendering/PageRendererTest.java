@@ -86,7 +86,7 @@ public class PageRendererTest
         this.portalRequest.setContent( this.content );
         this.portalRequest.setPageDescriptor( PageDescriptor.create()
                                                   .key( DescriptorKey.from( "myapplication:page" ) )
-                                                  .config( Form.create().build() )
+                                                  .config( Form.empty() )
                                                   .regions( RegionDescriptors.create().build() )
                                                   .build() );
 
@@ -108,7 +108,7 @@ public class PageRendererTest
 
         final PageDescriptor descriptor = PageDescriptor.create()
             .key( DescriptorKey.from( "myapplication:page" ) )
-            .config( Form.create().build() )
+            .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .build();
 

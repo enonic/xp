@@ -99,7 +99,7 @@ public class CreateContentHandlerTest
         when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
 
         when( this.xDataService.getByName( Mockito.eq( XDataName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( xData );
-        when( this.mixinService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
+        when( this.mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
     }
 
     @Test

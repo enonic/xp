@@ -45,7 +45,7 @@ public class PageConfigProcessorTest
     public void test_size()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processForm( Form.create().build() );
+        final PatternIndexConfigDocument result = processForm( Form.empty() );
         assertEquals( 4, result.getPathIndexConfigs().size() );
     }
 
@@ -53,7 +53,7 @@ public class PageConfigProcessorTest
     public void test_empty_config()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processForm( Form.create().build() );
+        final PatternIndexConfigDocument result = processForm( Form.empty() );
 
         assertEquals( 4, result.getPathIndexConfigs().size() );
 

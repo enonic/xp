@@ -2,50 +2,30 @@ package com.enonic.xp.form;
 
 public abstract class InputVisitor
 {
-    public final void traverse( final Iterable<FormItem> items )
+    public final void traverse( final Iterable<? extends FormItem> items )
     {
         for ( final FormItem item : items )
         {
-            doTraverse( item );
-        }
-    }
-
-    private void doTraverse( final FormItem item )
-    {
-        if ( item instanceof Input )
-        {
-            visit( (Input) item );
-        }
-        else if ( item instanceof FormItemSet )
-        {
-            doTraverse( (FormItemSet) item );
-        }
-        else if ( item instanceof FieldSet )
-        {
-            doTraverse( (FieldSet) item );
-        }
-        else if ( item instanceof FormOptionSet )
-        {
-            for ( FormOptionSetOption option : (FormOptionSet) item )
+            if ( item instanceof Input )
             {
-                doTraverse( option.getFormItems() );
+                visit( (Input) item );
+            }
+            else if ( item instanceof FormItemSet formItemSet )
+            {
+                traverse( formItemSet );
+            }
+            else if ( item instanceof FieldSet fieldSet)
+            {
+                traverse( fieldSet );
+            }
+            else if ( item instanceof FormOptionSet formOptionSet )
+            {
+                for ( FormOptionSetOption option : formOptionSet )
+                {
+                    traverse( option );
+                }
             }
         }
-    }
-
-    private void doTraverse( final FormItems formItems )
-    {
-        traverse( formItems );
-    }
-
-    private void doTraverse( final FormItemSet set )
-    {
-        traverse( set );
-    }
-
-    private void doTraverse( final FieldSet set )
-    {
-        traverse( set );
     }
 
     public abstract void visit( Input input );

@@ -63,11 +63,12 @@ public final class Mixin
     public static final class Builder
         extends BaseSchema.Builder<Builder, MixinName>
     {
-        private Form.Builder formBuilder = Form.create();
+        private Form.Builder formBuilder;
 
         private Builder()
         {
             super();
+            this.formBuilder = Form.create();
         }
 
         private Builder( final Mixin mixin )

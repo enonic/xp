@@ -986,7 +986,7 @@ public class ProjectContentEventListenerTest
             .thenReturn( PartDescriptor.create()
                              .key( DescriptorKey.from( "mainapplication:partTemplateName" ) )
                              .displayName( "my-component" )
-                             .config( Form.create().build() )
+                             .config( Form.empty() )
                              .build() );
 
         return Page.create().template( PageTemplateKey.from( "mypagetemplate" ) ).regions( regions ).build();

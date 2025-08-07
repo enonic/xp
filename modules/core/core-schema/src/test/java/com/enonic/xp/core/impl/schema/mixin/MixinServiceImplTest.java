@@ -18,7 +18,8 @@ import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MixinServiceImplTest
     extends AbstractSchemaTest
@@ -29,7 +30,6 @@ public class MixinServiceImplTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         this.service = new MixinServiceImpl( this.applicationService, this.resourceService );
 
@@ -48,7 +48,7 @@ public class MixinServiceImplTest
         assertEquals( 0, types2.getSize() );
 
         final Mixin mixin = service.getByName( MixinName.from( "other:mytype" ) );
-        assertEquals( null, mixin );
+        assertNull( mixin );
     }
 
     @Test
@@ -158,15 +158,9 @@ public class MixinServiceImplTest
             .addFormItem( InlineMixin.create().mixin( "myapp2:inline1" ).build() )
             .build();
 
-        try
-        {
-            service.inlineFormItems( form );
-            fail( "Expected exception due to cycle in mixins" );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.", e.getMessage() );
-        }
+            final IllegalArgumentException exception =
+                assertThrows( IllegalArgumentException.class, () -> service.inlineFormItems( form ) );
+            assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.", exception.getMessage() );
     }
 
     @Test
@@ -202,12 +196,10 @@ public class MixinServiceImplTest
 
         assertNotNull( transformedForm.getInput( "title" ) );
         assertNotNull( transformedForm.getOptionSet( "myOptionSet" ) );
-        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption1" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.label" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.street" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.postalNo" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.country" ) );
-        assertNotNull( transformedForm.getOptionSetOption( "myOptionSet.myOptionSetOption2" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption2.myTextLine2" ) );
     }
 }

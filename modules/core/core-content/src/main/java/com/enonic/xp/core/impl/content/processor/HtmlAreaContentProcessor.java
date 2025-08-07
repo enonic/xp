@@ -29,7 +29,7 @@ import com.enonic.xp.core.internal.processor.InternalHtmlSanitizer;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.form.FormItems;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -151,7 +151,7 @@ public class HtmlAreaContentProcessor
                 return;
             }
 
-            final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm().getFormItems() );
+            final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm() );
             processDataTree( properties, processedIds );
         } );
     }
@@ -167,7 +167,7 @@ public class HtmlAreaContentProcessor
         {
             final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( page.getDescriptor() );
 
-            final Collection<Property> properties = getProperties( page.getConfig(), pageDescriptor.getConfig().getFormItems() );
+            final Collection<Property> properties = getProperties( page.getConfig(), pageDescriptor.getConfig() );
             processDataTree( properties, processedIds );
         }
 
@@ -229,7 +229,7 @@ public class HtmlAreaContentProcessor
                 final XData xData = xDataService.getByName( extraData.getName() );
                 if ( xData != null )
                 {
-                    processDataTree( getProperties( extraData.getData(), xData.getForm().getFormItems() ), processedIds );
+                    processDataTree( getProperties( extraData.getData(), xData.getForm() ), processedIds );
                 }
             }
         }
@@ -237,11 +237,11 @@ public class HtmlAreaContentProcessor
 
     private void processContentData( final PropertyTree contentData, final ContentType contentType, final ContentIds.Builder processedIds )
     {
-        final Collection<Property> properties = getProperties( contentData, contentType.getForm().getFormItems() );
+        final Collection<Property> properties = getProperties( contentData, contentType.getForm() );
         processDataTree( properties, processedIds );
     }
 
-    private Collection<Property> getProperties( final PropertyTree data, final FormItems formItems )
+    private Collection<Property> getProperties( final PropertyTree data, final Iterable<FormItem> formItems )
     {
 
         if ( data == null || data.getTotalSize() == 0 )
@@ -252,7 +252,7 @@ public class HtmlAreaContentProcessor
         return getProperties( formItems, data ).stream().filter( Property::hasNotNullValue ).collect( Collectors.toList() );
     }
 
-    private Set<Property> getProperties( final FormItems formItems, final PropertyTree data )
+    private Set<Property> getProperties( final Iterable<FormItem> formItems, final PropertyTree data )
     {
         final HtmlAreaVisitor visitor = new HtmlAreaVisitor( data );
         visitor.traverse( formItems );
@@ -329,7 +329,7 @@ public class HtmlAreaContentProcessor
     private void processComponentDescriptor( final DescriptorBasedComponent component, final ComponentDescriptor componentDescriptor,
                                              final ContentIds.Builder processedIds )
     {
-        final Collection<Property> properties = getProperties( component.getConfig(), componentDescriptor.getConfig().getFormItems() );
+        final Collection<Property> properties = getProperties( component.getConfig(), componentDescriptor.getConfig() );
         processDataTree( properties, processedIds );
     }
 

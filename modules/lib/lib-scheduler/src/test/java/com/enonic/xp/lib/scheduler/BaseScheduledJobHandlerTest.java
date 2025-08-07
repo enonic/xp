@@ -24,7 +24,6 @@ import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.testing.ScriptTestSupport;
@@ -166,7 +165,7 @@ public abstract class BaseScheduledJobHandlerTest
 
         this.schedulerService = Mockito.mock( SchedulerService.class );
         this.calendarService = Mockito.mock( CalendarService.class );
-        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance( Mockito.mock( MixinService.class ) );
+        this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance();
 
         addService( CalendarService.class, this.calendarService );
         addService( SchedulerService.class, this.schedulerService );

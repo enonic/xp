@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -61,18 +60,16 @@ public class XmlMacroDescriptorParserTest
 
         assertEquals( 3, result.getForm().size() );
 
-        final FormItem item = result.getForm().getFormItem( "myDate" );
+        final Input item = result.getForm().getInput( "myDate" );
         assertNotNull( item );
 
-        final Input input = (Input) item;
-        assertEquals( InputTypeName.DATE.toString(), input.getInputType().toString() );
-        assertEquals( "key.label", input.getLabelI18nKey() );
-        assertEquals( "key.help-text", input.getHelpTextI18nKey() );
 
-        final FormItem contentSelectorItem = result.getForm().getFormItem( "someonesParent" );
-        assertNotNull( contentSelectorItem );
+        assertEquals( InputTypeName.DATE.toString(), item.getInputType().toString() );
+        assertEquals( "key.label", item.getLabelI18nKey() );
+        assertEquals( "key.help-text", item.getHelpTextI18nKey() );
 
-        final Input contentSelectorInput = (Input) contentSelectorItem;
+        final Input contentSelectorInput = result.getForm().getInput( "someonesParent" );
+
         assertEquals( InputTypeName.CONTENT_SELECTOR.toString(), contentSelectorInput.getInputType().toString() );
         assertEquals( "key.parent", contentSelectorInput.getLabelI18nKey() );
 
@@ -81,7 +78,7 @@ public class XmlMacroDescriptorParserTest
         assertEquals( "path1", contentSelectorInput.getInputTypeConfig().getProperty( "allowPath" ).getValue() );
         assertEquals( 2, contentSelectorInput.getInputTypeConfig().getProperties( "allowPath" ).size() );
 
-        final InputTypeConfig config = input.getInputTypeConfig();
+        final InputTypeConfig config = contentSelectorInput.getInputTypeConfig();
         assertNotNull( config );
     }
 }

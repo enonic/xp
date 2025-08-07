@@ -51,16 +51,4 @@ public class DescriptorsTest
         final Descriptors<MyDescriptor> list = Descriptors.from( List.of( desc1, desc2 ) );
         assertEquals( "[app1:abc, app2:abc]", list.toString() );
     }
-
-    @Test
-    public void testFilter()
-    {
-        final MyDescriptor desc1 = new MyDescriptor( "app1:abc" );
-        final MyDescriptor desc2 = new MyDescriptor( "app2:abc" );
-
-        final Descriptors<MyDescriptor> list1 = Descriptors.from( desc1, desc2 );
-        final Descriptors<MyDescriptor> list2 = list1.filter( ApplicationKey.from( "app1" ) );
-
-        assertEquals( "[app1:abc]", list2.toString() );
-    }
 }
