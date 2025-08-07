@@ -1,5 +1,7 @@
 dependencies {
     implementation project( ':admin:admin-api' )
+    implementation project( ':portal:portal-api' )
+    implementation project( ':jaxrs:jaxrs-api' )
     implementation project( ':core:core-internal' )
 
     testImplementation( testFixtures( project(":core:core-api") ) )
