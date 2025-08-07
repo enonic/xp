@@ -39,7 +39,7 @@ public final class IndexConfigDocumentJson
 
         for ( final PatternConfigJson patternConfigJson : json.patternConfigs )
         {
-            builder.addPattern( patternConfigJson.fromJson() );
+            builder.add( patternConfigJson.fromJson() );
         }
 
         if ( json.allTextConfig != null )

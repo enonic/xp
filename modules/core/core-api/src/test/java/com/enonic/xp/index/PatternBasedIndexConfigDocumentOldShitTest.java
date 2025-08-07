@@ -21,10 +21,10 @@ public class PatternBasedIndexConfigDocumentOldShitTest
             defaultConfig( IndexConfig.MINIMAL ).
             build();
 
-        assertEquals( IndexConfig.NONE, config.getConfigForPath( PropertyPath.from( "data.secret.dummy" ) ) );
-        assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath( PropertyPath.from( "data.secret.show" ) ) );
-        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( PropertyPath.from( "data.stuff" ) ) );
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "creator" ) ) );
+        assertEquals( IndexConfig.NONE, config.getConfigForPath( IndexPath.from( "data.secret.dummy" ) ) );
+        assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath( IndexPath.from( "data.secret.show" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( IndexPath.from( "data.stuff" ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( IndexPath.from( "creator" ) ) );
 
     }
 }

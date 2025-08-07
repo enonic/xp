@@ -180,7 +180,6 @@ public class OccurrenceValidatorTest
             .superType( ContentTypeName.structured() )
             .addFormItem( FieldSet.create()
                               .label( "My layout" )
-                              .name( "myLayout" )
                               .addFormItem( Input.create()
                                                 .name( "myField" )
                                                 .label( "Field" )
@@ -204,10 +203,8 @@ public class OccurrenceValidatorTest
             .superType( ContentTypeName.structured() )
             .addFormItem( FieldSet.create()
                               .label( "My outer layout" )
-                              .name( "myOuterlayout" )
                               .addFormItem( FieldSet.create()
                                                 .label( "My Layout" )
-                                                .name( "myLayout" )
                                                 .addFormItem( Input.create()
                                                                   .name( "myInput" )
                                                                   .label( "Input" )
@@ -274,7 +271,6 @@ public class OccurrenceValidatorTest
             .superType( ContentTypeName.structured() )
             .addFormItem( FieldSet.create()
                               .label( "My layout" )
-                              .name( "myLayout" )
                               .addFormItem( FormItemSet.create()
                                                 .name( "mySet" )
                                                 .required( true )
@@ -696,7 +692,7 @@ public class OccurrenceValidatorTest
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
             .superType( ContentTypeName.structured() )
-            .addFormItem( FieldSet.create().label( "My layout" ).name( "myLayout" ).addFormItem( myOptionSet.build() ).build() )
+            .addFormItem( FieldSet.create().label( "My layout" ).addFormItem( myOptionSet.build() ).build() )
             .build();
         final PropertyTree content = new PropertyTree();
 

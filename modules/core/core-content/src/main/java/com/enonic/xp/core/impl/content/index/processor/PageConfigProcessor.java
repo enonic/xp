@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
 import com.enonic.xp.core.impl.content.index.IndexConfigVisitor;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;

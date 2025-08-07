@@ -36,7 +36,6 @@ public class ListDynamicSchemasHandlerTest
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .addFormItem( FieldSet.create()
                                   .label( "My layout" )
-                                  .name( "myLayout" )
                                   .addFormItem( FormItemSet.create()
                                                     .name( "mySet" )
                                                     .required( true )

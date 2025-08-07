@@ -1,10 +1,9 @@
 package com.enonic.xp.index;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
@@ -21,7 +20,7 @@ public final class PatternIndexConfigDocument
 {
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
-    private final ImmutableMap<String, PathIndexConfig> pathIndexConfigMap;
+    private final ImmutableMap<IndexPath, PathIndexConfig> pathIndexConfigMap;
 
     private final IndexConfig defaultConfig;
 
@@ -36,7 +35,8 @@ public final class PatternIndexConfigDocument
     {
         super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
-        this.pathIndexConfigMap = ImmutableMap.copyOf( builder.stringPathIndexConfigMap );
+        this.pathIndexConfigMap = builder.pathIndexConfigs.stream()
+            .collect( ImmutableMap.toImmutableMap( pic -> IndexPath.from( pic.getPath() ), Function.identity() ) );
         this.defaultConfig = builder.defaultConfig;
         this.allTextConfig = builder.allTextIndexConfig.build();
     }
@@ -57,26 +57,16 @@ public final class PatternIndexConfigDocument
     }
 
     @Override
-    public IndexConfig getConfigForPath( final PropertyPath dataPath )
-    {
-        return doGetConfigForPath( dataPath.resetAllIndexesTo( 0 ).toString() );
-    }
-
-    @Override
     public IndexConfig getConfigForPath( final IndexPath indexPath )
     {
-        return doGetConfigForPath( indexPath.toString() );
-    }
-
-    private IndexConfig doGetConfigForPath( final String path )
-    {
-        final PathIndexConfig exactMatch = pathIndexConfigMap.get( path.toLowerCase() );
+        final PathIndexConfig exactMatch = pathIndexConfigMap.get( indexPath );
 
         if ( exactMatch != null )
         {
             return exactMatch.getIndexConfig();
         }
 
+        final String path = indexPath.toString();
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
             if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), path, "." ) )
@@ -130,8 +120,6 @@ public final class PatternIndexConfigDocument
     {
         private SortedSet<PathIndexConfig> pathIndexConfigs = new TreeSet<>();
 
-        private Map<String, PathIndexConfig> stringPathIndexConfigMap = new HashMap<>();
-
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
         private AllTextIndexConfig.Builder allTextIndexConfig = AllTextIndexConfig.create();
@@ -143,7 +131,6 @@ public final class PatternIndexConfigDocument
         private Builder( final PatternIndexConfigDocument source )
         {
             this.pathIndexConfigs = new TreeSet<>( source.pathIndexConfigs );
-            this.stringPathIndexConfigMap = new HashMap<>( source.pathIndexConfigMap );
             this.defaultConfig = IndexConfig.create( source.defaultConfig ).build();
             this.allTextIndexConfig = AllTextIndexConfig.create( source.allTextConfig );
         }
@@ -171,23 +158,12 @@ public final class PatternIndexConfigDocument
         public Builder add( final PathIndexConfig pathIndexConfig )
         {
             this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( pathIndexConfig.getPath().toString().toLowerCase(), pathIndexConfig );
-
             return this;
         }
 
         public Builder remove( final PathIndexConfig pathIndexConfig )
         {
             this.pathIndexConfigs.remove( pathIndexConfig );
-            this.stringPathIndexConfigMap.remove( pathIndexConfig.getPath().toString().toLowerCase() );
-
-            return this;
-        }
-
-        public Builder addPattern( final PathIndexConfig pathIndexConfig )
-        {
-            this.pathIndexConfigs.add( pathIndexConfig );
-            this.stringPathIndexConfigMap.put( pathIndexConfig.getPath().resetAllIndexesTo( 0 ).toString().toLowerCase(), pathIndexConfig );
             return this;
         }
 

@@ -24,11 +24,6 @@ public final class PathIndexConfig
         indexConfig = builder.indexConfig;
     }
 
-    public boolean matches( final PropertyPath dataPath )
-    {
-        return matches( dataPath.resetAllIndexesTo( 0 ).toString() );
-    }
-
     public boolean matches( final String testPath )
     {
         return testPath.startsWith( path.toString() );

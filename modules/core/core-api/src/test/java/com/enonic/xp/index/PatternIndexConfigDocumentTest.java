@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import com.enonic.xp.data.PropertyPath;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PatternIndexConfigDocumentTest
@@ -21,10 +19,10 @@ public class PatternIndexConfigDocumentTest
             build();
 
         assertEquals( IndexConfig.FULLTEXT,
-                      config.getConfigForPath( PropertyPath.from( "page", "region", "component", "textcomponent", "text" ) ) );
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "page" ) ) );
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "page", "region" ) ) );
-        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( PropertyPath.from( "page", "region", "another", "fisk", "ost" ) ) );
+                      config.getConfigForPath( IndexPath.from( String.join( ".","page", "region", "component", "textcomponent", "text" ) ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( IndexPath.from( "page" ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( IndexPath.from( "page.region" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( IndexPath.from( "page.region.another.fisk.ost" ) ) );
     }
 
     @Test
@@ -38,9 +36,9 @@ public class PatternIndexConfigDocumentTest
             defaultConfig( IndexConfig.MINIMAL ).
             build();
 
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "site", "data", "ost" ) ) );
-        assertEquals( IndexConfig.NONE, config.getConfigForPath( PropertyPath.from( "page" ) ) );
-        assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath( PropertyPath.from( "page", "region" ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( IndexPath.from( "site.data.ost" ) ) );
+        assertEquals( IndexConfig.NONE, config.getConfigForPath( IndexPath.from( "page" ) ) );
+        assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath( IndexPath.from( "page.region" ) ) );
     }
 
     @Test
@@ -54,11 +52,11 @@ public class PatternIndexConfigDocumentTest
             build();
 
         assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath(
-            PropertyPath.from( "page", "regions", "main", "components", "regions", "fisk", "components", "text" ) ) );
+            IndexPath.from( "page.regions.main.components.regions.fisk.components.text" ) ) );
         assertEquals( IndexConfig.NONE,
-                      config.getConfigForPath( PropertyPath.from( "page", "regions", "main", "center", "components", "text" ) ) );
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "page" ) ) );
-        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( PropertyPath.from( "page", "region" ) ) );
+                      config.getConfigForPath( IndexPath.from( "page.regions.main.center.components.text" ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( IndexPath.from( "page" ) ) );
+        assertEquals( IndexConfig.MINIMAL, config.getConfigForPath( IndexPath.from( "page.region" ) ) );
     }
 
     @Test

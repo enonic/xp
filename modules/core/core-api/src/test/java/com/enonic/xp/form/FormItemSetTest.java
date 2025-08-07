@@ -29,7 +29,6 @@ public class FormItemSetTest
 
         // verify
         assertEquals( "mySet.myInput", formItemSet.getInput( "myInput" ).getPath().toString() );
-        assertEquals( "mySet.myInput", formItemSet.getInput( FormItemPath.from( "myInput" ) ).getPath().toString() );
     }
 
     @Test
@@ -47,7 +46,6 @@ public class FormItemSetTest
 
         // verify
         assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( "mymixin" ).getPath().toString() );
-        assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( FormItemPath.from( "mymixin" ) ).getPath().toString() );
     }
 
 
@@ -63,7 +61,6 @@ public class FormItemSetTest
 
         // exercise
         assertEquals( "myOuterSet.myInnerSet", myOuterSet.getFormItemSet( "myInnerSet" ).getPath().toString() );
-        assertEquals( "myOuterSet.myInnerSet", myOuterSet.getFormItemSet( FormItemPath.from( "myInnerSet" ) ).getPath().toString() );
         assertEquals( "myOuterSet.myInnerSet.myInnermostSet",
                       myOuterSet.getFormItemSet( "myInnerSet.myInnermostSet" ).getPath().toString() );
         assertEquals( "myOuterSet.myInnerSet.myInnermostSet",

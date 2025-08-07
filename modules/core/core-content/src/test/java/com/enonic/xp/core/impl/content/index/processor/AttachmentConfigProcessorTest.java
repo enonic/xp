@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content.index.processor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -42,7 +42,7 @@ public class AttachmentConfigProcessorTest
             includeInAllText( true ).
             nGram( true ).
             decideByType( false ).
-            build(), builder.build().getConfigForPath( PropertyPath.from( ATTACHMENT_TEXT_COMPONENT ) ) );
+            build(), builder.build().getConfigForPath( IndexPath.from( ATTACHMENT_TEXT_COMPONENT ) ) );
 
     }
 
@@ -62,7 +62,7 @@ public class AttachmentConfigProcessorTest
             includeInAllText( false ).
             nGram( true ).
             decideByType( false ).
-            build(), builder.build().getConfigForPath( PropertyPath.from( ATTACHMENT_TEXT_COMPONENT ) ) );
+            build(), builder.build().getConfigForPath( IndexPath.from( ATTACHMENT_TEXT_COMPONENT ) ) );
 
     }
 }

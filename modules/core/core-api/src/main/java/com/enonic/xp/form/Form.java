@@ -36,34 +36,14 @@ public final class Form
         return formItems.getFormItemSet( FormItemPath.from( path ) );
     }
 
-    public FormItemSet getFormItemSet( final FormItemPath path )
-    {
-        return formItems.getFormItemSet( path );
-    }
-
     public Input getInput( final String path )
     {
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public Input getInput( final FormItemPath path )
-    {
-        return formItems.getInput( path );
-    }
-
-    public Input getInput( final FormItemPath path, final boolean skipLayout )
-    {
-        return formItems.getInput( path, skipLayout );
-    }
-
     public InlineMixin getInlineMixin( final String path )
     {
         return formItems.getInlineMixin( FormItemPath.from( path ) );
-    }
-
-    public InlineMixin getInlineMixin( final FormItemPath formItemPath )
-    {
-        return formItems.getInlineMixin( formItemPath );
     }
 
     public FormOptionSet getOptionSet( final String path )

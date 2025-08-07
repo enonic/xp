@@ -2,12 +2,12 @@ package com.enonic.xp.core.impl.content.index;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 
@@ -36,7 +36,7 @@ public class IndexConfigVisitorTest
 
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper", document.getConfigForPath( PropertyPath.from( "parent.htmlArea") ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper", document.getConfigForPath( IndexPath.from( "parent.htmlArea") ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -65,7 +65,7 @@ public class IndexConfigVisitorTest
 
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper", document.getConfigForPath( PropertyPath.from( "parent.myFormItemSet.htmlArea") ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper", document.getConfigForPath( IndexPath.from( "parent.myFormItemSet.htmlArea") ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     @Test
@@ -97,6 +97,6 @@ public class IndexConfigVisitorTest
 
         final PatternIndexConfigDocument document = builder.build();
         assertEquals( 1, document.getPathIndexConfigs().size() );
-        assertEquals( "htmlStripper", document.getConfigForPath( PropertyPath.from( "parent.myoptionset.myoptionsetoption2.htmlArea") ).getIndexValueProcessors().get( 0 ).getName() );
+        assertEquals( "htmlStripper", document.getConfigForPath( IndexPath.from( "parent.myoptionset.myoptionsetoption2.htmlArea") ).getIndexValueProcessors().get( 0 ).getName() );
     }
 }

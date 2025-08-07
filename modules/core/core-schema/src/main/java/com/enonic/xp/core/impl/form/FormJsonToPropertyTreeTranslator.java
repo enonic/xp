@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.Input;
@@ -54,43 +55,37 @@ public final class FormJsonToPropertyTreeTranslator
             {
                 addValue( key, objNode, parent );
             }
+            return;
         }
-        else if ( value.isObject() && !hasInput( parent.getProperty(), key ) )
+
+        final FormItem formItem = this.form.getFormItem( toFormItemPath( parent.getProperty(), key ) );
+
+        if ( value.isObject() && !( formItem instanceof Input ) )
         {
             final PropertySet parentSet = parent.addSet( key );
-            for ( Map.Entry<String, JsonNode> property : value.properties() )
+            for ( Map.Entry<String, JsonNode> p : value.properties() )
             {
-                addValue( property.getKey(), property.getValue(), parentSet );
+                addValue( p.getKey(), p.getValue(), parentSet );
             }
         }
         else
         {
-            mapValue( parent, key, value );
+            if ( formItem == null )
+            {
+                throwIfFormItemRequired( parent.getProperty(), key, value );
+                parent.addProperty( key, resolveCoreValue( value ) );
+            }
+            else
+            {
+                parent.addProperty( key, resolveMappedValue( value, formItem.toInput() ) );
+            }
         }
     }
 
-    private void mapValue( final PropertySet parent, final String key, final JsonNode value )
+    private Value resolveMappedValue( final JsonNode value, final Input input )
     {
-        final Property parentProperty = parent.getProperty();
-        final Input input = getInput( parentProperty, key );
-
-        if ( input == null )
-        {
-            if ( this.strictMode && !isOptionSetSelection( key, parentProperty ) )
-            {
-                throw new IllegalArgumentException(
-                    "No mapping defined for property " + key + " with value " + resolveStringValue( value ) );
-            }
-
-            parent.addProperty( key, resolveCoreValue( value ) );
-        }
-        else
-        {
-            final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
-            final Value mappedPropertyValue = type.createValue( resolveCoreValue( value ), input.getInputTypeConfig() );
-
-            parent.addProperty( key, mappedPropertyValue );
-        }
+        final InputType type = this.inputTypeResolver.resolve( input.getInputType() );
+        return type.createValue( resolveCoreValue( value ), input.getInputTypeConfig() );
     }
 
     private Value resolveCoreValue( final JsonNode value )
@@ -153,31 +148,22 @@ public final class FormJsonToPropertyTreeTranslator
         return value.toString();
     }
 
-    private FormItemPath resolveInputPath( final String key, final Property parentProperty )
+    private FormItemPath toFormItemPath( final Property parentProperty, final String key )
     {
-        if ( parentProperty == null )
+        return parentProperty == null ? FormItemPath.from( key ) : FormItemPath.from( FormItemPath.from( parentProperty.getPath() ), key );
+    }
+
+    private void throwIfFormItemRequired( final Property parentProperty, final String key, final JsonNode value )
+    {
+        if ( this.strictMode )
         {
-            return FormItemPath.from( key );
+            final boolean isOptionSetSelection = OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && this.form.getFormItem(
+                toFormItemPath( parentProperty.getParent().getProperty(), parentProperty.getName() ) ) instanceof FormOptionSet;
+            if ( !isOptionSetSelection )
+            {
+                throw new IllegalArgumentException(
+                    "No mapping defined for property " + key + " with value " + resolveStringValue( value ) );
+            }
         }
-
-        final FormItemPath parentPath = FormItemPath.from( parentProperty.getPath().resetAllIndexesTo( 0 ).toString() );
-        return FormItemPath.from( parentPath, key );
     }
-
-    private boolean hasInput( final Property parentProperty, final String key )
-    {
-        return this.form.getFormItem( resolveInputPath( key, parentProperty ) ) instanceof Input;
-    }
-
-    private Input getInput( final Property parentProperty, final String key )
-    {
-        return this.form.getInput( resolveInputPath( key, parentProperty ), true );
-    }
-
-    private boolean isOptionSetSelection( final String key, final Property parentProperty )
-    {
-        return OPTION_SET_SELECTION_ARRAY_NAME.equals( key ) && this.form.getFormItem(
-            resolveInputPath( parentProperty.getName(), parentProperty.getParent().getProperty() ) ) instanceof FormOptionSet;
-    }
-
 }

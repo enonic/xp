@@ -106,7 +106,7 @@ public class CreateDynamicComponentHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( componentParams.getResource() );
 
-            return new DynamicSchemaResult<PageDescriptor>( builder.build(), resource );
+            return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
         runScript( "/lib/xp/examples/schema/createPage.js" );

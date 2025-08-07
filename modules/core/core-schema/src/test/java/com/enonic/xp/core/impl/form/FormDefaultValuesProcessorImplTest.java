@@ -455,7 +455,6 @@ public class FormDefaultValuesProcessorImplTest
     public void testFieldSet()
     {
         FieldSet.Builder fieldSet = FieldSet.create()
-            .name( "fieldSet" )
             .label( "FieldSet" )
             .addFormItem( InlineMixin.create().mixin( "testApp:testMixin" ).build() )
             .addFormItem( Input.create()

@@ -4,6 +4,7 @@ package com.enonic.xp.form;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
@@ -18,9 +19,13 @@ final class FormItems
 
     FormItems( final FormItem containerFormItem, final Collection<? extends FormItem> formItems )
     {
+        final AtomicInteger unnamedCounter = new AtomicInteger( 1 );
+
         this.containerFormItem = containerFormItem;
-        this.formItemByName =
-            formItems.stream().map( this::setParent ).collect( ImmutableMap.toImmutableMap( FormItem::getName, Function.identity() ) );
+        this.formItemByName = formItems.stream()
+            .map( this::setParent )
+            .collect( ImmutableMap.toImmutableMap(
+                ( fi ) -> fi.getName().isEmpty() ? "__unnamed" + unnamedCounter.getAndIncrement() : fi.getName(), Function.identity() ) );
     }
 
     FormItemPath getPath()
@@ -46,27 +51,22 @@ final class FormItems
 
     FormItem getFormItem( final FormItemPath path )
     {
-        return getFormItem( path, false );
-    }
-
-    FormItem getFormItem( final FormItemPath path, final boolean skipLayout )
-    {
         Preconditions.checkNotNull( path, "path cannot be null" );
         Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
 
         if ( path.elementCount() > 1 )
         {
-            return doForwardGetFormItem( path, skipLayout );
+            return doForwardGetFormItem( path );
         }
         else
         {
-            return doGetFormItem( path.getFirstElement(), skipLayout );
+            return doGetFormItem( path.getFirstElement() );
         }
     }
 
-    private FormItem doForwardGetFormItem( final FormItemPath path, final boolean skipLayout )
+    private FormItem doForwardGetFormItem( final FormItemPath path )
     {
-        FormItem foundFormItem = doGetFormItem( path.getFirstElement(), skipLayout );
+        FormItem foundFormItem = doGetFormItem( path.getFirstElement() );
         if ( foundFormItem == null )
         {
             return null;
@@ -95,12 +95,12 @@ final class FormItems
         }
     }
 
-    FormItem doGetFormItem( final String name, final boolean skipLayout )
+    FormItem doGetFormItem( final String name )
     {
         Preconditions.checkArgument( FormItemPath.hasNotPathElementDivider( name ), "name cannot be a path: %s", name );
 
         FormItem foundFormItem = formItemByName.get( name );
-        if ( foundFormItem == null || ( skipLayout && foundFormItem.getType() == FormItemType.LAYOUT ) )
+        if ( foundFormItem == null )
         {
             return searchFormItemInLayouts( name );
         }
@@ -110,11 +110,6 @@ final class FormItems
     Input getInput( final FormItemPath path )
     {
         return typeCast( getFormItem( path ), Input.class );
-    }
-
-    Input getInput( final FormItemPath path, final boolean skipLayout )
-    {
-        return typeCast( getFormItem( path, skipLayout ), Input.class );
     }
 
     FormItemSet getFormItemSet( final FormItemPath path )

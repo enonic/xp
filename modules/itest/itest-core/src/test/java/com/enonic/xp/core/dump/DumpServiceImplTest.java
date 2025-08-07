@@ -28,7 +28,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -45,6 +44,7 @@ import com.enonic.xp.dump.SystemLoadResult;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
@@ -938,7 +938,7 @@ public class DumpServiceImplTest
 
     private void checkLanguageUpgrade( final Node draftNode )
     {
-        final IndexConfig indexConfigBefore = draftNode.getIndexConfigDocument().getConfigForPath( PropertyPath.from( "language" ) );
+        final IndexConfig indexConfigBefore = draftNode.getIndexConfigDocument().getConfigForPath( IndexPath.from( "language" ) );
         final List<String> languages = draftNode.getIndexConfigDocument().getAllTextConfig().getLanguages();
 
         assertEquals( IndexConfig.NGRAM, indexConfigBefore );

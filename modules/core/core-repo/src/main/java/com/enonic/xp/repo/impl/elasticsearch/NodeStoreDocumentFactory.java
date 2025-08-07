@@ -7,6 +7,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIndexPath;
@@ -169,7 +170,7 @@ public class NodeStoreDocumentFactory
             {
                 if ( !isNullOrEmpty( property.getString() ) )
                 {
-                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( property.getPath() );
+                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( IndexPath.from( property.getPath() ) );
 
                     if ( configForData == null )
                     {

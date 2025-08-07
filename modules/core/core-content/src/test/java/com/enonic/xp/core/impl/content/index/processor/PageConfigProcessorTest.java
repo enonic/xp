@@ -5,14 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -126,7 +127,7 @@ public class PageConfigProcessorTest
                 build() ) );
 
         assertEquals( IndexConfig.BY_TYPE,
-                      result.getConfigForPath( PropertyPath.from( COMPONENTS, PAGE, CONFIG, "appKey", "descriptorName" ) ) );
+                      result.getConfigForPath( IndexPath.from( String.join( ".", COMPONENTS, PAGE, CONFIG, "appKey", "descriptorName" ) ) ) );
     }
 
     @Test
@@ -153,8 +154,8 @@ public class PageConfigProcessorTest
                                        .indexConfig( IndexConfig.BY_TYPE )
                                        .build() ) );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), descriptorKey.getName(),
-                               "htmlarea" ) ).getIndexValueProcessors().get( 0 ).getName() );
+            IndexPath.from( String.join( "." , COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(), descriptorKey.getName(),
+                               "htmlarea" ) ) ).getIndexValueProcessors().get( 0 ).getName() );
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final DescriptorKey descriptorKey )

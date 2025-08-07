@@ -9,16 +9,12 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 
 @PublicApi
 public final class FieldSet
     extends FormItem
     implements Iterable<FormItem>
 {
-    private final String name;
-
     private final String label;
 
     private final String labelI18nKey;
@@ -27,11 +23,6 @@ public final class FieldSet
 
     private FieldSet( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "a name is required for a Layout" );
-        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a Layout" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
-        this.name = builder.name;
-
         this.label = Preconditions.checkNotNull( builder.label, "label is required" );
         this.labelI18nKey = builder.labelI18nKey;
         this.formItems = new FormItems( this, builder.formItems );
@@ -40,7 +31,7 @@ public final class FieldSet
     @Override
     public String getName()
     {
-        return this.name;
+        return "";
     }
 
     @Override
@@ -121,7 +112,6 @@ public final class FieldSet
 
         private String labelI18nKey;
 
-        private String name;
 
         private final List<FormItem> formItems = new ArrayList<>();
 
@@ -133,7 +123,6 @@ public final class FieldSet
         {
             this.label = source.label;
             this.labelI18nKey = source.labelI18nKey;
-            this.name = source.getName();
 
             for ( final FormItem formItemSource : source.formItems )
             {
@@ -150,12 +139,6 @@ public final class FieldSet
         public Builder labelI18nKey( String value )
         {
             this.labelI18nKey = value;
-            return this;
-        }
-
-        public Builder name( String value )
-        {
-            this.name = value;
             return this;
         }
 
