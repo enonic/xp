@@ -26,14 +26,12 @@ public class FormTest
     public void duplicatedItemInFieldSet()
     {
         final FieldSet fieldSet1 = FieldSet.create().
-            name( "fieldset1" ).
             label( "fieldset1" ).
             addFormItem( FormItemSet.create().name( "duplicated" ).label( "duplicated" ).addFormItem(
                 Input.create().name( "something" ).label( "something" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
         final FieldSet fieldSet2 = FieldSet.create().
-            name( "fieldSet2" ).
             label( "fieldSet2" ).
             addFormItem( Input.create().name( "duplicated" ).label( "duplicated" ).inputType( InputTypeName.CONTENT_SELECTOR ).build() ).
             build();
@@ -68,13 +66,11 @@ public class FormTest
                 build();
 
             final FieldSet fieldSet1 = FieldSet.create().
-                name( "fieldSet1" ).
                 label( "fieldSet1" ).
                 addFormItem( fis1 ).
                 build();
 
             final FieldSet fieldSet2 = FieldSet.create().
-                name( "fieldSet2" ).
                 label( "fieldSet2" ).
                 addFormItem( fis2 ).
                 build();
@@ -164,13 +160,11 @@ public class FormTest
                 build();
 
             final FieldSet fieldSet1 = FieldSet.create().
-                name( "fieldset1" ).
                 label( "fieldset1" ).
                 addFormItem( formOptionSet1 ).
                 build();
 
             final FieldSet fieldSet2 = FieldSet.create().
-                name( "fieldSet2" ).
                 label( "fieldSet2" ).
                 addFormItem( formOptionSet2 ).
                 build();

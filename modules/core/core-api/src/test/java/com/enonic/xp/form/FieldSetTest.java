@@ -14,21 +14,17 @@ public class FieldSetTest
     {
         FieldSet myFieldSet = FieldSet.create().
             label( "My FieldSet" ).
-            name( "myFieldSet" ).
             addFormItem( Input.create().name( "myInput" ).label( "input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
         FieldSet myOuterFieldSet = FieldSet.create().
             label( "My Outer FieldSet" ).
-            name( "myOuterFieldSet" ).
             addFormItem( FieldSet.create().
             label( "My inner FieldSet" ).
-            name( "myInnerFieldSet" ).
             addFormItem( Input.create().name( "myInput2" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
         final Form form = Form.create().addFormItem( myFieldSet ).addFormItem( myOuterFieldSet ).build();
 
-        //assertEquals( "myInput", form.getInput( "myInput" ).getPath().toString() );
         assertEquals( "myInput2", form.getInput( "myInput2" ).getPath().toString() );
     }
 }

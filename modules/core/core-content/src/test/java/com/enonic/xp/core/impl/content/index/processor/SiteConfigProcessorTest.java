@@ -9,10 +9,10 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.site.SiteConfig;
@@ -63,7 +63,7 @@ public class SiteConfigProcessorTest
         final PatternIndexConfigDocument result = processConfigs( siteConfigs, form );
         assertEquals( 1, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ).getIndexValueProcessors().get(
+            IndexPath.from( String.join( ".",  ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) ).getIndexValueProcessors().get(
             0 ).getName() );
     }
 
@@ -87,11 +87,11 @@ public class SiteConfigProcessorTest
         assertEquals( 2, result.getPathIndexConfigs().size() );
 
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ).getIndexValueProcessors().get(
+            IndexPath.from( String.join( ".",  ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) ).getIndexValueProcessors().get(
             0 ).getName() );
 
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, SITECONFIG, "config", "text2" ) ).getIndexValueProcessors().get(
+            IndexPath.from( String.join( ".", ContentPropertyNames.DATA, SITECONFIG, "config", "text2" ) ) ).getIndexValueProcessors().get(
             0 ).getName() );
     }
 
@@ -115,7 +115,10 @@ public class SiteConfigProcessorTest
         assertEquals( 1, result.getPathIndexConfigs().size() );
 
         assertEquals( "htmlStripper", result.getConfigForPath(
-            PropertyPath.from( ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ).getIndexValueProcessors().get( 0 ).getName() );
+                IndexPath.from( String.join( ".", ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
 
     }
 

@@ -186,29 +186,14 @@ public final class FormItemSet
         return formItems.getFormItemSet( FormItemPath.from( path ) );
     }
 
-    public FormItemSet getFormItemSet( final FormItemPath path )
-    {
-        return formItems.getFormItemSet( path );
-    }
-
     public Input getInput( final String path )
     {
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public Input getInput( final FormItemPath path )
-    {
-        return formItems.getInput( path );
-    }
-
     public InlineMixin getInlineMixin( final String name )
     {
         return formItems.getInlineMixin( FormItemPath.from( name ) );
-    }
-
-    public InlineMixin getInlineMixin( final FormItemPath formItemPath )
-    {
-        return formItems.getInlineMixin( formItemPath );
     }
 
     public static Builder create()

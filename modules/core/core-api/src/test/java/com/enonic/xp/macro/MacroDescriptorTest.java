@@ -44,7 +44,6 @@ public class MacroDescriptorTest
     {
         FieldSet body = FieldSet.create().
             label( "Body" ).
-            name( "body" ).
             addFormItem( Input.create().name( "param1" ).label( "Parameter 1" ).inputType( InputTypeName.TEXT_LINE ).build() ).
             build();
         final Form config = Form.create().addFormItem( body ).build();

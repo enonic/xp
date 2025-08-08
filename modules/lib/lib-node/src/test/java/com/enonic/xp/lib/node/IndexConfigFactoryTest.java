@@ -6,7 +6,6 @@ import java.util.SortedSet;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.internal.json.JsonHelper;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -28,11 +27,11 @@ public class IndexConfigFactoryTest
     {
         IndexConfigDocument minimal = create( "{\n" + " \"default\": \"minimal\"" + " }" );
 
-        assertEquals( IndexConfig.MINIMAL, minimal.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
+        assertEquals( IndexConfig.MINIMAL, minimal.getConfigForPath( IndexPath.from( "my.random.path" ) ) );
 
         IndexConfigDocument byType = create( "{\n" + " \"default\": \"byType\"" + " }" );
 
-        assertEquals( IndexConfig.BY_TYPE, byType.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, byType.getConfigForPath( IndexPath.from( "my.random.path" ) ) );
     }
 
     @Test
@@ -65,7 +64,7 @@ public class IndexConfigFactoryTest
         final SortedSet<PathIndexConfig> pathIndexConfigs = fullConfig.getPathIndexConfigs();
 
         assertEquals( 3, pathIndexConfigs.size() );
-        assertEquals( IndexConfig.FULLTEXT, fullConfig.getConfigForPath( PropertyPath.from( "displayName" ) ) );
+        assertEquals( IndexConfig.FULLTEXT, fullConfig.getConfigForPath( IndexPath.from( "displayName" ) ) );
     }
 
     @Test
@@ -93,7 +92,7 @@ public class IndexConfigFactoryTest
         throws Exception
     {
         IndexConfigDocument config = create( "{}" );
-        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( PropertyPath.from( "my.random.path" ) ) );
+        assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( IndexPath.from( "my.random.path" ) ) );
     }
 
     @Test

@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.data.PropertyPath;
 
 
 @PublicApi
@@ -45,6 +46,12 @@ public final class FormItemPath
         Preconditions.checkNotNull( path, "path cannot be null" );
 
         return fromInternal( ImmutableList.copyOf( path.split( Pattern.quote( ELEMENT_DIVIDER ), -1 ) ));
+    }
+
+    public static FormItemPath from( final PropertyPath path )
+    {
+        Preconditions.checkNotNull( path, "path cannot be null" );
+        return fromInternal( path.pathElements().stream().map( PropertyPath.Element::getName ).collect( ImmutableList.toImmutableList() ) );
     }
 
     private static FormItemPath fromInternal( final ImmutableList<String> elementNames )

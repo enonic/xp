@@ -25,7 +25,6 @@ assert.assertJsonEquals({
     form: [
         {
             'formItemType': 'Layout',
-            'name': 'myLayout',
             'label': 'My layout',
             'items': [
                 {

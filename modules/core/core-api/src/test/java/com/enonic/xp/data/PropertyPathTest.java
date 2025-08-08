@@ -103,12 +103,6 @@ public class PropertyPathTest
         assertThrows( IllegalArgumentException.class, () -> PropertyPath.from( "a.b[-1]" ) );
     }
 
-    @Test
-    public void resetAllIndexesTo()
-    {
-        assertEquals( "a[5].b[5].c[5].d[5]", PropertyPath.from( "a.b[1].c[2].d[3]" ).resetAllIndexesTo( 5 ).toString() );
-    }
-
 
     @Test
     public void build_with_strings()

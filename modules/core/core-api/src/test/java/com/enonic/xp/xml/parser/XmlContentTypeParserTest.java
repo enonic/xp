@@ -7,7 +7,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.FormOptionSet;
@@ -176,7 +175,7 @@ public class XmlContentTypeParserTest
         FieldSet fieldSet = null;
         for ( FormItem formItem : result.getForm() )
         {
-            if (formItem.getName().startsWith( "fieldSet" ))
+            if ( FormItemType.LAYOUT.equals( formItem.getType() ) )
             {
                 fieldSet = (FieldSet) formItem;
                 break;
@@ -205,7 +204,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", formItemSet.getLabelI18nKey() );
         assertEquals( "translated.help-text", formItemSet.getHelpTextI18nKey() );
 
-        final Input inputInsideFormItemSet = formItemSet.getInput( FormItemPath.from( "textLine1" ) );
+        final Input inputInsideFormItemSet = formItemSet.getInput( "textLine1" );
 
         assertEquals( "translated.help-text", inputInsideFormItemSet.getHelpTextI18nKey() );
         assertEquals( "translated.label", inputInsideFormItemSet.getLabelI18nKey() );
@@ -256,17 +255,16 @@ public class XmlContentTypeParserTest
 
 
         // field set
-        FormItem fieldSetItem = null;
-        for ( final FormItem next : result.getForm() )
+        FieldSet fieldSet = null;
+        for ( FormItem formItem : result.getForm() )
         {
-            if ( next.getName().startsWith( "fieldSet" ) )
+            if ( FormItemType.LAYOUT.equals( formItem.getType() ) )
             {
-                fieldSetItem = next;
+                fieldSet = (FieldSet) formItem;
+                break;
             }
         }
-        assertNotNull( fieldSetItem );
-
-        final FieldSet fieldSet = (FieldSet) fieldSetItem;
+        assertNotNull( fieldSet );
 
         assertEquals( "translated.label", fieldSet.getLabelI18nKey() );
         assertEquals( "translated.label", fieldSet.getLabel() );

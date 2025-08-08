@@ -175,7 +175,6 @@ assert.assertJsonEquals({
                 },
                 {
                     'formItemType': 'Layout',
-                    'name': 'fieldSet1',
                     'label': 'My field set',
                     'items': [
                         {

@@ -14,10 +14,11 @@ class IndexItemFactory
 {
     public static List<IndexItem> create( final Property property, final IndexConfigDocument indexConfigDocument )
     {
+        final IndexPath indexPath = IndexPath.from( property.getPath() );
         final Value processedPropertyValue =
-            applyValueProcessors( property.getValue(), indexConfigDocument.getConfigForPath( property.getPath() ) );
+            applyValueProcessors( property.getValue(), indexConfigDocument.getConfigForPath( indexPath ) );
 
-        return createItems( IndexPath.from( property ), indexConfigDocument, processedPropertyValue );
+        return createItems( indexPath, indexConfigDocument, processedPropertyValue );
     }
 
     public static List<IndexItem> create( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )

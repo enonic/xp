@@ -3,7 +3,6 @@ package com.enonic.xp.xml.parser;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -25,8 +24,6 @@ import com.enonic.xp.xml.XmlException;
 @PublicApi
 public final class XmlFormMapper
 {
-    private static final AtomicInteger FIELD_SET_COUNTER = new AtomicInteger( 1 );
-
     private final ApplicationKey currentApplication;
 
     private final XmlInputTypeDefaultMapper defaultMapper;
@@ -131,7 +128,6 @@ public final class XmlFormMapper
     private FieldSet buildFieldSetItem( final DomElement root )
     {
         final FieldSet.Builder builder = FieldSet.create();
-        builder.name( "fieldSet" + FIELD_SET_COUNTER.getAndIncrement() );
         final String labelI18n = getLabelI18n( root );
         builder.label( getLabel( root, labelI18n ) );
         builder.labelI18nKey( labelI18n );

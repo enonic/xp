@@ -309,7 +309,7 @@ public final class XmlNodeParser
 
         for ( final DomElement elem : root.getChildren( "pathIndexConfig" ) )
         {
-            builder.addPattern( parsePathIndexConfig( elem ) );
+            builder.add( parsePathIndexConfig( elem ) );
         }
     }
 

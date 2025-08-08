@@ -14,11 +14,11 @@ import org.mockito.stubbing.Answer;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
@@ -125,8 +125,8 @@ public class UpdateNodeHandlerTest
         assertThat( myArray ).containsExactly( "modified1", "modified2", "modified3" );
 
         final IndexConfigDocument indexConfigDocument = editedNode.indexConfigDocument;
-        assertFalse( indexConfigDocument.getConfigForPath( PropertyPath.from( "displayName" ) ).isEnabled() );
-        assertTrue( indexConfigDocument.getConfigForPath( PropertyPath.from( "whatever" ) ).isFulltext() );
+        assertFalse( indexConfigDocument.getConfigForPath( IndexPath.from( "displayName" ) ).isEnabled() );
+        assertTrue( indexConfigDocument.getConfigForPath( IndexPath.from( "whatever" ) ).isFulltext() );
     }
 
     @Test

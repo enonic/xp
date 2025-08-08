@@ -62,7 +62,6 @@ public class ValidateContentDataCommandTest
             .name( "myapplication:my_type" )
             .addFormItem( FieldSet.create()
                               .label( "My layout" )
-                              .name( "myLayout" )
                               .addFormItem( FormItemSet.create()
                                                 .name( "mySet" )
                                                 .required( true )
@@ -91,7 +90,6 @@ public class ValidateContentDataCommandTest
         // setup
         final FieldSet fieldSet = FieldSet.create()
             .label( "My layout" )
-            .name( "myLayout" )
             .addFormItem( FormItemSet.create()
                               .name( "mySet" )
                               .required( true )
@@ -142,7 +140,6 @@ public class ValidateContentDataCommandTest
         // setup
         final FieldSet fieldSet = FieldSet.create()
             .label( "My layout" )
-            .name( "myLayout" )
             .addFormItem( FormItemSet.create()
                               .name( "mySet" )
                               .required( true )
@@ -170,7 +167,6 @@ public class ValidateContentDataCommandTest
         // setup
         final FieldSet fieldSet = FieldSet.create()
             .label( "My layout" )
-            .name( "myLayout" )
             .addFormItem( FormItemSet.create()
                               .name( "mySet" )
                               .required( true )

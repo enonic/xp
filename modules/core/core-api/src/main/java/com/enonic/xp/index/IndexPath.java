@@ -1,8 +1,10 @@
 package com.enonic.xp.index;
 
 
+import java.util.stream.Collectors;
+
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 
 @PublicApi
 public final class IndexPath
@@ -19,9 +21,9 @@ public final class IndexPath
         return new IndexPath( path );
     }
 
-    public static IndexPath from( final Property property )
+    public static IndexPath from( final PropertyPath path )
     {
-        return IndexPath.from( property.getPath().resetAllIndexesTo( 0 ).toString() );
+        return IndexPath.from( path.pathElements().stream().map( PropertyPath.Element::getName ).collect( Collectors.joining( "." ) ) );
     }
 
     public String getPath()

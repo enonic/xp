@@ -4,10 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
@@ -46,7 +46,7 @@ public class XDataConfigProcessorTest
         final PatternIndexConfigDocument result = processForms( Form.empty() );
 
         assertEquals( 1, result.getPathIndexConfigs().size() );
-        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( PropertyPath.from( EXTRA_DATA ) ) );
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( IndexPath.from( EXTRA_DATA ) ) );
 
     }
 
@@ -68,7 +68,7 @@ public class XDataConfigProcessorTest
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      result.getConfigForPath( PropertyPath.from( EXTRA_DATA + ".appname.localname0.htmlarea" ) ).getIndexValueProcessors().get(
+                      result.getConfigForPath( IndexPath.from( EXTRA_DATA + ".appname.localname0.htmlarea" ) ).getIndexValueProcessors().get(
                           0 ).getName() );
 
     }
