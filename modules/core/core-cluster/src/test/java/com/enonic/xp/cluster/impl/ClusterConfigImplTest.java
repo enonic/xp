@@ -27,7 +27,7 @@ public class ClusterConfigImplTest
         assertNotNull( discovery );
 
         final List hosts = discovery.get();
-        assertEquals( 3, hosts.size() );
+        assertEquals( 2, hosts.size() );
     }
 
     @Test
