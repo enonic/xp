@@ -148,4 +148,6 @@ prometheus-metrics-exposition-textformats = { module = "io.prometheus:prometheus
 prometheus-metrics-model = { module = "io.prometheus:prometheus-metrics-model", version.ref = "prometheus" }
 prometheus-metrics-tracer-common = { module = "io.prometheus:prometheus-metrics-tracer-common", version.ref = "prometheus" }
 
+networknt = { module = "com.networknt:json-schema-validator", version = "1.5.8" }
+
 [plugins]

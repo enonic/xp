@@ -1,0 +1,119 @@
+label:
+  text: "Article"
+  i18n: "article.label"
+
+displayName:
+  text: "Article heading"
+  i18n: "article.title"
+  expression: "${expression}"
+
+description:
+  text: "Brief description"
+  i18n: "article.description"
+
+superType: "base:structured"
+
+isAbstract: false
+
+isFinal: false
+
+allowChildContent: false
+
+allowChildContentType:
+  - "person"
+  - "movie"
+
+xData:
+  - name: "meta-data1"
+    optional: true
+    allowContentTypes: "portal:site"
+  - name: "meta-data2"
+    optional: true
+    allowContentTypes: "portal:site"
+
+config:
+  maxLength: 300
+  minLength: 80
+
+form:
+  - type: "TextLine"
+    name: "sdsdsd"
+    customText: "Help text"
+    immutable: true
+    label:
+      text: "CustomSelector Label"
+    config:
+      p1: "v1"
+      p2: 123
+    occurrences:
+      minimum: 0
+      maximum: 1
+    default: 123.6
+  - type: "TextLine"
+    name: "dsds"
+    customText: "Help text2"
+    label:
+      text: "TextLine Value2"
+  - type: "HtmlArea"
+    name: "sdfdsdsds"
+    customText: "HtmlArea Help text"
+    immutable: false
+    label:
+      text: "HtmlArea Value"
+  - type: "FieldSet"
+    items:
+      - type: "TextLine"
+        name: "ssssdsds"
+        label:
+          text: "TextLine inside FieldSet"
+      - type: "FieldSet"
+        label:
+          text: "Nested FieldSet"
+        items:
+          - type: "HtmlArea"
+            name: "sssss"
+            validationRegexp: ".*"
+            customText: "HtmlArea Help text"
+            immutable: false
+            label:
+              text: "HtmlArea Value"
+  - type: "ItemSet"
+    name: "panel"
+    label:
+      text: "Panel"
+      i18n: "article.storypanel"
+    items:
+      - type: "Mixin"
+        name: "commonFields"
+
+      - type: "OptionSet"
+        name: "blocks"
+        label:
+          text: "Content blocks"
+          i18n: "article.blocks"
+        helpText:
+          text: "Compose your article from a selection of blocks"
+          i18n: "article.blocks.help"
+        expanded: true
+        occurrences:
+          minimum: 1
+          maximum: 0
+        options:
+          minimum: 1
+          maximum: 1
+          option:
+            - name: "text"
+              label:
+                text: "Text"
+                i18n: "article.text"
+              helpText:
+                text: "HelpText"
+              default: true
+              items:
+                - type: "HtmlArea"
+                  name: "name"
+                  validationRegexp: ".*"
+                  customText: "HtmlArea Help text"
+                  immutable: false
+                  label:
+                    text: "HtmlArea Value"
