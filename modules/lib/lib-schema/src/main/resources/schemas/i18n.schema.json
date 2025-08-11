@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/i18n.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/i18n.schema.json",
   "type": "object",
   "properties": {
     "text": {

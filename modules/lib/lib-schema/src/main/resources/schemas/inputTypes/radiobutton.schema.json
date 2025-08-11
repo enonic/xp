@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xp.enonic.com/schemas/json/inputTypes/radiobutton.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://xp.enonic.com/schemas/json/input.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "RadioButton"
+        },
+        "option": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "i18n": {
+                "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+              }
+            }
+          }
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

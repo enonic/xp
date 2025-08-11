@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xp.enonic.com/schemas/json/inputTypes/textarea.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://xp.enonic.com/schemas/json/input.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "TextArea"
+        },
+        "maxLength": {
+          "type": "integer"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

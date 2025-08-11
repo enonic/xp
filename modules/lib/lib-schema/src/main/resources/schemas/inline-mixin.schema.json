@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/inline-mixin.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/inline-mixin.schema.json",
   "allOf": [
     {
-      "$ref": "classpath:/schemas/form-item.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/form-item.schema.json"
     },
     {
       "type": "object",

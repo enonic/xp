@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/option-set.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/option-set.schema.json",
   "allOf": [
     {
-      "$ref": "classpath:/schemas/form-item.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/form-item.schema.json"
     },
     {
       "type": "object",
@@ -12,19 +12,19 @@
           "type": "string"
         },
         "label": {
-          "$ref": "classpath:/schemas/i18n.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
         },
         "expanded": {
           "type": "boolean"
         },
         "helpText": {
-          "$ref": "classpath:/schemas/i18n.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
         },
         "occurrences": {
-          "$ref": "classpath:/schemas/occurrence.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/occurrence.schema.json"
         },
         "options": {
-          "$ref": "classpath:/schemas/option-set-options.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/option-set-options.schema.json"
         },
         "type": {
           "const": "OptionSet"

@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/item-set.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/item-set.schema.json",
   "allOf": [
     {
-      "$ref": "classpath:/schemas/form-item.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/form-item.schema.json"
     },
     {
       "type": "object",
@@ -12,7 +12,7 @@
           "type": "string"
         },
         "label": {
-          "$ref": "classpath:/schemas/i18n.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
         },
         "immutable": {
           "type": "boolean"
@@ -21,15 +21,15 @@
           "type": "string"
         },
         "helpText": {
-          "$ref": "classpath:/schemas/i18n.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
         },
         "occurrences": {
-          "$ref": "classpath:/schemas/occurrence.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/occurrence.schema.json"
         },
         "items": {
           "type": "array",
           "items": {
-            "$ref": "classpath:/schemas/form-items.schema.json"
+            "$ref": "https://xp.enonic.com/schemas/json/form-items.schema.json"
           }
         },
         "type": {

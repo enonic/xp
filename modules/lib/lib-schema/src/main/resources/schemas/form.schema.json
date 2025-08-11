@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/form.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/form.schema.json",
   "type": "array",
   "items": {
-    "$ref": "classpath:/schemas/form-items.schema.json"
+    "$ref": "https://xp.enonic.com/schemas/json/form-items.schema.json"
   },
   "additionalProperties": false
 }

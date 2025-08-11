@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xp.enonic.com/schemas/json/inputTypes/time.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://xp.enonic.com/schemas/json/input.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Time"
+        },
+        "default": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

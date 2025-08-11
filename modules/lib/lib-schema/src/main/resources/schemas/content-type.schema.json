@@ -1,16 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/content-type.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/content-type.schema.json",
   "type": "object",
   "properties": {
     "label": {
-      "$ref": "classpath:/schemas/i18n.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
     },
     "description": {
-      "$ref": "classpath:/schemas/i18n.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
     },
     "displayName": {
-      "$ref": "classpath:/schemas/display-name.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/display-name.schema.json"
     },
     "superType": {
       "type": "string"
@@ -33,14 +33,14 @@
     "xData": {
       "type": "array",
       "items": {
-        "$ref": "classpath:/schemas/xdata.schema.json"
+        "$ref": "https://xp.enonic.com/schemas/json/xdata.schema.json"
       }
     },
     "config": {
-      "$ref": "classpath:/schemas/config.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/config.schema.json"
     },
     "form": {
-      "$ref": "classpath:/schemas/form.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/form.schema.json"
     }
   },
   "additionalProperties": false

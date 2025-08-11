@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/input.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/input.schema.json",
   "allOf": [
     {
-      "$ref": "classpath:/schemas/form-item.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/form-item.schema.json"
     },
     {
       "type": "object",
@@ -12,7 +12,7 @@
           "type": "string"
         },
         "label": {
-          "$ref": "classpath:/schemas/i18n.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
         },
         "immutable": {
           "type": "boolean"
@@ -24,48 +24,16 @@
           "type": "string"
         },
         "helpText": {
-          "$ref": "classpath:/schemas/i18n.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
         },
         "validationRegexp": {
           "type": "string"
         },
         "occurrences": {
-          "$ref": "classpath:/schemas/occurrence.schema.json"
-        },
-        "config": {
-          "$ref": "classpath:/schemas/config.schema.json"
+          "$ref": "https://xp.enonic.com/schemas/json/occurrence.schema.json"
         },
         "maximize": {
           "type": "boolean"
-        },
-        "default": {
-          "$ref": "classpath:/schemas/default.schema.json"
-        },
-        "type": {
-          "enum": [
-            "ComboBox",
-            "Date",
-            "Time",
-            "DateTime",
-            "CheckBox",
-            "Double",
-            "GeoPoint",
-            "HtmlArea",
-            "ImageUploader",
-            "MediaUploader",
-            "AttachmentUploader",
-            "ImageSelector",
-            "MediaSelector",
-            "ContentSelector",
-            "CustomSelector",
-            "RadioButton",
-            "Tag",
-            "TextArea",
-            "TextLine",
-            "Long",
-            "ContentTypeFilter",
-            "SiteConfigurator"
-          ]
         }
       },
       "required": [
@@ -74,5 +42,5 @@
       ]
     }
   ],
-  "unevaluatedProperties": false
+  "unevaluatedProperties": true
 }

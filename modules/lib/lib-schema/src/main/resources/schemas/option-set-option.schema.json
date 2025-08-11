@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "classpath:/schemas/option-set-option.schema.json",
+  "$id": "https://xp.enonic.com/schemas/json/option-set-option.schema.json",
   "type": "object",
   "properties": {
     "name": {
@@ -10,15 +10,15 @@
       "type": "boolean"
     },
     "label": {
-      "$ref": "classpath:/schemas/i18n.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
     },
     "helpText": {
-      "$ref": "classpath:/schemas/i18n.schema.json"
+      "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
     },
     "items": {
       "type": "array",
       "items": {
-        "$ref": "classpath:/schemas/form-items.schema.json"
+        "$ref": "https://xp.enonic.com/schemas/json/form-items.schema.json"
       }
     }
   },
