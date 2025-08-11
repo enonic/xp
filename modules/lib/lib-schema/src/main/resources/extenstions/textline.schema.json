@@ -9,7 +9,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "const": "TextLine"
+          "const": "CustomTextLine"
         },
         "maxLength": {
           "type": "integer"

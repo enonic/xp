@@ -54,14 +54,12 @@ form:
           text: "customTextLine"
           i18n: "article.customTextLine"
         maxLength: 300
-        minLength: 1
       - type: "TextArea"
         name: "preface"
         label:
           text: "Preface"
           i18n: "article.preface"
-        config:
-          maxLength: 300
+        maxLength: 300
         occurrences:
           minimum: 0
           maximum: 1

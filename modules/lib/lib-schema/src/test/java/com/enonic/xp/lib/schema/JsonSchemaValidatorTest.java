@@ -194,4 +194,22 @@ public class JsonSchemaValidatorTest
                         
             """ ) );
     }
+
+    @Test
+    void testValidateDate()
+    {
+        JsonSchemaRegistry schemaRegistry = new JsonSchemaRegistry();
+        schemaRegistry.activate();
+
+        JsonSchemaServiceImpl schemaService = new JsonSchemaServiceImpl( schemaRegistry );
+        schemaService.activate();
+
+        assertTrue( schemaService.isSchemaValid( "https://xp.enonic.com/schemas/json/inputTypes/date.schema.json", """
+            type: "Date"
+            name: "myDate"
+            label:
+              text: "My Date"
+            default: "2011-09-12"
+            """ ) );
+    }
 }
