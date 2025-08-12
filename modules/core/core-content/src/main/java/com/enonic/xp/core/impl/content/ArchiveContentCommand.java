@@ -67,8 +67,6 @@ final class ArchiveContentCommand
 
     ArchiveContentsResult execute()
     {
-        params.validate();
-
         try
         {
             return doExecute();

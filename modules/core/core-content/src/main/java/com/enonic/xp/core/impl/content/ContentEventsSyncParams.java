@@ -18,7 +18,7 @@ public final class ContentEventsSyncParams
 
     private final ContentSyncEventType syncType;
 
-    public ContentEventsSyncParams( Builder builder )
+    private ContentEventsSyncParams( final Builder builder )
     {
         this.contentIds = builder.contentIds.build();
         this.sourceProject = builder.sourceProject;

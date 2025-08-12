@@ -12,7 +12,7 @@ public final class ListDynamicContentSchemasParams
 
     private final DynamicContentSchemaType type;
 
-    public ListDynamicContentSchemasParams( final Builder builder )
+    private ListDynamicContentSchemasParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;

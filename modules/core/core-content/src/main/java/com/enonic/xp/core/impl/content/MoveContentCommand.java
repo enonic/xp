@@ -47,8 +47,6 @@ final class MoveContentCommand
 
     MoveContentsResult execute()
     {
-        params.validate();
-
         try
         {
             return doExecute();

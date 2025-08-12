@@ -52,7 +52,6 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
-import com.enonic.xp.content.FindContentPathsByQueryParams;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
@@ -746,7 +745,7 @@ public class ContentServiceImpl
     public FindContentPathsByQueryResult findPaths( ContentQuery query )
     {
         return FindContentPathsByQueryCommand.create().
-            params( new FindContentPathsByQueryParams( query ) ).
+            contentQuery( query ).
             nodeService( this.nodeService ).
             contentTypeService( this.contentTypeService ).
             translator( this.translator ).
@@ -761,7 +760,7 @@ public class ContentServiceImpl
         return CompareContentsCommand.create().
             nodeService( this.nodeService ).
             contentIds( params.getContentIds() ).
-            target( Objects.requireNonNullElse( params.getTarget(), ContentConstants.BRANCH_MASTER ) ).
+            target( ContentConstants.BRANCH_MASTER ).
             build().
             execute();
     }
@@ -774,8 +773,7 @@ public class ContentServiceImpl
         final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
             branch( Objects.requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) ).
             attribute( "ignorePublishTimes", Boolean.TRUE ).
-            build().
-            callWith( () -> this.getByIds( new GetContentByIdsParams( params.getContentIds() ) ) );
+            build().callWith( () -> this.getByIds( GetContentByIdsParams.create().contentIds( params.getContentIds() ).build() ) );
 
         final GetPublishStatusesResult.Builder getPublishStatusesResult = GetPublishStatusesResult.create();
 

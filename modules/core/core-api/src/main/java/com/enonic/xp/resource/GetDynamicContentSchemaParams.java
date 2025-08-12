@@ -12,7 +12,7 @@ public final class GetDynamicContentSchemaParams
 
     private final DynamicContentSchemaType type;
 
-    public GetDynamicContentSchemaParams( final Builder builder )
+    private GetDynamicContentSchemaParams( final Builder builder )
     {
         this.name = builder.name;
         this.type = builder.type;

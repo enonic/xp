@@ -6,7 +6,7 @@ public final class CreateBranchParams
 {
     private final Branch branch;
 
-    public CreateBranchParams( final Branch branch )
+    private CreateBranchParams( final Branch branch )
     {
         this.branch = branch;
     }

@@ -19,7 +19,7 @@ public final class ContentSyncParams
 
     private final boolean includeChildren;
 
-    public ContentSyncParams( Builder builder )
+    private ContentSyncParams( Builder builder )
     {
         this.contentIds = builder.contentIds.build();
         this.sourceProject = builder.sourceProject;

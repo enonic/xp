@@ -14,7 +14,7 @@ public final class CreateDynamicContentSchemaParams
 
     private final String resource;
 
-    public CreateDynamicContentSchemaParams( final Builder builder )
+    private CreateDynamicContentSchemaParams( final Builder builder )
     {
         this.name = builder.name;
         this.type = builder.type;

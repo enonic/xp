@@ -12,7 +12,7 @@ public final class GetDynamicComponentParams
 
     private final DynamicComponentType type;
 
-    public GetDynamicComponentParams( final Builder builder )
+    private GetDynamicComponentParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;

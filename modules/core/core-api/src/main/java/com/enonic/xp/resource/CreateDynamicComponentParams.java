@@ -14,7 +14,7 @@ public final class CreateDynamicComponentParams
 
     private final String resource;
 
-    public CreateDynamicComponentParams( final Builder builder )
+    private CreateDynamicComponentParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;

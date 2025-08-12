@@ -8,7 +8,7 @@ public final class ProjectSyncParams
 {
     private final ProjectName targetProject;
 
-    public ProjectSyncParams( Builder builder )
+    private ProjectSyncParams( final Builder builder )
     {
         this.targetProject = builder.targetProject;
     }

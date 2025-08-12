@@ -16,6 +16,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentDependenciesAggregation;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentService;
@@ -84,6 +85,7 @@ public class ContentDependenciesResolverTest
                     build() ).build() ) ).build();
 
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
+        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.empty() );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
 
@@ -93,15 +95,15 @@ public class ContentDependenciesResolverTest
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
-        assertEquals( result.getInbound().size(), 2 );
+        assertEquals( 2, result.getInbound().size() );
 
         final ContentDependenciesAggregation siteAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[0];
         assertEquals( siteAggregation.getType(), ContentTypeName.site() );
-        assertEquals( siteAggregation.getCount(), 2 );
+        assertEquals( 2, siteAggregation.getCount() );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getInbound().toArray()[1];
         assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        assertEquals( folderAggregation.getCount(), 1 );
+        assertEquals( 1, folderAggregation.getCount() );
 
     }
 
@@ -128,6 +130,7 @@ public class ContentDependenciesResolverTest
                 buckets( Buckets.create().
                     build() ).build() ) ).build();
 
+        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2", "siteRefContent1" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
             Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
@@ -162,6 +165,7 @@ public class ContentDependenciesResolverTest
                 buckets( Buckets.create().
                     build() ).build() ) ).build();
 
+        Mockito.when( contentService.getOutboundDependencies( Mockito.any() ) ).thenReturn( ContentIds.from( "folderRefContent1", "folderRefContent2" ) );
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn( Contents.from( folderRefContent1, folderRefContent2 ) );
         Mockito.when( contentService.getById( content.getId() ) ).thenReturn( content );
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( findContentByQueryResult );
@@ -171,10 +175,10 @@ public class ContentDependenciesResolverTest
 
         final ContentDependencies result = resolver.resolve( content.getId() );
 
-        assertEquals( result.getOutbound().size(), 1 );
+        assertEquals( 1, result.getOutbound().size() );
 
         final ContentDependenciesAggregation folderAggregation = (ContentDependenciesAggregation) result.getOutbound().toArray()[0];
         assertEquals( folderAggregation.getType(), ContentTypeName.folder() );
-        assertEquals( folderAggregation.getCount(), 2 );
+        assertEquals( 2, folderAggregation.getCount() );
     }
 }

@@ -8,7 +8,7 @@ public final class SystemDumpUpgradeParams
 
     private final UpgradeListener upgradeListener;
 
-    public SystemDumpUpgradeParams( final Builder builder )
+    private SystemDumpUpgradeParams( final Builder builder )
     {
         this.dumpName = builder.dumpName;
         this.upgradeListener = builder.upgradeListener;

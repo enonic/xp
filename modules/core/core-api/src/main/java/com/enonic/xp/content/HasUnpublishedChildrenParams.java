@@ -9,9 +9,9 @@ public final class HasUnpublishedChildrenParams
 {
     private final ContentId contentId;
 
-    private HasUnpublishedChildrenParams( final ContentId contentId )
+    private HasUnpublishedChildrenParams( final Builder builder )
     {
-        this.contentId = contentId;
+        this.contentId = builder.contentId;
     }
 
     public ContentId getContentId()
@@ -41,7 +41,7 @@ public final class HasUnpublishedChildrenParams
         public HasUnpublishedChildrenParams build()
         {
             Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
-            return new HasUnpublishedChildrenParams( this.contentId );
+            return new HasUnpublishedChildrenParams( this );
         }
     }
 }

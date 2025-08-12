@@ -30,7 +30,7 @@ public class ContentServiceImplTest_getByIds
             build() );
 
         final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
+        final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
 
         assertEquals( contents.getSize(), 2 );
         assertTrue( contents.contains( content1 ) );
@@ -48,7 +48,7 @@ public class ContentServiceImplTest_getByIds
                 build() );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-            final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
+            final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
 
             assertThat( contents ).map( Content::getId ).containsExactly( content1.getId() );
 
@@ -67,7 +67,7 @@ public class ContentServiceImplTest_getByIds
             build() );
 
         final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
+        final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
 
         assertThat( contents ).map( Content::getId ).containsExactlyInAnyOrder( content1.getId(), content2.getId() );
     }
@@ -84,7 +84,7 @@ public class ContentServiceImplTest_getByIds
                 build() );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-            final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
+            final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
 
             assertThat( contents ).map( Content::getId ).containsExactly( content1.getId() );
 
@@ -103,7 +103,7 @@ public class ContentServiceImplTest_getByIds
             build() );
 
         final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-        final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
+        final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
 
         assertEquals( contents.getSize(), 2 );
         assertTrue( contents.contains( content1 ) );
@@ -122,7 +122,7 @@ public class ContentServiceImplTest_getByIds
                 build() );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-            final Contents contents = this.contentService.getByIds( new GetContentByIdsParams( ids ) );
+            final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
 
             assertThat( contents ).map( Content::getId ).containsExactlyInAnyOrder( content1.getId(), content2.getId() );
             return null;
