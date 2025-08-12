@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.CleanupMode;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -14,6 +16,7 @@ import com.enonic.xp.resource.UrlResource;
 
 public class ResolverTestSupport
 {
+    @TempDir(cleanup = CleanupMode.NEVER) // https://bugs.openjdk.java.net/browse/JDK-6956385
     public Path temporaryFolder;
 
     protected ResourceService resourceService;
@@ -22,7 +25,6 @@ public class ResolverTestSupport
     public final void setup()
         throws Exception
     {
-        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
         temporaryFolder = Files.createTempDirectory("resolverTestSupport");
         this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( this.resourceService.getResource( Mockito.any() ) ).then( this::loadResource );

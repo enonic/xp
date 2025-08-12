@@ -99,7 +99,7 @@ public final class HandlerHelper
 
         if ( body instanceof Map )
         {
-            return null; // TODO
+            return null; //TODO
         }
 
         if ( body instanceof byte[] )

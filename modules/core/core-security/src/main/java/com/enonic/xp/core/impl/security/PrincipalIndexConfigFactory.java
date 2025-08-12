@@ -9,7 +9,6 @@ class PrincipalIndexConfigFactory
 {
     public static IndexConfigDocument create()
     {
-        // TODO: User correct analyzer when repository system is created
         return PatternIndexConfigDocument.create().
             analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
             add( PrincipalPropertyNames.DISPLAY_NAME_KEY, IndexConfig.FULLTEXT ).

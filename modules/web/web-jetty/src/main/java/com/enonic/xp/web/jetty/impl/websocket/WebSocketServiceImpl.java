@@ -74,7 +74,6 @@ public final class WebSocketServiceImpl
             @Override
             public boolean checkOrigin( final String originHeaderValue )
             {
-                // TODO: Check origin
                 return defaultConfigurator.checkOrigin( originHeaderValue );
             }
 

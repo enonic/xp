@@ -1,12 +1,7 @@
-import type {
-    Request,
-} from '../core/index';
+import type {Request,} from '../core/index';
 import {RequestImplementation} from './RequestImplementation';
 
-import {
-    expectAssignable,
-	expectNotAssignable,
-} from 'tsd';
+import {expectAssignable, expectNotAssignable,} from 'tsd';
 
 // Scenario: When implementing a idprovider login function the Request may have a validTicket property
 // Scenario: When implementing a idprovider logout function the Request may have a validTicket property
@@ -484,9 +479,6 @@ const customSelectorRequest = {
 };
 
 expectAssignable<Request>(customSelectorRequest);
-
-// TODO https://developer.enonic.com/docs/xp/stable/framework/filters
-// TODO processors
 
 const responseProcessorRequest = {
     'method': 'HEAD',

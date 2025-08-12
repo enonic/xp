@@ -49,11 +49,6 @@ public final class ArchiveContentParams
         return message;
     }
 
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
-    }
-
     public static final class Builder
     {
         private ContentId contentId;

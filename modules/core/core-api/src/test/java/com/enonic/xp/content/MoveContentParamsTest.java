@@ -31,7 +31,7 @@ public class MoveContentParamsTest
     @Test
     public void testValidate()
     {
-        assertThrows(NullPointerException.class, () -> new MoveContentParams( null ));
+        assertThrows( NullPointerException.class, () -> MoveContentParams.create().build() );
     }
 
 }

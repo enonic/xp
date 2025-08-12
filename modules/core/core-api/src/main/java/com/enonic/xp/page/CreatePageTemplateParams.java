@@ -107,9 +107,4 @@ public final class CreatePageTemplateParams
     {
         return pageConfig;
     }
-
-    public void validate()
-    {
-        // TODO
-    }
 }

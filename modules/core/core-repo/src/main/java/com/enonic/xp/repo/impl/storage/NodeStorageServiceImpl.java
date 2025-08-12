@@ -182,7 +182,6 @@ public class NodeStorageServiceImpl
     @Override
     public void updateVersion( final Node node, final InternalContext context )
     {
-        //TODO Check
         final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( node.getNodeVersionId(), context );
 
         if ( nodeVersionMetadata == null )

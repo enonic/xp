@@ -267,7 +267,6 @@ abstract class IdProviderNodeTranslator
         }
         else if ( IdProviderKey.system().equals( idProviderKey ) )
         {
-            //TODO Remove after next dump upgrade
             final IdProviderConfig idProviderConfig = IdProviderConfig.create().
                 applicationKey( SYSTEM_ID_PROVIDER_KEY ).
                 build();

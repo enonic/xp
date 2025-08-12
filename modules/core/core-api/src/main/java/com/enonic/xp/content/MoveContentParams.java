@@ -18,7 +18,7 @@ public final class MoveContentParams
 
     private final boolean stopInherit;
 
-    public MoveContentParams( Builder builder )
+    private MoveContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.parentContentPath = builder.parentContentPath;
@@ -57,14 +57,8 @@ public final class MoveContentParams
         return stopInherit;
     }
 
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
-    }
-
     public static final class Builder
     {
-
         private ContentId contentId;
 
         private ContentPath parentContentPath;
@@ -111,6 +105,7 @@ public final class MoveContentParams
 
         public MoveContentParams build()
         {
+            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
             return new MoveContentParams( this );
         }
     }

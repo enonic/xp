@@ -188,7 +188,6 @@ public final class Media
             return null;
         }
 
-        //TODO The values stored in top, left, bottom and right are not the correct values
         final double fixedTop = top / zoom;
         final double fixedLeft = left / zoom;
         final double fixedBottom = bottom / zoom;
