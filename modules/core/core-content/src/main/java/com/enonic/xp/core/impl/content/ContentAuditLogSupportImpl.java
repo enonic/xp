@@ -527,10 +527,10 @@ public class ContentAuditLogSupportImpl
             final PropertySet contentSet = resultSet.addSet( contentId.toString() );
             branchResults.forEach( branchResult -> {
 
-                final PropertySet branchSet = contentSet.addSet( branchResult.getBranch().toString() );
-                if ( branchResult.getContent() != null )
+                final PropertySet branchSet = contentSet.addSet( branchResult.branch().toString() );
+                if ( branchResult.content() != null )
                 {
-                    addContentWithPermissions( branchSet, branchResult.getContent() );
+                    addContentWithPermissions( branchSet, branchResult.content() );
                 }
             } );
         } );
@@ -540,9 +540,9 @@ public class ContentAuditLogSupportImpl
             .stream()
             .flatMap( entry -> entry.getValue()
                 .stream()
-                .map( branchResult -> branchResult.getContent() != null ? createAuditLogUri( entry.getKey(),
-                                                                                             ContextBuilder.from( rootContext )
-                                                                                                 .branch( branchResult.getBranch() )
+                .map( branchResult -> branchResult.content() != null ? createAuditLogUri( entry.getKey(),
+                                                                                          ContextBuilder.from( rootContext )
+                                                                                                 .branch( branchResult.branch() )
                                                                                                  .build() ) : null )
                 .filter( Objects::nonNull ) )
             .collect( AuditLogUris.collector() );

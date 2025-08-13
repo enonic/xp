@@ -35,35 +35,15 @@ public final class ApplyContentPermissionsResult
         final List<BranchResult> results = this.results.get( contentId );
         return results != null ? this.results.get( contentId )
             .stream()
-            .filter( br -> br.getBranch().equals( branch ) )
-            .map( BranchResult::getContent )
+            .filter( br -> br.branch().equals( branch ) )
+            .map( BranchResult::content )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
     }
 
-    public static final class BranchResult
+    public record BranchResult(Branch branch, Content content)
     {
-        private final Branch branch;
-
-        private final Content content;
-
-        public BranchResult( Branch branch, Content content )
-        {
-            this.branch = branch;
-            this.content = content;
-        }
-
-        public Branch getBranch()
-        {
-            return branch;
-        }
-
-        public Content getContent()
-        {
-            return content;
-        }
-
     }
 
     public static final class Builder

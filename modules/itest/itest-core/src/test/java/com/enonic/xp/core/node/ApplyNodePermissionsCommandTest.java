@@ -351,11 +351,11 @@ public class ApplyNodePermissionsCommandTest
                                                                                     .build() );
 
         assertEquals( 1, result.getResults().size() );
-        assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ ) );
+        assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).node().getPermissions().isAllowedFor( principal, READ ) );
         assertTrue( result.getResults()
                         .get( createdNode.id() )
                         .get( 0 )
-                        .getNode()
+                        .node()
                         .getPermissions()
                         .isAllowedFor( principal, MODIFY, DELETE, CREATE, PUBLISH, WRITE_PERMISSIONS, READ_PERMISSIONS ) );
 
@@ -398,11 +398,11 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 1, result.getResults().size() );
         assertTrue(
-            result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isAllowedFor( principal, READ, MODIFY ) );
+            result.getResults().get( createdNode.id() ).get( 0 ).node().getPermissions().isAllowedFor( principal, READ, MODIFY ) );
         assertFalse( result.getResults()
                          .get( createdNode.id() )
                          .get( 0 )
-                         .getNode()
+                         .node()
                          .getPermissions()
                          .isAllowedFor( principal, DELETE, CREATE, PUBLISH, WRITE_PERMISSIONS, READ_PERMISSIONS ) );
 
@@ -438,7 +438,7 @@ public class ApplyNodePermissionsCommandTest
                                                                                     .build() );
 
         assertEquals( 1, result.getResults().size() );
-        assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().contains( principal ) );
+        assertFalse( result.getResults().get( createdNode.id() ).get( 0 ).node().getPermissions().contains( principal ) );
 
     }
 
@@ -459,7 +459,7 @@ public class ApplyNodePermissionsCommandTest
                                                                                     .build() );
 
         assertEquals( 1, result.getResults().size() );
-        assertTrue( result.getResults().get( createdNode.id() ).get( 0 ).getNode().getPermissions().isEmpty() );
+        assertTrue( result.getResults().get( createdNode.id() ).get( 0 ).node().getPermissions().isEmpty() );
     }
 
     private void applyPermissionsWithOverwrite()
