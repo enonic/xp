@@ -65,8 +65,6 @@ final class RestoreContentCommand
 
     RestoreContentsResult execute()
     {
-        params.validate();
-
         try
         {
             return doExecute();

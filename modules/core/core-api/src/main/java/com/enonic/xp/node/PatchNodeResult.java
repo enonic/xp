@@ -43,7 +43,6 @@ public final class PatchNodeResult
 
     public record BranchResult(Branch branch, Node node)
     {
-
     }
 
     public static final class Builder

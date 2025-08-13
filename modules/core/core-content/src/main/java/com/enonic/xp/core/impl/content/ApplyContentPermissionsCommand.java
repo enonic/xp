@@ -51,11 +51,11 @@ final class ApplyContentPermissionsCommand
         final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
 
         result.getResults().forEach( ( id, branchResult ) -> {
-            branchResult.forEach( br -> builder.addResult( ContentId.from( id ), br.getBranch(), br.getNode() != null
+            branchResult.forEach( br -> builder.addResult( ContentId.from( id ), br.branch(), br.node() != null
                                                                      ? ContextBuilder.from( ContextAccessor.current() )
-                                                                     .branch( br.getBranch() )
+                                                                     .branch( br.branch() )
                                                                      .build()
-                                                                     .callWith( () -> contentNodeTranslator.fromNode( br.getNode(), true ) )
+                                                                     .callWith( () -> contentNodeTranslator.fromNode( br.node(), true ) )
                                                                      : null ) );
         } );
 
@@ -68,8 +68,8 @@ final class ApplyContentPermissionsCommand
             .values()
             .stream()
             .flatMap( Collection::stream )
-            .filter( branchResult -> ContentConstants.BRANCH_MASTER.equals( branchResult.getBranch() ) )
-            .map( ApplyNodePermissionsResult.BranchResult::getNode )
+            .filter( branchResult -> ContentConstants.BRANCH_MASTER.equals( branchResult.branch() ) )
+            .map( ApplyNodePermissionsResult.BranchResult::node )
             .filter( Objects::nonNull )
             .map( node -> RoutableNodeVersionId.from( node.id(), node.getNodeVersionId() ) )
             .collect( RoutableNodeVersionIds.collector() );

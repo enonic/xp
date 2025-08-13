@@ -36,7 +36,7 @@ public final class ReadImageParams
 
     private final ImageOrientation orientation;
 
-    public ReadImageParams( Builder builder )
+    private ReadImageParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.binaryReference = builder.binaryReference;

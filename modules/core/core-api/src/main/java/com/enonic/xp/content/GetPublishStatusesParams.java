@@ -12,9 +12,9 @@ public final class GetPublishStatusesParams
 
     private final Branch target;
 
-    private GetPublishStatusesParams( final ContentIds contentIds )
+    private GetPublishStatusesParams( final Builder builder )
     {
-        this.contentIds = contentIds;
+        this.contentIds = builder.contentIds;
         this.target = null;
     }
 
@@ -50,7 +50,7 @@ public final class GetPublishStatusesParams
         public GetPublishStatusesParams build()
         {
             Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
-            return new GetPublishStatusesParams( this.contentIds );
+            return new GetPublishStatusesParams( this );
         }
     }
 }

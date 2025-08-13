@@ -12,7 +12,7 @@ public final class DeleteDynamicContentSchemaParams
 
     private final DynamicContentSchemaType type;
 
-    public DeleteDynamicContentSchemaParams( final Builder builder )
+    private DeleteDynamicContentSchemaParams( final Builder builder )
     {
         this.name = builder.name;
         this.type = builder.type;

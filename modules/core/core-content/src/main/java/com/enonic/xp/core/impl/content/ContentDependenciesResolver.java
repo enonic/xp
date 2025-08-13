@@ -74,8 +74,8 @@ class ContentDependenciesResolver
     {
         final Map<ContentTypeName, Long> aggregationJsonMap = new HashMap<>();
 
-        final Contents contents =
-            this.contentService.getByIds( new GetContentByIdsParams( this.contentService.getOutboundDependencies( contentId ) ) );
+        final Contents contents = this.contentService.getByIds(
+            GetContentByIdsParams.create().contentIds( this.contentService.getOutboundDependencies( contentId ) ).build() );
 
         contents.forEach( existingContent -> {
             final ContentTypeName contentTypeName = existingContent.getType();

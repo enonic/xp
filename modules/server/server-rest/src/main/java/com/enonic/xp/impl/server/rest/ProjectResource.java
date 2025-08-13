@@ -89,7 +89,7 @@ public final class ProjectResource
 
         final FindContentIdsByQueryResult result = context.callWith( () -> contentService.find( query ) );
 
-        return context.callWith( () -> contentService.getByIds( new GetContentByIdsParams( result.getContentIds() ) )
+        return context.callWith( () -> contentService.getByIds( GetContentByIdsParams.create().contentIds( result.getContentIds() ).build() )
             .stream()
             .map( this::createSiteJson )
             .collect( Collectors.toList() ) );

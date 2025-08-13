@@ -144,7 +144,7 @@ public final class QueryContentHandler
         }
         else
         {
-            contents = this.contentService.getByIds( new GetContentByIdsParams( contentIds ) );
+            contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( contentIds ).build() );
         }
 
         return new ContentsResultMapper( contents, findQueryResult.getTotalHits(), findQueryResult.getAggregations(),

@@ -15,7 +15,7 @@ public final class GetDefaultPageTemplateParams
 
     private final ContentTypeName contentType;
 
-    public GetDefaultPageTemplateParams( final Builder builder )
+    private GetDefaultPageTemplateParams( final Builder builder )
     {
         site = builder.site;
         sitePath = builder.sitePath;

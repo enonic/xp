@@ -3,29 +3,20 @@ package com.enonic.xp.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
 
 @PublicApi
 public final class CompareContentsParams
 {
     private final ContentIds contentIds;
 
-    private final Branch target;
-
-    private CompareContentsParams( final ContentIds contentIds )
+    private CompareContentsParams( final Builder builder )
     {
-        this.contentIds = contentIds;
-        this.target = null;
+        this.contentIds = builder.contentIds;
     }
 
     public ContentIds getContentIds()
     {
         return contentIds;
-    }
-
-    public Branch getTarget()
-    {
-        return target;
     }
 
     public static Builder create()
@@ -50,7 +41,7 @@ public final class CompareContentsParams
         public CompareContentsParams build()
         {
             Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
-            return new CompareContentsParams( this.contentIds );
+            return new CompareContentsParams( this );
         }
     }
 }

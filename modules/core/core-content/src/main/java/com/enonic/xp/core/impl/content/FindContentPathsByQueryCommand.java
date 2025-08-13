@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.FindContentPathsByQueryParams;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
@@ -12,12 +12,12 @@ import com.enonic.xp.node.NodeQuery;
 final class FindContentPathsByQueryCommand
     extends AbstractContentCommand
 {
-    private final FindContentPathsByQueryParams params;
+    private final ContentQuery contentQuery;
 
     private FindContentPathsByQueryCommand( final Builder builder )
     {
         super( builder );
-        this.params = builder.params;
+        this.contentQuery = builder.contentQuery;
     }
 
     public static Builder create()
@@ -27,7 +27,7 @@ final class FindContentPathsByQueryCommand
 
     public FindContentPathsByQueryResult execute()
     {
-        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.params.getContentQuery() ).
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.contentQuery ).
             addQueryFilters( createFilters() ).
             withPath( true ).
             build();
@@ -48,15 +48,15 @@ final class FindContentPathsByQueryCommand
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
-        private FindContentPathsByQueryParams params;
+        private ContentQuery contentQuery;
 
         private Builder()
         {
         }
 
-        public Builder params( final FindContentPathsByQueryParams params )
+        public Builder contentQuery( final ContentQuery contentQuery )
         {
-            this.params = params;
+            this.contentQuery = contentQuery;
             return this;
         }
 
@@ -70,8 +70,7 @@ final class FindContentPathsByQueryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
-            Preconditions.checkNotNull( params.getContentQuery() );
+            Preconditions.checkNotNull( contentQuery );
         }
 
     }

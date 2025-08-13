@@ -764,38 +764,38 @@ public class NodeServiceImpl
             .values()
             .stream()
             .flatMap( Collection::stream )
-            .filter( br -> br.getNode() != null )
-            .collect( Collectors.groupingBy( br -> br.getNode().id() ) );
+            .filter( br -> br.node() != null )
+            .collect( Collectors.groupingBy( br -> br.node().id() ) );
 
         for ( Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : resultsByNodeId.entrySet() )
         {
             final List<ApplyNodePermissionsResult.BranchResult> branchResults = entry.getValue();
 
             final ApplyNodePermissionsResult.BranchResult mainBranchResult = branchResults.stream()
-                .filter( br -> ContextAccessor.current().getBranch().equals( br.getBranch() ) )
+                .filter( br -> ContextAccessor.current().getBranch().equals( br.branch() ) )
                 .findFirst()
                 .orElse( null );
 
-            final NodeVersionId mainBranchVersion = mainBranchResult != null ? mainBranchResult.getNode().getNodeVersionId() : null;
+            final NodeVersionId mainBranchVersion = mainBranchResult != null ? mainBranchResult.node().getNodeVersionId() : null;
 
             for ( ApplyNodePermissionsResult.BranchResult br : branchResults )
             {
-                if ( br.getNode() == null )
+                if ( br.node() == null )
                 {
                     continue;
                 }
 
-                ContextBuilder.from( ContextAccessor.current() ).branch( br.getBranch() ).build().runWith( () -> {
+                ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build().runWith( () -> {
                     final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-                    if ( ( mainBranchResult != null && mainBranchResult.getBranch().equals( br.getBranch() ) ) ||
-                        !br.getNode().getNodeVersionId().equals( mainBranchVersion ) )
+                    if ( ( mainBranchResult != null && mainBranchResult.branch().equals( br.branch() ) ) ||
+                        !br.node().getNodeVersionId().equals( mainBranchVersion ) )
                     {
-                        eventPublisher.publish( NodeEvents.permissionsUpdated( br.getNode(), internalContext ) );
+                        eventPublisher.publish( NodeEvents.permissionsUpdated( br.node(), internalContext ) );
                     }
                     else
                     {
-                        eventPublisher.publish( NodeEvents.pushed( br.getNode(), internalContext ) );
+                        eventPublisher.publish( NodeEvents.pushed( br.node(), internalContext ) );
                     }
                 } );
             }

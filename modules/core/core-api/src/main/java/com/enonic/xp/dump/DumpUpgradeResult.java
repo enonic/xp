@@ -14,7 +14,7 @@ public final class DumpUpgradeResult
 
     private final List<DumpUpgradeStepResult> stepResults;
 
-    public DumpUpgradeResult( final Builder builder )
+    private DumpUpgradeResult( final Builder builder )
     {
         this.initialVersion = builder.initialVersion;
         this.upgradedVersion = builder.upgradedVersion;

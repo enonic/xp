@@ -16,7 +16,7 @@ public final class ArchiveContentParams
 
     private final String message;
 
-    public ArchiveContentParams( Builder builder )
+    private ArchiveContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.archiveContentListener = builder.archiveContentListener;
@@ -47,11 +47,6 @@ public final class ArchiveContentParams
     public String getMessage()
     {
         return message;
-    }
-
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
     }
 
     public static final class Builder

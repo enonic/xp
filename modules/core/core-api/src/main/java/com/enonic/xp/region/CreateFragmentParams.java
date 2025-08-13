@@ -20,7 +20,7 @@ public final class CreateFragmentParams
 
     private final WorkflowInfo workflowInfo;
 
-    public CreateFragmentParams( final Builder builder )
+    private CreateFragmentParams( final Builder builder )
     {
         this.parentPath = builder.parentPath;
         this.component = builder.component;

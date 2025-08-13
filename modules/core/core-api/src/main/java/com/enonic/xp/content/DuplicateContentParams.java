@@ -23,7 +23,7 @@ public final class DuplicateContentParams
 
     private final ContentPath parent;
 
-    public DuplicateContentParams( Builder builder )
+    private DuplicateContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.workflowInfo = builder.workflowInfo;

@@ -29,8 +29,8 @@ public class ApplyPermissionsResultMapper
             gen.array( "branchResults" );
             entry.getValue().forEach( branchResult -> {
                 gen.map();
-                gen.value( "branch", branchResult.getBranch() );
-                gen.value( "node", new NodeMapper( branchResult.getNode() ) );
+                gen.value( "branch", branchResult.branch() );
+                gen.value( "node", new NodeMapper( branchResult.node() ) );
                 gen.end();
             } );
             gen.end();

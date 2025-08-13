@@ -10,7 +10,7 @@ public final class ContentEventSyncCommandParams
 {
     private final List<ContentToSync> contents;
 
-    public ContentEventSyncCommandParams( Builder builder )
+    private ContentEventSyncCommandParams( final Builder builder )
     {
         this.contents = builder.contents.build();
     }

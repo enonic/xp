@@ -129,7 +129,6 @@ public class NodeExporter
             return;
         }
 
-        // TODO: Batch this?
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().
             from( 0 ).
             size( -1 ).

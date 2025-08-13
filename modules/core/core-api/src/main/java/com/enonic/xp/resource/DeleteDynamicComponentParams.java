@@ -12,7 +12,7 @@ public final class DeleteDynamicComponentParams
 
     private final DynamicComponentType type;
 
-    public DeleteDynamicComponentParams( final Builder builder )
+    private DeleteDynamicComponentParams( final Builder builder )
     {
         this.key = builder.key;
         this.type = builder.type;

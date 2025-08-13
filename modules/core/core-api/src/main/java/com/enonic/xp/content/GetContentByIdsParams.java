@@ -9,11 +9,15 @@ public final class GetContentByIdsParams
 {
     private final ContentIds ids;
 
-    private boolean getChildrenIds = false;
-
-    public GetContentByIdsParams( final ContentIds ids )
-    {
+    @Deprecated
+    public GetContentByIdsParams( final ContentIds ids ) {
+        Preconditions.checkNotNull( ids, "ids must be specified" );
         this.ids = ids;
+    }
+
+    public GetContentByIdsParams( final Builder builder )
+    {
+        this.ids = builder.contentIds;
     }
 
     public ContentIds getIds()
@@ -21,19 +25,29 @@ public final class GetContentByIdsParams
         return this.ids;
     }
 
-    public GetContentByIdsParams setGetChildrenIds( final boolean getChildrenIds )
+    public static Builder create()
     {
-        this.getChildrenIds = getChildrenIds;
-        return this;
+        return new Builder();
     }
 
-    public boolean doGetChildrenIds()
+    public static final class Builder
     {
-        return getChildrenIds;
-    }
+        private ContentIds contentIds;
 
-    public void validate()
-    {
-        Preconditions.checkNotNull( ids, "ids must be specified" );
+        private Builder()
+        {
+        }
+
+        public Builder contentIds( final ContentIds contentIds )
+        {
+            this.contentIds = contentIds;
+            return this;
+        }
+
+        public GetContentByIdsParams build()
+        {
+            Preconditions.checkNotNull( this.contentIds, "ids must be specified" );
+            return new GetContentByIdsParams( this );
+        }
     }
 }

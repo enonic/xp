@@ -159,9 +159,9 @@ public class ImportNodeCommand
                 .execute().getResults()
                 .get( existingNode.id() )
                 .stream()
-                .filter( branchResult -> ContextAccessor.current().getBranch().equals( branchResult.getBranch() ) )
+                .filter( branchResult -> ContextAccessor.current().getBranch().equals( branchResult.branch() ) )
                 .findAny()
-                .map( ApplyNodePermissionsResult.BranchResult::getNode )
+                .map( ApplyNodePermissionsResult.BranchResult::node )
                 .orElse( updatedNode );
         }
 

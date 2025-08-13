@@ -17,7 +17,7 @@ public final class RestoreContentParams
 
     private final boolean stopInherit;
 
-    public RestoreContentParams( Builder builder )
+    private RestoreContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.parentPath = builder.parentPath;
@@ -49,11 +49,6 @@ public final class RestoreContentParams
     public boolean stopInherit()
     {
         return stopInherit;
-    }
-
-    public void validate()
-    {
-        Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
     }
 
     public static final class Builder

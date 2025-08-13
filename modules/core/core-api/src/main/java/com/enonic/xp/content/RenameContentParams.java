@@ -14,7 +14,7 @@ public final class RenameContentParams
 
     private final boolean stopInherit;
 
-    public RenameContentParams( Builder builder )
+    private RenameContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.newName = builder.newName;

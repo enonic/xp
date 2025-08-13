@@ -37,33 +37,14 @@ public final class ApplyNodePermissionsResult
         final List<BranchResult> results = this.results.get( nodeId );
 
         return results != null ? this.results.get( nodeId )
-            .stream().filter( br -> br.branch.equals( branch ) ).map( BranchResult::getNode )
+            .stream().filter( br -> br.branch.equals( branch ) ).map( BranchResult::node )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
     }
 
-    public static final class BranchResult
+    public record BranchResult(Branch branch, Node node)
     {
-        private final Branch branch;
-
-        private final Node node;
-
-        public BranchResult( Branch branch, Node node )
-        {
-            this.branch = branch;
-            this.node = node;
-        }
-
-        public Branch getBranch()
-        {
-            return branch;
-        }
-
-        public Node getNode()
-        {
-            return node;
-        }
 
     }
 
