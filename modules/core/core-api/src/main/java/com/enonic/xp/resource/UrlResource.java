@@ -43,7 +43,7 @@ public final class UrlResource
     {
         try
         {
-            openConnection();
+            openConnectionForMetadata();
             return true;
         }
         catch ( final Exception e )
@@ -57,7 +57,7 @@ public final class UrlResource
     {
         try
         {
-            return openConnection().getContentLengthLong();
+            return openConnectionForMetadata().getContentLengthLong();
         }
         catch ( final Exception e )
         {
@@ -70,7 +70,7 @@ public final class UrlResource
     {
         try
         {
-            return openConnection().getLastModified();
+            return openConnectionForMetadata().getLastModified();
         }
         catch ( final Exception e )
         {
@@ -78,28 +78,13 @@ public final class UrlResource
         }
     }
 
-    private URLConnection openConnection()
+    private URLConnection openConnectionForMetadata()
+        throws IOException
     {
-        if ( this.url == null )
-        {
-            throw new ResourceNotFoundException( getKey() );
-        }
-
-        try
-        {
-            final URLConnection connection = this.url.openConnection();
-            if ( connection == null )
-            {
-                throw new ResourceNotFoundException( getKey() );
-            }
-
-            connection.connect();
-            return connection;
-        }
-        catch ( final IOException e )
-        {
-            throw handleError( e );
-        }
+        final URLConnection urlConnection = this.url.openConnection();
+        // https://bugs.openjdk.org/browse/JDK-6956385
+        urlConnection.getInputStream().close();
+        return urlConnection;
     }
 
     @Override
@@ -130,9 +115,7 @@ public final class UrlResource
         {
             try
             {
-                final URLConnection urlConnection = url.openConnection();
-                urlConnection.connect();
-                return Optional.of( urlConnection.getContentLengthLong() );
+                return Optional.of( openConnectionForMetadata().getContentLengthLong() );
             }
             catch ( Exception e )
             {

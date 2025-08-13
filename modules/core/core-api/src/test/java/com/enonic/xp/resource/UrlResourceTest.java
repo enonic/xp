@@ -2,17 +2,44 @@ package com.enonic.xp.resource;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UrlResourceTest
-    extends AbstractResourceTest
 {
+    @TempDir
+    public Path temporaryFolder;
+
+    protected Path applicationsDir;
+
+    private void writeFile( final Path dir, final String path, final String value )
+        throws Exception
+    {
+        final Path file = dir.resolve( path );
+        Files.createDirectories( file.getParent() );
+
+        Files.writeString( file, value );
+    }
+
+    @BeforeEach
+    public void setup()
+        throws Exception
+    {
+        applicationsDir = Files.createDirectory( this.temporaryFolder.resolve( "applications" ) );
+
+        writeFile( applicationsDir, "myapplication/a/b.txt", "a/b.txt" );
+    }
+
     @Test
     public void testGetResource()
         throws Exception
@@ -29,8 +56,9 @@ public class UrlResourceTest
         assertEquals( resourceUrl, resource.getUrl() );
         assertEquals( "bundle", resource.getResolverName() );
 
-        resource.requireExists();
-        assertNotNull( resource.openStream() );
+        assertThat( resource.openStream() ).isNotNull().actual().close();
+        assertThat( resource.openReader() ).isNotNull().actual().close();
+
         assertNotNull( resource.readBytes() );
         assertEquals( "a/b.txt", resource.readString() );
         assertEquals( "a/b.txt", resource.readLines().get( 0 ) );

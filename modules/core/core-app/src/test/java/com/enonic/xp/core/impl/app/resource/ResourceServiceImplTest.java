@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.when;
 
 class ResourceServiceImplTest
 {
+    @TempDir
     Path temporaryFolder;
 
     ApplicationKey appKey;
@@ -63,9 +65,6 @@ class ResourceServiceImplTest
     void setup()
         throws Exception
     {
-        //TODO @TempDir JUnit5 suits better, but tests fail due to https://bugs.openjdk.java.net/browse/JDK-6956385
-        temporaryFolder = Files.createTempDirectory( "resourceServiceImplTest" );
-
         appDir = Files.createDirectory( this.temporaryFolder.resolve( "myapp" ) );
 
         appKey = ApplicationKey.from( "myapp" );
