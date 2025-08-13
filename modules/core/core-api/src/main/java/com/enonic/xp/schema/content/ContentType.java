@@ -271,6 +271,15 @@ public final class ContentType
             return this;
         }
 
+        public Builder addFormItems( final List<FormItem> formItems )
+        {
+            for ( FormItem item : formItems )
+            {
+                addFormItem( item );
+            }
+            return this;
+        }
+
         public Builder form( final Form form )
         {
             this.formBuilder = form != null ? Form.create( form ) : Form.create();
