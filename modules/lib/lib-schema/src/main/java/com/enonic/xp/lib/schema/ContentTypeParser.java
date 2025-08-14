@@ -37,7 +37,6 @@ import com.enonic.xp.lib.schema.mixin.InputMixin;
 import com.enonic.xp.lib.schema.mixin.InputTypeDefaultBuilderMixin;
 import com.enonic.xp.lib.schema.mixin.InputTypeDefaultMixin;
 import com.enonic.xp.lib.schema.mixin.InputTypeNameMixin;
-import com.enonic.xp.lib.schema.mixin.InputTypePropertyBuilderMixin;
 import com.enonic.xp.lib.schema.mixin.InputTypePropertyMixin;
 import com.enonic.xp.lib.schema.mixin.MixinNameMixin;
 import com.enonic.xp.lib.schema.mixin.OccurrencesMixin;
@@ -85,7 +84,6 @@ public final class ContentTypeParser
         MAPPER.addMixIn( FormOptionSetOption.Builder.class, FormOptionSetOptionBuilderMixin.class );
 
         MAPPER.addMixIn( InputTypeProperty.class, InputTypePropertyMixin.class );
-        MAPPER.addMixIn( InputTypeProperty.Builder.class, InputTypePropertyBuilderMixin.class );
 
 
         MAPPER.addMixIn( InputTypeDefault.class, InputTypeDefaultMixin.class );

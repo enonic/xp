@@ -50,7 +50,7 @@ public abstract class ContentTypeBuilderMixin
     abstract ContentType.Builder displayNameExpression( String value );
 
     @JsonProperty("form")
-    abstract ContentType.Builder addFormItems( List<FormItem> items );
+    abstract ContentType.Builder addFormItems( Iterable<? extends FormItem> items );
 
     @JsonProperty("displayName")
     abstract ContentType.Builder displayName( String displayName );

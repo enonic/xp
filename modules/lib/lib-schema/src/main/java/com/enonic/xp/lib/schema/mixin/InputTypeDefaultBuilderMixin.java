@@ -17,6 +17,10 @@ public abstract class InputTypeDefaultBuilderMixin
     }
 
     @JsonProperty("property")
-    abstract InputTypeDefault.Builder property( InputTypeProperty property );
+    public InputTypeDefault.Builder propertyFromYaml( InputTypeProperty prop )
+    {
+        return property( prop );
+    }
 
+    abstract InputTypeDefault.Builder property( InputTypeProperty property );
 }

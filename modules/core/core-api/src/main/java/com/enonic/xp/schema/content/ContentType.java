@@ -271,7 +271,7 @@ public final class ContentType
             return this;
         }
 
-        public Builder addFormItems( final List<FormItem> formItems )
+        public Builder addFormItems( final Iterable<? extends FormItem> formItems )
         {
             for ( FormItem item : formItems )
             {
