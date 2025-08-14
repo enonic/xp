@@ -11,7 +11,7 @@ import com.enonic.xp.form.InlineMixin;
 public abstract class InlineMixinMixin
 {
     @JsonPOJOBuilder(withPrefix = "")
-    public static abstract class Builder
+    public abstract static class Builder
     {
         @JsonCreator
         public static InlineMixin.Builder create()

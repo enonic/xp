@@ -13,7 +13,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 public abstract class ContentTypeMixin
 {
     @JsonPOJOBuilder
-    public static abstract class Builder
+    public abstract static class Builder
     {
         @JsonCreator
         public static ContentType.Builder create()

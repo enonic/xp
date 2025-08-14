@@ -13,7 +13,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public abstract class InputMixin
 {
     @JsonPOJOBuilder(withPrefix = "")
-    public static abstract class Builder
+    public abstract static class Builder
     {
         @JsonCreator
         public static Input.Builder create()

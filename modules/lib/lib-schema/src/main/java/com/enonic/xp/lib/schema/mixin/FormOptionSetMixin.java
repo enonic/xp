@@ -12,7 +12,7 @@ import com.enonic.xp.form.FormOptionSetOption;
 public abstract class FormOptionSetMixin
 {
     @JsonPOJOBuilder(withPrefix = "")
-    public static abstract class Builder
+    public abstract static class Builder
     {
         @JsonCreator
         public static FormOptionSet.Builder create()

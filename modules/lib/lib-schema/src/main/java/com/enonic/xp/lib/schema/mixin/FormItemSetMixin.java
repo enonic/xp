@@ -12,7 +12,7 @@ import com.enonic.xp.form.FormItemSet;
 public abstract class FormItemSetMixin
 {
     @JsonPOJOBuilder(withPrefix = "")
-    public static abstract class Builder
+    public abstract static class Builder
     {
         @JsonCreator
         public static FormItemSet.Builder create()
