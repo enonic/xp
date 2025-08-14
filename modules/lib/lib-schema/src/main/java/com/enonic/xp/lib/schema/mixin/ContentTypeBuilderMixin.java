@@ -20,47 +20,47 @@ public abstract class ContentTypeBuilderMixin
     }
 
     @JsonProperty("name")
-    abstract ContentType.Builder name( final ContentTypeName name );
+    abstract ContentType.Builder name( ContentTypeName name );
 
     @JsonProperty("name")
-    abstract ContentType.Builder name( final String name );
+    abstract ContentType.Builder name( String name );
 
     @JsonProperty("isAbstract")
-    abstract ContentType.Builder setAbstract( final boolean value );
+    abstract ContentType.Builder setAbstract( boolean value );
 
     @JsonProperty("isFinal")
-    abstract ContentType.Builder setFinal( final boolean value );
+    abstract ContentType.Builder setFinal( boolean value );
 
     @JsonProperty("allowChildContent")
-    abstract ContentType.Builder allowChildContent( final boolean value );
+    abstract ContentType.Builder allowChildContent( boolean value );
 
     @JsonProperty("isBuiltIn")
-    abstract ContentType.Builder setBuiltIn( final boolean value );
+    abstract ContentType.Builder setBuiltIn( boolean value );
 
     @JsonProperty("superType")
-    abstract ContentType.Builder superType( final ContentTypeName name );
+    abstract ContentType.Builder superType( ContentTypeName name );
 
     @JsonProperty("displayNameLabel")
-    abstract ContentType.Builder displayNameLabel( final String value );
+    abstract ContentType.Builder displayNameLabel( String value );
 
     @JsonProperty("displayNameLabelI18nKey")
-    abstract ContentType.Builder displayNameLabelI18nKey( final String value );
+    abstract ContentType.Builder displayNameLabelI18nKey( String value );
 
     @JsonProperty("displayNameExpression")
-    abstract ContentType.Builder displayNameExpression( final String value );
+    abstract ContentType.Builder displayNameExpression( String value );
 
     @JsonProperty("form")
-    abstract ContentType.Builder addFormItems( final List<FormItem> items );
+    abstract ContentType.Builder addFormItems( List<FormItem> items );
 
     @JsonProperty("displayName")
-    abstract ContentType.Builder displayName( final String displayName );
+    abstract ContentType.Builder displayName( String displayName );
 
     @JsonProperty("displayNameI18nKey")
-    abstract ContentType.Builder displayNameI18nKey( final String displayNameI18nKey );
+    abstract ContentType.Builder displayNameI18nKey( String displayNameI18nKey );
 
     @JsonProperty("description")
-    abstract ContentType.Builder description( final String description );
+    abstract ContentType.Builder description( String description );
 
     @JsonProperty("descriptionI18nKey")
-    abstract ContentType.Builder descriptionI18nKey( final String descriptionI18nKey );
+    abstract ContentType.Builder descriptionI18nKey( String descriptionI18nKey );
 }

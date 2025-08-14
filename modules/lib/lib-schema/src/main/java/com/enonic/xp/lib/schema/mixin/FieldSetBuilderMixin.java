@@ -17,5 +17,5 @@ public abstract class FieldSetBuilderMixin
     }
 
     @JsonProperty("items")
-    abstract FieldSet.Builder addFormItems( final Iterable<FormItem> items );
+    abstract FieldSet.Builder addFormItems( Iterable<FormItem> items );
 }

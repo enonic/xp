@@ -10,11 +10,11 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public abstract class InputTypePropertyBuilderMixin
 {
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-    public static InputTypeProperty.Builder create( final @JsonProperty("name") String name, final @JsonProperty("value") String value )
+    public static InputTypeProperty.Builder create( @JsonProperty("name") String name, @JsonProperty("value") String value )
     {
         return InputTypeProperty.create( name, value );
     }
 
     @JsonProperty("attribute")
-    abstract InputTypeProperty.Builder attribute( final @JsonProperty("name") String name, final @JsonProperty("value") String value );
+    abstract InputTypeProperty.Builder attribute( @JsonProperty("name") String name, @JsonProperty("value") String value );
 }

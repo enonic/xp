@@ -7,7 +7,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 public abstract class InputTypeNameMixin
 {
     @JsonCreator
-    public static InputTypeName from( final String value )
+    public static InputTypeName from( String value )
     {
         return InputTypeName.from( value );
     }

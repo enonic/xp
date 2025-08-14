@@ -7,7 +7,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 public abstract class MixinNameMixin
 {
     @JsonCreator
-    public static MixinName from( final String value )
+    public static MixinName from( String value )
     {
         return MixinName.from( value );
     }

@@ -17,6 +17,6 @@ public abstract class InputTypeDefaultBuilderMixin
     }
 
     @JsonProperty("property")
-    abstract InputTypeDefault.Builder property( final InputTypeProperty property );
+    abstract InputTypeDefault.Builder property( InputTypeProperty property );
 
 }

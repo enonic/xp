@@ -17,5 +17,5 @@ public abstract class FormOptionSetBuilderMixin
     }
 
     @JsonProperty("options")
-    abstract FormOptionSet.Builder addOptionSetOptions( final Iterable<FormOptionSetOption> setOptions );
+    abstract FormOptionSet.Builder addOptionSetOptions( Iterable<FormOptionSetOption> setOptions );
 }
