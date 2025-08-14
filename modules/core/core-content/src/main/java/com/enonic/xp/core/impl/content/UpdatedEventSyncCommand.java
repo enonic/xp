@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Instant;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -51,8 +50,6 @@ final class UpdatedEventSyncCommand
                         doSyncAttachments( content, updateParams );
 
                         contentService.patch( updateParams.build() );
-//                        }
-
                     }
                 }
             }
@@ -94,26 +91,49 @@ final class UpdatedEventSyncCommand
 
     private boolean isContentSyncable( final Content sourceContent, final Content targetContent )
     {
-        if ( WorkflowState.READY.equals( targetContent.getWorkflowInfo().getState() ) )
-        {
-            return WorkflowState.READY.equals( sourceContent.getWorkflowInfo().getState() );
-        }
-        return true;
+        return WorkflowState.READY.equals( sourceContent.getWorkflowInfo().getState() ) ||
+            !WorkflowState.READY.equals( targetContent.getWorkflowInfo().getState() );
     }
 
     private boolean needToUpdate( final Content sourceContent, final Content targetContent )
     {
+        //type
+        //createdTime
+        //modifiedTime
+        //modifier
+        //creator
+        // archivedBy
+        // archivedTime
+        // variantOf
+
+        //not syncable
+        // publishInfo
+        // inherit
+        // originProject
+        // childOrder
+        // permissions
+
+        // noProjectSync flag to events
+
         return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
             !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
+            !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) ||
             !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
             !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
             !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
-            !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             !Objects.equals( sourceContent.getAttachments(), targetContent.getAttachments() ) ||
             !Objects.equals( sourceContent.getValidationErrors(), targetContent.getValidationErrors() ) ||
+            !Objects.equals( sourceContent.getType(), targetContent.getType() ) ||
+            !Objects.equals( sourceContent.getCreatedTime(), targetContent.getCreatedTime() ) ||
+            !Objects.equals( sourceContent.getModifiedTime(), targetContent.getModifiedTime() ) ||
+            !Objects.equals( sourceContent.getModifier(), targetContent.getModifier() ) ||
+            !Objects.equals( sourceContent.getCreator(), targetContent.getCreator() ) ||
+            !Objects.equals( sourceContent.getArchivedBy(), targetContent.getArchivedBy() ) ||
+            !Objects.equals( sourceContent.getArchivedTime(), targetContent.getArchivedTime() ) ||
+            !Objects.equals( sourceContent.getVariantOf(), targetContent.getVariantOf() ) ||
             !Objects.equals( sourceContent.getManualOrderValue(), targetContent.getManualOrderValue() ) ||
             sourceContent.isValid() != targetContent.isValid();
     }
@@ -133,11 +153,17 @@ final class UpdatedEventSyncCommand
 
             edit.attachments.setValue( source.getAttachments() );
 
+            edit.type.setValue( source.getType() );
+            edit.createdTime.setValue( source.getCreatedTime() );
+            edit.modifiedTime.setValue( source.getModifiedTime() );
+            edit.modifier.setValue( source.getModifier() );
+            edit.creator.setValue( source.getCreator() );
+            edit.archivedBy.setValue( source.getArchivedBy() );
+            edit.archivedTime.setValue( source.getArchivedTime() );
+            edit.variantOf.setValue( source.getVariantOf() );
+
             edit.valid.setValue( source.isValid() );
             edit.validationErrors.setValue( source.getValidationErrors() );
-
-            edit.modifier.setValue( getCurrentUser() );
-            edit.modifiedTime.setValue( Instant.now() );
         } );
     }
 
