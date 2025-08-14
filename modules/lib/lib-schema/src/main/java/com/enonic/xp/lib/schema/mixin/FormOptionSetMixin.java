@@ -21,6 +21,7 @@ public abstract class FormOptionSetMixin
         }
 
         @JsonProperty("options")
+        @JsonDeserialize(using = FormOptionSetOptionsDeserializer.class)
         abstract FormOptionSet.Builder addOptionSetOptions( Iterable<FormOptionSetOption> setOptions );
     }
 }

@@ -74,10 +74,13 @@ public final class YmlTypeParser
         MAPPER.addMixIn( InputTypeDefault.class, InputTypeDefaultMixin.class );
         MAPPER.addMixIn( InputTypeDefault.Builder.class, InputTypeDefaultMixin.Builder.class );
 
-        MAPPER.registerSubtypes( new NamedType( Input.class, "Input" ), new NamedType( FieldSet.class, "FieldSet" ),
-                                 new NamedType( InlineMixin.class, "InlineMixin" ), new NamedType( FormItemSet.class, "ItemSet" ),
-                                 new NamedType( FormOptionSet.class, "OptionSet" ),
-                                 new NamedType( FormOptionSetOption.class, "OptionSetOption" ) );
+        MAPPER.registerSubtypes(
+            new NamedType( Input.class, "Input" ),
+            new NamedType( FieldSet.class, "FieldSet" ),
+            new NamedType( InlineMixin.class, "InlineMixin" ),
+            new NamedType( FormItemSet.class, "ItemSet" ),
+            new NamedType( FormOptionSet.class, "OptionSet" ),
+            new NamedType( FormOptionSetOption.class, "OptionSetOption" ) );
     }
 
     public ContentType parseContentType( final String contentTypeAsYml )
