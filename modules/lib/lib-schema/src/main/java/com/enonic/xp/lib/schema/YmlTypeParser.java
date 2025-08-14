@@ -44,7 +44,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
 
-public final class ContentTypeParser
+public final class YmlTypeParser
 {
     private static final ObjectMapper MAPPER = new ObjectMapper( new YAMLFactory() );
 
@@ -85,24 +85,25 @@ public final class ContentTypeParser
 
         MAPPER.addMixIn( InputTypeProperty.class, InputTypePropertyMixin.class );
 
-
         MAPPER.addMixIn( InputTypeDefault.class, InputTypeDefaultMixin.class );
         MAPPER.addMixIn( InputTypeDefault.Builder.class, InputTypeDefaultBuilderMixin.class );
 
-        MAPPER.registerSubtypes(
-            new NamedType( Input.class, "Input" ),
-            new NamedType( FieldSet.class, "FieldSet" ),
-            new NamedType( InlineMixin.class, "InlineMixin" ),
-            new NamedType( FormItemSet.class, "ItemSet" ),
-            new NamedType( FormOptionSet.class, "OptionSet" ),
-            new NamedType( FormOptionSetOption.class, "OptionSetOption" )
-        );
+        MAPPER.registerSubtypes( new NamedType( Input.class, "Input" ), new NamedType( FieldSet.class, "FieldSet" ),
+                                 new NamedType( InlineMixin.class, "InlineMixin" ), new NamedType( FormItemSet.class, "ItemSet" ),
+                                 new NamedType( FormOptionSet.class, "OptionSet" ),
+                                 new NamedType( FormOptionSetOption.class, "OptionSetOption" ) );
     }
 
-    public ContentType parse( final String contentTypeAsYml )
+    public ContentType parseContentType( final String contentTypeAsYml )
         throws Exception
     {
         return MAPPER.readValue( contentTypeAsYml, ContentType.class );
+    }
+
+    public <T> T parse( final String yml, final Class<T> clazz )
+        throws Exception
+    {
+        return MAPPER.readValue( yml, clazz );
     }
 
 }

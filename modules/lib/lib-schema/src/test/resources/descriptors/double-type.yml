@@ -1,0 +1,13 @@
+type: "Input"
+inputType: "Double"
+name: "backgroundGreen"
+label: "Green"
+config:
+  - name: "min"
+    value: 0
+  - name: "max"
+    value: 255
+defaultValue:
+  property:
+    name: "default"
+    value: 250.0

@@ -86,14 +86,14 @@ form:
             inputType: "RadioButton"
             name: "type"
             label: "Policy type"
-#            config:
-#              - name: "cookie"
-#                value: "Cookie"
-#                attributes:
-#                  key1: v1
-#                  key2: v1
-#              - name: "privacy"
-#                value: "Privacy"
+            config:
+              - name: "cookie"
+                value: "Cookie"
+                attributes:
+                  key1: v1
+                  key2: v1
+              - name: "privacy"
+                value: "Privacy"
             defaultValue:
               property:
                 name: "default"

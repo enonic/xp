@@ -273,10 +273,7 @@ public final class ContentType
 
         public Builder addFormItems( final Iterable<? extends FormItem> formItems )
         {
-            for ( FormItem item : formItems )
-            {
-                addFormItem( item );
-            }
+            formItems.forEach( this::addFormItem );
             return this;
         }
 

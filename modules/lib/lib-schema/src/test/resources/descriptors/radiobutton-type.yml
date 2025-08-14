@@ -1,0 +1,16 @@
+type: "Input"
+inputType: "RadioButton"
+name: "type"
+label: "Policy type"
+config:
+  - name: "cookie"
+    value: "Cookie"
+    attributes:
+      attr1: v1
+      attr2: v2
+  - name: "privacy"
+    value: "Privacy"
+defaultValue:
+  property:
+    name: "default"
+    value: "cookie"
