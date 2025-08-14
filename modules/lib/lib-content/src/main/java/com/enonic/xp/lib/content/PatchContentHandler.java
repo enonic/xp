@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -130,8 +131,10 @@ public final class PatchContentHandler
         parse( map, "processedReferences", String[].class, val -> target.processedReferences.setValue(
             Arrays.stream( val ).map( ContentId::from ).collect( ContentIds.collector() ) ) );
         parse( map, "manualOrderValue", Long.class, target.manualOrderValue::setValue );
-        parse( map, "inherit", String[].class,
-               val -> target.inherit.setValue( Arrays.stream( val ).map( ContentInheritType::valueOf ).collect( Collectors.toSet() ) ) );
+        parse( map, "inherit", List.class, ( List val ) -> {
+            final Set collect = (Set) val.stream().map( str -> ContentInheritType.valueOf( str.toString() ) ).collect( Collectors.toSet() );
+            target.inherit.setValue( collect );
+        } );
         parse( map, "variantOf", ContentId.class, target.variantOf::setValue );
 
         parse( map, "originProject", String.class, val -> target.originProject.setValue( ProjectName.from( val ) ) );
