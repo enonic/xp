@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
@@ -20,7 +21,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeService;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.SiteService;
@@ -102,6 +105,9 @@ public class UpdateContentCommandTest
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
 
+        Mockito.when( contentTypeService.getByName( ArgumentMatchers.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( Mockito.mock( ContentType.class ) );
+
         // exercise
         command.execute();
 
@@ -111,14 +117,14 @@ public class UpdateContentCommandTest
 
     private Content createContent( final PropertyTree contentData )
     {
-        return Content.create().
-            id( ContentId.from( "1" ) ).
-            parentPath( ContentPath.ROOT ).
-            name( "mycontent" ).
-            createdTime( CREATED_TIME ).
-            displayName( "MyContent" ).
-            owner( PrincipalKey.from( "user:system:admin" ) ).
-            data( contentData ).
-            build();
+        return Content.create()
+            .id( ContentId.from( "1" ) )
+            .parentPath( ContentPath.ROOT )
+            .name( "mycontent" )
+            .createdTime( CREATED_TIME )
+            .displayName( "MyContent" )
+            .owner( PrincipalKey.from( "user:system:admin" ) )
+            .data( contentData )
+            .build();
     }
 }

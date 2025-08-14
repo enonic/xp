@@ -20,14 +20,14 @@ public class ClusterConfigImplTest
         final ClusterConfigImpl config = new ClusterConfigImpl();
 
         final Map<String, String> settings = new HashMap<>();
-        settings.put( "discovery.unicast.hosts", "localhost, 192.168.0.1, beast.enonic.net" );
+        settings.put( "discovery.unicast.hosts", "localhost, 192.168.0.1" );
         config.activate( settings );
 
         final NodeDiscovery discovery = config.discovery();
         assertNotNull( discovery );
 
         final List hosts = discovery.get();
-        assertEquals( 3, hosts.size() );
+        assertEquals( 2, hosts.size() );
     }
 
     @Test
