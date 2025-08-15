@@ -1,0 +1,37 @@
+#<input name="socialsecuritynumber" type="TextLine">
+#<label>My SSN</label>
+#<occurrences minimum="1" maximum="3"/>
+#<default>000-00-0000</default>
+#<config>
+#<max-length>11</max-length>
+#<show-counter>true</show-counter>
+#<regexp>\b\d{3}-\d{2}-\d{4}\b</regexp>
+#</config>
+#</input>
+
+#type: "TextLine"
+#name: "socialsecuritynumber"
+#label: "My SSN"
+#defaultValue:
+#  property:
+#    name: "default"
+#    value: "000-00-0000"
+#occurrences:
+#  minimum: 1
+#  maximum: 3
+#config:
+#  - name: "max-length"
+#    value: "11"
+#  - name: "regexp"
+#    value: "\b\d{3}-\d{2}-\d{4}\b"
+
+
+type: "TextLine"
+name: "socialsecuritynumber"
+label: "My SSN"
+default: "000-00-0000"
+occurrences:
+  minimum: 1
+  maximum: 3
+maxLength: 11
+regexp: "\b\d{3}-\d{2}-\d{4}\b"

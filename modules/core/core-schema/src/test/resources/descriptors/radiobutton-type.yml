@@ -13,3 +13,12 @@ defaultValue:
   property:
     name: "default"
     value: "cookie"
+
+#options:
+#  - name: "cookie"
+#    value: "Cookie"
+#    i18n: "i18n.rbg.cookie"
+#  - name: "privacy"
+#    value: "Privacy"
+#default: "cookie"
+

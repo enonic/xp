@@ -26,10 +26,7 @@ public final class FormOptionSetOptionsDeserializer
 
         for ( JsonNode node : arr )
         {
-            if ( node.isObject() && !node.has( "type" ) )
-            {
-                ( (ObjectNode) node ).put( "type", "OptionSetOption" );
-            }
+            ( (ObjectNode) node ).put( "type", "OptionSetOption" );
         }
 
         final JavaType listType = mapper.getTypeFactory().constructCollectionType( List.class, FormOptionSetOption.class );
