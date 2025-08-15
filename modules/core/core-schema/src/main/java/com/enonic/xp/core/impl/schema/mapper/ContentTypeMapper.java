@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.schema.mixin;
+package com.enonic.xp.core.impl.schema.mapper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +10,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 @JsonDeserialize(builder = ContentType.Builder.class)
-public abstract class ContentTypeMixin
+public abstract class ContentTypeMapper
 {
     @JsonPOJOBuilder
     public abstract static class Builder

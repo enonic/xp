@@ -1,5 +1,4 @@
-type: "Input"
-inputType: "Double"
+type: "Double"
 name: "backgroundGreen"
 label: "Green"
 config:

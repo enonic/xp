@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.schema.mixin;
+package com.enonic.xp.core.impl.schema.mapper;
 
 import java.io.IOException;
 import java.util.List;

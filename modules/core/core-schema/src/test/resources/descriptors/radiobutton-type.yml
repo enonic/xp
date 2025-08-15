@@ -1,5 +1,4 @@
-type: "Input"
-inputType: "RadioButton"
+type: "RadioButton"
 name: "type"
 label: "Policy type"
 config:

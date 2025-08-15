@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.schema;
+package com.enonic.xp.core.impl.schema;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
@@ -95,6 +96,29 @@ public class YmlTypeParserTest
         assertNotNull( maxOpt );
         assertEquals( 255, Double.parseDouble( maxOpt.getValue() ) );
         assertTrue( maxOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void parseContentSelector()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
+
+        YmlTypeParser parser = new YmlTypeParser();
+        Input input = parser.parse( yaml, Input.class );
+
+        assertEquals( "ContentSelector", input.getInputType().toString() );
+        assertEquals( "searchResultPage", input.getName() );
+        assertEquals( "Search result page", input.getLabel() );
+
+        Occurrences occurrences = input.getOccurrences();
+        assertEquals( 1, occurrences.getMinimum() );
+        assertEquals( 1, occurrences.getMaximum() );
+
+        final InputTypeProperty configOpt = input.getInputTypeConfig().getProperty( "allow-content-type" );
+        assertNotNull( configOpt );
+        assertEquals( "myapp:landing-page", configOpt.getValue() );
+        assertTrue( configOpt.getAttributes().isEmpty() );
     }
 
     private String readAsString( final String name )

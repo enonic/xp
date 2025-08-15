@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.schema.mixin;
+package com.enonic.xp.core.impl.schema.mapper;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +10,7 @@ import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
 @JsonDeserialize(builder = Input.Builder.class)
-public abstract class InputMixin
+public abstract class InputMapper
 {
     @JsonPOJOBuilder(withPrefix = "")
     public abstract static class Builder
@@ -20,6 +20,9 @@ public abstract class InputMixin
         {
             return Input.create();
         }
+
+        @JsonProperty("type")
+        abstract Input.Builder inputType( String type );
 
         @JsonProperty("defaultValue")
         abstract Input.Builder defaultValue( InputTypeDefault value );

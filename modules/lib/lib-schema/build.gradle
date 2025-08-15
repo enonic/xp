@@ -1,11 +1,6 @@
 dependencies {
     compileOnly project( ':core:core-api' )
-    compileOnly project( ':core:core-internal' )
     compileOnly project( ':script:script-api' )
-
-    implementation libs.jackson.dataformat.yaml
-    implementation libs.jackson.datatype.jsr310
-    implementation libs.jackson.core
 
     testImplementation project( ':tools:testing' )
 }
