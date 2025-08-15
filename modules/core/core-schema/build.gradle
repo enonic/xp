@@ -2,6 +2,8 @@ dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
 
+    implementation libs.jackson.dataformat.yaml
+
     testFixturesApi project( ':core:core-api' )
     testImplementation( testFixtures( project(":core:core-app") ) )
 }

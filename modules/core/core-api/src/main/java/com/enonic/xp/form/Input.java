@@ -390,6 +390,12 @@ public final class Input
             return this;
         }
 
+        public Builder inputTypeProperties( final Iterable<InputTypeProperty> properties )
+        {
+            properties.forEach( this::inputTypeProperty );
+            return this;
+        }
+
         public Builder inputTypeConfig( final InputTypeConfig config )
         {
             this.inputTypeConfig.config( config );

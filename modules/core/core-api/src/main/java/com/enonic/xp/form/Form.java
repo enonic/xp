@@ -133,7 +133,7 @@ public final class Form
             return this;
         }
 
-        public Builder addFormItems( final Iterable<FormItem> formItems )
+        public Builder addFormItems( final Iterable<? extends FormItem> formItems )
         {
             for ( FormItem formItem : formItems )
             {
