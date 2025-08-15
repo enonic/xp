@@ -9,6 +9,7 @@ import com.enonic.xp.core.impl.schema.mapper.ContentTypeNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.FieldSetMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormItemMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormItemSetMapper;
+import com.enonic.xp.core.impl.schema.mapper.FormMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormOptionSetMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormOptionSetOptionMapper;
 import com.enonic.xp.core.impl.schema.mapper.InlineMixinMapper;
@@ -19,6 +20,7 @@ import com.enonic.xp.core.impl.schema.mapper.InputTypePropertyMapper;
 import com.enonic.xp.core.impl.schema.mapper.MixinNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.OccurrencesMapper;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -46,6 +48,8 @@ public final class YmlTypeParser
         MAPPER.addMixIn( Occurrences.class, OccurrencesMapper.class );
 
         // FormItem and implementations
+
+        MAPPER.addMixIn( Form.class, FormMapper.class );
 
         MAPPER.addMixIn( FormItem.class, FormItemMapper.class );
 

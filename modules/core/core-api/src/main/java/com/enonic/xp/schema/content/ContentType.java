@@ -271,12 +271,6 @@ public final class ContentType
             return this;
         }
 
-        public Builder addFormItems( final Iterable<? extends FormItem> formItems )
-        {
-            formItems.forEach( this::addFormItem );
-            return this;
-        }
-
         public Builder form( final Form form )
         {
             this.formBuilder = form != null ? Form.create( form ) : Form.create();

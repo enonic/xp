@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import com.enonic.xp.form.FormItem;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -20,6 +20,9 @@ public abstract class ContentTypeMapper
         {
             return ContentType.create();
         }
+
+        @JsonProperty("form")
+        abstract ContentType.Builder form( Form form );
 
         @JsonProperty("name")
         abstract ContentType.Builder name( ContentTypeName name );
@@ -50,9 +53,6 @@ public abstract class ContentTypeMapper
 
         @JsonProperty("displayNameExpression")
         abstract ContentType.Builder displayNameExpression( String value );
-
-        @JsonProperty("form")
-        abstract ContentType.Builder addFormItems( Iterable<? extends FormItem> items );
 
         @JsonProperty("displayName")
         abstract ContentType.Builder displayName( String displayName );
