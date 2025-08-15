@@ -274,12 +274,6 @@ public final class Input
             return this;
         }
 
-        public Builder inputType( final String type )
-        {
-            this.inputType( InputTypeName.from( type ) );
-            return this;
-        }
-
         public Builder label( String value )
         {
             label = value;

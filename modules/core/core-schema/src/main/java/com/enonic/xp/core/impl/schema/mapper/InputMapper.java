@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeDefault;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
 @JsonDeserialize(builder = Input.Builder.class)
@@ -22,7 +23,7 @@ public abstract class InputMapper
         }
 
         @JsonProperty("type")
-        abstract Input.Builder inputType( String type );
+        abstract Input.Builder inputType( InputTypeName type );
 
         @JsonProperty("defaultValue")
         abstract Input.Builder defaultValue( InputTypeDefault value );

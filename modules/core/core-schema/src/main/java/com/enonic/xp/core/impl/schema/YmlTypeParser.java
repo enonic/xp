@@ -14,6 +14,7 @@ import com.enonic.xp.core.impl.schema.mapper.FormOptionSetOptionMapper;
 import com.enonic.xp.core.impl.schema.mapper.InlineMixinMapper;
 import com.enonic.xp.core.impl.schema.mapper.InputMapper;
 import com.enonic.xp.core.impl.schema.mapper.InputTypeDefaultMapper;
+import com.enonic.xp.core.impl.schema.mapper.InputTypeNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.InputTypePropertyMapper;
 import com.enonic.xp.core.impl.schema.mapper.MixinNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.OccurrencesMapper;
@@ -26,6 +27,7 @@ import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeDefault;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -49,6 +51,7 @@ public final class YmlTypeParser
 
         MAPPER.addMixIn( Input.class, InputMapper.class );
         MAPPER.addMixIn( Input.Builder.class, InputMapper.Builder.class );
+        MAPPER.addMixIn( InputTypeName.class, InputTypeNameMapper.class );
 
         MAPPER.addMixIn( FieldSet.class, FieldSetMapper.class );
         MAPPER.addMixIn( FieldSet.Builder.class, FieldSetMapper.Builder.class );
