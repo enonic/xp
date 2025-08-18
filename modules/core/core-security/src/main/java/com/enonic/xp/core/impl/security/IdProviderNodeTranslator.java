@@ -42,9 +42,9 @@ import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
 
 abstract class IdProviderNodeTranslator
 {
-    static final String USER_FOLDER_NODE_NAME = "users";
+    static final NodeName USER_FOLDER_NODE_NAME = NodeName.from( "users" );
 
-    static final String GROUP_FOLDER_NODE_NAME = "groups";
+    static final NodeName GROUP_FOLDER_NODE_NAME = NodeName.from( "groups" );
 
     static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
@@ -63,20 +63,20 @@ abstract class IdProviderNodeTranslator
 
     static NodePath toIdProviderUsersNodePath( final IdProviderKey idProviderKey )
     {
-        return new NodePath( toIdProviderNodePath( idProviderKey ), NodeName.from( USER_FOLDER_NODE_NAME ) );
+        return new NodePath( toIdProviderNodePath( idProviderKey ), USER_FOLDER_NODE_NAME );
     }
 
     static NodePath toIdProviderGroupsNodePath( final IdProviderKey idProviderKey )
     {
-        return new NodePath( toIdProviderNodePath( idProviderKey ), NodeName.from( GROUP_FOLDER_NODE_NAME ) );
+        return new NodePath( toIdProviderNodePath( idProviderKey ), GROUP_FOLDER_NODE_NAME );
     }
 
     static IdProviders fromNodes( final Nodes nodes )
     {
-        return nodes.stream().
-            map( IdProviderNodeTranslator::createIdProviderFromNode ).
-            filter( Objects::nonNull ).
-            collect( IdProviders.collector() );
+        return nodes.stream()
+            .map( IdProviderNodeTranslator::createIdProviderFromNode )
+            .filter( Objects::nonNull )
+            .collect( IdProviders.collector() );
     }
 
     static IdProvider fromNode( final Node node )
@@ -103,33 +103,33 @@ abstract class IdProviderNodeTranslator
                 usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ) &&
                 groupsPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ) )
             {
-                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
-                    principal( principal ).access( ADMINISTRATOR ).build();
+                final IdProviderAccessControlEntry access =
+                    IdProviderAccessControlEntry.create().principal( principal ).access( ADMINISTRATOR ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) &&
                 groupsPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) )
             {
-                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
-                    principal( principal ).access( ID_PROVIDER_MANAGER ).build();
+                final IdProviderAccessControlEntry access =
+                    IdProviderAccessControlEntry.create().principal( principal ).access( ID_PROVIDER_MANAGER ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ, CREATE, MODIFY, DELETE ) )
             {
-                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
-                    principal( principal ).access( WRITE_USERS ).build();
+                final IdProviderAccessControlEntry access =
+                    IdProviderAccessControlEntry.create().principal( principal ).access( WRITE_USERS ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, CREATE ) )
             {
-                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
-                    principal( principal ).access( CREATE_USERS ).build();
+                final IdProviderAccessControlEntry access =
+                    IdProviderAccessControlEntry.create().principal( principal ).access( CREATE_USERS ).build();
                 acl.add( access );
             }
             else if ( usersPermissions.isAllowedFor( principal, READ ) )
             {
-                final IdProviderAccessControlEntry access = IdProviderAccessControlEntry.create().
-                    principal( principal ).access( IdProviderAccess.READ ).build();
+                final IdProviderAccessControlEntry access =
+                    IdProviderAccessControlEntry.create().principal( principal ).access( IdProviderAccess.READ ).build();
                 acl.add( access );
             }
         }
@@ -144,8 +144,10 @@ abstract class IdProviderNodeTranslator
         {
             if ( entry.getAccess() == ADMINISTRATOR )
             {
-                final AccessControlEntry ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                    allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
+                final AccessControlEntry ace = AccessControlEntry.create()
+                    .principal( entry.getPrincipal() )
+                    .allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS )
+                    .build();
                 entries.add( ace );
             }
         }
@@ -161,28 +163,26 @@ abstract class IdProviderNodeTranslator
             switch ( entry.getAccess() )
             {
                 case CREATE_USERS:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( CREATE ).build();
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).allow( CREATE ).build();
                     entries.add( ace );
                     break;
                 case WRITE_USERS:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( READ, CREATE, MODIFY, DELETE ).build();
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).allow( READ, CREATE, MODIFY, DELETE ).build();
                     entries.add( ace );
                     break;
                 case ID_PROVIDER_MANAGER:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( READ, CREATE, MODIFY, DELETE ).build();
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).allow( READ, CREATE, MODIFY, DELETE ).build();
                     entries.add( ace );
                     break;
                 case ADMINISTRATOR:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS ).build();
+                    ace = AccessControlEntry.create()
+                        .principal( entry.getPrincipal() )
+                        .allow( READ, CREATE, MODIFY, DELETE, PUBLISH, READ_PERMISSIONS, WRITE_PERMISSIONS )
+                        .build();
                     entries.add( ace );
                     break;
                 case READ:
-                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).
-                        allow( READ ).build();
+                    ace = AccessControlEntry.create().principal( entry.getPrincipal() ).allow( READ ).build();
                     entries.add( ace );
                     break;
             }
@@ -216,28 +216,23 @@ abstract class IdProviderNodeTranslator
 
     static UpdateNodeParams toUpdateNodeParams( final IdProvider idProvider, final NodeId nodeId )
     {
-        return UpdateNodeParams.create().
-            id( nodeId ).
-            editor( editableNode -> {
-                final PropertyTree nodeData = editableNode.data;
-                nodeData.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, idProvider.getDisplayName() );
-                nodeData.setString( IdProviderPropertyNames.DESCRIPTION_KEY, idProvider.getDescription() );
+        return UpdateNodeParams.create().id( nodeId ).editor( editableNode -> {
+            final PropertyTree nodeData = editableNode.data;
+            nodeData.setString( IdProviderPropertyNames.DISPLAY_NAME_KEY, idProvider.getDisplayName() );
+            nodeData.setString( IdProviderPropertyNames.DESCRIPTION_KEY, idProvider.getDescription() );
 
-                final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
-                if ( idProviderConfig == null )
-                {
-                    nodeData.removeProperties( IdProviderPropertyNames.APPLICATION );
-                }
-                else
-                {
-                    nodeData.setString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY,
-                                        idProviderConfig.getApplicationKey().toString() );
-                    nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY,
-                                     idProviderConfig.getConfig().getRoot().copy( nodeData ) );
-                }
-            } ).
-            refresh( RefreshMode.ALL ).
-            build();
+            final IdProviderConfig idProviderConfig = idProvider.getIdProviderConfig();
+            if ( idProviderConfig == null )
+            {
+                nodeData.removeProperties( IdProviderPropertyNames.APPLICATION );
+            }
+            else
+            {
+                nodeData.setString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY, idProviderConfig.getApplicationKey().toString() );
+                nodeData.setSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY,
+                                 idProviderConfig.getConfig().getRoot().copy( nodeData ) );
+            }
+        } ).refresh( RefreshMode.ALL ).build();
     }
 
     private static IdProvider createIdProviderFromNode( final Node node )
@@ -250,27 +245,23 @@ abstract class IdProviderNodeTranslator
 
         final IdProviderKey idProviderKey = IdProviderNodeTranslator.toKey( node );
 
-        final IdProvider.Builder idProvider = IdProvider.create().
-            displayName( nodeAsSet.getString( IdProviderPropertyNames.DISPLAY_NAME_KEY ) ).
-            key( idProviderKey ).
-            description( nodeAsSet.getString( IdProviderPropertyNames.DESCRIPTION_KEY ) );
+        final IdProvider.Builder idProvider = IdProvider.create()
+            .displayName( nodeAsSet.getString( IdProviderPropertyNames.DISPLAY_NAME_KEY ) )
+            .key( idProviderKey )
+            .description( nodeAsSet.getString( IdProviderPropertyNames.DESCRIPTION_KEY ) );
 
         if ( nodeAsSet.hasProperty( IdProviderPropertyNames.APPLICATION ) )
         {
             final String applicationKey = nodeAsSet.getString( IdProviderPropertyNames.ID_PROVIDER_APPLICATION_KEY );
             final PropertySet config = nodeAsSet.getSet( IdProviderPropertyNames.ID_PROVIDER_CONFIG_FORM_KEY );
-            final IdProviderConfig idProviderConfig = IdProviderConfig.create().
-                applicationKey( ApplicationKey.from( applicationKey ) ).
-                config( config.toTree() ).
-                build();
+            final IdProviderConfig idProviderConfig =
+                IdProviderConfig.create().applicationKey( ApplicationKey.from( applicationKey ) ).config( config.toTree() ).build();
             idProvider.idProviderConfig( idProviderConfig );
         }
         else if ( IdProviderKey.system().equals( idProviderKey ) )
         {
             //TODO Remove after next dump upgrade
-            final IdProviderConfig idProviderConfig = IdProviderConfig.create().
-                applicationKey( SYSTEM_ID_PROVIDER_KEY ).
-                build();
+            final IdProviderConfig idProviderConfig = IdProviderConfig.create().applicationKey( SYSTEM_ID_PROVIDER_KEY ).build();
             idProvider.idProviderConfig( idProviderConfig );
         }
 

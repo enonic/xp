@@ -51,6 +51,8 @@ final class ContentPathResolver
             return this.portalRequest.getContentPath();
         }
 
-        return this.path.isAbsolute() ? this.path : ContentPath.from( this.portalRequest.getContentPath(), this.path );
+        return this.path.isAbsolute()
+            ? this.path
+            : ContentPath.create().addAll( this.portalRequest.getContentPath() ).addAll( this.path ).build();
     }
 }

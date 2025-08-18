@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -33,13 +34,13 @@ final class RenamedEventSyncCommand
             {
                 if ( needToRename( content.getSourceContent(), content.getTargetContent() ) )
                 {
-                    final ContentName newName = ContentName.from(
-                        buildNewPath( content.getTargetContent().getParentPath(), content.getSourceContent().getName() ).getName() );
+                    final ContentName newName =
+                        buildNewPath( content.getTargetContent().getParentPath(), content.getSourceContent().getName() ).getName();
 
                     contentService.rename( RenameContentParams.create()
                                                .contentId( content.getTargetContent().getId() )
                                                .newName( newName )
-                                               .stopInherit( !newName.equals( content.getSourceContent().getName() ) )
+                                               .stopInherit( !Objects.equal( newName, content.getSourceContent().getName() ) )
                                                .build() );
                 }
             }

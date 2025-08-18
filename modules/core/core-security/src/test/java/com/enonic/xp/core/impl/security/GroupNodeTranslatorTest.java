@@ -8,6 +8,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.security.Group;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -31,7 +32,7 @@ public class GroupNodeTranslatorTest
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( group );
 
-        assertEquals( "group-a", createNodeParams.getName() );
+        assertEquals( NodeName.from( "group-a" ), createNodeParams.getName() );
 
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertNotNull( rootDataSet );

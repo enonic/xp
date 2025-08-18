@@ -42,7 +42,7 @@ public final class NodePath
         }
         else
         {
-            this.path = toElements( path ).stream()
+            this.path = toElements( path ).stream().map( NodeName::toString )
                 .collect( Collectors.joining( ELEMENT_DIVIDER, isAbsolute( path ) ? ELEMENT_DIVIDER : "",
                                               hasTrailing( path ) ? ELEMENT_DIVIDER : "" ) );
         }
@@ -127,7 +127,7 @@ public final class NodePath
         return isAbsolute( this.path );
     }
 
-    public String getName()
+    public NodeName getName()
     {
         if ( isEmpty() )
         {
@@ -139,7 +139,7 @@ public final class NodePath
             final int endIndex = hasTrailing( this.path ) ? this.path.length() - 1 : this.path.length();
             final String stringNoTrailing = this.path.substring( stringIndex, endIndex );
             final int beginIndex = stringNoTrailing.lastIndexOf( ELEMENT_DIVIDER );
-            return stringNoTrailing.substring( beginIndex == -1 ? 0 : beginIndex + 1 );
+            return NodeName.fromInternal( stringNoTrailing.substring( beginIndex == -1 ? 0 : beginIndex + 1 ) );
         }
     }
 
@@ -192,9 +192,14 @@ public final class NodePath
         return this.path.compareTo( o.path );
     }
 
-    private static List<String> toElements( final String elements )
+    private static ArrayList<NodeName> toElements( final String elements )
     {
-        return Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().trimResults().splitToList( elements );
+        return Splitter.on( ELEMENT_DIVIDER )
+            .omitEmptyStrings()
+            .trimResults()
+            .splitToStream( elements )
+            .map( NodeName::from )
+            .collect( Collectors.toCollection( ArrayList::new ) );
     }
 
     private static boolean isAbsolute( final String path )
@@ -213,14 +218,14 @@ public final class NodePath
 
         private boolean trailingDivider;
 
-        private final ArrayList<String> elementListBuilder;
+        private final ArrayList<NodeName> elementListBuilder;
 
         private Builder( final NodePath source )
         {
             Preconditions.checkNotNull( source, "source to build copy from not given" );
             this.absolute = isAbsolute( source.path );
             this.trailingDivider = hasTrailing( source.path );
-            this.elementListBuilder = source.isEmpty() ? new ArrayList<>() : new ArrayList<>( toElements( source.path ) );
+            this.elementListBuilder = source.isEmpty() ? new ArrayList<>() : toElements( source.path );
         }
 
         public Builder addElement( final String value )
@@ -229,14 +234,19 @@ public final class NodePath
             {
                 return this;
             }
+            this.elementListBuilder.add( NodeName.from( value ) );
+            return this;
+        }
 
-            this.elementListBuilder.add( NodeName.from( value ).toString() );
+        public Builder addElement( final NodeName value )
+        {
+            this.elementListBuilder.add( value );
             return this;
         }
 
         public NodePath build()
         {
-            return new NodePath( this.elementListBuilder.stream()
+            return new NodePath( this.elementListBuilder.stream().map( NodeName::toString )
                                      .collect( Collectors.joining( ELEMENT_DIVIDER, this.absolute ? ELEMENT_DIVIDER : "",
                                                                    this.trailingDivider && !this.elementListBuilder.isEmpty()
                                                                        ? ELEMENT_DIVIDER

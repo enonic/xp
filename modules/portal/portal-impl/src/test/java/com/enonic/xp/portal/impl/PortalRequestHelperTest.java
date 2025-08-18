@@ -69,7 +69,7 @@ public class PortalRequestHelperTest
 
         // case 8
         portalRequest.setMode( RenderMode.EDIT );
-        portalRequest.setContentPath( ContentPath.from( "/contentPath" ) );
+        portalRequest.setContentPath( ContentPath.from( "/" ) );
         portalRequest.setContent( Content.create( content ).root().build() );
         portalRequest.setSite( null );
         assertEquals( "/", PortalRequestHelper.getSiteRelativePath( portalRequest ) );

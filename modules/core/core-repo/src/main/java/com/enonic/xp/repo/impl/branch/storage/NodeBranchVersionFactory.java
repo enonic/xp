@@ -14,7 +14,6 @@ public class NodeBranchVersionFactory
     public static NodeBranchEntry create( final ReturnValues returnValues )
     {
         final Object path = returnValues.getSingleValue( BranchIndexPath.PATH.getPath() );
-        final Object state = returnValues.getSingleValue( BranchIndexPath.STATE.getPath() );
         final Object versionId = returnValues.getSingleValue( BranchIndexPath.VERSION_ID.getPath() );
         final Object nodeBlobKey = returnValues.getSingleValue( BranchIndexPath.NODE_BLOB_KEY.getPath() );
         final Object indexConfigBlobKey = returnValues.getSingleValue( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath() );

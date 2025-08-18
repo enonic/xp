@@ -72,7 +72,7 @@ public final class MoveNodeHandler
             move( node.id(), targetParent );
         }
 
-        return rename( node.id(), NodeName.from( targetPath.getName() ) );
+        return rename( node.id(), targetPath.getName() );
     }
 
     private NodeMapper convert( final Node node )

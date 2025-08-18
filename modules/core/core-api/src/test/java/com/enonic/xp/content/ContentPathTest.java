@@ -20,7 +20,7 @@ public class ContentPathTest
     public void test_toString()
         throws Exception
     {
-        assertEquals( "/parent/child", ContentPath.create().elements( "parent", "child" ).build().toString() );
+        assertEquals( "/parent/child", ContentPath.from( "/parent/child" ).toString() );
         assertEquals( "/", ContentPath.create().build().toString() );
         assertEquals( "", ContentPath.create().absolute( false ).build().toString() );
     }
@@ -30,9 +30,8 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "/" ), ContentPath.from( "/first" ).getParentPath() );
-        assertEquals( ContentPath.from( "/first" ), ContentPath.create().elements( "first", "second" ).build().getParentPath() );
-        assertEquals( ContentPath.create().elements( "first", "second" ).build(),
-                      ContentPath.create().elements( "first", "second", "third" ).build().getParentPath() );
+        assertEquals( ContentPath.from( "/first" ), ContentPath.from( "/first/second" ).getParentPath() );
+        assertEquals( ContentPath.from( "/first/second" ), ContentPath.from( "/first/second/third" ).getParentPath() );
     }
 
     @Test
@@ -46,10 +45,10 @@ public class ContentPathTest
     public void getAncestorPath()
         throws Exception
     {
-        assertEquals(  ContentPath.from( "/a/b" ), ContentPath.from( "/a/b/c" ).getAncestorPath(1) );
-        assertEquals(  ContentPath.from( "/a" ), ContentPath.from( "/a/b/c" ).getAncestorPath(2) );
-        assertEquals(  ContentPath.from( "/" ), ContentPath.from( "/a/b/c" ).getAncestorPath(3) );
-        assertEquals(  null, ContentPath.from( "/a/b/c" ).getAncestorPath(4) );
+        assertEquals( ContentPath.from( "/a/b" ), ContentPath.from( "/a/b/c" ).getAncestorPath( 1 ) );
+        assertEquals( ContentPath.from( "/a" ), ContentPath.from( "/a/b/c" ).getAncestorPath( 2 ) );
+        assertEquals( ContentPath.from( "/" ), ContentPath.from( "/a/b/c" ).getAncestorPath( 3 ) );
+        assertEquals( null, ContentPath.from( "/a/b/c" ).getAncestorPath( 4 ) );
     }
 
     @Test
@@ -73,7 +72,7 @@ public class ContentPathTest
         throws Exception
     {
         assertEquals( ContentPath.from( "a" ), ContentPath.from( "a" ) );
-        assertEquals( ContentPath.create().elements( "a", "b" ).build(), ContentPath.from( "/a/b" ) );
+        assertEquals( ContentPath.from( "a/b" ), ContentPath.from( "a/b" ) );
     }
 
     @Test
@@ -93,8 +92,8 @@ public class ContentPathTest
     public void getName()
         throws Exception
     {
-        assertEquals( "parent", ContentPath.from( "/parent" ).getName() );
-        assertEquals( "child", ContentPath.from( "/parent/child" ).getName() );
+        assertEquals( ContentName.from( "parent" ), ContentPath.from( "/parent" ).getName() );
+        assertEquals( ContentName.from( "child" ), ContentPath.from( "/parent/child" ).getName() );
         assertEquals( null, ContentPath.from( "/" ).getName() );
     }
 
