@@ -2,6 +2,8 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
+import com.google.common.collect.ImmutableMap;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
@@ -21,6 +23,8 @@ public final class NodeVersionMetadata
 
     private final NodeCommitId nodeCommitId;
 
+    private final ImmutableMap<String, String> attributes;
+
     private final Instant timestamp;
 
     private NodeVersionMetadata( Builder builder )
@@ -32,6 +36,7 @@ public final class NodeVersionMetadata
         nodePath = builder.nodePath;
         nodeCommitId = builder.nodeCommitId;
         timestamp = builder.timestamp;
+        attributes = ImmutableMap.of("com.enoic.xp.content.update", "");
     }
 
     public static Builder create()

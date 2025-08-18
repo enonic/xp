@@ -1,9 +1,8 @@
 package com.enonic.xp.content;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
@@ -18,16 +17,15 @@ public final class ContentPath
 
     private final boolean absolute;
 
-    private final List<String> elements;
+    private final ImmutableList<ContentName> elements;
 
-    private ContentPath( final Builder builder )
+    private ContentPath( final boolean absolute, final ImmutableList<ContentName> elements )
     {
-        Preconditions.checkNotNull( builder.elements );
-        this.absolute = builder.absolute;
-        this.elements = builder.elements.build();
+        this.absolute = absolute;
+        this.elements = elements;
     }
 
-    public String getElement( final int index )
+    public ContentName getElement( final int index )
     {
         return this.elements.get( index );
     }
@@ -56,10 +54,7 @@ public final class ContentPath
             return null;
         }
 
-        final int subIndex = size - deep;
-        final List<String> parentElements = this.elements.subList( 0, subIndex );
-
-        return create().absolute( absolute ).elements( parentElements ).build();
+        return new ContentPath( this.absolute, this.elements.subList( 0, size - deep ) );
     }
 
     public boolean isAbsolute()
@@ -77,12 +72,7 @@ public final class ContentPath
         return new ContentPath.Builder( this ).absolute( true ).build();
     }
 
-    public boolean hasName()
-    {
-        return !elements.isEmpty();
-    }
-
-    public String getName()
+    public ContentName getName()
     {
         return elements.isEmpty() ? null : elements.get( elements.size() - 1 );
     }
@@ -96,7 +86,7 @@ public final class ContentPath
 
         for ( int i = 0; i < possibleParentPath.elementCount(); i++ )
         {
-            if ( !elements.get( i ).equalsIgnoreCase( possibleParentPath.getElement( i ) ) )
+            if ( !elements.get( i ).toString().equalsIgnoreCase( possibleParentPath.getElement( i ).toString() ) )
             {
                 return false;
             }
@@ -129,29 +119,36 @@ public final class ContentPath
     @Override
     public String toString()
     {
-        return ( this.absolute ? ELEMENT_DIVIDER : "" ) + String.join( ELEMENT_DIVIDER, elements );
+        return ( this.absolute ? ELEMENT_DIVIDER : "" ) +
+            elements.stream().map( ContentName::toString ).collect( Collectors.joining( ELEMENT_DIVIDER ) );
     }
 
     public static ContentPath from( final String path )
     {
-        final Iterable<String> pathElements = Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().split( path );
-        boolean absolute = path.startsWith( ELEMENT_DIVIDER );
-        return create().elements( pathElements ).absolute( absolute ).build();
+        final Builder builder = create().absolute( path.startsWith( ELEMENT_DIVIDER ) );
+        Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().splitToStream( path ).map( ContentName::from ).forEach( builder::addElement );
+        return builder.build();
+    }
+
+    public static ContentPath from( final ContentPath parent, final ContentName name )
+    {
+        return new Builder( parent ).addElement( name ).build();
     }
 
     public static ContentPath from( final ContentPath parent, final String name )
     {
-        return create().elements( parent.elements ).absolute( parent.isAbsolute() ).addElement( name ).build();
+        return from( parent, ContentName.from( name ) );
     }
 
     public static ContentPath from( final ContentPath parent, final ContentPath relative )
     {
-        final Builder builder = create().elements( parent.elements );
-        builder.addElements( relative.elements );
-        builder.absolute( parent.isAbsolute() );
+        final Builder builder = new Builder( parent );
+        for ( ContentName element : relative.elements )
+        {
+            builder.addElement( element );
+        }
         return builder.build();
     }
-
 
     public static Builder create()
     {
@@ -160,7 +157,7 @@ public final class ContentPath
 
     public static final class Builder
     {
-        private ImmutableList.Builder<String> elements;
+        private ImmutableList.Builder<ContentName> elements;
 
         private boolean absolute = true;
 
@@ -171,8 +168,7 @@ public final class ContentPath
 
         private Builder( ContentPath source )
         {
-            this.elements = ImmutableList.builder();
-            this.elements.addAll( source.elements );
+            this.elements = ImmutableList.<ContentName>builder().addAll( source.elements );
             this.absolute = source.absolute;
         }
 
@@ -187,46 +183,30 @@ public final class ContentPath
             this.elements = ImmutableList.builder();
             for ( String pathElement : pathElements )
             {
-                validatePathElement( pathElement );
-                this.elements.add( pathElement );
+                this.elements.add( ContentName.from( pathElement ) );
             }
             return this;
         }
 
-        public Builder elements( final Iterable<String> pathElements )
+        public Builder elements( final Iterable<ContentName> pathElements )
         {
             this.elements = ImmutableList.builder();
-            for ( String pathElement : pathElements )
+            for ( ContentName pathElement : pathElements )
             {
-                validatePathElement( pathElement );
                 this.elements.add( pathElement );
             }
             return this;
         }
 
-        public Builder addElement( final String pathElement )
+        public Builder addElement( final ContentName pathElement )
         {
-            validatePathElement( pathElement );
             this.elements.add( pathElement );
             return this;
         }
 
-        public void addElements( final List<String> elements )
-        {
-            elements.forEach( this::addElement );
-        }
-
-        private void validatePathElement( final String pathElement )
-        {
-            Preconditions.checkNotNull( pathElement, "A path element cannot be null" );
-            Preconditions.checkArgument( !pathElement.isEmpty(), "A path element cannot be empty" );
-            Preconditions.checkArgument( !pathElement.contains( ELEMENT_DIVIDER ),
-                                         "A path element cannot contain an element divider '%s': [%s]", ELEMENT_DIVIDER, pathElement );
-        }
-
         public ContentPath build()
         {
-            return new ContentPath( this );
+            return new ContentPath( absolute, elements.build() );
         }
     }
 }

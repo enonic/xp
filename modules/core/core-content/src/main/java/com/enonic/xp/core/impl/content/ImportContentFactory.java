@@ -11,7 +11,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 
 import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
@@ -55,10 +55,11 @@ public class ImportContentFactory
 
         nodeData.removeProperties( PUBLISH_INFO );
 
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath() );
         return Node.create()
             .id( NodeId.from( params.getContent().getId() ) )
-            .parentPath( ContentNodeHelper.translateContentPathToNodePath( params.getTargetPath().getParentPath() ) )
-            .name( NodeName.from( params.getTargetPath().getName() ) )
+            .parentPath( nodePath.getParentPath() )
+            .name( nodePath.getName() )
             .data( nodeData )
             .childOrder( params.getContent().getChildOrder() )
             .manualOrderValue( params.getContent().getManualOrderValue() )

@@ -8,6 +8,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalType;
@@ -33,7 +34,7 @@ public class UserNodeTranslatorTest
 
         final CreateNodeParams createNodeParams = PrincipalNodeTranslator.toCreateNodeParams( user );
 
-        assertEquals( "rmy", createNodeParams.getName() );
+        assertEquals( NodeName.from( "rmy" ), createNodeParams.getName() );
 
         final PropertyTree rootDataSet = createNodeParams.getData();
         assertEquals( IdProviderKey.system().toString(), rootDataSet.getString( PrincipalPropertyNames.ID_PROVIDER_KEY ) );

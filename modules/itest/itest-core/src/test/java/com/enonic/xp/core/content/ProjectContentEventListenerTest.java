@@ -109,7 +109,7 @@ public class ProjectContentEventListenerTest
 
         compareSynched( firstContent, firstTargetContent );
         assertNotEquals( secondContent.getName(), secondTargetContent.getName() );
-        assertNotEquals( "name-1", secondTargetContent.getName() );
+        assertNotEquals( ContentName.from( "name-1" ), secondTargetContent.getName() );
     }
 
     @Test
@@ -680,7 +680,7 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        assertNotEquals( sortedInParent.getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ) );
+        assertNotEquals( sortedInParent.getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ).getChildOrder() );
 
     }
 

@@ -47,7 +47,7 @@ exports.deleteNull = function () {
     try {
         scheduler.delete({
             name: null
-        });
+        });PortalRequestHelperTest
     } catch (e) {
         assert.assertEquals('name cannot be null', e.getMessage());
     }

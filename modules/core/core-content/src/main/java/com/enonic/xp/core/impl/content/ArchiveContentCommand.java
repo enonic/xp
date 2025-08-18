@@ -174,10 +174,10 @@ final class ArchiveContentCommand
     private Node rename( final Node node )
     {
         final NodePath newPath = pathResolver.buildArchivedPath( node );
-        if ( !newPath.getName().equals( node.name().toString() ) )
+        if ( !newPath.getName().equals( node.name() ) )
         {
             return nodeService.rename(
-                RenameNodeParams.create().nodeId( node.id() ).nodeName( NodeName.from( newPath.getName() ) ).build() );
+                RenameNodeParams.create().nodeId( node.id() ).nodeName( newPath.getName() ).build() );
         }
 
         return node;

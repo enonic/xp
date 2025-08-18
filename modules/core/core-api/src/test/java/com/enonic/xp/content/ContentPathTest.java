@@ -93,8 +93,8 @@ public class ContentPathTest
     public void getName()
         throws Exception
     {
-        assertEquals( "parent", ContentPath.from( "/parent" ).getName() );
-        assertEquals( "child", ContentPath.from( "/parent/child" ).getName() );
+        assertEquals( ContentName.from( "parent" ), ContentPath.from( "/parent" ).getName() );
+        assertEquals( ContentName.from( "child" ), ContentPath.from( "/parent/child" ).getName() );
         assertEquals( null, ContentPath.from( "/" ).getName() );
     }
 

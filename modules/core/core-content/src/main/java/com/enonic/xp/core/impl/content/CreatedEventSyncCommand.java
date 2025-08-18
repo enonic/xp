@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.EnumSet;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +96,7 @@ final class CreatedEventSyncCommand
 
         final ContentPath targetPath = buildNewPath( parentPath, content.getSourceContent().getName() );
 
-        final EnumSet<ContentInheritType> inheritTypes = content.getSourceContent().getName().toString().equals( targetPath.getName() )
+        final EnumSet<ContentInheritType> inheritTypes = Objects.equals( content.getSourceContent().getName(), targetPath.getName() )
             ? EnumSet.allOf( ContentInheritType.class )
             : EnumSet.complementOf( EnumSet.of( ContentInheritType.NAME ) );
 

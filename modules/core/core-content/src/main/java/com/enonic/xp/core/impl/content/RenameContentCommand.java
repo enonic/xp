@@ -86,7 +86,7 @@ final class RenameContentCommand
                 .data( contentData )
                 .extraDatas( extraData )
                 .contentTypeName( type )
-                .contentName( ContentName.from( newNodePath.getName() ) )
+                .contentName( ContentName.from( newNodePath.getName().toString() ) )
                 .displayName( displayName )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
@@ -106,7 +106,7 @@ final class RenameContentCommand
     {
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
-        final NodeName nodeName = NodeName.from( params.getNewName().toString() );
+        final NodeName nodeName = NodeName.from( params.getNewName() );
 
         final RenameNodeParams.Builder builder =
             RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName ).processor( initProcessors() );

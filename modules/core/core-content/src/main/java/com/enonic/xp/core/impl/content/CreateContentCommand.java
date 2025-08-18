@@ -108,7 +108,7 @@ final class CreateContentCommand
         catch ( NodeAlreadyExistAtPathException e )
         {
             throw new ContentAlreadyExistsException(
-                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName().toString() ),
+                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName() ),
                 e.getRepositoryId(), e.getBranch() );
         }
         catch ( NodeAccessException e )
@@ -154,9 +154,7 @@ final class CreateContentCommand
             }
             catch ( final Exception e )
             {
-                final String name = params.getName() == null ? "" : params.getName().toString();
-                final ContentPath path = ContentPath.from( params.getParent(), name );
-                throw new IllegalArgumentException( "Incorrect property for content: " + path, e );
+                throw new IllegalArgumentException( "Incorrect content property", e );
             }
         }
     }

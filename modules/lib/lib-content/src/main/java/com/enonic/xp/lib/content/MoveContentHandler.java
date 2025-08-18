@@ -57,7 +57,7 @@ public final class MoveContentHandler
         {
             // just rename, keep same parent path
             // /a/b -> c => /a/c
-            return rename( sourceId, target );
+            return rename( sourceId, ContentName.from( target ) );
         }
         else
         {
@@ -101,16 +101,15 @@ public final class MoveContentHandler
         return contentService.getById( result.getMovedContents().first() );
     }
 
-    private Content rename( final ContentId sourceId, final String newName )
+    private Content rename( final ContentId sourceId, final ContentName newName )
     {
-        final ContentName newContentName = ContentName.from( newName );
-        final RenameContentParams renameParams = RenameContentParams.create().contentId( sourceId ).newName( newContentName ).build();
+        final RenameContentParams renameParams = RenameContentParams.create().contentId( sourceId ).newName( newName ).build();
         return contentService.rename( renameParams );
     }
 
-    private String uniqueName()
+    private ContentName uniqueName()
     {
-        return UUID.randomUUID().toString();
+        return ContentName.from( UUID.randomUUID().toString() );
     }
 
     public void setSource( final String source )

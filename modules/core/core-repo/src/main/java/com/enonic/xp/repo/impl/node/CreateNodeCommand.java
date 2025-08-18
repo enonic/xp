@@ -83,7 +83,7 @@ public final class CreateNodeCommand
         final Node.Builder nodeBuilder = Node.create().
             id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
             parentPath( params.getParent() ).
-            name( NodeName.from( params.getName() ) ).
+            name( params.getName() ).
             data( params.getData() ).
             indexConfigDocument( params.getIndexConfigDocument() ).
             childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
@@ -196,7 +196,7 @@ public final class CreateNodeCommand
             }
         }
 
-        NodePath nodePath = new NodePath( params.getParent(), NodeName.from( params.getName() ) );
+        NodePath nodePath = new NodePath( params.getParent(), params.getName() );
 
         CheckNodeExistsCommand.create( this ).
             nodePath( nodePath ).

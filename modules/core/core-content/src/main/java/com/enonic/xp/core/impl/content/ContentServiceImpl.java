@@ -31,6 +31,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -117,7 +118,7 @@ import com.enonic.xp.util.BinaryReference;
 public class ContentServiceImpl
     implements ContentService
 {
-    public static final String TEMPLATES_FOLDER_NAME = "_templates";
+    public static final ContentName TEMPLATES_FOLDER_NAME = ContentName.from( "_templates" );
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
@@ -451,7 +452,7 @@ public class ContentServiceImpl
     public Content getById( final ContentId contentId )
     {
         return Tracer.trace( "content.getById", trace -> trace.put( "id", contentId ), () -> doGetById( contentId ),
-                             ( trace, content ) -> trace.put( "path", content.getPath() ) );
+                             ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
     }
 
     private Content doGetById( final ContentId contentId )
@@ -487,7 +488,7 @@ public class ContentServiceImpl
         return Tracer.trace( "content.getNearestSite", trace -> trace.put( "id", contentId ), command::execute, ( trace, site ) -> {
             if ( site != null )
             {
-                trace.put( "path", site.getPath() );
+                trace.put( "path", site.getPath().toString() );
             }
         } );
     }
@@ -499,7 +500,7 @@ public class ContentServiceImpl
                              () -> (Site) doFindNearestByPath( contentPath, Content::isSite ), ( trace, site ) -> {
                 if ( site != null )
                 {
-                    trace.put( "path", site.getPath() );
+                    trace.put( "path", site.getPath().toString() );
                 }
             } );
     }
@@ -1032,7 +1033,7 @@ public class ContentServiceImpl
         return Tracer.trace( "content.getByIdAndVersionId", trace -> {
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
-        }, command::execute, ( trace, content ) -> trace.put( "path", content.getPath() ) );
+        }, command::execute, ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
     }
 
     @Override

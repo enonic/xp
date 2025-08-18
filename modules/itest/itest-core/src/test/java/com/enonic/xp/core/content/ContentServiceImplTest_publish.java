@@ -308,7 +308,7 @@ public class ContentServiceImplTest_publish
         this.contentService.delete( DeleteContentParams.create().contentPath( content2.getPath() ).build() );
 
         final Content movedContent =
-            this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName().toString() ) );
+            this.contentService.getByPath( ContentPath.from( content1.getPath(), content2_1.getName() ) );
 
         assertNotNull( movedContent );
     }
