@@ -316,7 +316,7 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final PatchContentResult patchedContentResult = ContextBuilder.from( projectContext )
+        final PatchContentResult patchedContentResult = ContextBuilder.copyOf( projectContext )
             .attribute( Event.METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) )
             .build()
             .callWith( () -> contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {

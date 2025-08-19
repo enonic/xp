@@ -64,10 +64,14 @@ public class PatchContentCommand
             .build()
             .produce();
 
-        final PatchNodeResult result = ContextBuilder.from( ContextAccessor.current() )
-            .attribute( Event.METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) )
-            .build()
-            .callWith( () -> nodeService.patch( patchNodeParams ) );
+        final ContextBuilder context = ContextBuilder.from( ContextAccessor.current() );
+
+        if ( params.isSkipSync() )
+        {
+            context.attribute( Event.METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) );
+        }
+
+        final PatchNodeResult result = context.build().callWith( () -> nodeService.patch( patchNodeParams ) );
 
         final PatchContentResult.Builder builder = PatchContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
 
