@@ -43,10 +43,10 @@ import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectContentEventListener;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
@@ -109,7 +109,7 @@ public class ProjectContentEventListenerTest
 
         compareSynched( firstContent, firstTargetContent );
         assertNotEquals( secondContent.getName(), secondTargetContent.getName() );
-        assertNotEquals( ContentName.from( "name-1" ), secondTargetContent.getName() );
+        assertEquals( ContentName.from( "name-1" ), secondTargetContent.getName() );
     }
 
     @Test
