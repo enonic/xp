@@ -1,16 +1,10 @@
 name: "myapp:article"
-superType: "base:structured"
-isAbstract: false
-isFinal: false
-allowChildContent: true
-isBuiltIn: false
-displayName: "Article"
-displayNameI18nKey: "i18n.article.displayName"
-description: "Article Description"
-descriptionI18nKey: "i18n.article.description"
-displayNameLabel: "Article heading"
-displayNameLabelI18nKey: "article.title"
-displayNameExpression: "${expression}"
+
+displayName:
+  text: "Article"
+  i18n: "i18n.article.displayName"
+  expression: "${expression}"
+
 form:
   - type: "TextLine"
     name: "field1"

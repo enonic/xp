@@ -1,0 +1,9 @@
+name: "myapp:article"
+
+displayName:
+  text: "Article"
+  i18n: "i18n.article.displayName"
+  expression: "${expression}"
+
+
+

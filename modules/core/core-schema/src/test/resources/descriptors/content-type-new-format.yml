@@ -1,0 +1,37 @@
+displayName:
+  text: "Article"
+  i18n: "i18n.article.displayName"
+  expression: "${expression}"
+form:
+  - type: "RadioButton"
+    name: "type"
+    label: "Policy type"
+    options:
+      - name: "cookie"
+        value: "Cookie"
+        i18n: "i18n.rbg.cookie"
+      - name: "privacy"
+        value: "Privacy"
+    default: "cookie"
+  - type: "TextLine"
+    name: "description"
+    label: "Brief description"
+    maxLength: 100
+    default: "Default value"
+  - type: "ItemSet"
+    name: "Panel"
+    label:
+      text: "My Panel"
+      i18n: "i18n.itemset.label"
+    helpText:
+      text: "Help Text"
+      i18n: "i18n.itemset.helpText"
+    occurrences:
+      minimum: 0
+      maximum: 2
+    immutable: true
+    customText: "Custom Text"
+    items:
+      - type: "TextLine"
+        name: "description"
+        label: "Description"

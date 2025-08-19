@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 
-public class FormBuilderDeserializer
+public class FormDeserializer
     extends JsonDeserializer<Form>
 {
     @Override
