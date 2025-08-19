@@ -12,7 +12,7 @@ public class LastResortErrorHandler
     extends ErrorHandler
 {
     @Override
-    protected void writeErrorHtml( Request request, Writer writer, Charset charset, int code, String message, Throwable cause, boolean showStacks )
+    protected void writeErrorHtml( Request request, Writer writer, Charset charset, int code, String message, Throwable cause )
         throws IOException
     {
         String text = code + " - " + HttpStatus.getMessage( code );
