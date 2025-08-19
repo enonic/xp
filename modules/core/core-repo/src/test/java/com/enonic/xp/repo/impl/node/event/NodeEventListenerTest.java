@@ -191,8 +191,7 @@ public class NodeEventListenerTest
             PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).currentTargetPath( previousNodePath ).build();
 
         final InternalContext internalContext = createInternalContext();
-        final Event localEvent =
-            NodeEvents.pushed( List.of( pushNodeEntry ), ContentConstants.BRANCH_MASTER, internalContext.getRepositoryId() );
+        final Event localEvent = NodeEvents.pushed( List.of( pushNodeEntry ), internalContext );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 

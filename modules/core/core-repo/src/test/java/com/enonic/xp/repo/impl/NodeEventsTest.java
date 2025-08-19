@@ -57,7 +57,8 @@ public class NodeEventsTest
                                                                  .build() );
 
         final Context context = createContext( "master" );
-        Event event = NodeEvents.pushed( pushNodeEntries, context.getBranch(), context.getRepositoryId() );
+        final InternalContext internalContext = InternalContext.from( context );
+        Event event = NodeEvents.pushed( pushNodeEntries, internalContext );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
