@@ -20,12 +20,15 @@ public final class PatchContentParams
 
     private final Branches branches;
 
+    private final boolean skipSync;
+
     private PatchContentParams( final Builder builder )
     {
         this.id = builder.id;
         this.patcher = builder.patcher;
         this.createAttachments = builder.createAttachments;
         this.branches = Branches.from( builder.branches.build() );
+        this.skipSync = builder.skipSync;
     }
 
     public static Builder create()
@@ -53,6 +56,11 @@ public final class PatchContentParams
         return branches;
     }
 
+    public boolean isSkipSync()
+    {
+        return skipSync;
+    }
+
     public static final class Builder
     {
         private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
@@ -62,6 +70,8 @@ public final class PatchContentParams
         private ContentPatcher patcher;
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
+
+        private boolean skipSync;
 
         private Builder()
         {
@@ -88,6 +98,12 @@ public final class PatchContentParams
         public Builder branches( final Branches branches )
         {
             this.branches.addAll( branches );
+            return this;
+        }
+
+        public Builder skipSync( final boolean skipSync )
+        {
+            this.skipSync = skipSync;
             return this;
         }
 

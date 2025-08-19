@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -305,6 +306,30 @@ public class ProjectContentEventListenerTest
         assertNotEquals( patchedContent.getOriginProject(), targetContent.getOriginProject() );
         assertNotEquals( patchedContent.getOriginalParentPath(), targetContent.getOriginalParentPath() );
         assertNotEquals( patchedContent.getOriginalName(), targetContent.getOriginalName() );
+    }
+
+    @Test
+    public void syncPatchedSkipSync()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
+
+        handleEvents();
+
+        final PatchContentResult patchedContentResult = ContextBuilder.from( projectContext )
+            .attribute( Event.METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) )
+            .build()
+            .callWith( () -> contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
+                final PropertyTree data = new PropertyTree();
+                data.addString( "test", "value" );
+                edit.data.setValue( data );
+            } ) ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertNotEquals( targetContent.getData(), patchedContentResult.getResult( ContentConstants.BRANCH_DRAFT ).getData() );
     }
 
     @Test

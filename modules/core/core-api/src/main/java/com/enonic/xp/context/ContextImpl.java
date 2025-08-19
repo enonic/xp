@@ -43,6 +43,12 @@ final class ContextImpl
     }
 
     @Override
+    public Map<String, String> getEventMetadata()
+    {
+        return (Map) this.attributes.getOrDefault( "eventMetadata", ImmutableMap.of() );
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T getAttribute( final Class<T> type )
     {

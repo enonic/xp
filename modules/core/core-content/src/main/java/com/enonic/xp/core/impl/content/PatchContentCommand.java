@@ -1,11 +1,16 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Map;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPatcher;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PatchableContent;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.event.Event;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
@@ -59,7 +64,10 @@ public class PatchContentCommand
             .build()
             .produce();
 
-        final PatchNodeResult result = nodeService.patch( patchNodeParams );
+        final PatchNodeResult result = ContextBuilder.from( ContextAccessor.current() )
+            .attribute( Event.METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) )
+            .build()
+            .callWith( () -> nodeService.patch( patchNodeParams ) );
 
         final PatchContentResult.Builder builder = PatchContentResult.create().contentId( ContentId.from( result.getNodeId() ) );
 

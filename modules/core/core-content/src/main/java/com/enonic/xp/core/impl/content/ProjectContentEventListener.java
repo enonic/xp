@@ -84,7 +84,10 @@ public final class ProjectContentEventListener
             .map( map -> map.get( "path" ) )
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
-        if ( isContentEvent )
+        final Map<String, String> eventMetadata = (Map) event.getData().getOrDefault( "metadata", Map.of() );
+        final boolean isSkipSync = Boolean.parseBoolean( eventMetadata.getOrDefault( "skipSync", "false" ).toString() );
+
+        if ( isContentEvent && !isSkipSync )
         {
             Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
             this.simpleExecutor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event ) ) );
@@ -139,10 +142,7 @@ public final class ProjectContentEventListener
                 .forEach( targetProject -> {
 
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
-                        .addContentIds( contentIds )
-                        .sourceProject( sourceProject.getName() )
-                        .targetProject( targetProject.getName() )
-                        .addEventMetadata( event.getData() );
+                        .addContentIds( contentIds ).sourceProject( sourceProject.getName() ).targetProject( targetProject.getName() );
 
                     switch ( event.getType() )
                     {
@@ -199,10 +199,7 @@ public final class ProjectContentEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() )
-            .branch( ContentConstants.BRANCH_DRAFT )
-            .authInfo( authInfo )
-            .build();
+        return ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).authInfo( authInfo ).build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()

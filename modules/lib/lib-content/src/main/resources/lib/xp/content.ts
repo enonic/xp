@@ -705,6 +705,7 @@ export interface PatchContentParams {
     key: string;
     patcher: (v: PatchableContent) => PatchableContent;
     branches?: string[];
+    skipSync?: boolean;
 }
 
 export interface PatchContentResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
@@ -733,6 +734,8 @@ interface PatchContentHandler {
     setPatcher(value: ScriptValue): void;
 
     setBranches(value: string[]): void;
+
+    setSkipSync(value: boolean): void;
 
     execute(): PatchContentResult;
 }
@@ -821,6 +824,7 @@ export function patch(params: PatchContentParams): PatchContentResult {
         key,
         patcher,
         branches = [],
+        skipSync = false,
     } = params ?? {};
 
     const bean: PatchContentHandler = __.newBean<PatchContentHandler>('com.enonic.xp.lib.content.PatchContentHandler');
@@ -828,6 +832,7 @@ export function patch(params: PatchContentParams): PatchContentResult {
     bean.setKey(key);
     bean.setPatcher(__.toScriptValue(patcher));
     bean.setBranches(branches);
+    bean.setSkipSync(skipSync);
 
     return __.toNativeObject(bean.execute());
 }

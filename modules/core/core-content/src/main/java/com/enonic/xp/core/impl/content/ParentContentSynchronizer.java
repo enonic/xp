@@ -108,7 +108,7 @@ public final class ParentContentSynchronizer
                 }
                 else
                 {
-                    this.doSync( contentsToSync, Map.of() ); // TODO: patch?
+                    this.doSync( contentsToSync );
                 }
             }
         }
@@ -124,7 +124,7 @@ public final class ParentContentSynchronizer
 
         if ( !contents.isEmpty() )
         {
-            final ContentEventSyncCommandParams commandParams = createEventCommandParams( contents, params.getEventMetadata() );
+            final ContentEventSyncCommandParams commandParams = createEventCommandParams( contents );
             createEventCommand( commandParams, params.getSyncType() ).sync();
         }
     }
@@ -142,7 +142,7 @@ public final class ParentContentSynchronizer
 
         if ( !contentsToSync.isEmpty() )
         {
-            this.doSync( contentsToSync, Map.of() ); // TODO: patch?
+            this.doSync( contentsToSync );
         }
 
         sourceContents.stream().filter( sourceContent -> sourceContent.getSourceContent() != null ).forEach( currentContentToSync -> {
@@ -184,7 +184,7 @@ public final class ParentContentSynchronizer
         } );
     }
 
-    private void doSync( final Collection<ContentToSync> sourceContents, final Map<String, Object> eventMetadata )
+    private void doSync( final Collection<ContentToSync> sourceContents )
     {
         final List<ContentToSync> existedContents =
             sourceContents.stream().filter( contentToSync -> contentToSync.getTargetContent() != null ).collect( Collectors.toList() );
@@ -194,11 +194,11 @@ public final class ParentContentSynchronizer
 
         if ( !newContents.isEmpty() )
         {
-            createEventCommand( createEventCommandParams( newContents, Map.of() ), ContentSyncEventType.CREATED ).sync();
+            createEventCommand( createEventCommandParams( newContents ), ContentSyncEventType.CREATED ).sync();
         }
 
         existedContents.stream().flatMap( contentToSync -> {
-            final ContentEventSyncCommandParams existedCommandParams = createEventCommandParams( List.of( contentToSync ), eventMetadata );
+            final ContentEventSyncCommandParams existedCommandParams = createEventCommandParams( List.of( contentToSync ) );
 
             if ( contentToSync.getSourceContent() != null )
             {
@@ -274,10 +274,9 @@ public final class ParentContentSynchronizer
 
     }
 
-    private ContentEventSyncCommandParams createEventCommandParams( final Collection<ContentToSync> contents,
-                                                                    final Map<String, Object> eventMetadata )
+    private ContentEventSyncCommandParams createEventCommandParams( final Collection<ContentToSync> contents )
     {
-        return ContentEventSyncCommandParams.create().addContents( contents ).setEventMetadata( eventMetadata ).build();
+        return ContentEventSyncCommandParams.create().addContents( contents ).build();
     }
 
     private AbstractContentEventSyncCommand createEventCommand( final ContentEventSyncCommandParams params,
@@ -308,7 +307,7 @@ public final class ParentContentSynchronizer
                                                                                                    ? actualSourceContext
                                                                                                    : contentToSync.getSourceContext() )
                                                                                .targetContext( contentToSync.getTargetContext() )
-                                                                               .build() ), Map.of() ),
+                                                                               .build() ) ),
                                         ContentSyncEventType.DELETED ).sync();
                 }
 

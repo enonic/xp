@@ -14,6 +14,8 @@ import com.enonic.xp.convert.Converters;
 public final class Event
     implements Serializable
 {
+    public static final String METADATA_ATTRIBUTE = "eventMetadata";
+
     private static final long serialVersionUID = 0;
 
     private final String type;

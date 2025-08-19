@@ -41,6 +41,8 @@ public final class PatchContentHandler
 
     private String[] branches;
 
+    private boolean skipSync;
+
     @Override
     protected Object doExecute()
     {
@@ -50,8 +52,10 @@ public final class PatchContentHandler
             return null;
         }
 
-        final PatchContentParams.Builder params =
-            PatchContentParams.create().contentId( existingContent.getId() ).patcher( newContentPatcher( existingContent ) );
+        final PatchContentParams.Builder params = PatchContentParams.create()
+            .contentId( existingContent.getId() )
+            .patcher( newContentPatcher( existingContent ) )
+            .skipSync( this.skipSync );
 
         if ( branches != null )
         {
@@ -197,5 +201,10 @@ public final class PatchContentHandler
     public void setBranches( final String[] branches )
     {
         this.branches = branches;
+    }
+
+    public void setSkipSync( final boolean skipSync )
+    {
+        this.skipSync = skipSync;
     }
 }

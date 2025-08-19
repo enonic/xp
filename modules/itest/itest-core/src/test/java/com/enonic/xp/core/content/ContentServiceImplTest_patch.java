@@ -41,6 +41,34 @@ public class ContentServiceImplTest_patch
         assertEquals( patchedContent.getModifiedTime(), content.getModifiedTime() );
         assertEquals( patchedContent.getModifier(), content.getModifier() );
     }
+
+//    @Test
+//    public void patch_with_skip_sync()
+//        throws Exception
+//    {
+//        Instant now = Instant.now();
+//
+//        final CreateContentParams createContentParams = CreateContentParams.create()
+//            .contentData( new PropertyTree() )
+//            .displayName( "This is my content" )
+//            .parent( ContentPath.ROOT )
+//            .type( ContentTypeName.folder() )
+//            .build();
+//
+//        final Content content = this.contentService.create( createContentParams );
+//
+//        final PatchContentParams patchContentParams = PatchContentParams.create().contentId( content.getId() ).patcher( edit -> {
+//            edit.displayName.setValue( "new display name" );
+//        } ).skipSync( true ).build();
+//
+//        this.contentService.patch( patchContentParams );
+//
+//        final FindAuditLogResult findAuditLogResult = auditLogService.find( FindAuditLogParams.create().from( now ).build() );
+//
+//        Mockito.verify( eventPublisher ).publish( Mockito.any() );
+//
+////        assertEquals( 1, findAuditLogResult.getCount());
+//    }
 //
 //    @Test
 //    public void update_content_image()
