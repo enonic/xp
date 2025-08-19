@@ -6,10 +6,11 @@ import java.util.concurrent.Callable;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.event.Event;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
+
+import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
 
 final class ContextImpl
     implements Context
@@ -46,7 +47,7 @@ final class ContextImpl
     @Override
     public Map<String, String> getEventMetadata()
     {
-        return (Map) this.attributes.getOrDefault( Event.METADATA_ATTRIBUTE, ImmutableMap.of() );
+        return (Map) this.attributes.getOrDefault( CONTEXT_METADATA_ATTRIBUTE, ImmutableMap.of() );
     }
 
     @Override

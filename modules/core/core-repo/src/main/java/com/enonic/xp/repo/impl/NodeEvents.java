@@ -15,6 +15,9 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodeEntry;
 
+import static com.enonic.xp.event.EventConstants.METADATA_FIELD;
+import static com.enonic.xp.event.EventConstants.NODES_FIELD;
+
 public final class NodeEvents
 {
     public static final String NODE_CREATED_EVENT = "node.created";
@@ -80,8 +83,7 @@ public final class NodeEvents
     public static Event moved( final MoveNodeResult result, final InternalContext internalContext )
     {
         return Event.create( NODE_MOVED_EVENT )
-            .distributed( true )
-            .value( "nodes", result.getMovedNodes()
+            .distributed( true ).value( NODES_FIELD, result.getMovedNodes()
                 .stream()
                 .map( movedNode -> createMoved( movedNode.getPreviousPath(), movedNode.getNode(), internalContext ) )
                 .collect( Collectors.toList() ) )
@@ -91,8 +93,7 @@ public final class NodeEvents
     public static Event renamed( final NodePath previousPath, final Node targetNode, final InternalContext internalContext )
     {
         return Event.create( NODE_RENAMED_EVENT )
-            .distributed( true )
-            .value( "nodes", ImmutableList.of( createMoved( previousPath, targetNode, internalContext ) ) )
+            .distributed( true ).value( NODES_FIELD, ImmutableList.of( createMoved( previousPath, targetNode, internalContext ) ) )
             .build();
     }
 
@@ -115,24 +116,24 @@ public final class NodeEvents
     {
         return Event.create( type )
             .distributed( true )
-            .value( "nodes", nodesToList( nodes, internalContext ) )
-            .value( "metadata", internalContext.getEventMetadata() );
+            .value( NODES_FIELD, nodesToList( nodes, internalContext ) )
+            .value( METADATA_FIELD, internalContext.getEventMetadata() );
     }
 
     private static Event.Builder event( String type, NodeBranchEntries nodes, InternalContext internalContext )
     {
         return Event.create( type )
             .distributed( true )
-            .value( "nodes", nodesToList( nodes, internalContext ) )
-            .value( "metadata", internalContext.getEventMetadata() );
+            .value( NODES_FIELD, nodesToList( nodes, internalContext ) )
+            .value( METADATA_FIELD, internalContext.getEventMetadata() );
     }
 
     private static Event.Builder event( String type, Collection<PushNodeEntry> nodes, final InternalContext internalContext )
     {
         return Event.create( type )
             .distributed( true )
-            .value( "nodes", nodesToList( nodes, internalContext ) )
-            .value( "metadata", internalContext.getEventMetadata() );
+            .value( NODES_FIELD, nodesToList( nodes, internalContext ) )
+            .value( METADATA_FIELD, internalContext.getEventMetadata() );
     }
 
     private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes, final InternalContext internalContext )

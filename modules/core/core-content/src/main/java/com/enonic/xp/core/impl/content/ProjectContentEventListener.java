@@ -85,7 +85,7 @@ public final class ProjectContentEventListener
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
         final Map<String, String> eventMetadata = (Map) event.getData().getOrDefault( "metadata", Map.of() );
-        final boolean isSkipSync = Boolean.parseBoolean( eventMetadata.getOrDefault( "skipSync", "false" ).toString() );
+        final boolean isSkipSync = Boolean.parseBoolean( eventMetadata.getOrDefault( "skipSync", "false" ) );
 
         if ( isContentEvent && !isSkipSync )
         {

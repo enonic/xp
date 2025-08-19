@@ -10,9 +10,10 @@ import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.event.Event;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
+
+import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
 
 public class PatchContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -68,7 +69,7 @@ public class PatchContentCommand
 
         if ( params.isSkipSync() )
         {
-            context.attribute( Event.METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) );
+            context.attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) );
         }
 
         final PatchNodeResult result = context.build().callWith( () -> nodeService.patch( patchNodeParams ) );

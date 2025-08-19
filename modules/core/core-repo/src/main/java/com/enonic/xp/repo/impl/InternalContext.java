@@ -8,10 +8,11 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.event.Event;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
 
 public class InternalContext
 {
@@ -43,7 +44,7 @@ public class InternalContext
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() )
             .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
-            .eventMetadata( (Map) context.getAttribute( Event.METADATA_ATTRIBUTE ) )
+            .eventMetadata( (Map) context.getAttribute( CONTEXT_METADATA_ATTRIBUTE ) )
             .build();
     }
 
@@ -82,8 +83,7 @@ public class InternalContext
         return create().authInfo( context.getAuthInfo() )
             .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
             .branch( context.getBranch() )
-            .repositoryId( context.getRepositoryId() )
-            .eventMetadata( (Map) context.getAttribute( Event.METADATA_ATTRIBUTE ) );
+            .repositoryId( context.getRepositoryId() ).eventMetadata( (Map) context.getAttribute( CONTEXT_METADATA_ATTRIBUTE ) );
     }
 
     public static Builder create()
