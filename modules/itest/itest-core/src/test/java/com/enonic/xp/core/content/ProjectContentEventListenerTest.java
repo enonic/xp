@@ -62,6 +62,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
@@ -72,6 +73,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -1253,8 +1255,8 @@ public class ProjectContentEventListenerTest
     public void repoIsNotProject()
         throws Exception
     {
-        eventPublisher.publish( Event.create( "node.created" )
-                                    .value( "nodes", List.of( ImmutableMap.builder()
+        eventPublisher.publish(
+            Event.create( NodeEvents.NODE_CREATED_EVENT ).value( EventConstants.NODES_FIELD, List.of( ImmutableMap.builder()
                                                                   .put( "id", "123" )
                                                                   .put( "path", "/content/something" )
                                                                   .put( "branch", "draft" )

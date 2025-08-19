@@ -21,6 +21,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -78,13 +79,13 @@ public final class ProjectContentEventListener
 
     private void handleContentEvent( final Event event )
     {
-        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( EventConstants.NODES_FIELD );
 
         final boolean isContentEvent = nodes.stream()
             .map( map -> map.get( "path" ) )
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
-        final Map<String, String> eventMetadata = (Map) event.getData().getOrDefault( "metadata", Map.of() );
+        final Map<String, String> eventMetadata = (Map) event.getData().getOrDefault( EventConstants.METADATA_FIELD, Map.of() );
         final boolean isSkipSync = Boolean.parseBoolean( eventMetadata.getOrDefault( "skipSync", "false" ) );
 
         if ( isContentEvent && !isSkipSync )

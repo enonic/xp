@@ -20,6 +20,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
@@ -611,8 +612,8 @@ public class NodeServiceImplTest
 
         final List<Event> patchedEvents = captor.getAllValues();
 
-        assertEquals( "value1", ( (Map) patchedEvents.get( 0 ).getData().get( "metadata" ) ).get( "key1" ) );
-        assertEquals( "value2", ( (Map) patchedEvents.get( 0 ).getData().get( "metadata" ) ).get( "key2" ) );
+        assertEquals( "value1", ( (Map) patchedEvents.get( 0 ).getData().get( EventConstants.METADATA_FIELD ) ).get( "key1" ) );
+        assertEquals( "value2", ( (Map) patchedEvents.get( 0 ).getData().get( EventConstants.METADATA_FIELD ) ).get( "key2" ) );
     }
 
     @Test

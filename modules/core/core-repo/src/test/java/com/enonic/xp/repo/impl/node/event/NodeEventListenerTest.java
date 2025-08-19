@@ -11,6 +11,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -56,7 +57,8 @@ public class NodeEventListenerTest
     public void invalid_event_nodes_not_list()
         throws Exception
     {
-        nodeEventListener.onEvent( Event.create( NodeEvents.NODE_CREATED_EVENT ).value( "nodes", "ost" ).localOrigin( false ).build() );
+        nodeEventListener.onEvent(
+            Event.create( NodeEvents.NODE_CREATED_EVENT ).value( EventConstants.NODES_FIELD, "ost" ).localOrigin( false ).build() );
 
         Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
     }
