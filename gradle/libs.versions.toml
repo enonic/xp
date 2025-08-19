@@ -3,7 +3,7 @@ jackson = "2.19.2"
 junit5 = "6.0.0"
 mockito = "5.20.0"
 slf4j = "2.0.17"
-jetty = "12.0.25"
+jetty = "12.1.0"
 hazelcast = "5.5.0"
 tika = "3.2.3"
 micrometer = "1.15.3"
@@ -132,10 +132,10 @@ jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "6.2.12.Final" }
 
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
-jetty-servlet = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlet", version.ref = "jetty" }
-jetty-servlets = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlets", version.ref = "jetty" }
+jetty-servlet = { module = "org.eclipse.jetty.ee11:jetty-ee11-servlet", version.ref = "jetty" }
+jetty-servlets = { module = "org.eclipse.jetty.ee11:jetty-ee11-servlets", version.ref = "jetty" }
 jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version.ref = "jetty" }
-jetty-websocket-server = { module = "org.eclipse.jetty.ee10.websocket:jetty-ee10-websocket-jakarta-server", version.ref = "jetty" }
+jetty-websocket-server = { module = "org.eclipse.jetty.ee11.websocket:jetty-ee11-websocket-jakarta-server", version.ref = "jetty" }
 jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version.ref = "jetty" }
 
 micrometer-commons = { module = "io.micrometer:micrometer-commons", version.ref = "micrometer" }
