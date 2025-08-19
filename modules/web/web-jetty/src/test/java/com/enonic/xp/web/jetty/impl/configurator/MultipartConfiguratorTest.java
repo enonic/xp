@@ -1,6 +1,6 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee11.servlet.ServletHolder;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

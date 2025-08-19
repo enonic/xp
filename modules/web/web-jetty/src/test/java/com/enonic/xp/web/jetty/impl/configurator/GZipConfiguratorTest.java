@@ -1,7 +1,8 @@
 package com.enonic.xp.web.jetty.impl.configurator;
 
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.compression.gzip.GzipCompression;
+import org.eclipse.jetty.compression.server.CompressionHandler;
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -34,12 +35,12 @@ class GZipConfiguratorTest
 
         configure();
 
-        ArgumentCaptor<GzipHandler> captor = ArgumentCaptor.forClass( GzipHandler.class );
+        ArgumentCaptor<CompressionHandler> captor = ArgumentCaptor.forClass( CompressionHandler.class );
         verify( object ).insertHandler( captor.capture() );
-        final GzipHandler handler = captor.getValue();
+        final CompressionHandler handler = captor.getValue();
 
         assertNotNull( handler );
-        assertEquals( 23, handler.getMinGzipSize() );
+        assertEquals( 32, handler.getBean( GzipCompression.class ).getMinCompressSize() );
     }
 
     @Test
@@ -60,10 +61,10 @@ class GZipConfiguratorTest
 
         configure();
 
-        ArgumentCaptor<GzipHandler> captor = ArgumentCaptor.forClass( GzipHandler.class );
+        ArgumentCaptor<CompressionHandler> captor = ArgumentCaptor.forClass( CompressionHandler.class );
         verify( object ).insertHandler( captor.capture() );
-        final GzipHandler handler = captor.getValue();
+        final CompressionHandler handler = captor.getValue();
 
-        assertEquals( 100, handler.getMinGzipSize() );
+        assertEquals( 100, handler.getBean( GzipCompression.class ).getMinCompressSize() );
     }
 }

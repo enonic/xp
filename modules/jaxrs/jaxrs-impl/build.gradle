@@ -1,14 +1,15 @@
 dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
+    implementation libs.resteasy.core
     implementation libs.jackson.jakarta.jsonprovider
-    implementation libs.resteasy
     implementation project( ':core:core-internal' )
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
-    testFixturesImplementation libs.resteasy
+    testFixturesImplementation libs.resteasy.core
+    testFixturesImplementation libs.jackson.jakarta.jsonprovider
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
-    testFixturesImplementation libs.jackson.jakarta.jsonprovider
+
     testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
     testFixturesImplementation project( ':core:core-internal' )
 
@@ -23,6 +24,7 @@ jar {
          'Private-Package': 'org.jboss.resteasy.*;-split-package:=merge-first' + ',' +
              'org.reactivestreams.*' + ',' +
              'com.ibm.asyncutil.*' + ',' +
+             'com.fasterxml.jackson.jakarta.rs.*' + ',' +
              'META-INF.services.*;-split-package:=merge-first' )
     }
 }

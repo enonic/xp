@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.google.common.net.MediaType;
+
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebResponse;
@@ -53,7 +55,7 @@ class WebDispatcherServletTest
     {
         this.handler.response = WebResponse.create().
             status( HttpStatus.OK ).
-            contentType( com.google.common.net.MediaType.create( "text", "plain" ) ).
+            contentType( MediaType.PLAIN_TEXT_UTF_8 ).
             body( "Hello World" ).
             build();
 
@@ -73,7 +75,7 @@ class WebDispatcherServletTest
         final HttpResponse response = callRequest( request );
 
         assertEquals( 200, response.statusCode() );
-        assertEquals( List.of( "text/plain" ), response.headers().allValues( "content-type" ) );
+        assertEquals( List.of( "text/plain;charset=utf-8" ), response.headers().allValues( "content-type" ) );
         assertEquals( "Hello World", response.body().toString() );
         assertEquals( List.of( "11" ), response.headers().allValues( "content-length" ) );
     }
@@ -185,7 +187,7 @@ class WebDispatcherServletTest
 
         this.handler.verifier = req -> {
             assertEquals( HttpMethod.POST, req.getMethod() );
-            assertEquals( "text/plain; charset=UTF-8", req.getContentType() );
+            assertEquals( "text/plain; charset=utf-8", req.getContentType() );
             assertEquals( "Hello World", req.getBodyAsString() );
         };
 
