@@ -174,10 +174,10 @@ final class ArchiveContentCommand
     private Node rename( final Node node )
     {
         final NodePath newPath = pathResolver.buildArchivedPath( node );
-        if ( !newPath.getName().equals( node.name().toString() ) )
+        if ( !newPath.getName().equals( node.name() ) )
         {
             return nodeService.rename(
-                RenameNodeParams.create().nodeId( node.id() ).nodeName( NodeName.from( newPath.getName() ) ).build() );
+                RenameNodeParams.create().nodeId( node.id() ).nodeName( newPath.getName() ).build() );
         }
 
         return node;
@@ -206,7 +206,7 @@ final class ArchiveContentCommand
     private void validateLocation()
     {
         final Node node = nodeService.getById( NodeId.from( params.getContentId() ) );
-        if ( ContentNodeHelper.getContentRootName( node.path() ).equals( ArchiveConstants.ARCHIVE_ROOT_NAME ) )
+        if ( ContentNodeHelper.inArchive( node.path() ) )
         {
             throw new ArchiveContentException( String.format( "content [%s] is archived already", params.getContentId() ),
                                                ContentNodeHelper.translateNodePathToContentPath( node.path() ) );

@@ -112,8 +112,8 @@ public class ZipDumpReader
         return StreamSupport.stream( Spliterators.spliteratorUnknownSize( zipFile.getEntries().asIterator(), Spliterator.ORDERED ), false )
             .map( ZipArchiveEntry::getName )
             .filter( name -> name.startsWith( prefix ) )
-            .filter( name -> name.indexOf( "/", prefix.length() ) != -1 )
-            .map( name -> name.substring( prefix.length(), name.indexOf( "/", prefix.length() ) ) )
+            .filter( name -> name.indexOf( '/', prefix.length() ) != -1 )
+            .map( name -> name.substring( prefix.length(), name.indexOf( '/', prefix.length() ) ) )
             .distinct();
     }
 

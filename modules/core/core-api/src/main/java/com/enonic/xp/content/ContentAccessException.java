@@ -57,7 +57,7 @@ public final class ContentAccessException
 
     private static ContentPath translateNodePathToContentPath( final NodePath nodePath )
     {
-        final int beginIndex = nodePath.toString().indexOf( "/", 1 );
+        final int beginIndex = nodePath.toString().indexOf( '/', 1 );
         if ( beginIndex == -1 )
         {
             return ContentPath.ROOT;

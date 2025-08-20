@@ -11,9 +11,9 @@ public final class ContentName
 {
     private static final String UNNAMED_PREFIX = "__unnamed__";
 
-    private ContentName( final String name )
+    private ContentName( final String name, boolean validate )
     {
-        super( name );
+        super( name, validate );
     }
 
     public boolean isUnnamed()
@@ -26,18 +26,13 @@ public final class ContentName
         return isUnnamed() && this.value.length() > UNNAMED_PREFIX.length();
     }
 
-    public static ContentName unnamed()
-    {
-        return from( UNNAMED_PREFIX );
-    }
-
     public static ContentName from( final String name )
     {
-        return new ContentName( name );
+        return new ContentName( name, true );
     }
 
     public static ContentName uniqueUnnamed()
     {
-        return from( UNNAMED_PREFIX + UUID.randomUUID() );
+        return new ContentName( UNNAMED_PREFIX + UUID.randomUUID(), false );
     }
 }

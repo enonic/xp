@@ -2,12 +2,8 @@ package com.enonic.xp.content;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -23,36 +19,6 @@ public final class ContentPaths
     private ContentPaths( final ImmutableSet<ContentPath> set )
     {
         super( set );
-    }
-
-    public ContentPaths add( final String... paths )
-    {
-        return add( from( paths ) );
-    }
-
-    public ContentPaths add( final ContentPath... paths )
-    {
-        return addPaths( Arrays.asList( paths ) );
-    }
-
-    public ContentPaths add( final Iterable<?> paths )
-    {
-        return addPaths( adaptPaths( paths ) );
-    }
-
-    public ContentPaths remove( final String... paths )
-    {
-        return remove( from( paths ) );
-    }
-
-    public ContentPaths remove( final ContentPath... paths )
-    {
-        return removePaths( ImmutableSet.copyOf( paths ) );
-    }
-
-    public ContentPaths remove( final Iterable<?> paths )
-    {
-        return removePaths( adaptPaths( paths ) );
     }
 
     public static ContentPaths empty()
@@ -93,35 +59,6 @@ public final class ContentPaths
     public static Builder create()
     {
         return new Builder();
-    }
-
-    private ContentPaths addPaths( final Collection<ContentPath> paths )
-    {
-        return Stream.concat( stream(), paths.stream() ).collect( collector() );
-    }
-
-    private ContentPaths removePaths( final Set<ContentPath> paths )
-    {
-        return stream().filter( Predicate.not( paths::contains ) ).collect( collector() );
-    }
-
-    private static ContentPath adaptPath( Object item )
-    {
-        if ( item instanceof String )
-        {
-            return ContentPath.from( (String) item );
-        }
-        else
-        {
-            return (ContentPath) item;
-        }
-    }
-
-    private static ImmutableSet<ContentPath> adaptPaths( final Iterable<?> paths )
-    {
-        return StreamSupport.stream( paths.spliterator(), false ).
-            map( ContentPaths::adaptPath ).
-            collect( ImmutableSet.toImmutableSet() );
     }
 
     public static final class Builder

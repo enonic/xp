@@ -373,7 +373,7 @@ public class MappingHandlerTest
         this.request.setProject( project );
         this.request.setRepositoryId( project.getName().getRepoId() );
 
-        final ContentPath path = ContentPath.from( contentPath ).asAbsolute();
+        final ContentPath path = ContentPath.from( contentPath );
 
         when( this.contentService.getByPath( path ) ).thenReturn( content );
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );

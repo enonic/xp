@@ -29,7 +29,7 @@ public class DuplicateContentsResultMapperTest
         JsonNode actualJson = (JsonNode) jsonGenerator.getRoot();
 
         assertEquals( "contentName", actualJson.get( "contentName" ).asText() );
-        assertEquals( "contentPath", actualJson.get( "sourceContentPath" ).asText() );
+        assertEquals( "/contentPath", actualJson.get( "sourceContentPath" ).asText() );
         assertEquals( 1, actualJson.get( "duplicatedContents" ).size() );
         assertEquals( "contentId", actualJson.get( "duplicatedContents" ).get( 0 ).asText() );
     }

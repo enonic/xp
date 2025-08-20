@@ -124,7 +124,7 @@ public abstract class RenderBaseHandlerTest
     protected final void setupContentWithoutPage()
     {
         final Content content = createPage( "id", "site/somepath/content", "myapplication:ctype", false );
-        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ).asAbsolute() ) ).thenReturn( content );
+        when( this.contentService.getByPath( ContentPath.from( "site/somepath/content" ) ) ).thenReturn( content );
         this.request.setContent( content );
 
         final Site site = createSite( "id", "site" );

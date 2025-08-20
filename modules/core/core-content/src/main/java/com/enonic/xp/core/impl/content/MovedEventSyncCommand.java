@@ -109,7 +109,7 @@ final class MovedEventSyncCommand
                         {
                             contentService.rename( RenameContentParams.create()
                                                        .contentId( content.getTargetContent().getId() )
-                                                       .newName( ContentName.from( newPath.getName() ) )
+                                                       .newName( newPath.getName() )
                                                        .build() );
                         }
                         contentService.move( MoveContentParams.create()

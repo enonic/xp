@@ -57,7 +57,6 @@ public final class DeleteContentParams
         public DeleteContentParams build()
         {
             Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
-            Preconditions.checkArgument( this.contentPath.isAbsolute(), "ContentPath must be absolute: " + this.contentPath );
             return new DeleteContentParams( this );
         }
     }

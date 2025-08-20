@@ -30,10 +30,6 @@ public final class FindContentByParentParams
     {
         Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
                                      "expected either parentPath or parentId, but not both" );
-        if ( builder.parentPath != null )
-        {
-            Preconditions.checkArgument( builder.parentPath.isAbsolute(), "parentPath must be absolute: " + builder.parentPath );
-        }
         this.parentPath = builder.parentPath;
         this.parentId = builder.parentId;
         this.queryFilters = builder.queryFilters.build();

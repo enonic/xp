@@ -25,6 +25,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 
+import static java.util.Objects.requireNonNullElse;
+
 @PublicApi
 public class Content
 {
@@ -35,10 +37,6 @@ public class Content
     private final String displayName;
 
     private final ContentTypeName type;
-
-    private final ContentPath parentPath;
-
-    private final ContentName name;
 
     private final ContentPath path;
 
@@ -100,12 +98,10 @@ public class Content
         this.validationErrors = builder.validationErrors;
         this.displayName = builder.displayName;
         this.type = builder.type;
-        this.name = builder.root ? null : builder.name;
-        this.parentPath = builder.root ? ContentPath.ROOT : builder.parentPath;
-        this.path = builder.root ? ContentPath.ROOT : ContentPath.from( builder.parentPath, builder.name.toString() );
+        this.path = builder.root ? ContentPath.ROOT : ContentPath.from( builder.parentPath, builder.name );
         this.id = builder.id;
         this.data = builder.data;
-        this.attachments = Objects.requireNonNullElseGet( builder.attachments, Attachments::empty );
+        this.attachments = requireNonNullElse( builder.attachments, Attachments.empty() );
         this.extraDatas = builder.extraDatas;
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
@@ -119,10 +115,10 @@ public class Content
         this.inherit = Sets.immutableEnumSet( builder.inherit );
         this.originProject = builder.originProject;
         this.childOrder = builder.childOrder;
-        this.permissions = builder.permissions == null ? AccessControlList.empty() : builder.permissions;
+        this.permissions = requireNonNullElse( builder.permissions, AccessControlList.empty() );
         this.language = builder.language;
         this.processedReferences = builder.processedReferences.build();
-        this.workflowInfo = builder.workflowInfo == null ? WorkflowInfo.ready() : builder.workflowInfo;
+        this.workflowInfo = requireNonNullElse(builder.workflowInfo, WorkflowInfo.ready() );
         this.manualOrderValue = builder.manualOrderValue;
         this.originalName = builder.originalName;
         this.originalParentPath = builder.originalParentPath;
@@ -182,7 +178,7 @@ public class Content
 
     public ContentPath getParentPath()
     {
-        return parentPath;
+        return path.getParentPath();
     }
 
     public ContentPath getPath()
@@ -197,7 +193,7 @@ public class Content
 
     public ContentName getName()
     {
-        return this.name;
+        return this.path.getName();
     }
 
     public boolean isValid()
@@ -379,7 +375,7 @@ public class Content
 
         final Content other = (Content) o;
 
-        return Objects.equals( id, other.id ) && Objects.equals( name, other.name ) && Objects.equals( parentPath, other.parentPath ) &&
+        return Objects.equals( id, other.id ) && Objects.equals( path, other.path ) &&
             Objects.equals( displayName, other.displayName ) && Objects.equals( type, other.type ) && valid == other.valid &&
             Objects.equals( modifier, other.modifier ) && Objects.equals( validationErrors, other.validationErrors ) &&
             Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
@@ -399,7 +395,7 @@ public class Content
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
+        return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
                              hasChildren, inherit, originProject, childOrder, thumbnail, permissions, attachments, data,
                              extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
                              originalParentPath, archivedTime, archivedBy, variantOf );
@@ -486,8 +482,8 @@ public class Content
             this.id = source.id;
             this.valid = source.valid;
             this.validationErrors = source.validationErrors;
-            this.parentPath = source.parentPath;
-            this.name = source.name;
+            this.parentPath = source.path.getParentPath();
+            this.name = source.path.getName();
             this.type = source.type;
             this.data = source.data.copy();
             this.attachments = source.attachments;
@@ -513,7 +509,7 @@ public class Content
             this.originalName = source.originalName;
             this.originalParentPath = source.originalParentPath;
             this.archivedTime = source.archivedTime;
-            this.root = source.name == null;
+            this.root = source.path.getName() == null;
             this.variantOf = source.variantOf;
         }
 
@@ -542,9 +538,8 @@ public class Content
 
         public BUILDER path( final ContentPath path )
         {
-            this.parentPath = path.getParentPath() != null ? path.getParentPath().asAbsolute() : null;
-            Preconditions.checkArgument( path.elementCount() > 0, "No content can be \"root content\": " + path );
-            this.name = ContentName.from( path.getElement( path.elementCount() - 1 ) );
+            this.parentPath = path.getParentPath();
+            this.name = path.getName();
             return (BUILDER) this;
         }
 
@@ -766,9 +761,10 @@ public class Content
         {
             if ( !root )
             {
-                Preconditions.checkNotNull( name, "name is required for a Content" );
                 Preconditions.checkNotNull( parentPath, "parentPath is required for a Content" );
+                Preconditions.checkNotNull( name, "name is required for a Content" );
             }
+
             Preconditions.checkNotNull( data, "data is required for a Content" );
 
             if ( page != null )

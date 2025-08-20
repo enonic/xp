@@ -27,59 +27,13 @@ class ContentPathsTest
     private static final ContentPath CONTENT_PATH3 = ContentPath.from( "/content/path3" );
 
     @Test
-    void addAndRemoveString()
-    {
-        Set<String> set = Set.of( STRING_PATH2, STRING_PATH3 );
-        String[] array = {STRING_PATH2, STRING_PATH3};
-
-        ContentPaths pathsFromSet = ContentPaths.from( STRING_PATH1 ).
-            add( set );
-        ContentPaths pathsFromArray = ContentPaths.from( STRING_PATH1 ).
-            add( array );
-
-        assertEquals( pathsFromSet, pathsFromArray );
-
-        pathsFromArray = pathsFromArray.remove( set );
-        pathsFromSet = pathsFromSet.remove( array );
-
-        assertEquals( pathsFromSet, pathsFromArray );
-        assertEquals( pathsFromSet.hashCode(), pathsFromArray.hashCode() );
-        assertEquals( pathsFromSet.toString(), pathsFromArray.toString() );
-    }
-
-    @Test
-    void addAndRemoveContentPath()
-    {
-
-        Set<ContentPath> set = Set.of( CONTENT_PATH2, CONTENT_PATH3 );
-        ContentPath[] array = {CONTENT_PATH2, CONTENT_PATH3};
-
-        ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 ).add( set );
-        ContentPaths pathsFromArray = ContentPaths.from( CONTENT_PATH1 ).add( array );
-
-        assertEquals( pathsFromSet, pathsFromArray );
-
-        pathsFromArray = pathsFromArray.remove( set );
-        pathsFromSet = pathsFromSet.remove( array );
-
-        assertEquals( pathsFromSet, pathsFromArray );
-        assertEquals( pathsFromSet.hashCode(), pathsFromArray.hashCode() );
-        assertEquals( pathsFromSet.toString(), pathsFromArray.toString() );
-    }
-
-    @Test
     void empty()
     {
         ContentPaths pathsFromSet = ContentPaths.from( CONTENT_PATH1 );
         assertFalse( pathsFromSet.isEmpty() );
 
-        pathsFromSet = pathsFromSet.remove( CONTENT_PATH1 );
-        assertTrue( pathsFromSet.isEmpty() );
-
         ContentPaths pathsEmpty = ContentPaths.empty();
         assertTrue( pathsEmpty.isEmpty() );
-
-        assertEquals( pathsEmpty, pathsFromSet );
     }
 
     @Test

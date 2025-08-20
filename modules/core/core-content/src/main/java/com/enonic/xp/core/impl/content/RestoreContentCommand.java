@@ -112,7 +112,7 @@ final class RestoreContentCommand
 
     private void validateLocation( final Node node )
     {
-        if ( !ArchiveConstants.ARCHIVE_ROOT_NAME.equals( ContentNodeHelper.getContentRootName( node.path() ) ) )
+        if ( !ContentNodeHelper.inArchive( node.path() ) )
         {
             if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( node.getNodeType() ) )
             {

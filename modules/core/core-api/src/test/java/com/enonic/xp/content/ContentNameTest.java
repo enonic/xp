@@ -69,15 +69,6 @@ public class ContentNameTest
     }
 
     @Test
-    public void testNewUnnamed()
-    {
-        final ContentName name = ContentName.unnamed();
-        assertEquals( true, name.isUnnamed() );
-        assertEquals( false, name.hasUniqueness() );
-        assertEquals( "__unnamed__", name.toString() );
-    }
-
-    @Test
     public void testNewUniqueUnnamed()
     {
         final ContentName name = ContentName.uniqueUnnamed();

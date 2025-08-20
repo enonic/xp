@@ -62,7 +62,7 @@ public class MoveContentHandlerTest
     {
         final Content.Builder builder = Content.create();
         builder.id( ContentId.from( "8d933461-ede7-4dd5-80da-cb7de0cd7bba" ) );
-        builder.name( contentPath.substring( contentPath.lastIndexOf( "/" ) + 1 ) );
+        builder.name( contentPath.substring( contentPath.lastIndexOf( '/' ) + 1 ) );
         builder.displayName( contentPath );
         builder.parentPath( ContentPath.from( contentPath ).getParentPath() );
         builder.modifier( PrincipalKey.from( "user:system:admin" ) );

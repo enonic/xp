@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import com.google.common.base.Preconditions;
 
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.node.NodePaths;
@@ -18,10 +17,6 @@ final class GetContentByPathsCommand
     {
         super( builder );
         this.contentPaths = builder.contentPaths;
-        for ( final ContentPath path : builder.contentPaths )
-        {
-            Preconditions.checkArgument( path.isAbsolute(), "contentPath must be absolute: " + path );
-        }
     }
 
     Contents execute()

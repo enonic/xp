@@ -112,7 +112,7 @@ class RenameContentCommandTest
         when( translator.fromNode( mockNode, true ) ).thenReturn( content );
 
         final RenameContentParams params =
-            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.unnamed() ).build();
+            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.uniqueUnnamed() ).build();
 
         createCommand( params ).execute();
 

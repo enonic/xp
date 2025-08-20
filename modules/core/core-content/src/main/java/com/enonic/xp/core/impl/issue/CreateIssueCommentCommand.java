@@ -47,7 +47,7 @@ public class CreateIssueCommentCommand
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
-            throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
+            throw new IssueAlreadyExistsException( IssueName.from( commentName ) );
         }
 
         return IssueCommentNodeTranslator.fromNode( createdNode );

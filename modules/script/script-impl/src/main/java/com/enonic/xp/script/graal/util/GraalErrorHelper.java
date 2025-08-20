@@ -126,13 +126,13 @@ public final class GraalErrorHelper
     {
         String name = methodName;
 
-        final int nestedSeparator = name.lastIndexOf( "#" );
+        final int nestedSeparator = name.lastIndexOf( '#' );
         if ( nestedSeparator >= 0 )
         {
             name = name.substring( nestedSeparator + 1 );
         }
 
-        final int idSeparator = name.indexOf( "-" );
+        final int idSeparator = name.indexOf( '-' );
         if ( idSeparator >= 0 )
         {
             name = name.substring( 0, idSeparator );

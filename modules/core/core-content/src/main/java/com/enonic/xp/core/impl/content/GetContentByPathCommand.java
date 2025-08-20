@@ -3,9 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 
@@ -17,7 +15,7 @@ final class GetContentByPathCommand
     private GetContentByPathCommand( final Builder builder )
     {
         super( builder );
-        Preconditions.checkArgument( builder.contentPath.isAbsolute(), "contentPath must be absolute: " + builder.contentPath );
+        Preconditions.checkNotNull( builder.contentPath, "contentPath cannot be null" );
         this.contentPath = builder.contentPath;
     }
 

@@ -31,6 +31,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
@@ -117,7 +118,7 @@ import com.enonic.xp.util.BinaryReference;
 public class ContentServiceImpl
     implements ContentService
 {
-    public static final String TEMPLATES_FOLDER_NAME = "_templates";
+    public static final ContentName TEMPLATES_FOLDER_NAME = ContentName.from( "_templates" );
 
     private static final Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
@@ -178,42 +179,42 @@ public class ContentServiceImpl
 
         SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            type( ContentTypeName.site() ).
-            parent( params.getParentContentPath() ).
-            name( params.getName() ).
-            displayName( params.getDisplayName() ).
-            contentData( data ).
-            requireValid( params.isRequireValid() ).
-            build();
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .type( ContentTypeName.site() )
+            .parent( params.getParentContentPath() )
+            .name( params.getName() )
+            .displayName( params.getDisplayName() )
+            .contentData( data )
+            .requireValid( params.isRequireValid() )
+            .build();
 
-        final Site site = (Site) CreateContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
-            params( createContentParams ).
-            build().
-            execute();
+        final Site site = (Site) CreateContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .params( createContentParams )
+            .build()
+            .execute();
 
-        this.create( CreateContentParams.create().
-            owner( site.getOwner() ).
-            displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
-            name( TEMPLATES_FOLDER_NAME ).
-            parent( site.getPath() ).
-            type( ContentTypeName.templateFolder() ).
-            requireValid( true ).
-            contentData( new PropertyTree() ).
-            build() );
+        this.create( CreateContentParams.create()
+                         .owner( site.getOwner() )
+                         .displayName( TEMPLATES_FOLDER_DISPLAY_NAME )
+                         .name( TEMPLATES_FOLDER_NAME )
+                         .parent( site.getPath() )
+                         .type( ContentTypeName.templateFolder() )
+                         .requireValid( true )
+                         .contentData( new PropertyTree() )
+                         .build() );
 
         contentAuditLogSupport.createSite( params, site );
 
@@ -225,35 +226,35 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = CreateContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
-            params( params ).
-            build().
-            execute();
+        final Content content = CreateContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .params( params )
+            .build()
+            .execute();
 
         if ( content instanceof Site )
         {
-            this.create( CreateContentParams.create().
-                owner( content.getOwner() ).
-                displayName( TEMPLATES_FOLDER_DISPLAY_NAME ).
-                name( TEMPLATES_FOLDER_NAME ).
-                parent( content.getPath() ).
-                type( ContentTypeName.templateFolder() ).
-                requireValid( true ).
-                contentData( new PropertyTree() ).
-                build() );
+            this.create( CreateContentParams.create()
+                             .owner( content.getOwner() )
+                             .displayName( TEMPLATES_FOLDER_DISPLAY_NAME )
+                             .name( TEMPLATES_FOLDER_NAME )
+                             .parent( content.getPath() )
+                             .type( ContentTypeName.templateFolder() )
+                             .requireValid( true )
+                             .contentData( new PropertyTree() )
+                             .build() );
 
             return this.doGetById( content.getId() );
         }
@@ -268,24 +269,24 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = CreateMediaCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfoService( this.mediaInfoService ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
-            build().
-            execute();
+        final Content content = CreateMediaCommand.create()
+            .params( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .mediaInfoService( this.mediaInfoService )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.createMedia( params, content );
 
@@ -297,21 +298,21 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = UpdateContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
-            build().
-            execute();
+        final Content content = UpdateContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.update( params, content );
 
@@ -323,22 +324,22 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = UpdateMediaCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            mediaInfoService( this.mediaInfoService ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() ).
-            build().
-            execute();
+        final Content content = UpdateMediaCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .mediaInfoService( this.mediaInfoService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.update( params, content );
 
@@ -350,14 +351,14 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final DeleteContentsResult result = DeleteContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            params( params ).
-            build().
-            execute();
+        final DeleteContentsResult result = DeleteContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .params( params )
+            .build()
+            .execute();
 
         contentAuditLogSupport.delete( params, result );
 
@@ -369,20 +370,20 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final PublishContentResult result = PublishContentCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentIds( params.getContentIds() ).
-            excludedContentIds( params.getExcludedContentIds() ).
-            contentPublishInfo( params.getContentPublishInfo() ).
-            excludeChildrenIds( params.getExcludeChildrenIds() ).
-            includeDependencies( params.isIncludeDependencies() ).
-            pushListener( params.getPublishContentListener() ).
-            message( params.getMessage() ).
-            build().
-            execute();
+        final PublishContentResult result = PublishContentCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .contentIds( params.getContentIds() )
+            .excludedContentIds( params.getExcludedContentIds() )
+            .contentPublishInfo( params.getContentPublishInfo() )
+            .excludeChildrenIds( params.getExcludeChildrenIds() )
+            .includeDependencies( params.isIncludeDependencies() )
+            .pushListener( params.getPublishContentListener() )
+            .message( params.getMessage() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.publish( params, result );
 
@@ -392,55 +393,55 @@ public class ContentServiceImpl
     @Override
     public CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params )
     {
-        return ResolveContentsToBePublishedCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentIds( params.getContentIds() ).
-            excludedContentIds( params.getExcludedContentIds() ).
-            excludeChildrenIds( params.getExcludeChildrenIds() ).
-            build().
-            execute();
+        return ResolveContentsToBePublishedCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .contentIds( params.getContentIds() )
+            .excludedContentIds( params.getExcludedContentIds() )
+            .excludeChildrenIds( params.getExcludeChildrenIds() )
+            .build()
+            .execute();
     }
 
     @Override
     public ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params )
     {
-        return ResolveRequiredDependenciesCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentIds( params.getContentIds() ).
-            build().
-            execute();
+        return ResolveRequiredDependenciesCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .contentIds( params.getContentIds() )
+            .build()
+            .execute();
     }
 
     @Override
     public ContentValidityResult getContentValidity( final ContentValidityParams params )
     {
-        return CheckContentValidityCommand.create().
-            translator( this.translator ).
-            nodeService( this.nodeService ).
-            eventPublisher( this.eventPublisher ).
-            contentTypeService( this.contentTypeService ).
-            contentIds( params.getContentIds() ).
-            build().
-            execute();
+        return CheckContentValidityCommand.create()
+            .translator( this.translator )
+            .nodeService( this.nodeService )
+            .eventPublisher( this.eventPublisher )
+            .contentTypeService( this.contentTypeService )
+            .contentIds( params.getContentIds() )
+            .build()
+            .execute();
     }
 
     @Override
     public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
     {
-        final UnpublishContentsResult result = UnpublishContentCommand.create().
-            params( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final UnpublishContentsResult result = UnpublishContentCommand.create()
+            .params( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
 
         contentAuditLogSupport.unpublishContent( params, result );
 
@@ -451,7 +452,7 @@ public class ContentServiceImpl
     public Content getById( final ContentId contentId )
     {
         return Tracer.trace( "content.getById", trace -> trace.put( "id", contentId ), () -> doGetById( contentId ),
-                             ( trace, content ) -> trace.put( "path", content.getPath() ) );
+                             ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
     }
 
     private Content doGetById( final ContentId contentId )
@@ -483,11 +484,12 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
-            .eventPublisher( this.eventPublisher ).build();
+            .eventPublisher( this.eventPublisher )
+            .build();
         return Tracer.trace( "content.getNearestSite", trace -> trace.put( "id", contentId ), command::execute, ( trace, site ) -> {
             if ( site != null )
             {
-                trace.put( "path", site.getPath() );
+                trace.put( "path", site.getPath().toString() );
             }
         } );
     }
@@ -499,7 +501,7 @@ public class ContentServiceImpl
                              () -> (Site) doFindNearestByPath( contentPath, Content::isSite ), ( trace, site ) -> {
                 if ( site != null )
                 {
-                    trace.put( "path", site.getPath() );
+                    trace.put( "path", site.getPath().toString() );
                 }
             } );
     }
@@ -515,9 +517,9 @@ public class ContentServiceImpl
         //Resolves the closest content, starting from the root.
         Content foundContent = null;
         ContentPath nextContentPath = ContentPath.ROOT;
-        for ( int contentPathIndex = 0; contentPathIndex < contentPath.elementCount(); contentPathIndex++ )
+        for ( final ContentName contentName : contentPath )
         {
-            final ContentPath currentContentPath = ContentPath.from( nextContentPath, contentPath.getElement( contentPathIndex ) );
+            final ContentPath currentContentPath = ContentPath.from( nextContentPath, contentName );
 
             final Content childContent = executeGetByPath( currentContentPath );
             if ( childContent == null )
@@ -613,13 +615,13 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {
-        return FindContentIdsByParentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        return FindContentIdsByParentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
     }
 
     @Override
@@ -627,14 +629,14 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final DuplicateContentsResult result = DuplicateContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            duplicateListener( params.getDuplicateContentListener() ).
-            build().
-            execute();
+        final DuplicateContentsResult result = DuplicateContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .duplicateListener( params.getDuplicateContentListener() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.duplicate( params, result );
 
@@ -646,14 +648,14 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final MoveContentsResult result = MoveContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            moveListener( params.getMoveContentListener() ).
-            build().
-            execute();
+        final MoveContentsResult result = MoveContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .moveListener( params.getMoveContentListener() )
+            .build()
+            .execute();
 
         contentAuditLogSupport.move( params, result );
 
@@ -702,20 +704,20 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final Content content = RenameContentCommand.create( params ).
-            nodeService( this.nodeService ).
-            xDataService( this.xDataService ).
-            siteService( this.siteService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentProcessors( this.contentProcessors ).
-            contentValidators( this.contentValidators ).
-            pageDescriptorService( this.pageDescriptorService ).
-            partDescriptorService( this.partDescriptorService ).
-            layoutDescriptorService( this.layoutDescriptorService ).
-            build().
-            execute();
+        final Content content = RenameContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .xDataService( this.xDataService )
+            .siteService( this.siteService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .build()
+            .execute();
 
         contentAuditLogSupport.rename( params, content );
 
@@ -744,25 +746,25 @@ public class ContentServiceImpl
     @Override
     public FindContentPathsByQueryResult findPaths( ContentQuery query )
     {
-        return FindContentPathsByQueryCommand.create().
-            contentQuery( query ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        return FindContentPathsByQueryCommand.create()
+            .contentQuery( query )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
     }
 
     @Override
     public CompareContentResults compare( final CompareContentsParams params )
     {
-        return CompareContentsCommand.create().
-            nodeService( this.nodeService ).
-            contentIds( params.getContentIds() ).
-            target( ContentConstants.BRANCH_MASTER ).
-            build().
-            execute();
+        return CompareContentsCommand.create()
+            .nodeService( this.nodeService )
+            .contentIds( params.getContentIds() )
+            .target( ContentConstants.BRANCH_MASTER )
+            .build()
+            .execute();
     }
 
     @Override
@@ -770,32 +772,31 @@ public class ContentServiceImpl
     {
         final Instant now = Instant.now();
 
-        final Contents contents = ContextBuilder.from( ContextAccessor.current() ).
-            branch( Objects.requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) ).
-            attribute( "ignorePublishTimes", Boolean.TRUE ).
-            build().callWith( () -> this.getByIds( GetContentByIdsParams.create().contentIds( params.getContentIds() ).build() ) );
+        final Contents contents = ContextBuilder.from( ContextAccessor.current() )
+            .branch( Objects.requireNonNullElseGet( params.getTarget(), ContextAccessor.current()::getBranch ) )
+            .attribute( "ignorePublishTimes", Boolean.TRUE )
+            .build()
+            .callWith( () -> this.getByIds( GetContentByIdsParams.create().contentIds( params.getContentIds() ).build() ) );
 
         final GetPublishStatusesResult.Builder getPublishStatusesResult = GetPublishStatusesResult.create();
 
-        contents.stream().
-            map( content -> {
+        contents.stream().map( content -> {
 
-                final ContentPublishInfo publishInfo = content.getPublishInfo();
-                if ( publishInfo != null )
+            final ContentPublishInfo publishInfo = content.getPublishInfo();
+            if ( publishInfo != null )
+            {
+                if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
                 {
-                    if ( publishInfo.getTo() != null && publishInfo.getTo().compareTo( now ) < 0 )
-                    {
-                        return new GetPublishStatusResult( content.getId(), PublishStatus.EXPIRED );
-                    }
-
-                    if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
-                    {
-                        return new GetPublishStatusResult( content.getId(), PublishStatus.PENDING );
-                    }
+                    return new GetPublishStatusResult( content.getId(), PublishStatus.EXPIRED );
                 }
-                return new GetPublishStatusResult( content.getId(), PublishStatus.ONLINE );
-            } ).
-            forEach( getPublishStatusesResult::add );
+
+                if ( publishInfo.getFrom() != null && publishInfo.getFrom().compareTo( now ) > 0 )
+                {
+                    return new GetPublishStatusResult( content.getId(), PublishStatus.PENDING );
+                }
+            }
+            return new GetPublishStatusResult( content.getId(), PublishStatus.ONLINE );
+        } ).forEach( getPublishStatusesResult::add );
 
         return getPublishStatusesResult.build();
     }
@@ -803,30 +804,30 @@ public class ContentServiceImpl
     @Override
     public FindContentVersionsResult getVersions( final FindContentVersionsParams params )
     {
-        return FindContentVersionsCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentId( params.getContentId() ).
-            from( params.getFrom() ).
-            size( params.getSize() ).
-            build().
-            execute();
+        return FindContentVersionsCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .contentId( params.getContentId() )
+            .from( params.getFrom() )
+            .size( params.getSize() )
+            .build()
+            .execute();
     }
 
     @Override
     public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
     {
-        return GetActiveContentVersionsCommand.create().
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            contentId( params.getContentId() ).
-            branches( params.getBranches() ).
-            build().
-            execute();
+        return GetActiveContentVersionsCommand.create()
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .contentId( params.getContentId() )
+            .branches( params.getBranches() )
+            .build()
+            .execute();
     }
 
     @Override
@@ -900,13 +901,13 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build().
-            execute();
+        final ApplyContentPermissionsResult result = ApplyContentPermissionsCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
 
         contentAuditLogSupport.applyPermissions( params, result );
 
@@ -944,20 +945,20 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .build();
         return Tracer.trace( "content.exists", trace -> trace.put( "id", contentId ), command::execute,
-         (trace, exists) -> trace.put( "exists", exists ) );
+                             ( trace, exists ) -> trace.put( "exists", exists ) );
     }
 
     @Override
     public boolean contentExists( final ContentPath contentPath )
     {
-        final ContentExistsCommand command = ContentExistsCommand.create( contentPath ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        final ContentExistsCommand command = ContentExistsCommand.create( contentPath )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
         return Tracer.trace( "content.exists", trace -> trace.put( "path", contentPath ), command::execute,
-                             (trace, exists) -> trace.put( "exists", exists ) );
+                             ( trace, exists ) -> trace.put( "exists", exists ) );
     }
 
     @Override
@@ -983,12 +984,12 @@ public class ContentServiceImpl
     @Override
     public ByteSource getBinary( final ContentId contentId, final ContentVersionId contentVersionId, final BinaryReference binaryReference )
     {
-        final GetBinaryByVersionCommand command = GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference ).
-            nodeService( this.nodeService ).
-            contentTypeService( this.contentTypeService ).
-            translator( this.translator ).
-            eventPublisher( this.eventPublisher ).
-            build();
+        final GetBinaryByVersionCommand command = GetBinaryByVersionCommand.create( contentId, contentVersionId, binaryReference )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build();
         return Tracer.trace( "content.getBinary", trace -> {
             trace.put( "id", contentId );
             trace.put( "versionId", contentVersionId );
@@ -1032,7 +1033,7 @@ public class ContentServiceImpl
         return Tracer.trace( "content.getByIdAndVersionId", trace -> {
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
-        }, command::execute, ( trace, content ) -> trace.put( "path", content.getPath() ) );
+        }, command::execute, ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
     }
 
     @Override
@@ -1040,14 +1041,14 @@ public class ContentServiceImpl
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        return ImportContentCommand.create().
-            params( params ).
-            nodeService( nodeService ).
-            contentTypeService( contentTypeService ).
-            eventPublisher( eventPublisher ).
-            translator( translator ).
-            build().
-            execute();
+        return ImportContentCommand.create()
+            .params( params )
+            .nodeService( nodeService )
+            .contentTypeService( contentTypeService )
+            .eventPublisher( eventPublisher )
+            .translator( translator )
+            .build()
+            .execute();
     }
 
     private static void verifyContextBranch( final Branch branch )

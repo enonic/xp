@@ -98,11 +98,11 @@ public abstract class BaseProjectHandlerTest
 
         when( this.projectService.getAvailableApplications( any( ProjectName.class ) ) ).thenAnswer( mock -> {
 
-            final Project project = projects.get( mock.getArguments()[0] );
+            final Project project = projects.get( mock.getArgument(0) );
 
             if ( project == null )
             {
-                throw new ProjectNotFoundException( (ProjectName) mock.getArguments()[0] );
+                throw new ProjectNotFoundException( mock.getArgument(0) );
             }
             return ApplicationKeys.from(
                 project.getSiteConfigs().stream().map( SiteConfig::getApplicationKey ).collect( Collectors.toList() ) );

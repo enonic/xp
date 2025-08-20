@@ -13,7 +13,7 @@ public final class CreateMediaParams
 {
     private ContentPath parent;
 
-    private String name;
+    private ContentName name;
 
     private String mimeType;
 
@@ -40,6 +40,12 @@ public final class CreateMediaParams
     }
 
     public CreateMediaParams name( final String value )
+    {
+        this.name = ContentName.from( value );
+        return this;
+    }
+
+    public CreateMediaParams name( final ContentName value )
     {
         this.name = value;
         return this;
@@ -102,7 +108,6 @@ public final class CreateMediaParams
     public void validate()
     {
         Preconditions.checkNotNull( this.parent, "parent cannot be null. Use ContentPath.ROOT when content has no parent." );
-        Preconditions.checkArgument( this.parent.isAbsolute(), "parent must be absolute: " + this.parent );
         Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.byteSource, "byteSource cannot be null" );
     }
@@ -112,7 +117,7 @@ public final class CreateMediaParams
         return parent;
     }
 
-    public String getName()
+    public ContentName getName()
     {
         return name;
     }
