@@ -295,7 +295,9 @@ public class ContentServiceImpl
     @Override
     public PatchContentResult patch( final PatchContentParams params )
     {
+
         // only content admin access is allowed to patch content
+
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         final PatchContentResult result = PatchContentCommand.create( params )

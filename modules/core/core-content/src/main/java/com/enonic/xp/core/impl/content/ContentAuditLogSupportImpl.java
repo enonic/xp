@@ -198,6 +198,7 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "modifier", nullToNull( modifier ) );
         paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
         addCreateAttachments( paramsSet, params.getCreateAttachments() );
+        paramsSet.addBoolean( "skipSync", params.isSkipSync() );
 
         result.getResults().forEach( ( branchResult ) -> {
             final Branch branch = branchResult.branch();

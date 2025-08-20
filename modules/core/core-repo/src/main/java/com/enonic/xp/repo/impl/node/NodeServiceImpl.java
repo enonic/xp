@@ -437,7 +437,7 @@ public class NodeServiceImpl
                 }
                 else
                 {
-                    eventPublisher.publish( NodeEvents.pushed( br.node(), internalContext ) ); // TODO: patch == true ?
+                    eventPublisher.publish( NodeEvents.pushed( br.node(), internalContext ) );
                 }
             } );
         }
@@ -520,8 +520,10 @@ public class NodeServiceImpl
 
         if ( !pushNodesResult.getSuccessfulEntries().isEmpty() )
         {
-            this.eventPublisher.publish(
-                NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(), target, ContextAccessor.current().getRepositoryId() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(),
+                                                            InternalContext.create( ContextAccessor.current() )
+                                                                .branch( target )
+                                                                .build() ) );
         }
 
         return pushNodesResult;
