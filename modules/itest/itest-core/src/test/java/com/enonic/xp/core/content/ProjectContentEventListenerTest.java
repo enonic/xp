@@ -320,7 +320,7 @@ public class ProjectContentEventListenerTest
         handleEvents();
 
         final PatchContentResult patchedContentResult = ContextBuilder.copyOf( projectContext )
-            .attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) )
+            .attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( "content.skipSync", "true" ) )
             .build()
             .callWith( () -> contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
                 final PropertyTree data = new PropertyTree();

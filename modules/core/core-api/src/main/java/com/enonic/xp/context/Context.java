@@ -1,6 +1,5 @@
 package com.enonic.xp.context;
 
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -17,8 +16,6 @@ public interface Context
     Branch getBranch();
 
     AuthenticationInfo getAuthInfo();
-
-    Map<String, String> getEventMetadata();
 
     void runWith( Runnable runnable );
 

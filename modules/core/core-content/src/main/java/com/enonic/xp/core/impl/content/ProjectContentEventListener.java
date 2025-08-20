@@ -33,6 +33,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.enonic.xp.core.impl.content.Constants.CONTENT_SKIP_SYNC;
+
 @Component(immediate = true)
 public final class ProjectContentEventListener
     implements EventListener
@@ -85,8 +87,7 @@ public final class ProjectContentEventListener
             .map( map -> map.get( "path" ) )
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
-        final Map<String, String> eventMetadata = (Map) event.getData().getOrDefault( EventConstants.METADATA_FIELD, Map.of() );
-        final boolean isSkipSync = Boolean.parseBoolean( eventMetadata.getOrDefault( "skipSync", "false" ) );
+        final boolean isSkipSync = Boolean.parseBoolean( (String) event.getData().getOrDefault( CONTENT_SKIP_SYNC, "false" ) );
 
         if ( isContentEvent && !isSkipSync )
         {

@@ -13,6 +13,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 
+import static com.enonic.xp.core.impl.content.Constants.CONTENT_SKIP_SYNC;
 import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
 
 public class PatchContentCommand
@@ -69,7 +70,7 @@ public class PatchContentCommand
 
         if ( params.isSkipSync() )
         {
-            context.attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( "skipSync", "true" ) );
+            context.attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( CONTENT_SKIP_SYNC, "true" ) );
         }
 
         final PatchNodeResult result = context.build().callWith( () -> nodeService.patch( patchNodeParams ) );

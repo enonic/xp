@@ -83,7 +83,8 @@ public class InternalContext
         return create().authInfo( context.getAuthInfo() )
             .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
             .branch( context.getBranch() )
-            .repositoryId( context.getRepositoryId() ).eventMetadata( (Map) context.getAttribute( CONTEXT_METADATA_ATTRIBUTE ) );
+            .repositoryId( context.getRepositoryId() )
+            .eventMetadata( (Map) context.getAttribute( CONTEXT_METADATA_ATTRIBUTE ) );
     }
 
     public static Builder create()

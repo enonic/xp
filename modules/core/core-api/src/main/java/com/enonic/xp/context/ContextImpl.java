@@ -10,8 +10,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.Exceptions;
 
-import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
-
 final class ContextImpl
     implements Context
 {
@@ -42,12 +40,6 @@ final class ContextImpl
     {
         final AuthenticationInfo attribute = getAttribute( AuthenticationInfo.class );
         return attribute == null ? AuthenticationInfo.unAuthenticated() : attribute;
-    }
-
-    @Override
-    public Map<String, String> getEventMetadata()
-    {
-        return (Map) this.attributes.getOrDefault( CONTEXT_METADATA_ATTRIBUTE, ImmutableMap.of() );
     }
 
     @Override
