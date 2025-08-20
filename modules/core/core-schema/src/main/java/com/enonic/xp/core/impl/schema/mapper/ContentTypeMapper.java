@@ -1,11 +1,15 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import com.enonic.xp.form.Form;
+import com.enonic.xp.schema.I18NText;
+import com.enonic.xp.schema.content.ContentDisplayName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -21,49 +25,34 @@ public abstract class ContentTypeMapper
             return ContentType.create();
         }
 
+        @JsonProperty("name")
+        public abstract ContentType.Builder name( String name );
+
         @JsonProperty("form")
-        abstract ContentType.Builder form( Form form );
-
-        @JsonProperty("name")
-        abstract ContentType.Builder name( ContentTypeName name );
-
-        @JsonProperty("name")
-        abstract ContentType.Builder name( String name );
-
-        @JsonProperty("isAbstract")
-        abstract ContentType.Builder setAbstract( boolean value );
-
-        @JsonProperty("isFinal")
-        abstract ContentType.Builder setFinal( boolean value );
-
-        @JsonProperty("allowChildContent")
-        abstract ContentType.Builder allowChildContent( boolean value );
-
-        @JsonProperty("isBuiltIn")
-        abstract ContentType.Builder setBuiltIn( boolean value );
+        public abstract ContentType.Builder form( Form form );
 
         @JsonProperty("superType")
         abstract ContentType.Builder superType( ContentTypeName name );
 
-        @JsonProperty("displayNameLabel")
-        abstract ContentType.Builder displayNameLabel( String value );
-
-        @JsonProperty("displayNameLabelI18nKey")
-        abstract ContentType.Builder displayNameLabelI18nKey( String value );
-
-        @JsonProperty("displayNameExpression")
-        abstract ContentType.Builder displayNameExpression( String value );
-
         @JsonProperty("displayName")
-        abstract ContentType.Builder displayName( String displayName );
+        public abstract ContentType.Builder setDisplayName( ContentDisplayName value );
 
-        @JsonProperty("displayNameI18nKey")
-        abstract ContentType.Builder displayNameI18nKey( String displayNameI18nKey );
+        @JsonProperty("label")
+        public abstract ContentType.Builder setLabel( I18NText value );
 
         @JsonProperty("description")
-        abstract ContentType.Builder description( String description );
+        public abstract ContentType.Builder setDescription( I18NText value );
 
-        @JsonProperty("descriptionI18nKey")
-        abstract ContentType.Builder descriptionI18nKey( String descriptionI18nKey );
+        @JsonProperty("abstract")
+        abstract ContentType.Builder setAbstract( boolean value );
+
+        @JsonProperty("final")
+        abstract ContentType.Builder setFinal( boolean value );
+
+        @JsonProperty(value = "allowChildContent", defaultValue = "true")
+        abstract ContentType.Builder allowChildContent( boolean value );
+
+        @JsonProperty("allowChildContentType")
+        abstract ContentType.Builder allowChildContentType( List<String> allowChildContentType );
     }
 }

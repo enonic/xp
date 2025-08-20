@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mapper.sandbox;
+package com.enonic.xp.core.impl.schema.mapper;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,9 +10,11 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public final class RadioButtonYml
+public class RadioButtonYml
     extends InputYml
 {
+    public static final String TYPE = "RadioButton";
+
     public List<Option> options;
 
     @JsonProperty("default")
@@ -42,4 +44,5 @@ public final class RadioButtonYml
             return attributes;
         }
     }
+
 }

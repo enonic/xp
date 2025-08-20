@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mapper.sandbox;
+package com.enonic.xp.core.impl.schema.mapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public final class InputRegistry
     {
         register( RadioButtonYml.class, yml -> {
             final Input.Builder builder =
-                Input.create().name( yml.name ).label( yml.label ).inputType( InputTypeName.from( "RadioButton" ) );
+                Input.create().name( yml.name ).label( yml.label.text() ).inputType( InputTypeName.from( "RadioButton" ) );
 
             if ( yml.defaultValue != null )
             {
@@ -37,7 +37,7 @@ public final class InputRegistry
         } );
 
         register( TextLineYml.class, yml -> {
-            final Input.Builder builder = Input.create().name( yml.name ).label( yml.label ).inputType( InputTypeName.from( "TextLine" ) );
+            final Input.Builder builder = Input.create().name( yml.name ).label( yml.label.text() ).inputType( InputTypeName.from( "TextLine" ) );
 
             if ( yml.defaultValue != null )
             {

@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
+import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
+import com.enonic.xp.schema.I18NText;
 
 @JsonDeserialize(builder = FormOptionSet.Builder.class)
 public abstract class FormOptionSetMapper
@@ -25,5 +27,11 @@ public abstract class FormOptionSetMapper
         @JsonProperty("options")
         @JsonDeserialize(using = FormOptionSetOptionsDeserializer.class)
         abstract FormOptionSet.Builder addOptionSetOptions( Iterable<FormOptionSetOption> setOptions );
+
+        @JsonProperty("label")
+        abstract FormOptionSet.Builder setLabel( I18NText value );
+
+        @JsonProperty("helpText")
+        abstract FormOptionSet.Builder setHelpText( I18NText value );
     }
 }

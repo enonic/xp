@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.schema.I18NText;
 
 @JsonDeserialize(builder = FormItemSet.Builder.class)
 public abstract class FormItemSetMapper
@@ -24,5 +25,11 @@ public abstract class FormItemSetMapper
 
         @JsonProperty("items")
         abstract FormItemSet.Builder addFormItems( Iterable<FormItem> items );
+
+        @JsonProperty("label")
+        abstract FormItemSet.Builder setLabel( I18NText value );
+
+        @JsonProperty("helpText")
+        abstract FormItemSet.Builder setHelpText( I18NText value );
     }
 }

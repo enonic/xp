@@ -1,21 +1,26 @@
-name: "myapp:article"
 superType: "base:structured"
-isAbstract: false
-isFinal: false
+abstract: false
+final: true
 allowChildContent: true
-isBuiltIn: false
-displayName: "Article"
-displayNameI18nKey: "i18n.article.displayName"
-description: "Article Description"
-descriptionI18nKey: "i18n.article.description"
-displayNameLabel: "Article heading"
-displayNameLabelI18nKey: "article.title"
-displayNameExpression: "${expression}"
+label:
+  text: "Article heading"
+  i18n: "article.title"
+description:
+  text: "Brief description"
+  i18n: "article.description"
+displayName:
+  text: "Article"
+  i18n: "i18n.article.displayName"
+  expression: "${expression}"
+allowChildContentType:
+  - "myapp:type1"
+  - "myapp:type2"
 form:
   - type: "TextLine"
     name: "field1"
-    label: "Field 1"
-    labelI18nKey: "i18n.label"
+    label:
+      text: "Field 1"
+      i18n: "i18n.label"
     immutable: true
     occurrences:
       minimum: 0
@@ -23,33 +28,39 @@ form:
     indexed: true
     customText: "Custom Text"
     validationRegexp: "myRegexp"
-    helpText: "helpText"
-    helpTextI18nKey: "helpTextI18nKey"
-    maximizeUIInputWidth: false
+    helpText:
+      text: "helpText"
+      i18n: "helpTextI18nKey"
 
   - type: "FieldSet"
-    label: "FieldSet Label"
-    labelI18nKey: "i18n.fieldset.label"
+    label:
+      text: "FieldSet Label"
+      i18n: "i18n.fieldset.label"
     items:
-      - type: "TextArea"
+      - type: "TextLine"
         name: "description"
-        label: "Description"
+        label:
+          text: "Description"
 
   - type: "InlineMixin"
     mixin: "myapp:mymixin"
 
   - type: "ItemSet"
     name: "Panel"
-    label: "My Panel"
+    label:
+      text: "My Panel"
     items:
-      - type: "TextArea"
+      - type: "TextLine"
         name: "description"
-        label: "Description"
+        label:
+          text: "Description"
 
   - type: "OptionSet"
     name: "radioOptionSet"
-    label: "Single selection"
-    helpText: "Help Text"
+    label:
+      text: "Single selection"
+    helpText:
+      text: "Help Text"
     expanded: false
     occurrences:
       minimum: 1
@@ -59,58 +70,57 @@ form:
       maximum: 1
     options:
       - name: "option_1"
-        label: "Option 1"
+        label:
+          text: "Option 1"
         defaultOption: false
         items:
           - type: "TextLine"
             name: "text-input"
-            label: "Name"
-            helpText: "Text input"
-            defaultValue:
-              property:
-                name: "default"
-                value: "something"
+            label:
+              text: "Name"
+            helpText:
+              text: "Text input"
+            defaultValue: "something"
             occurrences:
               minimum: 1
               maximum: 1
 
           - type: "RadioButton"
             name: "type"
-            label: "Policy type"
-            config:
+            label:
+              text: "Policy type"
+            options:
               - name: "cookie"
                 value: "Cookie"
-                attributes:
-                  key1: v1
-                  key2: v1
               - name: "privacy"
                 value: "Privacy"
-            defaultValue:
-              property:
-                name: "default"
-                value: "cookie"
+            defaultValue: "cookie"
 
           - type: "ItemSet"
             name: "minimum3"
-            label: "Minimum 3"
+            label:
+              text: "Minimum 3"
             occurrences:
               minimum: 3
               maximum: 0
             items:
               - type: "TextLine"
                 name: "label"
-                label: "Label"
+                label:
+                  text: "Label"
                 occurrences:
                   minimum: 0
                   maximum: 1
 
               - type: "TextLine"
                 name: "value"
-                label: "Value"
+                label:
+                  text: "Value"
                 occurrences:
                   minimum: 0
                   maximum: 1
 
       - name: "option_2"
-        label: "Option 2"
+        label:
+          text: "Option 2"
         defaultOption: true

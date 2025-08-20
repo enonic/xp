@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mapper.sandbox;
+package com.enonic.xp.core.impl.schema.mapper;
 
 import com.enonic.xp.form.Input;
 

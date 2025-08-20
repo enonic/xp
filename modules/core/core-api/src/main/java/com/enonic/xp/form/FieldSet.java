@@ -8,6 +8,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.schema.I18NText;
 
 
 @PublicApi
@@ -139,6 +140,13 @@ public final class FieldSet
         public Builder labelI18nKey( String value )
         {
             this.labelI18nKey = value;
+            return this;
+        }
+
+        public Builder setLabel( I18NText value )
+        {
+            this.label = value.text();
+            this.labelI18nKey = value.i18n();
             return this;
         }
 
