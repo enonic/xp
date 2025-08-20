@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.content;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -24,9 +25,12 @@ import com.enonic.xp.site.SiteDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PatchContentHandlerTest
@@ -202,6 +206,31 @@ public class PatchContentHandlerTest
         mockXData();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
+    }
+
+    @Test
+    public void patchWithSkipSync()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
+                                             TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        ArgumentCaptor<PatchContentParams> captor = ArgumentCaptor.forClass( PatchContentParams.class );
+
+        runFunction( "/test/PatchContentHandlerTest.js", "patchWithSkipSync" );
+
+        verify( this.contentService, times( 1 ) ).patch( captor.capture() );
+
+        final PatchContentParams params = captor.getValue();
+
+        assertTrue( params.isSkipSync() );
     }
 
     private void mockXData()

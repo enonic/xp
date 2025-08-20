@@ -483,5 +483,15 @@ exports.patchValidationErrors = function () {
     assert.assertJsonEquals(expectedErrors, result.results[0].content.validationErrors);
 };
 
+exports.patchWithSkipSync = function () {
+    content.patch({
+        key: '/a/b/mycontent',
+        skipSync: 'la',
+        patcher: function (c) {
+            c.displayName = 'Modified with skip sync';
+            return c;
+        },
+    });
+}
 
 
