@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
 
-import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -63,7 +62,7 @@ public class ContentNodeHelper
 
     public static boolean inArchive( final NodePath nodePath )
     {
-        return nodePath.toString().startsWith("/" + ArchiveConstants.ARCHIVE_ROOT_NAME + "/");
+        return nodePath.toString().startsWith("/" + ARCHIVE_ROOT_NAME + "/");
     }
 
     public static NodeIds toNodeIds( final Iterable<ContentId> contentIds )

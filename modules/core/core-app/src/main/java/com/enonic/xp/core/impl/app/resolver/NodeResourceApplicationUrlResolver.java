@@ -48,7 +48,7 @@ public final class NodeResourceApplicationUrlResolver
             return nodes.getNodeHits()
                 .stream()
                 .map( NodeHit::getNodePath )
-                .map( nodePath -> nodePath.toString().substring( nodePath.toString().indexOf( "/", 1 ) ) )
+                .map( nodePath -> nodePath.toString().substring( nodePath.toString().indexOf( '/', 1 ) ) )
                 .collect( Collectors.toCollection( LinkedHashSet::new ) );
         } );
     }

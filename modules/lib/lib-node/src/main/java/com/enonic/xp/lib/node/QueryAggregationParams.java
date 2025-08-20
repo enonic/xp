@@ -153,7 +153,7 @@ final class QueryAggregationParams
             orElse( 10 );
         final Long minDocCount = getLong( paramsMap, "minDocCount" );
 
-        final int index = orderExpr.indexOf( " " );
+        final int index = orderExpr.indexOf( ' ' );
         final String orderTypeStr = index == -1 ? orderExpr : orderExpr.substring( 0, index );
         final String orderDir = index == -1 ? "" : orderExpr.substring( index + 1 );
 
@@ -198,7 +198,7 @@ final class QueryAggregationParams
         HistogramAggregationQuery.Order histogramOrder = KEY_ASC;
         if ( !orderExpr.isEmpty() )
         {
-            final int index = orderExpr.indexOf( " " );
+            final int index = orderExpr.indexOf( ' ' );
             final String orderTypeStr = index == -1 ? orderExpr : orderExpr.substring( 0, index );
             final String orderDir = index == -1 ? "" : orderExpr.substring( index + 1 );
 

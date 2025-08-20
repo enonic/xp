@@ -34,7 +34,7 @@ abstract class DuplicateValueResolver
 
     public static String fileName( final String existingName )
     {
-        int dotIndex = existingName.lastIndexOf( "." );
+        int dotIndex = existingName.lastIndexOf( '.' );
         String name = existingName;
         String extension = null;
         if ( dotIndex > -1 )

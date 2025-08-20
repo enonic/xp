@@ -58,7 +58,7 @@ final class NetworkInterfaceResolver
         final String ifaceName;
         final IPVersion ipVersion;
 
-        final int index = interfaceName.indexOf( ":" );
+        final int index = interfaceName.indexOf( ':' );
         if ( index == -1 )
         {
             ifaceName = interfaceName;

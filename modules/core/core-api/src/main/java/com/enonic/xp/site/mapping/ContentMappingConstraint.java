@@ -107,7 +107,7 @@ public final class ContentMappingConstraint
             final String mixinName;
             final String propertyName;
 
-            final int firstIndex = dataPath.indexOf( "." );
+            final int firstIndex = dataPath.indexOf( '.' );
             if ( firstIndex == -1 )
             {
                 appPrefix = dataPath;
@@ -117,7 +117,7 @@ public final class ContentMappingConstraint
             else
             {
                 appPrefix = dataPath.substring( 0, firstIndex );
-                final int secondIndex = dataPath.indexOf( ".", firstIndex + 1 );
+                final int secondIndex = dataPath.indexOf( '.', firstIndex + 1 );
                 mixinName = secondIndex == -1 ? dataPath.substring( firstIndex + 1 ) : dataPath.substring( firstIndex + 1, secondIndex );
                 propertyName = secondIndex == -1 ? "" : dataPath.substring( secondIndex + 1 );
             }

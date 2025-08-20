@@ -125,14 +125,14 @@ final class DynamicResourceManager
     public static ApplicationKey appKeyFromNodePath( final NodePath path )
     {
         final String pathString = path.toString();
-        final int endIndex = pathString.indexOf( "/", 1 );
+        final int endIndex = pathString.indexOf( '/', 1 );
         return ApplicationKey.from( pathString.substring( 1, endIndex == -1 ? pathString.length() : endIndex ) );
     }
 
     private static String resourcePathFromNodePath( final NodePath path )
     {
         final String pathString = path.toString();
-        final int beginIndex = pathString.indexOf( "/", 1 );
+        final int beginIndex = pathString.indexOf( '/', 1 );
         return pathString.substring( beginIndex == -1 ? 1 : beginIndex );
     }
 }
