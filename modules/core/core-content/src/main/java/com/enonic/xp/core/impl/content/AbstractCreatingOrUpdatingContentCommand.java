@@ -8,6 +8,7 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.context.Context;
@@ -182,10 +183,10 @@ class AbstractCreatingOrUpdatingContentCommand
         return BINARY_CONTENT_TYPES.stream().anyMatch( mediaType::is );
     }
 
-    protected boolean isExecutableContentType( final String contentType, final String fileName )
+    protected boolean isExecutableContentType( final String contentType, final ContentName fileName )
     {
         final MediaType mediaType = MediaType.parse( contentType );
-        return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName );
+        return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName.toString() );
     }
 
     private boolean isExecutableFileName( final String fileName )

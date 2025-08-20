@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.data.PropertyTree;
@@ -61,7 +62,7 @@ final class CreateMediaCommand
         final PropertyTree data = new PropertyTree();
         new MediaFormDataBuilder().
             type( type ).
-            attachment( params.getName() ).
+            attachment( params.getName().toString() ).
             focalX( params.getFocalX() ).
             focalY( params.getFocalY() ).
             caption( params.getCaption() ).
@@ -72,7 +73,7 @@ final class CreateMediaCommand
             build( data );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create().
-            name( params.getName() ).
+            name( params.getName().toString() ).
             mimeType( params.getMimeType() ).
             label( "source" ).
             byteSource( params.getByteSource() ).
@@ -105,13 +106,13 @@ final class CreateMediaCommand
         return createCommand.execute();
     }
 
-    private String trimExtension( final String name )
+    private String trimExtension( final ContentName name )
     {
-        if ( name.lastIndexOf( "." ) < 0 )
+        if ( name.toString().lastIndexOf( "." ) < 0 )
         {
-            return name;
+            return name.toString();
         }
-        return name.substring( 0, name.lastIndexOf( "." ) );
+        return name.toString().substring( 0, name.toString().lastIndexOf( "." ) );
     }
 
 

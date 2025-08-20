@@ -82,7 +82,7 @@ abstract class PrincipalNodeTranslator
         Preconditions.checkNotNull( principal );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
-            name( PrincipalKeyNodeTranslator.toNodeName( principal.getKey() ).toString() ).
+            name( PrincipalKeyNodeTranslator.toNodeName( principal.getKey() ) ).
             parent( principal.getKey().toPath().getParentPath() ).
             setNodeId( NodeId.from( principal.getKey().toString().toLowerCase() ) ).
             inheritPermissions( true ).

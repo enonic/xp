@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
@@ -30,7 +31,7 @@ public class ContentNodeHelper
 
         for ( int i = 0; i < contentPath.elementCount(); i++ )
         {
-            builder.addElement( contentPath.getElement( i ) );
+            builder.addElement( NodeName.from( contentPath.getElement( i ) ) );
         }
         return builder.build();
     }

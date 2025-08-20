@@ -61,7 +61,7 @@ class ContentServiceImplTest_importContent
 
         final ImportContentParams importContentParams = ImportContentParams.create().
             importContent( sourceContent ).
-            targetPath( ContentPath.from( ContentPath.ROOT, sourceContent.getName().toString() ) ).
+            targetPath( ContentPath.from( ContentPath.ROOT, sourceContent.getName() ) ).
             importPermissionsOnCreate( true ).
             build();
 
@@ -86,7 +86,7 @@ class ContentServiceImplTest_importContent
 
         final ImportContentParams importContentParams = ImportContentParams.create().
             importContent( sourceContent ).
-            targetPath( ContentPath.from( ContentPath.ROOT, sourceContent.getName().toString() ) ).
+            targetPath( ContentPath.from( ContentPath.ROOT, sourceContent.getName() ) ).
             importPermissionsOnCreate( false ).
             build();
 

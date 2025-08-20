@@ -8,12 +8,10 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 
@@ -87,16 +85,6 @@ public class ContentNodeTranslator
         return contents.build();
     }
 
-    private ContentPath getParent( final NodePath nodePath )
-    {
-        final NodePath parentPath = nodePath.getParentPath();
-        if ( parentPath.isRoot() )
-        {
-            return ContentPath.ROOT;
-        }
-
-        return ContentNodeHelper.translateNodePathToContentPath( parentPath );
-    }
 
     private Content doTranslate( final Node node, final boolean hasChildren )
     {
@@ -107,7 +95,7 @@ public class ContentNodeTranslator
     {
         final ContentId contentId = ContentId.from( node.id() );
 
-        if ( !allowAltRootPath && !( node.path().toString().startsWith( ContentNodeHelper.getContentRoot().toString() + "/" ) ||
+        if ( !allowAltRootPath && !( node.path().toString().startsWith( ContentNodeHelper.getContentRoot() + "/" ) ||
             node.path().equals( ContentNodeHelper.getContentRoot() ) ) )
         {
             throw ContentNotFoundException.create()
@@ -118,22 +106,22 @@ public class ContentNodeTranslator
                 .build();
         }
 
-        final ContentPath parentContentPath = getParent( node.path() );
-
         final Content.Builder<?> builder = contentDataSerializer.fromData( node.data().getRoot() );
-
-        builder.id( contentId )
-            .parentPath( parentContentPath )
-            .name( node.name().toString() )
-            .childOrder( node.getChildOrder() )
-            .permissions( node.getPermissions() )
-            .hasChildren( hasChildren )
-            .manualOrderValue( node.getManualOrderValue() );
 
         if ( node.parentPath().isRoot() )
         {
             builder.root();
         }
+        else
+        {
+            builder.path( ContentNodeHelper.translateNodePathToContentPath( node.path() ) );
+        }
+
+        builder.id( contentId )
+            .childOrder( node.getChildOrder() )
+            .permissions( node.getPermissions() )
+            .hasChildren( hasChildren )
+            .manualOrderValue( node.getManualOrderValue() );
 
         return builder.build();
     }

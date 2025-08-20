@@ -382,7 +382,7 @@ public class ContentServiceImplTest_delete
         assertEquals( 0, deletedContents.getUnpublishedContents().getSize() );
 
         final DeleteContentsResult deletedOther = contentService.delete(
-            DeleteContentParams.create().contentPath( ContentPath.from( folder.getPath(), content.getName().toString() ) ).build() );
+            DeleteContentParams.create().contentPath( ContentPath.from( folder.getPath(), content.getName() ) ).build() );
 
         assertNotNull( deletedOther );
         assertEquals( 1, deletedOther.getDeletedContents().getSize() );

@@ -155,7 +155,7 @@ public class NodeExporter
         return resolveNodeDataFolder( originalNode ).
             resolve( NodeExportPathResolver.VERSION_FOLDER ).
             resolve( nodeVersion.getNodeVersionId().toString() ).
-            resolve( nodeVersion.getNodePath().getName() );
+            resolve( nodeVersion.getNodePath().getName().toString() );
     }
 
     private void writeVersion( final Node node, final Path baseFolder )

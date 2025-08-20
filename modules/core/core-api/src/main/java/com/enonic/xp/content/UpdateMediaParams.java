@@ -12,7 +12,7 @@ public final class UpdateMediaParams
 {
     private ContentId content;
 
-    private String name;
+    private ContentName name;
 
     private String mimeType;
 
@@ -42,7 +42,7 @@ public final class UpdateMediaParams
 
     public UpdateMediaParams name( final String value )
     {
-        this.name = value;
+        this.name = ContentName.from( value );
         return this;
     }
 
@@ -118,7 +118,7 @@ public final class UpdateMediaParams
         return content;
     }
 
-    public String getName()
+    public ContentName getName()
     {
         return name;
     }

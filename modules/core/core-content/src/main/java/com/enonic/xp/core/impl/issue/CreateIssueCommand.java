@@ -18,6 +18,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.User;
@@ -60,7 +61,7 @@ public class CreateIssueCommand
         }
         catch ( NodeAlreadyExistAtPathException e )
         {
-            throw new IssueAlreadyExistsException( IssueName.from( createNodeParams.getName() ) );
+            throw new IssueAlreadyExistsException( issueName );
         }
 
         return IssueNodeTranslator.fromNode( createdNode );
@@ -146,7 +147,7 @@ public class CreateIssueCommand
 
             final CreateNodeParams.Builder builder = CreateNodeParams.create().
                 setNodeId( NodeId.from( params.getId() ) ).
-                name( issueName.toString() ).
+                name( NodeName.from( issueName ) ).
                 parent( IssueConstants.ISSUE_ROOT_PATH ).
                 data( contentAsData ).
                 indexConfigDocument( indexConfigDocument ).

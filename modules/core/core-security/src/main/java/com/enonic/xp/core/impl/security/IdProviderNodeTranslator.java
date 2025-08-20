@@ -42,9 +42,9 @@ import static com.enonic.xp.security.acl.Permission.WRITE_PERMISSIONS;
 
 abstract class IdProviderNodeTranslator
 {
-    static final String USER_FOLDER_NODE_NAME = "users";
+    static final NodeName USER_FOLDER_NODE_NAME = NodeName.from( "users" );
 
-    static final String GROUP_FOLDER_NODE_NAME = "groups";
+    static final NodeName GROUP_FOLDER_NODE_NAME = NodeName.from( "groups");
 
     static final ApplicationKey SYSTEM_ID_PROVIDER_KEY = ApplicationKey.from( "com.enonic.xp.app.standardidprovider" );
 
@@ -63,12 +63,12 @@ abstract class IdProviderNodeTranslator
 
     static NodePath toIdProviderUsersNodePath( final IdProviderKey idProviderKey )
     {
-        return new NodePath( toIdProviderNodePath( idProviderKey ), NodeName.from( USER_FOLDER_NODE_NAME ) );
+        return new NodePath( toIdProviderNodePath( idProviderKey ), USER_FOLDER_NODE_NAME );
     }
 
     static NodePath toIdProviderGroupsNodePath( final IdProviderKey idProviderKey )
     {
-        return new NodePath( toIdProviderNodePath( idProviderKey ), NodeName.from( GROUP_FOLDER_NODE_NAME ) );
+        return new NodePath( toIdProviderNodePath( idProviderKey ), GROUP_FOLDER_NODE_NAME );
     }
 
     static IdProviders fromNodes( final Nodes nodes )

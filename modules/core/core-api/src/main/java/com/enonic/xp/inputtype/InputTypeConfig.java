@@ -17,7 +17,7 @@ import com.enonic.xp.convert.Converters;
 public final class InputTypeConfig
     implements Iterable<InputTypeProperty>
 {
-    private final SetMultimap<String, InputTypeProperty> map;
+    private final ImmutableSetMultimap<String, InputTypeProperty> map;
 
     private InputTypeConfig( final Builder builder )
     {

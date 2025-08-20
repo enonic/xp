@@ -77,7 +77,7 @@ public class CreateMediaHandlerTest
 
             final PropertyTree propertyTree = new PropertyTree();
             final PropertySet attachmentSet = propertyTree.newSet();
-            attachmentSet.addString( "attachment", params.getName() );
+            attachmentSet.addString( "attachment", params.getName().toString() );
 
             propertyTree.addSet( "media", attachmentSet );
 
@@ -86,7 +86,7 @@ public class CreateMediaHandlerTest
                 name( params.getName() ).
                 parentPath( params.getParent() ).
                 type( ContentTypeName.documentMedia() ).
-                displayName( params.getName() ).
+                displayName( params.getName().toString() ).
                 valid( true ).
                 creator( PrincipalKey.ofAnonymous() ).
                 data( propertyTree ).

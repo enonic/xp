@@ -166,7 +166,7 @@ public class MoveNodeCommand
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
             .data(
-                processor.process( persistedNode.data(), NodePath.create( newParentPath ).addElement( newNodeName.toString() ).build() ) )
+                processor.process( persistedNode.data(), NodePath.create( newParentPath ).addElement( newNodeName ).build() ) )
             .parentPath( newParentPath )
             .indexConfigDocument( persistedNode.getIndexConfigDocument() )
             .timestamp( Instant.now( CLOCK ) );

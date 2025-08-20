@@ -55,7 +55,7 @@ public class LocalizeNoHttpTest
             final Map<String, String> map = new HashMap<>();
             map.put( "myKey", "value-1" );
             map.put( "myKey2", "value-2" );
-            return map.get( arguments[0] );
+            return map.get( invocation.getArgument( 0 ) );
         }
 
         return null;

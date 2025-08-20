@@ -159,7 +159,7 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "caption", params.getCaption() );
         paramsSet.addString( "copyright", params.getCopyright() );
         paramsSet.addString( "mimeType", params.getMimeType() );
-        paramsSet.addString( "name", params.getName() );
+        paramsSet.addString( "name", nullToNull( params.getName() ) );
         paramsSet.addString( "tags", params.getTags() );
         paramsSet.addDouble( "focalX", params.getFocalX() );
         paramsSet.addDouble( "focalY", params.getFocalY() );
@@ -215,7 +215,7 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "copyright", params.getCopyright() );
         paramsSet.addString( "caption", params.getCaption() );
         paramsSet.addString( "mimeType", params.getMimeType() );
-        paramsSet.addString( "name", params.getName() );
+        paramsSet.addString( "name", nullToNull( params.getName() ) );
         paramsSet.addStrings( "tags", params.getTagList() );
         paramsSet.addDouble( "focalX", params.getFocalX() );
         paramsSet.addDouble( "focalY", params.getFocalY() );

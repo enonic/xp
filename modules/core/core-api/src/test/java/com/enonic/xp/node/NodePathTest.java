@@ -58,13 +58,13 @@ class NodePathTest
     {
         assertNull( new NodePath( "" ).getName() );
         assertNull( new NodePath( "/" ).getName() );
-        assertEquals( "first", new NodePath( "first" ).getName() );
-        assertEquals( "first", new NodePath( "/first" ).getName() );
-        assertEquals( "first", new NodePath( "first/" ).getName() );
-        assertEquals( "second", new NodePath( "first/second" ).getName() );
-        assertEquals( "second", new NodePath( "/first/second" ).getName() );
-        assertEquals( "second", new NodePath( "/first/second/" ).getName() );
-        assertEquals( "second", new NodePath( "first/second/" ).getName() );
+        assertEquals( NodeName.from( "first" ), new NodePath( "first" ).getName() );
+        assertEquals( NodeName.from( "first" ), new NodePath( "/first" ).getName() );
+        assertEquals( NodeName.from( "first" ), new NodePath( "first/" ).getName() );
+        assertEquals( NodeName.from( "second" ), new NodePath( "first/second" ).getName() );
+        assertEquals( NodeName.from( "second" ), new NodePath( "/first/second" ).getName() );
+        assertEquals( NodeName.from( "second" ), new NodePath( "/first/second/" ).getName() );
+        assertEquals( NodeName.from( "second" ), new NodePath( "first/second/" ).getName() );
     }
 
     @Test

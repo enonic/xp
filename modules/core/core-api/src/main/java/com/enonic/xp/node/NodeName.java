@@ -13,8 +13,13 @@ public final class NodeName
 
     private NodeName( final String name, final boolean validate )
     {
-        super( name, validate );
+        super( validate ? checkUnderscore( name ) : name, validate );
+    }
+
+    private static String checkUnderscore( final String name )
+    {
         Preconditions.checkArgument( !"_".equals( name ), "name cannot be _" );
+        return name;
     }
 
     public boolean isRoot()
@@ -25,5 +30,15 @@ public final class NodeName
     public static NodeName from( final String name )
     {
         return new NodeName( name, true );
+    }
+
+    public static NodeName from( final Name name )
+    {
+        return name instanceof NodeName nodeName ? nodeName : new NodeName( checkUnderscore( name.toString() ), false );
+    }
+
+    static NodeName fromInternal( final String name )
+    {
+        return name.isEmpty() ? ROOT : new NodeName( name, false );
     }
 }

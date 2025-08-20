@@ -67,7 +67,7 @@ final class UpdateMediaCommand
                                      "Updated content must be of type: " + existingContent.getType() );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
-            .name( params.getName() )
+            .name( params.getName().toString() )
             .mimeType( params.getMimeType() )
             .label( "source" )
             .byteSource( params.getByteSource() )
@@ -75,7 +75,7 @@ final class UpdateMediaCommand
             .build();
 
         final MediaFormDataBuilder mediaFormBuilder = new MediaFormDataBuilder().type( type )
-            .attachment( params.getName() )
+            .attachment( params.getName().toString() )
             .focalX( params.getFocalX() )
             .focalY( params.getFocalY() )
             .caption( params.getCaption() )

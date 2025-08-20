@@ -927,7 +927,7 @@ public class ApplicationServiceImplTest
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
             final CreateNodeParams createNodeParams = params.getArgument( 0 );
 
-            if ( applicationKey.toString().equals( createNodeParams.getName() ) )
+            if ( applicationKey.toString().equals( createNodeParams.getName().toString() ) )
             {
 
                 when( nodeService.nodeExists(
@@ -941,7 +941,7 @@ public class ApplicationServiceImplTest
                     .build();
 
             }
-            if ( appNodeNames.contains( createNodeParams.getName() ) )
+            if ( appNodeNames.contains( createNodeParams.getName().toString() ) )
             {
                 return Node.create()
                     .id( NodeId.from( createNodeParams.getName() ) )

@@ -14,6 +14,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -119,14 +120,14 @@ public class CreateNodeParamsFactory
         return builder;
     }
 
-    private static String resolveNodeName( final ContentName name )
+    private static NodeName resolveNodeName( final ContentName name )
     {
         if ( name.isUnnamed() && !name.hasUniqueness() )
         {
-            return ContentName.uniqueUnnamed().toString();
+            return NodeName.from( ContentName.uniqueUnnamed() );
         }
 
-        return name.toString();
+        return NodeName.from( name );
     }
 
     public static Builder create( final CreateContentTranslatorParams params )

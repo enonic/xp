@@ -109,7 +109,7 @@ public class ImportNodeCommand
                 .indexConfigDocument( this.importNode.getIndexConfigDocument() )
                 .insertManualStrategy( this.insertManualStrategy )
                 .manualOrderValue( this.importNode.getManualOrderValue() )
-                .name( this.importNode.name().toString() )
+                .name( this.importNode.name() )
                 .parent( this.importNode.parentPath() )
                 .setNodeId( this.importNode.id() )
                 .permissions( permissions )

@@ -15,7 +15,7 @@ public final class CreateNodeParams
 {
     private final NodePath parent;
 
-    private final String name;
+    private final NodeName name;
 
     private final PropertyTree data;
 
@@ -70,7 +70,7 @@ public final class CreateNodeParams
     {
         return new Builder().
             parent( node.parentPath() ).
-            name( node.name().toString() ).
+            name( node.name() ).
             data( node.data() ).
             indexConfigDocument( node.getIndexConfigDocument() ).
             childOrder( node.getChildOrder() ).
@@ -78,7 +78,7 @@ public final class CreateNodeParams
             nodeType( node.getNodeType() );
     }
 
-    public String getName()
+    public NodeName getName()
     {
         return name;
     }
@@ -147,7 +147,7 @@ public final class CreateNodeParams
     {
         private NodePath parent;
 
-        private String name;
+        private NodeName name;
 
         private PropertyTree data = new PropertyTree();
 
@@ -205,6 +205,12 @@ public final class CreateNodeParams
         }
 
         public Builder name( final String name )
+        {
+            this.name = NodeName.from( name );
+            return this;
+        }
+
+        public Builder name( final NodeName name )
         {
             this.name = name;
             return this;

@@ -13,7 +13,7 @@ public final class CreateMediaParams
 {
     private ContentPath parent;
 
-    private String name;
+    private ContentName name;
 
     private String mimeType;
 
@@ -41,9 +41,16 @@ public final class CreateMediaParams
 
     public CreateMediaParams name( final String value )
     {
+        this.name = ContentName.from( value );
+        return this;
+    }
+
+    public CreateMediaParams name( final ContentName value )
+    {
         this.name = value;
         return this;
     }
+
 
     public CreateMediaParams mimeType( final String value )
     {
@@ -112,7 +119,7 @@ public final class CreateMediaParams
         return parent;
     }
 
-    public String getName()
+    public ContentName getName()
     {
         return name;
     }

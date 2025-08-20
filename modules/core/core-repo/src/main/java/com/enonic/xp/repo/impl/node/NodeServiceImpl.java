@@ -1053,12 +1053,13 @@ public class NodeServiceImpl
 
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
-        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
+
         final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, context );
-        branchNodeVersions.stream()
+        final RoutableNodeVersionIds routableNodeVersionIds = branchNodeVersions.stream()
             .map( branchEntry -> RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() ) )
-            .forEach( routableNodeVersionIds::add );
-        final NodeCommitEntry commitEntry = nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds.build(), context );
+            .collect( RoutableNodeVersionIds.collector() );
+
+        final NodeCommitEntry commitEntry = nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, context );
 
         refresh( RefreshMode.STORAGE );
 

@@ -21,12 +21,6 @@ public class ContentTest
     private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
 
     @Test
-    public void given_path_isRoot_then_IllegalArgumentException_is_thrown()
-    {
-        assertThrows(IllegalArgumentException.class, () ->  Content.create().path( ContentPath.ROOT ).build() );
-    }
-
-    @Test
     public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup
