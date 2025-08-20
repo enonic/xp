@@ -15,6 +15,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -126,7 +127,8 @@ public class PatchNodeCommandTest
 
         assertEquals( 5, capturedEvents.stream()
             .filter( event -> NodeEvents.NODE_UPDATED_EVENT.equals( event.getType() ) &&
-                NodeId.from( ( (List<Map>) event.getData().get( "nodes" ) ).getFirst().get( "id" ) ).equals( createdNode.id() ) )
+                NodeId.from( ( (List<Map>) event.getData().get( EventConstants.NODES_FIELD ) ).getFirst().get( "id" ) )
+                    .equals( createdNode.id() ) )
             .count() );
     }
 
@@ -158,7 +160,7 @@ public class PatchNodeCommandTest
             {
                 return false;
             }
-            final Map node = ( (List<Map>) event.getData().get( "nodes" ) ).getFirst();
+            final Map node = ( (List<Map>) event.getData().get( EventConstants.NODES_FIELD ) ).getFirst();
             return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) && node.get( "branch" ).equals( branch.getValue() );
         } ).count() );
 
@@ -167,7 +169,7 @@ public class PatchNodeCommandTest
             {
                 return false;
             }
-            final Map node = ( (List<Map>) event.getData().get( "nodes" ) ).getFirst();
+            final Map node = ( (List<Map>) event.getData().get( EventConstants.NODES_FIELD ) ).getFirst();
             return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) &&
                 node.get( "branch" ).equals( RepositoryConstants.MASTER_BRANCH.getValue() );
         } ).count() );

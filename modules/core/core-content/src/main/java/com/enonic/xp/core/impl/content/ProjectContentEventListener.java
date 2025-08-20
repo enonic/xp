@@ -21,6 +21,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -31,6 +32,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static com.enonic.xp.core.impl.content.Constants.CONTENT_SKIP_SYNC;
 
 @Component(immediate = true)
 public final class ProjectContentEventListener
@@ -78,13 +81,15 @@ public final class ProjectContentEventListener
 
     private void handleContentEvent( final Event event )
     {
-        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( EventConstants.NODES_FIELD );
 
         final boolean isContentEvent = nodes.stream()
             .map( map -> map.get( "path" ) )
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
-        if ( isContentEvent )
+        final boolean isSkipSync = Boolean.parseBoolean( (String) event.getData().getOrDefault( CONTENT_SKIP_SYNC, "false" ) );
+
+        if ( isContentEvent && !isSkipSync )
         {
             Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
             this.simpleExecutor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event ) ) );
@@ -139,10 +144,7 @@ public final class ProjectContentEventListener
                 .forEach( targetProject -> {
 
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
-                        .addContentIds( contentIds )
-                        .sourceProject( sourceProject.getName() )
-                        .targetProject( targetProject.getName() )
-                        .addEventMetadata( event.getData() );
+                        .addContentIds( contentIds ).sourceProject( sourceProject.getName() ).targetProject( targetProject.getName() );
 
                     switch ( event.getType() )
                     {
@@ -199,10 +201,7 @@ public final class ProjectContentEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() )
-            .branch( ContentConstants.BRANCH_DRAFT )
-            .authInfo( authInfo )
-            .build();
+        return ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).authInfo( authInfo ).build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()

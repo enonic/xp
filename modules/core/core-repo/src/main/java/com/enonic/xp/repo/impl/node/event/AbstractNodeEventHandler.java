@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
@@ -20,7 +21,7 @@ abstract class AbstractNodeEventHandler
     {
         try
         {
-            final List nodesList = event.getValueAs( List.class, "nodes" ).get();
+            final List nodesList = event.getValueAs( List.class, EventConstants.NODES_FIELD ).get();
             return doGetValueMap( nodesList );
         }
         catch ( Exception e )
