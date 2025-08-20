@@ -3,7 +3,6 @@ package com.enonic.xp.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
 public final class MoveContentParams
@@ -11,8 +10,6 @@ public final class MoveContentParams
     private final ContentId contentId;
 
     private final ContentPath parentContentPath;
-
-    private final PrincipalKey creator;
 
     private final MoveContentListener moveContentListener;
 
@@ -22,7 +19,6 @@ public final class MoveContentParams
     {
         this.contentId = builder.contentId;
         this.parentContentPath = builder.parentContentPath;
-        this.creator = builder.creator;
         this.moveContentListener = builder.moveContentListener;
         this.stopInherit = builder.stopInherit;
     }
@@ -42,11 +38,6 @@ public final class MoveContentParams
         return parentContentPath;
     }
 
-    public PrincipalKey getCreator()
-    {
-        return creator;
-    }
-
     public MoveContentListener getMoveContentListener()
     {
         return moveContentListener;
@@ -62,8 +53,6 @@ public final class MoveContentParams
         private ContentId contentId;
 
         private ContentPath parentContentPath;
-
-        private PrincipalKey creator;
 
         private MoveContentListener moveContentListener;
 
@@ -82,12 +71,6 @@ public final class MoveContentParams
         public Builder parentContentPath( ContentPath parentContentPath )
         {
             this.parentContentPath = parentContentPath;
-            return this;
-        }
-
-        public Builder creator( PrincipalKey creator )
-        {
-            this.creator = creator;
             return this;
         }
 

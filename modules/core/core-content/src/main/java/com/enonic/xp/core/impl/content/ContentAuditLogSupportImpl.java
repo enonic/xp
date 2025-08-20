@@ -374,10 +374,6 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
         paramsSet.addString( "parentContentPath", nullToNull( params.getParentContentPath() ) );
-        if ( params.getCreator() != null )
-        {
-            paramsSet.addString( "creator", params.getCreator().getId() );
-        }
 
         addContents( resultSet, result.getMovedContents(), "movedContents" );
 
