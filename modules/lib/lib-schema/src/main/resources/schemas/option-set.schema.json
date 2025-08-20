@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xp.enonic.com/schemas/json/option-set.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://xp.enonic.com/schemas/json/form-item.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+        },
+        "expanded": {
+          "type": "boolean"
+        },
+        "helpText": {
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+        },
+        "occurrences": {
+          "$ref": "https://xp.enonic.com/schemas/json/occurrence.schema.json"
+        },
+        "options": {
+          "$ref": "https://xp.enonic.com/schemas/json/option-set-options.schema.json"
+        },
+        "type": {
+          "const": "OptionSet"
+        }
+      },
+      "required": [
+        "name",
+        "options"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
