@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ContentPathTest
 {
@@ -22,7 +21,6 @@ public class ContentPathTest
     {
         assertEquals( "/parent/child", ContentPath.from( "/parent/child" ).toString() );
         assertEquals( "/", ContentPath.create().build().toString() );
-        assertEquals( "", ContentPath.create().absolute( false ).build().toString() );
     }
 
     @Test
@@ -71,8 +69,8 @@ public class ContentPathTest
     public void from()
         throws Exception
     {
-        assertEquals( ContentPath.from( "a" ), ContentPath.from( "a" ) );
-        assertEquals( ContentPath.from( "a/b" ), ContentPath.from( "a/b" ) );
+        assertEquals( ContentPath.from( "a" ), ContentPath.from( "/a" ) );
+        assertEquals( ContentPath.from( "a/b" ), ContentPath.from( "/a/b" ) );
     }
 
     @Test
@@ -96,24 +94,4 @@ public class ContentPathTest
         assertEquals( ContentName.from( "child" ), ContentPath.from( "/parent/child" ).getName() );
         assertEquals( null, ContentPath.from( "/" ).getName() );
     }
-
-    @Test
-    public void isAbsolute()
-        throws Exception
-    {
-        assertEquals( true, ContentPath.from( "/parent" ).isAbsolute() );
-        assertEquals( false, ContentPath.from( "parent" ).isAbsolute() );
-    }
-
-    @Test
-    public void asAbsolute()
-    {
-        ContentPath samePath = ContentPath.from( "/same" );
-        assertSame( samePath, samePath.asAbsolute() );
-
-        ContentPath relative = ContentPath.from( "relative" );
-        assertEquals( true, relative.asAbsolute().isAbsolute() );
-        assertEquals( "/relative", relative.asAbsolute().toString() );
-    }
-
 }

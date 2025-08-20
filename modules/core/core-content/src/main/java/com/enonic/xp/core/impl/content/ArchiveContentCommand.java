@@ -206,7 +206,7 @@ final class ArchiveContentCommand
     private void validateLocation()
     {
         final Node node = nodeService.getById( NodeId.from( params.getContentId() ) );
-        if ( ContentNodeHelper.getContentRootName( node.path() ).equals( ArchiveConstants.ARCHIVE_ROOT_NAME ) )
+        if ( ContentNodeHelper.inArchive( node.path() ) )
         {
             throw new ArchiveContentException( String.format( "content [%s] is archived already", params.getContentId() ),
                                                ContentNodeHelper.translateNodePathToContentPath( node.path() ) );

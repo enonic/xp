@@ -11,8 +11,6 @@ public final class ContentName
 {
     private static final String UNNAMED_PREFIX = "__unnamed__";
 
-    private static final ContentName UNNAMED = new ContentName( UNNAMED_PREFIX, false );
-
     private ContentName( final String name, boolean validate )
     {
         super( name, validate );
@@ -26,11 +24,6 @@ public final class ContentName
     public boolean hasUniqueness()
     {
         return isUnnamed() && this.value.length() > UNNAMED_PREFIX.length();
-    }
-
-    public static ContentName unnamed()
-    {
-        return UNNAMED;
     }
 
     public static ContentName from( final String name )

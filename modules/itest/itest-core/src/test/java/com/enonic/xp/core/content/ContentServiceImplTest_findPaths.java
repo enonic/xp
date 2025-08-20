@@ -35,7 +35,7 @@ public class ContentServiceImplTest_findPaths
         final Content child1 = createContent( site.getPath(), "b" );
 
         final ContentQuery query = ContentQuery.create().
-            queryExpr( QueryParser.parse( "_path = '/content" + child1.getPath().asAbsolute() + "'" ) ).
+            queryExpr( QueryParser.parse( "_path = '/content" + child1.getPath() + "'" ) ).
             build();
 
         assertEquals( ContentPaths.from( child1.getPath() ), contentService.findPaths( query ).getContentPaths() );
@@ -60,7 +60,7 @@ public class ContentServiceImplTest_findPaths
 
         query = ContentQuery.create().
             queryExpr( QueryParser.parse(
-                "_path in ('/content" + child1.getPath().asAbsolute() + "', '/content" + child2.getPath().asAbsolute() + "')" ) ).
+                "_path in ('/content" + child1.getPath() + "', '/content" + child2.getPath() + "')" ) ).
             build();
 
         assertEquals( ContentPaths.from( child1.getPath(), child2.getPath() ), contentService.findPaths( query ).getContentPaths() );

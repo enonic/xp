@@ -268,7 +268,7 @@ public class AdminSiteHandler
         final String branchSubPath = findPathAfterBranch( baseSubPath );
         final int underscore = branchSubPath.indexOf( "/_/" );
         final String result = branchSubPath.substring( 0, underscore > -1 ? underscore : branchSubPath.length() );
-        return ContentPath.from( result.startsWith( "/" ) ? result : ( "/" + result ) );
+        return ContentPath.from( result );
     }
 
     private static String findPathAfterRepository( final String baseSubPath )

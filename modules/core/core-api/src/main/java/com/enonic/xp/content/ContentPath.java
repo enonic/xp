@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
@@ -13,17 +12,14 @@ import com.enonic.xp.annotation.PublicApi;
 public final class ContentPath
     implements Iterable<ContentName>
 {
-    public static final ContentPath ROOT = new ContentPath( true, ImmutableList.of() );
+    public static final ContentPath ROOT = new ContentPath( ImmutableList.of() );
 
     private static final String ELEMENT_DIVIDER = "/";
 
-    private final boolean absolute;
-
     private final ImmutableList<ContentName> elements;
 
-    private ContentPath( final boolean absolute, final ImmutableList<ContentName> elements )
+    private ContentPath( final ImmutableList<ContentName> elements )
     {
-        this.absolute = absolute;
         this.elements = elements;
     }
 
@@ -56,22 +52,7 @@ public final class ContentPath
             return null;
         }
 
-        return fromInternal( this.absolute, this.elements.subList( 0, size - deep ) );
-    }
-
-    public boolean isAbsolute()
-    {
-        return absolute;
-    }
-
-    public ContentPath asAbsolute()
-    {
-        if ( absolute )
-        {
-            return this;
-        }
-
-        return fromInternal( true, this.elements );
+        return fromInternal( this.elements.subList( 0, size - deep ) );
     }
 
     public ContentName getName()
@@ -115,31 +96,31 @@ public final class ContentPath
             return false;
         }
         final ContentPath that = (ContentPath) o;
-        return absolute == that.absolute && elements.equals( that.elements );
+        return elements.equals( that.elements );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( absolute, elements );
+        return elements.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return ( this.absolute ? ELEMENT_DIVIDER : "" ) +
+        return ELEMENT_DIVIDER +
             elements.stream().map( ContentName::toString ).collect( Collectors.joining( ELEMENT_DIVIDER ) );
     }
 
     public static ContentPath from( final String path )
     {
-        if ( path.equals( ELEMENT_DIVIDER ) )
+        if ( path.isEmpty() || path.equals( ELEMENT_DIVIDER ) )
         {
             return ContentPath.ROOT;
         }
         else
         {
-            final Builder builder = create().absolute( path.startsWith( ELEMENT_DIVIDER ) );
+            final Builder builder = create();
             Splitter.on( ELEMENT_DIVIDER ).omitEmptyStrings().splitToStream( path ).map( ContentName::from ).forEach( builder::add );
             return builder.build();
         }
@@ -155,14 +136,14 @@ public final class ContentPath
         return from( parent, ContentName.from( name ) );
     }
 
-    private static ContentPath fromInternal( final boolean absolute, final ImmutableList<ContentName> elements )
+    private static ContentPath fromInternal( final ImmutableList<ContentName> elements )
     {
-        if ( absolute && elements.isEmpty() )
+        if ( elements.isEmpty() )
         {
             return ROOT;
         }
         else {
-            return new ContentPath( absolute, elements );
+            return new ContentPath( elements );
         }
     }
 
@@ -175,24 +156,14 @@ public final class ContentPath
     {
         private final ImmutableList.Builder<ContentName> elements;
 
-        private boolean absolute;
-
         private Builder()
         {
             this.elements = ImmutableList.builder();
-            this.absolute = true;
         }
 
         private Builder( ContentPath source )
         {
             this.elements = ImmutableList.<ContentName>builder().addAll( source.elements );
-            this.absolute = source.absolute;
-        }
-
-        public Builder absolute( final boolean value )
-        {
-            this.absolute = value;
-            return this;
         }
 
         public Builder add( final ContentName pathElement )
@@ -209,7 +180,7 @@ public final class ContentPath
 
         public ContentPath build()
         {
-            return fromInternal( absolute, elements.build() );
+            return fromInternal( elements.build() );
         }
     }
 }

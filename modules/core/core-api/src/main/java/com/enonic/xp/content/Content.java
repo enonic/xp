@@ -538,7 +538,7 @@ public class Content
 
         public BUILDER path( final ContentPath path )
         {
-            this.parentPath = path.getParentPath() != null ? path.getParentPath().asAbsolute() : null;
+            this.parentPath = path.getParentPath();
             this.name = path.getName();
             return (BUILDER) this;
         }

@@ -181,7 +181,7 @@ public class ValidateContentDataCommandTest
         final Content content = Content.create()
             .path( "/mycontent" )
             .type( contentType.getName() )
-            .name( ContentName.unnamed() )
+            .name( ContentName.uniqueUnnamed() )
             .displayName( "display-name" )
             .build();
         content.getData().setString( "mySet.myInput", "thing" );

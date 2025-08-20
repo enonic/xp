@@ -136,7 +136,7 @@ public class MoveContentCommandTest
             build();
 
         final Node mockNode = Node.create().name( existingContent.getName().toString() ).parentPath(
-            ContentNodeHelper.translateContentParentToNodeParentPath( existingContent.getParentPath() ) ).build();
+            ContentNodeHelper.translateContentPathToNodePath( existingContent.getParentPath() ) ).build();
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( nodeService.nodeExists( mockNode.path() )).thenReturn( true );

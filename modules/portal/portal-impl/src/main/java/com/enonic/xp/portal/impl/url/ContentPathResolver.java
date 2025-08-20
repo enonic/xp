@@ -9,9 +9,9 @@ final class ContentPathResolver
 {
     private PortalRequest portalRequest;
 
-    private ContentId id;
+    private String id;
 
-    private ContentPath path;
+    private String path;
 
     private ContentService contentService;
 
@@ -23,13 +23,13 @@ final class ContentPathResolver
 
     public ContentPathResolver id( final String value )
     {
-        this.id = value != null ? ContentId.from( value ) : null;
+        this.id = value;
         return this;
     }
 
     public ContentPathResolver path( final String value )
     {
-        this.path = value != null ? ContentPath.from( value ) : null;
+        this.path = value;
         return this;
     }
 
@@ -43,7 +43,7 @@ final class ContentPathResolver
     {
         if ( this.id != null )
         {
-            return this.contentService.getById( this.id ).getPath();
+            return this.contentService.getById( ContentId.from( this.id ) ).getPath();
         }
 
         if ( path == null )
@@ -51,8 +51,13 @@ final class ContentPathResolver
             return this.portalRequest.getContentPath();
         }
 
-        return this.path.isAbsolute()
-            ? this.path
-            : ContentPath.create().addAll( this.portalRequest.getContentPath() ).addAll( this.path ).build();
+        if ( path.startsWith( "/" ) )
+        {
+            return ContentPath.from( path );
+        }
+        else
+        {
+            return ContentPath.create().addAll( this.portalRequest.getContentPath() ).addAll( ContentPath.from( path ) ).build();
+        }
     }
 }

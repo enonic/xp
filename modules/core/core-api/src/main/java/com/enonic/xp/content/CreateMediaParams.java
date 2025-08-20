@@ -108,7 +108,6 @@ public final class CreateMediaParams
     public void validate()
     {
         Preconditions.checkNotNull( this.parent, "parent cannot be null. Use ContentPath.ROOT when content has no parent." );
-        Preconditions.checkArgument( this.parent.isAbsolute(), "parent must be absolute: " + this.parent );
         Preconditions.checkNotNull( this.name, "name cannot be null" );
         Preconditions.checkNotNull( this.byteSource, "byteSource cannot be null" );
     }

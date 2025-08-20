@@ -104,7 +104,7 @@ public class CreateNodeParamsFactory
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( resolveNodeName( params.getName() ) ).
-            parent( ContentNodeHelper.translateContentParentToNodeParentPath( params.getParent() ) ).
+            parent( ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) ).
             data( contentAsData ).
             indexConfigDocument( indexConfigDocument ).
             permissions( params.getPermissions() ).

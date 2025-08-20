@@ -24,8 +24,8 @@ public final class CreateSiteParams
 
     public CreateSiteParams parent( final ContentPath parentContentPath )
     {
+        Preconditions.checkNotNull( parentContentPath, "parentPath cannot be null" );
         this.parentContentPath = parentContentPath;
-        Preconditions.checkArgument( parentContentPath.isAbsolute(), "parentContentPath must be absolute: " + parentContentPath );
         return this;
     }
 

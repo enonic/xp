@@ -51,7 +51,7 @@ public final class MoveContentHandler
         {
             // move as child of target path, keep same name
             // /a/b -> /c/d/ => /c/d/b
-            return move( sourceId, ContentPath.from( target ).asAbsolute() );
+            return move( sourceId, ContentPath.from( target ) );
         }
         else if ( !target.startsWith( "/" ) )
         {

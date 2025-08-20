@@ -413,7 +413,6 @@ public class CreateContentTranslatorParams
         private void validate()
         {
             Preconditions.checkNotNull( parent, "parentPath cannot be null" );
-            Preconditions.checkArgument( parent.isAbsolute(), "parentPath must be absolute: " + parent );
             Preconditions.checkNotNull( data, "data cannot be null" );
             Preconditions.checkNotNull( displayName, "displayName cannot be null" );
             Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );

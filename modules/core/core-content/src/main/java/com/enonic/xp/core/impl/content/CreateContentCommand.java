@@ -206,10 +206,9 @@ final class CreateContentCommand
 
     private Locale getDefaultLanguage( final CreateContentParams createContentParams )
     {
-        ContentPath parentPath = createContentParams.getParent();
         if ( createContentParams.getLanguage() == null )
         {
-            final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentParentToNodeParentPath( parentPath ) );
+            final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( createContentParams.getParent() ) );
 
             final List<Property> inheritProperties = parent.data().getProperties( ContentPropertyNames.INHERIT );
             final boolean inherited =
@@ -269,7 +268,7 @@ final class CreateContentCommand
             else
             {
                 builder.displayName( "" );
-                builder.name( ContentName.unnamed() );
+                builder.name( ContentName.uniqueUnnamed() );
             }
         }
     }

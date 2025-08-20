@@ -10,6 +10,9 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentNodeHelperTest
 {
@@ -22,6 +25,13 @@ public class ContentNodeHelperTest
     }
 
     @Test
+    public void translateNodePathToContentPath_root_throws()
+    {
+        assertThrows( IllegalArgumentException.class,
+                      () ->ContentNodeHelper.translateNodePathToContentPath( NodePath.ROOT ) );
+    }
+
+    @Test
     public void translateNodePathToContentPath_archive()
     {
         assertEquals( ContentPath.from( "/site/myContent" ),
@@ -31,7 +41,7 @@ public class ContentNodeHelperTest
     @Test
     public void translateContentParentToNodeParentPath()
     {
-        final NodePath nodePath = ContentNodeHelper.translateContentParentToNodeParentPath( ContentPath.from( "/site/myContent" ) );
+        final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( ContentPath.from( "/site/myContent" ) );
 
         assertEquals( new NodePath( "/content/site/myContent" ), nodePath );
     }
@@ -75,4 +85,13 @@ public class ContentNodeHelperTest
         assertEquals( ContentIds.from( "e1f57280-d672-4cd8-b674-98e26e5b69ae", "45d67001-7f2b-4093-99ae-639be9fdd1f6" ), contentIds );
     }
 
+    @Test
+    void inArchive()
+    {
+        assertFalse( ContentNodeHelper.inArchive( NodePath.ROOT ) );
+        assertFalse( ContentNodeHelper.inArchive( new NodePath( "/archive" ) ) );
+        assertFalse( ContentNodeHelper.inArchive( new NodePath( "/content" ) ) );
+        assertTrue( ContentNodeHelper.inArchive( new NodePath( "/archive/some/path" ) ) );
+        assertFalse( ContentNodeHelper.inArchive( new NodePath( "/content/archive/some/path" ) ) );
+    }
 }
