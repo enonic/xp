@@ -155,7 +155,7 @@ public class ContentAuditLogSupportImplTest
 
         assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
         assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
-        assertEquals( "true", argumentCaptor.getValue().getData().getSet( "params" ).getString( Constants.CONTENT_SKIP_SYNC ) );
+        assertEquals( "true", argumentCaptor.getValue().getData().getSet( "params" ).getString( "skipSync" ) );
         assertEquals( List.of( "draft", "master" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "branches" ) );
         assertEquals( "MyImage.jpg",
                       argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getString( "name" ) );
