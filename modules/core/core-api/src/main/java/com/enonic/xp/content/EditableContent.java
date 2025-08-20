@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 
-import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Locale;
 
@@ -30,10 +29,6 @@ public class EditableContent
 
     public Locale language;
 
-    public PrincipalKey creator;
-
-    public Instant createdTime;
-
     public ContentPublishInfo publishInfo;
 
     public ContentIds.Builder processedReferences;
@@ -56,8 +51,6 @@ public class EditableContent
         this.thumbnail = source.getThumbnail();
         this.owner = source.getOwner();
         this.language = source.getLanguage();
-        this.creator = source.getCreator();
-        this.createdTime = source.getCreatedTime();
         this.publishInfo = source.getPublishInfo();
         this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
@@ -76,8 +69,6 @@ public class EditableContent
             thumbnail( thumbnail ).
             owner( owner ).
             language( language ).
-            creator( creator ).
-            createdTime( createdTime ).
             publishInfo( publishInfo ).
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
