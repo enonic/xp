@@ -813,7 +813,7 @@ export function update<Data extends Record<string, unknown> = Record<string, unk
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the content.
  * @param {function} params.patcher Patcher callback function.
- * @param {boolean} [params.skipSync=false] If true, the content will not be synced immediately synced to the child projects.
+ * @param {boolean} [params.skipSync=false] If true, the content will not be immediately synced to the child projects.
  * @param {string[]} [params.branches=[]] List of branches to patch the content in. If not specified, the context's branch is used.
  *
  * @returns {object} Patched content as JSON.
