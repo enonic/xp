@@ -3,6 +3,9 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +59,7 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
@@ -66,6 +70,7 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -283,6 +288,30 @@ public class ProjectContentEventListenerTest
         assertNotEquals( patchedContent.getOriginProject(), targetContent.getOriginProject() );
         assertNotEquals( patchedContent.getOriginalParentPath(), targetContent.getOriginalParentPath() );
         assertNotEquals( patchedContent.getOriginalName(), targetContent.getOriginalName() );
+    }
+
+    @Test
+    public void syncPatchedSkipSync()
+        throws InterruptedException
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
+
+        handleEvents();
+
+        final PatchContentResult patchedContentResult = ContextBuilder.copyOf( projectContext )
+            .attribute( "eventMetadata", Map.of( "content.skipSync", "true" ) )
+            .build()
+            .callWith( () -> contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
+                final PropertyTree data = new PropertyTree();
+                data.addString( "test", "value" );
+                edit.data.setValue( data );
+            } ) ).build() ) );
+
+        handleEvents();
+
+        final Content targetContent = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
+
+        assertNotEquals( targetContent.getData(), patchedContentResult.getResult( ContentConstants.BRANCH_DRAFT ).getData() );
     }
 
     @Test

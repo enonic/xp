@@ -1,13 +1,17 @@
 package com.enonic.xp.core.content;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -19,26 +23,47 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.ValidationError;
+import com.enonic.xp.content.ValidationErrorCode;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
 import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReferences;
 
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
+import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
+import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -63,6 +88,62 @@ public class ParentContentSynchronizerTest
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
     }
+
+
+
+
+    private Content syncPatched( final ContentId contentId )
+    {
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
+                               .syncEventType( ContentSyncEventType.UPDATED )
+                               .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+
+
+    private Content syncDeleted( final ContentId contentId )
+    {
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
+                               .syncEventType( ContentSyncEventType.DELETED )
+                               .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+    }
+
+    private void sync( final ContentId contentId, final boolean includeChildren )
+    {
+        final ContentSyncParams.Builder builder = ContentSyncParams.create()
+            .sourceProject( project.getName() )
+            .targetProject( layer.getName() )
+            .includeChildren( includeChildren );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
+    }
+
+    private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
+    {
+        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
+    }
+
 
     @Test
     public void testCreatedChild()
@@ -229,10 +310,10 @@ public class ParentContentSynchronizerTest
                                                   .name( "new name" )
                                                   .byteSource( loadImage( "darth-small.jpg" ) )
                                                   .mimeType( "image/jpeg" )
-                                                  .artist( List.of("artist") )
+                                                  .artist( List.of( "artist" ) )
                                                   .altText( "alt text" )
                                                   .copyright( "copy" )
-                                                  .tags( List.of("my new tags") )
+                                                  .tags( List.of( "my new tags" ) )
                                                   .caption( "caption" ) );
             }
             catch ( IOException e )
@@ -250,6 +331,52 @@ public class ParentContentSynchronizerTest
         assertEquals( "caption", targetContentUpdated.getData().getString( "caption" ) );
         assertEquals( "copy", targetContentUpdated.getData().getString( "copyright" ) );
         assertEquals( "my new tags", targetContentUpdated.getData().getString( "tags" ) );
+    }
+
+    @Test
+    public void patch()
+        throws Exception
+    {
+        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
+        syncCreated( sourceContent.getId() );
+
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create().patcher( edit -> {
+            edit.data.setValue( new PropertyTree() );
+            edit.displayName.setValue( "newDisplayName" );
+            edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
+            edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
+            edit.language.setValue( Locale.forLanguageTag( "no" ) );
+            edit.page.setValue( createPage() );
+
+            edit.valid.setValue( false );
+            edit.validationErrors.setValue( ValidationErrors.create()
+                                                .add( ValidationError.dataError(
+                                                    ValidationErrorCode.from( ApplicationKey.SYSTEM, "errorCode" ),
+                                                    PropertyPath.from( "/property" ) ).build() )
+                                                .build() );
+
+            edit.modifiedTime.setValue( Instant.parse( "2023-10-01T12:00:00Z" ) );
+            edit.modifier.setValue( PrincipalKey.from( "user:system:modifier1" ) );
+
+            edit.childOrder.setValue( ChildOrder.from( "modifiedtime ASC" ) );
+
+            edit.originProject.setValue( ProjectName.from( "new-origin-project" ) );
+
+            edit.originalParentPath.setValue( ContentPath.from( "/newOriginalParent" ) );
+
+            edit.originalName.setValue( ContentName.from( "newOriginalName" ) );
+
+            edit.archivedTime.setValue( Instant.parse( "2023-10-02T12:00:00Z" ) );
+
+            edit.archivedBy.setValue( PrincipalKey.from( "user:system:archivedBy" ) );
+
+
+        } ).contentId( sourceContent.getId() ).build() ) );
+
+        final Content patchedContent = projectContext.callWith( () -> this.contentService.getById( sourceContent.getId() ) );
+        final Content targetContent = syncPatched( sourceContent.getId() );
+
+        compareSynched( patchedContent, targetContent );
     }
 
 
@@ -691,8 +818,7 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         syncCreated( sourceContent.getId() );
 
-        layerContext.runWith(
-            () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
+        layerContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( sourceContent.getPath() ).build() ) );
 
         refresh();
 
@@ -902,45 +1028,40 @@ public class ParentContentSynchronizerTest
                 .syncEventType( ContentSyncEventType.SORTED )
                 .build() );
 
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
     }
 
-    private Content syncDeleted( final ContentId contentId )
+    private ExtraData createExtraData()
     {
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( project.getName() )
-                               .targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.DELETED )
-                               .build() );
+        final PropertyTree mediaData = new PropertyTree();
+        mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L );
+        mediaData.setLong( IMAGE_INFO_IMAGE_HEIGHT, 200L );
+        mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
+        mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+        return new ExtraData( XDataName.from( "myApp:xData" ), mediaData );
     }
 
-
-    private void sync( final ContentId contentId, final boolean includeChildren )
+    private Page createPage()
     {
-        final ContentSyncParams.Builder builder = ContentSyncParams.create()
-            .sourceProject( project.getName() )
-            .targetProject( layer.getName() )
-            .includeChildren( includeChildren );
+        final PropertyTree config = new PropertyTree();
+        config.addString( "some", "line" );
 
-        if ( contentId != null )
-        {
-            builder.addContentId( contentId );
-        }
-        synchronizer.sync( builder.build() );
+        final Form pageDescriptorForm = Form.create()
+            .addFormItem( Input.create().inputType( InputTypeName.TEXT_LINE ).name( "some" ).label( "label" ).build() )
+            .build();
+
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "abc:abc" );
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) )
+            .thenReturn( PageDescriptor.create()
+                             .displayName( "Landing page" )
+                             .config( pageDescriptorForm )
+                             .regions( RegionDescriptors.create().build() )
+                             .key( DescriptorKey.from( "module:landing-page" ) )
+                             .build() );
+
+        return Page.create().descriptor( pageDescriptorKey ).config( config ).regions( PageRegions.create().build() ).build();
     }
 
-    private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
-    {
-        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
 
-        if ( contentId != null )
-        {
-            builder.addContentId( contentId );
-        }
-        synchronizer.sync( builder.build() );
-    }
 }

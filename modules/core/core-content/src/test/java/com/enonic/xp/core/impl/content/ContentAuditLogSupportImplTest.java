@@ -117,6 +117,7 @@ public class ContentAuditLogSupportImplTest
         final PatchContentParams params = PatchContentParams.create()
             .contentId( ContentId.from( "contentId" ) )
             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+            .skipSync( true )
             .createAttachments( CreateAttachments.from( CreateAttachment.create()
                                                             .mimeType( "image/jpeg" )
                                                             .label( "My Image 1" )
@@ -154,6 +155,7 @@ public class ContentAuditLogSupportImplTest
 
         assertEquals( "user:system:testUser", argumentCaptor.getValue().getData().getSet( "params" ).getString( "modifier" ) );
         assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "true", argumentCaptor.getValue().getData().getSet( "params" ).getString( "skipSync" ) );
         assertEquals( List.of( "draft", "master" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "branches" ) );
         assertEquals( "MyImage.jpg",
                       argumentCaptor.getValue().getData().getSet( "params" ).getSet( "createAttachments" ).getString( "name" ) );

@@ -88,7 +88,7 @@ public final class ParentContentSynchronizer
                 }
                 else
                 {
-                    this.doSync( contentsToSync, Map.of() ); // TODO: patch?
+                    this.doSync( contentsToSync );
                 }
             }
         }
@@ -121,7 +121,7 @@ public final class ParentContentSynchronizer
 
         if ( !contentsToSync.isEmpty() )
         {
-            this.doSync( contentsToSync, Map.of() ); // TODO: patch?
+            this.doSync( contentsToSync );
         }
 
         sourceContents.stream().filter( sourceContent -> sourceContent.getSourceContent() != null ).forEach( currentContentToSync -> {
@@ -163,7 +163,7 @@ public final class ParentContentSynchronizer
         } );
     }
 
-    private void doSync( final Collection<ContentToSync> sourceContents, final Map<String, Object> eventMetadata )
+    private void doSync( final Collection<ContentToSync> sourceContents )
     {
         final List<ContentToSync> existedContents =
             sourceContents.stream().filter( contentToSync -> contentToSync.getTargetContent() != null ).collect( Collectors.toList() );

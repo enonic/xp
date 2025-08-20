@@ -2,10 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.project.ProjectName;
@@ -20,15 +18,12 @@ public final class ContentEventsSyncParams
 
     private final ContentSyncEventType syncType;
 
-    private final Map<String, Object> eventMetadata;
-
-    private ContentEventsSyncParams( final Builder builder )
+    public ContentEventsSyncParams( Builder builder )
     {
         this.contentIds = builder.contentIds.build();
         this.sourceProject = builder.sourceProject;
         this.targetProject = builder.targetProject;
         this.syncType = builder.syncType;
-        this.eventMetadata = builder.eventMetadata.build();
     }
 
     public static Builder create()
@@ -56,11 +51,6 @@ public final class ContentEventsSyncParams
         return syncType;
     }
 
-    public Map<String, Object> getEventMetadata()
-    {
-        return eventMetadata;
-    }
-
     public static final class Builder
     {
         private final ImmutableList.Builder<ContentId> contentIds = ImmutableList.builder();
@@ -70,8 +60,6 @@ public final class ContentEventsSyncParams
         private ProjectName targetProject;
 
         private ContentSyncEventType syncType;
-
-        private final ImmutableMap.Builder<String, Object> eventMetadata = ImmutableMap.builder();
 
         public Builder addContentId( ContentId contentId )
         {
@@ -100,12 +88,6 @@ public final class ContentEventsSyncParams
         public Builder syncEventType( ContentSyncEventType syncEventType )
         {
             this.syncType = syncEventType;
-            return this;
-        }
-
-        public Builder addEventMetadata( Map<String, Object> metadata )
-        {
-            this.eventMetadata.putAll( metadata );
             return this;
         }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 
 class NodesEventData
 {
@@ -19,7 +20,7 @@ class NodesEventData
     @SuppressWarnings("unchecked")
     static NodesEventData create( final Event event )
     {
-        final Object nodesList = event.getData().get( "nodes" );
+        final Object nodesList = event.getData().get( EventConstants.NODES_FIELD );
 
         if ( nodesList == null )
         {
