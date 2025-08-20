@@ -61,8 +61,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 
-import static com.enonic.xp.core.impl.content.Constants.CONTENT_SKIP_SYNC;
-
 @Component(configurationPid = "com.enonic.xp.content")
 public class ContentAuditLogSupportImpl
     implements ContentAuditLogSupport
@@ -226,7 +224,7 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "modifier", nullToNull( modifier ) );
         paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
         addCreateAttachments( paramsSet, params.getCreateAttachments() );
-        paramsSet.addBoolean( CONTENT_SKIP_SYNC, params.isSkipSync() );
+        paramsSet.addBoolean( "skipSync", params.isSkipSync() );
 
         result.getResults().forEach( ( branchResult ) -> {
             final Branch branch = branchResult.branch();
