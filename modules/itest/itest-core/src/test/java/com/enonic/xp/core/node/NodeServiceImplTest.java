@@ -72,7 +72,6 @@ import com.enonic.xp.trace.TraceManager;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
-import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -595,8 +594,7 @@ public class NodeServiceImplTest
 
         Mockito.clearInvocations( eventPublisher );
 
-        ContextBuilder.from( ContextAccessor.current() )
-            .attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( "key1", "value1", "key2", "value2" ) )
+        ContextBuilder.from( ContextAccessor.current() ).attribute( "eventMetadata", Map.of( "key1", "value1", "key2", "value2" ) )
             .build()
             .callWith( () -> nodeService.patch( PatchNodeParams.create()
                                                     .id( nodeToPatch.id() )

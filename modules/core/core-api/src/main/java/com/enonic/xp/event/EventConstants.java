@@ -4,8 +4,6 @@ public final class EventConstants
 {
     public static final String NODES_FIELD = "nodes";
 
-    public static final String CONTEXT_METADATA_ATTRIBUTE = "eventMetadata";
-
     private EventConstants()
     {
     }

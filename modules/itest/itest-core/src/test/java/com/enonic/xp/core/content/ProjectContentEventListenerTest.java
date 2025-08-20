@@ -77,7 +77,6 @@ import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
-import static com.enonic.xp.event.EventConstants.CONTEXT_METADATA_ATTRIBUTE;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
@@ -320,7 +319,7 @@ public class ProjectContentEventListenerTest
         handleEvents();
 
         final PatchContentResult patchedContentResult = ContextBuilder.copyOf( projectContext )
-            .attribute( CONTEXT_METADATA_ATTRIBUTE, Map.of( "content.skipSync", "true" ) )
+            .attribute( "eventMetadata", Map.of( "content.skipSync", "true" ) )
             .build()
             .callWith( () -> contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
                 final PropertyTree data = new PropertyTree();
