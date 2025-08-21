@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.schema.LocalizedText;
+
 import static com.google.common.base.Strings.nullToEmpty;
 
 public final class FormOptionSetOption
@@ -227,6 +229,20 @@ public final class FormOptionSetOption
         public Builder labelI18nKey( String value )
         {
             labelI18nKey = value;
+            return this;
+        }
+
+        public Builder setLabel( LocalizedText value )
+        {
+            this.label = value.text();
+            this.labelI18nKey = value.i18n();
+            return this;
+        }
+
+        public Builder setHelpText( LocalizedText value )
+        {
+            this.helpText = value.text();
+            this.helpTextI18nKey = value.i18n();
             return this;
         }
 

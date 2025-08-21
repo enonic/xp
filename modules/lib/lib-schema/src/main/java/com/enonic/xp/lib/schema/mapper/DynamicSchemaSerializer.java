@@ -156,10 +156,7 @@ public class DynamicSchemaSerializer
         gen.value( "formItemType", "Input" );
         gen.value( "name", input.getName() );
         gen.value( "label", input.getLabel() );
-        gen.value( "customText", input.getCustomText() );
         gen.value( "helpText", input.getHelpText() );
-        gen.value( "validationRegexp", input.getValidationRegexp() );
-        gen.value( "maximize", input.isMaximizeUIInputWidth() );
         gen.value( "inputType", input.getInputType().toString() );
         serializeOccurrences( gen, input.getOccurrences() );
         serializeDefaultValue( gen, input );

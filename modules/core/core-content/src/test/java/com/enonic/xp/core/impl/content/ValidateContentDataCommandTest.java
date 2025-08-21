@@ -200,7 +200,6 @@ public class ValidateContentDataCommandTest
                                                            .label( "some-label" )
                                                            .name( "textInput-1" )
                                                            .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
-                                                           .immutable( true )
                                                            .build() ).build();
         return SiteDescriptor.create().form( config ).build();
     }

@@ -56,7 +56,6 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'text2',
             'label': 'Text 2',
-            'maximize': true,
             'inputType': 'TextLine',
             'occurrences': {
                 'maximum': 1,
