@@ -29,7 +29,6 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'width',
             'label': 'width',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,

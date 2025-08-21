@@ -27,23 +27,13 @@ public final class Input
 
     private final InputTypeDefault defaultValue;
 
-    private final boolean immutable;
-
     private final Occurrences occurrences;
-
-    private final boolean indexed;
-
-    private final String customText;
-
-    private final String validationRegexp;
 
     private final String helpText;
 
     private final String helpTextI18nKey;
 
     private final InputTypeConfig inputTypeConfig;
-
-    private final boolean maximizeUIInputWidth;
 
     private Input( Builder builder )
     {
@@ -60,17 +50,12 @@ public final class Input
         this.name = builder.name;
         this.type = builder.inputType;
         this.label = builder.label;
-        this.defaultValue = builder.defaultValue;
-        this.immutable = builder.immutable;
-        this.occurrences = builder.occurrences;
-        this.indexed = builder.indexed;
-        this.customText = builder.customText;
-        this.validationRegexp = builder.validationRegexp;
-        this.helpText = builder.helpText;
-        this.inputTypeConfig = builder.inputTypeConfig.build();
-        this.maximizeUIInputWidth = builder.maximizeUIInputWidth;
         this.labelI18nKey = builder.labelI18nKey;
+        this.defaultValue = builder.defaultValue;
+        this.occurrences = builder.occurrences;
+        this.helpText = builder.helpText;
         this.helpTextI18nKey = builder.helpTextI18nKey;
+        this.inputTypeConfig = builder.inputTypeConfig.build();
     }
 
     @Override
@@ -105,11 +90,6 @@ public final class Input
         return occurrences.impliesRequired();
     }
 
-    public boolean isImmutable()
-    {
-        return immutable;
-    }
-
     public boolean isMultiple()
     {
         return occurrences.isMultiple();
@@ -118,26 +98,6 @@ public final class Input
     public Occurrences getOccurrences()
     {
         return occurrences;
-    }
-
-    public boolean isMaximizeUIInputWidth()
-    {
-        return maximizeUIInputWidth;
-    }
-
-    public boolean isIndexed()
-    {
-        return indexed;
-    }
-
-    public String getCustomText()
-    {
-        return customText;
-    }
-
-    public String getValidationRegexp()
-    {
-        return validationRegexp;
     }
 
     public String getHelpText()
@@ -180,21 +140,16 @@ public final class Input
 
         final Input that = (Input) o;
         return super.equals( o ) && Objects.equals( this.type, that.type ) && Objects.equals( this.label, that.label ) &&
-            Objects.equals( this.defaultValue, that.defaultValue ) && this.immutable == that.immutable &&
-            Objects.equals( this.occurrences, that.occurrences ) && this.indexed == that.indexed &&
-            this.maximizeUIInputWidth == that.maximizeUIInputWidth && Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.validationRegexp, that.validationRegexp ) &&
-            Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) && Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
-            Objects.equals( this.labelI18nKey, that.labelI18nKey );
-
+            Objects.equals( this.defaultValue, that.defaultValue ) && Objects.equals( this.occurrences, that.occurrences ) &&
+            Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) &&
+            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) && Objects.equals( this.labelI18nKey, that.labelI18nKey );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.immutable, this.occurrences, this.indexed,
-                             this.customText, this.helpText, this.validationRegexp, this.inputTypeConfig, this.maximizeUIInputWidth,
-                             this.labelI18nKey, this.helpTextI18nKey );
+        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.occurrences, this.helpText,
+                             this.inputTypeConfig, this.labelI18nKey, this.helpTextI18nKey );
     }
 
     public static Builder create()
@@ -219,23 +174,13 @@ public final class Input
 
         private InputTypeDefault defaultValue;
 
-        private boolean immutable = false;
-
         private Occurrences occurrences = Occurrences.create( 0, 1 );
-
-        private boolean indexed = false;
-
-        private String customText;
-
-        private String validationRegexp;
 
         private String helpText;
 
         private String helpTextI18nKey;
 
         private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
-
-        private boolean maximizeUIInputWidth = true;
 
         private Builder()
         {
@@ -248,11 +193,7 @@ public final class Input
             this.label = source.label;
             this.defaultValue = source.defaultValue;
             this.occurrences = source.occurrences;
-            this.indexed = source.indexed;
-            this.customText = source.customText;
-            this.validationRegexp = source.validationRegexp;
             this.helpText = source.helpText;
-            this.maximizeUIInputWidth = source.maximizeUIInputWidth;
             this.labelI18nKey = source.labelI18nKey;
             this.helpTextI18nKey = source.helpTextI18nKey;
 
@@ -289,12 +230,6 @@ public final class Input
         public Builder defaultValue( InputTypeDefault value )
         {
             defaultValue = value;
-            return this;
-        }
-
-        public Builder immutable( boolean value )
-        {
-            immutable = value;
             return this;
         }
 
@@ -335,12 +270,6 @@ public final class Input
             return this;
         }
 
-        public Builder maximizeUIInputWidth( boolean value )
-        {
-            this.maximizeUIInputWidth = value;
-            return this;
-        }
-
         public Builder multiple( boolean value )
         {
             if ( value )
@@ -351,24 +280,6 @@ public final class Input
             {
                 occurrences = Occurrences.create( occurrences.getMinimum(), 1 );
             }
-            return this;
-        }
-
-        public Builder indexed( boolean value )
-        {
-            indexed = value;
-            return this;
-        }
-
-        public Builder customText( String value )
-        {
-            customText = value;
-            return this;
-        }
-
-        public Builder validationRegexp( String value )
-        {
-            validationRegexp = value;
             return this;
         }
 

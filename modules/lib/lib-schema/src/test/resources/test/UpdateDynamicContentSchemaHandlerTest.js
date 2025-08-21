@@ -198,7 +198,6 @@ exports.updateWithForm = function () {
                                 'name': 'text-input',
                                 'label': 'Name',
                                 'helpText': 'Text input',
-                                'maximize': true,
                                 'inputType': 'TextLine',
                                 'occurrences': {
                                     'maximum': 1,
@@ -223,7 +222,6 @@ exports.updateWithForm = function () {
                                         'formItemType': 'Input',
                                         'name': 'label',
                                         'label': 'Label',
-                                        'maximize': true,
                                         'inputType': 'TextLine',
                                         'occurrences': {
                                             'maximum': 1,
@@ -235,7 +233,6 @@ exports.updateWithForm = function () {
                                         'formItemType': 'Input',
                                         'name': 'value',
                                         'label': 'Value',
-                                        'maximize': true,
                                         'inputType': 'TextLine',
                                         'occurrences': {
                                             'maximum': 1,
@@ -304,7 +301,6 @@ exports.updateWithForm = function () {
                                                 'name': 'name',
                                                 'label': 'Name',
                                                 'helpText': 'Text input',
-                                                'maximize': true,
                                                 'inputType': 'TextLine',
                                                 'occurrences': {
                                                     'maximum': 1,
@@ -323,7 +319,6 @@ exports.updateWithForm = function () {
                                                 'formItemType': 'Input',
                                                 'name': 'myCheckbox',
                                                 'label': 'my-checkbox',
-                                                'maximize': true,
                                                 'inputType': 'Checkbox',
                                                 'occurrences': {
                                                     'maximum': 1,
@@ -346,7 +341,6 @@ exports.updateWithForm = function () {
                                 'formItemType': 'Input',
                                 'name': 'imageselector',
                                 'label': 'Image selector',
-                                'maximize': true,
                                 'inputType': 'ImageSelector',
                                 'occurrences': {
                                     'maximum': 1,
@@ -382,7 +376,6 @@ exports.updateWithForm = function () {
                                 'formItemType': 'Input',
                                 'name': 'double',
                                 'label': 'Double',
-                                'maximize': true,
                                 'inputType': 'Double',
                                 'occurrences': {
                                     'maximum': 1,
@@ -394,7 +387,6 @@ exports.updateWithForm = function () {
                                 'formItemType': 'Input',
                                 'name': 'long',
                                 'label': 'Long',
-                                'maximize': true,
                                 'inputType': 'Long',
                                 'occurrences': {
                                     'maximum': 1,

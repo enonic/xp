@@ -79,25 +79,25 @@ final class BuiltinXDataTypes
     private static Input.Builder createTextLine( final String name, final String label, final String i18n )
     {
         return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
+            labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Input.Builder createLong( final String name, final String label, final String i18n )
     {
         return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
+            labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Input.Builder createDate( final String name, final String label, final String i18n )
     {
         return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
+            labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Input.Builder createGeoPoint( final String name, final String label, final String i18n )
     {
         return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" ).immutable( true );
+            labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Form createGpsInfoXDataForm()
