@@ -8,15 +8,12 @@ import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
 public interface ContentService
 {
-    Site create( CreateSiteParams params );
-
     Content create( CreateContentParams params );
 
     Content create( CreateMediaParams params );

@@ -52,8 +52,6 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.CreateSiteParams;
-import com.enonic.xp.site.Site;
 
 @Component(configurationPid = "com.enonic.xp.content")
 public class ContentAuditLogSupportImpl
@@ -77,30 +75,6 @@ public class ContentAuditLogSupportImpl
         };
         this.auditLogService = auditLogService;
         this.contentAuditLogFilterService = contentAuditLogFilterService;
-    }
-
-    @Override
-    public void createSite( final CreateSiteParams params, final Site site )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doCreateSite( params, site, context ) );
-    }
-
-    private void doCreateSite( final CreateSiteParams params, final Site site, final Context rootContext )
-    {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-        final PropertySet resultSet = data.addSet( "result" );
-
-        paramsSet.setString( "description", params.getDescription() );
-        paramsSet.setString( "parentContentPath", nullToNull( params.getParentContentPath() ) );
-        paramsSet.setString( "name", nullToNull( params.getName() ) );
-        paramsSet.setString( "displayName", params.getDisplayName() );
-
-        addContent( resultSet, site );
-
-        log( "system.content.create", data, site.getPath(), rootContext );
     }
 
     @Override

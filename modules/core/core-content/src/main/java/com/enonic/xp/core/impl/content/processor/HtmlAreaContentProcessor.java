@@ -16,7 +16,6 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.processor.ContentProcessor;
@@ -50,7 +49,9 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -129,9 +130,10 @@ public class HtmlAreaContentProcessor
             processExtraData( editable.extraDatas, processedIds );
             editable.page = processPageData( editable.page, processedIds );
 
-            if ( editable instanceof EditableSite )
+            if ( editable.source instanceof Site )
             {
-                processSiteConfigData( ( (EditableSite) editable ).siteConfigs, processedIds );
+                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( editable.data.getRoot() ).build();
+                processSiteConfigData( siteConfigs, processedIds );
             }
 
             editable.processedReferences = processedIds;

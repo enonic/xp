@@ -107,9 +107,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -123,8 +121,6 @@ public class ContentServiceImpl
     private static final Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
-
-    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
 
     private ContentTypeService contentTypeService;
 
@@ -170,58 +166,6 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Site create( final CreateSiteParams params )
-    {
-        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
-
-        final PropertyTree data = new PropertyTree();
-        data.setString( "description", params.getDescription() );
-
-        SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), data.getRoot() );
-
-        final CreateContentParams createContentParams = CreateContentParams.create()
-            .type( ContentTypeName.site() )
-            .parent( params.getParentContentPath() )
-            .name( params.getName() )
-            .displayName( params.getDisplayName() )
-            .contentData( data )
-            .requireValid( params.isRequireValid() )
-            .build();
-
-        final Site site = (Site) CreateContentCommand.create()
-            .nodeService( this.nodeService )
-            .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
-            .contentProcessors( this.contentProcessors )
-            .contentValidators( this.contentValidators )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageDescriptorService( this.pageDescriptorService )
-            .partDescriptorService( this.partDescriptorService )
-            .layoutDescriptorService( this.layoutDescriptorService )
-            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
-            .params( createContentParams )
-            .build()
-            .execute();
-
-        this.create( CreateContentParams.create()
-                         .owner( site.getOwner() )
-                         .displayName( TEMPLATES_FOLDER_DISPLAY_NAME )
-                         .name( TEMPLATES_FOLDER_NAME )
-                         .parent( site.getPath() )
-                         .type( ContentTypeName.templateFolder() )
-                         .requireValid( true )
-                         .contentData( new PropertyTree() )
-                         .build() );
-
-        contentAuditLogSupport.createSite( params, site );
-
-        return site;
-    }
-
-    @Override
     public Content create( final CreateContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
@@ -256,7 +200,7 @@ public class ContentServiceImpl
                              .contentData( new PropertyTree() )
                              .build() );
 
-            return this.doGetById( content.getId() );
+            return content;
         }
 
         contentAuditLogSupport.createContent( params, content );

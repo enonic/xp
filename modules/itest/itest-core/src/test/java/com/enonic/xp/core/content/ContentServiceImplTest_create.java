@@ -23,8 +23,6 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.site.CreateSiteParams;
-import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -141,25 +139,6 @@ public class ContentServiceImplTest_create
         final Content storedContent = this.contentService.getById( content.getId() );
 
         assertEquals( Locale.ENGLISH, storedContent.getLanguage() );
-    }
-
-    @Test
-    public void create_site()
-        throws Exception
-    {
-        final CreateSiteParams createSiteParams = new CreateSiteParams();
-        createSiteParams.parent( ContentPath.ROOT ).
-            displayName( "My site" ).
-            description( "This is my site" ).
-            siteConfigs( SiteConfigs.empty() );
-
-        final Content content = this.contentService.create( createSiteParams );
-
-        assertNotNull( content.getName() );
-        assertNotNull( content.getCreatedTime() );
-        assertNotNull( content.getCreator() );
-        assertNotNull( content.getModifiedTime() );
-        assertNotNull( content.getModifier() );
     }
 
     @Test

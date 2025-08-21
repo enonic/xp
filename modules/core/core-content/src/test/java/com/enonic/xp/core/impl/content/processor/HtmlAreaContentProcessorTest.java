@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.EditableContent;
-import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
@@ -238,7 +237,7 @@ public class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
-        final EditableSite editableSite = new EditableSite( Site.create()
+        final EditableContent editableSite = new EditableContent( Site.create()
                                                                 .name( "myContentName" )
                                                                 .type( ContentTypeName.site() )
                                                                 .parentPath( ContentPath.ROOT )
@@ -274,7 +273,7 @@ public class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
-        final EditableSite editableSite = new EditableSite( Site.create()
+        final EditableContent editableSite = new EditableContent( Site.create()
                                                                 .name( "myContentName" )
                                                                 .type( ContentTypeName.site() )
                                                                 .parentPath( ContentPath.ROOT )
