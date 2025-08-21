@@ -4,7 +4,6 @@ package com.enonic.xp.site;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 
@@ -100,25 +99,5 @@ public class SiteTest
         assertEquals( siteConfig, siteConfig );
         assertEquals( siteConfig, siteConfig1 );
         assertNotEquals( siteConfig, null );
-    }
-
-    @Test
-    public void createSiteParams()
-    {
-        CreateSiteParams params = new CreateSiteParams();
-        params.parent( ContentPath.ROOT );
-        params.name( ContentName.from( "siteName" ) );
-        params.displayName( "displayName" );
-        params.description( "description" );
-        params.siteConfigs( SiteConfigs.empty() );
-        params.requireValid();
-
-        assertEquals( params.getParentContentPath(), ContentPath.ROOT );
-        assertEquals( params.getName(), ContentName.from( "siteName" ) );
-        assertEquals( params.getDisplayName(), "displayName" );
-        assertEquals( params.getDescription(), "description" );
-        assertEquals( params.isRequireValid(), true );
-        assertNotNull( params.getSiteConfigs() );
-        assertTrue( params.getSiteConfigs().getSize() == 0 );
     }
 }

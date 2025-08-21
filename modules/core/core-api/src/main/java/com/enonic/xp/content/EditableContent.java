@@ -11,7 +11,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
-public class EditableContent
+public final class EditableContent
 {
     public final Content source;
 

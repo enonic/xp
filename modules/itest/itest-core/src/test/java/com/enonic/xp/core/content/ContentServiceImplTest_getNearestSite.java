@@ -9,9 +9,12 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
+import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -19,9 +22,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.CreateSiteParams;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -164,12 +165,11 @@ public class ContentServiceImplTest_getNearestSite
 
     private Content createSite()
     {
-        final CreateSiteParams createSiteParams = new CreateSiteParams();
-        createSiteParams.parent( ContentPath.ROOT )
-            .displayName( "My mock site" )
-            .description( "This is my mock site" )
-            .siteConfigs( SiteConfigs.empty() );
-
-        return this.contentService.create( createSiteParams );
+        return this.contentService.create( CreateContentParams.create()
+                                               .type( ContentTypeName.site() )
+                                               .displayName( "My mock site" )
+                                               .contentData( new PropertyTree() )
+                                               .parent( ContentPath.ROOT )
+                                               .build() );
     }
 }

@@ -25,13 +25,9 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.site.CreateSiteParams;
-import com.enonic.xp.site.Site;
 
 interface ContentAuditLogSupport
 {
-    void createSite( CreateSiteParams params, Site site );
-
     void createContent( CreateContentParams params, Content content );
 
     void createMedia( CreateMediaParams params, Content content );

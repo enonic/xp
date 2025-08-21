@@ -25,7 +25,6 @@ import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContent;
-import com.enonic.xp.content.EditableSite;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
@@ -47,7 +46,6 @@ import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
 
 final class UpdateContentCommand
@@ -271,7 +269,7 @@ final class UpdateContentCommand
 
     private Content editContent( final ContentEditor editor, final Content original )
     {
-        final EditableContent editableContent = original.isSite() ? new EditableSite( (Site) original ) : new EditableContent( original );
+        final EditableContent editableContent = new EditableContent( original );
         if ( editor != null )
         {
             editor.edit( editableContent );
