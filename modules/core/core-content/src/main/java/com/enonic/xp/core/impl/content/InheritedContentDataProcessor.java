@@ -10,9 +10,29 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodePath;
 
-public abstract class InheritedContentDataProcessor
+public class InheritedContentDataProcessor
     implements NodeDataProcessor
 {
+    public static final InheritedContentDataProcessor ALL = new InheritedContentDataProcessor( EnumSet.allOf( ContentInheritType.class ) );
+
+    public static final InheritedContentDataProcessor SORT = new InheritedContentDataProcessor( ContentInheritType.SORT );
+
+    public static final InheritedContentDataProcessor PARENT = new InheritedContentDataProcessor( ContentInheritType.PARENT );
+
+    public static final InheritedContentDataProcessor NAME = new InheritedContentDataProcessor( ContentInheritType.NAME );
+
+    private final EnumSet<ContentInheritType> typesToProceed;
+
+    private InheritedContentDataProcessor( final EnumSet<ContentInheritType> typesToProceed )
+    {
+        this.typesToProceed = typesToProceed;
+    }
+
+    private InheritedContentDataProcessor( final ContentInheritType typeToProceed )
+    {
+        this.typesToProceed = EnumSet.of( typeToProceed );
+    }
+
     @Override
     public PropertyTree process( final PropertyTree originalData, final NodePath path )
     {
@@ -25,7 +45,7 @@ public abstract class InheritedContentDataProcessor
 
             for ( final String value : data.getStrings( ContentPropertyNames.INHERIT ) )
             {
-                if ( !getTypesToProceed().contains( ContentInheritType.valueOf( value ) ) )
+                if ( !typesToProceed.contains( ContentInheritType.valueOf( value ) ) )
                 {
                     inheritSet.add( value );
                 }
@@ -44,6 +64,4 @@ public abstract class InheritedContentDataProcessor
 
         return data;
     }
-
-    protected abstract EnumSet<ContentInheritType> getTypesToProceed();
 }

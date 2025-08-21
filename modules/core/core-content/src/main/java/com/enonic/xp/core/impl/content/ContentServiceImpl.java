@@ -788,7 +788,7 @@ public class ContentServiceImpl
 
             if ( params.stopInherit() )
             {
-                builder.processor( new SetContentChildOrderProcessor() );
+                builder.processor( InheritedContentDataProcessor.SORT );
             }
 
             final Node node = nodeService.setChildOrder( builder.build() );
@@ -822,7 +822,7 @@ public class ContentServiceImpl
 
         if ( params.stopInherit() )
         {
-            builder.processor( new SetContentChildOrderProcessor() );
+            builder.processor( InheritedContentDataProcessor.SORT );
         }
 
         final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
