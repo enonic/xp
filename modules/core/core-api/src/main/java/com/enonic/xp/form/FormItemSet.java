@@ -9,6 +9,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.schema.LocalizedText;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -130,22 +131,17 @@ public final class FormItemSet
         }
 
         final FormItemSet that = (FormItemSet) o;
-        return super.equals( o ) &&
-            Objects.equals( this.label, that.label ) &&
-            this.immutable == that.immutable &&
-            Objects.equals( this.customText, that.customText ) &&
-            Objects.equals( this.helpText, that.helpText ) &&
+        return super.equals( o ) && Objects.equals( this.label, that.label ) && this.immutable == that.immutable &&
+            Objects.equals( this.customText, that.customText ) && Objects.equals( this.helpText, that.helpText ) &&
             Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.labelI18nKey, that.labelI18nKey ) &&
-            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
-            Objects.equals( this.formItems, that.formItems );
+            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) && Objects.equals( this.formItems, that.formItems );
     }
 
     @Override
     public int hashCode()
     {
         return Objects.hash( super.hashCode(), this.label, this.immutable, this.customText, this.helpText, this.occurrences,
-                             this.helpTextI18nKey, this.labelI18nKey,
-                             this.formItems );
+                             this.helpTextI18nKey, this.labelI18nKey, this.formItems );
     }
 
     @Override
@@ -264,6 +260,13 @@ public final class FormItemSet
             return this;
         }
 
+        public Builder setLabel( LocalizedText value )
+        {
+            this.label = value.text();
+            this.labelI18nKey = value.i18n();
+            return this;
+        }
+
         public Builder immutable( boolean value )
         {
             immutable = value;
@@ -323,6 +326,13 @@ public final class FormItemSet
         public Builder helpTextI18nKey( String value )
         {
             helpTextI18nKey = value;
+            return this;
+        }
+
+        public Builder setHelpText( LocalizedText value )
+        {
+            this.helpText = value.text();
+            this.helpTextI18nKey = value.i18n();
             return this;
         }
 

@@ -132,7 +132,6 @@ assert.assertJsonEquals({
             'name': 'pause',
             'label': 'Pause parameter',
             'helpText': 'key1.help-text',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,
@@ -153,7 +152,6 @@ assert.assertJsonEquals({
                     'formItemType': 'Input',
                     'name': 'myTextLine',
                     'label': 'My text line',
-                    'maximize': true,
                     'inputType': 'TextLine',
                     'occurrences': {
                         'maximum': 1,
@@ -165,7 +163,6 @@ assert.assertJsonEquals({
                     'formItemType': 'Input',
                     'name': 'myCustomInput',
                     'label': 'My custom input',
-                    'maximize': true,
                     'inputType': 'TextLine',
                     'occurrences': {
                         'maximum': 1,
@@ -182,7 +179,6 @@ assert.assertJsonEquals({
                             'name': 'fieldSetItem',
                             'label': 'Field set Item',
                             'helpText': 'key2.help-text',
-                            'maximize': true,
                             'inputType': 'TextLine',
                             'occurrences': {
                                 'maximum': 1,

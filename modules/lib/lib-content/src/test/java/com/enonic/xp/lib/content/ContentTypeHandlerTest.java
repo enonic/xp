@@ -148,7 +148,6 @@ public class ContentTypeHandlerTest
             name( "myTextLine" ).
             inputType( InputTypeName.TEXT_LINE ).
             label( "My text line" ).
-            customText( "Some custom text" ).
             helpText( "Some help text" ).
             required( true ).
             inputTypeConfig( InputTypeConfig.create().property( InputTypeProperty.create( "regexp", "\\b\\d{3}-\\d{2}-\\d{4}\\b" ).

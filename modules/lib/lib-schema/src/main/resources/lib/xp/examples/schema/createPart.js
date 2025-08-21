@@ -55,7 +55,6 @@ assert.assertJsonEquals({
             'name': 'width',
             'label': 'Column width',
             'helpText': 'key.help-text',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,
