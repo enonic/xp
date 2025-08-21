@@ -13,8 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class RadioButtonYml
     extends InputYml
 {
-    public static final String TYPE = "RadioButton";
-
     public List<Option> options;
 
     @JsonProperty("default")

@@ -72,7 +72,6 @@ assert.assertJsonEquals({
             'name': 'pause',
             'label': 'Pause parameter',
             'helpText': 'key1.help-text',
-            'maximize': true,
             'inputType': 'Double',
             'occurrences': {
                 'maximum': 1,

@@ -4,24 +4,37 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
+import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
+import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
+import com.enonic.xp.data.Value;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.inputtype.InputType;
+import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlTypeParserTest
 {
+    private final YmlTypeParser parser = new YmlTypeParser();
+
     @Test
     void testParse()
         throws Exception
     {
-        YmlTypeParser parser = new YmlTypeParser();
-
-        String yaml = readAsString( "/descriptors/content-type.yml" );
+        final String yaml = readAsString( "/descriptors/content-type.yml" );
 
         ContentType.Builder builder = parser.parse( yaml, ContentType.Builder.class );
 
@@ -40,85 +53,136 @@ public class YmlTypeParserTest
         assertEquals( now, contentType.getCreatedTime() );
     }
 
-//    @Test
-//    void testParseRadioButton()
-//        throws Exception
-//    {
-//        final String yaml = readAsString( "/descriptors/radiobutton-type.yml" );
-//
-//        YmlTypeParser parser = new YmlTypeParser();
-//        Input input = parser.parse( yaml, Input.class );
-//
-//        assertEquals( "RadioButton", input.getInputType().toString() );
-//
-//        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-//
-//        final Value defaultValue = inputType.createDefaultValue( input );
-//        assertTrue( defaultValue.isString() );
-//        assertEquals( "cookie", defaultValue.asString() );
-//
-//        final InputTypeProperty cookieOpt = input.getInputTypeConfig().getProperty( "cookie" );
-//        assertNotNull( cookieOpt );
-//        assertEquals( "Cookie", cookieOpt.getValue() );
-//        assertEquals( "v1", cookieOpt.getAttribute( "attr1" ) );
-//        assertEquals( "v2", cookieOpt.getAttribute( "attr2" ) );
-//
-//        final InputTypeProperty privacyOpt = input.getInputTypeConfig().getProperty( "privacy" );
-//        assertNotNull( privacyOpt );
-//        assertEquals( "Privacy", privacyOpt.getValue() );
-//        assertTrue( privacyOpt.getAttributes().isEmpty() );
-//    }
-//
-//    @Test
-//    void parseDouble()
-//        throws Exception
-//    {
-//        final String yaml = readAsString( "/descriptors/double-type.yml" );
-//
-//        YmlTypeParser parser = new YmlTypeParser();
-//        Input input = parser.parse( yaml, Input.class );
-//
-//        assertEquals( "Double", input.getInputType().toString() );
-//
-//        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-//
-//        final Value defaultValue = inputType.createDefaultValue( input );
-//        assertTrue( defaultValue.isNumericType() );
-//        assertEquals( 250.0, defaultValue.asDouble() );
-//
-//        final InputTypeProperty minOpt = input.getInputTypeConfig().getProperty( "min" );
-//        assertNotNull( minOpt );
-//        assertEquals( 0, Double.parseDouble( minOpt.getValue() ) );
-//        assertTrue( minOpt.getAttributes().isEmpty() );
-//
-//        final InputTypeProperty maxOpt = input.getInputTypeConfig().getProperty( "max" );
-//        assertNotNull( maxOpt );
-//        assertEquals( 255, Double.parseDouble( maxOpt.getValue() ) );
-//        assertTrue( maxOpt.getAttributes().isEmpty() );
-//    }
-//
-//    @Test
-//    void parseContentSelector()
-//        throws Exception
-//    {
-//        final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
-//
-//        YmlTypeParser parser = new YmlTypeParser();
-//        Input input = parser.parse( yaml, Input.class );
-//
-//        assertEquals( "ContentSelector", input.getInputType().toString() );
-//        assertEquals( "searchResultPage", input.getName() );
-//        assertEquals( "Search result page", input.getLabel() );
-//
-//        Occurrences occurrences = input.getOccurrences();
-//        assertEquals( 1, occurrences.getMinimum() );
-//        assertEquals( 1, occurrences.getMaximum() );
-//
-//        final InputTypeProperty configOpt = input.getInputTypeConfig().getProperty( "allow-content-type" );
-//        assertNotNull( configOpt );
-//        assertEquals( "myapp:landing-page", configOpt.getValue() );
-//        assertTrue( configOpt.getAttributes().isEmpty() );
-//    }
+    @Test
+    void testParseRadioButton()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/radiobutton-type.yml" );
+
+        final RadioButtonYml radioButtonYml = parser.parse( yaml, RadioButtonYml.class );
+
+        Input input = radioButtonYml.copy().toInput();
+
+        assertEquals( "RadioButton", input.getInputType().toString() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isString() );
+        assertEquals( "cookie", defaultValue.asString() );
+
+        final InputTypeProperty cookieOpt = input.getInputTypeConfig().getProperty( "cookie" );
+        assertNotNull( cookieOpt );
+        assertEquals( "Cookie", cookieOpt.getValue() );
+        assertEquals( "i18n.rbg.cookie", cookieOpt.getAttribute( "i18n" ) );
+
+        final InputTypeProperty privacyOpt = input.getInputTypeConfig().getProperty( "privacy" );
+        assertNotNull( privacyOpt );
+        assertEquals( "Privacy", privacyOpt.getValue() );
+        assertTrue( privacyOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void testParseTextLine()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/textline-type.yml" );
+
+        final TextLineYml textLineYml = parser.parse( yaml, TextLineYml.class );
+
+        Input input = textLineYml.copy().toInput();
+
+        assertEquals( "TextLine", input.getInputType().toString() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isString() );
+        assertEquals( "000-00-0000", defaultValue.asString() );
+
+        final InputTypeProperty maxLengthOpt = input.getInputTypeConfig().getProperty( "maxLength" );
+        assertNotNull( maxLengthOpt );
+        assertEquals( "11", maxLengthOpt.getValue() );
+        assertTrue( maxLengthOpt.getAttributes().isEmpty() );
+
+        final InputTypeProperty regexpOpt = input.getInputTypeConfig().getProperty( "regexp" );
+        assertNotNull( regexpOpt );
+        assertEquals( "\\\\b\\\\d{3}-\\\\d{2}-\\\\d{4}\\\\b", regexpOpt.getValue() );
+        assertTrue( regexpOpt.getAttributes().isEmpty() );
+
+        final Occurrences occurrences = input.getOccurrences();
+        assertEquals( 1, occurrences.getMinimum() );
+        assertEquals( 3, occurrences.getMaximum() );
+    }
+
+
+
+    @Test
+    void parseDouble()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/double-type.yml" );
+
+        final DoubleYml doubleYml = parser.parse( yaml, DoubleYml.class );
+
+        Input input = doubleYml.copy().toInput();
+
+        assertEquals( "Double", input.getInputType().toString() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isNumericType() );
+        assertEquals( 250.0, defaultValue.asDouble() );
+
+        final InputTypeProperty minOpt = input.getInputTypeConfig().getProperty( "min" );
+        assertNotNull( minOpt );
+        assertEquals( 0, Double.parseDouble( minOpt.getValue() ) );
+        assertTrue( minOpt.getAttributes().isEmpty() );
+
+        final InputTypeProperty maxOpt = input.getInputTypeConfig().getProperty( "max" );
+        assertNotNull( maxOpt );
+        assertEquals( 255, Double.parseDouble( maxOpt.getValue() ) );
+        assertTrue( maxOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void parseContentSelector()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
+
+        final ContentSelectorYml contentSelectorYml = parser.parse( yaml, ContentSelectorYml.class );
+        Input input = contentSelectorYml.copy().toInput();
+
+        assertEquals( "ContentSelector", input.getInputType().toString() );
+        assertEquals( "searchResultPage", input.getName() );
+        assertEquals( "Search result page", input.getLabel() );
+
+        Occurrences occurrences = input.getOccurrences();
+        assertEquals( 1, occurrences.getMinimum() );
+        assertEquals( 1, occurrences.getMaximum() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        final Set<InputTypeProperty> allowContentTypes = inputTypeConfig.getProperties( "allowContentType" );
+        assertEquals( 2, allowContentTypes.size() );
+        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "myapp:landing-page1" ).build() ) );
+        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "myapp:landing-page2" ).build() ) );
+
+        final Set<InputTypeProperty> allowPaths = inputTypeConfig.getProperties( "allowPath" );
+        assertEquals( 2, allowPaths.size() );
+        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "${site}/people/" ).build() ) );
+        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "./*" ).build() ) );
+
+        final InputTypeProperty treeMode = inputTypeConfig.getProperty( "treeMode" );
+        assertNotNull( treeMode );
+        assertEquals( "true", treeMode.getValue() );
+
+        final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
+        assertNotNull( hideToggleIcon );
+        assertEquals( "true", hideToggleIcon.getValue() );
+    }
 
     private String readAsString( final String name )
         throws Exception

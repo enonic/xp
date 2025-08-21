@@ -1,24 +1,10 @@
 type: "RadioButton"
 name: "type"
 label: "Policy type"
-config:
+options:
   - name: "cookie"
     value: "Cookie"
-    attributes:
-      attr1: v1
-      attr2: v2
+    i18n: "i18n.rbg.cookie"
   - name: "privacy"
     value: "Privacy"
-defaultValue:
-  property:
-    name: "default"
-    value: "cookie"
-
-#options:
-#  - name: "cookie"
-#    value: "Cookie"
-#    i18n: "i18n.rbg.cookie"
-#  - name: "privacy"
-#    value: "Privacy"
-#default: "cookie"
-
+default: "cookie"

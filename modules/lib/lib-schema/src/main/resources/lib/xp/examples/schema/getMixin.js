@@ -29,7 +29,6 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'inputToBeMixedIn',
             'label': 'Mixed in',
-            'maximize': true,
             'inputType': 'TextLine',
             'occurrences': {
                 'maximum': 1,

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import com.enonic.xp.form.Form;
-import com.enonic.xp.schema.I18NText;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.schema.content.ContentDisplayName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -38,10 +38,10 @@ public abstract class ContentTypeMapper
         public abstract ContentType.Builder setDisplayName( ContentDisplayName value );
 
         @JsonProperty("label")
-        public abstract ContentType.Builder setLabel( I18NText value );
+        public abstract ContentType.Builder setLabel( LocalizedText value );
 
         @JsonProperty("description")
-        public abstract ContentType.Builder setDescription( I18NText value );
+        public abstract ContentType.Builder setDescription( LocalizedText value );
 
         @JsonProperty("abstract")
         abstract ContentType.Builder setAbstract( boolean value );

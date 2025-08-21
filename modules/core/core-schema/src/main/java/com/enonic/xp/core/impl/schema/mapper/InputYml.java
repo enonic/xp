@@ -1,12 +1,10 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemType;
-import com.enonic.xp.schema.I18NText;
+import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.schema.LocalizedText;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class InputYml
     extends FormItem
 {
@@ -14,7 +12,11 @@ public class InputYml
 
     public String name;
 
-    public I18NText label;
+    public LocalizedText label;
+
+    public LocalizedText helpText;
+
+    public Occurrences occurrences;
 
     @Override
     public String getName()

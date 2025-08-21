@@ -2,9 +2,7 @@ superType: "base:structured"
 abstract: false
 final: true
 allowChildContent: true
-label:
-  text: "Article heading"
-  i18n: "article.title"
+label: "Article heading"
 description:
   text: "Brief description"
   i18n: "article.description"
@@ -21,13 +19,9 @@ form:
     label:
       text: "Field 1"
       i18n: "i18n.label"
-    immutable: true
     occurrences:
       minimum: 0
       maximum: 1
-    indexed: true
-    customText: "Custom Text"
-    validationRegexp: "myRegexp"
     helpText:
       text: "helpText"
       i18n: "helpTextI18nKey"
@@ -80,7 +74,7 @@ form:
               text: "Name"
             helpText:
               text: "Text input"
-            defaultValue: "something"
+            default: "something"
             occurrences:
               minimum: 1
               maximum: 1
@@ -94,7 +88,7 @@ form:
                 value: "Cookie"
               - name: "privacy"
                 value: "Privacy"
-            defaultValue: "cookie"
+            default: "cookie"
 
           - type: "ItemSet"
             name: "minimum3"
@@ -114,8 +108,7 @@ form:
 
               - type: "TextLine"
                 name: "value"
-                label:
-                  text: "Value"
+                label: "Value"
                 occurrences:
                   minimum: 0
                   maximum: 1

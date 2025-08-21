@@ -4,6 +4,11 @@ label: "Search result page"
 occurrences:
   minimum: 1
   maximum: 1
-config:
-  - name: "allow-content-type"
-    value: "myapp:landing-page"
+allowContentType:
+  - "myapp:landing-page1"
+  - "myapp:landing-page2"
+allowPath:
+  - "${site}/people/"
+  - "./*"
+treeMode: true
+hideToggleIcon: true

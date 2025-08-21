@@ -9,7 +9,7 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.I18NText;
+import com.enonic.xp.schema.LocalizedText;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -261,7 +261,7 @@ public final class FormItemSet
             return this;
         }
 
-        public Builder setLabel( I18NText value )
+        public Builder setLabel( LocalizedText value )
         {
             this.label = value.text();
             this.labelI18nKey = value.i18n();
@@ -330,7 +330,7 @@ public final class FormItemSet
             return this;
         }
 
-        public Builder setHelpText( I18NText value )
+        public Builder setHelpText( LocalizedText value )
         {
             this.helpText = value.text();
             this.helpTextI18nKey = value.i18n();

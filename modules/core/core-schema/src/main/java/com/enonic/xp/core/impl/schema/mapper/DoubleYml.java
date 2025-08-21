@@ -2,13 +2,13 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TextLineYml
+public class DoubleYml
     extends InputYml
 {
-    public Integer maxLength;
+    public Double min;
 
-    public String regexp;
+    public Double max;
 
     @JsonProperty("default")
-    public String defaultValue;
+    public Double defaultValue;
 }

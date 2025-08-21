@@ -16,8 +16,7 @@ public final class InputRegistry
     static
     {
         register( RadioButtonYml.class, yml -> {
-            final Input.Builder builder =
-                Input.create().name( yml.name ).label( yml.label.text() ).inputType( InputTypeName.from( "RadioButton" ) );
+            final Input.Builder builder = defaultConverter( yml ).inputType( InputTypeName.from( "RadioButton" ) );
 
             if ( yml.defaultValue != null )
             {
@@ -37,7 +36,7 @@ public final class InputRegistry
         } );
 
         register( TextLineYml.class, yml -> {
-            final Input.Builder builder = Input.create().name( yml.name ).label( yml.label.text() ).inputType( InputTypeName.from( "TextLine" ) );
+            final Input.Builder builder = defaultConverter( yml ).inputType( InputTypeName.from( "TextLine" ) );
 
             if ( yml.defaultValue != null )
             {
@@ -60,6 +59,58 @@ public final class InputRegistry
 
             return builder.build();
         } );
+
+        register( DoubleYml.class, yml -> {
+            final Input.Builder builder = defaultConverter( yml ).inputType( InputTypeName.from( "Double" ) );
+
+            if ( yml.defaultValue != null )
+            {
+                builder.defaultValue( InputTypeDefault.create()
+                                          .property( InputTypeProperty.create( "default", yml.defaultValue.toString() ).build() )
+                                          .build() );
+            }
+
+            final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
+            if ( yml.min != null )
+            {
+                configBuilder.property( InputTypeProperty.create( "min", yml.min.toString() ).build() );
+            }
+            if ( yml.max != null )
+            {
+                configBuilder.property( InputTypeProperty.create( "max", yml.max.toString() ).build() );
+            }
+
+            builder.inputTypeConfig( configBuilder.build() );
+
+            return builder.build();
+        } );
+
+        register( ContentSelectorYml.class, yml -> {
+            final Input.Builder builder = defaultConverter( yml ).inputType( InputTypeName.from( "ContentSelector" ) );
+
+            final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
+            if ( yml.hideToggleIcon != null )
+            {
+                configBuilder.property( InputTypeProperty.create( "hideToggleIcon", yml.hideToggleIcon.toString() ).build() );
+            }
+            if ( yml.treeMode != null )
+            {
+                configBuilder.property( InputTypeProperty.create( "treeMode", yml.treeMode.toString() ).build() );
+            }
+            if ( yml.allowContentType != null )
+            {
+                yml.allowContentType.forEach(
+                    allowType -> configBuilder.property( InputTypeProperty.create( "allowContentType", allowType ).build() ) );
+            }
+            if ( yml.allowPath != null )
+            {
+                yml.allowPath.forEach( allowPath -> configBuilder.property( InputTypeProperty.create( "allowPath", allowPath ).build() ) );
+            }
+
+            builder.inputTypeConfig( configBuilder.build() );
+
+            return builder.build();
+        } );
     }
 
     public static <T extends InputYml> void register( final Class<T> type, final InputFactory<T> factory )
@@ -76,5 +127,27 @@ public final class InputRegistry
             throw new IllegalArgumentException( "No factory for " + yaml.getClass() );
         }
         return factory.build( yaml );
+    }
+
+    private static Input.Builder defaultConverter( final InputYml inputYml )
+    {
+        final Input.Builder builder = Input.create().name( inputYml.name );
+
+        if ( inputYml.label != null )
+        {
+            builder.label( inputYml.label.text() ).labelI18nKey( inputYml.label.i18n() );
+        }
+
+        if ( inputYml.helpText != null )
+        {
+            builder.helpText( inputYml.helpText.text() ).helpTextI18nKey( inputYml.helpText.i18n() );
+        }
+
+        if ( inputYml.occurrences != null )
+        {
+            builder.occurrences( inputYml.occurrences );
+        }
+
+        return builder;
     }
 }
