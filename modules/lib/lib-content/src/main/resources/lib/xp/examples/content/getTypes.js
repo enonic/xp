@@ -33,9 +33,7 @@ var expected = [
                 'formItemType': 'Input',
                 'name': 'myTextLine',
                 'label': 'My text line',
-                'customText': 'Some custom text',
                 'helpText': 'Some help text',
-                'maximize': true,
                 'inputType': 'TextLine',
                 'occurrences': {
                     'maximum': 1,
@@ -53,7 +51,6 @@ var expected = [
                 'formItemType': 'Input',
                 'name': 'myCheckbox',
                 'label': 'My checkbox input',
-                'maximize': true,
                 'inputType': 'CheckBox',
                 'occurrences': {
                     'maximum': 1,
@@ -69,7 +66,6 @@ var expected = [
                 'formItemType': 'Input',
                 'name': 'myRadioButton',
                 'label': 'Radio button',
-                'maximize': true,
                 'inputType': 'RadioButton',
                 'occurrences': {
                     'maximum': 1,
@@ -96,7 +92,6 @@ var expected = [
                         'formItemType': 'Input',
                         'name': 'myTextLineInFieldSet',
                         'label': 'My text line',
-                        'maximize': true,
                         'inputType': 'TextLine',
                         'occurrences': {
                             'maximum': 1,
@@ -119,7 +114,6 @@ var expected = [
                         'formItemType': 'Input',
                         'name': 'myTextLine',
                         'label': 'My text line',
-                        'maximize': true,
                         'inputType': 'TextLine',
                         'occurrences': {
                             'maximum': 1,
@@ -154,7 +148,6 @@ var expected = [
                                 'formItemType': 'Input',
                                 'name': 'myTextLine1',
                                 'label': 'myTextLine1',
-                                'maximize': true,
                                 'inputType': 'TextLine',
                                 'occurrences': {
                                     'maximum': 1,
@@ -174,7 +167,6 @@ var expected = [
                                 'formItemType': 'Input',
                                 'name': 'myTextLine2',
                                 'label': 'myTextLine2',
-                                'maximize': true,
                                 'inputType': 'TextLine',
                                 'occurrences': {
                                     'maximum': 1,

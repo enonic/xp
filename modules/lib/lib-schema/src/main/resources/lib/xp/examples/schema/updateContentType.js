@@ -76,9 +76,7 @@ assert.assertJsonEquals({
             'formItemType': 'Input',
             'name': 'tag_unlimited',
             'label': 'Tag, unlimited occurrences',
-            'customText': 'Custom text',
             'helpText': 'Some help text',
-            'maximize': true,
             'inputType': 'Tag',
             'occurrences': {
                 'maximum': 0,

@@ -10,6 +10,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.schema.BaseSchema;
+import com.enonic.xp.schema.LocalizedText;
 
 @PublicApi
 public final class ContentType
@@ -274,6 +275,28 @@ public final class ContentType
         public Builder form( final Form form )
         {
             this.formBuilder = form != null ? Form.create( form ) : Form.create();
+            return this;
+        }
+
+        public Builder setDisplayName( final ContentDisplayName source )
+        {
+            this.displayName( source.text() );
+            this.displayNameI18nKey( source.i18n() );
+            this.displayNameExpression( source.expression() );
+            return this;
+        }
+
+        public Builder setDescription( final LocalizedText source )
+        {
+            this.description( source.text() );
+            this.descriptionI18nKey( source.i18n() );
+            return this;
+        }
+
+        public Builder setLabel( final LocalizedText source )
+        {
+            this.displayNameLabel( source.text() );
+            this.displayNameLabelI18nKey( source.i18n() );
             return this;
         }
 
