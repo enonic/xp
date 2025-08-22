@@ -68,7 +68,7 @@ class VirtualFilePathImpl
     public VirtualFilePath subtractPath( final VirtualFilePath subtract )
     {
         Preconditions.checkArgument( this.elements.size() >= subtract.size(),
-                                     "No point in trying to remove [" + subtract.getPath() + "] from [" + this.getPath() + "]" );
+                                     "No point in trying to remove [%s] from [%s]", subtract.getPath(), this.getPath() );
 
         for ( int i = 0; i < subtract.size(); i++ )
         {

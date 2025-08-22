@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
-import org.osgi.framework.Bundle;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
+import org.osgi.framework.Bundle;
 
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
@@ -43,8 +43,8 @@ public final class ApplicationBuilder
 
     public ApplicationImpl build()
     {
-        Preconditions.checkNotNull( this.bundle, "bundle is required" );
-        Preconditions.checkNotNull( this.urlResolver, "urlResolver is required" );
+        Objects.requireNonNull( this.bundle, "bundle is required" );
+        Objects.requireNonNull( this.urlResolver, "urlResolver is required" );
 
         if ( this.classLoader == null )
         {

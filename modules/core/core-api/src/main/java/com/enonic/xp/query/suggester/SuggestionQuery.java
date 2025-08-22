@@ -1,6 +1,6 @@
 package com.enonic.xp.query.suggester;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public abstract class SuggestionQuery
 {
@@ -16,13 +16,9 @@ public abstract class SuggestionQuery
 
     protected SuggestionQuery( final SuggestionQuery.Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "name is required" );
-        Preconditions.checkNotNull( builder.field, "field is required" );
-        Preconditions.checkNotNull( builder.text, "text is required" );
-
-        this.name = builder.name;
-        this.field = builder.field;
-        this.text = builder.text;
+        this.name = Objects.requireNonNull( builder.name, "name is required" );
+        this.field = Objects.requireNonNull( builder.field, "field is required" );
+        this.text = Objects.requireNonNull( builder.text, "text is required" );
         this.size = builder.size;
         this.analyzer = builder.analyzer;
     }

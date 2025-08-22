@@ -39,7 +39,7 @@ public final class ComponentPath
     {
         final List<String> valueList = Splitter.on( DIVIDER ).omitEmptyStrings().splitToList( str );
 
-        Preconditions.checkArgument( valueList.size() % 2 == 0, "Expected even number of path elements: " + str );
+        Preconditions.checkArgument( valueList.size() % 2 == 0, "Expected even number of path elements: %s", str );
 
         final ImmutableList.Builder<RegionAndComponent> builder = new ImmutableList.Builder<>();
         for ( int i = 0; i < valueList.size() - 1; i += 2 )

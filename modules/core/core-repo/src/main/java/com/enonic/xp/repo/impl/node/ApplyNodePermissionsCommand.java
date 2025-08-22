@@ -77,7 +77,7 @@ public class ApplyNodePermissionsCommand
     private void verifyBranch()
     {
         Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
-                                  "Current(source) branch '%s' is not in the list of branches for apply: %s",
+                                  "Current (source) branch '%s' is not in the list of branches for apply: %s",
                                   ContextAccessor.current().getBranch(), this.branches );
     }
 

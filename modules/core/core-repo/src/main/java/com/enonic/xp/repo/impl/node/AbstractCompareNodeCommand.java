@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -40,8 +40,8 @@ class AbstractCompareNodeCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( nodeStorageService );
+            Objects.requireNonNull( nodeStorageService );
+            Objects.requireNonNull( target, "target is required" );
         }
     }
 }

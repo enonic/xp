@@ -27,8 +27,8 @@ public final class ApiDescriptor
 
     private ApiDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.key, "key cannot be null" );
-        Preconditions.checkNotNull( builder.allowedPrincipals, "allowedPrincipals cannot be null" );
+        Objects.requireNonNull( builder.key, "key cannot be null" );
+        Objects.requireNonNull( builder.allowedPrincipals, "allowedPrincipals cannot be null" );
         Preconditions.checkArgument( !builder.allowedPrincipals.isEmpty(), "allowedPrincipals cannot be empty" );
 
         this.key = builder.key;

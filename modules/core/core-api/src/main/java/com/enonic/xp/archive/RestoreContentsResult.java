@@ -1,6 +1,6 @@
 package com.enonic.xp.archive;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
@@ -59,7 +59,7 @@ public final class RestoreContentsResult
 
         private void validate()
         {
-            Preconditions.checkNotNull( parentPath, "parentPath must be set" );
+            Objects.requireNonNull( parentPath );
         }
 
         public RestoreContentsResult build()

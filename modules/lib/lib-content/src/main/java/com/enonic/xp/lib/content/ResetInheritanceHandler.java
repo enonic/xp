@@ -1,10 +1,9 @@
 package com.enonic.xp.lib.content;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -78,8 +77,8 @@ public class ResetInheritanceHandler
 
     private void validate()
     {
-        Preconditions.checkNotNull( key, "key must be set." );
-        Preconditions.checkNotNull( projectName, "projectName must be set." );
-        Preconditions.checkNotNull( inherit, "inherit must be set." );
+        Objects.requireNonNull( key, "key is required" );
+        Objects.requireNonNull( projectName, "projectName is required" );
+        Objects.requireNonNull( inherit, "inherit is required" );
     }
 }

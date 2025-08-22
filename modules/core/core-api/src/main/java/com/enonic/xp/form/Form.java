@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -118,7 +117,7 @@ public final class Form
 
         private Builder( final Form source )
         {
-            Preconditions.checkNotNull( source, "Given form cannot be null" );
+            Objects.requireNonNull( source, "Given form cannot be null" );
 
             this.formItemsList = new ArrayList<>();
             for ( FormItem formItem : source.formItems )

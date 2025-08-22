@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -139,7 +137,7 @@ public final class DuplicateContentParams
 
         public DuplicateContentParams build()
         {
-            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+            Objects.requireNonNull( this.contentId, "contentId is required" );
             return new DuplicateContentParams( this );
         }
     }

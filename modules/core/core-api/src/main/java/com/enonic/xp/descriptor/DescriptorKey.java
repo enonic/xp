@@ -3,8 +3,6 @@ package com.enonic.xp.descriptor;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.util.CharacterChecker;
@@ -66,7 +64,7 @@ public final class DescriptorKey
 
     public static DescriptorKey from( final String key )
     {
-        Preconditions.checkNotNull( key, "DescriptorKey can't be null" );
+        Objects.requireNonNull( key, "DescriptorKey cannot be null" );
         final int index = key.indexOf( SEPARATOR );
         final String applicationKey = index == -1 ? key : key.substring( 0, index );
         final String descriptorName = index == -1 ? "" : key.substring( index + 1 );

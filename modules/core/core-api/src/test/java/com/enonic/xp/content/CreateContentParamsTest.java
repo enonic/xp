@@ -115,7 +115,7 @@ public class CreateContentParamsTest
         }
         catch ( Exception e )
         {
-            assertEquals( "type cannot be null", e.getMessage() );
+            assertEquals( "type is required", e.getMessage() );
         }
     }
 
@@ -133,7 +133,7 @@ public class CreateContentParamsTest
         }
         catch ( Exception e )
         {
-            assertEquals( "parentPath cannot be null", e.getMessage() );
+            assertEquals( "parentPath is required", e.getMessage() );
         }
     }
 
@@ -151,7 +151,7 @@ public class CreateContentParamsTest
         }
         catch ( Exception e )
         {
-            assertEquals( "data cannot be null", e.getMessage() );
+            assertEquals( "data is required", e.getMessage() );
         }
     }
 

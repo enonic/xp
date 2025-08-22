@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
@@ -32,16 +33,16 @@ public class UUID
         }
         else
         {
-            Preconditions.checkNotNull( object, "object cannot be null" );
+            Objects.requireNonNull( object, "UUID cannot be null" );
             this.value = check( object.toString() );
         }
     }
 
     private static String check( String value )
     {
-        Preconditions.checkNotNull( value, "UUID cannot be null" );
+        Objects.requireNonNull( value, "UUID cannot be null" );
         Preconditions.checkArgument( !value.isBlank(), "UUID cannot be blank" );
-        Preconditions.checkArgument( VALID_NODE_ID_PATTERN.matcher( value ).matches(), "UUID format incorrect: " + value );
+        Preconditions.checkArgument( VALID_NODE_ID_PATTERN.matcher( value ).matches(), "UUID format incorrect: %s", value );
         return value;
     }
 

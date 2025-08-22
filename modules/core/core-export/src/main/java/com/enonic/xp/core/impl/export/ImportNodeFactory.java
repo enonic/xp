@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.export;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -49,7 +48,7 @@ public class ImportNodeFactory
                 parentPath( this.nodeImportPath.getParentPath() ).
                 name( this.nodeImportPath.getName() ).
                 permissions( importPermissions ? serializedNode.getPermissions() : AccessControlList.empty() ).
-                id( importNodeIds && this.serializedNode.id() != null ? NodeId.from( this.serializedNode.id() ) : null ).
+                id( importNodeIds && this.serializedNode.id() != null ? this.serializedNode.id() : null ).
                 manualOrderValue( manualOrderValue ).
                 timestamp( serializedNode.getTimestamp() ).
                 build();
@@ -105,8 +104,8 @@ public class ImportNodeFactory
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.importPath, "Importpath cannot be null" );
-            Preconditions.checkNotNull( this.serializedNode, "Serialized node cannot be null" );
+            Objects.requireNonNull( this.importPath, "importPath cannot be null" );
+            Objects.requireNonNull( this.serializedNode, "serializedNode cannot be null" );
         }
 
         public ImportNodeFactory build()

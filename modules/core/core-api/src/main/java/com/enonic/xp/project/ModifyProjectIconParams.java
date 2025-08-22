@@ -1,6 +1,6 @@
 package com.enonic.xp.project;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -73,7 +73,7 @@ public final class ModifyProjectIconParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "projectName cannot be null" );
+            Objects.requireNonNull( name, "name is required" );
         }
 
         public ModifyProjectIconParams build()

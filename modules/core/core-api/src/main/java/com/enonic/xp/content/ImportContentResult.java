@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public final class ImportContentResult
 {
@@ -37,7 +37,7 @@ public final class ImportContentResult
 
         private void validate()
         {
-            Preconditions.checkNotNull( content, "content cannot be null" );
+            Objects.requireNonNull( content );
         }
 
         public ImportContentResult build()

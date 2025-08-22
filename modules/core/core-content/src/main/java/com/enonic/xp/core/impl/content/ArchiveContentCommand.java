@@ -3,8 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.ArchiveContentException;
@@ -224,7 +223,7 @@ final class ArchiveContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public ArchiveContentCommand build()

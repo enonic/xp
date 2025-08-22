@@ -59,7 +59,7 @@ public final class SnapshotParams
 
         private void validate()
         {
-            Preconditions.checkArgument( !isNullOrEmpty( snapshotName ), "Snapshot name has to be given" );
+            Preconditions.checkArgument( !isNullOrEmpty( snapshotName ), "snapshotName has to be given" );
         }
 
         public SnapshotParams build()

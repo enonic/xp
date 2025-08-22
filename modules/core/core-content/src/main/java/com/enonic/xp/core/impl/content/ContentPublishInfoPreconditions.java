@@ -20,9 +20,9 @@ class ContentPublishInfoPreconditions
             if ( publishToInstant != null )
             {
                 final Instant publishFromInstant = publishInfo.getFrom();
-                Preconditions.checkArgument( publishFromInstant != null, "'Publish from' must be set if 'Publish to' is set." );
+                Preconditions.checkArgument( publishFromInstant != null, "'Publish from' must be set if 'Publish to' is set" );
                 Preconditions.checkArgument( publishToInstant.isAfter( publishFromInstant ),
-                                             "'Publish to' must be set after 'Publish from'." );
+                                             "'Publish to' must be set after 'Publish from'" );
             }
         }
     }

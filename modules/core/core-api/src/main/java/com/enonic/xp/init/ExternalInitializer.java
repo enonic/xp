@@ -1,6 +1,6 @@
 package com.enonic.xp.init;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.index.IndexService;
 
@@ -41,7 +41,7 @@ public abstract class ExternalInitializer
 
         protected void validate()
         {
-            Preconditions.checkNotNull( indexService );
+            Objects.requireNonNull( indexService );
         }
     }
 }

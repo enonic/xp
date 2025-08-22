@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
@@ -312,8 +312,8 @@ public final class DuplicateNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.params.getNodeId() );
-            Preconditions.checkNotNull( this.binaryService );
+            Objects.requireNonNull( this.binaryService );
+            Objects.requireNonNull( params, "params cannot be null" );;
         }
     }
 

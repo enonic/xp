@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
@@ -20,8 +20,8 @@ public class ImmutableFilesHelper
     public static ByteSource computeIfAbsent( Path path, Function<ByteSink, Boolean> consumer )
         throws IOException
     {
-        Preconditions.checkNotNull( path, "path is required" );
-        Preconditions.checkNotNull( consumer, "consumer is required" );
+        Objects.requireNonNull( path, "path is required" );
+        Objects.requireNonNull( consumer, "consumer is required" );
 
         final Lock lock = FILE_LOCKS.get( path );
         lock.lock();

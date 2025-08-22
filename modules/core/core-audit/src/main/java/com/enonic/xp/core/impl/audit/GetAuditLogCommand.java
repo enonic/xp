@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.audit;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
@@ -62,7 +62,7 @@ public class GetAuditLogCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( auditLogId, "AuditLogId cannot be null" );
+            Objects.requireNonNull( auditLogId, "auditLogId is required" );
         }
 
         public GetAuditLogCommand build()

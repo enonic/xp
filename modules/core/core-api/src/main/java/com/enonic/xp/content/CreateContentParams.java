@@ -1,8 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.Locale;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -335,10 +334,10 @@ public final class CreateContentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-            Preconditions.checkNotNull( data, "data cannot be null" );
-            Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
-            Preconditions.checkNotNull( type, "type cannot be null" );
+            Objects.requireNonNull( parentPath, "parentPath is required" );
+            Objects.requireNonNull( data, "data is required" );
+            Objects.requireNonNull( createAttachments, "createAttachments is required" );
+            Objects.requireNonNull( type, "type is required" );
         }
 
         public CreateContentParams build()

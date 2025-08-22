@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public final class ImportNodeResult
 {
@@ -54,7 +54,7 @@ public final class ImportNodeResult
 
         private void validate()
         {
-            Preconditions.checkNotNull( node, "node cannot be null" );
+            Objects.requireNonNull( node );
         }
 
         public ImportNodeResult build()

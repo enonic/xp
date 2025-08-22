@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.scheduler.mapper;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
@@ -92,7 +92,7 @@ public final class ScheduledJobMapper
 
         private void validate()
         {
-            Preconditions.checkNotNull( job, "job must be set." );
+            Objects.requireNonNull( job, "job is required" );
         }
 
         public ScheduledJobMapper build()

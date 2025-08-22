@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
@@ -58,8 +58,8 @@ public abstract class AbstractContentEventSyncCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( contentService, "contentService cannot be null" );
-            Preconditions.checkNotNull( params, "params cannot be null" );
+            Objects.requireNonNull( contentService );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public abstract <T extends AbstractContentEventSyncCommand> T build();

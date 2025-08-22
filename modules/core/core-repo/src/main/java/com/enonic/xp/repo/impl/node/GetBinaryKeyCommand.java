@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.node.AttachedBinary;
@@ -63,7 +65,7 @@ public class GetBinaryKeyCommand
         {
             super.validate();
 
-            Preconditions.checkNotNull( nodeId, "nodeId not set" );
+            Objects.requireNonNull( this.nodeId, "nodeId is required" );
             Preconditions.checkArgument( binaryReference != null, "binaryReference must be set" );
         }
 

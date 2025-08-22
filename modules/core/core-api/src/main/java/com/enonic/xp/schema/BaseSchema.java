@@ -4,8 +4,6 @@ package com.enonic.xp.schema;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.security.PrincipalKey;
@@ -151,7 +149,7 @@ public abstract class BaseSchema<T extends BaseSchemaName>
 
         public Builder( final BaseSchema schema )
         {
-            Preconditions.checkNotNull( schema, "schema cannot be null" );
+            Objects.requireNonNull( schema, "BaseSchema cannot be null" );
             this.name = (SCHEMA_NAME) schema.name;
             this.displayName = schema.displayName;
             this.displayNameI18nKey = schema.displayNameI18nKey;

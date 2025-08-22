@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -58,8 +58,8 @@ final class DeletePageCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.contentId );
-            Preconditions.checkNotNull( this.contentService );
+            Objects.requireNonNull( this.contentId, "contentId is required" );
+            Objects.requireNonNull( this.contentService );
         }
 
         public DeletePageCommand build()

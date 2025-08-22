@@ -1,8 +1,8 @@
 package com.enonic.xp.project;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -137,7 +137,7 @@ public final class Project
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "name cannot be null" );
+            Objects.requireNonNull( name, "name is required" );
         }
 
 

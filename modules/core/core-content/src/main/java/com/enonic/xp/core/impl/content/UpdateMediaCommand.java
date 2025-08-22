@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -53,7 +54,7 @@ final class UpdateMediaCommand
             params.mimeType( mediaInfo.getMediaType() );
         }
 
-        Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
+        Objects.requireNonNull( params.getMimeType(), "Unable to resolve media type" );
 
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
         final ContentTypeName type = resolvedTypeFromMimeType != null
@@ -64,7 +65,7 @@ final class UpdateMediaCommand
 
         final Content existingContent = getContent( params.getContent() );
         Preconditions.checkArgument( existingContent.getType().equals( type ),
-                                     "Updated content must be of type: " + existingContent.getType() );
+                                     "Updated content must be of type: %s", existingContent.getType() );
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
             .name( params.getName().toString() )
@@ -133,7 +134,7 @@ final class UpdateMediaCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public UpdateMediaCommand build()

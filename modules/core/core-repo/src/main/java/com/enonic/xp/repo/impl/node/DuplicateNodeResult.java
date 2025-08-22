@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.Node;
@@ -59,7 +59,7 @@ public class DuplicateNodeResult
 
         private void validate()
         {
-            Preconditions.checkNotNull( node, "node must be set" );
+            Objects.requireNonNull( node, "node is required" );
         }
 
         public DuplicateNodeResult build()

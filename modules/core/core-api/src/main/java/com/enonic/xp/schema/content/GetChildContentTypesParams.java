@@ -1,6 +1,6 @@
 package com.enonic.xp.schema.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -22,6 +22,6 @@ public final class GetChildContentTypesParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.parentName, "Parent content type name cannot be null" );
+        Objects.requireNonNull( this.parentName, "parentName is required" );
     }
 }

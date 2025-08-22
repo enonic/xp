@@ -44,24 +44,13 @@ public class NodeStoreDocumentFactory
 
     public IndexDocument create()
     {
-        this.node.validateForIndexing();
-
-        return createDataDocument();
-    }
-
-    private IndexDocument createDataDocument()
-    {
-        final IndexConfigDocument indexConfigDocument = this.node.getIndexConfigDocument();
-
-        final IndexDocument.Builder builder = IndexDocument.create().
+        return IndexDocument.create().
             id( this.node.id().toString() ).
             indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
             indexTypeName( this.branch.getValue() ).
-            analyzer( indexConfigDocument.getAnalyzer() ).
+            analyzer( this.node.getIndexConfigDocument().getAnalyzer() ).
             indexItems( createIndexItems() ).
-            refreshAfterOperation( this.refresh );
-
-        return builder.build();
+            refreshAfterOperation( this.refresh ).build();
     }
 
     private IndexItems createIndexItems()

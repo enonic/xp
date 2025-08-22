@@ -1,10 +1,11 @@
 package com.enonic.xp.security.auth;
 
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.mail.EmailValidator;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @PublicApi
 public final class VerifiedEmailAuthToken
@@ -19,8 +20,8 @@ public final class VerifiedEmailAuthToken
 
     public void setEmail( final String email )
     {
-        checkNotNull( email, "Email cannot be null" );
-        checkArgument( EmailValidator.isValid( email ), "Email [" + email + "] is not valid" );
+        Objects.requireNonNull( email, "email is required" );
+        Preconditions.checkArgument( EmailValidator.isValid( email ), "Email [%s] is not valid", email );
         this.email = email;
     }
 }

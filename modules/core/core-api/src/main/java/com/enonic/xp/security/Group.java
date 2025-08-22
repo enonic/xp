@@ -1,8 +1,8 @@
 package com.enonic.xp.security;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.google.common.base.Preconditions;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class Group
@@ -41,7 +41,7 @@ public final class Group
         protected void validate()
         {
             super.validate();
-            checkArgument( this.key.isGroup(), "Invalid Principal Type for Group: " + this.key.getType() );
+            Preconditions.checkArgument( this.key.isGroup(), "Invalid Principal Type for Group: %s", this.key.getType() );
         }
 
         public Group build()

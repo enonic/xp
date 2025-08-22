@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.validate;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -52,8 +52,8 @@ public final class InputValidator
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.form, "Form is required" );
-            Preconditions.checkNotNull( this.inputTypeResolver, "InputTypeResolver is required" );
+            Objects.requireNonNull( this.form );
+            Objects.requireNonNull( this.inputTypeResolver );
         }
 
         public InputValidator build()

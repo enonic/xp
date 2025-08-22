@@ -3,7 +3,6 @@ package com.enonic.xp.style;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 
 public final class GenericStyle
     implements ElementStyle
@@ -117,7 +116,7 @@ public final class GenericStyle
 
         public GenericStyle build()
         {
-            Preconditions.checkNotNull( this.name, "name cannot be null" );
+            Objects.requireNonNull( this.name, "name is required" );
             return new GenericStyle( this );
         }
     }

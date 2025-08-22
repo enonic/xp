@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -18,6 +16,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 public final class Node
 {
     public static final NodeId ROOT_UUID = NodeId.from( "000-000-000-000" );
+
+    private static final PatternIndexConfigDocument DEFAULT_INDEX_CONFIG =
+        PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build();
 
     private final NodeId id;
 
@@ -47,9 +48,6 @@ public final class Node
 
     private Node( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.permissions, "permissions are required" );
-        Preconditions.checkNotNull( builder.data, "data are required" );
-
         this.id = builder.id;
 
         this.nodeType = builder.nodeType;
@@ -80,8 +78,7 @@ public final class Node
             this.path = null;
         }
 
-        this.indexConfigDocument = Objects.requireNonNullElseGet( builder.indexConfigDocument, PatternIndexConfigDocument.create()
-            .defaultConfig( IndexConfig.BY_TYPE )::build );
+        this.indexConfigDocument = Objects.requireNonNullElse( builder.indexConfigDocument, DEFAULT_INDEX_CONFIG );
     }
 
     public boolean isRoot()
@@ -152,12 +149,6 @@ public final class Node
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
-    }
-
-    public void validateForIndexing()
-    {
-        Preconditions.checkNotNull( this.id, "Id must be set" );
-        Preconditions.checkNotNull( this.indexConfigDocument, "EntityIndexConfig must be set" );
     }
 
     @Override
@@ -341,9 +332,11 @@ public final class Node
 
         private void validate()
         {
+            Objects.requireNonNull( this.permissions, "permissions is required" );
+            Objects.requireNonNull( this.data, "data is required" );
             if ( ROOT_UUID.equals( this.id ) )
             {
-                Preconditions.checkNotNull( this.childOrder );
+                Objects.requireNonNull( this.childOrder, "childOrder is required" );
             }
         }
 

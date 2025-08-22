@@ -5,12 +5,12 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.CharacterChecker;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
@@ -43,16 +43,16 @@ public final class PrincipalKey
 
     private PrincipalKey( final IdProviderKey idProviderKey, final PrincipalType type, final String principalId )
     {
-        checkArgument( ( type == PrincipalType.ROLE ) || ( idProviderKey != null ), "Principal id provider cannot be null" );
+        Preconditions.checkArgument( type == PrincipalType.ROLE || idProviderKey != null, "Principal id provider cannot be null" );
         this.idProviderKey = idProviderKey;
-        this.type = checkNotNull( type, "Principal type cannot be null" );
-        checkArgument( !isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
+        this.type = Objects.requireNonNull( type, "Principal type cannot be null" );
+        Preconditions.checkArgument( !isNullOrEmpty( principalId ), "Principal id cannot be null or empty" );
         this.principalId = CharacterChecker.check( principalId, "Not a valid principal key [" + principalId + "]" );
     }
 
     public static PrincipalKey from( final String principalKey )
     {
-        checkArgument( !isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( principalKey ), "Principal key cannot be null or empty" );
         switch ( principalKey )
         {
             case "user:system:anonymous":

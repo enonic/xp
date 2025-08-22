@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -25,8 +24,7 @@ public final class StyleDescriptor
 
     private StyleDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.application, "applicationKey cannot be null" );
-        this.applicationKey = builder.application;
+        this.applicationKey = Objects.requireNonNull( builder.application, "applicationKey is required" );
         this.cssPath = builder.cssPath;
         this.elements = builder.elements.build();
         this.modifiedTime = builder.modifiedTime;

@@ -2,8 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.List;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
@@ -150,8 +149,8 @@ public class SetNodeChildOrderCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( nodeId );
-            Preconditions.checkNotNull( processor );
+            Objects.requireNonNull( processor );
+            Objects.requireNonNull( nodeId,  "nodeId is required" );
         }
 
         public SetNodeChildOrderCommand build()

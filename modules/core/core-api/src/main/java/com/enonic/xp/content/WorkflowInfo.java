@@ -3,7 +3,6 @@ package com.enonic.xp.content;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.data.Property;
@@ -109,11 +108,11 @@ public final class WorkflowInfo
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.state, "state cannot be null" );
+            Objects.requireNonNull( this.state, "state is required" );
             for ( Map.Entry<String, WorkflowCheckState> e : this.checks.entrySet() )
             {
                 Property.checkName( e.getKey() );
-                Preconditions.checkNotNull( e.getValue(), "workflow check state cannot be null" );
+                Objects.requireNonNull( e.getValue(), "workflow check state is required" );
             }
         }
 

@@ -30,7 +30,7 @@ exports.deleteProjectNull = function () {
         throw new Error('IllegalArgumentException should be thrown.');
 
     } catch (e) {
-        assert.assertEquals('Project name cannot be null', e.getMessage());
+        assert.assertEquals('Project name is required', e.getMessage());
 
     }
 };

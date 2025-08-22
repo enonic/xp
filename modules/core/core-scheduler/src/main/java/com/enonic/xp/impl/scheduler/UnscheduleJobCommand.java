@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.scheduler.ScheduledJobName;
 
@@ -46,8 +46,8 @@ final class UnscheduleJobCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( schedulerExecutorService, "schedulerExecutorService must be set." );
-            Preconditions.checkNotNull( name, "name must be set." );
+            Objects.requireNonNull( schedulerExecutorService );
+            Objects.requireNonNull( name, "name is required" );
         }
 
         public UnscheduleJobCommand build()

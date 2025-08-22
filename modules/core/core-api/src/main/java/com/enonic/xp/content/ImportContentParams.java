@@ -2,8 +2,7 @@ package com.enonic.xp.content;
 
 import java.util.Collection;
 import java.util.EnumSet;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.InsertManualStrategy;
@@ -157,8 +156,8 @@ public final class ImportContentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.content, "content cannot be null" );
-            Preconditions.checkNotNull( this.targetPath, "targetPath cannot be null" );
+            Objects.requireNonNull( this.content, "content is required" );
+            Objects.requireNonNull( this.targetPath, "targetPath is required" );
         }
 
         public ImportContentParams build()

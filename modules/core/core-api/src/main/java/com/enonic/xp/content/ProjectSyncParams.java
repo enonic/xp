@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.project.ProjectName;
 
@@ -39,7 +39,7 @@ public final class ProjectSyncParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( targetProject, "targetProject must be set." );
+            Objects.requireNonNull( targetProject, "targetProject is required" );
         }
 
         public ProjectSyncParams build()

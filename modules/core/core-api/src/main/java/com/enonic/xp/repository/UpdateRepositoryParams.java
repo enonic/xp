@@ -1,8 +1,7 @@
 package com.enonic.xp.repository;
 
+import java.util.Objects;
 import java.util.function.Consumer;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -58,7 +57,7 @@ public final class UpdateRepositoryParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( repositoryId, "repositoryId cannot be null" );
+            Objects.requireNonNull( repositoryId, "repositoryId is required" );
         }
 
 

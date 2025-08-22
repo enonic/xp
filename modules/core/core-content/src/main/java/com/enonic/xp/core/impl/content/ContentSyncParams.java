@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.content.ContentId;
@@ -94,8 +94,8 @@ public final class ContentSyncParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( sourceProject, "sourceProject must be set." );
-            Preconditions.checkNotNull( targetProject, "targetProject must be set." );
+            Objects.requireNonNull( sourceProject, "sourceProject is required" );
+            Objects.requireNonNull( targetProject, "targetProject is required" );
         }
 
         public ContentSyncParams build()

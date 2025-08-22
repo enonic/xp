@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -156,13 +156,13 @@ public final class MappingBuilder
 
     public FilterMapping filter( final Filter filter )
     {
-        Preconditions.checkNotNull( filter, "Filter should not be null" );
+        Objects.requireNonNull( filter, "Filter cannot not be null" );
         return new FilterMappingImpl( this, filter );
     }
 
     public ServletMapping servlet( final Servlet servlet )
     {
-        Preconditions.checkNotNull( servlet, "Servlet should not be null" );
+        Objects.requireNonNull( servlet, "Servlet cannot not be null" );
         return new ServletMappingImpl( this, servlet );
     }
 

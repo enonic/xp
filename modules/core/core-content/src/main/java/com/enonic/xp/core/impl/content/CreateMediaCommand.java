@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -50,7 +49,7 @@ final class CreateMediaCommand
             params.mimeType( mediaInfo.getMediaType() );
         }
 
-        Preconditions.checkNotNull( params.getMimeType(), "Unable to resolve media type" );
+        Objects.requireNonNull( params.getMimeType(), "Unable to resolve media type" );
 
         final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
         final ContentTypeName type = resolvedTypeFromMimeType != null
@@ -149,8 +148,8 @@ final class CreateMediaCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params, "params must be given" );
-            Preconditions.checkNotNull( formDefaultValuesProcessor );
+            Objects.requireNonNull( params, "params cannot be null" );
+            Objects.requireNonNull( formDefaultValuesProcessor );
         }
 
         public CreateMediaCommand build()

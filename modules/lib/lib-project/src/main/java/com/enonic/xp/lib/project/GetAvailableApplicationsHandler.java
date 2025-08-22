@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.project;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -23,6 +24,6 @@ public final class GetAvailableApplicationsHandler
 
     public void setId( final String value )
     {
-        this.id = ProjectName.from( value );
+        this.id = ProjectName.from( Objects.requireNonNull( value, "Project name is required" ) );
     }
 }

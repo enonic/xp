@@ -1,10 +1,10 @@
 package com.enonic.xp.portal.impl.error;
 
 
+import java.util.Objects;
+
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.HttpStatus;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class PortalError
 {
@@ -18,8 +18,8 @@ public final class PortalError
 
     private PortalError( final Builder builder )
     {
-        this.status = checkNotNull( builder.status, "status cannot be null" );
-        this.request = checkNotNull( builder.request, "request cannot be null" );
+        this.status = Objects.requireNonNull( builder.status, "status cannot be null" );
+        this.request = Objects.requireNonNull( builder.request, "request cannot be null" );
         this.message = builder.message == null ? "" : builder.message;
         this.exception = builder.exception;
     }

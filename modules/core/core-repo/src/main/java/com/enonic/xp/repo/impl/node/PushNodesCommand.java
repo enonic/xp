@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
@@ -245,8 +243,8 @@ public class PushNodesCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( target );
-            Preconditions.checkNotNull( ids );
+            Objects.requireNonNull( target, "target is required" );
+            Objects.requireNonNull( ids, "ids is required" );
         }
     }
 }

@@ -2,8 +2,6 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.WorkflowInfo;
@@ -129,9 +127,9 @@ public final class CreateFragmentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-            Preconditions.checkNotNull( component, "component cannot be null" );
-            Preconditions.checkNotNull( workflowInfo, "workflowInfo cannot be null" );
+            Objects.requireNonNull( parentPath, "parentPath is required" );
+            Objects.requireNonNull( component, "component is required" );
+            Objects.requireNonNull( workflowInfo, "workflowInfo is required" );
         }
 
         public CreateFragmentParams build()

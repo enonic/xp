@@ -2,10 +2,9 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.google.common.base.Preconditions;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class PrincipalRelationship
@@ -16,12 +15,12 @@ public final class PrincipalRelationship
 
     private PrincipalRelationship( final Builder builder )
     {
-        checkNotNull( builder.from, "Principal relationship 'from' cannot be null" );
-        checkNotNull( builder.to, "Principal relationship 'to' cannot be null" );
-        checkArgument( !builder.from.equals( builder.to ), "Principal relationship 'from' and 'to' cannot refer to the same principal" );
-        checkArgument( !( builder.from.isRole() && builder.to.isRole() ), "Principal relationship from Role to Role is not allowed" );
-        checkArgument( !( builder.from.isGroup() && builder.to.isRole() ), "Principal relationship from Group to Role is not allowed" );
-        checkArgument( !builder.from.isUser(), "Principal relationship from User to another Principal is not allowed" );
+        Objects.requireNonNull( builder.from, "Principal relationship 'from' cannot be null" );
+        Objects.requireNonNull( builder.to, "Principal relationship 'to' cannot be null" );
+        Preconditions.checkArgument( !builder.from.equals( builder.to ), "Principal relationship 'from' and 'to' cannot refer to the same principal" );
+        Preconditions.checkArgument( !( builder.from.isRole() && builder.to.isRole() ), "Principal relationship from Role to Role is not allowed" );
+        Preconditions.checkArgument( !( builder.from.isGroup() && builder.to.isRole() ), "Principal relationship from Group to Role is not allowed" );
+        Preconditions.checkArgument( !builder.from.isUser(), "Principal relationship from User to another Principal is not allowed" );
 
         this.from = builder.from;
         this.to = builder.to;

@@ -1,5 +1,7 @@
 package com.enonic.xp.export;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -106,9 +108,9 @@ public final class ExportNodesParams
 
         private void validate()
         {
-            Preconditions.checkArgument( exportName != null, "exportName must be set" );
+            Objects.requireNonNull( sourceNodePath, "sourceNodePath is required" );
+            Preconditions.checkArgument( exportName != null, "exportName is required" );
             Preconditions.checkArgument( FileNames.isSafeFileName( exportName ), "Invalid export name" );
-            Preconditions.checkNotNull( sourceNodePath );
         }
 
         public ExportNodesParams build()

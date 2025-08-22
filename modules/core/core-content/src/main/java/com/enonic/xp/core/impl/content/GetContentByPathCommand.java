@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
@@ -15,7 +15,7 @@ final class GetContentByPathCommand
     private GetContentByPathCommand( final Builder builder )
     {
         super( builder );
-        Preconditions.checkNotNull( builder.contentPath, "contentPath cannot be null" );
+        Objects.requireNonNull( builder.contentPath, "contentPath is required" );
         this.contentPath = builder.contentPath;
     }
 
@@ -64,7 +64,7 @@ final class GetContentByPathCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentPath );
+            Objects.requireNonNull( contentPath, "contentPath is required" );
         }
 
         public GetContentByPathCommand build()

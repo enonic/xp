@@ -1,6 +1,6 @@
 package com.enonic.xp.region;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -15,8 +15,7 @@ public final class LayoutDescriptor
     private LayoutDescriptor( final Builder builder )
     {
         super( builder );
-        Preconditions.checkNotNull( builder.regions, "regions cannot be null" );
-        this.regions = builder.regions;
+        this.regions = Objects.requireNonNull( builder.regions, "regions cannot be null" );
     }
 
     public RegionDescriptors getRegions()

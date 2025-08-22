@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.index;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeBranchEntries;
@@ -85,9 +85,9 @@ class GetBranchDataCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.repositoryId );
-            Preconditions.checkNotNull( this.branch );
-            Preconditions.checkNotNull( this.nodeSearchService );
+            Objects.requireNonNull( this.nodeSearchService );
+            Objects.requireNonNull( this.repositoryId, "repositoryId is required" );
+            Objects.requireNonNull( this.branch, "branch is required" );
         }
 
         public GetBranchDataCommand build()

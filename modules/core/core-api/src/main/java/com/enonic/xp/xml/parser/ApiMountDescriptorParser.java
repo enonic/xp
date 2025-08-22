@@ -1,5 +1,7 @@
 package com.enonic.xp.xml.parser;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -53,8 +55,8 @@ public final class ApiMountDescriptorParser
             apiKey = parts[API_KEY_INDEX].trim();
         }
 
-        Preconditions.checkArgument( applicationKey != null, "applicationKey must be set." );
-        Preconditions.checkArgument( !apiKey.isBlank(), "apiKey must be set." );
+        Objects.requireNonNull( applicationKey, "applicationKey cannot be null" );
+        Preconditions.checkArgument( !apiKey.isBlank(), "apiKey cannot be blank" );
 
         return DescriptorKey.from( applicationKey, apiKey );
     }

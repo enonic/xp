@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
@@ -108,9 +110,9 @@ public final class ContentToSync
 
         private void validate()
         {
-            Preconditions.checkNotNull( sourceContext, "sourceContext must be set." );
-            Preconditions.checkNotNull( targetContext, "targetContext must be set." );
-            Preconditions.checkArgument( sourceContent != null || targetContent != null, "source or target content must be set." );
+            Objects.requireNonNull( sourceContext, "sourceContext is required" );
+            Objects.requireNonNull( targetContext, "targetContext is required" );
+            Preconditions.checkArgument( sourceContent != null || targetContent != null, "source or target content is required" );
         }
 
         public ContentToSync build()

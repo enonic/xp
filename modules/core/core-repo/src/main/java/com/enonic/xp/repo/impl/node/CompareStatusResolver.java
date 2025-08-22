@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
@@ -124,7 +124,7 @@ class CompareStatusResolver
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.nodeStorageService, "StorageService must be set" );
+            Objects.requireNonNull( this.nodeStorageService );
         }
 
         public CompareStatusResolver build()

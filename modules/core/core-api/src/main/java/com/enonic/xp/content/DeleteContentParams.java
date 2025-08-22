@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -56,7 +56,7 @@ public final class DeleteContentParams
 
         public DeleteContentParams build()
         {
-            Preconditions.checkNotNull( this.contentPath, "ContentPath cannot be null" );
+            Objects.requireNonNull( this.contentPath, "contentPath is required" );
             return new DeleteContentParams( this );
         }
     }

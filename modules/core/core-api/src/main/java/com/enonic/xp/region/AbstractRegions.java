@@ -3,6 +3,7 @@ package com.enonic.xp.region;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -39,7 +40,7 @@ public abstract class AbstractRegions
 
     public Component getComponent( final ComponentPath path )
     {
-        Preconditions.checkNotNull( path, "no path for Component given" );
+        Objects.requireNonNull( path, "no path for Component given" );
         Preconditions.checkArgument( path.numberOfLevels() > 0, "empty path for Component given" );
 
         final ComponentPath.RegionAndComponent first = path.getFirstLevel();

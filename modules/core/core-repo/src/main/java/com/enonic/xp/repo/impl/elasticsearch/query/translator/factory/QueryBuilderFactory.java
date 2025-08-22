@@ -1,10 +1,10 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.Objects;
+
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -100,7 +100,7 @@ public class QueryBuilderFactory
 
         private void validate()
         {
-            Preconditions.checkNotNull( fieldNameResolver );
+            Objects.requireNonNull( fieldNameResolver );
         }
 
         public QueryBuilderFactory build()

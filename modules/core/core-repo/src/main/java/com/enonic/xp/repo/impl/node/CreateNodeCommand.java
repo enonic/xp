@@ -2,8 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.List;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
@@ -19,7 +18,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBinaryReferenceException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
@@ -254,7 +252,7 @@ public final class CreateNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );;
         }
 
         public CreateNodeCommand build()

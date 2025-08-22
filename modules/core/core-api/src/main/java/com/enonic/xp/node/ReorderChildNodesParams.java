@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -68,7 +69,7 @@ public final class ReorderChildNodesParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.processor, "processor must be set" );
+            Objects.requireNonNull( this.processor, "processor is required" );
         }
 
         public ReorderChildNodesParams build()

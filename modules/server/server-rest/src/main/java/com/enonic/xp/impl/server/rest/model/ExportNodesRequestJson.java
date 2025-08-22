@@ -1,7 +1,8 @@
 package com.enonic.xp.impl.server.rest.model;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 
 public class ExportNodesRequestJson
 {
@@ -18,8 +19,8 @@ public class ExportNodesRequestJson
                                    @JsonProperty("exportWithIds") final Boolean exportWithIds, //
                                    @JsonProperty("includeVersions") final Boolean includeVersions )
     {
-        Preconditions.checkNotNull( sourceRepoPath, "sourceRepoPath not given" );
-        Preconditions.checkNotNull( exportName, "exportName not given" );
+        Objects.requireNonNull( sourceRepoPath, "sourceRepoPath is required" );
+        Objects.requireNonNull( exportName, "exportName is required" );
 
         this.sourceRepoPath = RepoPath.from( sourceRepoPath );
         this.exportName = exportName;

@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
@@ -164,8 +162,8 @@ public class InternalContext
 
         private void verify()
         {
-            Preconditions.checkNotNull( repositoryId, "Repository must be set in internalContext" );
-            Preconditions.checkNotNull( branch, "Branch must be set in internalContext" );
+            Objects.requireNonNull( repositoryId, "repositoryId is required" );
+            Objects.requireNonNull( branch, "branch is required" );
         }
 
         public InternalContext build()

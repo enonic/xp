@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -142,9 +142,9 @@ public class SystemRepoInitializer
 
         protected void validate()
         {
-            Preconditions.checkNotNull( indexServiceInternal );
-            Preconditions.checkNotNull( repositoryService );
-            Preconditions.checkNotNull( nodeStorageService );
+            Objects.requireNonNull( indexServiceInternal );
+            Objects.requireNonNull( repositoryService );
+            Objects.requireNonNull( nodeStorageService );
         }
 
         public SystemRepoInitializer build()

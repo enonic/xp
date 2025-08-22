@@ -9,8 +9,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.query.highlight.constants.Encoder;
 import com.enonic.xp.query.highlight.constants.Fragmenter;
@@ -189,8 +187,8 @@ public class SearchRequestBuilderFactory
 
         private void validate()
         {
-            Preconditions.checkNotNull( query, "query must be set." );
-            Preconditions.checkNotNull( client, "client must be set." );
+            Objects.requireNonNull( this.client );
+            Objects.requireNonNull( this.query );
         }
 
         public SearchRequestBuilderFactory build()

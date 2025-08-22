@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.util.BinaryReferences;
@@ -69,7 +67,7 @@ public final class UpdateContentParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( contentId, "contentId cannot be null" );
+        Objects.requireNonNull( contentId, "contentId is required" );
     }
 
     public ContentEditor getEditor()

@@ -4,9 +4,9 @@ package com.enonic.xp.node;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -222,7 +222,7 @@ public final class NodePath
 
         private Builder( final NodePath source )
         {
-            Preconditions.checkNotNull( source, "source to build copy from not given" );
+            Objects.requireNonNull( source, "source to build copy from not given" );
             this.absolute = isAbsolute( source.path );
             this.trailingDivider = hasTrailing( source.path );
             this.elementListBuilder = source.isEmpty() ? new ArrayList<>() : toElements( source.path );

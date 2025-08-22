@@ -1,9 +1,8 @@
 package com.enonic.xp.impl.scheduler.distributed;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -55,7 +54,7 @@ public final class OneTimeCalendarImpl
 
         protected void validate()
         {
-            Preconditions.checkNotNull( value, "value must be set." );
+            Objects.requireNonNull( value, "value is required" );
         }
 
         public OneTimeCalendarImpl build()

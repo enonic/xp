@@ -1,6 +1,6 @@
 package com.enonic.xp.resource;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -57,8 +57,8 @@ public final class GetDynamicContentSchemaParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "name must be set" );
-            Preconditions.checkNotNull( type, "type must be set" );
+            Objects.requireNonNull( name, "name is required" );
+            Objects.requireNonNull( type, "type is required" );
         }
 
         public GetDynamicContentSchemaParams build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.project.command;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentService;
@@ -50,8 +50,8 @@ abstract class AbstractProjectRootCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( projectName, "Project name cannot be null" );
-            Preconditions.checkNotNull( contentService, "contentService cannot be null" );
+            Objects.requireNonNull( contentService );
+            Objects.requireNonNull( projectName, "projectName is required" );
         }
     }
 

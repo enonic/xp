@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public final class ResponseProcessorDescriptor
 {
     private final String name;
@@ -16,8 +14,8 @@ public final class ResponseProcessorDescriptor
 
     private ResponseProcessorDescriptor( final Builder builder )
     {
-        this.name = checkNotNull( builder.name, "name cannot be null" );
-        this.application = checkNotNull( builder.application, "application cannot be null" );
+        this.name = Objects.requireNonNull( builder.name, "name cannot be null" );
+        this.application = Objects.requireNonNull( builder.application, "application cannot be null" );
         this.order = builder.order;
     }
 

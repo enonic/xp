@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.audit;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.LogAuditLogParams;
@@ -65,7 +65,7 @@ public class CreateAuditLogCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( params, "AuditLogParams cannot be null" );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public CreateAuditLogCommand build()

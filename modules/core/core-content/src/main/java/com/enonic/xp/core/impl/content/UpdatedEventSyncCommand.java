@@ -139,9 +139,9 @@ final class UpdatedEventSyncCommand
         {
             super.validate();
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
-                                         "sourceContent must be set." );
+                                         "sourceContent must be set" );
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
-                                         "targetContent must be set." );
+                                         "targetContent must be set" );
         }
 
         @Override

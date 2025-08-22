@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentConstants;
@@ -314,7 +313,7 @@ public class PublishContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentIds );
+            Objects.requireNonNull( contentIds, "contentIds is required" );
             ContentPublishInfoPreconditions.check( contentPublishInfo );
         }
 

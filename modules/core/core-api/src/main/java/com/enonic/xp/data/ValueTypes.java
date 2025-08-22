@@ -69,7 +69,7 @@ public final class ValueTypes
     private static void register( ValueType valueType )
     {
         Object previous = TYPES_BY_NAME.put( valueType.getName(), valueType );
-        Preconditions.checkState( previous == null, "ValueType already registered: " + valueType.getName() );
+        Preconditions.checkState( previous == null, "ValueType already registered: %s", valueType.getName() );
     }
 
     public static ValueType getByName( final String name )

@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @PublicApi
 public final class RegionPath
 {
@@ -17,9 +15,8 @@ public final class RegionPath
 
     private RegionPath( final ComponentPath parentComponentPath, final String regionName )
     {
-        checkNotNull( regionName, "regionName cannot be null" );
         this.parentComponentPath = parentComponentPath;
-        this.regionName = regionName;
+        this.regionName = Objects.requireNonNull( regionName, "regionName cannot be null" );
 
     }
 

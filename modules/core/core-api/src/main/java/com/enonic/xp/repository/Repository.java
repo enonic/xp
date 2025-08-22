@@ -117,7 +117,7 @@ public final class Repository
 
         private void validate()
         {
-            Preconditions.checkNotNull( branches, "branches cannot be null" );
+            Objects.requireNonNull( branches, "branches is required" );
             Preconditions.checkArgument( branches.contains( RepositoryConstants.MASTER_BRANCH ), "branches must contain master branch" );
         }
 

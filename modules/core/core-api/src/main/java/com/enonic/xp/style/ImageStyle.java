@@ -3,7 +3,6 @@ package com.enonic.xp.style;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 
 public final class ImageStyle
     implements ElementStyle
@@ -152,7 +151,7 @@ public final class ImageStyle
 
         public ImageStyle build()
         {
-            Preconditions.checkNotNull( this.name, "name cannot be null" );
+            Objects.requireNonNull( this.name, "name is required" );
             return new ImageStyle( this );
         }
     }

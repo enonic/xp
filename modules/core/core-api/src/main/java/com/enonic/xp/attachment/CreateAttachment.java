@@ -1,6 +1,7 @@
 package com.enonic.xp.attachment;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 
@@ -136,8 +137,8 @@ public final class CreateAttachment
 
         private void validate()
         {
-            Preconditions.checkNotNull( name );
-            Preconditions.checkNotNull( byteSource );
+            Objects.requireNonNull( name, "name is required" );
+            Objects.requireNonNull( byteSource, "byteSource is required" );
         }
 
         public CreateAttachment build()

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.node.Node;
@@ -50,7 +51,7 @@ public class GetBinaryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( nodeId, "nodeId not set" );
+            Objects.requireNonNull( nodeId, "nodeId is required" );
         }
 
         public GetBinaryCommand build()

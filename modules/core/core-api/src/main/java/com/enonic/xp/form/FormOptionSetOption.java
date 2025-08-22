@@ -31,9 +31,8 @@ public final class FormOptionSetOption
     {
         super();
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a FormItemSet" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: " + builder.name );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "name is required for a FormItemSet" );
+        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctations: %s", builder.name );
 
         this.name = builder.name;
         this.label = builder.label;

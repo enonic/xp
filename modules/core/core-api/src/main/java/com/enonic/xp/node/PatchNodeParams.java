@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 
@@ -144,9 +145,9 @@ public final class PatchNodeParams
         {
             if ( this.id == null && this.path == null )
             {
-                throw new IllegalArgumentException("id and path cannot be both null");
+                throw new IllegalArgumentException("Either id or path is required");
             }
-            Preconditions.checkNotNull( this.editor, "editor cannot be null" );
+            Objects.requireNonNull( this.editor, "editor is required" );
         }
     }
 }

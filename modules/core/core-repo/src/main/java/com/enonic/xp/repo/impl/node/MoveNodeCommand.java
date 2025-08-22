@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -301,8 +299,8 @@ public class MoveNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( id, "id must be set." );
-            Preconditions.checkNotNull( processor, "processor must be set." );
+            Objects.requireNonNull( id, "id is required" );
+            Objects.requireNonNull( processor, "processor cant be null" );
 
             if ( this.newParentPath == null && this.newNodeName == null )
             {

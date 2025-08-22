@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -11,8 +11,7 @@ public final class GetContentByIdsParams
 
     @Deprecated
     public GetContentByIdsParams( final ContentIds ids ) {
-        Preconditions.checkNotNull( ids, "ids must be specified" );
-        this.ids = ids;
+        this.ids = Objects.requireNonNull( ids, "ids must be specified" );
     }
 
     public GetContentByIdsParams( final Builder builder )
@@ -46,7 +45,7 @@ public final class GetContentByIdsParams
 
         public GetContentByIdsParams build()
         {
-            Preconditions.checkNotNull( this.contentIds, "ids must be specified" );
+            Objects.requireNonNull( this.contentIds, "contentIds is required" );
             return new GetContentByIdsParams( this );
         }
     }

@@ -1,12 +1,12 @@
 package com.enonic.xp.lib.project;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import com.enonic.xp.lib.project.command.GetProjectLanguageCommand;
 import com.enonic.xp.lib.project.command.GetProjectReadAccessCommand;
 import com.enonic.xp.lib.project.mapper.ProjectMapper;
 import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectPermissions;
 
@@ -46,6 +46,6 @@ public final class GetProjectHandler
 
     public void setId( final String value )
     {
-        this.id = ProjectName.from( value );
+        this.id = ProjectName.from( Objects.requireNonNull( value, "Project name is required" ) );
     }
 }

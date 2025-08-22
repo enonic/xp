@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -94,7 +93,7 @@ public class ImportContentFactory
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.params, "params cannot be null" );
+            Objects.requireNonNull( params, "params cannot be null" );;
         }
 
         public ImportContentFactory build()

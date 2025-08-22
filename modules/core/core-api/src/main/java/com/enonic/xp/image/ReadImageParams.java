@@ -1,5 +1,7 @@
 package com.enonic.xp.image;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
@@ -235,9 +237,9 @@ public final class ReadImageParams
 
         public ReadImageParams build()
         {
-            Preconditions.checkNotNull( contentId, "contentId cannot be null" );
-            Preconditions.checkNotNull( binaryReference, "binaryReference cannot be null" );
-            Preconditions.checkNotNull( mimeType, "mimeType must be set, but not both" );
+            Objects.requireNonNull( contentId, "contentId is required" );
+            Objects.requireNonNull( binaryReference, "binaryReference is required" );
+            Objects.requireNonNull( mimeType, "mimeType is required" );
             Preconditions.checkArgument( quality >= 0 && quality <= 100, "Quality out of bounds 0-100" );
             Preconditions.checkArgument( backgroundColor >= 0 && backgroundColor <= 0xFFFFFF, "Background color out of bounds 0-0xFFFFFF" );
             return new ReadImageParams( this );

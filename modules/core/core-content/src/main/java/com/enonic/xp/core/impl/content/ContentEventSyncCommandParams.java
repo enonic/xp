@@ -37,7 +37,7 @@ public final class ContentEventSyncCommandParams
 
         private void validate()
         {
-            Preconditions.checkArgument( !contents.build().isEmpty(), "at least one content must be set." );
+            Preconditions.checkArgument( !contents.build().isEmpty(), "At least one content must be set" );
         }
 
         public ContentEventSyncCommandParams build()

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -22,8 +21,7 @@ public final class Region
 
     public Region( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "name cannot be null" );
-        this.name = builder.name;
+        this.name = Objects.requireNonNull( builder.name, "name cannot be null" );
         this.parent = builder.parent;
         this.components = ImmutableList.copyOf( builder.components );
 

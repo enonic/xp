@@ -1,6 +1,6 @@
 package com.enonic.xp.archive;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
@@ -89,7 +89,7 @@ public final class ArchiveContentParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( contentId, "contentId must be set" );
+            Objects.requireNonNull( contentId, "contentId is required" );
         }
 
         public ArchiveContentParams build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -95,7 +95,7 @@ final class FindContentByParentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public FindContentByParentCommand build()

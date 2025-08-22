@@ -2,8 +2,6 @@ package com.enonic.xp.issue;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.content.ContentId;
 
 public final class PublishRequestItem
@@ -83,7 +81,7 @@ public final class PublishRequestItem
 
         private void validate()
         {
-            Preconditions.checkNotNull( id, "content id cannot be null" );
+            Objects.requireNonNull( id, "content id is required" );
         }
 
         public PublishRequestItem build()

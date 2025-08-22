@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -57,9 +57,9 @@ public final class CreateScheduledJobHandler
     @Override
     protected void validate()
     {
-        Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set." );
-        Preconditions.checkArgument( schedule != null, "calendar must be set." );
-        Preconditions.checkArgument( descriptor != null, "descriptor must be set." );
+        Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set" );
+        Preconditions.checkArgument( schedule != null, "schedule must be set" );
+        Preconditions.checkArgument( descriptor != null, "descriptor must be set" );
     }
 
     public void setName( final String value )

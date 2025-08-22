@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.security;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.data.Property;
@@ -79,7 +79,7 @@ abstract class PrincipalNodeTranslator
 
     public static CreateNodeParams toCreateNodeParams( final Principal principal )
     {
-        Preconditions.checkNotNull( principal );
+        Objects.requireNonNull( principal );
 
         final CreateNodeParams.Builder builder = CreateNodeParams.create().
             name( PrincipalKeyNodeTranslator.toNodeName( principal.getKey() ) ).
@@ -117,7 +117,7 @@ abstract class PrincipalNodeTranslator
 
     public static UpdateNodeParams toUpdateNodeParams( final Principal principal )
     {
-        Preconditions.checkNotNull( principal );
+        Objects.requireNonNull( principal );
 
         return UpdateNodeParams.create().
             path( principal.getKey().toPath() ).
@@ -143,7 +143,7 @@ abstract class PrincipalNodeTranslator
 
     static UpdateNodeParams addRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
     {
-        Preconditions.checkNotNull( relationship );
+        Objects.requireNonNull( relationship );
 
         return UpdateNodeParams.create().
             path( relationship.getFrom().toPath() ).
@@ -166,7 +166,7 @@ abstract class PrincipalNodeTranslator
 
     static UpdateNodeParams removeRelationshipToUpdateNodeParams( final PrincipalRelationship relationship )
     {
-        Preconditions.checkNotNull( relationship );
+        Objects.requireNonNull( relationship );
 
         return UpdateNodeParams.create().
             path( relationship.getFrom().toPath() ).
@@ -187,7 +187,7 @@ abstract class PrincipalNodeTranslator
 
     static UpdateNodeParams removeAllRelationshipsToUpdateNodeParams( final PrincipalKey from )
     {
-        Preconditions.checkNotNull( from );
+        Objects.requireNonNull( from );
 
         return UpdateNodeParams.create().
             path( from.toPath() ).
@@ -247,7 +247,7 @@ abstract class PrincipalNodeTranslator
 
     private static User createUserFromNode( final Node node )
     {
-        Preconditions.checkNotNull( node );
+        Objects.requireNonNull( node );
 
         final PropertyTree nodeAsTree = node.data();
 
@@ -272,7 +272,7 @@ abstract class PrincipalNodeTranslator
 
     private static Group createGroupFromNode( final Node node )
     {
-        Preconditions.checkNotNull( node );
+        Objects.requireNonNull( node );
 
         final PropertyTree nodeAsTree = node.data();
 
@@ -285,7 +285,7 @@ abstract class PrincipalNodeTranslator
 
     private static Role createRoleFromNode( final Node node )
     {
-        Preconditions.checkNotNull( node );
+        Objects.requireNonNull( node );
 
         final PropertyTree nodeAsTree = node.data();
 

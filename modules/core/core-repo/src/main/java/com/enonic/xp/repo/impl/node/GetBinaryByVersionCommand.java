@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -75,8 +76,8 @@ public class GetBinaryByVersionCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( nodeVersionId, "nodeVersionId not set" );
-            Preconditions.checkNotNull( nodeId, "nodeId not set" );
+            Objects.requireNonNull( this.nodeVersionId, "nodeVersionId is required" );
+            Objects.requireNonNull( this.nodeId, "nodeId is required" );
         }
 
         public GetBinaryByVersionCommand build()

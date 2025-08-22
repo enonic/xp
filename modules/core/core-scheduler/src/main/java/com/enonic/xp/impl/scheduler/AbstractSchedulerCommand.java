@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.node.NodeService;
 
@@ -29,7 +29,7 @@ public abstract class AbstractSchedulerCommand
 
         protected void validate()
         {
-            Preconditions.checkNotNull( nodeService, "nodeService cannot be null." );
+            Objects.requireNonNull( nodeService );
         }
 
         abstract AbstractSchedulerCommand build();

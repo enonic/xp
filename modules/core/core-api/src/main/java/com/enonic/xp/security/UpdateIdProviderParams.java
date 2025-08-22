@@ -1,9 +1,9 @@
 package com.enonic.xp.security;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.IdProviderAccessControlList;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @PublicApi
 public final class UpdateIdProviderParams
@@ -23,7 +23,7 @@ public final class UpdateIdProviderParams
 
     private UpdateIdProviderParams( final Builder builder )
     {
-        this.idProviderKey = checkNotNull( builder.idProviderKey, "idProviderKey is required" );
+        this.idProviderKey = Objects.requireNonNull( builder.idProviderKey, "idProviderKey is required" );
         this.displayName = builder.displayName;
         this.description = builder.description;
         this.idProviderConfig = builder.idProviderConfig;

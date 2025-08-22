@@ -1,8 +1,7 @@
 package com.enonic.xp.lib.project.mapper;
 
 import java.util.Locale;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.project.Project;
@@ -133,7 +132,7 @@ public final class ProjectMapper
 
         private void validate()
         {
-            Preconditions.checkNotNull( project, "project cannot be null" );
+            Objects.requireNonNull( project, "project is required" );
         }
 
 

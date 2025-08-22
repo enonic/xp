@@ -7,8 +7,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.data.ValueFactory;
@@ -140,7 +138,7 @@ public class CleanUpAuditLogCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( ageThreshold, "ageThreshold cannot be null" );
+            Objects.requireNonNull( ageThreshold, "ageThreshold is required" );
         }
 
         public CleanUpAuditLogCommand build()

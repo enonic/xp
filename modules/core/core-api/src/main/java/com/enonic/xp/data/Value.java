@@ -23,13 +23,12 @@ public abstract class Value
 
     protected Value( final ValueType type, final Object value )
     {
-        Preconditions.checkNotNull( type, "type cannot be null" );
+        Objects.requireNonNull( type, "type cannot be null" );
         if ( value != null )
         {
-            Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: " + value.getClass() );
-            Preconditions.checkArgument( type.getJavaType().isInstance( value ),
-                                         "value is of wrong class, expected [" + type.getJavaType().getName() + "], got: " +
-                                             value.getClass().getName() );
+            Preconditions.checkArgument( !( value instanceof Value ), "The value of a Value cannot be: %s", value.getClass() );
+            Preconditions.checkArgument( type.getJavaType().isInstance( value ), "value is of wrong class, expected [%s], got: [%s]",
+                                         type.getJavaType().getName(), value.getClass().getName() );
         }
 
         this.type = type;

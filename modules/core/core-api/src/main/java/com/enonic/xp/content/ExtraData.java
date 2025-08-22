@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
@@ -18,10 +16,8 @@ public final class ExtraData
 
     public ExtraData( final XDataName name, final PropertyTree data )
     {
-        Preconditions.checkNotNull( name, "name cannot be null" );
-        Preconditions.checkNotNull( data, "data cannot be null" );
-        this.name = name;
-        this.data = data;
+        this.name = Objects.requireNonNull( name, "name cannot be null" );
+        this.data = Objects.requireNonNull( data, "data cannot be null" );
     }
 
     public PropertyTree getData()

@@ -761,18 +761,18 @@ public class Content
         {
             if ( !root )
             {
-                Preconditions.checkNotNull( parentPath, "parentPath is required for a Content" );
-                Preconditions.checkNotNull( name, "name is required for a Content" );
+                Objects.requireNonNull( parentPath, "parentPath is required for a Content" );
+                Objects.requireNonNull( name, "name is required for a Content" );
             }
 
-            Preconditions.checkNotNull( data, "data is required for a Content" );
+            Objects.requireNonNull( data, "data is required for a Content" );
 
             if ( page != null )
             {
                 Preconditions.checkArgument( !( page.getDescriptor() != null && page.getTemplate() != null ),
                                              "A Page cannot have both have a descriptor and a template set" );
             }
-            Preconditions.checkNotNull( type, "Content type cannot be null" );
+            Objects.requireNonNull( type, "type is required for a Content" );
         }
 
         public Content build()

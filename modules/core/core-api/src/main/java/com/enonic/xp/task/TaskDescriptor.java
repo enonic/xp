@@ -2,8 +2,6 @@ package com.enonic.xp.task;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -92,7 +90,7 @@ public final class TaskDescriptor
 
         public TaskDescriptor build()
         {
-            Preconditions.checkNotNull( this.key, "key cannot be null" );
+            Objects.requireNonNull( this.key, "key is required" );
             return new TaskDescriptor( this );
         }
     }

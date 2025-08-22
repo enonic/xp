@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
@@ -267,7 +267,7 @@ final class RestoreContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public RestoreContentCommand build()

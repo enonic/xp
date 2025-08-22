@@ -1,6 +1,7 @@
 package com.enonic.xp.task;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -16,7 +17,7 @@ public final class TaskId
 
     private TaskId( final String value )
     {
-        Preconditions.checkNotNull( value, "TaskId cannot be null" );
+        Objects.requireNonNull( value, "TaskId cannot be null" );
         Preconditions.checkArgument( !value.isBlank(), "TaskId cannot be blank" );
         this.value = value;
     }

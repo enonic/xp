@@ -39,7 +39,7 @@ public final class Branch
             default:
             {
                 Preconditions.checkArgument( !isNullOrEmpty( name ), "Branch name cannot be null or empty" );
-                Preconditions.checkArgument( name.matches( VALID_BRANCH_ID_REGEX ), "Branch name format incorrect: " + name );
+                Preconditions.checkArgument( name.matches( VALID_BRANCH_ID_REGEX ), "Branch name format incorrect: %s", name );
                 return new Branch( name );
             }
         }

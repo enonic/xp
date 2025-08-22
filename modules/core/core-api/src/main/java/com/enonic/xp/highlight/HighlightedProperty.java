@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 
@@ -80,7 +79,7 @@ public final class HighlightedProperty
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "name must be set" );
+            Objects.requireNonNull( name, "name is required" );
         }
 
         public HighlightedProperty build()

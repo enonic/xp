@@ -2,8 +2,6 @@ package com.enonic.xp.blob;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 public final class NodeVersionKey
 {
     private final BlobKey nodeBlobKey;
@@ -106,9 +104,9 @@ public final class NodeVersionKey
 
         private void validate()
         {
-            Preconditions.checkNotNull( nodeBlobKey, "nodeBlobKey cannot be null" );
-            Preconditions.checkNotNull( indexConfigBlobKey, "indexConfigBlobKey cannot be null" );
-            Preconditions.checkNotNull( accessControlBlobKey, "accessControlBlobKey cannot be null" );
+            Objects.requireNonNull( nodeBlobKey, "nodeBlobKey cannot be null" );
+            Objects.requireNonNull( indexConfigBlobKey, "indexConfigBlobKey cannot be null" );
+            Objects.requireNonNull( accessControlBlobKey, "accessControlBlobKey cannot be null" );
         }
 
         public NodeVersionKey build()

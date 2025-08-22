@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.node.CreateNodeParams;
@@ -75,7 +75,7 @@ public class ApplicationRepoInitializer
         protected void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( nodeService );
+            Objects.requireNonNull( nodeService );
         }
 
         public ApplicationRepoInitializer build()

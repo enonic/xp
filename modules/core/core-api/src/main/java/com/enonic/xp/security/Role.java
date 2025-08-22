@@ -1,8 +1,8 @@
 package com.enonic.xp.security;
 
-import com.enonic.xp.annotation.PublicApi;
+import com.google.common.base.Preconditions;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class Role
@@ -40,7 +40,7 @@ public final class Role
         protected void validate()
         {
             super.validate();
-            checkArgument( this.key.isRole(), "Invalid Principal Type for Role: " + this.key.getType() );
+            Preconditions.checkArgument( this.key.isRole(), "Invalid Principal Type for Role: %s", this.key.getType() );
         }
 
         public Role build()

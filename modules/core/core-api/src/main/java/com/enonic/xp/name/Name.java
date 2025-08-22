@@ -1,6 +1,6 @@
 package com.enonic.xp.name;
 
-import java.util.Arrays;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -28,10 +28,10 @@ public abstract class Name
 
     private static void validateName( final String name )
     {
-        Preconditions.checkNotNull( name, "name cannot be null" );
-        Preconditions.checkArgument( !name.trim().isEmpty(), "name cannot be empty" );
-        Preconditions.checkArgument( NameCharacterHelper.hasNoExplicitIllegal( name ), "Invalid name: '" + name + "'. Cannot contain " +
-            Arrays.toString( NameCharacterHelper.getExplicitlyIllegalCharacters() ) );
+        Objects.requireNonNull( name, "name cannot be null" );
+        Preconditions.checkArgument( !name.isBlank(), "name cannot be blank" );
+        Preconditions.checkArgument( NameCharacterHelper.hasNoExplicitIllegal( name ), "Invalid name: '%s'. Cannot contain %s", name,
+                                     NameCharacterHelper.EXPLICITLY_ILLEGAL_CHARACTERS );
         checkValidName( name );
     }
 
