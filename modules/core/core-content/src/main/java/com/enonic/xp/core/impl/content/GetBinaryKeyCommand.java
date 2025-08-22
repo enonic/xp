@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -66,8 +65,8 @@ final class GetBinaryKeyCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentId, "contentId must be set" );
-            Preconditions.checkNotNull( binaryReference, "binaryReference must be set" );
+            Objects.requireNonNull( contentId, "contentId is required" );
+            Objects.requireNonNull( binaryReference, "binaryReference is required" );
         }
 
         public GetBinaryKeyCommand build()

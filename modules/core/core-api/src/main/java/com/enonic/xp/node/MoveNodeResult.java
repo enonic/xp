@@ -1,8 +1,8 @@
 package com.enonic.xp.node;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 public final class MoveNodeResult
@@ -75,8 +75,8 @@ public final class MoveNodeResult
 
             private void validate()
             {
-                Preconditions.checkNotNull( previousPath, "previousPath must be set" );
-                Preconditions.checkNotNull( node, "node must be set" );
+                Objects.requireNonNull( previousPath );
+                Objects.requireNonNull( node );
             }
 
             public MovedNode build()

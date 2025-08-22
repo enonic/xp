@@ -3,10 +3,10 @@ package com.enonic.xp.event;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.convert.Converters;
@@ -216,7 +216,7 @@ public final class Event
 
         private void validate()
         {
-            Preconditions.checkNotNull( type, "type cannot be null" );
+            Objects.requireNonNull( type, "type is required" );
         }
 
 

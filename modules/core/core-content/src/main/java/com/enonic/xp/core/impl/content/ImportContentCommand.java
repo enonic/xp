@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
@@ -69,7 +69,7 @@ final class ImportContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params, "params must be given" );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public ImportContentCommand build()

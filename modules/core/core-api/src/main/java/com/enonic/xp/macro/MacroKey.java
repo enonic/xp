@@ -2,8 +2,6 @@ package com.enonic.xp.macro;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.util.CharacterChecker;
@@ -61,7 +59,7 @@ public final class MacroKey
 
     public static MacroKey from( final String key )
     {
-        Preconditions.checkNotNull( key, "MacroKey can't be null" );
+        Objects.requireNonNull( key, "MacroKey cannot be null" );
         final int index = key.indexOf( SEPARATOR );
         final String applicationKey = index == -1 ? key : key.substring( 0, index );
         final String macroName = index == -1 ? "" : key.substring( index + 1 );

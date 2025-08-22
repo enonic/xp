@@ -1,6 +1,7 @@
 package com.enonic.xp.app;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.osgi.framework.Bundle;
 
@@ -29,7 +30,7 @@ public final class ApplicationKey
 
     private ApplicationKey( final String name )
     {
-        Preconditions.checkNotNull( name, "ApplicationKey cannot be null" );
+        Objects.requireNonNull( name, "ApplicationKey cannot be null" );
         Preconditions.checkArgument( !name.isBlank(), "ApplicationKey cannot be blank" );
         this.name = CharacterChecker.check( name, "Not a valid ApplicationKey [" + name + "]" );
     }

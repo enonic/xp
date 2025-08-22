@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByQueryResult;
@@ -74,7 +74,7 @@ public class FindNodesByQueryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.query );
+            Objects.requireNonNull( this.query, "query is required" );
         }
 
         public FindNodesByQueryCommand build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -101,9 +101,9 @@ public class SingleRepoSearchSource
 
         private void validate()
         {
-            Preconditions.checkNotNull( repositoryId, "RepositoryId must be set in search-source" );
-            Preconditions.checkNotNull( branch, "Branch must be set in search-source" );
-            Preconditions.checkNotNull( acl, "ACL must be set in search-source" );
+            Objects.requireNonNull( repositoryId, "repositoryId is required in search-source" );
+            Objects.requireNonNull( branch, "branch required in search-source" );
+            Objects.requireNonNull( acl, "acl is required in search-source" );
         }
 
         public SingleRepoSearchSource build()

@@ -2,8 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentQuery;
@@ -95,7 +94,7 @@ final class FindContentIdsByQueryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( query );
+            Objects.requireNonNull( query, "query is required" );
         }
 
     }

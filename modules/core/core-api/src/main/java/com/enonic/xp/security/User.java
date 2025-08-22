@@ -170,11 +170,11 @@ public final class User
         protected void validate()
         {
             super.validate();
-            Preconditions.checkArgument( this.key.isUser(), "Invalid Principal Type for User: " + this.key.getType() );
-            Preconditions.checkNotNull( this.login, "login is required for a User" );
+            Objects.requireNonNull( this.login, "login is required for a User" );
+            Preconditions.checkArgument( this.key.isUser(), "Invalid Principal Type for User: %s", this.key.getType() );
             if ( !isNullOrEmpty( this.email ) )
             {
-                Preconditions.checkArgument( EmailValidator.isValid( this.email ), "Email [" + this.email + "] is not valid" );
+                Preconditions.checkArgument( EmailValidator.isValid( this.email ), "Email [%s] is not valid", this.email );
             }
         }
 

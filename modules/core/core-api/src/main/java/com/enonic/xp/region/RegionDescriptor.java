@@ -3,8 +3,6 @@ package com.enonic.xp.region;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -14,8 +12,7 @@ public final class RegionDescriptor
 
     private RegionDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "name cannot be null" );
-        this.name = builder.name;
+        this.name = Objects.requireNonNull( builder.name, "name cannot be null" );
     }
 
     public String getName()

@@ -3,14 +3,13 @@ package com.enonic.xp.core.impl.security;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
@@ -382,8 +381,8 @@ public final class SecurityInitializer
         protected void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( securityService );
-            Preconditions.checkNotNull( nodeService );
+            Objects.requireNonNull( securityService );
+            Objects.requireNonNull( nodeService );
         }
 
         public SecurityInitializer build()

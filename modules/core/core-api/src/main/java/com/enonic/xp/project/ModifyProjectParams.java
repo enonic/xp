@@ -1,6 +1,6 @@
 package com.enonic.xp.project;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.site.SiteConfig;
@@ -90,7 +90,7 @@ public final class ModifyProjectParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "projectName cannot be null" );
+            Objects.requireNonNull( name, "name is required" );
         }
 
         public ModifyProjectParams build()

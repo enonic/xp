@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -76,7 +76,7 @@ public class FindNodesByMultiRepoQueryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.query );
+            Objects.requireNonNull( this.query, "query is required" );
         }
 
         public FindNodesByMultiRepoQueryCommand build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.project.ProjectName;
 
@@ -25,7 +25,7 @@ abstract class AbstractProjectCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( projectName, "Project name cannot be null" );
+            Objects.requireNonNull( projectName, "projectName is required" );
         }
 
     }

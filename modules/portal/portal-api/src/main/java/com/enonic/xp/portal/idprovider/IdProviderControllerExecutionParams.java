@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.idprovider;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -107,11 +109,9 @@ public final class IdProviderControllerExecutionParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( functionName, "functionName cannot be null" );
-            if ( servletRequest == null && portalRequest == null )
-            {
-                throw new NullPointerException( "servletRequest and portalRequest cannot be both null" );
-            }
+            Objects.requireNonNull( functionName, "functionName is required" );
+            Preconditions.checkArgument( servletRequest != null || portalRequest != null,
+                                         "servletRequest and portalRequest cannot be both null" );
         }
 
         public IdProviderControllerExecutionParams build()

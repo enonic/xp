@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -88,9 +88,9 @@ public final class RenameNodeParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.nodeId, "id cannot be null" );
-            Preconditions.checkNotNull( this.newNodeName, "name cannot be null" );
-            Preconditions.checkNotNull( this.processor, "processor cannot be null" );
+            Objects.requireNonNull( this.nodeId, "nodeId is required" );
+            Objects.requireNonNull( this.newNodeName, "newNodeName is required" );
+            Objects.requireNonNull( this.processor, "processor cannot be null" );
         }
 
         public RenameNodeParams build()

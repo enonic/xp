@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.audit;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
@@ -69,7 +69,7 @@ public class AuditLogRepoInitializer
         protected void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( repositoryService );
+            Objects.requireNonNull( repositoryService );
         }
 
         public AuditLogRepoInitializer build()

@@ -18,8 +18,8 @@ public final class Occurrences
 
     public Occurrences( final int minimum, final int maximum )
     {
-        Preconditions.checkArgument( minimum >= 0 );
-        Preconditions.checkArgument( maximum >= 0 );
+        Preconditions.checkArgument( minimum >= 0,  "minimum must not be negative" );
+        Preconditions.checkArgument( maximum >= 0, "maximum must not be negative" );
 
         this.minimum = minimum;
         this.maximum = maximum;

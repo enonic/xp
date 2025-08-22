@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.content.index;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor;
@@ -205,7 +204,7 @@ public class ContentIndexConfigFactory
 
         private void validate()
         {
-            Preconditions.checkNotNull( contentTypeService );
+            Objects.requireNonNull( contentTypeService );
         }
 
         public ContentIndexConfigFactory build()

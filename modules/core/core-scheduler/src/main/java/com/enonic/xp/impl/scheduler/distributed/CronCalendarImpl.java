@@ -3,6 +3,7 @@ package com.enonic.xp.impl.scheduler.distributed;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
 
@@ -12,7 +13,6 @@ import com.cronutils.model.definition.CronDefinition;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -130,8 +130,8 @@ public final class CronCalendarImpl
 
         protected void validate()
         {
-            Preconditions.checkNotNull( value, "value must be set." );
-            Preconditions.checkNotNull( timeZone, "timeZone must be set." );
+            Objects.requireNonNull( value, "value is required" );
+            Objects.requireNonNull( timeZone, "timeZone is required" );
         }
 
         public CronCalendarImpl build()

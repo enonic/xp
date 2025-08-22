@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.project.Project;
@@ -70,9 +70,9 @@ final class ProjectSyncCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( this.params, "params must be set." );
-            Preconditions.checkNotNull( this.projectService, "projectService must be set." );
-            Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
+            Objects.requireNonNull( this.projectService );
+            Objects.requireNonNull( this.contentSynchronizer );
+            Objects.requireNonNull( params, "params cannot be null" );;
         }
 
         public ProjectSyncCommand build()

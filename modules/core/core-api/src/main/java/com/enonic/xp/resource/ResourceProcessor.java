@@ -1,8 +1,7 @@
 package com.enonic.xp.resource;
 
+import java.util.Objects;
 import java.util.function.Function;
-
-import com.google.common.base.Preconditions;
 
 public final class ResourceProcessor<K, V>
 {
@@ -84,10 +83,10 @@ public final class ResourceProcessor<K, V>
 
         public ResourceProcessor<K, V> build()
         {
-            Preconditions.checkNotNull( this.key, "key is required" );
-            Preconditions.checkNotNull( this.segment, "segment is required" );
-            Preconditions.checkNotNull( this.keyTranslator, "keyTranslator is required" );
-            Preconditions.checkNotNull( this.processor, "processor is required" );
+            Objects.requireNonNull( this.key, "key is required" );
+            Objects.requireNonNull( this.segment, "segment is required" );
+            Objects.requireNonNull( this.keyTranslator, "keyTranslator is required" );
+            Objects.requireNonNull( this.processor, "processor is required" );
 
             return new ResourceProcessor<>( this );
         }

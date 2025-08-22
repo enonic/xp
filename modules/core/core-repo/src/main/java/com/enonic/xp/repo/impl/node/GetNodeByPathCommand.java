@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -59,7 +59,7 @@ public class GetNodeByPathCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.path );
+            Objects.requireNonNull( this.path, "path is required" );
         }
 
         public GetNodeByPathCommand build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
@@ -58,7 +58,7 @@ public final class UpdateProjectRoleNamesCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.projectDisplayName, "Project display name is required" );
+            Objects.requireNonNull( this.projectDisplayName, "Project display name is required" );
         }
 
         public UpdateProjectRoleNamesCommand build()

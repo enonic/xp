@@ -1,6 +1,6 @@
 package com.enonic.xp.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -56,8 +56,8 @@ public final class ModifyScheduledJobParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "name must be set." );
-            Preconditions.checkNotNull( editor, "editor must be set." );
+            Objects.requireNonNull( name, "name is required" );
+            Objects.requireNonNull( editor, "editor is required" );
         }
 
         public ModifyScheduledJobParams build()

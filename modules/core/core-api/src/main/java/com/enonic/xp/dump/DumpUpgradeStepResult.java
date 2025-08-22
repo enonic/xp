@@ -1,6 +1,6 @@
 package com.enonic.xp.dump;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.util.Version;
 
@@ -20,12 +20,9 @@ public final class DumpUpgradeStepResult
 
     private DumpUpgradeStepResult( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.initialVersion, "initialVersion cannot be null" );
-        Preconditions.checkNotNull( builder.upgradedVersion, "upgradedVersion cannot be null" );
-        Preconditions.checkNotNull( builder.stepName, "stepName cannot be null" );
-        initialVersion = builder.initialVersion;
-        upgradedVersion = builder.upgradedVersion;
-        stepName = builder.stepName;
+        initialVersion = Objects.requireNonNull( builder.initialVersion, "initialVersion cannot be null" );
+        upgradedVersion = Objects.requireNonNull( builder.upgradedVersion, "upgradedVersion cannot be null" );
+        stepName = Objects.requireNonNull( builder.stepName, "stepName cannot be null" );
         processed = builder.processed;
         errors = builder.errors;
         warnings = builder.warnings;

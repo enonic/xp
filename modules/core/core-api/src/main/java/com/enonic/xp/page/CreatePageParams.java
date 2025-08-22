@@ -1,6 +1,6 @@
 package com.enonic.xp.page;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentId;
@@ -104,6 +104,6 @@ public final class CreatePageParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.content, "content cannot be null" );
+        Objects.requireNonNull( this.content, "content is required" );
     }
 }

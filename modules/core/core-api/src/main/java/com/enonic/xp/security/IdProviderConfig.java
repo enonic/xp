@@ -3,8 +3,6 @@ package com.enonic.xp.security;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
@@ -18,8 +16,7 @@ public final class IdProviderConfig
 
     private IdProviderConfig( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.applicationKey, "applicationKey cannot be null" );
-        this.applicationKey = builder.applicationKey;
+        this.applicationKey = Objects.requireNonNull( builder.applicationKey, "applicationKey cannot be null" );
         this.config = builder.config == null ? new PropertyTree() : builder.config;
     }
 

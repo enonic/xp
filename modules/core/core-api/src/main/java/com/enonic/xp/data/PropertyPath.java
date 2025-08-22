@@ -3,6 +3,7 @@ package com.enonic.xp.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
@@ -29,35 +30,35 @@ public final class PropertyPath
 
     public static PropertyPath from( final PropertyPath parentPath, final String element )
     {
-        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( element, "element cannot be null" );
+        Objects.requireNonNull( parentPath, "parentPath cannot be null" );
+        Objects.requireNonNull( element, "element cannot be null" );
         return new PropertyPath( parentPath, new Element( element ) );
     }
 
     public static PropertyPath from( final PropertyPath parentPath, final Element element )
     {
-        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( element, "element cannot be null" );
+        Objects.requireNonNull( parentPath, "parentPath cannot be null" );
+        Objects.requireNonNull( element, "element cannot be null" );
 
         return new PropertyPath( parentPath, element );
     }
 
     public static PropertyPath from( final Iterable<Element> pathElements )
     {
-        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        Objects.requireNonNull( pathElements, "pathElements cannot be null" );
         return new PropertyPath( ImmutableList.copyOf( pathElements ) );
     }
 
     public static PropertyPath from( final String path )
     {
-        Preconditions.checkNotNull( path, "path cannot be null" );
+        Objects.requireNonNull( path, "path cannot be null" );
         return new PropertyPath( splitPathIntoElements( path ) );
     }
 
     public static PropertyPath from( final String parentPath, final String... children )
     {
-        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( children, "children cannot be null" );
+        Objects.requireNonNull( parentPath, "parentPath cannot be null" );
+        Objects.requireNonNull( children, "children cannot be null" );
 
         final List<Element> elements = new ArrayList<>( splitPathIntoElements( parentPath ) );
 
@@ -71,7 +72,7 @@ public final class PropertyPath
 
     public static PropertyPath from( final Element... pathElements )
     {
-        Preconditions.checkNotNull( pathElements, "pathElements cannot be null" );
+        Objects.requireNonNull( pathElements, "pathElements cannot be null" );
         return new PropertyPath( ImmutableList.copyOf( pathElements ) );
     }
 
@@ -82,8 +83,8 @@ public final class PropertyPath
 
     private PropertyPath( final PropertyPath parentPath, final Element element )
     {
-        Preconditions.checkNotNull( parentPath, "parentPath cannot be null" );
-        Preconditions.checkNotNull( element, "element cannot be null" );
+        Objects.requireNonNull( parentPath, "parentPath cannot be null" );
+        Objects.requireNonNull( element, "element cannot be null" );
 
         final ImmutableList.Builder<Element> elementBuilder = ImmutableList.builder();
         elementBuilder.addAll( parentPath.pathElements() ).add( element );
@@ -240,7 +241,7 @@ public final class PropertyPath
 
         public Element( final String element )
         {
-            Preconditions.checkNotNull( element, "Element cannot be null" );
+            Objects.requireNonNull( element, "Element cannot be null" );
             Preconditions.checkArgument( !element.isEmpty(), "Element cannot be empty" );
 
             int indexStart = element.indexOf( INDEX_START_MARKER );
@@ -277,7 +278,7 @@ public final class PropertyPath
 
         public Element( final String name, final int index )
         {
-            Preconditions.checkNotNull( name, "Element name cannot be null" );
+            Objects.requireNonNull( name, "Element name cannot be null" );
             Preconditions.checkArgument( !isNullOrEmpty( name ), "Element name cannot be empty" );
             Preconditions.checkArgument( index >= 0, "an index cannot be less than zero" );
 

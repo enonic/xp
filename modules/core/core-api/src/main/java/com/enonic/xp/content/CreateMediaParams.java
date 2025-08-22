@@ -3,7 +3,6 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -107,9 +106,9 @@ public final class CreateMediaParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.parent, "parent cannot be null. Use ContentPath.ROOT when content has no parent." );
-        Preconditions.checkNotNull( this.name, "name cannot be null" );
-        Preconditions.checkNotNull( this.byteSource, "byteSource cannot be null" );
+        Objects.requireNonNull( this.parent, "parent is required" );
+        Objects.requireNonNull( this.name, "name is required" );
+        Objects.requireNonNull( this.byteSource, "byteSource is required" );
     }
 
     public ContentPath getParent()

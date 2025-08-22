@@ -3,7 +3,6 @@ package com.enonic.xp.attachment;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -26,11 +25,8 @@ public final class Attachment
 
     public Attachment( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.name, "name is mandatory for an Attachment" );
-        Preconditions.checkNotNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
-
-        this.mimeType = builder.mimeType;
-        this.name = builder.name;
+        this.mimeType = Objects.requireNonNull( builder.mimeType, "mimeType is mandatory for an Attachment" );
+        this.name = Objects.requireNonNull( builder.name, "name is mandatory for an Attachment" );
         this.sha512 = builder.sha512;
         this.size = builder.size;
         this.label = builder.label;

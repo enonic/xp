@@ -2,8 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -138,7 +136,7 @@ public final class DuplicateNodeParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.nodeId, "id cannot be null" );
+            Objects.requireNonNull( this.nodeId, "nodeId is required" );
         }
 
         public DuplicateNodeParams build()

@@ -2,13 +2,12 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardMatcher;
@@ -279,10 +278,10 @@ abstract class AbstractContentCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( nodeService, "nodeService cannot be null" );
-            Preconditions.checkNotNull( contentTypeService, "contentTypesService cannot be null" );
-            Preconditions.checkNotNull( eventPublisher, "eventPublisher cannot be null" );
-            Preconditions.checkNotNull( translator, "translator cannot be null" );
+            Objects.requireNonNull( nodeService );
+            Objects.requireNonNull( contentTypeService );
+            Objects.requireNonNull( eventPublisher );
+            Objects.requireNonNull( translator );
         }
     }
 

@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.lib.scheduler.mapper.ScheduledJobMapper;
 import com.enonic.xp.scheduler.EditableScheduledJob;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -132,8 +132,8 @@ public final class ModifyScheduledJobHandler
     @Override
     protected void validate()
     {
-        Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set." );
-        Preconditions.checkArgument( editor != null, "editor must be set." );
+        Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set" );
+        Preconditions.checkArgument( editor != null, "editor must be set" );
     }
 
     public void setName( final String value )

@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -194,8 +193,8 @@ public class ReorderChildNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( parentNode );
-            Preconditions.checkNotNull( nodeToMove );
+            Objects.requireNonNull( parentNode, "parentNode is required" );
+            Objects.requireNonNull( nodeToMove, "nodeToMove is required" );
         }
 
         public ReorderChildNodeCommand build()

@@ -1,10 +1,10 @@
 package com.enonic.xp.impl.server.rest.model;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 
 public class ImportNodesRequestJson
 {
@@ -30,8 +30,8 @@ public class ImportNodesRequestJson
 
     {
 
-        Preconditions.checkNotNull( exportName, "exportName not given" );
-        Preconditions.checkNotNull( targetRepoPath, "targetRepoPath not given" );
+        Objects.requireNonNull( exportName, "exportName is required" );
+        Objects.requireNonNull( targetRepoPath, "targetRepoPath is required" );
 
         this.targetRepoPath = RepoPath.from( targetRepoPath );
         this.exportName = exportName;

@@ -1,10 +1,10 @@
 package com.enonic.xp.security;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @PublicApi
 public final class CreateRoleParams
@@ -17,8 +17,8 @@ public final class CreateRoleParams
 
     private CreateRoleParams( final Builder builder )
     {
-        this.key = checkNotNull( builder.principalKey, "roleKey is required for a role" );
-        this.displayName = checkNotNull( builder.displayName, "displayName is required for a role" );
+        this.key = Objects.requireNonNull( builder.principalKey, "roleKey is required for a role" );
+        this.displayName = Objects.requireNonNull( builder.displayName, "displayName is required for a role" );
         this.description = builder.description;
     }
 
@@ -56,7 +56,7 @@ public final class CreateRoleParams
 
         public Builder roleKey( final PrincipalKey value )
         {
-            Preconditions.checkArgument( value.isRole(), "Invalid PrincipalType for role key: " + value.getType() );
+            Preconditions.checkArgument( value.isRole(), "Invalid PrincipalType for role key: %s", value.getType() );
             this.principalKey = value;
             return this;
         }

@@ -1,12 +1,11 @@
 package com.enonic.xp.security;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.mail.EmailValidator;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @PublicApi
 public final class UpdateUserParams
@@ -23,11 +22,11 @@ public final class UpdateUserParams
 
     private UpdateUserParams( final Builder builder )
     {
-        this.key = checkNotNull( builder.principalKey, "userKey is required for a user" );
+        this.key = Objects.requireNonNull( builder.principalKey, "userKey is required for a user" );
         this.displayName = builder.displayName;
         if ( builder.email != null )
         {
-            checkArgument( EmailValidator.isValid( builder.email ), "Email [" + builder.email + "] is not valid" );
+            Preconditions.checkArgument( EmailValidator.isValid( builder.email ), "Email [%s] is not valid", builder.email );
         }
         this.email = builder.email;
         this.login = builder.login;
@@ -120,7 +119,7 @@ public final class UpdateUserParams
 
         public Builder userKey( final PrincipalKey value )
         {
-            Preconditions.checkArgument( value.isUser(), "Invalid PrincipalType for user key: " + value.getType() );
+            Preconditions.checkArgument( value.isUser(), "Invalid PrincipalType for user key: %s", value.getType() );
             this.principalKey = value;
             return this;
         }

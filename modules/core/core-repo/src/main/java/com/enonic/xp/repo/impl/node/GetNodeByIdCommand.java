@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -58,7 +58,7 @@ public class GetNodeByIdCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.id );
+            Objects.requireNonNull( this.id, "id is required" );
         }
 
         public GetNodeByIdCommand build()

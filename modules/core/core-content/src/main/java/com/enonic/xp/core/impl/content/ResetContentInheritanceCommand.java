@@ -2,11 +2,10 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
@@ -165,9 +164,9 @@ final class ResetContentInheritanceCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.projectService, "projectService must be set." );
-            Preconditions.checkNotNull( this.contentService, "contentService must be set." );
-            Preconditions.checkNotNull( this.contentSynchronizer, "contentSynchronizer must be set." );
+            Objects.requireNonNull( this.projectService );
+            Objects.requireNonNull( this.contentService );
+            Objects.requireNonNull( this.contentSynchronizer );
         }
 
         public ResetContentInheritanceCommand build()

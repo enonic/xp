@@ -1,6 +1,6 @@
 package com.enonic.xp.schema.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -33,6 +33,6 @@ public final class GetContentTypeParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.contentTypeName, "contentTypeName cannot be null" );
+        Objects.requireNonNull( this.contentTypeName, "contentTypeName is required" );
     }
 }

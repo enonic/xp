@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
@@ -69,7 +69,7 @@ public class ModifyScheduledJobCommand
         @Override
         protected void validate()
         {
-            Preconditions.checkNotNull( params, "params cannot be null" );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         @Override

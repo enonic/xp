@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.context.ContextAccessor;
@@ -67,8 +68,8 @@ abstract class AbstractGetBinaryCommand
 
         @Override
         void validate() {
-            Preconditions.checkNotNull( binaryService, "binaryBlobStore not set" );
-            Preconditions.checkNotNull( binaryReference, "binaryReference must be set" );
+            Objects.requireNonNull( binaryService );
+            Objects.requireNonNull( binaryReference, "binaryReference is required" );
         }
     }
 }

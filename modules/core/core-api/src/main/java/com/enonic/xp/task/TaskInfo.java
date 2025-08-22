@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
@@ -38,14 +37,14 @@ public final class TaskInfo
 
     private TaskInfo( final Builder builder )
     {
-        id = Preconditions.checkNotNull( builder.id, "Task id cannot be null" );
-        application = Preconditions.checkNotNull( builder.application, "Task application cannot be null" );
-        name = Preconditions.checkNotNull( builder.name, "Task name cannot be null" );
+        id = Objects.requireNonNull( builder.id, "Task id is required" );
+        application = Objects.requireNonNull( builder.application, "Task application is required" );
+        name = Objects.requireNonNull( builder.name, "Task name is required" );
         state = Objects.requireNonNullElse( builder.state, TaskState.WAITING );
         description = Objects.requireNonNullElse( builder.description, "" );
         progress = Objects.requireNonNullElse( builder.progress, TaskProgress.EMPTY );
         user = Objects.requireNonNullElse( builder.user, PrincipalKey.ofAnonymous() );
-        startTime = Preconditions.checkNotNull( builder.startTime, "Task startTime cannot be null" );
+        startTime = Objects.requireNonNull( builder.startTime, "Task startTime is required" );
         node = builder.node;
     }
 

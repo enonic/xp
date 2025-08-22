@@ -1,8 +1,7 @@
 package com.enonic.xp.region;
 
 import java.time.Instant;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
@@ -33,13 +32,12 @@ public abstract class ComponentDescriptor
     {
         super( builder.key );
 
-        Preconditions.checkNotNull( builder.config, "config cannot be null" );
         this.displayName = builder.displayName == null || builder.displayName.isBlank() ? builder.name : builder.displayName;
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.modifiedTime = builder.modifiedTime;
-        this.config = builder.config;
+        this.config = Objects.requireNonNull( builder.config, "config cannot be null" );
         this.schemaConfig = builder.schemaConfig.build();
     }
 

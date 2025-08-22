@@ -51,8 +51,8 @@ final class FormItems
 
     FormItem getFormItem( final FormItemPath path )
     {
-        Preconditions.checkNotNull( path, "path cannot be null" );
-        Preconditions.checkArgument( path.elementCount() >= 1, "path must be something: " + path );
+        Objects.requireNonNull( path, "path cannot be null" );
+        Preconditions.checkArgument( path.elementCount() >= 1, "path must have at least one element" );
 
         if ( path.elementCount() > 1 )
         {
@@ -204,7 +204,7 @@ final class FormItems
     private <T extends FormItem> void checkFormItemType( final Class<T> type, final FormItem formItem )
     {
         Preconditions.checkArgument( type.isInstance( formItem ),
-                                     "FormItem [%s] in [%s] is not of type %s: " + formItem.getClass().getName(), this.getPath(),
-                                     formItem.getName(), type.getSimpleName() );
+                                     "FormItem [%s] in [%s] is not of type %s: %s", this.getPath(),
+                                     formItem.getName(), type.getSimpleName(), formItem.getClass().getName() );
     }
 }

@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -126,7 +126,7 @@ final class MoveContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );;
         }
 
         public MoveContentCommand build()

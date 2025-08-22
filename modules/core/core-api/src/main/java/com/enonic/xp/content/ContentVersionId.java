@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -13,7 +11,7 @@ public final class ContentVersionId
 
     private ContentVersionId( final String value )
     {
-        Preconditions.checkNotNull( value );
+        Objects.requireNonNull( value, "ContentVersionId cannot be null" );
         this.value = value;
     }
 

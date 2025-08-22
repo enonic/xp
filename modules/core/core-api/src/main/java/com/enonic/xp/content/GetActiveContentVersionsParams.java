@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branches;
@@ -57,7 +57,7 @@ public final class GetActiveContentVersionsParams
 
         public GetActiveContentVersionsParams build()
         {
-            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
+            Objects.requireNonNull( this.contentId, "contentId is required" );
             return new GetActiveContentVersionsParams( this );
         }
     }

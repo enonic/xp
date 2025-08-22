@@ -1,16 +1,16 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentName;
-import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.FileNames;
@@ -152,7 +152,7 @@ class AbstractCreatingOrUpdatingContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( xDataService, "xDataService cannot be null" );
+            Objects.requireNonNull( xDataService );
         }
     }
 

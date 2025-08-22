@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
@@ -123,11 +125,8 @@ public final class UpdateNodeParams
 
         private void validate()
         {
-            if ( this.id == null && this.path == null )
-            {
-                throw new NullPointerException( "id and path cannot be both null" );
-            }
-            Preconditions.checkNotNull( this.editor, "editor cannot be null" );
+            Preconditions.checkArgument( this.id != null || this.path != null, "Either id or path is required" );
+            Objects.requireNonNull( this.editor, "editor is required" );
         }
     }
 }

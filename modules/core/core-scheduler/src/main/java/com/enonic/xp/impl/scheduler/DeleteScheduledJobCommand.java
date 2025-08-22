@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.NodeName;
@@ -55,7 +55,7 @@ public class DeleteScheduledJobCommand
         @Override
         protected void validate()
         {
-            Preconditions.checkNotNull( name, "name cannot be null." );
+            Objects.requireNonNull( name, "name is required" );
         }
 
         @Override

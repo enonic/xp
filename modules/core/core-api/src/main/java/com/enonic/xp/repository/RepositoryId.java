@@ -2,6 +2,7 @@ package com.enonic.xp.repository;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 
@@ -13,15 +14,15 @@ public final class RepositoryId
 {
     private static final long serialVersionUID = 0;
 
-    public static final String VALID_REPOSITORY_ID_REGEX = "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*";
+    public static final Pattern VALID_REPOSITORY_ID_REGEX = Pattern.compile( "([a-z0-9\\-:])([a-z0-9_\\-\\.:])*" );
 
     private final String value;
 
     private RepositoryId( final String value )
     {
-        Preconditions.checkNotNull( value, "RepositoryId cannot be null" );
+        Objects.requireNonNull( value, "RepositoryId cannot be null" );
         Preconditions.checkArgument( !value.isBlank(), "RepositoryId cannot be blank" );
-        Preconditions.checkArgument( value.matches( "^" + VALID_REPOSITORY_ID_REGEX + "$" ), "RepositoryId format incorrect: " + value );
+        Preconditions.checkArgument( VALID_REPOSITORY_ID_REGEX.matcher( value ).matches(), "RepositoryId format incorrect: %s", value );
         this.value = value;
     }
 

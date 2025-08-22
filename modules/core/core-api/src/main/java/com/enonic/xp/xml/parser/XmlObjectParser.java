@@ -1,7 +1,5 @@
 package com.enonic.xp.xml.parser;
 
-import java.util.Collection;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
@@ -98,12 +96,6 @@ public abstract class XmlObjectParser<P extends XmlObjectParser<P>>
 
     protected final void assertTagName( final DomElement elem, final String name )
     {
-        Preconditions.checkArgument( elem.getTagName().equals( name ), "Element [" + name + "] is required" );
-    }
-
-    protected final void assertTagNames( final DomElement elem, final Collection<String> names )
-    {
-        Preconditions.checkArgument( names.stream().anyMatch( name -> elem.getTagName().equals( name ) ),
-                                     "Any of tag names: [" + String.join( ", ", names ) + "] is required" );
+        Preconditions.checkArgument( elem.getTagName().equals( name ), "Element [%s] is required", name );
     }
 }

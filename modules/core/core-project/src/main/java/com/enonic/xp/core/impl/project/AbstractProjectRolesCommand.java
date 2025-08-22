@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKey;
@@ -96,7 +95,7 @@ abstract class AbstractProjectRolesCommand
         @Override
         void validate()
         {
-            Preconditions.checkNotNull( securityService, "securityService cannot be null" );
+            Objects.requireNonNull( securityService );
         }
     }
 

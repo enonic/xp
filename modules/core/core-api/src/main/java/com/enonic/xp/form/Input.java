@@ -49,13 +49,10 @@ public final class Input
     {
         super();
 
-        Preconditions.checkNotNull( builder.name, "a name is required for a Input" );
-        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "a name is required for a Input" );
-        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: " + builder.name );
-        Preconditions.checkNotNull( builder.inputType, "inputType cannot be null" );
-
-        Preconditions.checkNotNull( builder.label, "a label is required for a Input" );
-        Preconditions.checkArgument( !nullToEmpty( builder.label ).isBlank(), "a label is required for a Input" );
+        Preconditions.checkArgument( !nullToEmpty( builder.name ).isBlank(), "name is required for a Input" );
+        Preconditions.checkArgument( !builder.name.contains( "." ), "name cannot contain punctuations: %s", builder.name );
+        Objects.requireNonNull( builder.inputType, "inputType is required for a Input" );
+        Preconditions.checkArgument( !nullToEmpty( builder.label ).isBlank(), "label is required for a Input" );
 
         this.name = builder.name;
         this.type = builder.inputType;

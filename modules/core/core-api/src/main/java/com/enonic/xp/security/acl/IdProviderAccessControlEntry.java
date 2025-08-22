@@ -5,8 +5,6 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @PublicApi
 public final class IdProviderAccessControlEntry
 {
@@ -16,8 +14,8 @@ public final class IdProviderAccessControlEntry
 
     private IdProviderAccessControlEntry( final Builder builder )
     {
-        this.principal = checkNotNull( builder.principal, "principal cannot be null" );
-        this.access = checkNotNull( builder.access, "access cannot be null" );
+        this.principal = Objects.requireNonNull( builder.principal, "principal cannot be null" );
+        this.access = Objects.requireNonNull( builder.access, "access cannot be null" );
     }
 
     public PrincipalKey getPrincipal()
@@ -33,7 +31,7 @@ public final class IdProviderAccessControlEntry
     @Override
     public String toString()
     {
-        return principal.toString() + "[" + access.toString().toLowerCase() + "]";
+        return principal + "[" + access.toString().toLowerCase() + "]";
     }
 
     public IdProviderAccess getAccess()

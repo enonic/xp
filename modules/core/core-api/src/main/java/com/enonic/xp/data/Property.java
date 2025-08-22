@@ -171,10 +171,7 @@ public final class Property
 
     public static void checkName( final String name )
     {
-        if ( name == null )
-        {
-            throw new NullPointerException( "Property name cannot be null" );
-        }
+        Objects.requireNonNull( name, "Property name cannot be null" );
         if ( name.isBlank() )
         {
             throw new IllegalArgumentException( "Property name cannot be blank" );

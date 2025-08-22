@@ -2,8 +2,6 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.icon.Icon;
 
@@ -18,8 +16,7 @@ public final class ApplicationDescriptor
 
     private ApplicationDescriptor( final Builder builder )
     {
-        Preconditions.checkNotNull( builder.key, "key is required" );
-        this.key = builder.key;
+        this.key = Objects.requireNonNull( builder.key, "key cannot be null" );
         this.description = builder.description != null ? builder.description : "";
         this.icon = builder.icon;
     }

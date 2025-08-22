@@ -23,7 +23,7 @@ public final class GetScheduledJobHandler
     @Override
     protected void validate()
     {
-        Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set." );
+        Preconditions.checkArgument( name != null && !name.getValue().isBlank(), "name must be set" );
     }
 
     public void setName( final String value )

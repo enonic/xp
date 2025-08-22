@@ -3,9 +3,6 @@ package com.enonic.xp.name;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
-import com.enonic.xp.annotation.PublicApi;
-
-@PublicApi
 final class NameCharacterHelper
 {
     private static final ImmutableSet<Character> ADDITIONAL_ALLOWED_CHARACTERS = ImmutableSet.of( ' ', '-' );
@@ -16,7 +13,7 @@ final class NameCharacterHelper
                          Character.INITIAL_QUOTE_PUNCTUATION, Character.OTHER_PUNCTUATION, Character.CURRENCY_SYMBOL,
                          Character.MODIFIER_SYMBOL, Character.MATH_SYMBOL, Character.OTHER_SYMBOL, Character.DASH_PUNCTUATION );
 
-    private static final String EXPLICITLY_ILLEGAL_CHARACTERS = "/\\*?|";
+    public static final String EXPLICITLY_ILLEGAL_CHARACTERS = "/\\*?|";
 
     private static final CharMatcher EXPLICITLY_ILLEGAL_CHAR_MATCHER = CharMatcher.anyOf( EXPLICITLY_ILLEGAL_CHARACTERS );
 
@@ -54,10 +51,5 @@ final class NameCharacterHelper
     static String getUnicodeString( final char c )
     {
         return "U+" + Integer.toHexString( c | 0x10000 ).substring( 1 );
-    }
-
-    public static char[] getExplicitlyIllegalCharacters()
-    {
-        return EXPLICITLY_ILLEGAL_CHARACTERS.toCharArray();
     }
 }

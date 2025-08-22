@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentId;
@@ -79,8 +79,8 @@ final class GetBinaryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentId, "contentId must be set" );
-            Preconditions.checkNotNull( binaryReference, "binaryReference must be set" );
+            Objects.requireNonNull( contentId, "contentId is required" );
+            Objects.requireNonNull( binaryReference, "binaryReference is required" );
         }
 
         public GetBinaryCommand build()

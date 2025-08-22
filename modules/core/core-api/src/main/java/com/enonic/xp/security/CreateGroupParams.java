@@ -1,10 +1,10 @@
 package com.enonic.xp.security;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @PublicApi
 public final class CreateGroupParams
@@ -17,8 +17,8 @@ public final class CreateGroupParams
 
     private CreateGroupParams( final Builder builder )
     {
-        this.key = checkNotNull( builder.principalKey, "groupKey is required for a group" );
-        this.displayName = checkNotNull( builder.displayName, "displayName is required for a group" );
+        this.key = Objects.requireNonNull( builder.principalKey, "groupKey is required for a group" );
+        this.displayName = Objects.requireNonNull( builder.displayName, "displayName is required for a group" );
         this.description = builder.description;
     }
 
@@ -56,7 +56,7 @@ public final class CreateGroupParams
 
         public Builder groupKey( final PrincipalKey value )
         {
-            Preconditions.checkArgument( value.isGroup(), "Invalid PrincipalType for group key: " + value.getType() );
+            Preconditions.checkArgument( value.isGroup(), "Invalid PrincipalType for group key: %s", value.getType() );
             this.principalKey = value;
             return this;
         }

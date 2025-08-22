@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.ContentQuery;
@@ -70,7 +70,7 @@ final class FindContentPathsByQueryCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentQuery );
+            Objects.requireNonNull( contentQuery, "contentQuery is required" );
         }
 
     }

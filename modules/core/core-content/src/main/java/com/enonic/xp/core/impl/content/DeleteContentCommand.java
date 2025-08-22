@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentId;
@@ -144,7 +144,7 @@ final class DeleteContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public DeleteContentCommand build()

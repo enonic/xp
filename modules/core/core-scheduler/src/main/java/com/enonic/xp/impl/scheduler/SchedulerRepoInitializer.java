@@ -1,6 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
@@ -70,7 +70,7 @@ public class SchedulerRepoInitializer
         protected void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( repositoryService );
+            Objects.requireNonNull( repositoryService );
         }
 
         public SchedulerRepoInitializer build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.vacuum.blob;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.data.ValueFactory;
@@ -82,9 +82,9 @@ public class IsBlobUsedByVersionCommand
 
         public IsBlobUsedByVersionCommand build()
         {
-            Preconditions.checkNotNull( nodeService, "nodeService cannot be null" );
-            Preconditions.checkNotNull( fieldPath, "fieldPath cannot be null" );
-            Preconditions.checkNotNull( blobKey, "blobKey cannot be null" );
+            Objects.requireNonNull( nodeService );
+            Objects.requireNonNull( fieldPath, "fieldPath is required" );
+            Objects.requireNonNull( blobKey, "blobKey is required" );
             return new IsBlobUsedByVersionCommand( this );
         }
     }

@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content.page.region;
 
+import java.util.Objects;
 import java.util.stream.IntStream;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -226,10 +225,10 @@ final class CreateFragmentCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( contentService );
-            Preconditions.checkNotNull( partDescriptorService );
-            Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( contentService );
+            Objects.requireNonNull( partDescriptorService );
+            Objects.requireNonNull( layoutDescriptorService );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public CreateFragmentCommand build()

@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -128,7 +127,7 @@ public class UnpublishContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public UnpublishContentCommand build()

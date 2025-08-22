@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -9,8 +10,6 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodePath;
@@ -146,8 +145,8 @@ public class DiffQueryFactory
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.query );
-            Preconditions.checkNotNull( this.childStorageType );
+            Objects.requireNonNull( this.query, "query is required" );
+            Objects.requireNonNull( this.childStorageType, "childStorageType is required" );
         }
 
         public DiffQueryFactory build()

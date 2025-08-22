@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
@@ -101,9 +101,9 @@ abstract class AbstractNodeCommand
 
         void validate()
         {
-            Preconditions.checkNotNull( indexServiceInternal, "indexService not set" );
-            Preconditions.checkNotNull( nodeStorageService, "storageService not set" );
-            Preconditions.checkNotNull( nodeSearchService, "searchService not set" );
+            Objects.requireNonNull( indexServiceInternal );
+            Objects.requireNonNull( nodeStorageService );
+            Objects.requireNonNull( nodeSearchService );
         }
     }
 }

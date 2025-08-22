@@ -130,7 +130,7 @@ final class DeletedEventSyncCommand
         {
             super.validate();
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
-                                         "targetContent must be set." );
+                                         "targetContent is required" );
         }
 
         @Override

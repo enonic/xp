@@ -15,34 +15,23 @@ import static com.enonic.xp.repo.impl.TestContext.TEST_BRANCH;
 import static com.enonic.xp.repo.impl.TestContext.TEST_REPOSITORY_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NodeIndexDocumentFactoryTest
 {
 
     @Test
-    public void validate_given_no_id_then_exception()
-        throws Exception
+    void validate_given_no_id_then_exception()
     {
         Node node = Node.create().
             build();
 
-        try
-        {
-            NodeStoreDocumentFactory.createBuilder().
-                node( node ).
-                branch( TEST_BRANCH ).
-                repositoryId( TEST_REPOSITORY_ID ).
-                build().
-                create();
-        }
-        catch ( NullPointerException e )
-        {
-            assertEquals( "Id must be set", e.getMessage() );
-            return;
-        }
-
-        fail( "Expected exception" );
+        assertThrows( NullPointerException.class, () -> NodeStoreDocumentFactory.createBuilder()
+            .node( node )
+            .branch( TEST_BRANCH )
+            .repositoryId( TEST_REPOSITORY_ID )
+            .build()
+            .create() );
     }
 
     @Test

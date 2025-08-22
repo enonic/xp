@@ -230,7 +230,7 @@ public final class PatchNodeCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.params );
+            Objects.requireNonNull( params, "params cannot be null" );;
             Preconditions.checkArgument( this.params.getBranches().getSize() <= 1 || this.params.getPath() == null,
                                          "Only one branch is allowed with path" );
         }

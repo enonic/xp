@@ -2,8 +2,6 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.app.ApplicationKey;
 
 public final class ValidationErrorCode
@@ -17,7 +15,7 @@ public final class ValidationErrorCode
     private ValidationErrorCode( final ApplicationKey applicationKey, final String code )
     {
         this.applicationKey = applicationKey;
-        this.code = Preconditions.checkNotNull( code );
+        this.code = Objects.requireNonNull( code );
     }
 
     public ApplicationKey getApplicationKey()

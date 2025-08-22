@@ -1,6 +1,6 @@
 package com.enonic.xp.scheduler;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
@@ -139,10 +139,10 @@ public final class CreateScheduledJobParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( name, "name must be set." );
-            Preconditions.checkNotNull( calendar, "calendar must be set." );
-            Preconditions.checkNotNull( descriptor, "descriptor must be set." );
-            Preconditions.checkNotNull( config, "config must be set." );
+            Objects.requireNonNull( name, "name is required" );
+            Objects.requireNonNull( calendar, "calendar is required" );
+            Objects.requireNonNull( descriptor, "descriptor is required" );
+            Objects.requireNonNull( config, "config is required" );
         }
 
         public CreateScheduledJobParams build()

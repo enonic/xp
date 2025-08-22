@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -8,7 +9,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.branch.Branch;
@@ -401,8 +401,8 @@ public class ResolveSyncWorkCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( nodeId, "nodeId must be provided" );
-            Preconditions.checkNotNull( target, "target branch must be provided" );
+            Objects.requireNonNull( nodeId, "nodeId is required" );
+            Objects.requireNonNull( target, "target branch is required" );
         }
 
         public ResolveSyncWorkCommand build()

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
@@ -88,7 +89,7 @@ final class MediaFormDataBuilder
 
     void build( PropertyTree data )
     {
-        Preconditions.checkNotNull( type, "Type cannot be null." );
+        Objects.requireNonNull( type, "type is required" );
         Preconditions.checkArgument( focalX >= 0.0 && focalX <= 1.0, "Image focal point x value must be between 0 and 1 : %s", focalX );
         Preconditions.checkArgument( focalY >= 0.0 && focalY <= 1.0, "Image focal point y value must be between 0 and 1 : %s", focalY );
 

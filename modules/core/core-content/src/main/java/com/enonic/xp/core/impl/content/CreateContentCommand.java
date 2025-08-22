@@ -2,11 +2,10 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -338,8 +337,8 @@ final class CreateContentCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( params, "params must be given" );
-            Preconditions.checkNotNull( formDefaultValuesProcessor );
+            Objects.requireNonNull( params, "params cannot be null" );
+            Objects.requireNonNull( formDefaultValuesProcessor );
             ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 

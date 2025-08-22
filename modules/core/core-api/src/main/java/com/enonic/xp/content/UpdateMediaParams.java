@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -16,7 +16,7 @@ public final class UpdateMediaParams
 
     private String mimeType;
 
-    private ByteSource inputStream;
+    private ByteSource byteSource;
 
     private double focalX = 0.5;
 
@@ -54,7 +54,7 @@ public final class UpdateMediaParams
 
     public UpdateMediaParams byteSource( final ByteSource value )
     {
-        this.inputStream = value;
+        this.byteSource = value;
         return this;
     }
 
@@ -108,9 +108,9 @@ public final class UpdateMediaParams
 
     public void validate()
     {
-        Preconditions.checkNotNull( this.content, "content to update cannot be null." );
-        Preconditions.checkNotNull( this.name, "name cannot be null" );
-        Preconditions.checkNotNull( this.inputStream, "byteSource cannot be null" );
+        Objects.requireNonNull( this.content, "content to update is required" );
+        Objects.requireNonNull( this.name, "name is required" );
+        Objects.requireNonNull( this.byteSource, "byteSource is required" );
     }
 
     public ContentId getContent()
@@ -130,7 +130,7 @@ public final class UpdateMediaParams
 
     public ByteSource getByteSource()
     {
-        return inputStream;
+        return byteSource;
     }
 
     public double getFocalX()

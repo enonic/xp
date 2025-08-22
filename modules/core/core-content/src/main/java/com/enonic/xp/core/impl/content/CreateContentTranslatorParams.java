@@ -2,8 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.Locale;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentIds;
@@ -412,14 +411,14 @@ public class CreateContentTranslatorParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( parent, "parentPath cannot be null" );
-            Preconditions.checkNotNull( data, "data cannot be null" );
-            Preconditions.checkNotNull( displayName, "displayName cannot be null" );
-            Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
-            Preconditions.checkNotNull( type, "type cannot be null" );
-            Preconditions.checkNotNull( creator, "creator cannot be null" );
-            Preconditions.checkNotNull( name, "name cannot be null" );
-            Preconditions.checkNotNull( childOrder, "childOrder cannot be null" );
+            Objects.requireNonNull( parent, "parentPath cannot be null" );
+            Objects.requireNonNull( data, "data cannot be null" );
+            Objects.requireNonNull( displayName, "displayName cannot be null" );
+            Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
+            Objects.requireNonNull( type, "type cannot be null" );
+            Objects.requireNonNull( creator, "creator cannot be null" );
+            Objects.requireNonNull( name, "name cannot be null" );
+            Objects.requireNonNull( childOrder, "childOrder cannot be null" );
         }
 
         public CreateContentTranslatorParams build()

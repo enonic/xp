@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.content.Content;
@@ -49,7 +49,7 @@ abstract class MovedEventSyncSynchronizer
 
         void validate()
         {
-            Preconditions.checkNotNull( contentService, "contentService must be set" );
+            Objects.requireNonNull( contentService );
         }
 
         abstract MovedEventSyncSynchronizer build();

@@ -1,6 +1,6 @@
 package com.enonic.xp.resource;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
@@ -57,8 +57,8 @@ public final class ListDynamicComponentsParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( key, "key must be set" );
-            Preconditions.checkNotNull( type, "type must be set" );
+            Objects.requireNonNull( key, "key is required" );
+            Objects.requireNonNull( type, "type is required" );
         }
 
         public ListDynamicComponentsParams build()

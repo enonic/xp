@@ -1,6 +1,7 @@
 package com.enonic.xp.media;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
@@ -43,9 +44,8 @@ public final class MediaInfo
     private MediaInfo( final Builder builder )
     {
         this.mediaType = builder.mediaType;
-        this.metadata = builder.metadata.build();
+        this.metadata = Objects.requireNonNull( builder.metadata.build(), "metadata cannot be null" );
         this.textContent = builder.textContent;
-        Preconditions.checkNotNull( this.metadata, "xData cannot be null" );
     }
 
     public String getMediaType()

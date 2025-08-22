@@ -157,7 +157,7 @@ public final class FindNodesByParentParams
 
         private void validate()
         {
-            Preconditions.checkArgument( parentId != null || parentPath != null, "Either parent-path or parent-id must be set" );
+            Preconditions.checkArgument( parentId != null || parentPath != null, "Either parentId or parentPath is required" );
         }
 
         public FindNodesByParentParams build()

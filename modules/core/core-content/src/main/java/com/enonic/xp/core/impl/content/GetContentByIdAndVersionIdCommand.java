@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -84,8 +84,8 @@ public final class GetContentByIdAndVersionIdCommand
         {
             super.validate();
 
-            Preconditions.checkNotNull( this.contentId );
-            Preconditions.checkNotNull( this.versionId );
+            Objects.requireNonNull( this.contentId, "contentId is required" );
+            Objects.requireNonNull( this.versionId, "versionId is required" );
         }
 
         public GetContentByIdAndVersionIdCommand build()

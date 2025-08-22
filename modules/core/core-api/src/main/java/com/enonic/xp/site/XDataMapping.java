@@ -3,8 +3,6 @@ package com.enonic.xp.site;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.xdata.XDataName;
 
@@ -99,7 +97,7 @@ public final class XDataMapping
 
         private void validate()
         {
-            Preconditions.checkNotNull( xDataName, "XData name cannot be null" );
+            Objects.requireNonNull( xDataName, "xDataName is required" );
         }
 
         public XDataMapping build()

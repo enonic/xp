@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.List;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
@@ -15,7 +14,7 @@ final class CompositeNodeDataProcessor
 
     CompositeNodeDataProcessor( final List<NodeDataProcessor> processors )
     {
-        Preconditions.checkNotNull( processors, "processors must not be null" );
+        Objects.requireNonNull( processors, "processors cannot be null" );
         this.processors = processors;
     }
 

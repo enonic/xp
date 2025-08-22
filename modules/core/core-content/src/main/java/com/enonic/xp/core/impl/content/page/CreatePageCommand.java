@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content.page;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
@@ -111,12 +111,12 @@ final class CreatePageCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( contentService );
-            Preconditions.checkNotNull( pageDescriptorService );
-            Preconditions.checkNotNull( partDescriptorService );
-            Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( formDefaultValuesProcessor );
-            Preconditions.checkNotNull( params );
+            Objects.requireNonNull( contentService );
+            Objects.requireNonNull( pageDescriptorService );
+            Objects.requireNonNull( partDescriptorService );
+            Objects.requireNonNull( layoutDescriptorService );
+            Objects.requireNonNull( formDefaultValuesProcessor );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public CreatePageCommand build()

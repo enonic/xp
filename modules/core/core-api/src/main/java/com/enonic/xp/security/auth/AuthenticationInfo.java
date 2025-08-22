@@ -17,8 +17,6 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @PublicApi
 public final class AuthenticationInfo
     implements Serializable
@@ -36,7 +34,7 @@ public final class AuthenticationInfo
         this.authenticated = builder.authenticated;
         if ( builder.authenticated )
         {
-            this.user = checkNotNull( builder.user, "AuthenticationInfo user cannot be null" );
+            this.user = Objects.requireNonNull( builder.user, "user is required" );
             builder.principals.add( user.getKey() );
         }
         else

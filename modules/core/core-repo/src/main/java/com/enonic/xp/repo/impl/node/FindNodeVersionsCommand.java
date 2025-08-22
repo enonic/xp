@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -62,8 +62,8 @@ public class FindNodeVersionsCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.nodeSearchService, "SearchService must be set" );
-            Preconditions.checkNotNull( this.query, "Query must be set" );
+            Objects.requireNonNull( this.nodeSearchService );
+            Objects.requireNonNull( this.query, "query is required" );
         }
 
         public FindNodeVersionsCommand build()

@@ -1,6 +1,6 @@
 package com.enonic.xp.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
@@ -73,9 +73,9 @@ public final class SearchTarget
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.principalKeys, "Auth info must be set" );
-            Preconditions.checkNotNull( this.branch, "Branch must be set" );
-            Preconditions.checkNotNull( this.repositoryId, "RepositoryId must be set" );
+            Objects.requireNonNull( this.principalKeys, "principalKeys is required" );
+            Objects.requireNonNull( this.branch, "branch is required" );
+            Objects.requireNonNull( this.repositoryId, "repositoryId is required" );
         }
 
         public SearchTarget build()

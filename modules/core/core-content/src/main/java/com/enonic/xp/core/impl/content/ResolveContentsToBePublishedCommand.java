@@ -1,8 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
 import java.util.Set;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.CompareContentResults;
@@ -124,7 +123,7 @@ public class ResolveContentsToBePublishedCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentIds );
+            Objects.requireNonNull( contentIds, "contentIds is required" );
         }
 
         public ResolveContentsToBePublishedCommand build()

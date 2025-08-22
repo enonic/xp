@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.attachment.CreateAttachment;
@@ -190,17 +191,17 @@ public class PatchNodeParamsFactory
 
         void validate()
         {
-            Preconditions.checkNotNull( editedContent, "editedContent cannot be null" );
-            Preconditions.checkNotNull( editedContent.getModifier(), "modifier cannot be null" );
-            Preconditions.checkNotNull( editedContent.getAttachments(), "attachments cannot be null" );
-            Preconditions.checkNotNull( createAttachments, "createAttachments cannot be null" );
+            Objects.requireNonNull( editedContent, "editedContent cannot be null" );
+            Objects.requireNonNull( editedContent.getModifier(), "modifier cannot be null" );
+            Objects.requireNonNull( editedContent.getAttachments(), "attachments cannot be null" );
+            Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
 
-            Preconditions.checkNotNull( contentTypeService );
-            Preconditions.checkNotNull( xDataService );
-            Preconditions.checkNotNull( pageDescriptorService );
-            Preconditions.checkNotNull( partDescriptorService );
-            Preconditions.checkNotNull( layoutDescriptorService );
-            Preconditions.checkNotNull( contentDataSerializer );
+            Objects.requireNonNull( contentTypeService );
+            Objects.requireNonNull( xDataService );
+            Objects.requireNonNull( pageDescriptorService );
+            Objects.requireNonNull( partDescriptorService );
+            Objects.requireNonNull( layoutDescriptorService );
+            Objects.requireNonNull( contentDataSerializer );
         }
 
         public PatchNodeParamsFactory build()

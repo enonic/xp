@@ -2,8 +2,6 @@ package com.enonic.xp.icon;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.util.BinaryReference;
 
@@ -18,9 +16,9 @@ public final class Thumbnail
 
     private Thumbnail( final BinaryReference binaryReference, final String mimeType, final Long size )
     {
-        Preconditions.checkNotNull( binaryReference, "binaryReference is mandatory" );
-        Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
-        Preconditions.checkNotNull( size, "size is mandatory" );
+        Objects.requireNonNull( binaryReference, "binaryReference is required" );
+        Objects.requireNonNull( mimeType, "mimeType is required" );
+        Objects.requireNonNull( size, "size is required" );
         this.binaryReference = binaryReference;
         this.mimeType = mimeType;
         this.size = size;

@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.node.event;
 
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -22,8 +21,8 @@ class NodeEventData
 
     static NodeEventData create( final Map<String, String> valueMap )
     {
-        Preconditions.checkNotNull( valueMap.get( "id" ), "Expected field 'id' not found" );
-        Preconditions.checkNotNull( valueMap.get( "path" ), "Expected field 'path' not found" );
+        Objects.requireNonNull( valueMap.get( "id" ), "Expected field 'id' not found" );
+        Objects.requireNonNull( valueMap.get( "path" ), "Expected field 'path' not found" );
 
         return new NodeEventData( NodeId.from( valueMap.get( "id" ) ), new NodePath( valueMap.get( "path" ) ) );
     }

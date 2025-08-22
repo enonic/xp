@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
@@ -288,7 +290,7 @@ public final class CreateNodeParams
 
         public CreateNodeParams build()
         {
-            Preconditions.checkNotNull( parent, "Path of parent Node must be specified" );
+            Objects.requireNonNull( parent, "parent is required" );
             Preconditions.checkArgument( parent.isAbsolute(), "Path to parent Node must be absolute: %s", parent );
 
             return new CreateNodeParams( this );

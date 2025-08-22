@@ -1,6 +1,6 @@
 package com.enonic.xp.page;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -18,8 +18,7 @@ public final class PageDescriptor
     private PageDescriptor( final Builder builder )
     {
         super( builder );
-        Preconditions.checkNotNull( builder.regions, "regions cannot be null" );
-        this.regions = builder.regions;
+        this.regions = Objects.requireNonNull( builder.regions, "regions cannot be null" );
     }
 
     @Override

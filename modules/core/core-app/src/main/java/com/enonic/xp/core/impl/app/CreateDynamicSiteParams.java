@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 
@@ -51,8 +51,8 @@ public final class CreateDynamicSiteParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( key, "key must be set" );
-            Preconditions.checkNotNull( resource, "resource must be set" );
+            Objects.requireNonNull( key, "key is required" );
+            Objects.requireNonNull( resource, "resource is required" );
         }
 
         public CreateDynamicSiteParams build()

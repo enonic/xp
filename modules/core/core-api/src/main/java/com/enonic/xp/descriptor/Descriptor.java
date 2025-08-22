@@ -1,6 +1,6 @@
 package com.enonic.xp.descriptor;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 
@@ -10,7 +10,7 @@ public abstract class Descriptor
 
     public Descriptor( final DescriptorKey key )
     {
-        Preconditions.checkNotNull( key, "key cannot be null" );
+        Objects.requireNonNull( key, "key cannot be null" );
         this.key = key;
     }
 

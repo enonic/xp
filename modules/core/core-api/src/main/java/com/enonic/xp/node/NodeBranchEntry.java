@@ -1,8 +1,7 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.blob.NodeVersionKey;
 
@@ -150,8 +149,8 @@ public final class NodeBranchEntry
 
         private void validate()
         {
-            Preconditions.checkNotNull( this.nodePath, "NodePath must be set" );
-            Preconditions.checkNotNull( this.nodeId, "NodeId must be set" );
+            Objects.requireNonNull( this.nodePath, "nodePath is required" );
+            Objects.requireNonNull( this.nodeId, "nodeId is required" );
         }
 
         public NodeBranchEntry build()

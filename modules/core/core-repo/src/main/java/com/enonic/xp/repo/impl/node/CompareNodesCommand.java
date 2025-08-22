@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
+
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.content.CompareStatus;
@@ -75,7 +76,7 @@ public class CompareNodesCommand
         protected void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( nodeIds );
+            Objects.requireNonNull( nodeIds, "nodeIds is required" );
         }
 
         public CompareNodesCommand build()

@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.data.PropertySet;
 
-import static org.elasticsearch.common.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 class RangeQueryBuilder
     extends ExpressionQueryBuilder

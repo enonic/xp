@@ -1,6 +1,6 @@
 package com.enonic.xp.repository;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -111,7 +111,7 @@ public final class CreateRepositoryParams
 
         private void validate()
         {
-            Preconditions.checkNotNull( repositoryId, "repositoryId cannot be null" );
+            Objects.requireNonNull( repositoryId, "repositoryId is required" );
         }
 
         public CreateRepositoryParams build()

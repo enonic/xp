@@ -1,9 +1,8 @@
 package com.enonic.xp.core.impl.project;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
 
 import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
@@ -87,7 +86,7 @@ public final class UpdateProjectRolesCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.permissions, "Project permissions is required" );
+            Objects.requireNonNull( this.permissions, "Project permissions is required" );
         }
 
         public UpdateProjectRolesCommand build()

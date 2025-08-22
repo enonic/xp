@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -22,9 +21,9 @@ public final class PropertyArray
 
     PropertyArray( final PropertySet parent, final String name, final ValueType valueType, final int initialCapacity )
     {
-        Preconditions.checkNotNull( parent, "parent cannot be null" );
-        Preconditions.checkNotNull( name, "name cannot be null" );
-        Preconditions.checkNotNull( valueType, "valueType cannot be null" );
+        Objects.requireNonNull( parent, "parent cannot be null" );
+        Objects.requireNonNull( name, "name cannot be null" );
+        Objects.requireNonNull( valueType, "valueType cannot be null" );
         Property.checkName( name );
 
         this.parent = parent;
@@ -38,8 +37,8 @@ public final class PropertyArray
      */
     private PropertyArray( final PropertyArray source, final PropertySet parent )
     {
-        Preconditions.checkNotNull( source, "source cannot be null" );
-        Preconditions.checkNotNull( parent, "parent cannot be null" );
+        Objects.requireNonNull( source, "source cannot be null" );
+        Objects.requireNonNull( parent, "parent cannot be null" );
 
         this.parent = parent;
         this.name = source.name;

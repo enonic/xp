@@ -1,7 +1,7 @@
 package com.enonic.xp.content;
 
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 
@@ -73,8 +73,8 @@ public final class RenameContentParams
 
         public RenameContentParams build()
         {
-            Preconditions.checkNotNull( this.contentId, "Content id cannot be null" );
-            Preconditions.checkNotNull( this.newName, "name cannot be null" );
+            Objects.requireNonNull( this.contentId, "contentId is required" );
+            Objects.requireNonNull( this.newName, "newName is required" );
             return new RenameContentParams( this );
         }
     }

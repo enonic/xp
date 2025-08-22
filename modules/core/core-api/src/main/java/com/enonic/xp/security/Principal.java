@@ -3,8 +3,6 @@ package com.enonic.xp.security;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -135,8 +133,8 @@ public abstract class Principal
 
         void validate()
         {
-            Preconditions.checkNotNull( key, "Principal key cannot be null" );
-            Preconditions.checkNotNull( displayName, "Principal display name cannot be null" );
+            Objects.requireNonNull( key, "Principal key cannot be null" );
+            Objects.requireNonNull( displayName, "Principal display name cannot be null" );
         }
     }
 }

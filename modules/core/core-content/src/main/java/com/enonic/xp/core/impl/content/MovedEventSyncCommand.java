@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -136,9 +135,9 @@ final class MovedEventSyncCommand
         {
             super.validate();
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
-                                         "sourceContent must be set." );
+                                         "sourceContent must be set" );
             Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
-                                         "targetContent must be set." );
+                                         "targetContent must be set" );
         }
 
         @Override

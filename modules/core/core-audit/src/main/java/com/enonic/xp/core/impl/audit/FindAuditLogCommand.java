@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.audit;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogs;
@@ -152,7 +152,7 @@ public class FindAuditLogCommand
 
         private void validate()
         {
-            Preconditions.checkNotNull( params, "FindAuditLogParams params cannot be null" );
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public FindAuditLogCommand build()

@@ -24,8 +24,8 @@ public final class Icon
 
     private Icon( final byte[] iconData, final String mimeType, final Instant modifiedTime )
     {
-        Preconditions.checkNotNull( mimeType, "mimeType is mandatory for an icon" );
-        Preconditions.checkNotNull( iconData, "iconData is mandatory" );
+        Objects.requireNonNull( mimeType, "mimeType is required" );
+        Objects.requireNonNull( iconData, "iconData is required" );
         Preconditions.checkArgument( iconData.length > 0, "iconData cannot be empty" );
         this.iconData = iconData;
         this.mimeType = mimeType;
@@ -99,7 +99,7 @@ public final class Icon
 
     public static Icon from( final InputStream dataStream, final String mimeType, final Instant modifiedTime )
     {
-        Preconditions.checkNotNull( dataStream, "dataStream is mandatory" );
+        Objects.requireNonNull( dataStream, "dataStream is required" );
         try
         {
             return new Icon( ByteStreams.toByteArray( dataStream ), mimeType, modifiedTime );

@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
@@ -46,7 +46,7 @@ public final class ResolveRequiredDependenciesParams
 
         public ResolveRequiredDependenciesParams build()
         {
-            Preconditions.checkNotNull( this.contentIds, "Content ids cannot be null" );
+            Objects.requireNonNull( this.contentIds, "contentIds is required" );
             return new ResolveRequiredDependenciesParams( this );
         }
     }

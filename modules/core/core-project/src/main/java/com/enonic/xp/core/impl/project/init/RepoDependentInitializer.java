@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.project.init;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
@@ -83,8 +83,8 @@ public abstract class RepoDependentInitializer
         protected void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( repositoryId, "\"repositoryId\" must be set" );
-            Preconditions.checkNotNull( nodeService );
+            Objects.requireNonNull( nodeService );
+            Objects.requireNonNull( repositoryId, "repositoryId is required" );
         }
 
     }

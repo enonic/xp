@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
@@ -202,12 +202,12 @@ public class CreateNodeParamsFactory
 
         void validate()
         {
-            Preconditions.checkNotNull( params );
-            Preconditions.checkNotNull( contentTypeService );
-            Preconditions.checkNotNull( pageDescriptorService );
-            Preconditions.checkNotNull( siteService );
-            Preconditions.checkNotNull( xDataService );
-            Preconditions.checkNotNull( contentDataSerializer );
+            Objects.requireNonNull( params, "params cannot be null" );
+            Objects.requireNonNull( contentTypeService );
+            Objects.requireNonNull( pageDescriptorService );
+            Objects.requireNonNull( siteService );
+            Objects.requireNonNull( xDataService );
+            Objects.requireNonNull( contentDataSerializer );
         }
 
         public CreateNodeParamsFactory build()

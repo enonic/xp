@@ -3,8 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
@@ -108,7 +107,7 @@ public class ReorderChildNodesCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( this.params );
+            Objects.requireNonNull( params, "params cannot be null" );;
         }
 
         public ReorderChildNodesCommand build()

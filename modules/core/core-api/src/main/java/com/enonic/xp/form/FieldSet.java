@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 
 
@@ -23,7 +21,7 @@ public final class FieldSet
 
     private FieldSet( final Builder builder )
     {
-        this.label = Preconditions.checkNotNull( builder.label, "label is required" );
+        this.label = Objects.requireNonNull( builder.label, "label is required" );
         this.labelI18nKey = builder.labelI18nKey;
         this.formItems = new FormItems( this, builder.formItems );
     }

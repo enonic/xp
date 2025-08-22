@@ -2,8 +2,6 @@ package com.enonic.xp.schema;
 
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
@@ -18,7 +16,7 @@ public abstract class BaseSchemaName
 
     protected BaseSchemaName( final String name )
     {
-        Preconditions.checkNotNull( name, "BaseSchemaName can't be null" );
+        Objects.requireNonNull( name, "BaseSchemaName cannot be null" );
         final int index = name.indexOf( SEPARATOR );
         this.applicationKey = ApplicationKey.from( index == -1 ? name : name.substring( 0, index ) );
         this.localName = index == -1 ? "" : name.substring( index + 1 );

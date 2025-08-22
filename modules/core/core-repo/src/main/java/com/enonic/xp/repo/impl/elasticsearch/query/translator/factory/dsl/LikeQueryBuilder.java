@@ -9,7 +9,8 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 
-import static org.elasticsearch.common.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 
 class LikeQueryBuilder
     extends ExpressionQueryBuilder
@@ -23,7 +24,7 @@ class LikeQueryBuilder
         super( expression );
 
         this.value = getString( "value" );
-        Preconditions.checkArgument( !isNullOrEmpty( this.value ), "'Like' value cannot be empty" );
+        Preconditions.checkArgument( !isNullOrEmpty( this.value ), "'like' value cannot be empty" );
     }
 
     @Override

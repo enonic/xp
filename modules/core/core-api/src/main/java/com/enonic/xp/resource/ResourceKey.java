@@ -107,25 +107,25 @@ public final class ResourceKey
 
     public static ResourceKey from( final String uri )
     {
-        Preconditions.checkNotNull( uri );
+        Objects.requireNonNull( uri );
 
         final int pos = uri.indexOf( ':' );
-        Preconditions.checkArgument( pos > 0, "Invalid applicationKey file key uri specification." );
+        Preconditions.checkArgument( pos > 0, "Invalid applicationKey file key uri specification" );
 
         return from( ApplicationKey.from( uri.substring( 0, pos ) ), uri.substring( pos + 1 ) );
     }
 
     public static ResourceKey from( final ApplicationKey application, final String path )
     {
-        Preconditions.checkNotNull( application );
-        Preconditions.checkNotNull( path );
+        Objects.requireNonNull( application );
+        Objects.requireNonNull( path );
 
         return new ResourceKey( application, normalizePath( path ) );
     }
 
     public static ResourceKey assets( final ApplicationKey application )
     {
-        Preconditions.checkNotNull( application );
+        Objects.requireNonNull( application );
 
         return new ResourceKey( application, "/assets/" );
     }

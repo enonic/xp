@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -115,7 +113,7 @@ public class ResolveRequiredDependenciesCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkNotNull( contentIds );
+            Objects.requireNonNull( contentIds, "contentIds is required" );
         }
 
         public ResolveRequiredDependenciesCommand build()

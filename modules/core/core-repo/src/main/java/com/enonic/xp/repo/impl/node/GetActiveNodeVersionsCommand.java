@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -88,8 +88,8 @@ public class GetActiveNodeVersionsCommand
         @Override
         void validate()
         {
-            Preconditions.checkNotNull( this.nodeId );
-            Preconditions.checkNotNull( this.branches );
+            Objects.requireNonNull( this.nodeId, "nodeId is required" );
+            Objects.requireNonNull( this.branches, "branches is required" );
         }
 
         public GetActiveNodeVersionsCommand build()
