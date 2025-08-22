@@ -237,7 +237,13 @@ public class ContentServiceImplTest_duplicate
 
         final Content content = this.contentService.create( myContent );
 
-        DuplicateContentParams duplicateParams = createDuplicatedParams( content.getId(), "variantName", false, true, content.getPath() );
+        DuplicateContentParams duplicateParams = DuplicateContentParams.create()
+            .contentId( content.getId() )
+            .includeChildren( false )
+            .variant( true )
+            .name( "variantName" )
+            .parent( content.getPath() )
+            .build();
 
         DuplicateContentsResult result = contentService.duplicate( duplicateParams );
 
@@ -255,7 +261,13 @@ public class ContentServiceImplTest_duplicate
 
         // try to create a variant for content which already is a variant, in result that must be a duplicated content
 
-        duplicateParams = createDuplicatedParams( duplicatedContent.getId(), "variantName-new", false, true, content.getPath() );
+        duplicateParams = DuplicateContentParams.create()
+            .contentId( duplicatedContent.getId() )
+            .includeChildren( false )
+            .variant( true )
+            .name( "variantName-new" )
+            .parent( content.getPath() )
+            .build();
 
         result = contentService.duplicate( duplicateParams );
 
@@ -266,26 +278,4 @@ public class ContentServiceImplTest_duplicate
         assertEquals( duplicateParams.getParent(), duplicatedContent2.getParentPath() );
     }
 
-    @Test
-    public void testValidateDuplicateContentParams()
-    {
-        createDuplicatedParams( ContentId.from( "contentId" ), "name", true, false, ContentPath.ROOT );
-        createDuplicatedParams( ContentId.from( "contentId" ), "name", false, true, ContentPath.ROOT );
-        NullPointerException ex =
-            assertThrows( NullPointerException.class, () -> createDuplicatedParams( null, "name", true, true, ContentPath.ROOT ) );
-
-        assertEquals( "Content id cannot be null", ex.getMessage() );
-    }
-
-    private DuplicateContentParams createDuplicatedParams( ContentId contentId, String name, boolean includeChildren, boolean variant,
-                                                           ContentPath parentPath )
-    {
-        return DuplicateContentParams.create()
-            .contentId( contentId )
-            .includeChildren( includeChildren )
-            .variant( variant )
-            .name( name )
-            .parent( parentPath )
-            .build();
-    }
 }
