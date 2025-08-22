@@ -57,13 +57,13 @@ public final class DescriptorKey
             return false;
         }
         final DescriptorKey that = (DescriptorKey) o;
-        return applicationKey.equals( that.applicationKey ) && name.equals( that.name );
+        return applicationKey.equals( that.applicationKey ) && name.equals( that.name ) && extension.equals( that.extension );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( applicationKey, name );
+        return Objects.hash( applicationKey, name, extension );
     }
 
     @Override

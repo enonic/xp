@@ -23,7 +23,14 @@ public final class DescriptorKeyLocator
                 String nameWithoutExtension = getNameWithoutExtension( resource.getName() );
                 String extension = resource.getName().length() - nameWithoutExtension.length() > 1 ? resource.getName()
                     .substring( nameWithoutExtension.length() + 1 ) : "";
-                return DescriptorKey.from( key, nameWithoutExtension, extension );
+                if ( "yml".equals( extension ) )
+                {
+                    return DescriptorKey.from( key, nameWithoutExtension, extension );
+                }
+                else
+                {
+                    return DescriptorKey.from( key, nameWithoutExtension );
+                }
             } )
             .collect( DescriptorKeys.collector() );
     }

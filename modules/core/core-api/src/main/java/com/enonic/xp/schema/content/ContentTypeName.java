@@ -1,5 +1,7 @@
 package com.enonic.xp.schema.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -351,5 +353,30 @@ public final class ContentTypeName
     public static ContentTypeName from( final String contentTypeName )
     {
         return new ContentTypeName( contentTypeName );
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+        ContentTypeName that = (ContentTypeName) o;
+        return Objects.equals( extension, that.extension );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), extension );
     }
 }
