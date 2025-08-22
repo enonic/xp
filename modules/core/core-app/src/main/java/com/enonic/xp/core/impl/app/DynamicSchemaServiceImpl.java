@@ -43,6 +43,7 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
@@ -61,10 +62,11 @@ public class DynamicSchemaServiceImpl
     private final DynamicResourceParser dynamicResourceParser;
 
     @Activate
-    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService )
+    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService,
+                                     @Reference final ContentTypeService contentTypeService )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService, resourceService );
-        this.dynamicResourceParser = new DynamicResourceParser();
+        this.dynamicResourceParser = new DynamicResourceParser( contentTypeService );
     }
 
     @Override
@@ -108,7 +110,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
-            dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource(), "yml" );
 
         return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
     }
@@ -122,7 +124,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
+            dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource(), "yml" );
         return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
     }
 
@@ -229,7 +231,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName() );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName(), "yml" );
 
         if ( resource.exists() && resource.getSize() > 0 )
         {
@@ -290,7 +292,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true, "yml" );
     }
 
     @Override
@@ -300,7 +302,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath componentRootPath = createSchemaRootPath( params.getKey(), params.getType() );
 
-        return dynamicResourceManager.listResources( componentRootPath ).stream().map( resource -> {
+        return dynamicResourceManager.listResources( componentRootPath, "yml" ).stream().map( resource -> {
 
             final BaseSchema<?> schema =
                 dynamicResourceParser.parseSchema( getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) ),
@@ -316,7 +318,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createSiteFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.SITE_ROOT_NAME, false, "yml" );
     }
 
     @Override

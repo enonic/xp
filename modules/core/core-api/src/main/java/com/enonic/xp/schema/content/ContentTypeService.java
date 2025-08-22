@@ -18,4 +18,6 @@ public interface ContentTypeService
     Set<String> getMimeTypes( ContentTypeNames napes );
 
     ContentTypeValidationResult validate( ContentType type );
+
+    ContentType.Builder parseYml( String contentTypeYml );
 }

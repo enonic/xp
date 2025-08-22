@@ -8,9 +8,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.schema.YmlTypeParser;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -22,6 +24,8 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class ContentTypeServiceImpl
     implements ContentTypeService
 {
+    private static final YmlTypeParser YML_TYPE_PARSER = new YmlTypeParser();
+
     private final ContentTypeRegistry registry;
 
     private final MixinService mixinService;
@@ -30,7 +34,7 @@ public final class ContentTypeServiceImpl
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
                                    final @Reference MixinService mixinService )
     {
-        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
+        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService, this ), applicationService );
         this.mixinService = mixinService;
     }
 
@@ -38,10 +42,17 @@ public final class ContentTypeServiceImpl
     public ContentType getByName( final GetContentTypeParams params )
     {
         params.validate();
-        final ContentType contentType = this.registry.get( params.getContentTypeName() );
+        final ContentTypeName contentTypeName = params.getContentTypeName();
+        ContentType contentType = this.registry.get( contentTypeName );
         if ( contentType == null )
         {
-            return null;
+            ContentTypeName ymlContentType =
+                ContentTypeName.from( contentTypeName.getApplicationKey(), contentTypeName.getLocalName(), "yml" );
+            contentType = this.registry.get( ymlContentType );
+            if ( contentType == null )
+            {
+                return null;
+            }
         }
 
         return transformInlineMixins( contentType );
@@ -72,6 +83,12 @@ public final class ContentTypeServiceImpl
 
         validator.validate( type.getName(), type.getSuperType() );
         return validator.getResult();
+    }
+
+    @Override
+    public ContentType.Builder parseYml( final String contentTypeYml )
+    {
+        return YML_TYPE_PARSER.parse( contentTypeYml, ContentType.Builder.class );
     }
 
     private ContentType transformInlineMixins( final ContentType contentType )

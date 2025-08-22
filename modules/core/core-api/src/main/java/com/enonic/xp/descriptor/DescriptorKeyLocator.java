@@ -12,14 +12,19 @@ public final class DescriptorKeyLocator
     public DescriptorKeyLocator( final ResourceService service, final String path, final boolean optional )
     {
         this.service = service;
-        this.pattern = "^" + path + "/(?<name>[^/]+)/\\k<name>\\.(?:xml" + ( optional ? "|js" : "" ) + ")$";
+        this.pattern = "^" + path + "/(?<name>[^/]+)/\\k<name>\\.(?:xml|yml" + ( optional ? "|js" : "" ) + ")$";
     }
 
     public DescriptorKeys findKeys( final ApplicationKey key )
     {
         return this.service.findFiles( key, this.pattern )
             .stream()
-            .map( resource -> DescriptorKey.from( key, getNameWithoutExtension( resource.getName() ) ) )
+            .map( resource -> {
+                String nameWithoutExtension = getNameWithoutExtension( resource.getName() );
+                String extension = resource.getName().length() - nameWithoutExtension.length() > 1 ? resource.getName()
+                    .substring( nameWithoutExtension.length() + 1 ) : "";
+                return DescriptorKey.from( key, nameWithoutExtension, extension );
+            } )
             .collect( DescriptorKeys.collector() );
     }
 

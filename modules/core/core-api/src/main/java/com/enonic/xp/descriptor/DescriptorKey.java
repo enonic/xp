@@ -21,10 +21,13 @@ public final class DescriptorKey
 
     private final String name;
 
-    private DescriptorKey( final ApplicationKey applicationKey, final String name )
+    private final String extension;
+
+    private DescriptorKey( final ApplicationKey applicationKey, final String name, final String extension )
     {
         this.applicationKey = Objects.requireNonNull( applicationKey );
         this.name = CharacterChecker.check( name, "Not a valid name for DescriptorKey [" + name + "]" );
+        this.extension = extension;
     }
 
     public ApplicationKey getApplicationKey()
@@ -35,6 +38,11 @@ public final class DescriptorKey
     public String getName()
     {
         return name;
+    }
+
+    public String getExtension()
+    {
+        return extension;
     }
 
     @Override
@@ -70,11 +78,16 @@ public final class DescriptorKey
         final int index = key.indexOf( SEPARATOR );
         final String applicationKey = index == -1 ? key : key.substring( 0, index );
         final String descriptorName = index == -1 ? "" : key.substring( index + 1 );
-        return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
+        return DescriptorKey.from( ApplicationKey.from( applicationKey ), descriptorName );
     }
 
     public static DescriptorKey from( final ApplicationKey applicationKey, final String descriptorName )
     {
-        return new DescriptorKey( applicationKey, descriptorName );
+        return new DescriptorKey( applicationKey, descriptorName, "xml" );
+    }
+
+    public static DescriptorKey from( final ApplicationKey applicationKey, final String descriptorName, final String extension )
+    {
+        return new DescriptorKey( applicationKey, descriptorName, extension );
     }
 }

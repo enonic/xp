@@ -12,6 +12,7 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
@@ -19,7 +20,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
@@ -30,6 +30,13 @@ import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class DynamicResourceParser
 {
+    private final ContentTypeService contentTypeService;
+
+    DynamicResourceParser( final ContentTypeService contentTypeService )
+    {
+        this.contentTypeService = contentTypeService;
+    }
+
     ComponentDescriptor parseComponent( final DescriptorKey key, final DynamicComponentType type, final String resource )
     {
         switch ( type )
@@ -131,26 +138,28 @@ final class DynamicResourceParser
 
     private ContentType parseContentTypeDescriptor( final ContentTypeName name, final String resource )
     {
-        final ContentType.Builder builder = ContentType.create();
         try
         {
-            final XmlContentTypeParser parser = new XmlContentTypeParser();
-            parser.currentApplication( name.getApplicationKey() );
-            parser.source( resource );
-            parser.builder( builder );
-            parser.parse();
+            final ContentType.Builder builder = contentTypeService.parseYml( resource );
+            builder.name( name );
+
+            final ContentType contentType = builder.build();
+
+            final ContentTypeName superType = contentType.getSuperType();
+
+            if ( "".equals( superType.getLocalName() ) )
+            {
+                return ContentType.create( contentType )
+                    .superType( ContentTypeName.from( name.getApplicationKey(), superType.getApplicationKey().getName() ) )
+                    .build();
+            }
+
+            return contentType;
         }
         catch ( Exception e )
         {
             throw new XmlException( e, "Could not parse dynamic content type [" + name + "]" );
         }
-
-//        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
-//        builder.modifiedTime( modifiedTime );
-//        builder.createdTime( modifiedTime );
-        builder.name( name );
-
-        return builder.build();
     }
 
     private Mixin parseMixinDescriptor( final MixinName name, final String resource )

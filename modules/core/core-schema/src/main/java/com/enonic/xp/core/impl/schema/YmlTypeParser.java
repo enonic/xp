@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.schema;
 
+import java.io.UncheckedIOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -83,9 +86,15 @@ public final class YmlTypeParser
     }
 
     public <T> T parse( final String yml, final Class<T> clazz )
-        throws Exception
     {
-        return MAPPER.readValue( yml, clazz );
+        try
+        {
+            return MAPPER.readValue( yml, clazz );
+        }
+        catch ( final JsonProcessingException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
 }
