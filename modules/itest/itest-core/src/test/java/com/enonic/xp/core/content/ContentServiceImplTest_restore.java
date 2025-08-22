@@ -29,6 +29,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -232,10 +233,7 @@ public class ContentServiceImplTest_restore
         this.contentService.restore( RestoreContentParams.create().contentId( importedId ).build() );
 
         final Set<ContentInheritType> inherit = this.contentService.getById( importedId ).getInherit();
-        assertEquals( 2, inherit.size() );
-        assertTrue( inherit.contains( ContentInheritType.SORT ) );
-        assertTrue( inherit.contains( ContentInheritType.NAME ) );
-
+        assertThat( inherit ).isEmpty();
     }
 
     @Test

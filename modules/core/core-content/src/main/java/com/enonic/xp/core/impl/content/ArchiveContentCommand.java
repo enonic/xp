@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
 
 import com.google.common.base.Preconditions;
 
@@ -15,7 +14,6 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -190,14 +188,7 @@ final class ArchiveContentCommand
 
         if ( params.stopInherit() )
         {
-            builder.processor( new InheritedContentDataProcessor()
-            {
-                @Override
-                protected EnumSet<ContentInheritType> getTypesToProceed()
-                {
-                    return EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.PARENT );
-                }
-            } );
+            builder.processor( InheritedContentDataProcessor.ALL );
         }
 
         return nodeService.move( builder.build() );

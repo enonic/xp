@@ -137,12 +137,8 @@ public class ContentServiceImplTest_archive
 
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
 
-        archiveContext().runWith( () -> {
-            final Content archived = this.contentService.getById( content.getId() );
-            assertEquals( 2, archived.getInherit().size() );
-            assertTrue( archived.getInherit().contains( ContentInheritType.SORT ) );
-            assertTrue( archived.getInherit().contains( ContentInheritType.NAME ) );
-        } );
+        final Content archived = archiveContext().callWith( () -> this.contentService.getById( content.getId() ) );
+        assertThat(archived.getInherit() ).isEmpty();
     }
 
     @Test

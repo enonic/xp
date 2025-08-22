@@ -2,12 +2,10 @@ package com.enonic.xp.core.impl.content;
 
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -65,14 +63,7 @@ final class RenameContentCommand
 
         if ( params.stopInherit() )
         {
-            processors.add( new InheritedContentDataProcessor()
-            {
-                @Override
-                protected EnumSet<ContentInheritType> getTypesToProceed()
-                {
-                    return EnumSet.of( ContentInheritType.NAME );
-                }
-            } );
+            processors.add( InheritedContentDataProcessor.NAME );
         }
 
         processors.add( ( data, newNodePath ) -> {

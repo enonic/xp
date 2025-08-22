@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.EnumSet;
-
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.archive.ArchiveConstants;
@@ -12,7 +10,6 @@ import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
@@ -143,17 +140,9 @@ final class RestoreContentCommand
 
     private void stopInherit( final MoveNodeParams.Builder builder )
     {
-
         if ( params.stopInherit() )
         {
-            builder.processor( new InheritedContentDataProcessor()
-            {
-                @Override
-                protected EnumSet<ContentInheritType> getTypesToProceed()
-                {
-                    return EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.PARENT );
-                }
-            } );
+            builder.processor( InheritedContentDataProcessor.ALL );
         }
     }
 
