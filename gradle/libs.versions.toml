@@ -80,7 +80,7 @@ jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
 
 attoparser = { module = "org.attoparser:attoparser", version = "1.3" }
 
-nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.6" }
+nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.7" }
 graalvm-polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalvm" }
 graalvm-js = { module = "org.graalvm.polyglot:js", version.ref = "graalvm" }
 graalvm-jsse = { module = "org.graalvm.js:js-scriptengine", version.ref = "graalvm" }
