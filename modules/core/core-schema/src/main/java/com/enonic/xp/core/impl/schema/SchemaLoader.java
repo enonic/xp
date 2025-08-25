@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.Resource;
@@ -13,6 +14,7 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {
@@ -39,12 +41,21 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     private ResourceProcessor<N, V> newProcessor( final N key )
     {
-        return new ResourceProcessor.Builder<N, V>().
-            key( key ).
-            segment( key.getClass().getSimpleName() ).
-            keyTranslator( this::toXmlResourceKey ).
-            processor( resource -> load( key, resource ) ).
-            build();
+        final ResourceProcessor.Builder<N, V> processor = new ResourceProcessor.Builder<N, V>().key( key )
+            .segment( key.getClass().getSimpleName() )
+            .processor( resource -> load( key, resource ) );
+
+        if ( key instanceof ContentTypeName )
+        {
+            processor.keyTranslator(
+                contentTypeName -> toResourceKey( contentTypeName, ( (ContentTypeName) contentTypeName ).getExtension() ) );
+        }
+        else
+        {
+            processor.keyTranslator( this::toXmlResourceKey );
+        }
+
+        return processor.build();
     }
 
     protected final ResourceKey toXmlResourceKey( final N name )
@@ -82,9 +93,9 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     public final Set<N> findNames( final ApplicationKey key )
     {
-        return descriptorKeyLocator.findKeys( key ).stream().map( dk -> newName( dk.getApplicationKey(), dk.getName() ) ).collect(
+        return descriptorKeyLocator.findKeys( key ).stream().map( this::newName ).collect(
             Collectors.toCollection( LinkedHashSet::new ) );
     }
 
-    protected abstract N newName( ApplicationKey appKey, String name );
+    protected abstract N newName( DescriptorKey descriptorKey );
 }

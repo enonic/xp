@@ -32,6 +32,11 @@ final class DynamicResourceManager
 
     Resource createResource( final NodePath folderPath, final String name, final String resource )
     {
+        return createResource( folderPath, name, resource, "xml" );
+    }
+
+    Resource createResource( final NodePath folderPath, final String name, final String resource, final String extension )
+    {
         return VirtualAppContext.createContext().callWith( () -> {
 
             Node resourceFolder = nodeService.getByPath( folderPath );
@@ -49,22 +54,35 @@ final class DynamicResourceManager
 
             if ( resource != null )
             {
-                resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                if ( "xml".equals( extension ) )
+                {
+                    resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                }
+                else
+                {
+                    resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
+                }
             }
 
             final Node schemaNode = nodeService.create( CreateNodeParams.create()
                                                             .parent( resourceFolder.path() )
-                                                            .name( name + ".xml" )
+                                                            .name( name + "." + extension )
                                                             .data( resourceData )
                                                             .inheritPermissions( true )
                                                             .refresh( RefreshMode.ALL )
                                                             .build() );
 
-            return new NodeValueResource( ResourceKey.from( appKeyFromNodePath( folderPath), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
+            return new NodeValueResource(
+                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
         } );
     }
 
     Resource updateResource( final NodePath folderPath, final String name, final String resource )
+    {
+        return updateResource( folderPath, name, resource, "xml" );
+    }
+
+    Resource updateResource( final NodePath folderPath, final String name, final String resource, final String extension )
     {
         return VirtualAppContext.createContext().callWith( () -> {
 
@@ -72,11 +90,18 @@ final class DynamicResourceManager
 
             if ( resource != null )
             {
-                resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                if ( "xml".equals( extension ) )
+                {
+                    resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                }
+                else
+                {
+                    resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
+                }
             }
 
             final Node schemaNode = nodeService.update( UpdateNodeParams.create()
-                                                            .path( new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
+                                                            .path( new NodePath( folderPath, NodeName.from( name + "." + extension ) ) )
                                                             .editor( toBeEdited -> toBeEdited.data = resourceData )
                                                             .refresh( RefreshMode.ALL )
                                                             .build() );
@@ -88,22 +113,33 @@ final class DynamicResourceManager
 
     boolean resourceNodeExists( final NodePath folderPath, final String name )
     {
+        return resourceNodeExists( folderPath, name, "xml" );
+    }
+
+    boolean resourceNodeExists( final NodePath folderPath, final String name, final String extension )
+    {
         return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".xml" ) ) ) );
+            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + "." + extension ) ) ) );
     }
 
     Resource getResource( final NodePath folderPath, final String name )
     {
+        return getResource( folderPath, name, "xml" );
+    }
+
+    Resource getResource( final NodePath folderPath, final String name, final String extension )
+    {
         return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.getResource(
-                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".xml" ) ) );
+            .callWith( () -> resourceService.getResource( ResourceKey.from( appKeyFromNodePath( folderPath ),
+                                                                            resourcePathFromNodePath( folderPath ) + "/" + name + "." +
+                                                                                extension ) ) );
     }
 
     List<Resource> listResources( final NodePath folderPath )
     {
         return VirtualAppContext.createContext()
             .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
-                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.xml" )
+                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.(?:xml|yml)" )
                 .stream()
                 .map( resourceService::getResource )
                 .collect( Collectors.toList() ) );
@@ -111,11 +147,16 @@ final class DynamicResourceManager
 
     boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
     {
+        return deleteResource( folderPath, name, deleteFolder, "xml" );
+    }
+
+    boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder, final String extension )
+    {
         return VirtualAppContext.createContext()
             .callWith( () -> nodeService.delete( DeleteNodeParams.create()
                                                      .nodePath( deleteFolder
                                                                     ? folderPath
-                                                                    : new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
+                                                                    : new NodePath( folderPath, NodeName.from( name + "." + extension ) ) )
                                                      .refresh( RefreshMode.ALL )
                                                      .build() ) )
             .getNodeBranchEntries()
