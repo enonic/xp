@@ -59,21 +59,28 @@ final class AttachmentMediaPathSupplier
     {
         final Attachments attachments = content.getAttachments();
 
-        final String attachmentNameOrLabel = Objects.requireNonNullElseGet( name, () -> Objects.requireNonNullElse( label, "source" ) );
-
-        Attachment attachment = attachments.byName( attachmentNameOrLabel );
-        if ( attachment == null )
+        final Attachment attachment;
+        if ( name != null )
         {
-            attachment = attachments.byLabel( attachmentNameOrLabel );
+            attachment = attachments.byName( name );
+            if ( attachment == null )
+            {
+                throw new IllegalArgumentException(
+                    String.format( "Could not find attachment with name [%s] on content [%s]", name, content.getId() ) );
+            }
+        }
+        else
+        {
+            final String targetLabel = Objects.requireNonNullElse( label, "source" );
+            attachment = attachments.byLabel( targetLabel );
+            if ( attachment == null )
+            {
+                throw new IllegalArgumentException(
+                    String.format( "Could not find attachment with label [%s] on content [%s]", targetLabel, content.getId() ) );
+            }
         }
 
-        if ( attachment != null )
-        {
-            return attachment;
-        }
-
-        throw new IllegalArgumentException(
-            String.format( "Could not find attachment with name/label [%s] on content [%s]", attachmentNameOrLabel, content.getId() ) );
+        return attachment;
     }
 
     public static Builder create()
