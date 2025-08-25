@@ -24,23 +24,23 @@ final class ContentTypeLoader
     @Override
     protected ContentType load( final ContentTypeName name, final Resource resource )
     {
+        ContentType.Builder builder;
         if ( name.getExtension().equals( "yml" ) )
         {
-            final ContentType.Builder builder = contentTypeService.parseYml( resource.readString() );
-            builder.name( name );
-            return builder.build();
+            builder = contentTypeService.parseYml( resource.readString() );
         }
-        else {
-            final ContentType.Builder builder = ContentType.create();
+        else
+        {
+            builder = ContentType.create();
             parseXml( resource, builder );
-
-            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
-            builder.modifiedTime( modifiedTime );
-            builder.createdTime( modifiedTime );
-
             builder.icon( loadIcon( name ) );
-            return builder.name( name ).build();
         }
+
+        final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
+        builder.modifiedTime( modifiedTime );
+        builder.createdTime( modifiedTime );
+        builder.name( name );
+        return builder.build();
     }
 
     @Override

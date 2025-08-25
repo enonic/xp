@@ -20,6 +20,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
+import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
@@ -140,21 +141,36 @@ final class DynamicResourceParser
     {
         try
         {
-            final ContentType.Builder builder = contentTypeService.parseYml( resource );
-            builder.name( name );
-
-            final ContentType contentType = builder.build();
-
-            final ContentTypeName superType = contentType.getSuperType();
-
-            if ( "".equals( superType.getLocalName() ) )
+            if ( "xml".equals( name.getExtension() ) )
             {
-                return ContentType.create( contentType )
-                    .superType( ContentTypeName.from( name.getApplicationKey(), superType.getApplicationKey().getName() ) )
-                    .build();
-            }
+                final ContentType.Builder builder = ContentType.create();
+                final XmlContentTypeParser parser = new XmlContentTypeParser();
+                parser.currentApplication( name.getApplicationKey() );
+                parser.source( resource );
+                parser.builder( builder );
+                parser.parse();
+                builder.name( name );
 
-            return contentType;
+                return builder.build();
+            }
+            else
+            {
+                final ContentType.Builder builder = contentTypeService.parseYml( resource );
+                builder.name( name );
+
+                final ContentType contentType = builder.build();
+
+                final ContentTypeName superType = contentType.getSuperType();
+
+                if ( "".equals( superType.getLocalName() ) )
+                {
+                    return ContentType.create( contentType )
+                        .superType( ContentTypeName.from( name.getApplicationKey(), superType.getApplicationKey().getName() ) )
+                        .build();
+                }
+
+                return contentType;
+            }
         }
         catch ( Exception e )
         {
