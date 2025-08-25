@@ -66,6 +66,6 @@ public class DescriptorKeysTest
     @Test
     void equalsContract()
     {
-        EqualsVerifier.forClass( DescriptorKey.class ).withNonnullFields( "applicationKey", "name" ).verify();
+        EqualsVerifier.forClass( DescriptorKey.class ).withNonnullFields( "applicationKey", "name", "extension" ).verify();
     }
 }

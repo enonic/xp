@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.xdata;
 
 import java.time.Instant;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaLoader;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.xdata.XData;
@@ -42,8 +42,8 @@ final class XDataLoader
     }
 
     @Override
-    protected XDataName newName( final ApplicationKey appKey, final String name )
+    protected XDataName newName( final DescriptorKey descriptorKey )
     {
-        return XDataName.from( appKey, name );
+        return XDataName.from( descriptorKey.getApplicationKey(), descriptorKey.getName() );
     }
 }

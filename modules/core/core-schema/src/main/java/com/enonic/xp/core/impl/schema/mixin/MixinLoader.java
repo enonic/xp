@@ -2,8 +2,8 @@ package com.enonic.xp.core.impl.schema.mixin;
 
 import java.time.Instant;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.SchemaLoader;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.Mixin;
@@ -42,8 +42,8 @@ final class MixinLoader
     }
 
     @Override
-    protected MixinName newName( final ApplicationKey appKey, final String name )
+    protected MixinName newName( final DescriptorKey descriptorKey )
     {
-        return MixinName.from( appKey, name );
+        return MixinName.from( descriptorKey.getApplicationKey(), descriptorKey.getName() );
     }
 }
