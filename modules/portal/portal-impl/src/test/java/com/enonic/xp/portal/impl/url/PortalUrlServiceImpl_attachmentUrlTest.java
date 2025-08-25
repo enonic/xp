@@ -577,10 +577,83 @@ public class PortalUrlServiceImpl_attachmentUrlTest
         assertEquals( "baseUrl/_/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
     }
 
+    @Test
+    void testAttachmentUrlByName()
+    {
+        AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+            .setBaseUrl( "baseUrl" )
+            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+            .setProjectName( () -> ProjectName.from( "project" ) )
+            .setBranch( () -> Branch.from( "branch" ) )
+            .setDownload( true )
+            .setName( "mycontent.png" )
+            .build();
+
+        final String url = this.portalUrlGeneratorService.attachmentUrl( params );
+
+        assertEquals( "baseUrl/_/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
+    }
+
+    @Test
+    void testAttachmentUrlByLabel()
+    {
+        AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+            .setBaseUrl( "baseUrl" )
+            .setContent( () -> mockMedia( "123456", "mycontent.png", "myLabel" ) )
+            .setProjectName( () -> ProjectName.from( "project" ) )
+            .setBranch( () -> Branch.from( "branch" ) )
+            .setDownload( true )
+            .setLabel( "myLabel" )
+            .build();
+
+        final String url = this.portalUrlGeneratorService.attachmentUrl( params );
+
+        assertEquals( "baseUrl/_/media:attachment/project:branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download", url );
+    }
+
+    @Test
+    void testAttachmentUrlByUnknownLabel()
+    {
+        AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+            .setBaseUrl( "baseUrl" )
+            .setContent( () -> mockMedia( "123456", "mycontent.png", "myLabel" ) )
+            .setProjectName( () -> ProjectName.from( "project" ) )
+            .setBranch( () -> Branch.from( "branch" ) )
+            .setDownload( true )
+            .setLabel( "unknownLabel" )
+            .build();
+
+        final String url = this.portalUrlGeneratorService.attachmentUrl( params );
+
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+    }
+
+    @Test
+    void testAttachmentUrlByUnknownName()
+    {
+        AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+            .setBaseUrl( "baseUrl" )
+            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+            .setProjectName( () -> ProjectName.from( "project" ) )
+            .setBranch( () -> Branch.from( "branch" ) )
+            .setDownload( true )
+            .setName( "unknownName" )
+            .build();
+
+        final String url = this.portalUrlGeneratorService.attachmentUrl( params );
+
+        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+    }
+
     private Media mockMedia( String id, String name )
     {
+        return mockMedia( id, name, "source" );
+    }
+
+    private Media mockMedia( String id, String name, String label )
+    {
         final Attachment attachment =
-            Attachment.create().name( name ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).label( "source" ).build();
+            Attachment.create().name( name ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).label( label ).build();
 
         final Media media = mock( Media.class );
 
