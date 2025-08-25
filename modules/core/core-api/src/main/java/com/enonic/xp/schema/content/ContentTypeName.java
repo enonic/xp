@@ -352,7 +352,12 @@ public final class ContentTypeName
 
     public static ContentTypeName from( final String contentTypeName )
     {
-        return new ContentTypeName( contentTypeName );
+        return ContentTypeName.from( contentTypeName, "xml" );
+    }
+
+    public static ContentTypeName from( final String contentTypeName, final String extension )
+    {
+        return new ContentTypeName( contentTypeName, extension );
     }
 
     @Override

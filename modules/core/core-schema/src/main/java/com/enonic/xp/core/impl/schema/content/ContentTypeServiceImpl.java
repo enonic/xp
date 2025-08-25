@@ -86,9 +86,9 @@ public final class ContentTypeServiceImpl
     }
 
     @Override
-    public ContentType.Builder parseYml( final String contentTypeYml )
+    public ContentType.Builder createContentTypeFromYml( final String contentTypeYml, final ApplicationKey applicationKey )
     {
-        return YML_TYPE_PARSER.parse( contentTypeYml, ContentType.Builder.class );
+        return YML_TYPE_PARSER.parseContentType( contentTypeYml, applicationKey );
     }
 
     private ContentType transformInlineMixins( final ContentType contentType )

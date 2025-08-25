@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeMapper;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeNameMapper;
@@ -95,6 +97,17 @@ public final class YmlTypeParser
         {
             throw new UncheckedIOException( e );
         }
+    }
+
+    public ContentType.Builder parseContentType( final String yml, final ApplicationKey currentApplication )
+    {
+        final ContentType.Builder builder = parse( yml, ContentType.Builder.class );
+        builder.name( "_TEMP_NAME_" );
+
+        final ContentType contentType = builder.build();
+
+        return ContentType.create( contentType )
+            .superType( new ApplicationRelativeResolver( currentApplication ).toContentTypeName( contentType.getSuperType().toString() ) );
     }
 
 }

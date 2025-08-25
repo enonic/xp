@@ -19,5 +19,5 @@ public interface ContentTypeService
 
     ContentTypeValidationResult validate( ContentType type );
 
-    ContentType.Builder parseYml( String contentTypeYml );
+    ContentType.Builder createContentTypeFromYml( String contentTypeYml, ApplicationKey applicationKey );
 }

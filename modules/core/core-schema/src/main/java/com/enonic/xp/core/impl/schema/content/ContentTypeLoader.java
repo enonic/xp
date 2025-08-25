@@ -27,7 +27,7 @@ final class ContentTypeLoader
         ContentType.Builder builder;
         if ( name.getExtension().equals( "yml" ) )
         {
-            builder = contentTypeService.parseYml( resource.readString() );
+            builder = contentTypeService.createContentTypeFromYml( resource.readString(), name.getApplicationKey() );
         }
         else
         {

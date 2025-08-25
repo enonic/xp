@@ -139,9 +139,10 @@ final class DynamicResourceParser
 
     private ContentType parseContentTypeDescriptor( final ContentTypeName name, final String resource )
     {
-        try
+        // TODO: Remove later, kept just for testing
+        if ( "xml".equals( name.getExtension() ) )
         {
-            if ( "xml".equals( name.getExtension() ) )
+            try
             {
                 final ContentType.Builder builder = ContentType.create();
                 final XmlContentTypeParser parser = new XmlContentTypeParser();
@@ -153,28 +154,23 @@ final class DynamicResourceParser
 
                 return builder.build();
             }
-            else
+            catch ( Exception e )
             {
-                final ContentType.Builder builder = contentTypeService.parseYml( resource );
-                builder.name( name );
-
-                final ContentType contentType = builder.build();
-
-                final ContentTypeName superType = contentType.getSuperType();
-
-                if ( "".equals( superType.getLocalName() ) )
-                {
-                    return ContentType.create( contentType )
-                        .superType( ContentTypeName.from( name.getApplicationKey(), superType.getApplicationKey().getName() ) )
-                        .build();
-                }
-
-                return contentType;
+                throw new XmlException( e, "Could not parse dynamic content type [" + name + "]" );
             }
         }
-        catch ( Exception e )
+        else
         {
-            throw new XmlException( e, "Could not parse dynamic content type [" + name + "]" );
+            try
+            {
+                final ContentType.Builder builder = contentTypeService.createContentTypeFromYml( resource, name.getApplicationKey() );
+                builder.name( name );
+                return builder.build();
+            }
+            catch ( Exception e )
+            {
+                throw new RuntimeException( String.format( "Could not parse dynamic content type [%s]", name ), e );
+            }
         }
     }
 
