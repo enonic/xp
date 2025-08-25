@@ -139,7 +139,7 @@ final class DynamicResourceManager
     {
         return VirtualAppContext.createContext()
             .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
-                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.xml|yml" )
+                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.(?:xml|yml)" )
                 .stream()
                 .map( resourceService::getResource )
                 .collect( Collectors.toList() ) );
