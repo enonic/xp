@@ -26,11 +26,14 @@ public final class InputRegistry
 
             if ( yml.options != null )
             {
+                final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
                 yml.options.forEach( option -> {
-                    final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( option.name, option.value );
+                    final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( "option", option.value );
+                    propertyBuilder.attribute( "value", option.name );
                     option.getAttributes().forEach( propertyBuilder::attribute );
-                    builder.inputTypeConfig( InputTypeConfig.create().property( propertyBuilder.build() ).build() );
+                    configBuilder.property( propertyBuilder.build() );
                 } );
+                builder.inputTypeConfig( configBuilder.build() );
             }
             return builder.build();
         } );

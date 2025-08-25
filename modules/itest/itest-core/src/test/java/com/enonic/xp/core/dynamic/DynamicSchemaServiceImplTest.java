@@ -101,6 +101,7 @@ import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
@@ -231,7 +232,7 @@ public class DynamicSchemaServiceImplTest
 
         ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );
 
-        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, resourceService );
+        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, resourceService, mock( ContentTypeService.class ) );
 
         AppFilterService appFilterService = new AppFilterServiceImpl( appConfig );
 

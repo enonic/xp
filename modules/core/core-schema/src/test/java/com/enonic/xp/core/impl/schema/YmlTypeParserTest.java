@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -71,15 +72,20 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "cookie", defaultValue.asString() );
 
-        final InputTypeProperty cookieOpt = input.getInputTypeConfig().getProperty( "cookie" );
+
+        final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
+
+        final Iterator<InputTypeProperty> iterator = options.iterator();
+        final InputTypeProperty cookieOpt = iterator.next();
         assertNotNull( cookieOpt );
         assertEquals( "Cookie", cookieOpt.getValue() );
+        assertEquals( "cookie", cookieOpt.getAttribute( "value" ) );
         assertEquals( "i18n.rbg.cookie", cookieOpt.getAttribute( "i18n" ) );
 
-        final InputTypeProperty privacyOpt = input.getInputTypeConfig().getProperty( "privacy" );
+        final InputTypeProperty privacyOpt = iterator.next();
         assertNotNull( privacyOpt );
         assertEquals( "Privacy", privacyOpt.getValue() );
-        assertTrue( privacyOpt.getAttributes().isEmpty() );
+        assertEquals( "privacy", privacyOpt.getAttribute( "value" ) );
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.enonic.xp.schema.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -56,14 +58,28 @@ public final class ContentTypeName
 
     private static final ContentTypeName MEDIA_UNKNOWN = new ContentTypeName( ApplicationKey.MEDIA_MOD, "unknown" );
 
+    private final String extension;
+
     private ContentTypeName( final String name )
     {
+        this( name, "xml" );
+    }
+
+    private ContentTypeName( final String name, final String extension )
+    {
         super( name );
+        this.extension = extension;
     }
 
     private ContentTypeName( final ApplicationKey applicationKey, final String localName )
     {
+        this( applicationKey, localName, "xml" );
+    }
+
+    private ContentTypeName( final ApplicationKey applicationKey, final String localName, final String extension )
+    {
         super( applicationKey, localName );
+        this.extension = extension;
     }
 
     public static ContentTypeName structured()
@@ -313,6 +329,11 @@ public final class ContentTypeName
         return MEDIA_UNKNOWN.equals( this );
     }
 
+    public String getExtension()
+    {
+        return extension;
+    }
+
     @Override
     public int compareTo( final ContentTypeName that )
     {
@@ -321,11 +342,46 @@ public final class ContentTypeName
 
     public static ContentTypeName from( final ApplicationKey applicationKey, final String localName )
     {
-        return new ContentTypeName( applicationKey, localName );
+        return new ContentTypeName( applicationKey, localName, "xml" );
+    }
+
+    public static ContentTypeName from( final ApplicationKey applicationKey, final String localName, final String extension )
+    {
+        return new ContentTypeName( applicationKey, localName, extension );
     }
 
     public static ContentTypeName from( final String contentTypeName )
     {
-        return new ContentTypeName( contentTypeName );
+        return ContentTypeName.from( contentTypeName, "xml" );
+    }
+
+    public static ContentTypeName from( final String contentTypeName, final String extension )
+    {
+        return new ContentTypeName( contentTypeName, extension );
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if ( this == o )
+        {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() )
+        {
+            return false;
+        }
+        if ( !super.equals( o ) )
+        {
+            return false;
+        }
+        ContentTypeName that = (ContentTypeName) o;
+        return Objects.equals( extension, that.extension );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( super.hashCode(), extension );
     }
 }
