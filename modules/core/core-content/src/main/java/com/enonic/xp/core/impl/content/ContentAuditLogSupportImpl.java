@@ -437,6 +437,7 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
         paramsSet.addString( "childOrder", nullToNull( params.getChildOrder() ) );
+        paramsSet.addString( "manualOrderBase", nullToNull( params.getChildOrder() ) );
 
         addContent( resultSet, content );
 

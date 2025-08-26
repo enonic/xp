@@ -32,9 +32,11 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.ReorderChildNodeParams;
+import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
 import com.enonic.xp.repo.impl.node.DuplicateNodeResult;
-import com.enonic.xp.repo.impl.node.ReorderChildNodeCommand;
+import com.enonic.xp.repo.impl.node.ReorderChildNodesCommand;
 import com.enonic.xp.repo.impl.node.SetNodeChildOrderCommand;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
@@ -267,7 +269,7 @@ public class DuplicateNodeCommandTest
 
         assertOrder( parentNode, "child3", "child2", "child1" );
 
-        put_child1_on_top( parentNode, childNode1, childNode3 );
+        put_child1_on_top( childNode1, childNode3 );
 
         assertOrder( parentNode, "child1", "child3", "child2" );
 
@@ -435,12 +437,12 @@ public class DuplicateNodeCommandTest
         assertEquals( third, getNode( iterator.next() ).name().toString() );
     }
 
-    private void put_child1_on_top( final Node parentNode, final Node childNode1, final Node childNode3 )
+    private void put_child1_on_top( final Node childNode1, final Node childNode3 )
     {
-        ReorderChildNodeCommand.create()
-            .parentNode( getNodeById( parentNode.id() ) )
-            .nodeToMove( getNodeById( childNode1.id() ) )
-            .nodeToMoveBefore( getNodeById( childNode3.id() ) )
+        ReorderChildNodesCommand.create()
+            .params( ReorderChildNodesParams.create()
+                         .add( ReorderChildNodeParams.create().nodeId( childNode1.id() ).moveBefore( childNode3.id() ).build() )
+                         .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )

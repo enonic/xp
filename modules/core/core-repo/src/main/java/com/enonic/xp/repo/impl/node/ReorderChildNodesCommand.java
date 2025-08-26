@@ -8,11 +8,23 @@ import java.util.Objects;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
@@ -44,23 +56,52 @@ public class ReorderChildNodesCommand
             refresh( RefreshMode.SEARCH );
 
             final Node nodeToMove = doGetById( reorderChildNodeParams.getNodeId() );
-            final Node nodeToMoveBefore =
-                reorderChildNodeParams.getMoveBefore() == null ? null : doGetById( reorderChildNodeParams.getMoveBefore() );
 
-            final Node parentNode = parents.stream()
-                .filter( node -> node.path().equals( nodeToMove.parentPath() ) )
-                .findAny()
-                .orElseGet( () -> doGetByPath( nodeToMove.parentPath() ) );
+            final Long toMoveBeforeValue;
+            if ( reorderChildNodeParams.getMoveBefore() == null )
+            {
+                toMoveBeforeValue = null;
+            }
+            else
+            {
+                final Node nodeToMoveBefore = doGetById( reorderChildNodeParams.getMoveBefore() );
+                toMoveBeforeValue = nodeToMoveBefore.getManualOrderValue();
+                if ( toMoveBeforeValue == null )
+                {
+                    throw new IllegalArgumentException( "Node with id [" + nodeToMoveBefore.id() + "] missing manual order value" );
+                }
+            }
 
-            final Node reorderedNode = ReorderChildNodeCommand.create()
-                .indexServiceInternal( this.indexServiceInternal )
-                .searchService( this.nodeSearchService )
-                .storageService( this.nodeStorageService )
-                .parentNode( parentNode )
-                .nodeToMove( nodeToMove )
-                .nodeToMoveBefore( nodeToMoveBefore )
-                .build()
-                .execute();
+            final Node parentNode =
+                parents.stream().filter( node -> node.path().equals( nodeToMove.parentPath() ) ).findAny().orElseGet( () -> {
+                    final Node node = doGetByPath( nodeToMove.parentPath() );
+                    if ( !node.getChildOrder().isManualOrder() )
+                    {
+                        throw new IllegalArgumentException(
+                            "Cannot manually order node with id [" + nodeToMove.id() + "] since manual child order not enabled on parent" );
+                    }
+                    return node;
+                } );
+
+            final NodePath parentNodePath = parentNode.path();
+            final long newOrderValue;
+            if ( toMoveBeforeValue == null )
+            {
+                final Long nodeManualOrderValue = getManualOrderValue( parentNodePath, Long.MIN_VALUE );
+
+                newOrderValue = nodeManualOrderValue == null
+                    ? NodeManualOrderValueResolver.first()
+                    : NodeManualOrderValueResolver.after( nodeManualOrderValue );
+            }
+            else
+            {
+                final Long nodeManualOrderValue = getManualOrderValue( parentNodePath, toMoveBeforeValue );
+
+                newOrderValue = nodeManualOrderValue == null
+                    ? NodeManualOrderValueResolver.before( toMoveBeforeValue )
+                    : NodeManualOrderValueResolver.between( toMoveBeforeValue, nodeManualOrderValue );
+            }
+            final Node reorderedNode = doUpdateNodeOrderValue( nodeToMove, newOrderValue );
 
             result.addNodeId( reorderedNode.id() );
 
@@ -86,6 +127,37 @@ public class ReorderChildNodesCommand
             final Node editedNode = Node.create( parentNode ).data( processedData ).timestamp( Instant.now( CLOCK ) ).build();
             this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), InternalContext.from( ContextAccessor.current() ) );
         }
+    }
+
+    private Long getManualOrderValue( final NodePath parentNodePath, final long nodeAfterOrderValue )
+    {
+        final NodeQuery query = NodeQuery.create()
+            .parent( parentNodePath )
+            .query( QueryExpr.from(
+                CompareExpr.gt( FieldExpr.from( NodeIndexPath.MANUAL_ORDER_VALUE ), ValueExpr.number( nodeAfterOrderValue ) ),
+                FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ) )
+            .size( 1 )
+            .build();
+        final SearchResult searchResult = nodeSearchService.query( query, SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        if ( searchResult.isEmpty() )
+        {
+            return null;
+        }
+
+        final Node node = doGetById( NodeId.from( searchResult.getHits().getFirst().getId() ) );
+        final Long manualOrderValue = node.getManualOrderValue();
+        if ( manualOrderValue == null )
+        {
+            throw new IllegalArgumentException( "Node with id [" + node.id() + "] missing manual order value" );
+        }
+
+        return manualOrderValue;
+    }
+
+    private Node doUpdateNodeOrderValue( Node nodeToMove, final long newOrderValue )
+    {
+        final Node updatedNode = Node.create( nodeToMove ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
+        return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) ).node();
     }
 
     public static class Builder

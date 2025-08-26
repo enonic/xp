@@ -784,7 +784,8 @@ public class ContentServiceImpl
             final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create()
                 .nodeId( NodeId.from( params.getContentId() ) )
                 .refresh( RefreshMode.ALL )
-                .childOrder( params.getChildOrder() );
+                .childOrder( params.getChildOrder() )
+                .manualOrderBase( params.getManualOrderBase() );
 
             if ( params.stopInherit() )
             {

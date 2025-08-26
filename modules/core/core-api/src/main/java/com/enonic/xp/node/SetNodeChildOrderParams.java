@@ -10,6 +10,8 @@ public final class SetNodeChildOrderParams
 
     private final ChildOrder childOrder;
 
+    private final ChildOrder manualOrderBase;
+
     private final NodeDataProcessor processor;
 
     private final RefreshMode refresh;
@@ -18,6 +20,7 @@ public final class SetNodeChildOrderParams
     {
         nodeId = builder.nodeId;
         childOrder = builder.childOrder;
+        manualOrderBase = builder.manualOrderBase;
         processor = builder.processor;
         this.refresh = builder.refresh;
     }
@@ -30,6 +33,11 @@ public final class SetNodeChildOrderParams
     public ChildOrder getChildOrder()
     {
         return childOrder;
+    }
+
+    public ChildOrder getManualOrderBase()
+    {
+        return manualOrderBase;
     }
 
     public NodeDataProcessor getProcessor()
@@ -54,6 +62,8 @@ public final class SetNodeChildOrderParams
 
         private ChildOrder childOrder;
 
+        private ChildOrder manualOrderBase;
+
         private NodeDataProcessor processor = ( n, p ) -> n;
 
         private RefreshMode refresh;
@@ -71,6 +81,12 @@ public final class SetNodeChildOrderParams
         public Builder childOrder( ChildOrder childOrder )
         {
             this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder manualOrderBase( ChildOrder manualOrderBase )
+        {
+            this.manualOrderBase = manualOrderBase;
             return this;
         }
 

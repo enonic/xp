@@ -1,23 +1,26 @@
 package com.enonic.xp.content;
 
+import java.util.Iterator;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class ReorderChildContentsParams
-    extends AbstractImmutableEntityList<ReorderChildParams>
+    implements Iterable<ReorderChildParams>
 {
     private final ContentId contentId;
 
     private final boolean stopInherit;
 
+    private final ImmutableList<ReorderChildParams> list;
+
     private ReorderChildContentsParams( final Builder builder )
     {
-        super( builder.orderChildContentParamsList.build() );
-        contentId = builder.contentId;
-        stopInherit = builder.stopInherit;
+        this.list = builder.orderChildContentParamsList.build();
+        this.contentId = builder.contentId;
+        this.stopInherit = builder.stopInherit;
     }
 
     public ContentId getContentId()
@@ -28,6 +31,11 @@ public final class ReorderChildContentsParams
     public boolean stopInherit()
     {
         return stopInherit;
+    }
+
+    public Iterator<ReorderChildParams> iterator()
+    {
+        return list.iterator();
     }
 
     public static Builder create()

@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -15,21 +14,20 @@ public class ResolveInsertOrderValueCommand
 {
     private final NodePath parentPath;
 
-    private final InsertManualStrategy insertManualStrategy;
+    private final boolean last;
 
     private ResolveInsertOrderValueCommand( final Builder builder )
     {
         super( builder );
         parentPath = builder.parentPath;
-        insertManualStrategy = builder.insertManualStrategy;
+        last = builder.last;
     }
 
-    public Long execute()
+    public long execute()
     {
         refresh( RefreshMode.SEARCH );
 
-        final ChildOrder childOrder =
-            InsertManualStrategy.LAST.equals( insertManualStrategy ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
+        final ChildOrder childOrder = last ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 
         final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
                                                                                     .size( 1 )
@@ -42,25 +40,19 @@ public class ResolveInsertOrderValueCommand
 
         if ( childrenIds.isEmpty() )
         {
-            return NodeManualOrderValueResolver.START_ORDER_VALUE;
+            return NodeManualOrderValueResolver.first();
         }
         else
         {
-            final Node first = doGetById( childrenIds.first() );
-            if ( first.getManualOrderValue() == null )
+            final Node node = doGetById( childrenIds.first() );
+            final Long manualOrderValue = node.getManualOrderValue();
+            if ( manualOrderValue == null )
             {
-                throw new IllegalArgumentException( "Expected that node " + first +
+                throw new IllegalArgumentException( "Expected that node " + node.id() +
                                                         " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
             }
 
-            if ( InsertManualStrategy.LAST.equals( insertManualStrategy ) )
-            {
-                return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
-            }
-            else
-            {
-                return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
-            }
+            return last ? NodeManualOrderValueResolver.after( manualOrderValue ) : NodeManualOrderValueResolver.before( manualOrderValue );
         }
     }
 
@@ -79,7 +71,7 @@ public class ResolveInsertOrderValueCommand
     {
         private NodePath parentPath;
 
-        private InsertManualStrategy insertManualStrategy;
+        private boolean last;
 
         private Builder()
         {
@@ -96,9 +88,9 @@ public class ResolveInsertOrderValueCommand
             return this;
         }
 
-        public Builder insertManualStrategy( final InsertManualStrategy val )
+        public Builder last( final boolean val )
         {
-            insertManualStrategy = val;
+            last = val;
             return this;
         }
 

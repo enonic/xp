@@ -1,38 +1,32 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NodeManualOrderValueResolverTest
 {
-
     @Test
-    public void resolve()
+    void resolve()
         throws Exception
     {
-        List<NodeId> nodeIds = new ArrayList<>();
-
-        for ( int i = 0; i <= 10; i++ )
+        double previousValue = NodeManualOrderValueResolver.first() + 1;
+        final NodeManualOrderValueResolver resolver = new NodeManualOrderValueResolver();
+        for ( int i = 0; i < 10; i++ )
         {
-            nodeIds.add( NodeId.from( i ) );
+            final long manualOrderValue = resolver.getAsLong();
+
+            assertTrue( previousValue > manualOrderValue );
+            previousValue = manualOrderValue;
         }
+    }
 
-        final List<NodeManualOrderValueResolver.NodeIdOrderValue> resolvedOrder =
-            NodeManualOrderValueResolver.resolve( NodeIds.from( nodeIds ) );
+    @Test
+    void between() {
+        assertEquals( 4611686018427387905L, NodeManualOrderValueResolver.between( 3L, Long.MAX_VALUE ));
 
-        double previousValue = NodeManualOrderValueResolver.START_ORDER_VALUE + 1;
-
-        for ( final NodeManualOrderValueResolver.NodeIdOrderValue nodeIdOrderValue : resolvedOrder )
-        {
-            assertTrue( previousValue > nodeIdOrderValue.getManualOrderValue() );
-            previousValue = nodeIdOrderValue.getManualOrderValue();
-        }
+        assertEquals( 0, NodeManualOrderValueResolver.after( NodeManualOrderValueResolver.first() ),
+                      NodeManualOrderValueResolver.before( NodeManualOrderValueResolver.first() ) );
     }
 }

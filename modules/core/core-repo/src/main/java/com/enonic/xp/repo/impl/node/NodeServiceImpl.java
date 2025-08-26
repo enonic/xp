@@ -671,6 +671,7 @@ public class NodeServiceImpl
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .childOrder( params.getChildOrder() )
+            .manualOrderBase( params.getManualOrderBase() )
             .nodeId( params.getNodeId() )
             .processor( params.getProcessor() )
             .refresh( params.getRefresh() )

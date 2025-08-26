@@ -177,8 +177,7 @@ public final class CreateNodeCommand
         else
         {
             return ResolveInsertOrderValueCommand.create( this ).
-                parentPath( parentNode.path() ).
-                insertManualStrategy( insertManualStrategy ).
+                parentPath( parentNode.path() ).last( InsertManualStrategy.LAST.equals( insertManualStrategy ) ).
                 build().
                 execute();
         }

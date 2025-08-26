@@ -10,12 +10,15 @@ public final class SetContentChildOrderParams
 
     private final ChildOrder childOrder;
 
+    private final ChildOrder manualOrderBase;
+
     private final boolean stopInherit;
 
     private SetContentChildOrderParams( Builder builder )
     {
         contentId = builder.contentId;
         childOrder = builder.childOrder;
+        manualOrderBase  = builder.manualOrderBase;
         stopInherit = builder.stopInherit;
     }
 
@@ -27,6 +30,11 @@ public final class SetContentChildOrderParams
     public ChildOrder getChildOrder()
     {
         return childOrder;
+    }
+
+    public ChildOrder getManualOrderBase()
+    {
+        return manualOrderBase;
     }
 
     public boolean stopInherit()
@@ -46,6 +54,8 @@ public final class SetContentChildOrderParams
 
         private ChildOrder childOrder;
 
+        private ChildOrder manualOrderBase;
+
         private boolean stopInherit = true;
 
         private Builder()
@@ -61,6 +71,12 @@ public final class SetContentChildOrderParams
         public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
+            return this;
+        }
+
+        public Builder manualOrderBase( final ChildOrder manualOrderBase )
+        {
+            this.manualOrderBase = manualOrderBase;
             return this;
         }
 

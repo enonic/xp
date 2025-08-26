@@ -15,16 +15,18 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.ReorderChildNodeParams;
+import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.node.ReorderChildNodeCommand;
+import com.enonic.xp.repo.impl.node.ReorderChildNodesCommand;
 import com.enonic.xp.repo.impl.node.SetNodeChildOrderCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ReorderChildNodeCommandTest
+public class ReorderChildNodesCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -49,15 +51,15 @@ public class ReorderChildNodeCommandTest
         setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-        ReorderChildNodeCommand.create().
-            parentNode( getNodeById( parentNode.id() ) ).
-            nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
-            nodeToMoveBefore( getNodeById( NodeId.from( "a" ) ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        ReorderChildNodesCommand.create()
+            .params( ReorderChildNodesParams.create()
+                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "a" ) ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
         refresh();
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
@@ -87,15 +89,15 @@ public class ReorderChildNodeCommandTest
         setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-        ReorderChildNodeCommand.create().
-            parentNode( getNodeById( parentNode.id() ) ).
-            nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
-            nodeToMoveBefore( getNodeById( NodeId.from( "b" ) ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        ReorderChildNodesCommand.create()
+            .params( ReorderChildNodesParams.create()
+                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "b" ) ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
         refresh();
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
@@ -125,14 +127,15 @@ public class ReorderChildNodeCommandTest
         setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
         // current node order: a,b,c,d,e,f
-        ReorderChildNodeCommand.create().
-            parentNode( getNodeById( parentNode.id() ) ).
-            nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        ReorderChildNodesCommand.create()
+            .params( ReorderChildNodesParams.create()
+                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
         refresh();
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
@@ -168,15 +171,15 @@ public class ReorderChildNodeCommandTest
         setManualOrderValueToNull( NodeId.from( "e" ) );
         setManualOrderValueToNull( NodeId.from( "f" ) );
 
-        assertThrows(IllegalArgumentException.class, () -> ReorderChildNodeCommand.create().
-            parentNode( getNodeById( parentNode.id() ) ).
-            nodeToMove( getNodeById( NodeId.from( "c" ) ) ).
-            nodeToMoveBefore( getNode( NodeId.from( "f" ) ) ).
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute() );
+        assertThrows( IllegalArgumentException.class, () -> ReorderChildNodesCommand.create()
+            .params( ReorderChildNodesParams.create()
+                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "f" ) ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute() );
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )
