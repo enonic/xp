@@ -10,10 +10,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
-import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeMapper;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeNameMapper;
-import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.FieldSetMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.FormItemMapper;
@@ -21,10 +19,9 @@ import com.enonic.xp.core.impl.schema.mapper.FormItemSetMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormOptionSetMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormOptionSetOptionMapper;
 import com.enonic.xp.core.impl.schema.mapper.InlineMixinMapper;
+import com.enonic.xp.core.impl.schema.mapper.InputRegistry;
 import com.enonic.xp.core.impl.schema.mapper.MixinNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.OccurrencesMapper;
-import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
-import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -71,10 +68,12 @@ public final class YmlTypeParser
         MAPPER.addMixIn( FormOptionSetOption.class, FormOptionSetOptionMapper.class );
         MAPPER.addMixIn( FormOptionSetOption.Builder.class, FormOptionSetOptionMapper.Builder.class );
 
-        MAPPER.registerSubtypes( new NamedType( TextLineYml.class, "TextLine" ), new NamedType( RadioButtonYml.class, "RadioButton" ),
-                                 new NamedType( DoubleYml.class, "Double" ), new NamedType( Input.class, "TextArea" ),
-                                 new NamedType( Input.class, "CheckBox" ), new NamedType( Input.class, "ComboBox" ),
-                                 new NamedType( ContentSelectorYml.class, "ContentSelector" ), new NamedType( Input.class, "CustomSelector" ),
+
+        InputRegistry.getFactories()
+            .forEach( ( clazz, typeName ) -> MAPPER.registerSubtypes( new NamedType( clazz, typeName.toString() ) ) );
+
+        MAPPER.registerSubtypes( new NamedType( Input.class, "TextArea" ), new NamedType( Input.class, "CheckBox" ),
+                                 new NamedType( Input.class, "ComboBox" ), new NamedType( Input.class, "CustomSelector" ),
                                  new NamedType( Input.class, "ContentTypeFilter" ), new NamedType( Input.class, "Date" ),
                                  new NamedType( Input.class, "DateTime" ), new NamedType( Input.class, "MediaUploader" ),
                                  new NamedType( Input.class, "AttachmentUploader" ), new NamedType( Input.class, "GeoPoint" ),
