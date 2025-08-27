@@ -106,6 +106,27 @@ public class NodeStorageServiceImpl
     }
 
     @Override
+    public void updateVersion( final Node node, final InternalContext context )
+    {
+        final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( node.getNodeVersionId(), context );
+
+        if ( nodeVersionMetadata == null )
+        {
+            throw new NodeNotFoundException( "Cannot find node version with id: " + node.getNodeVersionId() );
+        }
+
+        this.branchService.store( NodeBranchEntry.create()
+                                      .nodeVersionId( node.getNodeVersionId() )
+                                      .nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() )
+                                      .nodeId( node.id() )
+                                      .timestamp( node.getTimestamp() )
+                                      .nodePath( node.path() )
+                                      .build(), null, context );
+
+        this.indexDataService.store( node, context );
+    }
+
+    @Override
     public void push( final Collection<PushNodeEntry> entries, final Branch target, final PushNodesListener pushListener,
                       final InternalContext context )
     {
@@ -234,7 +255,7 @@ public class NodeStorageServiceImpl
         {
             return Nodes.empty();
         }
-        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds.getSet(), context ).stream();
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context ).stream();
         return doReturnNodes( stream, context );
     }
 
@@ -288,7 +309,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds.getSet(), context );
+        return this.branchService.get( nodeIds, context );
     }
 
     @Override

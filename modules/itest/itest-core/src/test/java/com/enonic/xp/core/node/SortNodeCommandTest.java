@@ -16,16 +16,17 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.SetNodeChildOrderParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.node.SetNodeChildOrderCommand;
+import com.enonic.xp.repo.impl.node.SortNodeCommand;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SetNodeChildOrderCommandTest
+public class SortNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -190,14 +191,13 @@ public class SetNodeChildOrderCommandTest
 
     private void setChildOrder( final Node node, final ChildOrder childOrder )
     {
-        SetNodeChildOrderCommand.create().
-            nodeId( node.id() ).
-            childOrder( childOrder ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        SortNodeCommand.create()
+            .params( SetNodeChildOrderParams.create().nodeId( node.id() ).childOrder( childOrder ).build() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     private FindNodesByParentResult createNodeAndReturnOrderedChildren( final IndexPath path, final OrderExpr.Direction direction )
@@ -208,14 +208,16 @@ public class SetNodeChildOrderCommandTest
 
         refresh();
 
-        SetNodeChildOrderCommand.create().
-            nodeId( node.id() ).
-            childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        SortNodeCommand.create()
+            .params( SetNodeChildOrderParams.create()
+                         .nodeId( node.id() )
+                         .childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() )
+                         .build() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         refresh();
 

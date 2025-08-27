@@ -76,6 +76,7 @@ import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -666,21 +667,17 @@ public class NodeServiceImpl
     public Node setChildOrder( final SetNodeChildOrderParams params )
     {
         verifyContext();
-        final Node sortedNode = SetNodeChildOrderCommand.create()
+        final SortNodeResult result = SortNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
-            .childOrder( params.getChildOrder() )
-            .manualOrderBase( params.getManualOrderBase() )
-            .nodeId( params.getNodeId() )
-            .processor( params.getProcessor() )
-            .refresh( params.getRefresh() )
+            .params( params )
             .build()
             .execute();
 
-        this.eventPublisher.publish( NodeEvents.sorted( sortedNode, InternalContext.from( ContextAccessor.current() ) ) );
+        this.eventPublisher.publish( NodeEvents.sorted( result.getNode(), InternalContext.from( ContextAccessor.current() ) ) );
 
-        return sortedNode;
+        return result.getNode();
     }
 
     @Override

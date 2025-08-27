@@ -198,7 +198,6 @@ public class ApplyNodePermissionsCommand
         }
 
         return NodeHelper.runAsAdmin( () -> {
-            NodeVersionData result;
             if ( updatedVersionMetadata != null )
             {
                 this.nodeStorageService.push( List.of( PushNodeEntry.create()
@@ -214,7 +213,7 @@ public class ApplyNodePermissionsCommand
                 }, targetContext );
 
                 return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(),
-                                                                    InternalContext.create( ContextAccessor.current() ).build() ),
+                                                                    InternalContext.from( ContextAccessor.current() ) ),
                                             updatedVersionMetadata );
             }
             else
@@ -225,11 +224,11 @@ public class ApplyNodePermissionsCommand
                         compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
                                                          params.getRemovePermissions() ) )
                     .build();
-                result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
-            }
+                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
 
-            listener.permissionsApplied( 1 );
-            return result;
+                listener.permissionsApplied( 1 );
+                return result;
+            }
         } );
     }
 

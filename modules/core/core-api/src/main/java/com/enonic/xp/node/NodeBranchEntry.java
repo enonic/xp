@@ -19,11 +19,11 @@ public final class NodeBranchEntry
 
     private NodeBranchEntry( Builder builder )
     {
-        this.nodeVersionId = builder.nodeVersionId;
-        this.nodeVersionKey = builder.nodeVersionKey;
-        this.nodePath = builder.nodePath;
-        this.timestamp = builder.timestamp;
-        this.nodeId = builder.nodeId;
+        this.nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
+        this.nodeVersionKey = Objects.requireNonNull( builder.nodeVersionKey );
+        this.nodePath = Objects.requireNonNull( builder.nodePath );
+        this.timestamp = Objects.requireNonNull( builder.timestamp) ;
+        this.nodeId = Objects.requireNonNull( builder.nodeId );
     }
 
     public static Builder create()
@@ -147,15 +147,8 @@ public final class NodeBranchEntry
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( this.nodePath, "nodePath is required" );
-            Objects.requireNonNull( this.nodeId, "nodeId is required" );
-        }
-
         public NodeBranchEntry build()
         {
-            validate();
             return new NodeBranchEntry( this );
         }
     }

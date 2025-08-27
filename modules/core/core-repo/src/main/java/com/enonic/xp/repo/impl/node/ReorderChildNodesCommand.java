@@ -157,7 +157,8 @@ public class ReorderChildNodesCommand
     private Node doUpdateNodeOrderValue( Node nodeToMove, final long newOrderValue )
     {
         final Node updatedNode = Node.create( nodeToMove ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
-        return this.nodeStorageService.store( updatedNode, InternalContext.from( ContextAccessor.current() ) ).node();
+        return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), InternalContext.from( ContextAccessor.current() ) )
+            .node();
     }
 
     public static class Builder

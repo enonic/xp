@@ -148,7 +148,7 @@ public class PushNodesCommand
 
         final PushNodesResult result = builder.build();
 
-        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, InternalContext.create( context ).build() );
+        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, InternalContext.from( context ) );
 
         refresh( RefreshMode.ALL );
 

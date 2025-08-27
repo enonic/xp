@@ -1,5 +1,10 @@
 package com.enonic.xp.node;
 
+import java.util.List;
+import java.util.Objects;
+
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
@@ -12,16 +17,19 @@ public final class SetNodeChildOrderParams
 
     private final ChildOrder manualOrderBase;
 
+    private final ImmutableList<ReorderChildNodeParams> reorderChildNodes;
+
     private final NodeDataProcessor processor;
 
     private final RefreshMode refresh;
 
     private SetNodeChildOrderParams( final Builder builder )
     {
-        nodeId = builder.nodeId;
-        childOrder = builder.childOrder;
-        manualOrderBase = builder.manualOrderBase;
-        processor = builder.processor;
+        this.nodeId = builder.nodeId;
+        this.childOrder = builder.childOrder;
+        this.manualOrderBase = builder.manualOrderBase;
+        this.reorderChildNodes = builder.reorderChildNodes.build();
+        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
 
@@ -50,11 +58,15 @@ public final class SetNodeChildOrderParams
         return refresh;
     }
 
+    public List<ReorderChildNodeParams> getReorderChildNodes()
+    {
+        return reorderChildNodes;
+    }
+
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -64,7 +76,9 @@ public final class SetNodeChildOrderParams
 
         private ChildOrder manualOrderBase;
 
-        private NodeDataProcessor processor = ( n, p ) -> n;
+        private final ImmutableList.Builder<ReorderChildNodeParams> reorderChildNodes = ImmutableList.builder();
+
+        private NodeDataProcessor processor;
 
         private RefreshMode refresh;
 
@@ -90,6 +104,12 @@ public final class SetNodeChildOrderParams
             return this;
         }
 
+        public Builder addManualOrder( final ReorderChildNodeParams reorderChildNodeParams )
+        {
+            this.reorderChildNodes.add( reorderChildNodeParams );
+            return this;
+        }
+
         public Builder processor( NodeDataProcessor processor )
         {
             this.processor = processor;
@@ -104,6 +124,7 @@ public final class SetNodeChildOrderParams
 
         public SetNodeChildOrderParams build()
         {
+            Objects.requireNonNull( nodeId,  "nodeId is required" );
             return new SetNodeChildOrderParams( this );
         }
     }

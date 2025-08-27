@@ -62,7 +62,7 @@ class NodeStorageServiceImplTest
 
         context = InternalContext.create().
             repositoryId( RepositoryId.from( "repository-id" ) ).
-            authInfo( AuthenticationInfo.unAuthenticated() ).
+            principalsKeys( AuthenticationInfo.unAuthenticated().getPrincipals() ).
             branch( Branch.from( "branch" ) ).
             build();
     }
