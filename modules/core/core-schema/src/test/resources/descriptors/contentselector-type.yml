@@ -4,10 +4,10 @@ label: "Search result page"
 occurrences:
   minimum: 1
   maximum: 1
-allowContentType:
+allowContentTypes:
   - "myapp:landing-page1"
   - "myapp:landing-page2"
-allowPath:
+allowPaths:
   - "${site}/people/"
   - "./*"
 treeMode: true

@@ -10,9 +10,9 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class ContentSelectorYml
     extends InputYml
 {
-    public List<String> allowContentType;
+    public List<String> allowContentTypes;
 
-    public List<String> allowPath;
+    public List<String> allowPaths;
 
     public Boolean treeMode;
 
@@ -37,14 +37,14 @@ public class ContentSelectorYml
         {
             configBuilder.property( InputTypeProperty.create( "treeMode", treeMode.toString() ).build() );
         }
-        if ( allowContentType != null )
+        if ( allowContentTypes != null )
         {
-            allowContentType.forEach(
+            allowContentTypes.forEach(
                 allowType -> configBuilder.property( InputTypeProperty.create( "allowContentType", allowType ).build() ) );
         }
-        if ( allowPath != null )
+        if ( allowPaths != null )
         {
-            allowPath.forEach( allowPath -> configBuilder.property( InputTypeProperty.create( "allowPath", allowPath ).build() ) );
+            allowPaths.forEach( allowPath -> configBuilder.property( InputTypeProperty.create( "allowPath", allowPath ).build() ) );
         }
 
         builder.inputTypeConfig( configBuilder.build() );

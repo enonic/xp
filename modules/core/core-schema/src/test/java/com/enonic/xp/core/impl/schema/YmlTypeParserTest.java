@@ -72,7 +72,6 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "cookie", defaultValue.asString() );
 
-
         final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
 
         final Iterator<InputTypeProperty> iterator = options.iterator();
@@ -122,7 +121,6 @@ public class YmlTypeParserTest
     }
 
 
-
     @Test
     void parseDouble()
         throws Exception
@@ -159,7 +157,7 @@ public class YmlTypeParserTest
         final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
 
         final ContentSelectorYml contentSelectorYml = parser.parse( yaml, ContentSelectorYml.class );
-        Input input = contentSelectorYml.copy().toInput();
+        final Input input = contentSelectorYml.copy().toInput();
 
         assertEquals( "ContentSelector", input.getInputType().toString() );
         assertEquals( "searchResultPage", input.getName() );
