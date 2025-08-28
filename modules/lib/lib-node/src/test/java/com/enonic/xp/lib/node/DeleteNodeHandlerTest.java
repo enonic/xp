@@ -1,8 +1,11 @@
 package com.enonic.xp.lib.node;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.DeleteNodeResult;
@@ -10,6 +13,7 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -29,10 +33,16 @@ public class DeleteNodeHandlerTest
                                     .add( NodeBranchEntry.create()
                                               .nodeId( NodeId.from( "nodeId" ) )
                                               .nodePath( new NodePath( "/node2-path" ) )
+                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+                                              .nodeVersionId( new NodeVersionId() )
+                                              .timestamp( Instant.EPOCH )
                                               .build() )
                                     .add( NodeBranchEntry.create()
                                               .nodeId( NodeId.from( "aSubNodeId" ) )
                                               .nodePath( new NodePath( "/node2-path/subNode" ) )
+                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+                                              .nodeVersionId( new NodeVersionId() )
+                                              .timestamp( Instant.EPOCH )
                                               .build() )
                                     .build() )
             .build();

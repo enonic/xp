@@ -12,9 +12,9 @@ public final class NodeVersionKey
 
     private NodeVersionKey( final Builder builder )
     {
-        nodeBlobKey = builder.nodeBlobKey;
-        indexConfigBlobKey = builder.indexConfigBlobKey;
-        accessControlBlobKey = builder.accessControlBlobKey;
+        nodeBlobKey = Objects.requireNonNull(builder.nodeBlobKey);
+        indexConfigBlobKey = Objects.requireNonNull(builder.indexConfigBlobKey);
+        accessControlBlobKey = Objects.requireNonNull(builder.accessControlBlobKey);
     }
 
     public BlobKey getNodeBlobKey()
@@ -102,16 +102,8 @@ public final class NodeVersionKey
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( nodeBlobKey, "nodeBlobKey cannot be null" );
-            Objects.requireNonNull( indexConfigBlobKey, "indexConfigBlobKey cannot be null" );
-            Objects.requireNonNull( accessControlBlobKey, "accessControlBlobKey cannot be null" );
-        }
-
         public NodeVersionKey build()
         {
-            validate();
             return new NodeVersionKey( this );
         }
     }
