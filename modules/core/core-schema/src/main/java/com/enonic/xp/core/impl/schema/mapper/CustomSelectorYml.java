@@ -3,10 +3,12 @@ package com.enonic.xp.core.impl.schema.mapper;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
@@ -20,6 +22,9 @@ public class CustomSelectorYml
 
     public Map<String, String> params;
 
+    @JsonProperty("default")
+    public String defaultValue;
+
     @Override
     public InputTypeName getInputTypeName()
     {
@@ -29,6 +34,12 @@ public class CustomSelectorYml
     @Override
     public void customizeInputType( final Input.Builder builder )
     {
+        if ( defaultValue != null )
+        {
+            builder.defaultValue(
+                InputTypeDefault.create().property( InputTypeProperty.create( "default", defaultValue ).build() ).build() );
+        }
+
         final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
 
         if ( service != null )

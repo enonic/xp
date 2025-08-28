@@ -206,7 +206,12 @@ public class YmlTypeParserTest
 
         final CustomSelectorYml customSelectorYml = parser.parse( yaml, CustomSelectorYml.class, injectableValues );
 
-        Input input = customSelectorYml.convertToInput();
+        final Input input = customSelectorYml.convertToInput();
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isString() );
+        assertEquals( "DefaultValue", defaultValue.asString() );
 
         assertEquals( InputTypeName.CUSTOM_SELECTOR, input.getInputType() );
 

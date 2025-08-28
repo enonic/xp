@@ -5,3 +5,4 @@ service: "spotify-music-selector"
 params:
   genre: "classic"
   sortBy: "length"
+default: "DefaultValue"
