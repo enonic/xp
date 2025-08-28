@@ -8,11 +8,9 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
@@ -20,9 +18,6 @@ public class RadioButtonYml
     extends InputYml
 {
     public List<Option> options;
-
-    @JsonProperty("default")
-    public String defaultValue;
 
     @Override
     public InputTypeName getInputTypeName()
@@ -33,12 +28,6 @@ public class RadioButtonYml
     @Override
     public void customizeInputType( final Input.Builder builder )
     {
-        if ( defaultValue != null )
-        {
-            builder.defaultValue(
-                InputTypeDefault.create().property( InputTypeProperty.create( "default", defaultValue ).build() ).build() );
-        }
-
         if ( options != null )
         {
             final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
