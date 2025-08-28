@@ -48,6 +48,7 @@ addBundle( libs.bcprov.jdk18on, 6 )
 // Library dependencies
 addBundle( libs.guava, 8 )
 addBundle( libs.commons.lang, 8 )
+addBundle( libs.commons.lang3, 8 )
 addBundle( libs.commons.io, 8 )
 addBundle( libs.commons.compress, 8 )
 addBundle( libs.jackson.core, 8 )
@@ -56,8 +57,6 @@ addBundle( libs.jackson.databind, 8 )
 addBundle( libs.jackson.datatype.jsr310, 8 )
 addBundle( libs.jackson.jaxrs.base, 8 )
 addBundle( libs.jackson.jaxrs.jsonprovider, 8 )
-addBundle( libs.tika.core, 8 )
-addBundle( libs.tika.bundlestandard, 8 )
 addBundle( libs.metrics.core, 8 )
 addBundle( libs.metrics.json, 8 )
 addBundle( libs.metrics.jvm, 8 )
@@ -69,6 +68,34 @@ addBundle( libs.hazelcast.client, 8 )
 addBundle( libs.hazelcast.kubernetes, 8 )
 addBundle( libs.jparsec, 8 )
 addBundle( project( ':repack:repack-elasticsearch' ), 8 )
+
+repackBundle( libs.tika.core, 8 ) {
+    forceOptional = ["org.apache.xerces"]
+}
+addBundle( project( ':repack:repack-tika' ), 8 )
+
+repackTikaParserBundle( libs.tika.parser.apple, 8 )
+repackTikaParserBundle( libs.tika.parser.audiovideo, 8 )
+repackTikaParserBundle( libs.tika.parser.cad, 8 )
+repackTikaParserBundle( libs.tika.parser.code, 8 )
+repackTikaParserBundle( libs.tika.parser.crypto, 8 )
+repackTikaParserBundle( libs.tika.parser.digestcommons, 8 )
+repackTikaParserBundle( libs.tika.parser.font, 8 )
+repackTikaParserBundle( libs.tika.parser.html, 8 )
+repackTikaParserBundle( libs.tika.parser.image, 8 )
+repackTikaParserBundle( libs.tika.parser.mail, 8 )
+repackTikaParserBundle( libs.tika.parser.mailcommons, 8 )
+repackTikaParserBundle( libs.tika.parser.microsoft, 8 )
+repackTikaParserBundle( libs.tika.parser.miscoffice, 8 )
+repackTikaParserBundle( libs.tika.parser.news, 8 )
+repackTikaParserBundle( libs.tika.parser.ocr, 8 )
+repackTikaParserBundle( libs.tika.parser.pdf, 8 )
+repackTikaParserBundle( libs.tika.parser.pkg, 8 )
+repackTikaParserBundle( libs.tika.parser.text, 8 )
+repackTikaParserBundle( libs.tika.parser.webarchive, 8 )
+repackTikaParserBundle( libs.tika.parser.xml, 8 )
+repackTikaParserBundle( libs.tika.parser.xmpcommons, 8 )
+repackTikaParserBundle( libs.tika.parser.zipcommons, 8 )
 
 addBundle( project( ':core:core-internal' ), 9 )
 
@@ -143,6 +170,83 @@ addBundle( project( ':blobstore:blobstore-file' ), 22 )
 
 // Applications
 addBundle( project( ':app:app-system' ), 32 )
+
+def repackTikaParserBundle( depProvider, level ) {
+    repackBundle( depProvider, level) {
+        fragmentHost = "org.apache.tika.bundle-standard;bundle-version=\"[3.2,4)\""
+    }
+}
+
+def repackBundle( depProvider, level, Closure config = null ) {
+    def context = [:]
+    if (config)
+    {
+        config.delegate = context
+        config.resolveStrategy = Closure.DELEGATE_FIRST
+        config()
+    }
+
+    def levelStr = "$level".padLeft( 2, '0' )
+    def dep = depProvider.get()
+    def modifiedJarConfig = configurations.create("modifiedBundle@${dep.name}") {
+        transitive = false
+    }
+    dependencies.add( modifiedJarConfig.name, depProvider )
+
+    def modifyManifestTask = tasks.register("modifiedBundleManifest@${dep.name}", Jar) {
+
+        archiveFileName = "${dep.name}-${dep.version}-repack.jar"
+        destinationDirectory = layout.buildDirectory.dir( "tmp/modified-bundles" )
+
+        def artifact = modifiedJarConfig.resolve().first()
+
+        java.util.jar.JarFile jar = new java.util.jar.JarFile( artifact )
+        java.util.jar.Manifest originalManifest = jar.manifest
+
+
+        def modifiedImportPackage = originalManifest.getMainAttributes().getValue( "Import-Package" ).split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+            .collect {
+
+                if (context.forceOptional)  {
+                    it = (it.startsWithAny( context.forceOptional as CharSequence[]) && !it.contains( ";resolution:=" ))
+                        ? it + ";resolution:=optional" : it
+                }
+                it = it.startsWithAny( "org.slf4j" ) ? it.replace( "version=\"[2.0,3)", "version=\"[1.7,3)" ) : it
+                return it;
+            }.join( ',' )
+
+        def modifiedDynamicImportPackage = (originalManifest.getMainAttributes().getValue("DynamicImport-Package") ?: "").split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+            .collect {
+                it = it.startsWithAny( "org.slf4j" ) ? it.replace( "version=\"[2.0,3)", "version=\"[1.7,3)" ) : it
+                return it;
+            }.join( ',' )
+
+        from {
+            zipTree(artifact)
+        }
+
+        with copySpec {
+            exclude "META-INF/MANIFEST.MF"
+        }
+
+        manifest {
+            attributes originalManifest.mainAttributes.collectEntries { key, value ->
+                if (key.toString() == "Import-Package") {
+                    ["Import-Package": modifiedImportPackage]
+                } else if (key.toString() == "DynamicImport-Package") {
+                    ["DynamicImport-Package": modifiedDynamicImportPackage]
+                } else {
+                    [(key.toString()): value.toString()]
+                }
+            }  + (context.fragmentHost ? ["Fragment-Host": context.fragmentHost] : [:])
+        }
+    }
+
+    ext.bundleCopySpecs += project.copySpec {
+        from modifyManifestTask
+        into levelStr
+    }
+}
 
 def addBundle( dep, level )
 {

@@ -1,3 +1,6 @@
+apply plugin: 'java-library'
+apply plugin: 'biz.aQute.bnd.builder'
+
 dependencies {
     implementation ( libs.elasticsearch ) {
         exclude group: 'com.google.guava'
@@ -12,24 +15,36 @@ dependencies {
 }
 
 jar {
-    bnd( 'Bundle-Name': 'Elasticsearch Library',
-         'Export-Package':
-             'org.elasticsearch.*;-split-package:=merge-first' + ',' +
-             'org.apache.lucene.*;-split-package:=merge-first' + ',' +
-             'org.joda.time.*;-split-package:=merge-first' + ',' +
-             'com.spatial4j.*'+ ',' +
-             'org.tartarus.*' + ',' +
-             'org.jboss.netty.*' + ',' +
-             'com.ning.compress.*'  + ',' +
-             'com.carrotsearch.hppc.*' + ',' +
-             'com.tdunning.math.stats.*',
-         'Import-Package': '*;resolution:=optional',
-         'Private-Package': 'config.*' + ',' +
-             'META-INF.services.*;-split-package:=merge-first' + ',' +
-             'com.fasterxml.jackson.dataformat.smile.*' + ',' +
-             'com.fasterxml.jackson.dataformat.cbor.*' + ',' +
-             'com.fasterxml.jackson.dataformat.yaml.*' + ',' +
-             'org.yaml.snakeyaml.*' + ',' +
-             'com.twitter.jsr166e.*'
-    )
+    manifest {
+        attributes( ['Implementation-Version': project.version] )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    bundle {
+        bnd(
+            'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
+            '-nouses': 'true',
+            '-dsannotations': '*',
+            'Implementation-Version': project.version,
+            'Bundle-Name': 'Elasticsearch Library',
+            'Export-Package':
+                'org.elasticsearch.*;-split-package:=merge-first' + ',' +
+                    'org.apache.lucene.*;-split-package:=merge-first' + ',' +
+                    'org.joda.time.*;-split-package:=merge-first' + ',' +
+                    'com.spatial4j.*'+ ',' +
+                    'org.tartarus.*' + ',' +
+                    'org.jboss.netty.*' + ',' +
+                    'com.ning.compress.*'  + ',' +
+                    'com.carrotsearch.hppc.*' + ',' +
+                    'com.tdunning.math.stats.*',
+            'Import-Package': '*;resolution:=optional',
+            'Private-Package': 'config.*' + ',' +
+                'META-INF.services.*;-split-package:=merge-first' + ',' +
+                'com.fasterxml.jackson.dataformat.smile.*' + ',' +
+                'com.fasterxml.jackson.dataformat.cbor.*' + ',' +
+                'com.fasterxml.jackson.dataformat.yaml.*' + ',' +
+                'org.yaml.snakeyaml.*' + ',' +
+                'com.twitter.jsr166e.*'
+        )
+    }
 }

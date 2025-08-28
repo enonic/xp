@@ -1,6 +1,8 @@
 dependencies {
     implementation project( ':core:core-api' )
-    implementation libs.tika.core
+    implementation (libs.tika.core) {
+        exclude group: 'org.slf4j'
+    }
 }
 
 jar {

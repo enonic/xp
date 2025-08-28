@@ -121,6 +121,7 @@ include 'blobstore:blobstore-file'
 include 'app:app-system'
 
 include 'repack:repack-elasticsearch'
+include 'repack:repack-tika'
 
 include 'runtime'
 
