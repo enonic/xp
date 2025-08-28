@@ -9,7 +9,12 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.InjectableValues;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
@@ -18,6 +23,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
@@ -62,7 +68,7 @@ public class YmlTypeParserTest
 
         final RadioButtonYml radioButtonYml = parser.parse( yaml, RadioButtonYml.class );
 
-        Input input = radioButtonYml.copy().toInput();
+        Input input = radioButtonYml.convertToInput();
 
         assertEquals( "RadioButton", input.getInputType().toString() );
 
@@ -71,7 +77,6 @@ public class YmlTypeParserTest
         final Value defaultValue = inputType.createDefaultValue( input );
         assertTrue( defaultValue.isString() );
         assertEquals( "cookie", defaultValue.asString() );
-
 
         final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
 
@@ -96,7 +101,7 @@ public class YmlTypeParserTest
 
         final TextLineYml textLineYml = parser.parse( yaml, TextLineYml.class );
 
-        Input input = textLineYml.copy().toInput();
+        Input input = textLineYml.convertToInput();
 
         assertEquals( "TextLine", input.getInputType().toString() );
 
@@ -122,7 +127,6 @@ public class YmlTypeParserTest
     }
 
 
-
     @Test
     void parseDouble()
         throws Exception
@@ -131,7 +135,7 @@ public class YmlTypeParserTest
 
         final DoubleYml doubleYml = parser.parse( yaml, DoubleYml.class );
 
-        Input input = doubleYml.copy().toInput();
+        Input input = doubleYml.convertToInput();
 
         assertEquals( "Double", input.getInputType().toString() );
 
@@ -159,7 +163,7 @@ public class YmlTypeParserTest
         final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
 
         final ContentSelectorYml contentSelectorYml = parser.parse( yaml, ContentSelectorYml.class );
-        Input input = contentSelectorYml.copy().toInput();
+        Input input = contentSelectorYml.convertToInput();
 
         assertEquals( "ContentSelector", input.getInputType().toString() );
         assertEquals( "searchResultPage", input.getName() );
@@ -188,6 +192,33 @@ public class YmlTypeParserTest
         final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
         assertNotNull( hideToggleIcon );
         assertEquals( "true", hideToggleIcon.getValue() );
+    }
+
+    @Test
+    void parseCustomSelector()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/customselector-type.yml" );
+
+        final InjectableValues injectableValues = new InjectableValues.Std().addValue( "applicationRelativeResolver",
+                                                                                       new ApplicationRelativeResolver(
+                                                                                           ApplicationKey.from( "myapp" ) ) );
+
+        final CustomSelectorYml customSelectorYml = parser.parse( yaml, CustomSelectorYml.class, injectableValues );
+
+        Input input = customSelectorYml.convertToInput();
+
+        assertEquals( InputTypeName.CUSTOM_SELECTOR, input.getInputType() );
+
+        final InputTypeProperty serviceOpt = input.getInputTypeConfig().getProperty( "service" );
+        assertNotNull( serviceOpt );
+        assertEquals( "myapp/spotify-music-selector", serviceOpt.getValue() );
+        assertTrue( serviceOpt.getAttributes().isEmpty() );
+
+        final Set<InputTypeProperty> allowPaths = input.getInputTypeConfig().getProperties( "param" );
+        assertEquals( 2, allowPaths.size() );
+        assertTrue( allowPaths.contains( InputTypeProperty.create( "param", "classic" ).attribute( "value", "genre" ).build() ) );
+        assertTrue( allowPaths.contains( InputTypeProperty.create( "param", "length" ).attribute( "value", "sortBy" ).build() ) );
     }
 
     private String readAsString( final String name )

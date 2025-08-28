@@ -1,14 +1,11 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.LocalizedText;
 
 public abstract class InputYml
-    extends FormItem
 {
     public String type;
 
@@ -20,20 +17,7 @@ public abstract class InputYml
 
     public Occurrences occurrences;
 
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public FormItemType getType()
-    {
-        return FormItemType.INPUT;
-    }
-
-    @Override
-    public FormItem copy()
+    public final Input convertToInput()
     {
         final Input.Builder builder = Input.create().name( name ).inputType( getInputTypeName() );
 

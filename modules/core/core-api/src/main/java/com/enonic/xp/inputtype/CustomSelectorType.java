@@ -18,6 +18,7 @@ final class CustomSelectorType
         super( InputTypeName.CUSTOM_SELECTOR );
     }
 
+    @Deprecated
     @Override
     public Value createDefaultValue( final Input input )
     {
