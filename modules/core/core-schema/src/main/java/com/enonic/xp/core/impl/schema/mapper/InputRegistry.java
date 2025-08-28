@@ -8,23 +8,30 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 public final class InputRegistry
 {
-    private static final Map<Class<? extends InputYml>, InputTypeName> FACTORIES = new ConcurrentHashMap<>();
+    private static final Map<InputTypeName, Class<? extends InputYml>> TYPES = new ConcurrentHashMap<>();
 
     static
     {
-        register( RadioButtonYml.class, InputTypeName.RADIO_BUTTON );
-        register( TextLineYml.class, InputTypeName.TEXT_LINE );
-        register( DoubleYml.class, InputTypeName.DOUBLE );
-        register( ContentSelectorYml.class, InputTypeName.CONTENT_SELECTOR );
+        register( InputTypeName.RADIO_BUTTON, RadioButtonYml.class );
+        register( InputTypeName.TEXT_LINE, TextLineYml.class );
+        register( InputTypeName.DOUBLE, DoubleYml.class );
+        register( InputTypeName.CONTENT_SELECTOR, ContentSelectorYml.class );
+        register( InputTypeName.CUSTOM_SELECTOR, CustomSelectorYml.class );
     }
 
-    public static Map<Class<? extends InputYml>, InputTypeName> getFactories()
+    public static Map<InputTypeName, Class<? extends InputYml>> getTypes()
     {
-        return Collections.unmodifiableMap( FACTORIES );
+        return Collections.unmodifiableMap( TYPES );
     }
 
-    public static <T extends InputYml> void register( final Class<T> type, final InputTypeName typeName )
+    @SuppressWarnings("unchecked")
+    public static <T extends InputYml> Class<T> getInputType( final String typeName )
     {
-        FACTORIES.put( type, typeName );
+        return (Class<T>) TYPES.get( InputTypeName.from( typeName ) );
+    }
+
+    public static <T extends InputYml> void register( final InputTypeName typeName, final Class<T> type )
+    {
+        TYPES.put( typeName, type );
     }
 }
