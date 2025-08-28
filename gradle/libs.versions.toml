@@ -1,3 +1,10 @@
+[versions]
+jackson = "2.19.2"
+mockito = "5.19.0"
+slf4j = "1.7.36"
+jetty = "9.4.58.v20250814"
+tika = "3.2.2"
+
 [libraries]
 junit-junit4 = { module = "junit:junit", version = "4.13.2" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version = "5.10.1" }
@@ -5,24 +12,24 @@ junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", vers
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.10.1" }
 junit-jupiter-vintage = { module = "org.junit.vintage:junit-vintage-engine", version = "5.10.1" }
 
-mockito-core = { module = "org.mockito:mockito-core", version = "5.8.0" }
-mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version = "5.8.0" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.15.5" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "3.19.4" }
 
-assertj-core = { module = "org.assertj:assertj-core", version = "3.25.1" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.4" }
 
 tinybundles = { module = "org.ops4j.pax.tinybundles:tinybundles", version = "3.0.0" }
 
 mockjavamail = { module = "org.jvnet.mock-javamail:mock-javamail", version = "1.9" }
 
-slf4j-api = { module = "org.slf4j:slf4j-api", version = "1.7.36" }
-slf4j-simple = { module = "org.slf4j:slf4j-simple", version = "1.7.36" }
-slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version = "1.7.36" }
-slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version = "1.7.36" }
-slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version = "1.7.36" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
+slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
+slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "slf4j" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.5.3.Final" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.2.13" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.3.15" }
 jansi = { module = "org.fusesource.jansi:jansi", version = "1.18" }
 
 jakarta-activation = { module = "com.sun.activation:jakarta.activation", version = "1.2.2" }
@@ -58,7 +65,7 @@ felix-gogo-runtime = { module = "org.apache.felix:org.apache.felix.gogo.runtime"
 felix-gogo-shell = { module = "org.apache.felix:org.apache.felix.gogo.shell", version = "0.12.0" }
 felix-shell-remote = { module = "org.apache.felix:org.apache.felix.shell.remote", version = "1.1.2" }
 
-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.77" }
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.81" }
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 
@@ -66,11 +73,11 @@ jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
 guava = { module = "com.google.guava:guava", version = "26.0-jre" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.17.2" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.21.2" }
 
-owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20220608.1" }
+owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.14.11" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.17.7" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.0" }
 
@@ -78,31 +85,54 @@ jhlabs-filters = { module = "com.jhlabs:filters", version = "2.0.235-1" }
 
 attoparser = { module = "org.attoparser:attoparser", version = "1.3" }
 
-nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.4" }
-graaljs = { module = "org.graalvm.js:js", version = "22.3.2" }
+nashorn = { module = "org.openjdk.nashorn:nashorn-core", version = "15.7" }
+graaljs = { module = "org.graalvm.js:js", version = "22.3.5" }
 
 commons-lang = { module = "commons-lang:commons-lang", version = "2.6" }
-commons-io = { module = "commons-io:commons-io", version = "2.15.1" }
-commons-compress = { module = "org.apache.commons:commons-compress", version = "1.26.1" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version = "3.18.0" }
+commons-io = { module = "commons-io:commons-io", version = "2.20.0" }
+commons-compress = { module = "org.apache.commons:commons-compress", version = "1.28.0" }
 
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version = "2.16.1" }
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version = "2.16.1" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.16.1" }
-jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.16.1" }
-jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version = "2.16.1" }
-jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version = "2.16.1" }
-jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version = "2.16.1" }
-jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version = "2.16.1" }
-jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version = "2.16.1" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-jaxrs-base = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-base", version.ref = "jackson" }
+jackson-jaxrs-jsonprovider = { module = "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider", version.ref = "jackson" }
+jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
+jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 
-tika-core = { module = "org.apache.tika:tika-core", version = "2.4.1" }
-tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version = "2.4.1" }
+tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
+tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version.ref = "tika" }
+tika-parser-apple = { module = "org.apache.tika:tika-parser-apple-module", version.ref = "tika" }
+tika-parser-audiovideo = { module = "org.apache.tika:tika-parser-audiovideo-module", version.ref = "tika" }
+tika-parser-cad = { module = "org.apache.tika:tika-parser-cad-module", version.ref = "tika" }
+tika-parser-code = { module = "org.apache.tika:tika-parser-code-module", version.ref = "tika" }
+tika-parser-crypto = { module = "org.apache.tika:tika-parser-crypto-module", version.ref = "tika" }
+tika-parser-digestcommons = { module = "org.apache.tika:tika-parser-digest-commons", version.ref = "tika" }
+tika-parser-font = { module = "org.apache.tika:tika-parser-font-module", version.ref = "tika" }
+tika-parser-html = { module = "org.apache.tika:tika-parser-html-module", version.ref = "tika" }
+tika-parser-image = { module = "org.apache.tika:tika-parser-image-module", version.ref = "tika" }
+tika-parser-mail = { module = "org.apache.tika:tika-parser-mail-module", version.ref = "tika" }
+tika-parser-mailcommons = { module = "org.apache.tika:tika-parser-mail-commons", version.ref = "tika" }
+tika-parser-microsoft = { module = "org.apache.tika:tika-parser-microsoft-module", version.ref = "tika" }
+tika-parser-miscoffice = { module = "org.apache.tika:tika-parser-miscoffice-module", version.ref = "tika" }
+tika-parser-news = { module = "org.apache.tika:tika-parser-news-module", version.ref = "tika" }
+tika-parser-ocr = { module = "org.apache.tika:tika-parser-ocr-module", version.ref = "tika" }
+tika-parser-pdf = { module = "org.apache.tika:tika-parser-pdf-module", version.ref = "tika" }
+tika-parser-pkg = { module = "org.apache.tika:tika-parser-pkg-module", version.ref = "tika" }
+tika-parser-text = { module = "org.apache.tika:tika-parser-text-module", version.ref = "tika" }
+tika-parser-webarchive = { module = "org.apache.tika:tika-parser-webarchive-module", version.ref = "tika" }
+tika-parser-xml = { module = "org.apache.tika:tika-parser-xml-module", version.ref = "tika" }
+tika-parser-xmpcommons = { module = "org.apache.tika:tika-parser-xmp-commons", version.ref = "tika" }
+tika-parser-zipcommons = { module = "org.apache.tika:tika-parser-zip-commons", version.ref = "tika" }
 
-metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.23" }
-metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.23" }
-metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.23" }
-metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.23" }
-metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.23" }
+metrics-core = { module = "io.dropwizard.metrics:metrics-core", version = "4.2.34" }
+metrics-json = { module = "io.dropwizard.metrics:metrics-json", version = "4.2.34" }
+metrics-jvm = { module = "io.dropwizard.metrics:metrics-jvm", version = "4.2.34" }
+metrics-jetty9 = { module = "io.dropwizard.metrics:metrics-jetty9", version = "4.2.34" }
+metrics-annotation = { module = "io.dropwizard.metrics:metrics-annotation", version = "4.2.34" }
 
 hazelcast-hazelcast = { module = "com.hazelcast:hazelcast", version = "3.12.13" }
 hazelcast-client = { module = "com.hazelcast:hazelcast-client", version = "3.12.13" }
@@ -112,14 +142,14 @@ jparsec = { module = "org.jparsec:jparsec", version = "3.1" }
 
 resteasy = { module = "org.jboss.resteasy:resteasy-core", version = "5.0.9.Final" }
 
-jetty-server = { module = "org.eclipse.jetty:jetty-server", version = "9.4.53.v20231009" }
-jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version = "9.4.53.v20231009" }
-jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets", version = "9.4.53.v20231009" }
-jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version = "9.4.53.v20231009" }
-jetty-websocket-server = { module = "org.eclipse.jetty.websocket:websocket-server", version = "9.4.53.v20231009" }
-jetty-websocket-servlet = { module = "org.eclipse.jetty.websocket:websocket-servlet", version = "9.4.53.v20231009" }
-jetty-websocket-serverimpl = { module = "org.eclipse.jetty.websocket:javax-websocket-server-impl", version = "9.4.53.v20231009" }
-jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version = "9.4.53.v20231009" }
-jetty-client = { module = "org.eclipse.jetty:jetty-client", version = "9.4.53.v20231009" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jetty" }
+jetty-servlets = { module = "org.eclipse.jetty:jetty-servlets", version.ref = "jetty" }
+jetty-jmx = { module = "org.eclipse.jetty:jetty-jmx", version.ref = "jetty" }
+jetty-websocket-server = { module = "org.eclipse.jetty.websocket:websocket-server", version.ref = "jetty" }
+jetty-websocket-servlet = { module = "org.eclipse.jetty.websocket:websocket-servlet", version.ref = "jetty" }
+jetty-websocket-serverimpl = { module = "org.eclipse.jetty.websocket:javax-websocket-server-impl", version.ref = "jetty" }
+jetty-hazelcast = { module = "org.eclipse.jetty:jetty-hazelcast", version.ref = "jetty" }
+jetty-client = { module = "org.eclipse.jetty:jetty-client", version.ref = "jetty" }
 
 [plugins]

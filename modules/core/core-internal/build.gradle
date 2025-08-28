@@ -18,5 +18,5 @@ jar {
     bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
          'Export-Package': 'com.enonic.xp.core.internal.*',
          'Import-Package': 'javax.annotation.meta;resolution:=optional,org.jspecify.annotations;resolution:=optional,*',
-         'Private-Package': 'org.jsoup.*;org.owasp.html.*')
+         'Private-Package': 'org.jsoup.*;org.owasp.html.*;org.owasp.shim.*')
 }
