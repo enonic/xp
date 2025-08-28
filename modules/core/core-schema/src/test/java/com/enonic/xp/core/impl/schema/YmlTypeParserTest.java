@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
+import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.data.Value;
@@ -224,6 +225,40 @@ public class YmlTypeParserTest
         assertEquals( 2, allowPaths.size() );
         assertTrue( allowPaths.contains( InputTypeProperty.create( "param", "classic" ).attribute( "value", "genre" ).build() ) );
         assertTrue( allowPaths.contains( InputTypeProperty.create( "param", "length" ).attribute( "value", "sortBy" ).build() ) );
+    }
+
+    @Test
+    void testParseHtmlArea()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/htmlarea-type.yml" );
+
+        final HtmlAreaYml htmlAreaYml = parser.parse( yaml, HtmlAreaYml.class );
+
+        Input input = htmlAreaYml.convertToInput();
+
+        assertEquals( "HtmlArea", input.getInputType().toString() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isString() );
+        assertEquals( "<h3>Enter description here</h3>", defaultValue.asString() );
+
+        final InputTypeProperty excludeOpt = input.getInputTypeConfig().getProperty( "exclude" );
+        assertNotNull( excludeOpt );
+        assertEquals( "*", excludeOpt.getValue() );
+        assertTrue( excludeOpt.getAttributes().isEmpty() );
+
+        final InputTypeProperty includeOpt = input.getInputTypeConfig().getProperty( "include" );
+        assertNotNull( includeOpt );
+        assertEquals( "JustifyLeft JustifyRight | Bold Italic", includeOpt.getValue() );
+        assertTrue( includeOpt.getAttributes().isEmpty() );
+
+        final InputTypeProperty allowHeadingsOpt = input.getInputTypeConfig().getProperty( "allowHeadings" );
+        assertNotNull( allowHeadingsOpt );
+        assertEquals( "h2 h4 h6", allowHeadingsOpt.getValue() );
+        assertTrue( allowHeadingsOpt.getAttributes().isEmpty() );
     }
 
     private String readAsString( final String name )
