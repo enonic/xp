@@ -17,6 +17,7 @@ public final class InputRegistry
         register( InputTypeName.CONTENT_SELECTOR, ContentSelectorYml.class );
         register( InputTypeName.CUSTOM_SELECTOR, CustomSelectorYml.class );
         register( InputTypeName.HTML_AREA, HtmlAreaYml.class );
+        register( InputTypeName.TEXT_AREA, TextAreaYml.class );
     }
 
     @SuppressWarnings("unchecked")

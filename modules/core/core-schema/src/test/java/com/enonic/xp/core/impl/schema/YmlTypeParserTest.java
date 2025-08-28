@@ -18,6 +18,7 @@ import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
+import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
@@ -259,6 +260,35 @@ public class YmlTypeParserTest
         assertNotNull( allowHeadingsOpt );
         assertEquals( "h2 h4 h6", allowHeadingsOpt.getValue() );
         assertTrue( allowHeadingsOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void testParseTextArea()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/textarea-type.yml" );
+
+        final TextAreaYml inputYml = parser.parse( yaml, TextAreaYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "TextArea", input.getInputType().toString() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isString() );
+        assertEquals( "Default text goes here", defaultValue.asString() );
+
+        final InputTypeProperty maxLengthOpt = input.getInputTypeConfig().getProperty( "maxLength" );
+        assertNotNull( maxLengthOpt );
+        assertEquals( "11", maxLengthOpt.getValue() );
+        assertTrue( maxLengthOpt.getAttributes().isEmpty() );
+
+        final InputTypeProperty showCounterOpt = input.getInputTypeConfig().getProperty( "showCounter" );
+        assertNotNull( showCounterOpt );
+        assertEquals( "true", showCounterOpt.getValue() );
+        assertTrue( showCounterOpt.getAttributes().isEmpty() );
     }
 
     private String readAsString( final String name )

@@ -1,8 +1,12 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.LocalizedText;
 
 public abstract class InputYml
@@ -16,6 +20,9 @@ public abstract class InputYml
     public LocalizedText helpText;
 
     public Occurrences occurrences;
+
+    @JsonProperty("default")
+    public Object defaultValue;
 
     public final Input convertToInput()
     {
@@ -34,6 +41,12 @@ public abstract class InputYml
         if ( occurrences != null )
         {
             builder.occurrences( occurrences );
+        }
+
+        if ( defaultValue != null )
+        {
+            builder.defaultValue(
+                InputTypeDefault.create().property( InputTypeProperty.create( "default", defaultValue.toString() ).build() ).build() );
         }
 
         customizeInputType( builder );

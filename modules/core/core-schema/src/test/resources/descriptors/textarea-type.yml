@@ -1,0 +1,6 @@
+type: "TextArea"
+name: "mytextarea"
+label: "My TextArea"
+default: "Default text goes here"
+maxLength: 11
+showCounter: true
