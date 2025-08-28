@@ -34,7 +34,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
 import com.enonic.xp.repo.impl.node.DuplicateNodeResult;
 import com.enonic.xp.repo.impl.node.ReorderChildNodesCommand;
@@ -455,7 +455,7 @@ public class DuplicateNodeCommandTest
     private void setManualOrder( final Node parentNode )
     {
         SortNodeCommand.create()
-            .params( SetNodeChildOrderParams.create().nodeId( parentNode.id() ).childOrder( ChildOrder.manualOrder() ).build() )
+            .params( SortNodeParams.create().nodeId( parentNode.id() ).childOrder( ChildOrder.manualOrder() ).build() )
             .indexServiceInternal( indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )

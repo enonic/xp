@@ -1,5 +1,9 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -48,6 +52,8 @@ import com.enonic.xp.security.acl.Permission;
 public class NodeStorageServiceImpl
     implements NodeStorageService
 {
+    private static final Clock CLOCK = Clock.tick( Clock.system( ZoneOffset.UTC ), Duration.ofMillis( 1 ) );
+
     private final VersionService versionService;
 
     private final BranchService branchService;
@@ -75,6 +81,7 @@ public class NodeStorageServiceImpl
     {
         final Node node = params.getNode();
 
+        final Instant timestamp = node.getTimestamp() == null ? Instant.now( CLOCK ) : node.getTimestamp();
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
 
@@ -85,7 +92,7 @@ public class NodeStorageServiceImpl
             .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
             .nodePath( node.path() )
             .nodeCommitId( params.getNodeCommitId() )
-            .timestamp( node.getTimestamp() )
+            .timestamp( timestamp )
             .build();
 
         this.versionService.store( nodeVersionMetadata, context );
@@ -95,35 +102,14 @@ public class NodeStorageServiceImpl
                                       .nodeVersionId( nodeVersionId )
                                       .nodeVersionKey( nodeVersionKey )
                                       .nodePath( node.path() )
-                                      .timestamp( node.getTimestamp() )
+                                      .timestamp( timestamp )
                                       .build(), params.movedFrom(), context );
 
-        final Node newNode = Node.create( node ).nodeVersionId( nodeVersionId ).build();
+        final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
 
         this.indexDataService.store( newNode, context );
 
         return new NodeVersionData( newNode, nodeVersionMetadata );
-    }
-
-    @Override
-    public void updateVersion( final Node node, final InternalContext context )
-    {
-        final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( node.getNodeVersionId(), context );
-
-        if ( nodeVersionMetadata == null )
-        {
-            throw new NodeNotFoundException( "Cannot find node version with id: " + node.getNodeVersionId() );
-        }
-
-        this.branchService.store( NodeBranchEntry.create()
-                                      .nodeVersionId( node.getNodeVersionId() )
-                                      .nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() )
-                                      .nodeId( node.id() )
-                                      .timestamp( node.getTimestamp() )
-                                      .nodePath( node.path() )
-                                      .build(), null, context );
-
-        this.indexDataService.store( node, context );
     }
 
     @Override

@@ -9,11 +9,9 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
 @PublicApi
-public final class SetNodeChildOrderParams
+public final class ManualSortNodeParams
 {
     private final NodeId nodeId;
-
-    private final ChildOrder childOrder;
 
     private final ChildOrder manualOrderBase;
 
@@ -23,10 +21,9 @@ public final class SetNodeChildOrderParams
 
     private final RefreshMode refresh;
 
-    private SetNodeChildOrderParams( final Builder builder )
+    private ManualSortNodeParams( final Builder builder )
     {
         this.nodeId = builder.nodeId;
-        this.childOrder = builder.childOrder;
         this.manualOrderBase = builder.manualOrderBase;
         this.reorderChildNodes = builder.reorderChildNodes.build();
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
@@ -36,11 +33,6 @@ public final class SetNodeChildOrderParams
     public NodeId getNodeId()
     {
         return nodeId;
-    }
-
-    public ChildOrder getChildOrder()
-    {
-        return childOrder;
     }
 
     public ChildOrder getManualOrderBase()
@@ -72,8 +64,6 @@ public final class SetNodeChildOrderParams
     {
         private NodeId nodeId;
 
-        private ChildOrder childOrder;
-
         private ChildOrder manualOrderBase;
 
         private final ImmutableList.Builder<ReorderChildNodeParams> reorderChildNodes = ImmutableList.builder();
@@ -89,12 +79,6 @@ public final class SetNodeChildOrderParams
         public Builder nodeId( NodeId nodeId )
         {
             this.nodeId = nodeId;
-            return this;
-        }
-
-        public Builder childOrder( ChildOrder childOrder )
-        {
-            this.childOrder = childOrder;
             return this;
         }
 
@@ -122,10 +106,10 @@ public final class SetNodeChildOrderParams
             return this;
         }
 
-        public SetNodeChildOrderParams build()
+        public ManualSortNodeParams build()
         {
             Objects.requireNonNull( nodeId,  "nodeId is required" );
-            return new SetNodeChildOrderParams( this );
+            return new ManualSortNodeParams( this );
         }
     }
 }

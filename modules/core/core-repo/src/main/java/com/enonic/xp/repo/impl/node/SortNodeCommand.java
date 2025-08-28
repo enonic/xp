@@ -6,20 +6,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Ordering;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
@@ -41,7 +38,7 @@ public class SortNodeCommand
 {
     private static final int BATCH_SIZE = 10_000;
 
-    private final SetNodeChildOrderParams params;
+    private final SortNodeParams params;
 
     private SortNodeCommand( final Builder builder )
     {
@@ -233,13 +230,13 @@ public class SortNodeCommand
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private SetNodeChildOrderParams params;
+        private SortNodeParams params;
 
         private Builder()
         {
         }
 
-        public Builder params( SetNodeChildOrderParams params )
+        public Builder params( SortNodeParams params )
         {
             this.params = params;
             return this;

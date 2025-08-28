@@ -22,7 +22,7 @@ public final class NodeBranchEntry
         this.nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
         this.nodeVersionKey = Objects.requireNonNull( builder.nodeVersionKey );
         this.nodePath = Objects.requireNonNull( builder.nodePath );
-        this.timestamp = Objects.requireNonNull( builder.timestamp) ;
+        this.timestamp = Objects.requireNonNull( builder.timestamp );
         this.nodeId = Objects.requireNonNull( builder.nodeId );
     }
 

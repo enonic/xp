@@ -36,10 +36,9 @@ public class InheritedContentDataProcessor
     @Override
     public PropertyTree process( final PropertyTree originalData, final NodePath path )
     {
-        final PropertyTree data = originalData.copy();
-
-        if ( data.hasProperty( ContentPropertyNames.INHERIT ) )
+        if ( originalData.hasProperty( ContentPropertyNames.INHERIT ) )
         {
+            final PropertyTree data = originalData.copy();
             boolean changed = false;
             final ImmutableSet.Builder<String> inheritSet = ImmutableSet.builder();
 
@@ -60,8 +59,11 @@ public class InheritedContentDataProcessor
                 data.removeProperties( ContentPropertyNames.INHERIT );
                 data.addStrings( ContentPropertyNames.INHERIT, inheritSet.build() );
             }
+            return data;
         }
-
-        return data;
+        else
+        {
+            return originalData;
+        }
     }
 }

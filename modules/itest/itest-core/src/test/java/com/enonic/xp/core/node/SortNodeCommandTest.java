@@ -16,7 +16,7 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
@@ -192,7 +192,7 @@ public class SortNodeCommandTest
     private void setChildOrder( final Node node, final ChildOrder childOrder )
     {
         SortNodeCommand.create()
-            .params( SetNodeChildOrderParams.create().nodeId( node.id() ).childOrder( childOrder ).build() )
+            .params( SortNodeParams.create().nodeId( node.id() ).childOrder( childOrder ).build() )
             .indexServiceInternal( indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -209,7 +209,7 @@ public class SortNodeCommandTest
         refresh();
 
         SortNodeCommand.create()
-            .params( SetNodeChildOrderParams.create()
+            .params( SortNodeParams.create()
                          .nodeId( node.id() )
                          .childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() )
                          .build() )

@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.BlobKeys;
@@ -25,13 +26,13 @@ public final class NodeVersionMetadata
 
     private NodeVersionMetadata( Builder builder )
     {
-        nodeVersionId = builder.nodeVersionId;
-        nodeVersionKey = builder.nodeVersionKey;
-        binaryBlobKeys = builder.binaryBlobKeys;
-        nodeId = builder.nodeId;
-        nodePath = builder.nodePath;
+        nodeVersionId = Objects.requireNonNull( builder.nodeVersionId );
+        nodeVersionKey = Objects.requireNonNull( builder.nodeVersionKey );
+        binaryBlobKeys = Objects.requireNonNull( builder.binaryBlobKeys );
+        nodeId = Objects.requireNonNull( builder.nodeId );
+        nodePath = Objects.requireNonNull( builder.nodePath );
         nodeCommitId = builder.nodeCommitId;
-        timestamp = builder.timestamp;
+        timestamp = Objects.requireNonNull( builder.timestamp );
     }
 
     public static Builder create()

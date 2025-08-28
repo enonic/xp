@@ -1,11 +1,15 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -70,12 +74,13 @@ class NodeStorageServiceImplTest
     @Test
     public void testGetNode()
     {
-        final NodePath nodePath = new NodePath( "/path" );
-
         final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().
-            nodeVersionId( nodeVersionId ).
+            nodeId( NodeId.from( "nodeId1" ) ).
             nodeVersionKey( versionKey ).
-            nodePath( nodePath ).
+            binaryBlobKeys( BlobKeys.empty() ).
+            nodeVersionId( nodeVersionId ).
+            nodePath( NodePath.ROOT ).
+            timestamp( Instant.EPOCH ).
             build();
 
         final NodeVersion nodeVersion = NodeVersion.create().
@@ -121,8 +126,13 @@ class NodeStorageServiceImplTest
     {
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( NodeVersionMetadata.create().
-                nodeVersionKey( versionKey ).
-                build() );
+            nodeId( NodeId.from( "nodeId1" ) ).
+            nodeVersionKey( versionKey ).
+            binaryBlobKeys( BlobKeys.empty() ).
+            nodeVersionId( nodeVersionId ).
+            nodePath( NodePath.ROOT ).
+            timestamp( Instant.EPOCH ).
+            build() );
 
         when( nodeVersionService.get( any( NodeVersionKey.class ), any( InternalContext.class ) ) ).thenReturn( null );
 

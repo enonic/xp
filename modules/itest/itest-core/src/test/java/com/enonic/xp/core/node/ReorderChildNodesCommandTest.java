@@ -17,7 +17,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -206,7 +206,7 @@ public class ReorderChildNodesCommandTest
     private void setChildOrder( final Node parentNode, final IndexPath indexPath, final OrderExpr.Direction direction )
     {
         SortNodeCommand.create()
-            .params( SetNodeChildOrderParams.create()
+            .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
                          .childOrder( ChildOrder.create().add( FieldOrderExpr.create( indexPath, direction ) ).build() )
                          .refresh( RefreshMode.ALL )
