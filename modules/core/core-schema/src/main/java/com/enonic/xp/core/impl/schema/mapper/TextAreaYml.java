@@ -5,19 +5,17 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
-public class TextLineYml
+public class TextAreaYml
     extends InputYml
 {
     public Integer maxLength;
-
-    public String regexp;
 
     public Boolean showCounter;
 
     @Override
     public InputTypeName getInputTypeName()
     {
-        return InputTypeName.TEXT_LINE;
+        return InputTypeName.TEXT_AREA;
     }
 
     @Override
@@ -28,11 +26,6 @@ public class TextLineYml
         if ( maxLength != null )
         {
             configBuilder.property( InputTypeProperty.create( "maxLength", maxLength.toString() ).build() );
-        }
-
-        if ( regexp != null )
-        {
-            configBuilder.property( InputTypeProperty.create( "regexp", regexp ).build() ).build();
         }
 
         if ( showCounter != null )
