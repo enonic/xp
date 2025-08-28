@@ -1,19 +1,13 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
 public class HtmlAreaYml
     extends InputYml
 {
-    @JsonProperty("default")
-    public String defaultValue;
-
     public String exclude;
 
     public String include;
@@ -29,12 +23,6 @@ public class HtmlAreaYml
     @Override
     public void customizeInputType( final Input.Builder builder )
     {
-        if ( defaultValue != null )
-        {
-            builder.defaultValue(
-                InputTypeDefault.create().property( InputTypeProperty.create( "default", defaultValue ).build() ).build() );
-        }
-
         final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
 
         if ( exclude != null )
