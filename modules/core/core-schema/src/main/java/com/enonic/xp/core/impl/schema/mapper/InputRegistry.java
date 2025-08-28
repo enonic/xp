@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,11 +16,7 @@ public final class InputRegistry
         register( InputTypeName.DOUBLE, DoubleYml.class );
         register( InputTypeName.CONTENT_SELECTOR, ContentSelectorYml.class );
         register( InputTypeName.CUSTOM_SELECTOR, CustomSelectorYml.class );
-    }
-
-    public static Map<InputTypeName, Class<? extends InputYml>> getTypes()
-    {
-        return Collections.unmodifiableMap( TYPES );
+        register( InputTypeName.HTML_AREA, HtmlAreaYml.class );
     }
 
     @SuppressWarnings("unchecked")
