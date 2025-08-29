@@ -21,6 +21,8 @@ public final class InputRegistry
         register( InputTypeName.DATE, DateYml.class );
         register( InputTypeName.DATE_TIME, DateTimeYml.class );
         register( InputTypeName.TIME, TimeYml.class );
+        register( InputTypeName.CHECK_BOX, CheckBoxYml.class );
+        register( InputTypeName.COMBO_BOX, ComboBoxYml.class );
     }
 
     @SuppressWarnings("unchecked")

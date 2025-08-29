@@ -7,7 +7,7 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
-public class RadioButtonYml
+public class ComboBoxYml
     extends InputYml
 {
     public List<OptionYml> options;
@@ -15,7 +15,7 @@ public class RadioButtonYml
     @Override
     public InputTypeName getInputTypeName()
     {
-        return InputTypeName.RADIO_BUTTON;
+        return InputTypeName.COMBO_BOX;
     }
 
     @Override
@@ -33,5 +33,4 @@ public class RadioButtonYml
             builder.inputTypeConfig( configBuilder.build() );
         }
     }
-
 }
