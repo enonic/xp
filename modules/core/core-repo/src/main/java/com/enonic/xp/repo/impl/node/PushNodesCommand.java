@@ -65,8 +65,6 @@ public class PushNodesCommand
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final Context context = ContextAccessor.current();
-
         NodeIds.Builder allIdsBuilder = NodeIds.create().addAll( ids );
 
         final NodeComparisons comparisons = getNodeComparisons( ids );
@@ -148,7 +146,7 @@ public class PushNodesCommand
 
         final PushNodesResult result = builder.build();
 
-        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, InternalContext.from( context ) );
+        this.nodeStorageService.push( result.getSuccessfulEntries(), target, pushListener, internalContext );
 
         refresh( RefreshMode.ALL );
 

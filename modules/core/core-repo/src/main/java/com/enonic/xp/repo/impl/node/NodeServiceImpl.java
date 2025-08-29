@@ -637,9 +637,7 @@ public class NodeServiceImpl
     public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         verifyContext();
-
-        final Context currentContext = ContextAccessor.current();
-        return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( currentContext ) );
+        return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( ContextAccessor.current() ) );
     }
 
     @Override

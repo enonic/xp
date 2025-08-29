@@ -37,13 +37,13 @@ public class BranchEntryProcessor
 
         final VersionMeta meta = branchDumpEntry.getMeta();
 
-        addNode( result, branchDumpEntry, meta );
+        addNode( result, meta );
 
         this.result = result.build();
         return true;
     }
 
-    private void addNode( final EntryLoadResult.Builder result, final BranchDumpEntry branchDumpEntry, final VersionMeta meta )
+    private void addNode( final EntryLoadResult.Builder result, final VersionMeta meta )
     {
         final NodeVersion nodeVersion = getVersion( meta );
 
@@ -53,22 +53,16 @@ public class BranchEntryProcessor
             return;
         }
 
-        final Node node;
-        if (nodeVersion.getId().equals( Node.ROOT_UUID )) {
-            node = Node.createRoot( )
-                .nodeVersionId( meta.getVersion() )
-                .timestamp( meta.getTimestamp() ).build();
-        } else {
-            node = Node.create( nodeVersion )
-                .nodeVersionId( meta.getVersion() )
-                .timestamp( meta.getTimestamp() )
-                .parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() ).build();
+        final Node.Builder nodeBuilder = Node.create( nodeVersion ).nodeVersionId( meta.getVersion() ).timestamp( meta.getTimestamp() );
+        if ( nodeVersion.getId().equals( Node.ROOT_UUID ) )
+        {
+            nodeBuilder.parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() );
         }
 
         try
         {
             this.nodeService.loadNode( LoadNodeParams.create().
-                node( node ).
+                node( nodeBuilder.build() ).
                 nodeCommitId( meta.getNodeCommitId() ).
                 build() );
 
@@ -78,7 +72,8 @@ public class BranchEntryProcessor
         }
         catch ( Exception e )
         {
-            final String message = String.format( "Cannot load node with id %s, path %s: %s", node.id(), node.path(), e.getMessage() );
+            final String message =
+                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.getNodePath(), e.getMessage() );
             result.error( EntryLoadError.error( message ) );
             LOG.error( message, e );
         }
@@ -92,7 +87,7 @@ public class BranchEntryProcessor
         }
         catch ( RepoLoadException e )
         {
-            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: " + meta.getVersion(), e );
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.getVersion(), e );
             return null;
         }
     }
