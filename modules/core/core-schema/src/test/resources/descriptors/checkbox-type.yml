@@ -1,0 +1,5 @@
+type: "CheckBox"
+name: "mycheckbox"
+label: "My Checkbox"
+default: "checked"
+alignment: "right"

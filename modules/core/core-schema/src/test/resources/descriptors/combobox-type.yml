@@ -1,0 +1,12 @@
+type: "ComboBox"
+name: "mycombobox"
+label: "My Combobox"
+default: "one"
+occurrences:
+  minimum: 1
+  maximum: 2
+options:
+  - value: "one"
+    text: "Option One"
+  - value: "two"
+    text: "Option Two"
