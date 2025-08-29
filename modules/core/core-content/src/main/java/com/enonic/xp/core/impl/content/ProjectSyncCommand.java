@@ -72,7 +72,7 @@ final class ProjectSyncCommand
         {
             Objects.requireNonNull( this.projectService );
             Objects.requireNonNull( this.contentSynchronizer );
-            Objects.requireNonNull( params, "params cannot be null" );;
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public ProjectSyncCommand build()

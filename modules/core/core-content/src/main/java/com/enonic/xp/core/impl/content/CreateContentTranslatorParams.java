@@ -79,7 +79,7 @@ public class CreateContentTranslatorParams
         this.name = builder.name;
         this.parentContentPath = builder.parent;
         this.valid = builder.valid;
-        this.validationErrors = builder.validationErrors;;
+        this.validationErrors = builder.validationErrors;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
         this.createAttachments = builder.createAttachments;

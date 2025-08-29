@@ -313,7 +313,7 @@ public final class DuplicateNodeCommand
         {
             super.validate();
             Objects.requireNonNull( this.binaryService );
-            Objects.requireNonNull( params, "params cannot be null" );;
+            Objects.requireNonNull( params, "params cannot be null" );
         }
     }
 

@@ -126,7 +126,7 @@ final class MoveContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );;
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public MoveContentCommand build()

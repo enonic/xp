@@ -239,7 +239,7 @@ public class XmlContentTypeParserTest
         assertEquals( "translated.label", radioOptionSet.getLabelI18nKey() );
         assertEquals( "translated.label", radioOptionSet.getLabel() );
 
-        final FormOptionSetOption radioOption = radioOptionSet.getOption( "option_1" );;
+        final FormOptionSetOption radioOption = radioOptionSet.getOption( "option_1" );
 
         assertEquals( "translated.help-text", radioOption.getHelpTextI18nKey() );
         assertEquals( "translated.help-text", radioOption.getHelpText() );
