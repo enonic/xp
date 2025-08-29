@@ -257,8 +257,6 @@ interface NodeHandler {
 
     getActiveVersion(key: string): NodeVersion | null;
 
-    setActiveVersion(key: string, versionId: string): boolean;
-
     findChildren(params: FindChildrenHandlerParams): FindNodesByParentResult;
 
     commit(keys: string[], message?: string | null): NodeCommit;
@@ -453,11 +451,6 @@ export interface NodeVersionsQueryResult {
 
 export interface GetActiveVersionParams {
     key: string;
-}
-
-export interface SetActiveVersionParams {
-    key: string;
-    versionId: string;
 }
 
 export interface FindChildrenParams {
@@ -684,8 +677,6 @@ export interface RepoConnection {
     findVersions(params: FindVersionsParams): NodeVersionsQueryResult;
 
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
-
-    setActiveVersion(params: SetActiveVersionParams): boolean;
 
     findChildren(params: FindChildrenParams): FindNodesByParentResult;
 
@@ -1058,23 +1049,6 @@ class RepoConnectionImpl
         checkRequired(params, 'key');
 
         return __.toNativeObject(this.nodeHandler.getActiveVersion(params.key));
-    }
-
-    /**
-     * This function sets the active version of a node.
-     *
-     * @example-ref examples/node/setActiveVersion.js
-     * @param {object} params JSON parameters.
-     * @param {string} params.key Path or ID of the node.
-     * @param {string} params.versionId Version to set as active.
-     *
-     * @returns {boolean} True if deleted, false otherwise.
-     */
-    setActiveVersion(params: SetActiveVersionParams): boolean {
-        checkRequired(params, 'key');
-        checkRequired(params, 'versionId');
-
-        return __.toNativeObject(this.nodeHandler.setActiveVersion(params.key, params.versionId));
     }
 
     /**

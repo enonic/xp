@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryService;
@@ -87,7 +88,6 @@ public class SystemRepoInitializer
 
     private void initRepositoryFolder()
     {
-        final Context currentContext = ContextAccessor.current();
         final Node node = Node.create( new NodeId() ).
             childOrder( ChildOrder.defaultOrder() ).
             parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.getParentPath() ).
@@ -95,7 +95,7 @@ public class SystemRepoInitializer
             permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
             build();
 
-        this.nodeStorageService.store( node, InternalContext.from( currentContext ) );
+        this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( ContextAccessor.current() ) );
     }
 
     private Context createAdminContext()

@@ -34,6 +34,7 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
@@ -70,7 +71,7 @@ public class RepositoryEntryServiceImpl
     {
         final Node node = RepositoryNodeTranslator.toNode( repository );
         final InternalContext internalContext = createInternalContext();
-        final Node createdNode = nodeStorageService.store( node, internalContext ).node();
+        final Node createdNode = nodeStorageService.store( StoreNodeParams.newVersion( node ), internalContext ).node();
 
         refresh();
         eventPublisher.publish( NodeEvents.created( createdNode, internalContext ) );

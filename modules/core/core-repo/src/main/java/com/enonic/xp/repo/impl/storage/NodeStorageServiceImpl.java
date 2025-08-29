@@ -24,7 +24,6 @@ import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersion;
@@ -69,12 +68,6 @@ public class NodeStorageServiceImpl
         this.commitService = commitService;
         this.nodeVersionService = nodeVersionService;
         this.indexDataService = indexDataService;
-    }
-
-    @Override
-    public NodeVersionData store( final Node node, final InternalContext context )
-    {
-        return store( StoreNodeParams.create().node( node ).build(), context );
     }
 
     @Override
@@ -177,27 +170,6 @@ public class NodeStorageServiceImpl
     public void deleteFromIndex( final NodeId nodeId, final InternalContext internalContext )
     {
         indexDataService.delete( Collections.singleton( nodeId ), internalContext );
-    }
-
-    @Override
-    public void updateVersion( final Node node, final InternalContext context )
-    {
-        final NodeVersionMetadata nodeVersionMetadata = this.versionService.getVersion( node.getNodeVersionId(), context );
-
-        if ( nodeVersionMetadata == null )
-        {
-            throw new NodeNotFoundException( "Cannot find node version with id: " + node.getNodeVersionId() );
-        }
-
-        this.branchService.store( NodeBranchEntry.create()
-                                      .nodeVersionId( node.getNodeVersionId() )
-                                      .nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() )
-                                      .nodeId( node.id() )
-                                      .timestamp( node.getTimestamp() )
-                                      .nodePath( node.path() )
-                                      .build(), null, context );
-
-        this.indexDataService.store( node, context );
     }
 
     @Override

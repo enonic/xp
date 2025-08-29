@@ -26,8 +26,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public interface NodeStorageService
 {
-    NodeVersionData store( Node node, InternalContext context );
-
     NodeVersionData store( StoreNodeParams params, InternalContext context );
 
     void storeVersion( StoreNodeVersionParams params, InternalContext context );
@@ -37,8 +35,6 @@ public interface NodeStorageService
     void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 
     void deleteFromIndex( NodeId nodeId, InternalContext internalContext );
-
-    void updateVersion( Node node, InternalContext context );
 
     void push( Collection<PushNodeEntry> entries, Branch target, PushNodesListener pushListener, InternalContext context );
 

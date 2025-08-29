@@ -23,6 +23,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -91,7 +92,8 @@ public final class CreateNodeCommand
             attachedBinaries( attachedBinaries ).
             timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
 
-        final Node newNode = this.nodeStorageService.store( nodeBuilder.build(), InternalContext.from( ContextAccessor.current() ) ).node();
+        final Node newNode = this.nodeStorageService.store( StoreNodeParams.newVersion( nodeBuilder.build() ),
+                                                            InternalContext.from( ContextAccessor.current() ) ).node();
 
         refresh( params.getRefresh() );
         return newNode;
@@ -252,7 +254,7 @@ public final class CreateNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );;
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public CreateNodeCommand build()

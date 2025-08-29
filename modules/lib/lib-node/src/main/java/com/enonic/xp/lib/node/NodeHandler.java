@@ -16,7 +16,6 @@ import com.enonic.xp.lib.value.ScriptValueTranslatorResult;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -156,16 +155,6 @@ public class NodeHandler
     public Object getActiveVersion( final String key )
     {
         return execute( GetActiveVersionHandler.create().nodeService( this.nodeService ).key( NodeKey.from( key ) ).build() );
-    }
-
-    @SuppressWarnings("unused")
-    public Object setActiveVersion( final String key, final String versionId )
-    {
-        return execute( SetActiveVersionHandler.create()
-                            .nodeService( this.nodeService )
-                            .key( NodeKey.from( key ) )
-                            .versionId( NodeVersionId.from( versionId ) )
-                            .build() );
     }
 
     @SuppressWarnings("unused")

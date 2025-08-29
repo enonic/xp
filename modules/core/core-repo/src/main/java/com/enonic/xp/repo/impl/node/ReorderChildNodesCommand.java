@@ -13,6 +13,7 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
@@ -83,8 +84,7 @@ public class ReorderChildNodesCommand
         if ( !processedData.equals( parentNode.data() ) )
         {
             final Node editedNode = Node.create( parentNode ).data( processedData ).timestamp( Instant.now( CLOCK ) ).build();
-
-            this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), InternalContext.from( ContextAccessor.current() ) );
         }
     }
 
@@ -107,7 +107,7 @@ public class ReorderChildNodesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );;
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public ReorderChildNodesCommand build()

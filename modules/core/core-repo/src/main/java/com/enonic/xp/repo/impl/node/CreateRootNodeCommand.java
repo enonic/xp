@@ -4,6 +4,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 
 public class CreateRootNodeCommand
     extends AbstractNodeCommand
@@ -34,7 +35,8 @@ public class CreateRootNodeCommand
             childOrder( params.getChildOrder() ).
             build();
 
-        return this.nodeStorageService.store( rootNode, InternalContext.from( ContextAccessor.current() ) ).node();
+        return this.nodeStorageService.store( StoreNodeParams.newVersion( rootNode ), InternalContext.from( ContextAccessor.current() ) )
+            .node();
     }
 
     public static class Builder

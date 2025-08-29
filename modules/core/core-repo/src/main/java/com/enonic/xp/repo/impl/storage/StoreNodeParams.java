@@ -14,12 +14,12 @@ public class StoreNodeParams
 
     private final NodePath movedFrom;
 
-    private StoreNodeParams( final Builder builder )
+    private StoreNodeParams( final Node node, final NodeCommitId nodeCommitId, final boolean newVersion, final NodePath movedFrom )
     {
-        node = builder.node;
-        nodeCommitId = builder.nodeCommitId;
-        newVersion = builder.newVersion;
-        movedFrom = builder.movedFrom;
+        this.node = node;
+        this.nodeCommitId = nodeCommitId;
+        this.newVersion = newVersion;
+        this.movedFrom = movedFrom;
     }
 
     public Node getNode()
@@ -47,6 +47,10 @@ public class StoreNodeParams
         return new Builder();
     }
 
+    public static StoreNodeParams newVersion( final Node node )
+    {
+        return new StoreNodeParams( node, null, true, null );
+    }
 
     public static final class Builder
     {
@@ -88,7 +92,7 @@ public class StoreNodeParams
 
         public StoreNodeParams build()
         {
-            return new StoreNodeParams( this );
+            return new StoreNodeParams( node, nodeCommitId, newVersion, movedFrom );
         }
     }
 }
