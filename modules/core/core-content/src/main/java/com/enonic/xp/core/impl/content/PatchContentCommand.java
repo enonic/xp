@@ -2,6 +2,9 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Map;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPatcher;
@@ -50,7 +53,9 @@ public class PatchContentCommand
     private PatchContentResult doExecute()
     {
         final Content contentBeforeChange = getContent( params.getContentId() );
-        final Content patchedContent = patchContent( params.getPatcher(), contentBeforeChange );
+
+        Content patchedContent = patchContent( params.getPatcher(), contentBeforeChange );
+        patchedContent = addAttachments( patchedContent );
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create().editedContent( patchedContent )
             .createAttachments( params.getCreateAttachments() )
@@ -82,6 +87,38 @@ public class PatchContentCommand
                 : null ) );
 
         return builder.build();
+    }
+
+    private Content addAttachments( final Content content )
+    {
+        if ( !params.getCreateAttachments().isEmpty() )
+        {
+            return Content.create( content ).attachments( mergeExistingAndUpdatedAttachments( content.getAttachments() ) ).build();
+        }
+        return content;
+    }
+
+    private Attachments mergeExistingAndUpdatedAttachments( final Attachments existingAttachments )
+    {
+        final Attachments.Builder result = Attachments.create( existingAttachments );
+
+        for ( final CreateAttachment createAttachment : params.getCreateAttachments() )
+        {
+            if ( existingAttachments.byName( createAttachment.getName() ) != null )
+            {
+                throw new IllegalArgumentException( "Attachment with name '" + createAttachment.getName() + "' already exists." );
+            }
+
+            final Attachment.Builder builder = Attachment.create()
+                .name( createAttachment.getName() )
+                .label( createAttachment.getLabel() )
+                .mimeType( createAttachment.getMimeType() )
+                .textContent( createAttachment.getTextContent() );
+            populateByteSourceProperties( createAttachment.getByteSource(), builder );
+
+            result.add( builder.build() );
+        }
+        return result.build();
     }
 
     private Content patchContent( final ContentPatcher patcher, final Content original )

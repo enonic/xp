@@ -1,18 +1,27 @@
 package com.enonic.xp.core.impl.content;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.security.DigestInputStream;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.processor.ContentProcessor;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.FileNames;
+import com.enonic.xp.core.internal.HexCoder;
+import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -152,6 +161,25 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             super.validate();
             Preconditions.checkNotNull( xDataService, "xDataService cannot be null" );
+        }
+    }
+
+    static void populateByteSourceProperties( final ByteSource byteSource, Attachment.Builder builder )
+    {
+        try
+        {
+            final InputStream inputStream = byteSource.openStream();
+            final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
+            try (inputStream; digestInputStream)
+            {
+                final long size = ByteStreams.exhaust( digestInputStream );
+                builder.size( size );
+            }
+            builder.sha512( HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
         }
     }
 

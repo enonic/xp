@@ -67,6 +67,8 @@ public final class PatchNodeCommand
             doPatchNode();
         } );
 
+        refresh( params.getRefresh() );
+
         return results.build();
     }
 
@@ -83,7 +85,8 @@ public final class PatchNodeCommand
 
         final Map<NodeVersionId, NodeVersionMetadata> patchedVersions = new HashMap<>(); // old version id -> new version metadata
 
-        this.branches.forEach( targetBranch -> {
+        for ( Branch targetBranch : this.branches )
+        {
 
             final NodeVersionData updatedTargetNode = patchNodeInBranch( Optional.ofNullable( activeNodeMap.get( targetBranch ) )
                                                                              .map( activeNode -> patchedVersions.get(
@@ -97,7 +100,8 @@ public final class PatchNodeCommand
             }
 
             results.addResult( targetBranch, updatedTargetNode != null ? updatedTargetNode.node() : null );
-        } );
+        }
+
     }
 
     private NodeVersionData patchNodeInBranch( final NodeVersionMetadata patchedVersionMetadata, final Branch branch )
@@ -125,8 +129,6 @@ public final class PatchNodeCommand
                                                        .build() ), branch, l -> {
             }, internalContext );
 
-            refresh( params.getRefresh() );
-
             return new NodeVersionData( nodeStorageService.get( persistedNode.id(), internalContext ), patchedVersionMetadata );
         }
         else
@@ -153,11 +155,7 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            final NodeVersionData result = this.nodeStorageService.store( updatedNode, internalContext );
-
-            refresh( params.getRefresh() );
-
-            return result;
+            return this.nodeStorageService.store( updatedNode, internalContext );
         }
     }
 

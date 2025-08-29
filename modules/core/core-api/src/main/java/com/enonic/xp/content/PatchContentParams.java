@@ -18,6 +18,8 @@ public final class PatchContentParams
 
     private final CreateAttachments createAttachments;
 
+//    private final BinaryReferences removeAttachments;
+
     private final Branches branches;
 
     private final boolean skipSync;
@@ -27,6 +29,7 @@ public final class PatchContentParams
         this.id = builder.id;
         this.patcher = builder.patcher;
         this.createAttachments = builder.createAttachments;
+//        this.removeAttachments = builder.removeAttachments;
         this.branches = Branches.from( builder.branches.build() );
         this.skipSync = builder.skipSync;
     }
@@ -45,6 +48,11 @@ public final class PatchContentParams
     {
         return createAttachments;
     }
+
+//    public BinaryReferences getRemoveAttachments()
+//    {
+//        return removeAttachments;
+//    }
 
     public ContentPatcher getPatcher()
     {
@@ -71,6 +79,8 @@ public final class PatchContentParams
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
+//        private BinaryReferences removeAttachments = BinaryReferences.empty();
+
         private boolean skipSync;
 
         private Builder()
@@ -94,6 +104,12 @@ public final class PatchContentParams
             this.createAttachments = Objects.requireNonNullElseGet( value, CreateAttachments::empty );
             return this;
         }
+
+//        public Builder removeAttachments( final BinaryReferences value )
+//        {
+//            this.removeAttachments = Objects.requireNonNullElseGet( value, BinaryReferences::empty );
+//            return this;
+//        }
 
         public Builder branches( final Branches branches )
         {
