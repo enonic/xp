@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.InjectableValues;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
+import com.enonic.xp.core.impl.schema.mapper.CheckBoxYml;
+import com.enonic.xp.core.impl.schema.mapper.ComboBoxYml;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.DateTimeYml;
@@ -361,6 +363,70 @@ public class YmlTypeParserTest
         final Value defaultValue = inputType.createDefaultValue( input );
         assertTrue( defaultValue.isJavaType( LocalTime.class ) );
         assertEquals( "13:22", defaultValue.asString() );
+    }
+
+    @Test
+    void testParseCheckBox()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/checkbox-type.yml" );
+
+        final CheckBoxYml inputYml = parser.parse( yaml, CheckBoxYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "CheckBox", input.getInputType().toString() );
+        assertEquals( "My Checkbox", input.getLabel() );
+        assertEquals( "mycheckbox", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isBoolean() );
+        assertTrue( defaultValue.asBoolean() );
+
+        final InputTypeProperty alignmentOpt = input.getInputTypeConfig().getProperty( "alignment" );
+        assertNotNull( alignmentOpt );
+        assertEquals( "right", alignmentOpt.getValue() );
+        assertTrue( alignmentOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void testParseComboBox()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/combobox-type.yml" );
+
+        final ComboBoxYml inputYml = parser.parse( yaml, ComboBoxYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "ComboBox", input.getInputType().toString() );
+        assertEquals( "My Combobox", input.getLabel() );
+        assertEquals( "mycombobox", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isString() );
+        assertEquals("one", defaultValue.asString() );
+
+        final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
+
+        final Iterator<InputTypeProperty> iterator = options.iterator();
+        final InputTypeProperty cookieOpt = iterator.next();
+        assertNotNull( cookieOpt );
+        assertEquals( "Option One", cookieOpt.getValue() );
+        assertEquals( "one", cookieOpt.getAttribute( "value" ) );
+
+        final InputTypeProperty privacyOpt = iterator.next();
+        assertNotNull( privacyOpt );
+        assertEquals( "Option Two", privacyOpt.getValue() );
+        assertEquals( "two", privacyOpt.getAttribute( "value" ) );
+
+        final Occurrences occurrences = input.getOccurrences();
+        assertEquals( 1, occurrences.getMinimum() );
+        assertEquals( 2, occurrences.getMaximum() );
     }
 
     private String readAsString( final String name )
