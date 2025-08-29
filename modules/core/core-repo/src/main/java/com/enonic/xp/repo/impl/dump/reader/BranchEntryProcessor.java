@@ -9,10 +9,7 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
@@ -56,12 +53,17 @@ public class BranchEntryProcessor
             return;
         }
 
-        final Node node = NodeFactory.create( nodeVersion, NodeVersionMetadata.create().
-            nodeId( branchDumpEntry.getNodeId() ).
-            nodePath( meta.getNodePath() ).
-            timestamp( meta.getTimestamp() ).
-            nodeVersionId( meta.getVersion() ).
-            build() );
+        final Node node;
+        if (nodeVersion.getId().equals( Node.ROOT_UUID )) {
+            node = Node.createRoot( )
+                .nodeVersionId( meta.getVersion() )
+                .timestamp( meta.getTimestamp() ).build();
+        } else {
+            node = Node.create( nodeVersion )
+                .nodeVersionId( meta.getVersion() )
+                .timestamp( meta.getTimestamp() )
+                .parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() ).build();
+        }
 
         try
         {
