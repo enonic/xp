@@ -64,6 +64,7 @@ import com.enonic.xp.repo.impl.repository.RepositoryEntry;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
 import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
@@ -465,17 +466,16 @@ public class DumpServiceImpl
 
     private void createRootNode( final RepositoryId repositoryId )
     {
-        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( RepositoryConstants.MASTER_BRANCH ).
-            build();
+        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( repositoryId )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build();
 
-        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
-
-        this.nodeStorageService.store( Node.createRoot().
-            permissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS ).
-            childOrder( RepositoryConstants.DEFAULT_CHILD_ORDER ).
-            build(), rootNodeInternalContext );
+        final Node node = Node.createRoot()
+            .permissions( RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
+            .childOrder( RepositoryConstants.DEFAULT_CHILD_ORDER )
+            .build();
+        this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( rootNodeContext ) );
 
         rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }

@@ -156,12 +156,12 @@ public class ApplyNodePermissionsCommand
 
     private void doApply( List<Map<Branch, Node>> versionsToApply )
     {
-
-        branches.forEach( branch -> {
+        for ( Branch branch : branches )
+        {
             versionsToApply.stream()
                 .map( versionMap -> versionMap.get( branch ) )
                 .forEach( versionMetadata -> doApplyOnNode( versionMetadata, branch ) );
-        } );
+        }
     }
 
     private void doApplyOnNode( final Node node, final Branch branch )
@@ -225,7 +225,7 @@ public class ApplyNodePermissionsCommand
                         compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
                                                          params.getRemovePermissions() ) )
                     .build();
-                result = this.nodeStorageService.store( StoreNodeParams.create().node( editedNode ).build(), targetContext );
+                result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
             }
 
             listener.permissionsApplied( 1 );
@@ -263,7 +263,8 @@ public class ApplyNodePermissionsCommand
 
         if ( !addPermissions.isEmpty() )
         {
-            addPermissions.getEntries().forEach( entryToAdd -> {
+            for ( AccessControlEntry entryToAdd : addPermissions.getEntries() )
+            {
                 newPermissions.compute( entryToAdd.getPrincipal(), ( key, entry ) -> entry == null
                     ? entryToAdd
                     : AccessControlEntry.create()
@@ -273,7 +274,7 @@ public class ApplyNodePermissionsCommand
                         .deny( entry.getDeniedPermissions() )
                         .deny( entryToAdd.getDeniedPermissions() )
                         .build() );
-            } );
+            }
         }
 
         if ( !removePermissions.isEmpty() )

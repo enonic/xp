@@ -27,6 +27,7 @@ import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
@@ -158,7 +159,7 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            final NodeVersionData result = this.nodeStorageService.store( updatedNode, internalContext );
+            final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext );
 
             refresh( params.getRefresh() );
 
@@ -230,7 +231,7 @@ public final class PatchNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( params, "params cannot be null" );;
+            Objects.requireNonNull( params, "params cannot be null" );
             Preconditions.checkArgument( this.params.getBranches().getSize() <= 1 || this.params.getPath() == null,
                                          "Only one branch is allowed with path" );
         }

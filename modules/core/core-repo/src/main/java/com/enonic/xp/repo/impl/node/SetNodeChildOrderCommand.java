@@ -17,6 +17,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
@@ -69,7 +70,9 @@ public class SetNodeChildOrderCommand
             timestamp( Instant.now( CLOCK ) ).
             build();
 
-        final Node node = this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) ).node();
+        final Node node =
+            this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), InternalContext.from( ContextAccessor.current() ) )
+                .node();
         refresh( refresh );
         return node;
     }
@@ -101,8 +104,7 @@ public class SetNodeChildOrderCommand
                 manualOrderValue( nodeIdOrderValue.getManualOrderValue() ).
                 timestamp( Instant.now( CLOCK ) ).
                 build();
-
-            this.nodeStorageService.store( editedNode, InternalContext.from( ContextAccessor.current() ) );
+            this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), InternalContext.from( ContextAccessor.current() ) );
         }
     }
 

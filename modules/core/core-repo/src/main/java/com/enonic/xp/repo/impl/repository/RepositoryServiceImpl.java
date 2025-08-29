@@ -34,6 +34,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -385,12 +386,9 @@ public class RepositoryServiceImpl
             repositoryId( params.getRepositoryId() ).
             branch( RepositoryConstants.MASTER_BRANCH ).build();
 
-        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
-
-        final Node rootNode = this.nodeStorageService.store( Node.createRoot()
-                                                                 .permissions( params.getRootPermissions() )
-                                                                 .childOrder( params.getRootChildOrder() )
-                                                                 .build(), rootNodeInternalContext ).node();
+        final Node node = Node.createRoot().permissions( params.getRootPermissions() ).childOrder( params.getRootChildOrder() ).build();
+        final Node rootNode =
+            this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( rootNodeContext ) ).node();
 
         doRefresh();
 

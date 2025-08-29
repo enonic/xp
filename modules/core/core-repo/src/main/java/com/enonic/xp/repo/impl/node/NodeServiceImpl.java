@@ -634,30 +634,6 @@ public class NodeServiceImpl
             .execute();
     }
 
-
-    @Override
-    public NodeVersionId setActiveVersion( final NodeId nodeId, final NodeVersionId nodeVersionId )
-    {
-        verifyContext();
-        final NodeVersionId result = SetActiveVersionCommand.create()
-            .nodeVersionId( nodeVersionId )
-            .nodeId( nodeId )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-
-        final Node node = this.getById( nodeId );
-
-        if ( node != null )
-        {
-            this.eventPublisher.publish( NodeEvents.updated( node, InternalContext.from( ContextAccessor.current() ) ) );
-        }
-
-        return result;
-    }
-
     @Override
     public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {

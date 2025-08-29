@@ -7,6 +7,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -40,7 +41,8 @@ public class SetRootPermissionsCommand
             .timestamp( Instant.now( CLOCK ) )
             .build();
 
-        return this.nodeStorageService.store( node, InternalContext.from( ContextAccessor.current() ) ).node();
+        return this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( ContextAccessor.current() ) )
+            .node();
     }
 
     public static Builder create()
