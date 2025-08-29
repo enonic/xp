@@ -6,7 +6,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class InternalContext
 {
@@ -24,7 +23,7 @@ public class InternalContext
     {
         this.repositoryId = builder.repositoryId;
         this.branch = builder.branch;
-        this.principalsKeys = builder.principalsKeys;
+        this.principalsKeys = Objects.requireNonNullElse( builder.principalsKeys, PrincipalKeys.empty() );
         this.skipConstraints = builder.skipConstraints;
         this.searchPreference = builder.searchPreference;
     }
@@ -74,7 +73,7 @@ public class InternalContext
 
     public static Builder create( final Context context )
     {
-        return create().authInfo( context.getAuthInfo() )
+        return create()
             .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() );
@@ -133,12 +132,6 @@ public class InternalContext
         public Builder branch( final Branch branch )
         {
             this.branch = branch;
-            return this;
-        }
-
-        public Builder authInfo( final AuthenticationInfo authenticationInfo )
-        {
-            this.principalsKeys = authenticationInfo != null ? authenticationInfo.getPrincipals() : PrincipalKeys.empty();
             return this;
         }
 

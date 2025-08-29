@@ -50,12 +50,12 @@ import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
+import com.enonic.xp.node.SortNodeParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -430,18 +430,21 @@ public class NodeServiceImplTest
 
         final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
 
-        final ReorderChildNodesParams params = ReorderChildNodesParams.create()
-            .add( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() )
-            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ).processor( ( data, path ) -> {
-                data.addString( "processedValue", "value" );
-                return data;
+        final SortNodeParams params = SortNodeParams.create()
+            .nodeId( parent.id() )
+            .childOrder( ChildOrder.manualOrder() )
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() )
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ).processor( ( data, path ) -> {
+                final PropertyTree copy = data.copy();
+                copy.addString( "processedValue", "value" );
+                return copy;
             } )
             .build();
 
-        final ReorderChildNodesResult result = this.nodeService.reorderChildren( params );
+        final SortNodeResult result = this.nodeService.sort( params );
 
-        assertThat( result.getNodeIds() ).containsExactly( child1.id(), child3.id() );
-        assertThat( result.getParentNodes().getIds() ).containsExactly( parent.id() );
+        assertThat( result.getReorderedNodes() ).extracting( Node::id ).containsExactly( child1.id(), child3.id() );
+        assertEquals( parent.id(), result.getNode().id() );
         assertThat(
             nodeService.findByParent( FindNodesByParentParams.create().parentId( parent.id() ).build() ).getNodeIds() ).containsExactly(
             child3.id(), child1.id(), child2.id() );

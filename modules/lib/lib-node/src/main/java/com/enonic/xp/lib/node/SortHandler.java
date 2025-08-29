@@ -3,16 +3,16 @@ package com.enonic.xp.lib.node;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.lib.node.mapper.NodeMapper;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
 
-public class SetChildOrderHandler
+public class SortHandler
     extends AbstractNodeHandler
 {
     private final NodeKey nodeKey;
 
     private final ChildOrder childOrder;
 
-    private SetChildOrderHandler( final Builder builder )
+    private SortHandler( final Builder builder )
     {
         super( builder );
 
@@ -23,13 +23,13 @@ public class SetChildOrderHandler
     @Override
     public Object execute()
     {
-        final Node node = nodeService.setChildOrder( makeSetNodeChildOrderParams() );
+        final Node node = nodeService.sort( makeSetNodeChildOrderParams() ).getNode();
         return new NodeMapper( node );
     }
 
-    private SetNodeChildOrderParams makeSetNodeChildOrderParams()
+    private SortNodeParams makeSetNodeChildOrderParams()
     {
-        return SetNodeChildOrderParams.create().nodeId( getNodeId( nodeKey ) ).childOrder( childOrder ).build();
+        return SortNodeParams.create().nodeId( getNodeId( nodeKey ) ).childOrder( childOrder ).build();
     }
 
     public static Builder create()
@@ -60,9 +60,9 @@ public class SetChildOrderHandler
             return this;
         }
 
-        public SetChildOrderHandler build()
+        public SortHandler build()
         {
-            return new SetChildOrderHandler( this );
+            return new SortHandler( this );
         }
     }
 }

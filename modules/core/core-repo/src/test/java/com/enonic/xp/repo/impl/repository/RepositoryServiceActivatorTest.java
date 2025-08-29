@@ -17,6 +17,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 

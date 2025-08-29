@@ -1,23 +1,25 @@
 package com.enonic.xp.node;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class ReorderChildNodesParams
-    extends AbstractImmutableEntityList<ReorderChildNodeParams>
+    implements Iterable<ReorderChildNodeParams>
 {
     private final NodeDataProcessor processor;
 
     private final RefreshMode refresh;
 
+    private final ImmutableList<ReorderChildNodeParams> list;
+
     private ReorderChildNodesParams( final Builder builder )
     {
-        super( builder.orderChildNodeParamsList.build() );
+        this.list = builder.orderChildNodeParamsList.build();
         this.processor = builder.processor;
         this.refresh = builder.refresh;
     }
@@ -30,6 +32,11 @@ public final class ReorderChildNodesParams
     public RefreshMode getRefresh()
     {
         return refresh;
+    }
+
+    public Iterator<ReorderChildNodeParams> iterator()
+    {
+        return list.iterator();
     }
 
     public static Builder create()

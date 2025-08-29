@@ -1067,10 +1067,10 @@ public class DumpServiceImplTest
             .build();
 
         Node node = Node.createRoot()
-            .permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
-            .childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER )
-            .build();
-        this.storageService.store( StoreNodeParams.newVersion( node ), InternalContext.create( rootNodeContext ).build() );
+                                       .permissions( permissions != null ? permissions : RepositoryConstants.DEFAULT_REPO_PERMISSIONS )
+                                       .childOrder( childOrder != null ? childOrder : RepositoryConstants.DEFAULT_CHILD_ORDER )
+                                       .build();
+        this.storageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( rootNodeContext ) );
 
         rootNodeContext.runWith( () -> nodeService.refresh( RefreshMode.ALL ) );
     }

@@ -1,9 +1,11 @@
 package com.enonic.xp.repo.impl;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
@@ -13,6 +15,7 @@ import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -44,12 +47,9 @@ public class NodeEventsTest
         final Node pushed2 = createNode( "pushed2", new NodePath( "/mynode1/pushed2" ), "id2" );
         final Node pushed3 = createNode( "pushed3Renamed", new NodePath( "/mynode1/pushed3" ), "id3" );
 
-        final NodeBranchEntry nodeBranchEntry =
-            NodeBranchEntry.create().nodeId( pushed1.id() ).nodePath( pushed1.path() ).nodeVersionId( pushed1.getNodeVersionId() ).build();
-        final NodeBranchEntry nodeBranchEntry2 =
-            NodeBranchEntry.create().nodeId( pushed2.id() ).nodePath( pushed2.path() ).nodeVersionId( pushed2.getNodeVersionId() ).build();
-        final NodeBranchEntry nodeBranchEntry3 =
-            NodeBranchEntry.create().nodeId( pushed3.id() ).nodePath( pushed3.path() ).nodeVersionId( pushed3.getNodeVersionId() ).build();
+        final NodeBranchEntry nodeBranchEntry = createNodeVersionId( pushed1 );
+        final NodeBranchEntry nodeBranchEntry2 = createNodeVersionId( pushed2 );
+        final NodeBranchEntry nodeBranchEntry3 = createNodeVersionId( pushed3 );
 
         final List<PushNodeEntry> pushNodeEntries = List.of( PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).build(),
                                                              PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry2 ).build(),
@@ -69,6 +69,17 @@ public class NodeEventsTest
                           ", {id=id2, path=/mynode1/pushed2/pushed2, branch=master, repo=com.enonic.cms.myproject}" +
                           ", {id=id3, path=/mynode1/pushed3/pushed3Renamed, branch=master, repo=com.enonic.cms.myproject, currentTargetPath=/mynode1/pushed3/pushed3}]",
                       event.getValue( "nodes" ).get().toString() );
+    }
+
+    private static NodeBranchEntry createNodeVersionId( final Node pushed1 )
+    {
+        return NodeBranchEntry.create()
+            .nodeId( pushed1.id() )
+            .nodePath( pushed1.path() )
+            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+            .timestamp( Instant.EPOCH )
+            .nodeVersionId( pushed1.getNodeVersionId() )
+            .build();
     }
 
     @Test
@@ -170,14 +181,9 @@ public class NodeEventsTest
         assertNull( eventCreated );
     }
 
-    private Node createNode( final String name, final NodePath root )
-    {
-        return Node.create().name( NodeName.from( name ) ).parentPath( root ).build();
-    }
-
     private Node createNode( final String name, final NodePath root, String id )
     {
-        return Node.create().name( NodeName.from( name ) ).parentPath( root ).id( NodeId.from( id ) ).build();
+        return Node.create().name( NodeName.from( name ) ).parentPath( root ).nodeVersionId( new NodeVersionId() ).id( NodeId.from( id ) ).build();
     }
 
     private Context createContext( final String branch )

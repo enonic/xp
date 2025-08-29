@@ -1,7 +1,10 @@
 package com.enonic.xp.core.impl.audit;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.audit.AuditLog;
 import com.enonic.xp.audit.AuditLogId;
@@ -12,6 +15,7 @@ import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -30,6 +34,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -151,14 +156,7 @@ public class AuditLogServiceImplTest
     @Test
     public void cleanUpOneEmpty()
     {
-        when( nodeService.delete( any() ) ).thenAnswer( answer -> DeleteNodeResult.create()
-            .nodeBranchEntries( NodeBranchEntries.create()
-                                    .add( NodeBranchEntry.create()
-                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
-                                              .nodePath( NodePath.ROOT )
-                                              .build() )
-                                    .build() )
-            .build() );
+        when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
@@ -178,14 +176,7 @@ public class AuditLogServiceImplTest
     @Test
     public void cleanUpOneBatch()
     {
-        when( nodeService.delete( any() ) ).thenAnswer( answer -> DeleteNodeResult.create()
-            .nodeBranchEntries( NodeBranchEntries.create()
-                                    .add( NodeBranchEntry.create()
-                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
-                                              .nodePath( NodePath.ROOT )
-                                              .build() )
-                                    .build() )
-            .build() );
+        when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
@@ -212,14 +203,7 @@ public class AuditLogServiceImplTest
     @Test
     public void cleanUpMultipleBatch()
     {
-        when( nodeService.delete( any() ) ).thenAnswer( answer -> DeleteNodeResult.create()
-            .nodeBranchEntries( NodeBranchEntries.create()
-                                    .add( NodeBranchEntry.create()
-                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
-                                              .nodePath( NodePath.ROOT )
-                                              .build() )
-                                    .build() )
-            .build() );
+        when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
@@ -273,5 +257,20 @@ public class AuditLogServiceImplTest
         assertEquals( auditLogParams.getObjectUris(), log.getObjectUris() );
         assertNotNull( log.getData() );
         assertEquals( auditLogParams.getData(), log.getData() );
+    }
+
+    private static DeleteNodeResult answerDeleted( InvocationOnMock answer )
+    {
+        return DeleteNodeResult.create()
+            .nodeBranchEntries( NodeBranchEntries.create()
+                                    .add( NodeBranchEntry.create()
+                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
+                                              .nodeVersionId( new NodeVersionId() )
+                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+                                              .timestamp( Instant.EPOCH )
+                                              .nodePath( NodePath.ROOT )
+                                              .build() )
+                                    .build() )
+            .build();
     }
 }

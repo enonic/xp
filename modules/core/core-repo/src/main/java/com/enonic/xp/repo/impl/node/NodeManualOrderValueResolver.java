@@ -1,54 +1,41 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
+import java.util.function.LongSupplier;
 
 public class NodeManualOrderValueResolver
+    implements LongSupplier
 {
-    public static final Long ORDER_SPACE = (long) Integer.MAX_VALUE;
+    private static final long ORDER_SPACE = Integer.MAX_VALUE;
 
-    public static final Long START_ORDER_VALUE = 0L;
+    private static final long START_ORDER_VALUE = 0L;
 
-    public static List<NodeIdOrderValue> resolve( final NodeIds orderedNodeIds )
+    private long current = START_ORDER_VALUE;
+
+    @Override
+    public long getAsLong()
     {
-        final List<NodeIdOrderValue> result = new ArrayList<>();
-
-        Long currentValue = START_ORDER_VALUE;
-
-        for ( final NodeId nodeId : orderedNodeIds )
-        {
-            result.add( new NodeIdOrderValue( nodeId, currentValue ) );
-            currentValue = currentValue - ORDER_SPACE;
-        }
-
-        return result;
+        long value = current;
+        current = after( value );
+        return value;
     }
 
-
-    public static class NodeIdOrderValue
+    public static long first()
     {
-        private final Long manualOrderValue;
-
-        private final NodeId nodeId;
-
-        public NodeIdOrderValue( final NodeId nodeId, final Long manualOrderValue )
-        {
-            this.manualOrderValue = manualOrderValue;
-            this.nodeId = nodeId;
-        }
-
-        public Long getManualOrderValue()
-        {
-            return manualOrderValue;
-        }
-
-        public NodeId getNodeId()
-        {
-            return nodeId;
-        }
+        return START_ORDER_VALUE;
     }
 
+    public static long after( long value )
+    {
+        return value - ORDER_SPACE;
+    }
+
+    public static long before( final long value )
+    {
+        return value + ORDER_SPACE;
+    }
+
+    public static long between( final long value1, final long value2 )
+    {
+        return (value1 & value2) + ((value1 ^ value2) >> 1);
+    }
 }

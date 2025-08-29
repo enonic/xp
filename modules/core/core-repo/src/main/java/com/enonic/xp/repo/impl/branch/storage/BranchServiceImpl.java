@@ -147,7 +147,7 @@ public class BranchServiceImpl
     }
 
     @Override
-    public NodeBranchEntries get( final Collection<NodeId> nodeIds, final InternalContext context )
+    public NodeBranchEntries get( final Iterable<NodeId> nodeIds, final InternalContext context )
     {
         final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
 
