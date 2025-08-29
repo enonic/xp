@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -15,11 +16,14 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.DateTimeYml;
+import com.enonic.xp.core.impl.schema.mapper.DateYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
 import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
+import com.enonic.xp.core.impl.schema.mapper.TimeYml;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
@@ -289,6 +293,74 @@ public class YmlTypeParserTest
         assertNotNull( showCounterOpt );
         assertEquals( "true", showCounterOpt.getValue() );
         assertTrue( showCounterOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void testParseDate()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/date-type.yml" );
+
+        final DateYml inputYml = parser.parse( yaml, DateYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "Date", input.getInputType().toString() );
+        assertEquals( "My Date", input.getLabel() );
+        assertEquals( "mydate", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isDateType() );
+        assertEquals( "2025-08-29", defaultValue.asString() );
+    }
+
+    @Test
+    void testParseDateTime()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/datetime-type.yml" );
+
+        final DateTimeYml inputYml = parser.parse( yaml, DateTimeYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "DateTime", input.getInputType().toString() );
+        assertEquals( "My DateTime", input.getLabel() );
+        assertEquals( "mydatetime", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isDateType() );
+        assertEquals( "2025-08-29T07:44:27Z", defaultValue.asString() );
+
+        final InputTypeProperty timezoneOpt = input.getInputTypeConfig().getProperty( "timezone" );
+        assertNotNull( timezoneOpt );
+        assertEquals( "true", timezoneOpt.getValue() );
+        assertTrue( timezoneOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void testParseTime()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/time-type.yml" );
+
+        final TimeYml inputYml = parser.parse( yaml, TimeYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "Time", input.getInputType().toString() );
+        assertEquals( "My Time", input.getLabel() );
+        assertEquals( "mytime", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isJavaType( LocalTime.class ) );
+        assertEquals( "13:22", defaultValue.asString() );
     }
 
     private String readAsString( final String name )
