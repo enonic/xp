@@ -18,6 +18,9 @@ public final class InputRegistry
         register( InputTypeName.CUSTOM_SELECTOR, CustomSelectorYml.class );
         register( InputTypeName.HTML_AREA, HtmlAreaYml.class );
         register( InputTypeName.TEXT_AREA, TextAreaYml.class );
+        register( InputTypeName.DATE, DateYml.class );
+        register( InputTypeName.DATE_TIME, DateTimeYml.class );
+        register( InputTypeName.TIME, TimeYml.class );
     }
 
     @SuppressWarnings("unchecked")
