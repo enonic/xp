@@ -1,0 +1,4 @@
+type: "Date"
+name: "mydate"
+label: "My Date"
+default: "2025-08-29"
