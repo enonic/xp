@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
+import com.enonic.xp.core.impl.schema.mapper.AttachmentUploaderYml;
 import com.enonic.xp.core.impl.schema.mapper.CheckBoxYml;
 import com.enonic.xp.core.impl.schema.mapper.ComboBoxYml;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
@@ -409,7 +410,7 @@ public class YmlTypeParserTest
 
         final Value defaultValue = inputType.createDefaultValue( input );
         assertTrue( defaultValue.isString() );
-        assertEquals("one", defaultValue.asString() );
+        assertEquals( "one", defaultValue.asString() );
 
         final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
 
@@ -427,6 +428,21 @@ public class YmlTypeParserTest
         final Occurrences occurrences = input.getOccurrences();
         assertEquals( 1, occurrences.getMinimum() );
         assertEquals( 2, occurrences.getMaximum() );
+    }
+
+    @Test
+    void testParseAttachmentUploader()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/attachmentuploader-type.yml" );
+
+        final AttachmentUploaderYml inputYml = parser.parse( yaml, AttachmentUploaderYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "AttachmentUploader", input.getInputType().toString() );
+        assertEquals( "My AttachmentUploader", input.getLabel() );
+        assertEquals( "myattachmentUploader", input.getName() );
     }
 
     private String readAsString( final String name )
