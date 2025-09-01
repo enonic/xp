@@ -7,10 +7,10 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
-public class ContentSelectorYml
+public class MediaSelectorYml
     extends InputYml
 {
-    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.CONTENT_SELECTOR;
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.MEDIA_SELECTOR;
 
     public List<String> allowContentType;
 
@@ -20,7 +20,7 @@ public class ContentSelectorYml
 
     public Boolean hideToggleIcon;
 
-    protected ContentSelectorYml()
+    public MediaSelectorYml()
     {
         super( INPUT_TYPE_NAME );
     }

@@ -1,20 +1,14 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 
 public class TimeYml
     extends InputYml
 {
-    @Override
-    public InputTypeName getInputTypeName()
-    {
-        return InputTypeName.TIME;
-    }
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.TIME;
 
-    @Override
-    public void customizeInputType( final Input.Builder builder )
+    public TimeYml()
     {
-        // do nothing
+        super( INPUT_TYPE_NAME );
     }
 }

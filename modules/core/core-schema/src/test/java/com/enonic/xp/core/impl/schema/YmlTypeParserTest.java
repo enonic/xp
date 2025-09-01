@@ -23,6 +23,8 @@ import com.enonic.xp.core.impl.schema.mapper.DateTimeYml;
 import com.enonic.xp.core.impl.schema.mapper.DateYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
+import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.MediaSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
 import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
@@ -443,6 +445,75 @@ public class YmlTypeParserTest
         assertEquals( "AttachmentUploader", input.getInputType().toString() );
         assertEquals( "My AttachmentUploader", input.getLabel() );
         assertEquals( "myattachmentUploader", input.getName() );
+    }
+
+    @Test
+    void parseImageSelector()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/imageselector-type.yml" );
+
+        final ImageSelectorYml contentSelectorYml = parser.parse( yaml, ImageSelectorYml.class );
+        Input input = contentSelectorYml.convertToInput();
+
+        assertEquals( "ImageSelector", input.getInputType().toString() );
+        assertEquals( "myImageSelector", input.getName() );
+        assertEquals( "My ImageSelector", input.getLabel() );
+
+        Occurrences occurrences = input.getOccurrences();
+        assertEquals( 0, occurrences.getMinimum() );
+        assertEquals( 1, occurrences.getMaximum() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        final Set<InputTypeProperty> allowPaths = inputTypeConfig.getProperties( "allowPath" );
+        assertEquals( 1, allowPaths.size() );
+        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ) );
+
+        final InputTypeProperty treeMode = inputTypeConfig.getProperty( "treeMode" );
+        assertNotNull( treeMode );
+        assertEquals( "true", treeMode.getValue() );
+
+        final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
+        assertNotNull( hideToggleIcon );
+        assertEquals( "true", hideToggleIcon.getValue() );
+    }
+
+    @Test
+    void parseMediaSelector()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/mediaselector-type.yml" );
+
+        final MediaSelectorYml contentSelectorYml = parser.parse( yaml, MediaSelectorYml.class );
+        Input input = contentSelectorYml.convertToInput();
+
+        assertEquals( "MediaSelector", input.getInputType().toString() );
+        assertEquals( "myMediaSelector", input.getName() );
+        assertEquals( "My MediaSelector", input.getLabel() );
+
+        Occurrences occurrences = input.getOccurrences();
+        assertEquals( 0, occurrences.getMinimum() );
+        assertEquals( 1, occurrences.getMaximum() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        final Set<InputTypeProperty> allowContentTypes = inputTypeConfig.getProperties( "allowContentType" );
+        assertEquals( 2, allowContentTypes.size() );
+        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "media:image" ).build() ) );
+        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "media:video" ).build() ) );
+
+        final Set<InputTypeProperty> allowPaths = inputTypeConfig.getProperties( "allowPath" );
+        assertEquals( 1, allowPaths.size() );
+        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ) );
+
+        final InputTypeProperty treeMode = inputTypeConfig.getProperty( "treeMode" );
+        assertNotNull( treeMode );
+        assertEquals( "true", treeMode.getValue() );
+
+        final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
+        assertNotNull( hideToggleIcon );
+        assertEquals( "true", hideToggleIcon.getValue() );
     }
 
     private String readAsString( final String name )

@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.form.Input;
@@ -11,6 +13,8 @@ import com.enonic.xp.schema.LocalizedText;
 
 public abstract class InputYml
 {
+    private final InputTypeName inputTypeName;
+
     public String type;
 
     public String name;
@@ -24,9 +28,14 @@ public abstract class InputYml
     @JsonProperty("default")
     public Object defaultValue;
 
+    protected InputYml( final InputTypeName inputTypeName )
+    {
+        this.inputTypeName = Objects.requireNonNull( inputTypeName, "inputTypeName can not be null" );
+    }
+
     public final Input convertToInput()
     {
-        final Input.Builder builder = Input.create().name( name ).inputType( getInputTypeName() );
+        final Input.Builder builder = Input.create().name( name ).inputType( inputTypeName );
 
         if ( label != null )
         {
@@ -54,7 +63,7 @@ public abstract class InputYml
         return builder.build();
     }
 
-    public abstract InputTypeName getInputTypeName();
-
-    public abstract void customizeInputType( Input.Builder builder );
+    public void customizeInputType( Input.Builder builder )
+    {
+    }
 }

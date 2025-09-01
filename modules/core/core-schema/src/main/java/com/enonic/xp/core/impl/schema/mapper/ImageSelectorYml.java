@@ -7,12 +7,10 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
-public class ContentSelectorYml
+public class ImageSelectorYml
     extends InputYml
 {
-    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.CONTENT_SELECTOR;
-
-    public List<String> allowContentType;
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.IMAGE_SELECTOR;
 
     public List<String> allowPath;
 
@@ -20,7 +18,7 @@ public class ContentSelectorYml
 
     public Boolean hideToggleIcon;
 
-    protected ContentSelectorYml()
+    public ImageSelectorYml()
     {
         super( INPUT_TYPE_NAME );
     }
@@ -34,15 +32,12 @@ public class ContentSelectorYml
         {
             configBuilder.property( InputTypeProperty.create( "hideToggleIcon", hideToggleIcon.toString() ).build() );
         }
+
         if ( treeMode != null )
         {
             configBuilder.property( InputTypeProperty.create( "treeMode", treeMode.toString() ).build() );
         }
-        if ( allowContentType != null )
-        {
-            allowContentType.forEach(
-                allowType -> configBuilder.property( InputTypeProperty.create( "allowContentType", allowType ).build() ) );
-        }
+
         if ( allowPath != null )
         {
             allowPath.forEach( allowPath -> configBuilder.property( InputTypeProperty.create( "allowPath", allowPath ).build() ) );
