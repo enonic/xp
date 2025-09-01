@@ -18,6 +18,7 @@ import com.enonic.xp.core.impl.schema.mapper.AttachmentUploaderYml;
 import com.enonic.xp.core.impl.schema.mapper.CheckBoxYml;
 import com.enonic.xp.core.impl.schema.mapper.ComboBoxYml;
 import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.ContentTypeFilterYml;
 import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.DateTimeYml;
 import com.enonic.xp.core.impl.schema.mapper.DateYml;
@@ -514,6 +515,30 @@ public class YmlTypeParserTest
         final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
         assertNotNull( hideToggleIcon );
         assertEquals( "true", hideToggleIcon.getValue() );
+    }
+
+    @Test
+    void parseContentTypeFilter()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/contenttypetilter-type.yml" );
+
+        final ContentTypeFilterYml contentSelectorYml = parser.parse( yaml, ContentTypeFilterYml.class );
+        Input input = contentSelectorYml.convertToInput();
+
+        assertEquals( "ContentTypeFilter", input.getInputType().toString() );
+        assertEquals( "myContentTypeFilter", input.getName() );
+        assertEquals( "My ContentTypeFilter", input.getLabel() );
+
+        Occurrences occurrences = input.getOccurrences();
+        assertEquals( 0, occurrences.getMinimum() );
+        assertEquals( 1, occurrences.getMaximum() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        final InputTypeProperty contextOpt = inputTypeConfig.getProperty( "context" );
+        assertNotNull( contextOpt );
+        assertEquals( "true", contextOpt.getValue() );
     }
 
     private String readAsString( final String name )
