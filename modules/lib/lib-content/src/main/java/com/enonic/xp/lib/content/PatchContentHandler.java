@@ -174,8 +174,8 @@ public final class PatchContentHandler
 
     private void patchAttachments( final PatchableContent target, final Map<String, Object> map )
     {
-        final var modifyAttachments = (List<Map<String, Object>>) map.get( "modifyAttachments" );
-        final var removeAttachments = (List<String>) map.get( "removeAttachments" );
+        final var modifyAttachments = (List<Map<String, Object>>) map.getOrDefault( "modifyAttachments", List.of() );
+        final var removeAttachments = (List<String>) map.getOrDefault( "removeAttachments", List.of() );
 
         final Attachments parsedAttachments = createAttachments( modifyAttachments, target.attachments.originalValue ).stream()
             .filter( attachment -> !removeAttachments.contains( attachment.getName() ) )

@@ -128,7 +128,7 @@ public class AttachmentsDeserializer
                     builder.size( Long.parseLong( value.toString() ) );
                     break;
                 default:
-                    break;
+                    throw new IllegalArgumentException( "Unknown attachment key: " + key );
             }
         }
 
@@ -176,8 +176,9 @@ public class AttachmentsDeserializer
                     {
                         builder.byteSource( ByteSource.wrap( value.toString().getBytes( StandardCharsets.UTF_8 ) ) );
                     }
-                default:
                     break;
+                default:
+                    throw new IllegalArgumentException( "Unknown CreateAttachment key: " + key );
             }
         }
 
