@@ -1,0 +1,6 @@
+type: "Long"
+name: "myLong"
+label: "My Long"
+min: 350
+max: 123456789
+default: 1000
