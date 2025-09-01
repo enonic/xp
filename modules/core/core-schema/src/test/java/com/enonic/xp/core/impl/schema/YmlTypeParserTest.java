@@ -27,6 +27,7 @@ import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.MediaSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
+import com.enonic.xp.core.impl.schema.mapper.TagYml;
 import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.core.impl.schema.mapper.TimeYml;
@@ -539,6 +540,25 @@ public class YmlTypeParserTest
         final InputTypeProperty contextOpt = inputTypeConfig.getProperty( "context" );
         assertNotNull( contextOpt );
         assertEquals( "true", contextOpt.getValue() );
+    }
+
+
+    @Test
+    void parseTag()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/tag-type.yml" );
+
+        final TagYml contentSelectorYml = parser.parse( yaml, TagYml.class );
+        final Input input = contentSelectorYml.convertToInput();
+
+        assertEquals( "Tag", input.getInputType().toString() );
+        assertEquals( "myTag", input.getName() );
+        assertEquals( "My Tag", input.getLabel() );
+
+        final Occurrences occurrences = input.getOccurrences();
+        assertEquals( 0, occurrences.getMinimum() );
+        assertEquals( 0, occurrences.getMaximum() );
     }
 
     private String readAsString( final String name )
