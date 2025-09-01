@@ -55,7 +55,12 @@ public class PatchContentCommand
         final Content contentBeforeChange = getContent( params.getContentId() );
 
         Content patchedContent = patchContent( params.getPatcher(), contentBeforeChange );
-        patchedContent = addAttachments( patchedContent );
+        if ( !params.getCreateAttachments().isEmpty() )
+        {
+            patchedContent = Content.create( patchedContent )
+                .attachments( mergeExistingAndUpdatedAttachments( patchedContent.getAttachments() ) )
+                .build();
+        }
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create().editedContent( patchedContent )
             .createAttachments( params.getCreateAttachments() )
@@ -89,34 +94,31 @@ public class PatchContentCommand
         return builder.build();
     }
 
-    private Content addAttachments( final Content content )
-    {
-        if ( !params.getCreateAttachments().isEmpty() )
-        {
-            return Content.create( content ).attachments( mergeExistingAndUpdatedAttachments( content.getAttachments() ) ).build();
-        }
-        return content;
-    }
-
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments existingAttachments )
     {
-        final Attachments.Builder result = Attachments.create( existingAttachments );
+        final Attachments.Builder result = Attachments.create();
 
-        for ( final CreateAttachment createAttachment : params.getCreateAttachments() )
+        for ( Attachment existing : existingAttachments )
         {
-            if ( existingAttachments.byName( createAttachment.getName() ) != null )
+            CreateAttachment createAttachment =
+                params.getCreateAttachments().stream().filter( ca -> ca.getName().equals( existing.getName() ) ).findFirst().orElse( null );
+
+            if ( createAttachment == null )
             {
-                throw new IllegalArgumentException( "Attachment with name '" + createAttachment.getName() + "' already exists." );
+                result.add( existing );
             }
+            else
+            {
+                final Attachment.Builder builder = Attachment.create()
+                    .name( createAttachment.getName() )
+                    .label( createAttachment.getLabel() )
+                    .mimeType( createAttachment.getMimeType() )
+                    .textContent( createAttachment.getTextContent() );
+                populateByteSourceProperties( createAttachment.getByteSource(), builder );
 
-            final Attachment.Builder builder = Attachment.create()
-                .name( createAttachment.getName() )
-                .label( createAttachment.getLabel() )
-                .mimeType( createAttachment.getMimeType() )
-                .textContent( createAttachment.getTextContent() );
-            populateByteSourceProperties( createAttachment.getByteSource(), builder );
+                result.add( builder.build() );
 
-            result.add( builder.build() );
+            }
         }
         return result.build();
     }
