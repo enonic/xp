@@ -447,20 +447,18 @@ public class ProjectContentEventListenerTest
                                              .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
                                              .contentId( sourceContent.getId() )
                                              .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create()
+                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
                                                                                .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
                                                                                .name( "MyImage3.gif" )
                                                                                .build() )
                                                                      .build() )
                                              .patcher( ( edit -> {
-                                                 final Attachment a2 = Attachment.create()
-                                                     .mimeType( "image/png" )
+                                                 final Attachment a2 = Attachment.create().mimeType( "image/gif" )
                                                      .label( "My Image 2" )
                                                      .name( "MyImage2.gif" )
                                                      .build();
 
-                                                 final Attachment a3 = Attachment.create()
-                                                     .mimeType( "image/png" )
+                                                 final Attachment a3 = Attachment.create().mimeType( "image/gif" )
                                                      .label( "My Image 3" )
                                                      .name( "MyImage3.gif" )
                                                      .build();
@@ -1254,13 +1252,13 @@ public class ProjectContentEventListenerTest
     public void repoIsNotProject()
         throws Exception
     {
-        eventPublisher.publish(
-            Event.create( NodeEvents.NODE_CREATED_EVENT ).value( EventConstants.NODES_FIELD, List.of( ImmutableMap.builder()
-                                                                  .put( "id", "123" )
-                                                                  .put( "path", "/content/something" )
-                                                                  .put( "branch", "draft" )
-                                                                  .put( "repo", "not-a-project" )
-                                                                  .build() ) )
+        eventPublisher.publish( Event.create( NodeEvents.NODE_CREATED_EVENT )
+                                    .value( EventConstants.NODES_FIELD, List.of( ImmutableMap.builder()
+                                                                                     .put( "id", "123" )
+                                                                                     .put( "path", "/content/something" )
+                                                                                     .put( "branch", "draft" )
+                                                                                     .put( "repo", "not-a-project" )
+                                                                                     .build() ) )
                                     .build() );
 
         assertDoesNotThrow( this::handleEvents );
