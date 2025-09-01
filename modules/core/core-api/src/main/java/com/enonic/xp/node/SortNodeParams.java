@@ -15,7 +15,7 @@ public final class SortNodeParams
 
     private final ChildOrder childOrder;
 
-    private final ChildOrder manualOrderBase;
+    private final ChildOrder manualOrderSeed;
 
     private final ImmutableList<ReorderChildNodeParams> reorderChildNodes;
 
@@ -27,7 +27,7 @@ public final class SortNodeParams
     {
         this.nodeId = builder.nodeId;
         this.childOrder = builder.childOrder;
-        this.manualOrderBase = builder.manualOrderBase;
+        this.manualOrderSeed = builder.manualOrderSeed;
         this.reorderChildNodes = builder.reorderChildNodes.build();
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
@@ -43,9 +43,9 @@ public final class SortNodeParams
         return childOrder;
     }
 
-    public ChildOrder getManualOrderBase()
+    public ChildOrder getManualOrderSeed()
     {
-        return manualOrderBase;
+        return manualOrderSeed;
     }
 
     public NodeDataProcessor getProcessor()
@@ -74,7 +74,7 @@ public final class SortNodeParams
 
         private ChildOrder childOrder;
 
-        private ChildOrder manualOrderBase;
+        private ChildOrder manualOrderSeed;
 
         private final ImmutableList.Builder<ReorderChildNodeParams> reorderChildNodes = ImmutableList.builder();
 
@@ -86,21 +86,21 @@ public final class SortNodeParams
         {
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
             return this;
         }
 
-        public Builder childOrder( ChildOrder childOrder )
+        public Builder childOrder( final ChildOrder childOrder )
         {
             this.childOrder = childOrder;
             return this;
         }
 
-        public Builder manualOrderBase( ChildOrder manualOrderBase )
+        public Builder manualOrderSeed( final ChildOrder manualOrderSeed )
         {
-            this.manualOrderBase = manualOrderBase;
+            this.manualOrderSeed = manualOrderSeed;
             return this;
         }
 
@@ -110,7 +110,7 @@ public final class SortNodeParams
             return this;
         }
 
-        public Builder processor( NodeDataProcessor processor )
+        public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
             return this;

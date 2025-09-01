@@ -63,7 +63,7 @@ public class SortNodeCommand
         {
             if ( !node.getChildOrder().isManualOrder() )
             {
-                orderChildNodes( node.path(), Objects.requireNonNullElse( params.getManualOrderBase(), node.getChildOrder() ),
+                orderChildNodes( node.path(), Objects.requireNonNullElse( params.getManualOrderSeed(), node.getChildOrder() ),
                                  params.getReorderChildNodes(), result );
             }
             else

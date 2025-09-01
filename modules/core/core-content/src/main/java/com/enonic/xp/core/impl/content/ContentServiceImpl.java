@@ -97,8 +97,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.page.PageDescriptorService;
@@ -787,7 +785,7 @@ public class ContentServiceImpl
                 .nodeId( NodeId.from( params.getContentId() ) )
                 .refresh( RefreshMode.ALL )
                 .childOrder( params.getChildOrder() )
-                .manualOrderBase( params.getManualOrderBase() );
+                .manualOrderSeed( params.getManualOrderBase() );
 
             if ( params.stopInherit() )
             {

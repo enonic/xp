@@ -1,7 +1,5 @@
 package com.enonic.xp.core.node;
 
-import java.util.Iterator;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,20 +10,16 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.ReorderChildNodesParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.node.ReorderChildNodesCommand;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReorderChildNodesCommandTest
     extends AbstractNodeTest
@@ -48,13 +42,13 @@ public class ReorderChildNodesCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
-
         // current node order: a,b,c,d,e,f
-        ReorderChildNodesCommand.create()
-            .params( ReorderChildNodesParams.create()
-                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "a" ) ).build() )
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .addManualOrder( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "a" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -66,13 +60,7 @@ public class ReorderChildNodesCommandTest
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         // updated node order: c,a,b,d,e,f
-        final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
-        assertEquals( "c", iterator.next().toString() );
-        assertEquals( "a", iterator.next().toString() );
-        assertEquals( "b", iterator.next().toString() );
-        assertEquals( "d", iterator.next().toString() );
-        assertEquals( "e", iterator.next().toString() );
-        assertEquals( "f", iterator.next().toString() );
+        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "a", "b", "d", "e", "f" );
     }
 
     @Test
@@ -86,13 +74,13 @@ public class ReorderChildNodesCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
-
         // current node order: a,b,c,d,e,f
-        ReorderChildNodesCommand.create()
-            .params( ReorderChildNodesParams.create()
-                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "b" ) ).build() )
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .addManualOrder( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "b" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -104,13 +92,7 @@ public class ReorderChildNodesCommandTest
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         // updated node order: a,c,b,d,e,f
-        final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
-        assertEquals( "a", iterator.next().toString() );
-        assertEquals( "c", iterator.next().toString() );
-        assertEquals( "b", iterator.next().toString() );
-        assertEquals( "d", iterator.next().toString() );
-        assertEquals( "e", iterator.next().toString() );
-        assertEquals( "f", iterator.next().toString() );
+        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "c", "b", "d", "e", "f" );
     }
 
     @Test
@@ -124,13 +106,13 @@ public class ReorderChildNodesCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
-
         // current node order: a,b,c,d,e,f
-        ReorderChildNodesCommand.create()
-            .params( ReorderChildNodesParams.create()
-                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).build() )
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .addManualOrder( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -142,13 +124,7 @@ public class ReorderChildNodesCommandTest
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         // updated node order: a,b,d,e,f,c
-        final Iterator<NodeId> iterator = reOrderedResult.getNodeIds().iterator();
-        assertEquals( "a", iterator.next().toString() );
-        assertEquals( "b", iterator.next().toString() );
-        assertEquals( "d", iterator.next().toString() );
-        assertEquals( "e", iterator.next().toString() );
-        assertEquals( "f", iterator.next().toString() );
-        assertEquals( "c", iterator.next().toString() );
+        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "f", "c" );
     }
 
     @Test
@@ -162,9 +138,6 @@ public class ReorderChildNodesCommandTest
 
         createChildNodes( parentNode );
 
-        setChildOrder( parentNode, NodeIndexPath.NAME, OrderExpr.Direction.ASC );
-        setChildOrder( parentNode, NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
-
         setManualOrderValueToNull( NodeId.from( "a" ) );
         setManualOrderValueToNull( NodeId.from( "b" ) );
         setManualOrderValueToNull( NodeId.from( "c" ) );
@@ -172,15 +145,24 @@ public class ReorderChildNodesCommandTest
         setManualOrderValueToNull( NodeId.from( "e" ) );
         setManualOrderValueToNull( NodeId.from( "f" ) );
 
-        assertThrows( IllegalArgumentException.class, () -> ReorderChildNodesCommand.create()
-            .params( ReorderChildNodesParams.create()
-                         .add( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "f" ) ).build() )
+       SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .addManualOrder( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "f" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
-            .execute() );
+            .execute();
+
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
+
+
+        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
+
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )
