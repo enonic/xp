@@ -11,19 +11,21 @@ public final class InputRegistry
 
     static
     {
-        register( InputTypeName.RADIO_BUTTON, RadioButtonYml.class );
-        register( InputTypeName.TEXT_LINE, TextLineYml.class );
-        register( InputTypeName.DOUBLE, DoubleYml.class );
-        register( InputTypeName.CONTENT_SELECTOR, ContentSelectorYml.class );
-        register( InputTypeName.CUSTOM_SELECTOR, CustomSelectorYml.class );
-        register( InputTypeName.HTML_AREA, HtmlAreaYml.class );
-        register( InputTypeName.TEXT_AREA, TextAreaYml.class );
-        register( InputTypeName.DATE, DateYml.class );
-        register( InputTypeName.DATE_TIME, DateTimeYml.class );
-        register( InputTypeName.TIME, TimeYml.class );
-        register( InputTypeName.CHECK_BOX, CheckBoxYml.class );
-        register( InputTypeName.COMBO_BOX, ComboBoxYml.class );
-        register( InputTypeName.ATTACHMENT_UPLOADER, AttachmentUploaderYml.class );
+        register( RadioButtonYml.INPUT_TYPE_NAME, RadioButtonYml.class );
+        register( TextLineYml.INPUT_TYPE_NAME, TextLineYml.class );
+        register( DoubleYml.INPUT_TYPE_NAME, DoubleYml.class );
+        register( ContentSelectorYml.INPUT_TYPE_NAME, ContentSelectorYml.class );
+        register( CustomSelectorYml.INPUT_TYPE_NAME, CustomSelectorYml.class );
+        register( HtmlAreaYml.INPUT_TYPE_NAME, HtmlAreaYml.class );
+        register( TextAreaYml.INPUT_TYPE_NAME, TextAreaYml.class );
+        register( DateYml.INPUT_TYPE_NAME, DateYml.class );
+        register( DateTimeYml.INPUT_TYPE_NAME, DateTimeYml.class );
+        register( TimeYml.INPUT_TYPE_NAME, TimeYml.class );
+        register( CheckBoxYml.INPUT_TYPE_NAME, CheckBoxYml.class );
+        register( ComboBoxYml.INPUT_TYPE_NAME, ComboBoxYml.class );
+        register( AttachmentUploaderYml.INPUT_TYPE_NAME, AttachmentUploaderYml.class );
+        register( ImageSelectorYml.INPUT_TYPE_NAME, ImageSelectorYml.class );
+        register( MediaSelectorYml.INPUT_TYPE_NAME, MediaSelectorYml.class );
     }
 
     @SuppressWarnings("unchecked")

@@ -8,12 +8,13 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class CheckBoxYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.CHECK_BOX;
+
     public String alignment;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public CheckBoxYml()
     {
-        return InputTypeName.CHECK_BOX;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

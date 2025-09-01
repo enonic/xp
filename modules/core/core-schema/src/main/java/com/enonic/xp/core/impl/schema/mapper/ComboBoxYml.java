@@ -10,12 +10,13 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class ComboBoxYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.COMBO_BOX;
+
     public List<OptionYml> options;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public ComboBoxYml()
     {
-        return InputTypeName.COMBO_BOX;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

@@ -1,0 +1,10 @@
+type: "ImageSelector"
+name: "myImageSelector"
+label: "My ImageSelector"
+occurrences:
+  minimum: 0
+  maximum: 1
+allowPath:
+  - "${site}/*"
+treeMode: true
+hideToggleIcon: true
