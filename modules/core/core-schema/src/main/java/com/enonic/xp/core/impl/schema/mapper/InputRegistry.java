@@ -29,6 +29,7 @@ public final class InputRegistry
         register( ContentTypeFilterYml.INPUT_TYPE_NAME, ContentTypeFilterYml.class );
         register( TagYml.INPUT_TYPE_NAME, TagYml.class );
         register( LongYml.INPUT_TYPE_NAME, LongYml.class );
+        register( GeoPointYml.INPUT_TYPE_NAME, GeoPointYml.class );
     }
 
     @SuppressWarnings("unchecked")
