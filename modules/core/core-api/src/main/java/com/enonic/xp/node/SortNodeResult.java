@@ -33,10 +33,6 @@ public final class SortNodeResult
 
     public static final class Builder
     {
-        private Builder()
-        {
-        }
-
         private Node node;
 
         private ImmutableList.Builder<Node> reorderedNodes = ImmutableList.builder();
@@ -55,6 +51,10 @@ public final class SortNodeResult
         public SortNodeResult build()
         {
             return new SortNodeResult( this );
+        }
+
+        private Builder()
+        {
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +54,8 @@ public class BranchEntryProcessor
             return;
         }
 
-        final Node.Builder nodeBuilder = Node.create( nodeVersion ).nodeVersionId( meta.getVersion() ).timestamp( meta.getTimestamp() );
-        if ( nodeVersion.getId().equals( Node.ROOT_UUID ) )
+        final Node.Builder nodeBuilder = Node.create( nodeVersion ).nodeVersionId( meta.getVersion() ).timestamp( meta.getTimestamp().truncatedTo( ChronoUnit.MILLIS ) );
+        if ( !nodeVersion.getId().equals( Node.ROOT_UUID ) )
         {
             nodeBuilder.parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() );
         }

@@ -1,9 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -48,12 +45,12 @@ import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
+
 @Component
 public class NodeStorageServiceImpl
     implements NodeStorageService
 {
-    private static final Clock CLOCK = Clock.tick( Clock.system( ZoneOffset.UTC ), Duration.ofMillis( 1 ) );
-
     private final VersionService versionService;
 
     private final BranchService branchService;
