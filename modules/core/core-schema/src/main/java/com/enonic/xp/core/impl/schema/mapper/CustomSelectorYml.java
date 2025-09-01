@@ -13,6 +13,8 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class CustomSelectorYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.CUSTOM_SELECTOR;
+
     @JacksonInject("applicationRelativeResolver")
     private ApplicationRelativeResolver applicationRelativeResolver;
 
@@ -20,10 +22,9 @@ public class CustomSelectorYml
 
     public Map<String, String> params;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public CustomSelectorYml()
     {
-        return InputTypeName.CUSTOM_SELECTOR;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

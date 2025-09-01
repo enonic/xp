@@ -10,12 +10,13 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class RadioButtonYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.RADIO_BUTTON;
+
     public List<OptionYml> options;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public RadioButtonYml()
     {
-        return InputTypeName.RADIO_BUTTON;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

@@ -8,16 +8,17 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class HtmlAreaYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.HTML_AREA;
+
     public String exclude;
 
     public String include;
 
     public String allowHeadings;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public HtmlAreaYml()
     {
-        return InputTypeName.HTML_AREA;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override
