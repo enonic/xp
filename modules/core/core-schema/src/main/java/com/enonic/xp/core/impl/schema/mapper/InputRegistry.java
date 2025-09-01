@@ -28,6 +28,7 @@ public final class InputRegistry
         register( MediaSelectorYml.INPUT_TYPE_NAME, MediaSelectorYml.class );
         register( ContentTypeFilterYml.INPUT_TYPE_NAME, ContentTypeFilterYml.class );
         register( TagYml.INPUT_TYPE_NAME, TagYml.class );
+        register( LongYml.INPUT_TYPE_NAME, LongYml.class );
     }
 
     @SuppressWarnings("unchecked")
