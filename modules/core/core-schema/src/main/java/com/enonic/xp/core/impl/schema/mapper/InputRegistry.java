@@ -26,6 +26,7 @@ public final class InputRegistry
         register( AttachmentUploaderYml.INPUT_TYPE_NAME, AttachmentUploaderYml.class );
         register( ImageSelectorYml.INPUT_TYPE_NAME, ImageSelectorYml.class );
         register( MediaSelectorYml.INPUT_TYPE_NAME, MediaSelectorYml.class );
+        register( ContentTypeFilterYml.INPUT_TYPE_NAME, ContentTypeFilterYml.class );
     }
 
     @SuppressWarnings("unchecked")
