@@ -18,6 +18,11 @@ public class NodeCommitQueryResultFactory
 {
     public static NodeCommitQueryResult create( final NodeCommitQuery query, final SearchResult searchResult )
     {
+        if ( searchResult.isEmpty() )
+        {
+            return NodeCommitQueryResult.empty( searchResult.getTotalHits() );
+        }
+
         final NodeCommitQueryResult.Builder nodeCommitQueryResult = NodeCommitQueryResult.create();
 
         nodeCommitQueryResult.hits( searchResult.getHits().size() );

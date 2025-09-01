@@ -139,12 +139,12 @@ public class SortNodeCommand
         }
 
         final NodeManualOrderValueResolver resolver = new NodeManualOrderValueResolver();
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         for ( final NodeId nodeId : childNodeIds )
         {
             final Node node = doGetById( nodeId );
             final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Instant.now( CLOCK ) ).build();
-            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ),
-                                                                   InternalContext.from( ContextAccessor.current() ) ).node();
+            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
             result.node( storedNode );
         }
     }
@@ -152,6 +152,8 @@ public class SortNodeCommand
     private void reoderChildNoes( final NodePath parentNodePath, final List<ReorderChildNodeParams> reorderChildNodes,
                                   final SortNodeResult.Builder result )
     {
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+
         for ( final ReorderChildNodeParams reorderChildNodeParams : reorderChildNodes )
         {
             final Long toMoveBeforeValue;
@@ -194,8 +196,7 @@ public class SortNodeCommand
             }
 
             final Node updatedNode = Node.create( node ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
-            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ),
-                                                                   InternalContext.from( ContextAccessor.current() ) ).node();
+            final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
 
             result.addReorderedNode( storedNode );
         }

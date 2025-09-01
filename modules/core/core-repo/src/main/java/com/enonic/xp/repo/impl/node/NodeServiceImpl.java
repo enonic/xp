@@ -391,16 +391,15 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        result.getResults().forEach( ( branchResult ) -> {
+        for ( PatchNodeResult.BranchResult branchResult : result.getResults() )
+        {
             if ( branchResult.node() != null )
             {
-                ContextBuilder.from( ContextAccessor.current() )
-                    .branch( branchResult.branch() )
-                    .build()
-                    .runWith( () -> this.eventPublisher.publish(
-                        NodeEvents.updated( branchResult.node(), InternalContext.from( ContextAccessor.current() ) ) ) );
+                final InternalContext internalContext =
+                    InternalContext.create( ContextAccessor.current() ).branch( branchResult.branch() ).build();
+                this.eventPublisher.publish( NodeEvents.updated( branchResult.node(), internalContext ) );
             }
-        } );
+        }
 
         return result.getResult( ContextAccessor.current().getBranch() );
     }
