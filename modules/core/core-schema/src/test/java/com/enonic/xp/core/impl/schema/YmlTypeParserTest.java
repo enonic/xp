@@ -25,6 +25,7 @@ import com.enonic.xp.core.impl.schema.mapper.DateYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.LongYml;
 import com.enonic.xp.core.impl.schema.mapper.MediaSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
 import com.enonic.xp.core.impl.schema.mapper.TagYml;
@@ -559,6 +560,37 @@ public class YmlTypeParserTest
         final Occurrences occurrences = input.getOccurrences();
         assertEquals( 0, occurrences.getMinimum() );
         assertEquals( 0, occurrences.getMaximum() );
+    }
+
+    @Test
+    void parseLong()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/long-type.yml" );
+
+        final LongYml inputYml = parser.parse( yaml, LongYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "Long", input.getInputType().toString() );
+        assertEquals( "myLong", input.getName() );
+        assertEquals( "My Long", input.getLabel() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isNumericType() );
+        assertEquals( 1000, defaultValue.asDouble() );
+
+        final InputTypeProperty minOpt = input.getInputTypeConfig().getProperty( "min" );
+        assertNotNull( minOpt );
+        assertEquals( 350, Double.parseDouble( minOpt.getValue() ) );
+        assertTrue( minOpt.getAttributes().isEmpty() );
+
+        final InputTypeProperty maxOpt = input.getInputTypeConfig().getProperty( "max" );
+        assertNotNull( maxOpt );
+        assertEquals( 123456789, Double.parseDouble( maxOpt.getValue() ) );
+        assertTrue( maxOpt.getAttributes().isEmpty() );
     }
 
     private String readAsString( final String name )
