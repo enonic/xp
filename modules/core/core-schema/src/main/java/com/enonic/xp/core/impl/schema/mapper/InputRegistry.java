@@ -23,6 +23,7 @@ public final class InputRegistry
         register( InputTypeName.TIME, TimeYml.class );
         register( InputTypeName.CHECK_BOX, CheckBoxYml.class );
         register( InputTypeName.COMBO_BOX, ComboBoxYml.class );
+        register( InputTypeName.ATTACHMENT_UPLOADER, AttachmentUploaderYml.class );
     }
 
     @SuppressWarnings("unchecked")
