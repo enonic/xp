@@ -8,14 +8,15 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class DoubleYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.DOUBLE;
+
     public Double min;
 
     public Double max;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public DoubleYml()
     {
-        return InputTypeName.DOUBLE;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

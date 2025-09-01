@@ -8,14 +8,15 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class TextAreaYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.TEXT_AREA;
+
     public Integer maxLength;
 
     public Boolean showCounter;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public TextAreaYml()
     {
-        return InputTypeName.TEXT_AREA;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

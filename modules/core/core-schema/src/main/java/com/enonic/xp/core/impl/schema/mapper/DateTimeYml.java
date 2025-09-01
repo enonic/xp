@@ -8,12 +8,13 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class DateTimeYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.DATE_TIME;
+
     public Boolean timezone;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public DateTimeYml()
     {
-        return InputTypeName.DATE_TIME;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override

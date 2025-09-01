@@ -8,16 +8,17 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 public class TextLineYml
     extends InputYml
 {
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.TEXT_LINE;
+
     public Integer maxLength;
 
     public String regexp;
 
     public Boolean showCounter;
 
-    @Override
-    public InputTypeName getInputTypeName()
+    public TextLineYml()
     {
-        return InputTypeName.TEXT_LINE;
+        super( INPUT_TYPE_NAME );
     }
 
     @Override
