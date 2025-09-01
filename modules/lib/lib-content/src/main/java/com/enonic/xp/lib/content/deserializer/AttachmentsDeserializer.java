@@ -127,6 +127,9 @@ public class AttachmentsDeserializer
                 case "size":
                     builder.size( Long.parseLong( value.toString() ) );
                     break;
+                case "name":
+                    // already set
+                    break;
                 default:
                     throw new IllegalArgumentException( "Unknown attachment key: " + key );
             }
