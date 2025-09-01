@@ -23,6 +23,7 @@ import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.DateTimeYml;
 import com.enonic.xp.core.impl.schema.mapper.DateYml;
 import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
+import com.enonic.xp.core.impl.schema.mapper.GeoPointYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.LongYml;
@@ -42,6 +43,7 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -591,6 +593,30 @@ public class YmlTypeParserTest
         assertNotNull( maxOpt );
         assertEquals( 123456789, Double.parseDouble( maxOpt.getValue() ) );
         assertTrue( maxOpt.getAttributes().isEmpty() );
+    }
+
+    @Test
+    void parseGeoPoint()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/geopoint-type.yml" );
+
+        final GeoPointYml inputYml = parser.parse( yaml, GeoPointYml.class );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "GeoPoint", input.getInputType().toString() );
+        assertEquals( "myGeoPoint", input.getName() );
+        assertEquals( "My GeoPoint", input.getLabel() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isGeoPoint() );
+
+        final GeoPoint geoPoint = defaultValue.asGeoPoint();
+        assertEquals( 51.5, geoPoint.getLatitude() );
+        assertEquals( -0.1, geoPoint.getLongitude() );
     }
 
     private String readAsString( final String name )
