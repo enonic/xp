@@ -1,0 +1,6 @@
+type: "Tag"
+name: "myTag"
+label: "My Tag"
+occurrences:
+  minimum: 0
+  maximum: 0
