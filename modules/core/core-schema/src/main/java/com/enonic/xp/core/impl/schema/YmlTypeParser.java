@@ -8,10 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
+import com.enonic.xp.core.impl.schema.mapper.ApiDescriptorMapper;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeMapper;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeNameMapper;
+import com.enonic.xp.core.impl.schema.mapper.DescriptorKeyMapper;
 import com.enonic.xp.core.impl.schema.mapper.FieldSetMapper;
 import com.enonic.xp.core.impl.schema.mapper.FormDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.FormItemDeserializer;
@@ -21,6 +24,9 @@ import com.enonic.xp.core.impl.schema.mapper.FormOptionSetOptionMapper;
 import com.enonic.xp.core.impl.schema.mapper.InlineMixinMapper;
 import com.enonic.xp.core.impl.schema.mapper.MixinNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.OccurrencesMapper;
+import com.enonic.xp.core.impl.schema.mapper.PrincipalKeyMapper;
+import com.enonic.xp.core.impl.schema.mapper.PrincipalKeysDeserializer;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
@@ -32,6 +38,8 @@ import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 public final class YmlTypeParser
 {
@@ -42,10 +50,16 @@ public final class YmlTypeParser
         final SimpleModule module = new SimpleModule();
         module.addDeserializer( Form.class, new FormDeserializer() );
         module.addDeserializer( FormItem.class, new FormItemDeserializer() );
+        module.addDeserializer( PrincipalKeys.class, new PrincipalKeysDeserializer() );
         MAPPER.registerModule( module );
 
         MAPPER.addMixIn( ContentTypeName.class, ContentTypeNameMapper.class );
         MAPPER.addMixIn( ContentType.Builder.class, ContentTypeMapper.Builder.class );
+
+        MAPPER.addMixIn( ApiDescriptor.class, ApiDescriptorMapper.class );
+        MAPPER.addMixIn( ApiDescriptor.Builder.class, ApiDescriptorMapper.Builder.class );
+        MAPPER.addMixIn( PrincipalKey.class, PrincipalKeyMapper.class );
+        MAPPER.addMixIn( DescriptorKey.class, DescriptorKeyMapper.class );
 
         MAPPER.addMixIn( Occurrences.class, OccurrencesMapper.class );
 

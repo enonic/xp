@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 
+import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.mapper.AttachmentUploaderYml;
@@ -34,6 +35,7 @@ import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.core.impl.schema.mapper.TimeYml;
 import com.enonic.xp.data.Value;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputType;
@@ -43,6 +45,8 @@ import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -617,6 +621,31 @@ public class YmlTypeParserTest
         final GeoPoint geoPoint = defaultValue.asGeoPoint();
         assertEquals( 51.5, geoPoint.getLatitude() );
         assertEquals( -0.1, geoPoint.getLongitude() );
+    }
+
+    @Test
+    void testParseApiDescriptor()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/api-descriptor.yml" );
+
+        final ApiDescriptor.Builder builder = parser.parse( yaml, ApiDescriptor.Builder.class );
+
+        builder.key( DescriptorKey.from( "myapp:myapi" ) );
+
+        final ApiDescriptor apiDescriptor = builder.build();
+
+        assertEquals( "GraphQL API", apiDescriptor.getDisplayName() );
+        assertEquals( "Description of GraphQL API", apiDescriptor.getDescription() );
+        assertEquals( "https://docs.mygraphqlapi.com", apiDescriptor.getDocumentationUrl() );
+        assertTrue( apiDescriptor.isMount() );
+
+        final PrincipalKeys principalKeys = apiDescriptor.getAllowedPrincipals();
+        assertEquals( 2, principalKeys.getSize() );
+
+        final Iterator<PrincipalKey> iterator = principalKeys.iterator();
+        assertEquals( "role:system.roleId_1", iterator.next().toString() );
+        assertEquals( "role:system.roleId_2", iterator.next().toString() );
     }
 
     private String readAsString( final String name )
