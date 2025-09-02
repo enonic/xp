@@ -704,6 +704,7 @@ export interface UpdateContentParams<Data, Type extends string> {
 export interface PatchContentParams {
     key: string;
     patcher: (v: PatchableContent) => PatchableContent;
+    attachments?: any;
     branches?: string[];
     skipSync?: boolean;
 }
@@ -732,6 +733,8 @@ interface PatchContentHandler {
     setKey(value: string): void;
 
     setPatcher(value: ScriptValue): void;
+
+    setAttachments(value: ScriptValue): void;
 
     setBranches(value: string[]): void;
 
@@ -824,6 +827,7 @@ export function patch(params: PatchContentParams): PatchContentResult {
     const {
         key,
         patcher,
+        attachments,
         branches = [],
         skipSync = false,
     } = params ?? {};
@@ -832,6 +836,7 @@ export function patch(params: PatchContentParams): PatchContentResult {
 
     bean.setKey(key);
     bean.setPatcher(__.toScriptValue(patcher));
+    bean.setAttachments(__.toScriptValue(attachments));
     bean.setBranches(branches);
     bean.setSkipSync(skipSync);
 

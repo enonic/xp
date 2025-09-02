@@ -1,9 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.security.DigestInputStream;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -11,9 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
-
-import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -36,8 +29,6 @@ import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.core.internal.HexCoder;
-import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
@@ -256,25 +247,6 @@ final class UpdateContentCommand
             attachments.put( attachment.getBinaryReference(), attachment );
         }
         return Attachments.from( attachments.values() );
-    }
-
-    private static void populateByteSourceProperties( final ByteSource byteSource, Attachment.Builder builder )
-    {
-        try
-        {
-            final InputStream inputStream = byteSource.openStream();
-            final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
-            try (inputStream; digestInputStream)
-            {
-                final long size = ByteStreams.exhaust( digestInputStream );
-                builder.size( size );
-            }
-            builder.sha512( HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
     }
 
     private Content processContent( final Content originalContent, Content editedContent )

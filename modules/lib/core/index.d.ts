@@ -709,7 +709,9 @@ export interface PatchableContent<
     manualOrderValue: number;
     inherit: ContentInheritValue[];
     variantOf: string;
-    attachments: Record<string, Attachment>;
+    modifyAttachments: Attachment;
+    removeAttachments: string[];
+    createAttachments: AddAttachmentParam[];
     // validationErrors:
     type: Type;
     childOrder: string;

@@ -6,10 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
@@ -39,7 +43,9 @@ public final class PatchContentHandler
 
     private ScriptValue patcher;
 
-    private String[] branches;
+    private ScriptValue attachments;
+
+    private List<String> branches;
 
     private boolean skipSync;
 
@@ -54,12 +60,16 @@ public final class PatchContentHandler
 
         final PatchContentParams.Builder params = PatchContentParams.create()
             .contentId( existingContent.getId() )
-            .patcher( newContentPatcher( existingContent ) )
+            .patcher( newContentPatcher() )
+            .createAttachments( parseCreateAttachments( (List) Optional.ofNullable( attachments )
+                .map( att -> att.getMember( "createAttachments" ) )
+                .map( ScriptValue::getList )
+                .orElse( List.of() ) ) )
             .skipSync( this.skipSync );
 
         if ( branches != null )
         {
-            params.branches( Arrays.stream( branches ).map( Branch::from ).collect( Branches.collecting() ) );
+            params.branches( branches.stream().map( Branch::from ).collect( Branches.collecting() ) );
         }
 
         final PatchContentResult result;
@@ -100,18 +110,33 @@ public final class PatchContentHandler
         }
     }
 
-    private ContentPatcher newContentPatcher( final Content existingContent )
+    private CreateAttachments parseCreateAttachments( List<Map<String, Object>> createAttachments )
+    {
+        if ( createAttachments == null || createAttachments.isEmpty() )
+        {
+            return CreateAttachments.empty();
+        }
+
+        return createAddAttachments( createAttachments );
+    }
+
+    private ContentPatcher newContentPatcher()
     {
         return edit -> {
             final ScriptValue value = this.patcher.call( new ContentMapper( edit.source ) );
             if ( value != null )
             {
-                patchContent( edit, value.getMap(), existingContent );
+                patchContent( edit, value.getMap() );
+            }
+
+            if ( this.attachments != null )
+            {
+                patchAttachments( edit, attachments.getMap() );
             }
         };
     }
 
-    private void patchContent( final PatchableContent target, final Map<String, Object> map, final Content existingContent )
+    private void patchContent( final PatchableContent target, final Map<String, Object> map )
     {
         parse( map, "displayName", String.class, val -> target.displayName.setValue( val ) );
         parse( map, "language", String.class, val -> target.language.setValue( Locale.forLanguageTag( val ) ) );
@@ -122,14 +147,13 @@ public final class PatchContentHandler
         parse( map, "modifier", String.class, val -> target.modifier.setValue( PrincipalKey.from( val ) ) );
         parse( map, "modifiedTime", String.class, val -> target.modifiedTime.setValue( Instant.parse( val ) ) );
 
-        parse( map, "data", Map.class, val -> target.data.setValue( createPropertyTree( val, existingContent.getType() ) ) );
-        parse( map, "x", Map.class, val -> target.extraDatas.setValue( createExtraDatas( val, existingContent.getType() ) ) );
+        parse( map, "data", Map.class, val -> target.data.setValue( createPropertyTree( val, target.type.originalValue ) ) );
+        parse( map, "x", Map.class, val -> target.extraDatas.setValue( createExtraDatas( val, target.type.originalValue ) ) );
         parse( map, "publish", Map.class, val -> target.publishInfo.setValue( createContentPublishInfo( val ) ) );
         parse( map, "workflow", Map.class, val -> target.workflowInfo.setValue( createWorkflowInfo( val ) ) );
 
         parse( map, "page", Map.class, val -> target.page.setValue( createPage( val ) ) );
         parse( map, "validationErrors", List.class, val -> target.validationErrors.setValue( createValidationErrors( val ) ) );
-//        parse(map, "attachments", Map.class, val -> target.attachments::setValue);
 
         parse( map, "valid", Boolean.class, target.valid::setValue );
         parse( map, "processedReferences", String[].class, val -> target.processedReferences.setValue(
@@ -146,6 +170,26 @@ public final class PatchContentHandler
         parse( map, "originalName", String.class, val -> target.originalName.setValue( ContentName.from( val ) ) );
         parse( map, "archivedTime", String.class, val -> target.archivedTime.setValue( Instant.parse( val ) ) );
         parse( map, "archivedBy", String.class, val -> target.archivedBy.setValue( PrincipalKey.from( val ) ) );
+    }
+
+    private void patchAttachments( final PatchableContent target, final Map<String, Object> map )
+    {
+        final var modifyAttachments = (List<Map<String, Object>>) map.getOrDefault( "modifyAttachments", List.of() );
+        final var removeAttachments = (List<String>) map.getOrDefault( "removeAttachments", List.of() );
+
+        final Attachments parsedAttachments = createAttachments( modifyAttachments, target.attachments.originalValue ).stream()
+            .filter( attachment -> !removeAttachments.contains( attachment.getName() ) )
+            .collect( Attachments.collector() );
+
+        final Set<String> originalNames =
+            target.attachments.originalValue.stream().map( Attachment::getName ).collect( Collectors.toSet() );
+
+        if ( parsedAttachments.stream().anyMatch( att -> !originalNames.contains( att.getName() ) ) )
+        {
+            throw new IllegalArgumentException( "Attachments can only be added using createAttachments" );
+        }
+
+        target.attachments.setValue( parsedAttachments );
     }
 
     private <T> void parse( Map<?, ?> map, String key, Class<T> type, Consumer<T> consumer )
@@ -198,7 +242,7 @@ public final class PatchContentHandler
         this.patcher = patcher;
     }
 
-    public void setBranches( final String[] branches )
+    public void setBranches( final List<String> branches )
     {
         this.branches = branches;
     }
@@ -206,5 +250,10 @@ public final class PatchContentHandler
     public void setSkipSync( final boolean skipSync )
     {
         this.skipSync = skipSync;
+    }
+
+    public void setAttachments( final ScriptValue attachments )
+    {
+        this.attachments = attachments;
     }
 }
