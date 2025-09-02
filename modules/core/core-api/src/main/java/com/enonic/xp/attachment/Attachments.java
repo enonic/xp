@@ -2,6 +2,8 @@ package com.enonic.xp.attachment;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
@@ -70,6 +72,11 @@ public final class Attachments
     public static Attachments from( final Collection<? extends Attachment> contents )
     {
         return fromInternal( ImmutableList.copyOf( contents ) );
+    }
+
+    public static Collector<Attachment, ?, Attachments> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Attachments::fromInternal );
     }
 
     private static Attachments fromInternal( final ImmutableList<Attachment> list )

@@ -3,11 +3,14 @@ package com.enonic.xp.lib.content;
 import java.util.List;
 import java.util.Map;
 
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
+import com.enonic.xp.lib.content.deserializer.AttachmentsDeserializer;
 import com.enonic.xp.lib.content.deserializer.ContentDataDeserializer;
 import com.enonic.xp.lib.content.deserializer.PageDeserializer;
 import com.enonic.xp.lib.content.deserializer.PropertyTreeTranslator;
@@ -20,6 +23,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.util.BinaryReferences;
 
 public abstract class BaseContentHandler
     extends BaseContextHandler
@@ -42,7 +46,8 @@ public abstract class BaseContentHandler
 
         this.contentDataDeserializer =
             new ContentDataDeserializer( translator, new SiteConfigDeserializer( translator ), new WorkflowDeserializer(),
-                                         new PageDeserializer( translator ), new ValidationErrorsDeserializer() );
+                                         new PageDeserializer( translator ), new ValidationErrorsDeserializer(),
+                                         new AttachmentsDeserializer() );
     }
 
     protected PropertyTree createPropertyTree( final Map<String, Object> data, final ContentTypeName contentTypeName )
@@ -68,6 +73,21 @@ public abstract class BaseContentHandler
     protected WorkflowInfo createWorkflowInfo( final Map<String, Object> workflowMap )
     {
         return contentDataDeserializer.toWorkflowInfo( workflowMap );
+    }
+
+    protected Attachments createAttachments( final List<Map<String, Object>> attachmentsMap, final Attachments originalAttachments )
+    {
+        return contentDataDeserializer.toAttachments( attachmentsMap, originalAttachments );
+    }
+
+    protected CreateAttachments createAddAttachments( final List<Map<String, Object>> attachmentsMap )
+    {
+        return contentDataDeserializer.toAddAttachments( attachmentsMap );
+    }
+
+    protected BinaryReferences createRemoveAttachments( final List<String> references )
+    {
+        return contentDataDeserializer.toRemoveAttachments( references );
     }
 
     protected boolean strictContentValidation( final ContentTypeName contentTypeName )
