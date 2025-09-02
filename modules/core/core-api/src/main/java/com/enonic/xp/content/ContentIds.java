@@ -51,11 +51,6 @@ public final class ContentIds
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentIds::fromInternal );
     }
 
-    public static Collector<ContentId, ?, ContentIds> collector()
-    {
-        return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), ContentIds::fromInternal );
-    }
-
     private static ContentIds fromInternal( final ImmutableSet<ContentId> set )
     {
         if ( set.isEmpty() )
