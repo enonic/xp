@@ -166,9 +166,14 @@ public class SortNodeCommand
                 final Node nodeToMoveBefore = doGetById( reorderChildNodeParams.getMoveBefore() );
                 if ( !nodeToMoveBefore.parentPath().equals( parentNodePath ) )
                 {
-                    throw new IllegalArgumentException( "reordered nodes must be children of " + parentNodePath );
+                    ///debug( "reordered nodes must be children of " + parentNodePath );
+                    continue;
                 }
                 toMoveBeforeValue = nodeToMoveBefore.getManualOrderValue();
+                if (toMoveBeforeValue == null )
+                {
+                    continue;
+                }
             }
 
             final long newOrderValue;

@@ -5,18 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,19 +134,25 @@ public class ReorderChildNodesCommandTest
 
         createChildNodes( parentNode );
 
-        setManualOrderValueToNull( NodeId.from( "a" ) );
-        setManualOrderValueToNull( NodeId.from( "b" ) );
-        setManualOrderValueToNull( NodeId.from( "c" ) );
-        setManualOrderValueToNull( NodeId.from( "d" ) );
-        setManualOrderValueToNull( NodeId.from( "e" ) );
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.name() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+
         setManualOrderValueToNull( NodeId.from( "f" ) );
 
-       SortNodeCommand.create()
+        SortNodeCommand.create()
             .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
                          .childOrder( ChildOrder.manualOrder() )
-                         .manualOrderSeed( ChildOrder.name() )
-                         .addManualOrder( ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "f" ) ).build() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "f" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -160,9 +162,7 @@ public class ReorderChildNodesCommandTest
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
-
-        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
-
+        assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "c", "f" );
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )
@@ -177,27 +177,12 @@ public class ReorderChildNodesCommandTest
 
     private void createChildNodes( final Node parentNode )
     {
-        createNode( parentNode.path(), "b"  );
+        createNode( parentNode.path(), "b" );
         createNode( parentNode.path(), "a" );
         createNode( parentNode.path(), "c" );
         createNode( parentNode.path(), "f" );
         createNode( parentNode.path(), "e" );
         createNode( parentNode.path(), "d" );
-    }
-
-    private void setChildOrder( final Node parentNode, final IndexPath indexPath, final OrderExpr.Direction direction )
-    {
-        SortNodeCommand.create()
-            .params( SortNodeParams.create()
-                         .nodeId( parentNode.id() )
-                         .childOrder( ChildOrder.create().add( FieldOrderExpr.create( indexPath, direction ) ).build() )
-                         .refresh( RefreshMode.ALL )
-                         .build() )
-            .indexServiceInternal( indexServiceInternal )
-            .storageService( this.storageService )
-            .searchService( this.searchService )
-            .build()
-            .execute();
     }
 }
 
