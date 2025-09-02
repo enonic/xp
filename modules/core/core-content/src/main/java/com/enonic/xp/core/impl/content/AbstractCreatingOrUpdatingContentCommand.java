@@ -166,16 +166,13 @@ class AbstractCreatingOrUpdatingContentCommand
 
     static void populateByteSourceProperties( final ByteSource byteSource, Attachment.Builder builder )
     {
-        try
+        try (InputStream inputStream = byteSource.openStream(); DigestInputStream digestInputStream = new DigestInputStream( inputStream,
+                                                                                                                             MessageDigests.sha512() ))
         {
-            final InputStream inputStream = byteSource.openStream();
-            final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
-            try (inputStream; digestInputStream)
-            {
-                final long size = ByteStreams.exhaust( digestInputStream );
-                builder.size( size );
-            }
+            long size = ByteStreams.exhaust( digestInputStream );
+            builder.size( size );
             builder.sha512( HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
+
         }
         catch ( IOException e )
         {

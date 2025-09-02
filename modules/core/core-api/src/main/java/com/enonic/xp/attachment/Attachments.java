@@ -96,16 +96,6 @@ public final class Attachments
         return new Builder();
     }
 
-    public static Builder create( Attachments source )
-    {
-        final Builder result = new Builder();
-        if ( source != null )
-        {
-            source.list.forEach( result::add );
-        }
-        return result;
-    }
-
     public static class Builder
     {
         private final ImmutableList.Builder<Attachment> builder = ImmutableList.builder();

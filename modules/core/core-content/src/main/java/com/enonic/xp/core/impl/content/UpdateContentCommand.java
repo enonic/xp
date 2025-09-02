@@ -253,25 +253,6 @@ final class UpdateContentCommand
         return Attachments.from( attachments.values() );
     }
 
-//    private static void populateByteSourceProperties( final ByteSource byteSource, Attachment.Builder builder )
-//    {
-//        try
-//        {
-//            final InputStream inputStream = byteSource.openStream();
-//            final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
-//            try (inputStream; digestInputStream)
-//            {
-//                final long size = ByteStreams.exhaust( digestInputStream );
-//                builder.size( size );
-//            }
-//            builder.sha512( HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
-//        }
-//        catch ( IOException e )
-//        {
-//            throw new UncheckedIOException( e );
-//        }
-//    }
-
     private Content processContent( final Content originalContent, Content editedContent )
     {
         final ContentType contentType = getContentType( editedContent.getType() );
