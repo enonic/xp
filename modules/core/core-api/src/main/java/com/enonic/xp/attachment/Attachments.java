@@ -1,5 +1,8 @@
 package com.enonic.xp.attachment;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -49,6 +52,11 @@ public final class Attachments
     public static Attachments from( final Iterable<Attachment> attachments )
     {
         return attachments instanceof Attachments a ? a : fromInternal( ImmutableList.copyOf( attachments ) );
+    }
+
+    public static Collector<Attachment, ?, Attachments> collector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Attachments::fromInternal );
     }
 
     private static Attachments fromInternal( final ImmutableList<Attachment> list )

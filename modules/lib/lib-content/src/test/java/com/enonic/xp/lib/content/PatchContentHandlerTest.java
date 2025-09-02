@@ -4,7 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.Attachments;
+import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -25,6 +30,7 @@ import com.enonic.xp.site.SiteDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -208,6 +214,11 @@ public class PatchContentHandlerTest
         runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
     }
 
+    public static ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes() );
+    }
+
     @Test
     public void patchWithSkipSync()
         throws Exception
@@ -231,6 +242,58 @@ public class PatchContentHandlerTest
         final PatchContentParams params = captor.getValue();
 
         assertTrue( params.isSkipSync() );
+    }
+
+    @Test
+    public void patchAttachments()
+        throws Exception
+    {
+        final Content content = Content.create( TestDataFixtures.newSmallContent() )
+            .attachments( Attachments.create()
+                              .add( Attachment.create()
+                                        .name( "file.txt" )
+                                        .label( "initial label" )
+                                        .mimeType( "image/jpeg" )
+                                        .textContent( "initial content" )
+                                        .sha512( "ABC" )
+                                        .size( 123 )
+                                        .build() )
+                              .build() )
+            .build();
+
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], content ) );
+
+        mockXData();
+
+        final ArgumentCaptor<PatchContentParams> captor = ArgumentCaptor.forClass( PatchContentParams.class );
+
+        runFunction( "/test/PatchContentHandlerTest.js", "patchAttachments" );
+
+        verify( this.contentService, times( 1 ) ).patch( captor.capture() );
+
+        final PatchContentParams params = captor.getValue();
+
+        final CreateAttachment createAttachment = params.getCreateAttachments().first();
+        assertEquals( "file4.txt", createAttachment.getName() );
+        assertEquals( "File 4", createAttachment.getLabel() );
+        assertEquals( "text/plain", createAttachment.getMimeType() );
+        assertEquals( "data 4", createAttachment.getTextContent() );
+        assertEquals( "data 2", new String( createAttachment.getByteSource().read() ) );
+
+        final PatchableContent patchable = new PatchableContent( content );
+        params.getPatcher().patch( patchable );
+
+        final Attachment patchedAttachment = patchable.build().getAttachments().first();
+
+        assertEquals( "file.txt", patchedAttachment.getName() );
+        assertEquals( "File 1", patchedAttachment.getLabel() );
+        assertEquals( "text/plain", patchedAttachment.getMimeType() );
+        assertEquals( "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae", patchedAttachment.getSha512() );
+        assertEquals( 14, patchedAttachment.getSize() );
+        assertEquals( "data 1", patchedAttachment.getTextContent() );
     }
 
     private void mockXData()
@@ -285,5 +348,21 @@ public class PatchContentHandlerTest
             .contentId( params.getContentId() )
             .addResult( ContentConstants.BRANCH_DRAFT, patchable.build() )
             .build();
+    }
+
+    @Test
+    public void patchAttachmentsNonExistingAttachment()
+        throws Exception
+    {
+        final Content contentWithoutAttachments = TestDataFixtures.newSmallContent();
+
+        when( this.contentService.getByPath( contentWithoutAttachments.getPath() ) ).thenReturn( contentWithoutAttachments );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], contentWithoutAttachments ) );
+
+        mockXData();
+
+        assertThrowsExactly( RuntimeException.class, () -> runFunction( "/test/PatchContentHandlerTest.js", "patchAttachments" ) );
     }
 }

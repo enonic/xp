@@ -1,6 +1,5 @@
 package com.enonic.xp.content;
 
-
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Locale;

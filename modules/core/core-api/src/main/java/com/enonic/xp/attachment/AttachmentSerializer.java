@@ -41,17 +41,16 @@ public final class AttachmentSerializer
 
     private static void populateByteSourceProperties( final ByteSource byteSource, final PropertySet attachmentSet )
     {
-        try
+        try (InputStream inputStream = byteSource.openStream(); DigestInputStream digestInputStream = new DigestInputStream( inputStream,
+                                                                                                                             MessageDigests.sha512() ))
         {
-            final InputStream inputStream = byteSource.openStream();
-            final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
-            try (inputStream; digestInputStream)
-            {
-                final long size = ByteStreams.exhaust( digestInputStream );
-                attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, size );
-            }
+
+            long size = ByteStreams.exhaust( digestInputStream );
+            attachmentSet.addLong( ContentPropertyNames.ATTACHMENT_SIZE, size );
+
             attachmentSet.addString( ContentPropertyNames.ATTACHMENT_SHA512,
                                      HexCoder.toHex( digestInputStream.getMessageDigest().digest() ) );
+
         }
         catch ( IOException e )
         {
