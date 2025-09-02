@@ -143,10 +143,7 @@ public final class JsObjectConverter
         for ( final Map.Entry<String, Object> entry : source.entrySet() )
         {
             final Object converted = toObject( entry.getValue() );
-//            if ( converted != null )
-//            {
-                result.put( entry.getKey(), converted );
-//            }
+            result.put( entry.getKey(), converted );
         }
 
         return result;
