@@ -1,0 +1,12 @@
+displayName:
+  text: "My widget"
+  i18n: "i18n.my-widget.display-name"
+description: "My widget description"
+interfaces:
+  - "interface_1"
+  - "interface_2"
+allow:
+  - "role:system.authenticated"
+config:
+  property_1: "value_1"
+  property_2: "value_2"
