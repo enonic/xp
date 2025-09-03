@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.tool;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -161,6 +163,13 @@ public final class AdminToolDescriptor
             return this;
         }
 
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return this;
+        }
+
         public Builder description( final String description )
         {
             this.description = description;
@@ -170,6 +179,19 @@ public final class AdminToolDescriptor
         public Builder descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return this;
+        }
+
+        public Builder description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
+            return this;
+        }
+
+        public Builder addAllowedPrincipals( final PrincipalKeys allowedPrincipals )
+        {
+            this.allowedPrincipals.addAll( allowedPrincipals );
             return this;
         }
 
@@ -188,6 +210,12 @@ public final class AdminToolDescriptor
         public Builder addInterface( final String interfaceName )
         {
             this.interfaces.add( interfaceName );
+            return this;
+        }
+
+        public Builder addInterfaces( final List<String> interfaceNames )
+        {
+            this.interfaces.addAll( interfaceNames );
             return this;
         }
 
