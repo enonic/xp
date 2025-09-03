@@ -8,7 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.schema.YmlTypeParser;
+import com.enonic.xp.core.impl.schema.YmlContentTypeParser;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
@@ -24,7 +24,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class ContentTypeServiceImpl
     implements ContentTypeService
 {
-    private static final YmlTypeParser YML_TYPE_PARSER = new YmlTypeParser();
+    private static final YmlContentTypeParser PARSER = new YmlContentTypeParser();
 
     private final ContentTypeRegistry registry;
 
@@ -88,7 +88,7 @@ public final class ContentTypeServiceImpl
     @Override
     public ContentType.Builder createContentTypeFromYml( final String contentTypeYml, final ApplicationKey applicationKey )
     {
-        return YML_TYPE_PARSER.parseContentType( contentTypeYml, applicationKey );
+        return PARSER.parse( contentTypeYml, applicationKey );
     }
 
     private ContentType transformInlineMixins( final ContentType contentType )
