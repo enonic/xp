@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.xml.DomElement;
 import com.enonic.xp.xml.parser.XmlModelParser;
 
@@ -49,7 +50,7 @@ final class XmlWidgetDescriptorParser
                 .stream()
                 .map( allowedPrincipal -> PrincipalKey.from( allowedPrincipal.getValue().trim() ) )
                 .collect( Collectors.toList() );
-            this.builder.setAllowedPrincipals( allowedPrincipalList );
+            this.builder.allowedPrincipals( PrincipalKeys.from( allowedPrincipalList ) );
         }
 
         final DomElement config = root.getChild( "config" );
