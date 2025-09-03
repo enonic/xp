@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.widget;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +12,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -127,7 +127,7 @@ public final class WidgetDescriptor
 
         public final Set<String> interfaces = new TreeSet<>();
 
-        private Collection<PrincipalKey> allowedPrincipals;
+        private Iterable<PrincipalKey> allowedPrincipals;
 
         public final Map<String, String> config = new HashMap<>();
 
@@ -144,6 +144,13 @@ public final class WidgetDescriptor
         public Builder displayName( final String displayName )
         {
             this.displayName = displayName;
+            return this;
+        }
+
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
             return this;
         }
 
@@ -165,6 +172,13 @@ public final class WidgetDescriptor
             return this;
         }
 
+        public Builder description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
+            return this;
+        }
+
         public Builder setIcon( final Icon icon )
         {
             this.icon = icon;
@@ -177,7 +191,13 @@ public final class WidgetDescriptor
             return this;
         }
 
-        public Builder setAllowedPrincipals( final Collection<PrincipalKey> allowedPrincipals )
+        public Builder addInterfaces( final Iterable<String> interfaceNames )
+        {
+            interfaceNames.forEach( this::addInterface );
+            return this;
+        }
+
+        public Builder setAllowedPrincipals( final Iterable<PrincipalKey> allowedPrincipals )
         {
             this.allowedPrincipals = allowedPrincipals;
             return this;
