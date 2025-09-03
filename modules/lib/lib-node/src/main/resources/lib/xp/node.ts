@@ -235,7 +235,7 @@ interface NodeHandler {
 
     patch(params: PatchNodeHandlerParams): PatchNodeResult;
 
-    setChildOrder<NodeData>(key: string, childOrder: string): Node<NodeData>;
+    sort<NodeData>(key: string, childOrder: string): Node<NodeData>;
 
     get<NodeData>(params: GetNodeHandlerParams): Node<NodeData> | Node<NodeData>[] | null;
 
@@ -384,7 +384,15 @@ export interface MoveNodeParams {
     target: string;
 }
 
+/**
+ * @deprecated Use {@link SortNodeParams} instead
+ */
 export interface SetChildOrderParams {
+    key: string;
+    childOrder: string;
+}
+
+export interface SortNodeParams {
     key: string;
     childOrder: string;
 }
@@ -666,7 +674,7 @@ export interface RepoConnection {
 
     move(params: MoveNodeParams): boolean;
 
-    setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData>;
+    sort<NodeData = Record<string, unknown>>(params: SortNodeParams): Node<NodeData>;
 
     query<
         AggregationInput extends Aggregations = never
@@ -932,9 +940,8 @@ class RepoConnectionImpl
     }
 
     /**
-     * Set node's children order
-     *
-     * @example-ref examples/node/setChildOrder.js
+     * @deprecated Use {@link sort} instead
+     * Sort node's children
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.key node's path or id
@@ -945,7 +952,24 @@ class RepoConnectionImpl
         checkRequired(params, 'key');
         checkRequired(params, 'childOrder');
 
-        return __.toNativeObject(this.nodeHandler.setChildOrder(params.key, params.childOrder));
+        return __.toNativeObject(this.nodeHandler.sort(params.key, params.childOrder));
+    }
+
+    /**
+     * Sort node's children
+
+     * @example-ref examples/node/sort.js
+     *
+     * @param {object} params JSON with the parameters.
+     * @param {string} params.key node's path or id
+     * @param {string} params.childOrder children order
+     * @returns {object} updated node
+     */
+    sort<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData> {
+        checkRequired(params, 'key');
+        checkRequired(params, 'childOrder');
+
+        return __.toNativeObject(this.nodeHandler.sort(params.key, params.childOrder));
     }
 
     /**

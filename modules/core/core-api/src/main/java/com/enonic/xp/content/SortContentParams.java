@@ -1,24 +1,31 @@
 package com.enonic.xp.content;
 
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.index.ChildOrder;
 
 @PublicApi
-public final class SetContentChildOrderParams
+public final class SortContentParams
 {
     private final ContentId contentId;
 
     private final ChildOrder childOrder;
 
-    private final ChildOrder manualOrderBase;
+    private final ChildOrder manualOrderSeed;
+
+    private final ImmutableList<ReorderChildContentParams> reorderChildContents;
 
     private final boolean stopInherit;
 
-    private SetContentChildOrderParams( Builder builder )
+    private SortContentParams( Builder builder )
     {
-        contentId = builder.contentId;
-        childOrder = builder.childOrder;
-        manualOrderBase  = builder.manualOrderBase;
+        this.contentId = builder.contentId;
+        this.childOrder = builder.childOrder;
+        this.manualOrderSeed = builder.manualOrderSeed;
+        this.reorderChildContents = builder.reorderChildContents.build();
         stopInherit = builder.stopInherit;
     }
 
@@ -32,9 +39,14 @@ public final class SetContentChildOrderParams
         return childOrder;
     }
 
-    public ChildOrder getManualOrderBase()
+    public ChildOrder getManualOrderSeed()
     {
-        return manualOrderBase;
+        return manualOrderSeed;
+    }
+
+    public List<ReorderChildContentParams> getReorderChildContents()
+    {
+        return reorderChildContents;
     }
 
     public boolean stopInherit()
@@ -54,7 +66,9 @@ public final class SetContentChildOrderParams
 
         private ChildOrder childOrder;
 
-        private ChildOrder manualOrderBase;
+        private ChildOrder manualOrderSeed;
+
+        private final ImmutableList.Builder<ReorderChildContentParams> reorderChildContents = ImmutableList.builder();
 
         private boolean stopInherit = true;
 
@@ -74,11 +88,18 @@ public final class SetContentChildOrderParams
             return this;
         }
 
-        public Builder manualOrderBase( final ChildOrder manualOrderBase )
+        public Builder manualOrderSeed( final ChildOrder manualOrderSeed )
         {
-            this.manualOrderBase = manualOrderBase;
+            this.manualOrderSeed = manualOrderSeed;
             return this;
         }
+
+        public Builder addManualOrder( final ReorderChildContentParams reorderChildParams )
+        {
+            this.reorderChildContents.add( reorderChildParams );
+            return this;
+        }
+
 
         public Builder stopInherit( final boolean stopInherit )
         {
@@ -86,9 +107,9 @@ public final class SetContentChildOrderParams
             return this;
         }
 
-        public SetContentChildOrderParams build()
+        public SortContentParams build()
         {
-            return new SetContentChildOrderParams( this );
+            return new SortContentParams( this );
         }
     }
 }

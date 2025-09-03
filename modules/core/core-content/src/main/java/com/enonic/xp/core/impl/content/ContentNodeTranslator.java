@@ -51,6 +51,11 @@ public class ContentNodeTranslator
         }
     }
 
+    public Content fromNode( final Node node )
+    {
+        return fromNode( node, false, false );
+    }
+
     public Content fromNode( final Node node, final boolean resolveHasChildren )
     {
         return fromNode( node, resolveHasChildren, false );

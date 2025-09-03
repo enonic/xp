@@ -10,6 +10,7 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
@@ -17,7 +18,7 @@ import com.enonic.xp.repo.impl.node.SortNodeCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ReorderChildNodesCommandTest
+public class SortNodeCommandTest_manualOrder
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -160,6 +161,7 @@ public class ReorderChildNodesCommandTest
             .build()
             .execute();
 
+        refresh();
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
         assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "c", "f" );
@@ -172,6 +174,7 @@ public class ReorderChildNodesCommandTest
                 node.manualOrderValue = null;
             } ).
             id( nodeId ).
+            refresh( RefreshMode.ALL ).
             build() );
     }
 

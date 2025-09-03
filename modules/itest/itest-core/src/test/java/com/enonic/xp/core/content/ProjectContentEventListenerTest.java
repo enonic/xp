@@ -33,9 +33,9 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.ReorderChildContentParams;
+import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -638,7 +638,7 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
@@ -666,21 +666,21 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        final Content sortedInChild = layerContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        final SortContentResult sortedInChild = layerContext.callWith( () -> contentService.sort( SortContentParams.create()
                                                                                                      .contentId( sourceContent.getId() )
                                                                                                      .childOrder(
                                                                                                          ChildOrder.from( "_name DESC" ) )
                                                                                                      .build() ) );
 
-        assertEquals( 3, sortedInChild.getInherit().size() );
-        assertFalse( sortedInChild.getInherit().contains( ContentInheritType.SORT ) );
+        assertEquals( 3, sortedInChild.getContent().getInherit().size() );
+        assertFalse( sortedInChild.getContent().getInherit().contains( ContentInheritType.SORT ) );
 
-        final Content sortedInParent = projectContext.callWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
+        final SortContentResult  sortedInParent = projectContext.callWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
 
         handleEvents();
 
-        assertNotEquals( sortedInParent.getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ).getChildOrder() );
+        assertNotEquals( sortedInParent.getContent().getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getContent().getId() ) ).getChildOrder() );
 
     }
 
@@ -695,7 +695,7 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
@@ -713,22 +713,18 @@ public class ProjectContentEventListenerTest
             assertEquals( sourceChild1.getId(), iterator.next().getId() );
         } );
 
-        projectContext.runWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
-
-        handleEvents();
-
-        projectContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                                          .contentId( sourceContent.getId() )
-                                                                          .add( ReorderChildParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
+                                                               .contentId( sourceContent.getId() )
+                                                               .childOrder( ChildOrder.manualOrder() )
+                                                               .addManualOrder( ReorderChildContentParams.create()
                                                                                     .contentToMove( sourceChild2.getId() )
                                                                                     .contentToMoveBefore( sourceChild3.getId() )
                                                                                     .build() )
-                                                                          .add( ReorderChildParams.create()
+                                                               .addManualOrder( ReorderChildContentParams.create()
                                                                                     .contentToMove( sourceChild1.getId() )
                                                                                     .contentToMoveBefore( sourceChild3.getId() )
                                                                                     .build() )
-                                                                          .build() ) );
+                                                               .build() ) );
 
         handleEvents();
 
@@ -756,29 +752,29 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
 
         handleEvents();
 
-        layerContext.runWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
-
-        layerContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                                        .contentId( sourceContent.getId() )
-                                                                        .add( ReorderChildParams.create()
+        layerContext.runWith( () -> contentService.sort( SortContentParams.create()
+                                                             .contentId( sourceContent.getId() )
+                                                             .childOrder( ChildOrder.manualOrder() )
+                                                             .addManualOrder( ReorderChildContentParams.create()
                                                                                   .contentToMove( sourceChild2.getId() )
                                                                                   .contentToMoveBefore( sourceChild3.getId() )
                                                                                   .build() )
-                                                                        .add( ReorderChildParams.create()
+                                                             .addManualOrder( ReorderChildContentParams.create()
                                                                                   .contentToMove( sourceChild1.getId() )
                                                                                   .contentToMoveBefore( sourceChild3.getId() )
                                                                                   .build() )
-                                                                        .build() ) );
+                                                             .build() ) );
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        handleEvents();
+
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );

@@ -14,7 +14,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.ResetContentInheritParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
@@ -55,10 +56,10 @@ public class SyncContentServiceImplTest
         syncCreated( source.getId() );
 
         layerContext.runWith( () -> {
-            final Content changed = contentService.setChildOrder(
-                SetContentChildOrderParams.create().contentId( source.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() );
+            final SortContentResult changed = contentService.sort(
+                SortContentParams.create().contentId( source.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() );
 
-            assertFalse( changed.getInherit().contains( ContentInheritType.SORT ) );
+            assertFalse( changed.getContent().getInherit().contains( ContentInheritType.SORT ) );
         } );
 
         syncContentService.resetInheritance( ResetContentInheritParams.create()

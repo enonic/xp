@@ -24,6 +24,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SortNodeCommandTest
@@ -96,22 +98,20 @@ public class SortNodeCommandTest
         final Node node = createParentNode();
         createChildNodes( node );
 
-        setChildOrder( node, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
+        setChildOrder( node, ChildOrder.manualOrder() );
         refresh();
 
         final FindNodesByParentResult result = findChildren( node );
 
-        Long previousOrderValue = null;
+        Long previousOrderValue = Long.MAX_VALUE;
 
         for ( final NodeId n : result.getNodeIds() )
         {
-            final Node currentNode = getNode( n );
+            final Long manualOrderValue = getNode( n ).getManualOrderValue();
 
-            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue ,
-                    "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
+            assertThat( manualOrderValue ).isLessThan( previousOrderValue );
 
-            previousOrderValue = currentNode.getManualOrderValue();
+            previousOrderValue = manualOrderValue;
         }
     }
 
@@ -127,8 +127,7 @@ public class SortNodeCommandTest
         refresh();
 
         // Now set order manual
-        setChildOrder( node, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC ) ).build() );
+        setChildOrder( node, ChildOrder.manualOrder() );
         refresh();
 
         final FindNodesByParentResult result = findChildren( node );
@@ -175,8 +174,7 @@ public class SortNodeCommandTest
         boolean createRightChecked = false;
         try
         {
-            setChildOrder( createUngrantedNode, ChildOrder.create().add(
-                FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
+            setChildOrder( createUngrantedNode, ChildOrder.manualOrder() );
         }
         catch ( NodeAccessException e )
         {
@@ -185,8 +183,7 @@ public class SortNodeCommandTest
         assertTrue( createRightChecked );
 
         // Tests the correct behaviour if the right is granted
-        setChildOrder( createGrantedNode, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
+        setChildOrder( createGrantedNode, ChildOrder.manualOrder() );
     }
 
     private void setChildOrder( final Node node, final ChildOrder childOrder )

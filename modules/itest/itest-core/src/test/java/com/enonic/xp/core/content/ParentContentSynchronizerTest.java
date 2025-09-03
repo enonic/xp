@@ -23,10 +23,9 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
@@ -627,7 +626,7 @@ public class ParentContentSynchronizerTest
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetParent = syncCreated( sourceParent.getId() );
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceParent.getId() )
                                                                         .childOrder( ChildOrder.from( "modifiedTime ASC" ) )
                                                                         .build() ) );
@@ -652,18 +651,14 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceChild3.getId() );
 
         projectContext.runWith( () -> {
-            contentService.setChildOrder(
-                SetContentChildOrderParams.create().contentId( sourceParent.getId() ).childOrder( ChildOrder.manualOrder() ).build() );
-
-            contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                .contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create()
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
                                                           .contentToMove( sourceChild1.getId() )
                                                           .contentToMoveBefore( sourceChild3.getId() )
                                                           .build() )
-                                                .build() );
-
-
+                                     .build() );
         } );
 
         syncSorted( sourceParent.getId() );
@@ -672,18 +667,15 @@ public class ParentContentSynchronizerTest
         syncManualOrderUpdated( sourceChild3.getId() );
 
         layerContext.runWith( () -> {
-            contentService.setChildOrder( SetContentChildOrderParams.create()
-                                              .contentId( sourceParent.getId() )
-                                              .childOrder( ChildOrder.manualOrder() )
-                                              .stopInherit( true )
-                                              .build() );
-
-            contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                .contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create().contentToMove( sourceChild1.getId() )
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
+                                                          .contentToMove( sourceChild1.getId() )
                                                           .contentToMoveBefore( sourceChild2.getId() )
                                                           .build() )
-                                                .build() );
+                                     .stopInherit( true )
+                                     .build() );
 
             syncContentService.resetInheritance( ResetContentInheritParams.create()
                                                      .contentId( sourceParent.getId() )
@@ -937,33 +929,30 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceChild2.getId() );
 
         projectContext.runWith( () -> {
-            contentService.setChildOrder(
-                SetContentChildOrderParams.create().contentId( sourceParent.getId() ).childOrder( ChildOrder.manualOrder() ).build() );
-
-            assertTrue( syncSorted( sourceParent.getId() ).getChildOrder().isManualOrder() );
-
-            syncManualOrderUpdated( sourceChild1.getId() );
-            syncManualOrderUpdated( sourceChild2.getId() );
-
-            contentService.reorderChildren( ReorderChildContentsParams.create().contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create()
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
                                                           .contentToMove( sourceChild1.getId() )
                                                           .contentToMoveBefore( sourceChild2.getId() )
                                                           .build() )
-                                                .build() );
+                                     .build() );
+
+            assertTrue( syncSorted( sourceParent.getId() ).getChildOrder().isManualOrder() );
 
             Long newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
             Long newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
 
             assertTrue( newManualOrderValue1 > newManualOrderValue2 );
 
-            contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                .contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create()
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
                                                           .contentToMove( sourceChild2.getId() )
                                                           .contentToMoveBefore( sourceChild1.getId() )
                                                           .build() )
-                                                .build() );
+                                     .build() );
 
             newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
             newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();

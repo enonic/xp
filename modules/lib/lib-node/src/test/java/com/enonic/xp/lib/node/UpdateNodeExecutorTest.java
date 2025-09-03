@@ -2,12 +2,16 @@ package com.enonic.xp.lib.node;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,11 +60,11 @@ public class UpdateNodeExecutorTest
         final EditableNode editableNode = new EditableNode( originalNode );
 
         final PropertyTree updateScript = new PropertyTree();
-        updateScript.setString( "_childOrder", ChildOrder.reverseManualOrder().toString() );
+        updateScript.setString( "_childOrder", ChildOrder.name().toString() );
 
         UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( updateScript ).build().execute();
 
-        assertEquals( ChildOrder.reverseManualOrder(), editableNode.childOrder );
+        assertEquals( ChildOrder.name(), editableNode.childOrder );
     }
 
     @Test

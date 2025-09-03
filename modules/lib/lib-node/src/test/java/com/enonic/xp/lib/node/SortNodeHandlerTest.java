@@ -17,7 +17,7 @@ public class SortNodeHandlerTest
     {
         final ArgumentCaptor<SortNodeParams> argumentCaptor = ArgumentCaptor.forClass( SortNodeParams.class );
         Mockito.when( nodeService.sort( Mockito.any() ) ).thenReturn( SortNodeResult.create().node( createNode() ).build() );
-        runScript( "/lib/xp/examples/node/setChildOrder.js" );
+        runScript( "/lib/xp/examples/node/sort.js" );
         Mockito.verify( nodeService ).sort( argumentCaptor.capture() );
 
         assertEquals( "nodeId", argumentCaptor.getValue().getNodeId().toString() );

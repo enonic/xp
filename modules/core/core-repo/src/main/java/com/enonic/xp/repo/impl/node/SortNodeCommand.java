@@ -252,6 +252,9 @@ public class SortNodeCommand
         @Override
         void validate()
         {
+            if ( params.getChildOrder().isManualOrder() ) {
+
+            }
             super.validate();
         }
 
