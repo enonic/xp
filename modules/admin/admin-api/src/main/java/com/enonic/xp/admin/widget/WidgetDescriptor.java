@@ -197,7 +197,7 @@ public final class WidgetDescriptor
             return this;
         }
 
-        public Builder setAllowedPrincipals( final Iterable<PrincipalKey> allowedPrincipals )
+        public Builder allowedPrincipals( final PrincipalKeys allowedPrincipals )
         {
             this.allowedPrincipals = allowedPrincipals;
             return this;

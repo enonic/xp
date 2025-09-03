@@ -9,10 +9,11 @@ import org.mockito.Mockito;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorService;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -51,19 +52,19 @@ public class WidgetDescriptorServiceTest
         widgetDescriptor3 = WidgetDescriptor.create()
             .key( DescriptorKey.from( "app:c" ) )
             .addInterface( "com.enonic.xp.my-interface" )
-            .setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "role:system.user.admin" ) ) )
+            .allowedPrincipals( PrincipalKeys.from( Collections.singleton( PrincipalKey.from( "role:system.user.admin" ) ) ) )
             .build();
 
         widgetDescriptor4 = WidgetDescriptor.create()
             .key( DescriptorKey.from( "app:d" ) )
             .addInterface( "com.enonic.xp.my-interface" )
-            .setAllowedPrincipals( Collections.singleton( PrincipalKey.from( "user:system:anonymous" ) ) )
+            .allowedPrincipals( PrincipalKeys.from( Collections.singleton( PrincipalKey.from( "user:system:anonymous" ) ) ) )
             .build();
 
         widgetDescriptor5 = WidgetDescriptor.create()
             .key( DescriptorKey.from( "app:e" ) )
             .addInterface( "com.enonic.xp.my-interface" )
-            .setAllowedPrincipals( Collections.emptyList() )
+            .allowedPrincipals( PrincipalKeys.from( Collections.emptyList() ) )
             .build();
 
         final Descriptors<WidgetDescriptor> widgetDescriptors =
