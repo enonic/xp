@@ -1,6 +1,5 @@
 package com.enonic.xp.admin.tool;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -213,7 +212,7 @@ public final class AdminToolDescriptor
             return this;
         }
 
-        public Builder addInterfaces( final List<String> interfaceNames )
+        public Builder addInterfaces( final Iterable<String> interfaceNames )
         {
             this.interfaces.addAll( interfaceNames );
             return this;

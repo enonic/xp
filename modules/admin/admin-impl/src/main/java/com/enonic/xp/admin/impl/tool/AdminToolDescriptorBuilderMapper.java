@@ -1,7 +1,5 @@
 package com.enonic.xp.admin.impl.tool;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -31,5 +29,5 @@ public abstract class AdminToolDescriptorBuilderMapper
     public abstract AdminToolDescriptor.Builder apiMounts( DescriptorKeys apiDescriptors );
 
     @JsonProperty("interfaces")
-    public abstract AdminToolDescriptor.Builder addInterfaces( List<String> interfaceNames );
+    public abstract AdminToolDescriptor.Builder addInterfaces( Iterable<String> interfaceNames );
 }
