@@ -13,7 +13,6 @@ import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.schema.LocalizedText;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
@@ -46,7 +45,7 @@ public final class WidgetDescriptor
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.icon = builder.icon;
         this.interfaces = ImmutableSet.copyOf( builder.interfaces );
-        this.allowedPrincipals = builder.allowedPrincipals == null ? null : PrincipalKeys.from( builder.allowedPrincipals );
+        this.allowedPrincipals = builder.allowedPrincipals;
         this.config = ImmutableMap.copyOf( builder.config );
     }
 
@@ -97,8 +96,8 @@ public final class WidgetDescriptor
 
     public boolean isAccessAllowed( final PrincipalKeys principalKeys )
     {
-        return allowedPrincipals == null || principalKeys.contains( RoleKeys.ADMIN ) || principalKeys.stream().
-            anyMatch( allowedPrincipals::contains );
+        return allowedPrincipals == null || principalKeys.contains( RoleKeys.ADMIN ) ||
+            principalKeys.stream().anyMatch( allowedPrincipals::contains );
     }
 
     public Map<String, String> getConfig()
@@ -127,7 +126,7 @@ public final class WidgetDescriptor
 
         public final Set<String> interfaces = new TreeSet<>();
 
-        private Iterable<PrincipalKey> allowedPrincipals;
+        private PrincipalKeys allowedPrincipals;
 
         public final Map<String, String> config = new HashMap<>();
 
