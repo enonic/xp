@@ -18,6 +18,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
@@ -59,6 +60,7 @@ import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
@@ -596,7 +598,14 @@ public class NodeServiceImplTest
         nodeService.refresh( RefreshMode.SEARCH );
 
         final NodeQuery nodeQuery =
-            NodeQuery.create().parent( NodePath.ROOT ).path( NodePath.create().addElement( "my-node" ).build() ).build();
+            NodeQuery.create().parent( NodePath.ROOT ).addQueryFilter( ValueFilter.create()
+                                                                           .fieldName( NodeIndexPath.PATH.getPath() )
+                                                                           .addValue( ValueFactory.newString(
+                                                                               NodePath.create( NodePath.ROOT )
+                                                                                   .addElement( "my-node" )
+                                                                                   .build()
+                                                                                   .toString() ) )
+                                                                           .build() ).build();
 
         final SearchTargets searchTargets = SearchTargets.create()
             .add( SearchTarget.create()

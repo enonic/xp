@@ -175,7 +175,13 @@ public class MoveNodeCommand
 
             if ( !isRenaming )
             {
-                updateStoredNodeProperties( newParentPath, nodeToMoveBuilder );
+                final Node parentNode = doGetByPath( newParentPath );
+                if ( parentNode.getChildOrder().isManualOrder() )
+                {
+                    final long newOrderValue = ResolveInsertOrderValueCommand.create( this ).parentPath( newParentPath ).build().execute();
+
+                    nodeToMoveBuilder.manualOrderValue( newOrderValue );
+                }
             }
         }
 
@@ -201,24 +207,6 @@ public class MoveNodeCommand
         }
 
         return movedNode;
-    }
-
-    private void updateStoredNodeProperties( final NodePath newParentPath, final Node.Builder nodeToMoveBuilder )
-    {
-        if ( newParentPath.equals( this.newParentPath ) )
-        {
-            final Node parentNode = doGetByPath( newParentPath );
-            if ( parentNode.getChildOrder().isManualOrder() )
-            {
-
-                final long newOrderValue = ResolveInsertOrderValueCommand.create( this )
-                    .parentPath( newParentPath )
-                    .build()
-                    .execute();
-
-                nodeToMoveBuilder.manualOrderValue( newOrderValue );
-            }
-        }
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

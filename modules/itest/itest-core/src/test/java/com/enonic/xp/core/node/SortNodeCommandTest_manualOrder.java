@@ -30,7 +30,6 @@ public class SortNodeCommandTest_manualOrder
 
     @Test
     public void move_first()
-        throws Exception
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -39,7 +38,6 @@ public class SortNodeCommandTest_manualOrder
 
         createChildNodes( parentNode );
 
-        // current node order: a,b,c,d,e,f
         SortNodeCommand.create()
             .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
@@ -56,13 +54,11 @@ public class SortNodeCommandTest_manualOrder
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
-        // updated node order: c,a,b,d,e,f
         assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "a", "b", "d", "e", "f" );
     }
 
     @Test
     public void move_in_between()
-        throws Exception
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -71,7 +67,6 @@ public class SortNodeCommandTest_manualOrder
 
         createChildNodes( parentNode );
 
-        // current node order: a,b,c,d,e,f
         SortNodeCommand.create()
             .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
@@ -88,13 +83,11 @@ public class SortNodeCommandTest_manualOrder
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
-        // updated node order: a,c,b,d,e,f
         assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "c", "b", "d", "e", "f" );
     }
 
     @Test
     public void move_last()
-        throws Exception
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -103,7 +96,6 @@ public class SortNodeCommandTest_manualOrder
 
         createChildNodes( parentNode );
 
-        // current node order: a,b,c,d,e,f
         SortNodeCommand.create()
             .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
@@ -120,13 +112,11 @@ public class SortNodeCommandTest_manualOrder
 
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
-        // updated node order: a,b,d,e,f,c
         assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "f", "c" );
     }
 
     @Test
-    public void move_last_missing_order_values()
-        throws Exception
+    public void move_inexistent_keeps_seed()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -138,22 +128,76 @@ public class SortNodeCommandTest_manualOrder
         SortNodeCommand.create()
             .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
-                         .childOrder( ChildOrder.name() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .addManualOrder( ReorderChildNodeParams.create().nodeId( NodeId.from( "g" ) ).build() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "g" ) ).moveBefore( NodeId.from( "z" ) ).build() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "g" ) ).moveBefore( NodeId.from( "a" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
             .execute();
+        refresh();
 
-        setManualOrderValueToNull( NodeId.from( "f" ) );
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
+
+        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
+    }
+
+    @Test
+    public void move_before_inexistent_keeps_seed()
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createChildNodes( parentNode );
+
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "a" ) ).moveBefore( NodeId.from( "g" ) ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+        refresh();
+
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
+
+        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
+    }
+
+    @Test
+    public void reorder()
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createChildNodes( parentNode );
+
+        manualOrderWithByNameSeed( parentNode );
 
         SortNodeCommand.create()
             .params( SortNodeParams.create()
                          .nodeId( parentNode.id() )
                          .childOrder( ChildOrder.manualOrder() )
                          .addManualOrder(
-                             ReorderChildNodeParams.create().nodeId( NodeId.from( "c" ) ).moveBefore( NodeId.from( "f" ) ).build() )
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "a" ) ).moveBefore( NodeId.from( "e" ) ).build() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "b" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -164,7 +208,57 @@ public class SortNodeCommandTest_manualOrder
         refresh();
         final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
 
-        assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "c", "f" );
+        // `a` moved right in front of `e`
+        assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "d", "a", "e", "f", "b" );
+    }
+
+    @Test
+    public void move_last_missing_order_values()
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().
+            name( "my-node" ).
+            parent( NodePath.ROOT ).
+            build() );
+
+        createChildNodes( parentNode );
+
+        manualOrderWithByNameSeed( parentNode );
+
+        setManualOrderValueToNull( NodeId.from( "e" ) );
+
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "a" ) ).moveBefore( NodeId.from( "e" ) ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+
+        refresh();
+        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
+
+        // `e` moved to the end but `a` left intact
+        assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "f", "e" );
+    }
+
+    private void manualOrderWithByNameSeed( final Node parentNode )
+    {
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .manualOrderSeed( ChildOrder.name() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     private void setManualOrderValueToNull( final NodeId nodeId )

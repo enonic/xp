@@ -14,23 +14,16 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
 
@@ -73,7 +66,7 @@ public class SortNodeCommand
             }
             else
             {
-                reorderChildNoes( node.path(), params.getReorderChildNodes(), result );
+                reorderChildNodes( node.path(), params.getReorderChildNodes(), result );
             }
         }
 
@@ -122,23 +115,27 @@ public class SortNodeCommand
         for ( ReorderChildNodeParams param : reorderChildNodes )
         {
             final NodeId moveBefore = param.getMoveBefore();
-            if ( childNodeIds.remove( param.getNodeId() ) )
+            final NodeId nodeId = param.getNodeId();
+            if ( moveBefore != null )
             {
-                if ( moveBefore == null )
+                final int moveBeforeIndex = childNodeIds.indexOf( moveBefore );
+                if ( moveBeforeIndex >= 0 )
                 {
-                    childNodeIds.add( param.getNodeId() );
+                    final int indexOf = childNodeIds.indexOf( nodeId );
+                    if ( indexOf >= 0 )
+                    {
+                        childNodeIds.remove( indexOf );
+                        childNodeIds.add( moveBeforeIndex, nodeId );
+                    }
                 }
-                else
+            }
+            else
+            {
+                final int indexOf = childNodeIds.indexOf( nodeId );
+                if ( indexOf >= 0 )
                 {
-                    int index = childNodeIds.indexOf( moveBefore );
-                    if ( index >= 0 )
-                    {
-                        childNodeIds.add( index, param.getNodeId() );
-                    }
-                    else
-                    {
-                        childNodeIds.add( param.getNodeId() );
-                    }
+                    childNodeIds.remove( indexOf );
+                    childNodeIds.add( nodeId );
                 }
             }
         }
@@ -154,8 +151,8 @@ public class SortNodeCommand
         }
     }
 
-    private void reorderChildNoes( final NodePath parentNodePath, final List<ReorderChildNodeParams> reorderChildNodes,
-                                   final SortNodeResult.Builder result )
+    private void reorderChildNodes( final NodePath parentPath, final List<ReorderChildNodeParams> reorderChildNodes,
+                                    final SortNodeResult.Builder result )
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
@@ -169,73 +166,38 @@ public class SortNodeCommand
             else
             {
                 final Node nodeToMoveBefore = doGetById( reorderChildNodeParams.getMoveBefore() );
-                if ( !nodeToMoveBefore.parentPath().equals( parentNodePath ) )
+                if ( !nodeToMoveBefore.parentPath().equals( parentPath ) )
                 {
-                    LOG.debug( "Reordered nodes must be children of {}", parentNodePath );
+                    LOG.debug( "Reordered nodes must be children of {}", parentPath );
                     continue;
                 }
                 toMoveBeforeValue = nodeToMoveBefore.getManualOrderValue();
                 if (toMoveBeforeValue == null )
                 {
+                    LOG.debug( "Node [{}] to move before does not have manualOrderValue", nodeToMoveBefore );
                     continue;
                 }
             }
 
-            final long newOrderValue;
-            if ( toMoveBeforeValue == null )
-            {
-                final Long nodeManualOrderValue = getManualOrderValue( parentNodePath, Long.MIN_VALUE );
-
-                newOrderValue = nodeManualOrderValue == null
-                    ? NodeManualOrderValueResolver.first()
-                    : NodeManualOrderValueResolver.after( nodeManualOrderValue );
-            }
-            else
-            {
-                final Long nodeManualOrderValue = getManualOrderValue( parentNodePath, toMoveBeforeValue );
-
-                newOrderValue = nodeManualOrderValue == null
-                    ? NodeManualOrderValueResolver.before( toMoveBeforeValue )
-                    : NodeManualOrderValueResolver.between( toMoveBeforeValue, nodeManualOrderValue );
-            }
-
             final Node node = doGetById( reorderChildNodeParams.getNodeId() );
-            if ( !node.parentPath().equals( parentNodePath ) )
+            if ( !node.parentPath().equals( parentPath ) )
             {
-                throw new IllegalArgumentException( "reordered nodes must be children of " + parentNodePath );
+                LOG.debug( "Reordered nodes must be children of {}", parentPath );
+                continue;
             }
+
+            final long newOrderValue = ResolveInsertOrderValueCommand.create( this )
+                .parentPath( parentPath )
+                .referenceValue( toMoveBeforeValue )
+                .lower( true )
+                .build()
+                .execute();
 
             final Node updatedNode = Node.create( node ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
             final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
 
             result.addReorderedNode( storedNode );
         }
-    }
-
-    private Long getManualOrderValue( final NodePath parentNodePath, final long nodeAfterOrderValue )
-    {
-        refresh( RefreshMode.SEARCH );
-        final NodeQuery query = NodeQuery.create()
-            .parent( parentNodePath )
-            .query( QueryExpr.from(
-                CompareExpr.gt( FieldExpr.from( NodeIndexPath.MANUAL_ORDER_VALUE ), ValueExpr.number( nodeAfterOrderValue ) ),
-                FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ) )
-            .size( 1 )
-            .build();
-        final SearchResult searchResult = nodeSearchService.query( query, SingleRepoSearchSource.from( ContextAccessor.current() ) );
-        if ( searchResult.isEmpty() )
-        {
-            return null;
-        }
-
-        final Node node = doGetById( NodeId.from( searchResult.getHits().getFirst().getId() ) );
-        final Long manualOrderValue = node.getManualOrderValue();
-        if ( manualOrderValue == null )
-        {
-            throw new IllegalArgumentException( "Node with id [" + node.id() + "] missing manual order value" );
-        }
-
-        return manualOrderValue;
     }
 
     public static final class Builder

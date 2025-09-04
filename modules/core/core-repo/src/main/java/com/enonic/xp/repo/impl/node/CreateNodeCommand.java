@@ -75,7 +75,7 @@ public final class CreateNodeCommand
 
         final AccessControlList permissions = params.isInheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
 
-        final Long manualOrderValue = NodeHelper.runAsAdmin( () -> resolvePotentialManualOrderValue( parentNode ) );
+        final Long manualOrderValue = resolvePotentialManualOrderValue( parentNode );
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
@@ -159,29 +159,24 @@ public final class CreateNodeCommand
 
         if ( parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
         {
-            return doResolveManualOrderValue( parentNode );
+            final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
+
+            if ( InsertManualStrategy.MANUAL.equals( insertManualStrategy ) )
+            {
+                return params.getManualOrderValue();
+            }
+            else
+            {
+                return ResolveInsertOrderValueCommand.create( this ).
+                    parentPath( parentNode.path() ).lower( InsertManualStrategy.LAST.equals( insertManualStrategy ) ).
+                    build().
+                    execute();
+            }
         }
 
         return null;
     }
 
-
-    private Long doResolveManualOrderValue( final Node parentNode )
-    {
-        final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
-
-        if ( InsertManualStrategy.MANUAL.equals( insertManualStrategy ) )
-        {
-            return params.getManualOrderValue();
-        }
-        else
-        {
-            return ResolveInsertOrderValueCommand.create( this ).
-                parentPath( parentNode.path() ).last( InsertManualStrategy.LAST.equals( insertManualStrategy ) ).
-                build().
-                execute();
-        }
-    }
 
     private void verifyNotExistsAlready()
     {
