@@ -42,11 +42,6 @@ public final class YmlParserBase
 
     public YmlParserBase()
     {
-        initialize();
-    }
-
-    private void initialize()
-    {
         final SimpleModule module = new SimpleModule();
         module.addDeserializer( Form.class, new FormDeserializer() );
         module.addDeserializer( FormItem.class, new FormItemDeserializer() );
