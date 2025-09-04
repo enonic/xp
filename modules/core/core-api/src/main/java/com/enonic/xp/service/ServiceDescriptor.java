@@ -1,10 +1,7 @@
 package com.enonic.xp.service;
 
-import java.util.Collection;
-
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 
@@ -19,7 +16,7 @@ public final class ServiceDescriptor
     private ServiceDescriptor( final Builder builder )
     {
         key = builder.key;
-        allowedPrincipals = builder.allowedPrincipals == null ? null : PrincipalKeys.from( builder.allowedPrincipals );
+        allowedPrincipals = builder.allowedPrincipals;
     }
 
     public DescriptorKey getKey()
@@ -52,7 +49,7 @@ public final class ServiceDescriptor
     {
         private DescriptorKey key;
 
-        private Collection<PrincipalKey> allowedPrincipals;
+        private PrincipalKeys allowedPrincipals;
 
         private Builder()
         {
@@ -64,7 +61,7 @@ public final class ServiceDescriptor
             return this;
         }
 
-        public Builder setAllowedPrincipals( final Collection<PrincipalKey> allowedPrincipals )
+        public Builder allowedPrincipals( final PrincipalKeys allowedPrincipals )
         {
             this.allowedPrincipals = allowedPrincipals;
             return this;

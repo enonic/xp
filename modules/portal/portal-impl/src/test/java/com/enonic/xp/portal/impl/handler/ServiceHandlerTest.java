@@ -29,6 +29,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -136,8 +137,10 @@ public class ServiceHandlerTest
     {
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
         final Set<PrincipalKey> allowedPrincipals = Collections.singleton( PrincipalKey.from( "role:system.admin" ) );
-        final ServiceDescriptor serviceDescriptor =
-            ServiceDescriptor.create().key( serviceDescriptorKey ).setAllowedPrincipals( allowedPrincipals ).build();
+        final ServiceDescriptor serviceDescriptor = ServiceDescriptor.create()
+            .key( serviceDescriptorKey )
+            .allowedPrincipals( allowedPrincipals.stream().collect( PrincipalKeys.collector() ) )
+            .build();
         when( this.serviceDescriptorService.getByKey( serviceDescriptorKey ) ).thenReturn( serviceDescriptor );
 
         this.request.setEndpointPath( "/_/service/demo/test" );

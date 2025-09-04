@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.xml.DomElement;
 
@@ -35,7 +36,7 @@ public final class XmlServiceDescriptorParser
             {
                 allowedPrincipalKeys.add( PrincipalKey.from( allowedPrincipal.getValue().trim() ) );
             }
-            this.builder.setAllowedPrincipals( allowedPrincipalKeys );
+            this.builder.allowedPrincipals( PrincipalKeys.from( allowedPrincipalKeys ) );
         }
     }
 }
