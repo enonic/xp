@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.mapper.DescriptorKeyDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.DescriptorKeysDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.FieldSetMapper;
@@ -40,6 +41,11 @@ public final class YmlParserBase
     private final ObjectMapper mapper = new ObjectMapper( new YAMLFactory() );
 
     public YmlParserBase()
+    {
+        initialize();
+    }
+
+    private void initialize()
     {
         final SimpleModule module = new SimpleModule();
         module.addDeserializer( Form.class, new FormDeserializer() );
@@ -75,18 +81,13 @@ public final class YmlParserBase
         mapper.addMixIn( target, mixinSource );
     }
 
-    public <T> T parse( final String yml, final Class<T> clazz )
-    {
-        return parse( yml, clazz, null );
-    }
-
-    public <T> T parse( final String yml, final Class<T> clazz, final InjectableValues injectableValues )
+    public <T> T parse( final String resource, final Class<T> clazz, final ApplicationKey currentApplication )
     {
         try
         {
             final ObjectMapper localMapper = mapper.copy();
-            localMapper.setInjectableValues( injectableValues );
-            return localMapper.readValue( yml, clazz );
+            localMapper.setInjectableValues( new InjectableValues.Std().addValue( "currentApplication", currentApplication ) );
+            return localMapper.readValue( resource, clazz );
         }
         catch ( final JsonProcessingException e )
         {

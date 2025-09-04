@@ -27,7 +27,7 @@ public class YmlWidgetDescriptorParserTest
 
         final ApplicationKey myapp = ApplicationKey.from( "myapp" );
 
-        final WidgetDescriptor.Builder descriptorBuilder = YmlWidgetDescriptorParser.parse( yml );
+        final WidgetDescriptor.Builder descriptorBuilder = YmlWidgetDescriptorParser.parse( yml, myapp );
         descriptorBuilder.key( DescriptorKey.from( myapp, "mywidget" ) );
 
         final WidgetDescriptor descriptor = descriptorBuilder.build();

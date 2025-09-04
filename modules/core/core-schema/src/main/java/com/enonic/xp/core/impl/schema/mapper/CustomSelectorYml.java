@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -15,8 +16,8 @@ public class CustomSelectorYml
 {
     public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.CUSTOM_SELECTOR;
 
-    @JacksonInject("applicationRelativeResolver")
-    private ApplicationRelativeResolver applicationRelativeResolver;
+    @JacksonInject("currentApplication")
+    private ApplicationKey currentApplication;
 
     public String service;
 
@@ -34,7 +35,9 @@ public class CustomSelectorYml
 
         if ( service != null )
         {
-            configBuilder.property( InputTypeProperty.create( "service", applicationRelativeResolver.toServiceUrl( service ) ).build() );
+            configBuilder.property(
+                InputTypeProperty.create( "service", new ApplicationRelativeResolver( currentApplication ).toServiceUrl( service ) )
+                    .build() );
         }
 
         if ( params != null )
