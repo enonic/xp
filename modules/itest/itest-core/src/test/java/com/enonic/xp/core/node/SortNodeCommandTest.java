@@ -170,17 +170,7 @@ public class SortNodeCommandTest
             permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
             build() );
 
-        // Tests the check of the DELETE right on the moved node
-        boolean createRightChecked = false;
-        try
-        {
-            setChildOrder( createUngrantedNode, ChildOrder.manualOrder() );
-        }
-        catch ( NodeAccessException e )
-        {
-            createRightChecked = true;
-        }
-        assertTrue( createRightChecked );
+        assertThrows( NodeAccessException.class, () -> setChildOrder( createUngrantedNode, ChildOrder.manualOrder() ) );
 
         // Tests the correct behaviour if the right is granted
         setChildOrder( createGrantedNode, ChildOrder.manualOrder() );

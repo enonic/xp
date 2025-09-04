@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.security.IdProviderKey;
@@ -37,11 +36,4 @@ public final class NodeConstants
         build();
 
     public static final Clock CLOCK = Clock.tick( Clock.systemUTC(), Duration.ofMillis( 1 ) );
-
-    public static void main( String[] args )
-    {
-        System.out.println( CLOCK.instant() );
-        System.out.println( Clock.systemUTC().instant() );
-        System.out.println( Instant.now() );
-    }
 }

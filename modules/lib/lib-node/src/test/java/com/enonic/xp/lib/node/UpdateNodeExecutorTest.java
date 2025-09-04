@@ -2,16 +2,12 @@ package com.enonic.xp.lib.node;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

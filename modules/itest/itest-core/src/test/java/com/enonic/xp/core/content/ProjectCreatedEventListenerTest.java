@@ -1,46 +1,28 @@
 package com.enonic.xp.core.content;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.ProjectCreatedEventListener;
-import com.enonic.xp.core.impl.project.ProjectEvents;
-import com.enonic.xp.event.Event;
+import com.enonic.xp.impl.task.MockTaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ProjectCreatedEventListenerTest
     extends AbstractContentSynchronizerTest
 {
-    private ProjectCreatedEventListener listener;
-
-    private ArgumentCaptor<Event> eventCaptor;
-
-    private Set<Event> handledEvents;
-
     @BeforeEach
     void setUp()
     {
         final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
-        listener = new ProjectCreatedEventListener( this.projectService, this.taskService, synchronizer );
-
-        eventCaptor = ArgumentCaptor.forClass( Event.class );
-        handledEvents = new HashSet<>();
+        listener = new ProjectCreatedEventListener( this.projectService, new MockTaskService(), synchronizer );
     }
 
     @Test
     public void testSingle()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -53,7 +35,6 @@ public class ProjectCreatedEventListenerTest
 
     @Test
     public void testChildren()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "name" ) );
@@ -69,24 +50,7 @@ public class ProjectCreatedEventListenerTest
     }
 
     @Test
-    public void testNotLocalEvent()
-        throws InterruptedException
-    {
-        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
-
-        adminContext().runWith( () -> listener.onEvent( Event.create( ProjectEvents.CREATED_EVENT_TYPE )
-                                                            .value( ProjectEvents.PROJECT_NAME_KEY, layer.getName() )
-                                                            .localOrigin( false )
-                                                            .build() ) );
-
-        Thread.sleep( 1000 );
-
-        assertThrows( ContentNotFoundException.class, () -> layerContext.runWith( () -> contentService.getById( sourceContent.getId() ) ) );
-    }
-
-    @Test
     public void testFromMultipleParents()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -99,16 +63,6 @@ public class ProjectCreatedEventListenerTest
 
         compareSynched( parentContent1, targetContent );
         assertEquals( childLayer.getName(), targetContent.getOriginProject() );
-    }
-
-    private void handleEvents()
-        throws InterruptedException
-    {
-        Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
-        eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
-        handledEvents.addAll( eventCaptor.getAllValues() );
-        Thread.sleep( 1000 );
-
     }
 
 }

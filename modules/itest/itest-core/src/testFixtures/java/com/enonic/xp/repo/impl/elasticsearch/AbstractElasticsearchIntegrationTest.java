@@ -70,7 +70,7 @@ public abstract class AbstractElasticsearchIntegrationTest
     }
 
     static class ElasticsearchFixture
-        implements ExtensionContext.Store.CloseableResource
+        implements AutoCloseable
     {
         static EmbeddedElasticsearchServer server;
 

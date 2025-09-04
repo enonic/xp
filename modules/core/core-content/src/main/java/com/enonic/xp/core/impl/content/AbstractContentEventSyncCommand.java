@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.enonic.xp.content.ContentName;
@@ -10,12 +11,12 @@ public abstract class AbstractContentEventSyncCommand
 {
     final ContentService contentService;
 
-    final ContentEventSyncCommandParams params;
+    final List<ContentToSync> contentToSync;
 
-    AbstractContentEventSyncCommand( final Builder builder )
+    AbstractContentEventSyncCommand( final Builder<?> builder )
     {
         this.contentService = builder.contentService;
-        this.params = builder.params;
+        this.contentToSync = builder.contentToSync;
     }
 
     public void sync()
@@ -39,7 +40,7 @@ public abstract class AbstractContentEventSyncCommand
 
     public abstract static class Builder<B extends Builder<B>>
     {
-        protected ContentEventSyncCommandParams params;
+        protected List<ContentToSync> contentToSync;
 
         private ContentService contentService;
 
@@ -50,16 +51,16 @@ public abstract class AbstractContentEventSyncCommand
             return (B) this;
         }
 
-        public B params( final ContentEventSyncCommandParams params )
+        public B contentToSync( final List<ContentToSync> params )
         {
-            this.params = params;
+            this.contentToSync = params;
             return (B) this;
         }
 
         void validate()
         {
             Objects.requireNonNull( contentService );
-            Objects.requireNonNull( params, "params cannot be null" );
+            Objects.requireNonNull( contentToSync, "contentToSync cannot be null" );
         }
 
         public abstract <T extends AbstractContentEventSyncCommand> T build();

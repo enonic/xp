@@ -34,15 +34,10 @@ final class DeletedEventSyncCommand
     @Override
     protected void doSync()
     {
-        doSync( params.getContents() );
-    }
-
-    private void doSync( final List<ContentToSync> contents )
-    {
         final Set<ContentId> fullIds =
-            contents.stream().map( contentToSync -> contentToSync.getTargetContent().getId() ).collect( Collectors.toSet() );
+            contentToSync.stream().map( contentToSync -> contentToSync.getTargetContent().getId() ).collect( Collectors.toSet() );
 
-        final Set<ContentToSync> roots = getRoots( contents );
+        final Set<ContentToSync> roots = getRoots( contentToSync );
 
         roots.forEach( content -> content.getTargetContext().runWith( () -> {
 
@@ -129,7 +124,7 @@ final class DeletedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getTargetContent() != null ),
                                          "targetContent is required" );
         }
 

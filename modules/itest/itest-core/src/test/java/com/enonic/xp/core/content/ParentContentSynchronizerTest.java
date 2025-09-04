@@ -225,15 +225,11 @@ public class ParentContentSynchronizerTest
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
-        final Content targetContent1 = syncCreated( sourceContent.getId() );
+        syncCreated( sourceContent.getId() );
+        // second "create" that might appear in multi inheritance must not throw, but targetContent should remain equal to sourceContent
+        final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertThrows( IllegalArgumentException.class, () -> syncCreated( sourceContent.getId() ), "targetContent must be set." );
-
-        final Content targetContent2 = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
-
-        assertEquals( targetContent1, targetContent2 );
-
-        compareSynched( sourceContent, targetContent1 );
+        compareSynched( sourceContent, targetContent );
     }
 
     @Test
@@ -650,16 +646,14 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceChild2.getId() );
         syncCreated( sourceChild3.getId() );
 
-        projectContext.runWith( () -> {
-            contentService.sort( SortContentParams.create()
-                                     .contentId( sourceParent.getId() )
-                                     .childOrder( ChildOrder.manualOrder() )
-                                     .addManualOrder( ReorderChildContentParams.create()
-                                                          .contentToMove( sourceChild1.getId() )
-                                                          .contentToMoveBefore( sourceChild3.getId() )
-                                                          .build() )
-                                     .build() );
-        } );
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
+                                 .contentId( sourceParent.getId() )
+                                 .childOrder( ChildOrder.manualOrder() )
+                                 .addManualOrder( ReorderChildContentParams.create()
+                                                      .contentToMove( sourceChild1.getId() )
+                                                      .contentToMoveBefore( sourceChild3.getId() )
+                                                      .build() )
+                                 .build() ) );
 
         syncSorted( sourceParent.getId() );
         syncManualOrderUpdated( sourceChild1.getId() );
@@ -686,7 +680,7 @@ public class ParentContentSynchronizerTest
 
         syncSorted( sourceParent.getId() );
 
-        Thread.sleep( 1000 );
+        refresh();
 
         final FindContentByParentResult sourceOrderedChildren = projectContext.callWith(
             () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceParent.getId() ).build() ) );

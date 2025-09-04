@@ -37,18 +37,19 @@ final class MovedEventSyncCommand
         final List<ContentToSync> toRestore = new ArrayList<>();
         final List<ContentToSync> toMove = new ArrayList<>();
 
-        params.getContents().forEach( contentToSync -> {
+        for ( ContentToSync contentToSync : contentToSync )
+        {
             if ( !contentToSync.getSourceContext()
                 .getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE )
                 .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
             {
-                if ( ArchiveConstants.ARCHIVE_ROOT_PATH
-                    .equals( contentToSync.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
+                if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals(
+                    contentToSync.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
                 {
                     toArchive.add( contentToSync );
                 }
-                else if ( ArchiveConstants.ARCHIVE_ROOT_PATH
-                    .equals( contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
+                else if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals(
+                    contentToSync.getTargetContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) )
                 {
                     toRestore.add( contentToSync );
                 }
@@ -57,7 +58,7 @@ final class MovedEventSyncCommand
             {
                 toMove.add( contentToSync );
             }
-        } );
+        }
 
         if ( !toArchive.isEmpty() )
         {
@@ -134,9 +135,9 @@ final class MovedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getSourceContent() != null ),
                                          "sourceContent must be set" );
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getTargetContent() != null ),
                                          "targetContent must be set" );
         }
 

@@ -30,7 +30,7 @@ final class UpdatedEventSyncCommand
     @Override
     protected void doSync()
     {
-        params.getContents().forEach( this::doSync );
+        contentToSync.forEach( this::doSync );
     }
 
     private void doSync( final ContentToSync content )
@@ -138,9 +138,9 @@ final class UpdatedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getSourceContent() != null ),
                                          "sourceContent must be set" );
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getTargetContent() != null ),
                                          "targetContent must be set" );
         }
 

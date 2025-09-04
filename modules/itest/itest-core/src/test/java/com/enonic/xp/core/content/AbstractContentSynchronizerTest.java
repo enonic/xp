@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.osgi.framework.Bundle;
+import org.mockito.ArgumentCaptor;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
@@ -40,14 +42,11 @@ import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
-import com.enonic.xp.core.internal.concurrent.RecurringJob;
-import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
-import com.enonic.xp.impl.task.LocalTaskManagerImpl;
-import com.enonic.xp.impl.task.TaskManagerCleanupScheduler;
-import com.enonic.xp.impl.task.TaskServiceImpl;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -72,7 +71,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractContentSynchronizerTest
@@ -100,8 +101,6 @@ public abstract class AbstractContentSynchronizerTest
     protected LayoutDescriptorService layoutDescriptorService;
 
     protected ContentTypeServiceImpl contentTypeService;
-
-    protected TaskServiceImpl taskService;
 
     protected Context projectContext;
 
@@ -135,6 +134,12 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Project mixedChildLayer;
 
+    private ArgumentCaptor<Event> eventCaptor;
+
+    private Set<Event> handledEvents;
+
+    protected EventListener listener;
+
     protected static Context adminContext()
     {
         return ContextBuilder.create()
@@ -154,7 +159,8 @@ public abstract class AbstractContentSynchronizerTest
     {
         setUpProjectService();
         setUpContentService();
-        setupTaskService();
+        eventCaptor = ArgumentCaptor.forClass( Event.class );
+        handledEvents = new HashSet<>();
     }
 
     private void setUpProjectService()
@@ -319,30 +325,6 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
     }
 
-    private void setupTaskService()
-    {
-        final Bundle bundle = OsgiSupportMock.mockBundle();
-        when( bundle.getSymbolicName() ).thenReturn( "testBundle" );
-
-        final LocalTaskManagerImpl taskMan = new LocalTaskManagerImpl( Runnable::run, new TaskManagerCleanupSchedulerMock(), event -> {
-        } );
-        taskMan.activate();
-
-        this.taskService = new TaskServiceImpl( taskMan );
-    }
-
-    private static class TaskManagerCleanupSchedulerMock
-        implements TaskManagerCleanupScheduler
-    {
-
-        @Override
-        public RecurringJob scheduleWithFixedDelay( final Runnable command )
-        {
-            command.run();
-            return mock( RecurringJob.class );
-        }
-    }
-
     protected Content createContent( final ContentPath parent )
     {
         return createContent( parent, "name" );
@@ -402,5 +384,13 @@ public abstract class AbstractContentSynchronizerTest
         assertEquals( sourceContent.getCreatedTime(), targetContent.getCreatedTime() );
 
         assertTrue( targetContent.getInherit().containsAll( EnumSet.allOf( ContentInheritType.class ) ) );
+    }
+
+    protected void handleEvents()
+    {
+        verify( eventPublisher, atLeastOnce() ).publish( eventCaptor.capture() );
+        eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
+        handledEvents.addAll( eventCaptor.getAllValues() );
+        refresh();
     }
 }
