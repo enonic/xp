@@ -9,10 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.InjectableValues;
-
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.mapper.AttachmentUploaderYml;
 import com.enonic.xp.core.impl.schema.mapper.CheckBoxYml;
 import com.enonic.xp.core.impl.schema.mapper.ComboBoxYml;
@@ -50,13 +47,15 @@ public class YmlTypeParserTest
 {
     private final YmlParserBase parser = new YmlParserBase();
 
+    private static final ApplicationKey CURRENT_APPLICATION = ApplicationKey.from( "myapp" );
+
     @Test
     void testParseRadioButton()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/radiobutton-type.yml" );
 
-        final RadioButtonYml radioButtonYml = parser.parse( yaml, RadioButtonYml.class );
+        final RadioButtonYml radioButtonYml = parser.parse( yaml, RadioButtonYml.class, CURRENT_APPLICATION );
 
         Input input = radioButtonYml.convertToInput();
 
@@ -89,7 +88,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/textline-type.yml" );
 
-        final TextLineYml textLineYml = parser.parse( yaml, TextLineYml.class );
+        final TextLineYml textLineYml = parser.parse( yaml, TextLineYml.class, CURRENT_APPLICATION );
 
         Input input = textLineYml.convertToInput();
 
@@ -123,7 +122,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/double-type.yml" );
 
-        final DoubleYml doubleYml = parser.parse( yaml, DoubleYml.class );
+        final DoubleYml doubleYml = parser.parse( yaml, DoubleYml.class, CURRENT_APPLICATION );
 
         Input input = doubleYml.convertToInput();
 
@@ -152,7 +151,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
 
-        final ContentSelectorYml contentSelectorYml = parser.parse( yaml, ContentSelectorYml.class );
+        final ContentSelectorYml contentSelectorYml = parser.parse( yaml, ContentSelectorYml.class, CURRENT_APPLICATION );
         Input input = contentSelectorYml.convertToInput();
 
         assertEquals( "ContentSelector", input.getInputType().toString() );
@@ -190,11 +189,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/customselector-type.yml" );
 
-        final InjectableValues injectableValues = new InjectableValues.Std().addValue( "applicationRelativeResolver",
-                                                                                       new ApplicationRelativeResolver(
-                                                                                           ApplicationKey.from( "myapp" ) ) );
-
-        final CustomSelectorYml customSelectorYml = parser.parse( yaml, CustomSelectorYml.class, injectableValues );
+        final CustomSelectorYml customSelectorYml = parser.parse( yaml, CustomSelectorYml.class, CURRENT_APPLICATION );
 
         final Input input = customSelectorYml.convertToInput();
 
@@ -222,7 +217,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/htmlarea-type.yml" );
 
-        final HtmlAreaYml htmlAreaYml = parser.parse( yaml, HtmlAreaYml.class );
+        final HtmlAreaYml htmlAreaYml = parser.parse( yaml, HtmlAreaYml.class, CURRENT_APPLICATION );
 
         Input input = htmlAreaYml.convertToInput();
 
@@ -256,7 +251,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/textarea-type.yml" );
 
-        final TextAreaYml inputYml = parser.parse( yaml, TextAreaYml.class );
+        final TextAreaYml inputYml = parser.parse( yaml, TextAreaYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -285,7 +280,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/date-type.yml" );
 
-        final DateYml inputYml = parser.parse( yaml, DateYml.class );
+        final DateYml inputYml = parser.parse( yaml, DateYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -306,7 +301,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/datetime-type.yml" );
 
-        final DateTimeYml inputYml = parser.parse( yaml, DateTimeYml.class );
+        final DateTimeYml inputYml = parser.parse( yaml, DateTimeYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -332,7 +327,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/time-type.yml" );
 
-        final TimeYml inputYml = parser.parse( yaml, TimeYml.class );
+        final TimeYml inputYml = parser.parse( yaml, TimeYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -353,7 +348,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/checkbox-type.yml" );
 
-        final CheckBoxYml inputYml = parser.parse( yaml, CheckBoxYml.class );
+        final CheckBoxYml inputYml = parser.parse( yaml, CheckBoxYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -379,7 +374,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/combobox-type.yml" );
 
-        final ComboBoxYml inputYml = parser.parse( yaml, ComboBoxYml.class );
+        final ComboBoxYml inputYml = parser.parse( yaml, ComboBoxYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -417,7 +412,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/attachmentuploader-type.yml" );
 
-        final AttachmentUploaderYml inputYml = parser.parse( yaml, AttachmentUploaderYml.class );
+        final AttachmentUploaderYml inputYml = parser.parse( yaml, AttachmentUploaderYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -432,7 +427,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/imageselector-type.yml" );
 
-        final ImageSelectorYml contentSelectorYml = parser.parse( yaml, ImageSelectorYml.class );
+        final ImageSelectorYml contentSelectorYml = parser.parse( yaml, ImageSelectorYml.class, CURRENT_APPLICATION );
         Input input = contentSelectorYml.convertToInput();
 
         assertEquals( "ImageSelector", input.getInputType().toString() );
@@ -464,7 +459,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/mediaselector-type.yml" );
 
-        final MediaSelectorYml contentSelectorYml = parser.parse( yaml, MediaSelectorYml.class );
+        final MediaSelectorYml contentSelectorYml = parser.parse( yaml, MediaSelectorYml.class, CURRENT_APPLICATION );
         Input input = contentSelectorYml.convertToInput();
 
         assertEquals( "MediaSelector", input.getInputType().toString() );
@@ -501,7 +496,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/contenttypetilter-type.yml" );
 
-        final ContentTypeFilterYml contentSelectorYml = parser.parse( yaml, ContentTypeFilterYml.class );
+        final ContentTypeFilterYml contentSelectorYml = parser.parse( yaml, ContentTypeFilterYml.class, CURRENT_APPLICATION );
         Input input = contentSelectorYml.convertToInput();
 
         assertEquals( "ContentTypeFilter", input.getInputType().toString() );
@@ -526,7 +521,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/tag-type.yml" );
 
-        final TagYml contentSelectorYml = parser.parse( yaml, TagYml.class );
+        final TagYml contentSelectorYml = parser.parse( yaml, TagYml.class, CURRENT_APPLICATION );
         final Input input = contentSelectorYml.convertToInput();
 
         assertEquals( "Tag", input.getInputType().toString() );
@@ -544,7 +539,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/long-type.yml" );
 
-        final LongYml inputYml = parser.parse( yaml, LongYml.class );
+        final LongYml inputYml = parser.parse( yaml, LongYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
@@ -575,7 +570,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/geopoint-type.yml" );
 
-        final GeoPointYml inputYml = parser.parse( yaml, GeoPointYml.class );
+        final GeoPointYml inputYml = parser.parse( yaml, GeoPointYml.class, CURRENT_APPLICATION );
 
         final Input input = inputYml.convertToInput();
 
