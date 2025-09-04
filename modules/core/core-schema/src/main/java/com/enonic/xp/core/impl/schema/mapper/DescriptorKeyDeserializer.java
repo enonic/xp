@@ -21,15 +21,15 @@ public class DescriptorKeyDeserializer
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
         final JsonNode node = mapper.readTree( jsonParser );
 
-        final String trimmedValue = node.asText().trim();
-        if ( trimmedValue.contains( ":" ) )
+        final String rawValue = node.asText();
+        if ( rawValue.contains( ":" ) )
         {
-            return DescriptorKey.from( trimmedValue );
+            return DescriptorKey.from( rawValue );
         }
         else
         {
             final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null );
-            return DescriptorKey.from( currentApplication, trimmedValue );
+            return DescriptorKey.from( currentApplication, rawValue );
         }
     }
 }
