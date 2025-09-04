@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
@@ -36,6 +39,8 @@ import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 public class SortNodeCommand
     extends AbstractNodeCommand
 {
+    private static final Logger LOG = LoggerFactory.getLogger( SortNodeCommand.class);
+
     private static final int BATCH_SIZE = 10_000;
 
     private final SortNodeParams params;
@@ -68,7 +73,7 @@ public class SortNodeCommand
             }
             else
             {
-                reoderChildNoes( node.path(), params.getReorderChildNodes(), result );
+                reorderChildNoes( node.path(), params.getReorderChildNodes(), result );
             }
         }
 
@@ -149,8 +154,8 @@ public class SortNodeCommand
         }
     }
 
-    private void reoderChildNoes( final NodePath parentNodePath, final List<ReorderChildNodeParams> reorderChildNodes,
-                                  final SortNodeResult.Builder result )
+    private void reorderChildNoes( final NodePath parentNodePath, final List<ReorderChildNodeParams> reorderChildNodes,
+                                   final SortNodeResult.Builder result )
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
@@ -166,7 +171,7 @@ public class SortNodeCommand
                 final Node nodeToMoveBefore = doGetById( reorderChildNodeParams.getMoveBefore() );
                 if ( !nodeToMoveBefore.parentPath().equals( parentNodePath ) )
                 {
-                    ///debug( "reordered nodes must be children of " + parentNodePath );
+                    LOG.debug( "Reordered nodes must be children of {}", parentNodePath );
                     continue;
                 }
                 toMoveBeforeValue = nodeToMoveBefore.getManualOrderValue();
@@ -252,9 +257,6 @@ public class SortNodeCommand
         @Override
         void validate()
         {
-            if ( params.getChildOrder().isManualOrder() ) {
-
-            }
             super.validate();
         }
 

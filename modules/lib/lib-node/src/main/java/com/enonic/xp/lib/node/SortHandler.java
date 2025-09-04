@@ -1,8 +1,7 @@
 package com.enonic.xp.lib.node;
 
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.lib.node.mapper.NodeMapper;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.lib.node.mapper.SortNodeResultMapper;
 import com.enonic.xp.node.SortNodeParams;
 
 public class SortHandler
@@ -21,15 +20,10 @@ public class SortHandler
     }
 
     @Override
-    public Object execute()
+    public SortNodeResultMapper execute()
     {
-        final Node node = nodeService.sort( makeSetNodeChildOrderParams() ).getNode();
-        return new NodeMapper( node );
-    }
-
-    private SortNodeParams makeSetNodeChildOrderParams()
-    {
-        return SortNodeParams.create().nodeId( getNodeId( nodeKey ) ).childOrder( childOrder ).build();
+        return new SortNodeResultMapper(
+            nodeService.sort( SortNodeParams.create().nodeId( getNodeId( nodeKey ) ).childOrder( childOrder ).build() ) );
     }
 
     public static Builder create()

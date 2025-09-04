@@ -384,17 +384,14 @@ export interface MoveNodeParams {
     target: string;
 }
 
-/**
- * @deprecated Use {@link SortNodeParams} instead
- */
-export interface SetChildOrderParams {
+export interface SortNodeParams {
     key: string;
     childOrder: string;
 }
 
-export interface SortNodeParams {
-    key: string;
-    childOrder: string;
+export interface SortNodeResult<NodeData> {
+    node: Node<NodeData>
+    reorderedNodes?: Node<NodeData>[]
 }
 
 export interface QueryNodeParams<AggregationInput extends Aggregations = never> {
@@ -674,7 +671,7 @@ export interface RepoConnection {
 
     move(params: MoveNodeParams): boolean;
 
-    sort<NodeData = Record<string, unknown>>(params: SortNodeParams): Node<NodeData>;
+    sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData>;
 
     query<
         AggregationInput extends Aggregations = never
@@ -940,22 +937,6 @@ class RepoConnectionImpl
     }
 
     /**
-     * @deprecated Use {@link sort} instead
-     * Sort node's children
-     *
-     * @param {object} params JSON with the parameters.
-     * @param {string} params.key node's path or id
-     * @param {string} params.childOrder children order
-     * @returns {object} updated node
-     */
-    setChildOrder<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData> {
-        checkRequired(params, 'key');
-        checkRequired(params, 'childOrder');
-
-        return __.toNativeObject(this.nodeHandler.sort(params.key, params.childOrder));
-    }
-
-    /**
      * Sort node's children
 
      * @example-ref examples/node/sort.js
@@ -963,9 +944,9 @@ class RepoConnectionImpl
      * @param {object} params JSON with the parameters.
      * @param {string} params.key node's path or id
      * @param {string} params.childOrder children order
-     * @returns {object} updated node
+     * @returns {object} result with updated nodes
      */
-    sort<NodeData = Record<string, unknown>>(params: SetChildOrderParams): Node<NodeData> {
+    sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData> {
         checkRequired(params, 'key');
         checkRequired(params, 'childOrder');
 
