@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.api.ApiDescriptor;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -23,9 +24,11 @@ public class YmlApiDescriptorParserTest
     {
         final String yaml = readAsString( "/descriptors/api-descriptor.yml" );
 
-        final ApiDescriptor.Builder builder = YmlApiDescriptorParser.parse( yaml );
+        final ApplicationKey currentApplication = ApplicationKey.from( "myapp" );
 
-        builder.key( DescriptorKey.from( "myapp:myapi" ) );
+        final ApiDescriptor.Builder builder = YmlApiDescriptorParser.parse( yaml, currentApplication );
+
+        builder.key( DescriptorKey.from( currentApplication, "myapi" ) );
 
         final ApiDescriptor apiDescriptor = builder.build();
 
