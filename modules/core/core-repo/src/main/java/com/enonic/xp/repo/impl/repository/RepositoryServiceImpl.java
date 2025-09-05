@@ -12,7 +12,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.ValueFactory;
@@ -187,8 +186,8 @@ public class RepositoryServiceImpl
         //If the root node does not exist, creates it
         if ( getRootNode( previousRepository.getId(), newBranch ) == null )
         {
-            final Context context = ContextAccessor.current();
-            final InternalContext internalContext = InternalContext.create( context ).branch( RepositoryConstants.MASTER_BRANCH ).build();
+            final InternalContext internalContext =
+                InternalContext.create( ContextAccessor.current() ).branch( RepositoryConstants.MASTER_BRANCH ).build();
             final NodeBranchEntry rootNode = this.nodeStorageService.getBranchNodeVersion( Node.ROOT_UUID, internalContext );
 
             if ( rootNode == null )
@@ -370,25 +369,20 @@ public class RepositoryServiceImpl
 
     private Node getRootNode( final RepositoryId repositoryId, final Branch branch )
     {
-        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
-            repositoryId( repositoryId ).
-            branch( branch ).
-            build();
-
-        final InternalContext rootNodeInternalContext = InternalContext.create( rootNodeContext ).build();
+        final InternalContext rootNodeInternalContext =
+            InternalContext.create( ContextAccessor.current() ).repositoryId( repositoryId ).branch( branch ).build();
 
         return this.nodeStorageService.get( Node.ROOT_UUID, rootNodeInternalContext );
     }
 
     private void createRootNode( final CreateRepositoryParams params )
     {
-        final Context rootNodeContext = ContextBuilder.from( ContextAccessor.current() ).
+        final InternalContext rootNodeContext = InternalContext.create( ContextAccessor.current() ).
             repositoryId( params.getRepositoryId() ).
             branch( RepositoryConstants.MASTER_BRANCH ).build();
 
-        final Node node = Node.createRoot().permissions( params.getRootPermissions() ).childOrder( params.getRootChildOrder() ).build();
-        final Node rootNode =
-            this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( rootNodeContext ) ).node();
+        Node node = Node.createRoot().permissions( params.getRootPermissions() ).childOrder( params.getRootChildOrder() ).build();
+        final Node rootNode = this.nodeStorageService.store( StoreNodeParams.newVersion( node ), rootNodeContext ).node();
 
         doRefresh();
 

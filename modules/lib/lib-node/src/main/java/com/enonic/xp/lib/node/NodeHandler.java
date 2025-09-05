@@ -48,9 +48,9 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object setChildOrder( final String key, final String childOrder )
+    public Object sort( final String key, final String childOrder )
     {
-        return execute( SetChildOrderHandler.create()
+        return execute( SortHandler.create()
                             .nodeService( this.nodeService )
                             .key( NodeKey.from( key ) )
                             .childOrder( ChildOrder.from( childOrder ) )

@@ -36,9 +36,8 @@ import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildContentsResult;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentResult;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -422,14 +421,14 @@ public class ContentAuditLogSupportImpl
     }
 
     @Override
-    public void setChildOrder( final SetContentChildOrderParams params, final Content content )
+    public void sort( final SortContentParams params, final SortContentResult result )
     {
         final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
 
-        executor.execute( () -> doSetChildOrder( params, content, context ) );
+        executor.execute( () -> doSort( params, result, context ) );
     }
 
-    private void doSetChildOrder( final SetContentChildOrderParams params, final Content content, final Context rootContext )
+    private void doSort( final SortContentParams params, final SortContentResult result, final Context rootContext )
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet paramsSet = data.addSet( "params" );
@@ -437,32 +436,12 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
         paramsSet.addString( "childOrder", nullToNull( params.getChildOrder() ) );
+        paramsSet.addString( "manualOrderSeed", nullToNull( params.getChildOrder() ) );
+        addContents( resultSet, result.getMovedChildren(), "movedChildren" );
 
-        addContent( resultSet, content );
+        addContent( resultSet, result.getContent() );
 
-        log( "system.content.setChildOrder", data, content.getId(), rootContext );
-    }
-
-    @Override
-    public void reorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doReorderChildren( params, result, context ) );
-    }
-
-    private void doReorderChildren( final ReorderChildContentsParams params, final ReorderChildContentsResult result,
-                                    final Context rootContext )
-    {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-        final PropertySet resultSet = data.addSet( "result" );
-
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-
-        resultSet.addLong( "size", (long) result.getMovedChildren() );
-
-        log( "system.content.reorderChildren", data, params.getContentId(), rootContext );
+        log( "system.content.sort", data, result.getContent().getId(), rootContext );
     }
 
     @Override
@@ -518,29 +497,6 @@ public class ContentAuditLogSupportImpl
             .collect( AuditLogUris.collector() );
 
         log( "system.content.applyPermissions", data, auditLogUris, rootContext );
-    }
-
-    @Override
-    public void reprocess( final Content content )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doReprocess( content, context ) );
-    }
-
-    private void doReprocess( final Content content, final Context rootContext )
-    {
-        final ContentId contentId = content.getId();
-
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-        final PropertySet resultSet = data.addSet( "result" );
-
-        paramsSet.addString( "contentId", nullToNull( contentId ) );
-
-        addContent( resultSet, content );
-
-        log( "system.content.reprocess", data, contentId, rootContext );
     }
 
     private void addContent( final PropertySet targetSet, final Content content )

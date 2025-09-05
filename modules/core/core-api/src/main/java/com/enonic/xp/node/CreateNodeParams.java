@@ -51,7 +51,7 @@ public final class CreateNodeParams
         this.nodeId = builder.nodeId;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
-        this.insertManualStrategy = builder.insertManualStrategy;
+        this.insertManualStrategy = Objects.requireNonNullElse( builder.insertManualStrategy, InsertManualStrategy.FIRST );
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
         this.binaryAttachments = builder.binaryAttachments.build();
@@ -163,7 +163,7 @@ public final class CreateNodeParams
 
         private boolean inheritPermissions;
 
-        private InsertManualStrategy insertManualStrategy = InsertManualStrategy.FIRST;
+        private InsertManualStrategy insertManualStrategy;
 
         private Long manualOrderValue;
 

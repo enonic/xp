@@ -9,6 +9,8 @@ dependencies {
     testImplementation( testFixtures( project(":core:core-app") ) )
     testImplementation( testFixtures( project(":core:core-internal") ) )
     testImplementation project( ':tools:testing' )
+
+    testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
 }
 
 jar {

@@ -24,12 +24,6 @@ public class FindNodeCommitsCommand
     public NodeCommitQueryResult execute()
     {
         final SearchResult result = this.nodeSearchService.query( query, ContextAccessor.current().getRepositoryId() );
-
-        if ( result.isEmpty() )
-        {
-            return NodeCommitQueryResult.empty( result.getTotalHits() );
-        }
-
         return NodeCommitQueryResultFactory.create( query, result );
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;

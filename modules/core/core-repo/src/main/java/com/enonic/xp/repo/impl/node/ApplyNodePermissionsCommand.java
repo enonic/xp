@@ -138,13 +138,11 @@ public class ApplyNodePermissionsCommand
     {
         final List<Map<Branch, Node>> result = new ArrayList<>();
 
-        final Context sourceBranchContext = ContextBuilder.from( ContextAccessor.current() ).build();
-
         final NodeIds childrenIds = NodeIds.from(
             this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( node.path() ).build(),
-                                          SingleRepoSearchSource.from( sourceBranchContext ) ).getIds() );
+                                          SingleRepoSearchSource.from(  ContextAccessor.current() ) ).getIds() );
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( sourceBranchContext ) );
+        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from(  ContextAccessor.current() ) );
 
         children.stream().map( child -> getActiveNodes( child.id(), this.branches ) ).forEach( result::add );
 
@@ -198,7 +196,6 @@ public class ApplyNodePermissionsCommand
         }
 
         return NodeHelper.runAsAdmin( () -> {
-            NodeVersionData result;
             if ( updatedVersionMetadata != null )
             {
                 this.nodeStorageService.push( List.of( PushNodeEntry.create()
@@ -214,7 +211,7 @@ public class ApplyNodePermissionsCommand
                 }, targetContext );
 
                 return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(),
-                                                                    InternalContext.create( ContextAccessor.current() ).build() ),
+                                                                    InternalContext.from( ContextAccessor.current() ) ),
                                             updatedVersionMetadata );
             }
             else
@@ -225,11 +222,11 @@ public class ApplyNodePermissionsCommand
                         compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
                                                          params.getRemovePermissions() ) )
                     .build();
-                result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
-            }
+                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
 
-            listener.permissionsApplied( 1 );
-            return result;
+                listener.permissionsApplied( 1 );
+                return result;
+            }
         } );
     }
 
@@ -237,12 +234,12 @@ public class ApplyNodePermissionsCommand
     {
         final Map<Branch, Node> result = new HashMap<>();
 
-        branches.forEach( branch -> {
-            final InternalContext context =
-                InternalContext.from( ContextBuilder.copyOf( ContextAccessor.current() ).branch( branch ).build() );
-            final Node node = nodeStorageService.get( nodeId, context );
+        for ( Branch branch : branches )
+        {
+            final Node node =
+                nodeStorageService.get( nodeId, InternalContext.create( ContextAccessor.current() ).branch( branch ).build() );
             result.put( branch, node );
-        } );
+        }
 
         return result;
     }

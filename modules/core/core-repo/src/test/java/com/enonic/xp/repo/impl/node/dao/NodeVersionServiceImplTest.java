@@ -266,8 +266,7 @@ class NodeVersionServiceImplTest
 
     protected InternalContext createInternalContext()
     {
-        final Context currentContext = ContextAccessor.current();
-        return InternalContext.create( currentContext ).build();
+        return InternalContext.from( ContextAccessor.current() );
     }
 
     private <T> T executeInContext( final Callable<T> runnable )

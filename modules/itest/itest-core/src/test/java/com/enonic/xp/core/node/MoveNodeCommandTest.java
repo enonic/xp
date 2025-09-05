@@ -1,14 +1,11 @@
 package com.enonic.xp.core.node;
 
-import java.util.Iterator;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -26,6 +23,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -424,7 +422,6 @@ public class MoveNodeCommandTest
 
     @Test
     public void move_to_manually_ordered_parent()
-        throws Exception
     {
         final Node originalRoot = createNode( NodePath.ROOT, "a1" );
         final Node a1_1 = createNode( originalRoot.path(), "a1_1" );
@@ -440,15 +437,7 @@ public class MoveNodeCommandTest
         doMoveNode( newParent.path(), a1_2.id() );
 
         refresh();
-
-        final FindNodesByParentResult result = findByParent( newParent.path() );
-
-        final Iterator<NodeId> iterator = result.getNodeIds().iterator();
-
-        assertEquals( a1_2.id(), iterator.next() );
-        assertEquals( a1_1.id(), iterator.next() );
-        assertEquals( a2_2.id(), iterator.next() );
-        assertEquals( a2_1.id(), iterator.next() );
+        assertThat( findByParent( newParent.path() ).getNodeIds() ).containsExactly( a1_2.id(), a1_1.id(), a2_2.id(), a2_1.id() );
     }
 
     @Test

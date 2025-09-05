@@ -3,6 +3,7 @@ package com.enonic.xp.lib.task;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;

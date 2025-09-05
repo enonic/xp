@@ -91,8 +91,7 @@ public class FindNodeIdsByParentCommand
             .from( from )
             .size( size )
             .searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH )
-            .setOrderExpressions( order.getOrderExpressions() )
-            .accurateScoring( true );
+            .setOrderExpressions( order.getOrderExpressions() );
 
         if ( !recursive )
         {

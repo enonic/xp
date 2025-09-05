@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node.event;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -17,6 +19,7 @@ import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -102,8 +105,13 @@ public class NodeEventListenerTest
         final NodeId nodeId = NodeId.from( "node1" );
         final NodePath nodePath = new NodePath( "/nodeName" );
 
-        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).build();
-
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create()
+            .nodeId( nodeId )
+            .nodeVersionId( new NodeVersionId() )
+            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+            .timestamp( Instant.EPOCH )
+            .nodePath( nodePath )
+            .build();
         final Event localEvent = NodeEvents.deleted( NodeBranchEntries.create().add( nodeBranchEntry ).build(), createInternalContext() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
@@ -186,7 +194,13 @@ public class NodeEventListenerTest
         final NodePath nodePath = new NodePath( "/nodeName" );
         final NodePath previousNodePath = new NodePath( "/previousName" );
 
-        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create().nodeId( nodeId ).nodePath( nodePath ).build();
+        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create()
+            .nodeId( nodeId )
+            .nodeVersionId( new NodeVersionId() )
+            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+            .timestamp( Instant.EPOCH )
+            .nodePath( nodePath )
+            .build();
         final PushNodeEntry pushNodeEntry =
             PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).currentTargetPath( previousNodePath ).build();
 

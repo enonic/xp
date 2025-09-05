@@ -1,6 +1,5 @@
 package com.enonic.xp.core.node;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import com.google.common.io.ByteSource;
 
@@ -24,7 +21,6 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -32,13 +28,15 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.node.ReorderChildNodeParams;
+import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
 import com.enonic.xp.repo.impl.node.DuplicateNodeResult;
-import com.enonic.xp.repo.impl.node.ReorderChildNodeCommand;
-import com.enonic.xp.repo.impl.node.SetNodeChildOrderCommand;
+import com.enonic.xp.repo.impl.node.SortNodeCommand;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,11 +47,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 public class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
-    @Mock
+    @Mock(strictness = Mock.Strictness.LENIENT)
     private DuplicateNodeListener duplicateNodeListener;
 
     @BeforeEach
@@ -253,21 +250,27 @@ public class DuplicateNodeCommandTest
     public void manual_order_kept()
     {
         final Node parentNode =
-            createNode( CreateNodeParams.create().parent( NodePath.ROOT ).setNodeId( NodeId.from( "my-node" ) ).name( "my-node" ).build() );
+            createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
 
         final Node childNode1 = createNode(
-            CreateNodeParams.create().parent( parentNode.path() ).setNodeId( NodeId.from( "child1" ) ).name( "child1" ).build() );
+            CreateNodeParams.create().parent( parentNode.path() ).name( "child1" ).build() );
 
-        createNode( CreateNodeParams.create().parent( parentNode.path() ).setNodeId( NodeId.from( "child2" ) ).name( "child2" ).build() );
+        createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "child2" ).build() );
 
         final Node childNode3 = createNode(
-            CreateNodeParams.create().parent( parentNode.path() ).setNodeId( NodeId.from( "child3" ) ).name( "child3" ).build() );
+            CreateNodeParams.create().parent( parentNode.path() ).name( "child3" ).build() );
 
-        setManualOrder( parentNode );
-
-        assertOrder( parentNode, "child3", "child2", "child1" );
-
-        put_child1_on_top( parentNode, childNode1, childNode3 );
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( parentNode.id() )
+                         .childOrder( ChildOrder.manualOrder() )
+                         .addManualOrder( ReorderChildNodeParams.create().nodeId( childNode1.id() ).moveBefore( childNode3.id() ).build() )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         assertOrder( parentNode, "child1", "child3", "child2" );
 
@@ -319,8 +322,7 @@ public class DuplicateNodeCommandTest
         final Node a1Duplicate = duplicateNode( a1 ).getNode();
 
         refresh();
-
-        final NodeIds children = findChildren( a1Duplicate ).getNodeIds();
+        final NodeIds children = findByParent( a1Duplicate.path() ).getNodeIds();
         assertEquals( 2, children.getSize() );
 
         assertDuplicatedTree( a1.path(), a1, a1Duplicate );
@@ -333,8 +335,9 @@ public class DuplicateNodeCommandTest
 
         assertReferenceIntegrity( duplicatedTreeRootPath, originalReferences, duplicateReferences );
 
-        final Nodes originalChildren = getNodes( findChildren( originalNode ).getNodeIds() );
-        final Nodes duplicatedChildren = getNodes( findChildren( duplicatedNode ).getNodeIds() );
+        refresh();
+        final Nodes originalChildren = getNodes( findByParent( originalNode.path() ).getNodeIds() );
+        final Nodes duplicatedChildren = getNodes( findByParent( duplicatedNode.path() ).getNodeIds() );
 
         assertEquals( originalChildren.getSize(), duplicatedChildren.getSize() );
 
@@ -424,48 +427,14 @@ public class DuplicateNodeCommandTest
         return parent.equals( candidate ) || candidate.getParentPaths().contains( parent );
     }
 
-    private void assertOrder( final Node parentNode, final String first, final String second, final String third )
+    private void assertOrder( final Node parentNode, final String... names )
     {
-        final FindNodesByParentResult children = findChildren( parentNode );
-
-        final Iterator<NodeId> iterator = children.getNodeIds().iterator();
-
-        assertEquals( first, getNode( iterator.next() ).name().toString() );
-        assertEquals( second, getNode( iterator.next() ).name().toString() );
-        assertEquals( third, getNode( iterator.next() ).name().toString() );
-    }
-
-    private void put_child1_on_top( final Node parentNode, final Node childNode1, final Node childNode3 )
-    {
-        ReorderChildNodeCommand.create()
-            .parentNode( getNodeById( parentNode.id() ) )
-            .nodeToMove( getNodeById( childNode1.id() ) )
-            .nodeToMoveBefore( getNodeById( childNode3.id() ) )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.storageService )
-            .searchService( this.searchService )
-            .build()
-            .execute();
         refresh();
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( this::getNode )
+            .map( Node::name )
+            .map( NodeName::toString )
+            .containsExactly( names );
     }
-
-    private void setManualOrder( final Node parentNode )
-    {
-        SetNodeChildOrderCommand.create()
-            .nodeId( parentNode.id() )
-            .childOrder( ChildOrder.manualOrder() )
-            .indexServiceInternal( indexServiceInternal )
-            .storageService( this.storageService )
-            .searchService( this.searchService )
-            .build()
-            .execute();
-    }
-
-    private FindNodesByParentResult findChildren( final Node node )
-    {
-        return findByParent( node.path() );
-    }
-
 
     private DuplicateNodeResult duplicateNode( final Node node1 )
     {

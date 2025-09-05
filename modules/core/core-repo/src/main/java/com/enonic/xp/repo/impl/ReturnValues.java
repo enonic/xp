@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class ReturnValues
 {
@@ -33,6 +34,13 @@ public class ReturnValues
         }
 
         return returnValue.getSingleValue();
+    }
+
+    public Optional<Object> getOptional( final String key )
+    {
+        final ReturnValue returnValue = returnValues.get( key );
+
+        return returnValue == null ? Optional.empty() : Optional.of( returnValue.getSingleValue() );
     }
 
     public ReturnValue get( final String key )

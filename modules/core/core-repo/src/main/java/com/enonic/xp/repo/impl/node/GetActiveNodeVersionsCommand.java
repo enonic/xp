@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeBranchEntry;
@@ -41,17 +40,12 @@ public class GetActiveNodeVersionsCommand
 
         for ( final Branch branch : branches )
         {
-            final Context context = ContextAccessor.current();
-
-            final NodeBranchEntry nodeBranchEntry =
-                this.nodeStorageService.getBranchNodeVersion( this.nodeId, InternalContext.create( context ).
-                    branch( branch ).
-                    build() );
+            final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
+            final NodeBranchEntry nodeBranchEntry = this.nodeStorageService.getBranchNodeVersion( this.nodeId, internalContext );
 
             if ( nodeBranchEntry != null )
             {
-                builder.add( branch, this.nodeStorageService.getVersion( nodeBranchEntry.getVersionId(),
-                                                                         InternalContext.from( context ) ) );
+                builder.add( branch, this.nodeStorageService.getVersion( nodeBranchEntry.getVersionId(), internalContext ) );
             }
         }
         return builder.build();

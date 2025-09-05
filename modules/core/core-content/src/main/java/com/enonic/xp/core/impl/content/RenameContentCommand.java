@@ -67,6 +67,7 @@ final class RenameContentCommand
         }
 
         processors.add( ( data, newNodePath ) -> {
+            data = data.copy();
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );

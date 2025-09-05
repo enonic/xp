@@ -2,65 +2,96 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.InsertManualStrategy;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchHit;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class ResolveInsertOrderValueCommand
     extends AbstractNodeCommand
 {
     private final NodePath parentPath;
 
-    private final InsertManualStrategy insertManualStrategy;
+    private final boolean lower;
+
+    private final Long referenceValue;
 
     private ResolveInsertOrderValueCommand( final Builder builder )
     {
         super( builder );
         parentPath = builder.parentPath;
-        insertManualStrategy = builder.insertManualStrategy;
+        referenceValue = builder.referenceValue;
+        lower = builder.lower;
     }
 
-    public Long execute()
+    public long execute()
     {
-        refresh( RefreshMode.SEARCH );
-
-        final ChildOrder childOrder =
-            InsertManualStrategy.LAST.equals( insertManualStrategy ) ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
-
-        final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
-                                                                                    .size( 1 )
-                                                                                    .setOrderExpressions( childOrder.getOrderExpressions() )
-                                                                                    .accurateScoring( true )
-                                                                                    .parent( parentPath )
-                                                                                    .build(),
-                                                                                SingleRepoSearchSource.from( ContextAccessor.current() ) )
-                                                      .getIds() );
-
-        if ( childrenIds.isEmpty() )
+        final Long manualOrderValue = NodeHelper.runAsAdmin( this::getManualOrderValue );
+        if ( referenceValue == null )
         {
-            return NodeManualOrderValueResolver.START_ORDER_VALUE;
-        }
-        else
-        {
-            final Node first = doGetById( childrenIds.first() );
-            if ( first.getManualOrderValue() == null )
+            if ( manualOrderValue == null )
             {
-                throw new IllegalArgumentException( "Expected that node " + first +
-                                                        " should have manualOrderValue since parent childOrder = manualOrderValue, but value was null" );
-            }
-
-            if ( InsertManualStrategy.LAST.equals( insertManualStrategy ) )
-            {
-                return first.getManualOrderValue() - NodeManualOrderValueResolver.ORDER_SPACE;
+                return NodeManualOrderValueResolver.first();
             }
             else
             {
-                return first.getManualOrderValue() + NodeManualOrderValueResolver.ORDER_SPACE;
+                return lower
+                    ? NodeManualOrderValueResolver.after( manualOrderValue )
+                    : NodeManualOrderValueResolver.before( manualOrderValue );
             }
+        }
+        else
+        {
+            if ( manualOrderValue == null )
+            {
+                return lower ? NodeManualOrderValueResolver.before( referenceValue ) : NodeManualOrderValueResolver.after( referenceValue );
+            }
+            else
+            {
+                return lower
+                    ? NodeManualOrderValueResolver.after( manualOrderValue )
+                    : NodeManualOrderValueResolver.between( referenceValue, manualOrderValue );
+            }
+        }
+    }
+
+    private Long getManualOrderValue()
+    {
+        final ChildOrder childOrder = lower ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
+
+        final NodeQuery.Builder query =
+            NodeQuery.create().size( 1 ).parent( parentPath ).setOrderExpressions( childOrder.getOrderExpressions() );
+
+        if ( referenceValue != null )
+        {
+            query.query( QueryExpr.from(
+                CompareExpr.gt( FieldExpr.from( NodeIndexPath.MANUAL_ORDER_VALUE ), ValueExpr.number( referenceValue ) ) ) );
+        }
+
+        refresh( RefreshMode.SEARCH );
+        final SearchResult searchResult =
+            this.nodeSearchService.query( query.build(), ReturnFields.from( NodeIndexPath.MANUAL_ORDER_VALUE ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+        if ( searchResult.isEmpty() )
+        {
+            return null;
+        }
+        else
+        {
+            final SearchHit hit = searchResult.getHits().getFirst();
+            return hit.getReturnValues()
+                .getOptional( NodeIndexPath.MANUAL_ORDER_VALUE.getPath() )
+                .map( Object::toString )
+                .map( Long::valueOf )
+                .orElseThrow(
+                    () -> new IllegalStateException( String.format( "Node with id [%s] missing manual order value", hit.getId() ) ) );
         }
     }
 
@@ -79,7 +110,9 @@ public class ResolveInsertOrderValueCommand
     {
         private NodePath parentPath;
 
-        private InsertManualStrategy insertManualStrategy;
+        private boolean lower;
+
+        private Long referenceValue;
 
         private Builder()
         {
@@ -96,9 +129,15 @@ public class ResolveInsertOrderValueCommand
             return this;
         }
 
-        public Builder insertManualStrategy( final InsertManualStrategy val )
+        public Builder lower( final boolean val )
         {
-            insertManualStrategy = val;
+            lower = val;
+            return this;
+        }
+
+        public Builder referenceValue( final Long val )
+        {
+            referenceValue = val;
             return this;
         }
 

@@ -6,7 +6,7 @@ var repo = nodeLib.connect({
     branch: 'master'
 });
 
-var node = repo.setChildOrder({
+var node = repo.sort({
     key: 'nodeId',
     childOrder: 'field DESC'
 });

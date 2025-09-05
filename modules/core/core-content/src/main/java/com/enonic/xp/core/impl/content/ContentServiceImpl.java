@@ -71,12 +71,11 @@ import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildContentsResult;
-import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.SortContentResult;
+import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -96,9 +95,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.ReorderChildNodesResult;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -775,63 +773,49 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Content setChildOrder( final SetContentChildOrderParams params )
+    public SortContentResult sort( final SortContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
         try
         {
-            final SetNodeChildOrderParams.Builder builder = SetNodeChildOrderParams.create()
+            final SortNodeParams.Builder paramsBuilder = SortNodeParams.create()
                 .nodeId( NodeId.from( params.getContentId() ) )
                 .refresh( RefreshMode.ALL )
-                .childOrder( params.getChildOrder() );
+                .childOrder( params.getChildOrder() )
+                .manualOrderSeed( params.getManualOrderSeed() );
+
+            for ( final ReorderChildContentParams param : params.getReorderChildContents() )
+            {
+                paramsBuilder.addManualOrder( ReorderChildNodeParams.create()
+                                            .nodeId( NodeId.from( param.getContentToMove() ) )
+                                            .moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) )
+                                            .build() );
+            }
 
             if ( params.stopInherit() )
             {
-                builder.processor( InheritedContentDataProcessor.SORT );
+                paramsBuilder.processor( InheritedContentDataProcessor.SORT );
             }
 
-            final Node node = nodeService.setChildOrder( builder.build() );
+            final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
-            final Content content = translator.fromNode( node, true );
+            final Content content = translator.fromNode( sortNodeResult.getNode(), true );
 
-            contentAuditLogSupport.setChildOrder( params, content );
+            final SortContentResult result = SortContentResult.create()
+                .content( content )
+                .movedChildren(
+                    sortNodeResult.getReorderedNodes().stream().map( Node::id ).map( ContentId::from ).collect( ContentIds.collector() ) )
+                .build();
 
-            return content;
+            contentAuditLogSupport.sort( params, result );
+
+            return result;
         }
         catch ( NodeAccessException e )
         {
             throw new ContentAccessException( e );
         }
-    }
-
-    @Override
-    public ReorderChildContentsResult reorderChildren( final ReorderChildContentsParams params )
-    {
-        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
-
-        final ReorderChildNodesParams.Builder builder = ReorderChildNodesParams.create().refresh( RefreshMode.ALL );
-
-        for ( final ReorderChildParams param : params )
-        {
-            builder.add( ReorderChildNodeParams.create()
-                             .nodeId( NodeId.from( param.getContentToMove() ) )
-                             .moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) )
-                             .build() );
-        }
-
-        if ( params.stopInherit() )
-        {
-            builder.processor( InheritedContentDataProcessor.SORT );
-        }
-
-        final ReorderChildNodesResult reorderChildNodesResult = this.nodeService.reorderChildren( builder.build() );
-
-        final ReorderChildContentsResult result = new ReorderChildContentsResult( reorderChildNodesResult.getSize() );
-
-        contentAuditLogSupport.reorderChildren( params, result );
-
-        return result;
     }
 
     @Override

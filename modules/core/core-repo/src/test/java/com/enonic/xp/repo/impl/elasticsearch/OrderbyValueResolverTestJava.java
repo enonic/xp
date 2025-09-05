@@ -22,13 +22,13 @@ public class OrderbyValueResolverTestJava
 
         List<String> orderStrings = new ArrayList<>();
         final String third = OrderbyValueResolver.getOrderbyValue(
-            ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE + NodeManualOrderValueResolver.ORDER_SPACE ) );
+            ValueFactory.newDouble( (double) NodeManualOrderValueResolver.before( NodeManualOrderValueResolver.first() ) ) );
         orderStrings.add( third );
         final String second =
-            OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE ) );
+            OrderbyValueResolver.getOrderbyValue( ValueFactory.newDouble( (double) NodeManualOrderValueResolver.first() ) );
         orderStrings.add( second );
         final String first = OrderbyValueResolver.getOrderbyValue(
-            ValueFactory.newDouble( (double) NodeManualOrderValueResolver.START_ORDER_VALUE - NodeManualOrderValueResolver.ORDER_SPACE ) );
+            ValueFactory.newDouble( (double) NodeManualOrderValueResolver.after( NodeManualOrderValueResolver.first() ) ) );
         orderStrings.add( first );
         Collections.sort( orderStrings );
 
@@ -36,7 +36,5 @@ public class OrderbyValueResolverTestJava
         assertEquals( first, iterator.next() );
         assertEquals( second, iterator.next() );
         assertEquals( third, iterator.next() );
-
     }
-
 }

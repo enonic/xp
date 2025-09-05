@@ -221,10 +221,10 @@ public class ResolveSyncWorkCommand
     {
         final NodeIds.Builder parentIdBuilder = NodeIds.create();
 
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         for ( final NodePath parent : parentPaths )
         {
-            final NodeBranchEntry parentNodeBranchEntry =
-                this.nodeStorageService.getBranchNodeVersion( parent, InternalContext.from( ContextAccessor.current() ) );
+            final NodeBranchEntry parentNodeBranchEntry = this.nodeStorageService.getBranchNodeVersion( parent, internalContext );
 
             if ( parentNodeBranchEntry == null )
             {

@@ -24,12 +24,6 @@ public class FindNodeVersionsCommand
     public NodeVersionQueryResult execute()
     {
         final SearchResult result = this.nodeSearchService.query( query, ContextAccessor.current().getRepositoryId() );
-
-        if ( result.isEmpty() )
-        {
-            return NodeVersionQueryResult.empty( result.getTotalHits() );
-        }
-
         return NodeVersionQueryResultFactory.create( query, result );
     }
 

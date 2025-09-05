@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.BlobKeys;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
@@ -25,7 +27,9 @@ public class GetActiveVersionHandlerTest
     {
         final NodeVersionMetadata nodeVersionMeta = NodeVersionMetadata.create().
             nodeId( NodeId.from( "nodeId1" ) ).
+            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId1" ) ).
+            binaryBlobKeys( BlobKeys.empty() ).
             nodePath( NodePath.ROOT ).
             timestamp( Instant.ofEpochSecond( 1000 ) ).
             build();

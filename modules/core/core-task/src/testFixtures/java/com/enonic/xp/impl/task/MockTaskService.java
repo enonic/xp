@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.task;
+package com.enonic.xp.impl.task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskService;
 
-class MockTaskService
+public class MockTaskService
     implements TaskService, ProgressReporter
 {
     public TaskId taskId;

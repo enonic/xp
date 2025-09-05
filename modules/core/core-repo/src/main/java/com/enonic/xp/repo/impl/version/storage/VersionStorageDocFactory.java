@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.version.storage;
 
-import java.time.Instant;
-
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
@@ -22,7 +20,7 @@ public class VersionStorageDocFactory
             add( VersionIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getAccessControlBlobKey().toString() ).
             add( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), nodeVersion.getBinaryBlobKeys() ).
             add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() ).
-            add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() != null ? nodeVersion.getTimestamp() : Instant.now() ).
+            add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() ).
             add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() );
 
         if ( nodeVersion.getNodeCommitId() != null) {

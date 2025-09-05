@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.reader;
 
 import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,9 +10,7 @@ import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
@@ -39,13 +38,13 @@ public class BranchEntryProcessor
 
         final VersionMeta meta = branchDumpEntry.getMeta();
 
-        addNode( result, branchDumpEntry, meta );
+        addNode( result, meta );
 
         this.result = result.build();
         return true;
     }
 
-    private void addNode( final EntryLoadResult.Builder result, final BranchDumpEntry branchDumpEntry, final VersionMeta meta )
+    private void addNode( final EntryLoadResult.Builder result, final VersionMeta meta )
     {
         final NodeVersion nodeVersion = getVersion( meta );
 
@@ -55,17 +54,16 @@ public class BranchEntryProcessor
             return;
         }
 
-        final Node node = NodeFactory.create( nodeVersion, NodeBranchEntry.create().
-            nodeId( branchDumpEntry.getNodeId() ).
-            nodePath( meta.getNodePath() ).
-            timestamp( meta.getTimestamp() ).
-            nodeVersionId( meta.getVersion() ).
-            build() );
+        final Node.Builder nodeBuilder = Node.create( nodeVersion ).nodeVersionId( meta.getVersion() ).timestamp( meta.getTimestamp().truncatedTo( ChronoUnit.MILLIS ) );
+        if ( !nodeVersion.getId().equals( Node.ROOT_UUID ) )
+        {
+            nodeBuilder.parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() );
+        }
 
         try
         {
             this.nodeService.loadNode( LoadNodeParams.create().
-                node( node ).
+                node( nodeBuilder.build() ).
                 nodeCommitId( meta.getNodeCommitId() ).
                 build() );
 
@@ -75,7 +73,8 @@ public class BranchEntryProcessor
         }
         catch ( Exception e )
         {
-            final String message = String.format( "Cannot load node with id %s, path %s: %s", node.id(), node.path(), e.getMessage() );
+            final String message =
+                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.getNodePath(), e.getMessage() );
             result.error( EntryLoadError.error( message ) );
             LOG.error( message, e );
         }
@@ -89,7 +88,7 @@ public class BranchEntryProcessor
         }
         catch ( RepoLoadException e )
         {
-            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: " + meta.getVersion(), e );
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.getVersion(), e );
             return null;
         }
     }

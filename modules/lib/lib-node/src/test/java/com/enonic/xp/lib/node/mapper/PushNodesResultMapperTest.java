@@ -1,10 +1,14 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.testing.helper.JsonAssert;
 
@@ -48,9 +52,12 @@ public class PushNodesResultMapperTest
 
     static NodeBranchEntry createEntry( final String a )
     {
-        return NodeBranchEntry.create().
-            nodeId( NodeId.from( a ) ).
-            nodePath( new NodePath( "/" + a ) ).
-            build();
+        return NodeBranchEntry.create()
+            .nodeId( NodeId.from( a ) )
+            .nodePath( new NodePath( "/" + a ) )
+            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+            .nodeVersionId( new NodeVersionId() )
+            .timestamp( Instant.EPOCH )
+            .build();
     }
 }

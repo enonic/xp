@@ -26,6 +26,7 @@ import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
@@ -47,6 +48,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -190,6 +192,9 @@ public class ApplicationServiceImplTest
                                     .add( NodeBranchEntry.create()
                                               .nodeId( NodeId.from( "nodeId" ) )
                                               .nodePath( new NodePath( "/app1" ) )
+                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+                                              .nodeVersionId( new NodeVersionId() )
+                                              .timestamp( Instant.EPOCH )
                                               .build() )
                                     .build() )
             .build();
@@ -208,6 +213,9 @@ public class ApplicationServiceImplTest
                                     .add( NodeBranchEntry.create()
                                               .nodeId( NodeId.from( "nodeId" ) )
                                               .nodePath( new NodePath( "/app1" ) )
+                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+                                              .nodeVersionId( new NodeVersionId() )
+                                              .timestamp( Instant.EPOCH )
                                               .build() )
                                     .build() )
             .build();

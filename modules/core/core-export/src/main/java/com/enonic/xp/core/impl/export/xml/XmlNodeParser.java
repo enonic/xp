@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public final class XmlNodeParser
         }
 
         final String timestampString = root.getChildValue( "timestamp" );
-        this.builder.timestamp( nullToEmpty( timestampString ).isBlank() ? null : Instant.parse( timestampString ) );
+        this.builder.timestamp( nullToEmpty( timestampString ).isBlank() ? null : Instant.parse( timestampString ).truncatedTo( ChronoUnit.MILLIS ) );
 
         this.builder.childOrder( ChildOrder.from( root.getChildValue( "childOrder" ) ) );
         this.builder.nodeType( NodeType.from( root.getChildValue( "nodeType" ) ) );

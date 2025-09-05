@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 
 
@@ -33,9 +34,11 @@ final class ProjectSyncCommand
 
         if ( !targetProject.getParents().isEmpty() )
         {
-            targetProject.getParents()
-                .forEach( parent -> contentSynchronizer.sync(
-                    ContentSyncParams.create().sourceProject( parent ).targetProject( params.getTargetProject() ).build() ) );
+            for ( ProjectName parent : targetProject.getParents() )
+            {
+                contentSynchronizer.sync(
+                    ContentSyncParams.create().sourceProject( parent ).targetProject( params.getTargetProject() ).build() );
+            }
         }
         else
         {

@@ -12,7 +12,14 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
+import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
@@ -70,24 +77,25 @@ public class ReindexExecutor
 
     private void doReindexBranchNew( final RepositoryId repositoryId, final ReindexResult.Builder builder, final Branch branch )
     {
-        final NodeBranchEntries nodeBranchEntries = GetBranchDataCommand.create().
-            branch( branch ).
-            repositoryId( repositoryId ).
-            nodeSearchService( this.nodeSearchService ).
-            build().execute();
+        final NodeBranchEntries nodeBranchEntries = NodeBranchQueryResultFactory.create( this.nodeSearchService.query(
+            NodeBranchQuery.create()
+                .query( QueryExpr.from(
+                    CompareExpr.create( FieldExpr.from( BranchIndexPath.BRANCH_NAME.getPath() ), CompareExpr.Operator.EQ,
+                                        ValueExpr.string( branch.getValue() ) ) ) )
+                .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+                .build(), this.repositoryId ) );
 
         if ( listener != null )
         {
             listener.branch( repositoryId, branch, nodeBranchEntries.getSize() );
         }
 
+        final InternalContext context = InternalContext.create( ContextAccessor.current() ).
+            repositoryId( repositoryId ).
+            branch( branch ).
+            build();
         for ( final NodeBranchEntry nodeBranchEntry : nodeBranchEntries )
         {
-            final InternalContext context = InternalContext.create( ContextAccessor.current() ).
-                repositoryId( repositoryId ).
-                branch( branch ).
-                build();
-
             final NodeVersion nodeVersion = this.nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
             final Node node = NodeFactory.create( nodeVersion, nodeBranchEntry );

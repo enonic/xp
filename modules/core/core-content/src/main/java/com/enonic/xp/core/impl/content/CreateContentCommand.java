@@ -164,17 +164,12 @@ final class CreateContentCommand
             .creator( getCurrentUser().getKey() )
             .owner( getDefaultOwner( processedContent ) );
         populateName( builder );
-        setChildOrder( builder );
+        builder.childOrder( Objects.requireNonNullElse( this.params.getChildOrder(), ContentConstants.DEFAULT_CHILD_ORDER ) );
         populateLanguage( builder );
 
         populateValid( builder );
 
         return builder.build();
-    }
-
-    private void setChildOrder( final CreateContentTranslatorParams.Builder builder )
-    {
-        builder.childOrder( this.params.getChildOrder() != null ? this.params.getChildOrder() : ContentConstants.DEFAULT_CHILD_ORDER );
     }
 
     private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
