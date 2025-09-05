@@ -1,0 +1,16 @@
+dependencies {
+    implementation project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
+    implementation project( ':core:core-schema' )
+
+    testFixturesImplementation libs.junit.jupiter.api
+    testFixturesImplementation libs.mockito.core
+
+    testImplementation( testFixtures( project( ":core:core-api" ) ) )
+}
+
+jar {
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Model' )
+    }
+}
