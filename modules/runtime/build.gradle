@@ -137,6 +137,7 @@ addBundle( project( ':core:core-project' ), 22 )
 addBundle( project( ':core:core-scheduler' ), 22 )
 addBundle( project( ':core:core-shared' ), 22 )
 addBundle( project( ':core:core-cluster' ), 22 )
+addBundle( project( ':core:core-model' ), 22 )
 
 // BlobStore providers
 addBundle( project( ':blobstore:blobstore-file' ), 23 )
