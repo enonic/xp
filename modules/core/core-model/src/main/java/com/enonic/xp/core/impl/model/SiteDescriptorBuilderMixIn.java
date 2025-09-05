@@ -55,7 +55,7 @@ abstract class SiteDescriptorBuilderMixIn
     abstract SiteDescriptor.Builder apiMounts( DescriptorKeys apiMounts );
 
     @JsonDeserialize(builder = XDataMapping.Builder.class)
-    static abstract class XDataMappingMixIn
+    abstract static class XDataMappingMixIn
     {
         @JsonCreator
         static XDataMapping.Builder create()
@@ -64,7 +64,7 @@ abstract class SiteDescriptorBuilderMixIn
         }
 
         @JsonPOJOBuilder(withPrefix = "")
-        static abstract class Builder
+        abstract static class Builder
         {
             @JsonProperty("name")
             @JsonDeserialize(using = XDataNameDeserializer.class)
@@ -79,7 +79,7 @@ abstract class SiteDescriptorBuilderMixIn
     }
 
     @JsonDeserialize(builder = ResponseProcessorDescriptor.Builder.class)
-    static abstract class ResponseProcessorDescriptorMixIn
+    abstract static class ResponseProcessorDescriptorMixIn
     {
         @JsonCreator
         static ResponseProcessorDescriptor.Builder create()
@@ -88,7 +88,7 @@ abstract class SiteDescriptorBuilderMixIn
         }
 
         @JsonPOJOBuilder(withPrefix = "")
-        static abstract class Builder
+        abstract static class Builder
         {
             @JsonProperty("name")
             abstract ResponseProcessorDescriptor.Builder name( String name );
@@ -102,7 +102,7 @@ abstract class SiteDescriptorBuilderMixIn
     }
 
     @JsonDeserialize(builder = ControllerMappingDescriptor.Builder.class)
-    static abstract class ControllerMappingDescriptorMixIn
+    abstract static class ControllerMappingDescriptorMixIn
     {
         @JsonCreator
         static ControllerMappingDescriptor.Builder create()
@@ -111,7 +111,7 @@ abstract class SiteDescriptorBuilderMixIn
         }
 
         @JsonPOJOBuilder(withPrefix = "")
-        static abstract class Builder
+        abstract static class Builder
         {
             @JsonProperty("service")
             abstract ControllerMappingDescriptor.Builder service( String service );
