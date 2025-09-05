@@ -21,7 +21,6 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -323,8 +322,7 @@ public class DuplicateNodeCommandTest
         final Node a1Duplicate = duplicateNode( a1 ).getNode();
 
         refresh();
-
-        final NodeIds children = findChildren( a1Duplicate ).getNodeIds();
+        final NodeIds children = findByParent( a1Duplicate.path() ).getNodeIds();
         assertEquals( 2, children.getSize() );
 
         assertDuplicatedTree( a1.path(), a1, a1Duplicate );
@@ -337,8 +335,9 @@ public class DuplicateNodeCommandTest
 
         assertReferenceIntegrity( duplicatedTreeRootPath, originalReferences, duplicateReferences );
 
-        final Nodes originalChildren = getNodes( findChildren( originalNode ).getNodeIds() );
-        final Nodes duplicatedChildren = getNodes( findChildren( duplicatedNode ).getNodeIds() );
+        refresh();
+        final Nodes originalChildren = getNodes( findByParent( originalNode.path() ).getNodeIds() );
+        final Nodes duplicatedChildren = getNodes( findByParent( duplicatedNode.path() ).getNodeIds() );
 
         assertEquals( originalChildren.getSize(), duplicatedChildren.getSize() );
 
@@ -428,18 +427,14 @@ public class DuplicateNodeCommandTest
         return parent.equals( candidate ) || candidate.getParentPaths().contains( parent );
     }
 
-    private void assertOrder( final Node parentNode, final String... ids )
+    private void assertOrder( final Node parentNode, final String... names )
     {
         refresh();
-        final FindNodesByParentResult children = findChildren( parentNode );
-        assertThat( children.getNodeIds() ).map( this::getNode ).map( Node::name ).map( NodeName::toString ).containsExactly( ids );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( this::getNode )
+            .map( Node::name )
+            .map( NodeName::toString )
+            .containsExactly( names );
     }
-
-    private FindNodesByParentResult findChildren( final Node node )
-    {
-        return findByParent( node.path() );
-    }
-
 
     private DuplicateNodeResult duplicateNode( final Node node1 )
     {

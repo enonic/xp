@@ -1,19 +1,17 @@
 package com.enonic.xp.node;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public final class SortNodeResult
 {
     private final Node node;
 
-    private final ImmutableList<Node> reorderedNodes;
+    private final Nodes reorderedNodes;
 
     private SortNodeResult( final Builder builder )
     {
         this.node = builder.node;
-        this.reorderedNodes = builder.reorderedNodes.build();
+        this.reorderedNodes = Nodes.from( builder.reorderedNodes.buildKeepingLast().values() );
     }
 
     public Node getNode()
@@ -21,7 +19,7 @@ public final class SortNodeResult
         return node;
     }
 
-    public List<Node> getReorderedNodes()
+    public Nodes getReorderedNodes()
     {
         return reorderedNodes;
     }
@@ -35,7 +33,7 @@ public final class SortNodeResult
     {
         private Node node;
 
-        private ImmutableList.Builder<Node> reorderedNodes = ImmutableList.builder();
+        private ImmutableMap.Builder<NodeId, Node> reorderedNodes = ImmutableMap.builder();
 
         public Builder node( Node node )
         {
@@ -43,8 +41,9 @@ public final class SortNodeResult
             return this;
         }
 
-        public Builder addReorderedNode(Node node) {
-            reorderedNodes.add( node );
+        public Builder addReorderedNode( Node node )
+        {
+            reorderedNodes.put( node.id(), node );
             return this;
         }
 

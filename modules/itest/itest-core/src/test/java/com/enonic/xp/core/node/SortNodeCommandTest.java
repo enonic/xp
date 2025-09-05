@@ -99,9 +99,9 @@ public class SortNodeCommandTest
         createChildNodes( node );
 
         setChildOrder( node, ChildOrder.manualOrder() );
-        refresh();
 
-        final FindNodesByParentResult result = findChildren( node );
+        refresh();
+        final FindNodesByParentResult result = findByParent( node.path() );
 
         Long previousOrderValue = Long.MAX_VALUE;
 
@@ -128,9 +128,9 @@ public class SortNodeCommandTest
 
         // Now set order manual
         setChildOrder( node, ChildOrder.manualOrder() );
-        refresh();
 
-        final FindNodesByParentResult result = findChildren( node );
+        refresh();
+        final FindNodesByParentResult result = findByParent( node.path() );
 
         // Verify same order as initial ordering, name desc
         String previousName = "";
@@ -207,12 +207,6 @@ public class SortNodeCommandTest
             .execute();
 
         refresh();
-
-        return findChildren( node );
-    }
-
-    private FindNodesByParentResult findChildren( final Node node )
-    {
         return findByParent( node.path() );
     }
 

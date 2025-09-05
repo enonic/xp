@@ -64,117 +64,6 @@ public class ParentContentSynchronizerTest
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
     }
 
-    private Content syncCreated( final ContentId contentId )
-    {
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( project.getName() )
-                               .targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.CREATED )
-                               .build() );
-
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( layer.getName() )
-                               .targetProject( childLayer.getName() )
-                               .syncEventType( ContentSyncEventType.CREATED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
-
-    private Content syncUpdated( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.UPDATED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncRenamed( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.RENAMED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncMoved( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.MOVED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncSorted( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.SORTED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncDeleted( final ContentId contentId )
-    {
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( project.getName() )
-                               .targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.DELETED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
-
-    private Content syncManualOrderUpdated( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
-
-    private void sync( final ContentId contentId, final boolean includeChildren )
-    {
-        final ContentSyncParams.Builder builder = ContentSyncParams.create()
-            .sourceProject( project.getName() )
-            .targetProject( layer.getName() )
-            .includeChildren( includeChildren );
-
-        if ( contentId != null )
-        {
-            builder.addContentId( contentId );
-        }
-        synchronizer.sync( builder.build() );
-    }
-
-    private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
-    {
-        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
-
-        if ( contentId != null )
-        {
-            builder.addContentId( contentId );
-        }
-        synchronizer.sync( builder.build() );
-    }
-
-
     @Test
     public void testCreatedChild()
         throws Exception
@@ -912,7 +801,6 @@ public class ParentContentSynchronizerTest
 
     @Test
     public void updateManualOrderValue()
-        throws Exception
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceParent.getPath(), "child1" ) );
@@ -937,7 +825,7 @@ public class ParentContentSynchronizerTest
             Long newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
             Long newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
 
-            assertTrue( newManualOrderValue1 > newManualOrderValue2 );
+            assertThat( newManualOrderValue1 ).isGreaterThan( newManualOrderValue2 );
 
             contentService.sort( SortContentParams.create()
                                      .contentId( sourceParent.getId() )
@@ -951,8 +839,117 @@ public class ParentContentSynchronizerTest
             newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
             newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
 
-            assertTrue( newManualOrderValue1 < newManualOrderValue2 );
+            assertThat( newManualOrderValue1 ).isLessThan( newManualOrderValue2 );
         } );
+    }
 
+    private Content syncCreated( final ContentId contentId )
+    {
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
+                               .syncEventType( ContentSyncEventType.CREATED )
+                               .build() );
+
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( layer.getName() )
+                               .targetProject( childLayer.getName() )
+                               .syncEventType( ContentSyncEventType.CREATED )
+                               .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+    }
+
+    private Content syncUpdated( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.UPDATED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncRenamed( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.RENAMED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncMoved( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.MOVED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncSorted( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.SORTED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncDeleted( final ContentId contentId )
+    {
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
+                               .syncEventType( ContentSyncEventType.DELETED )
+                               .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+    }
+
+    private Content syncManualOrderUpdated( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+    }
+
+    private void sync( final ContentId contentId, final boolean includeChildren )
+    {
+        final ContentSyncParams.Builder builder = ContentSyncParams.create()
+            .sourceProject( project.getName() )
+            .targetProject( layer.getName() )
+            .includeChildren( includeChildren );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
+    }
+
+    private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
+    {
+        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
     }
 }

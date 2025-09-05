@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 public class SortNodeCommand
     extends AbstractNodeCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SortNodeCommand.class);
+    private static final Logger LOG = LoggerFactory.getLogger( SortNodeCommand.class );
 
     private static final int BATCH_SIZE = 10_000;
 
@@ -156,6 +157,8 @@ public class SortNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
+        final LinkedHashMap<NodeId, Node> knownOrderValues = new LinkedHashMap<>();
+
         for ( final ReorderChildNodeParams reorderChildNodeParams : reorderChildNodes )
         {
             final Long toMoveBeforeValue;
@@ -165,26 +168,25 @@ public class SortNodeCommand
             }
             else
             {
-                final Node nodeToMoveBefore = doGetById( reorderChildNodeParams.getMoveBefore() );
-                if ( !nodeToMoveBefore.parentPath().equals( parentPath ) )
+                final Node toMoveBefore = memoNode( reorderChildNodeParams.getMoveBefore(), parentPath, knownOrderValues );
+                if ( toMoveBefore == null )
                 {
-                    LOG.debug( "Reordered nodes must be children of {}", parentPath );
                     continue;
                 }
-                toMoveBeforeValue = nodeToMoveBefore.getManualOrderValue();
-                if (toMoveBeforeValue == null )
+                toMoveBeforeValue = toMoveBefore.getManualOrderValue();
+                if ( toMoveBeforeValue == null )
                 {
-                    LOG.debug( "Node [{}] to move before does not have manualOrderValue", nodeToMoveBefore );
+                    LOG.debug( "Node [{}] to move before does not have manualOrderValue", reorderChildNodeParams.getMoveBefore() );
                     continue;
                 }
             }
 
-            final Node node = doGetById( reorderChildNodeParams.getNodeId() );
-            if ( !node.parentPath().equals( parentPath ) )
+            final Node node = memoNode( reorderChildNodeParams.getNodeId(), parentPath, knownOrderValues );
+            if ( node == null )
             {
-                LOG.debug( "Reordered nodes must be children of {}", parentPath );
                 continue;
             }
+            final Long currentValue = node.getManualOrderValue();
 
             final long newOrderValue = ResolveInsertOrderValueCommand.create( this )
                 .parentPath( parentPath )
@@ -193,11 +195,43 @@ public class SortNodeCommand
                 .build()
                 .execute();
 
+            if ( currentValue != null && newOrderValue == currentValue )
+            {
+                LOG.debug( "manualOrderValue not changed {}", node.id() );
+                continue;
+            }
             final Node updatedNode = Node.create( node ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
             final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
+            knownOrderValues.put( storedNode.id(), storedNode );
 
             result.addReorderedNode( storedNode );
         }
+    }
+
+    private Node memoNode( NodeId nodeId, NodePath parentPath, LinkedHashMap<NodeId, Node> storage )
+    {
+        final Node inMemory = storage.get( nodeId );
+        if ( inMemory != null )
+        {
+            return inMemory;
+        }
+
+        final Node node = doGetById( nodeId );
+        if ( node == null )
+        {
+            LOG.debug( "Reorder node [{}] not found", nodeId );
+            storage.put( nodeId, null );
+            return null;
+        }
+        if ( !parentPath.equals( node.parentPath() ) )
+        {
+            LOG.debug( "Reordered nodes must have parent path [{}]. Node [{}] has parent path [{}]", parentPath, node.id(),
+                       node.parentPath() );
+            storage.put( node.id(), null );
+            return null;
+        }
+        storage.put( node.id(), node );
+        return node;
     }
 
     public static final class Builder

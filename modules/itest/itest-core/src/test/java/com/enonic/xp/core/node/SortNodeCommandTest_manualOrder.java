@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -50,11 +49,9 @@ public class SortNodeCommandTest_manualOrder
             .searchService( this.searchService )
             .build()
             .execute();
+
         refresh();
-
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
-        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "a", "b", "d", "e", "f" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "a", "b", "d", "e", "f" );
     }
 
     @Test
@@ -79,11 +76,9 @@ public class SortNodeCommandTest_manualOrder
             .searchService( this.searchService )
             .build()
             .execute();
+
         refresh();
-
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
-        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "c", "b", "d", "e", "f" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "c", "b", "d", "e", "f" );
     }
 
     @Test
@@ -108,11 +103,9 @@ public class SortNodeCommandTest_manualOrder
             .searchService( this.searchService )
             .build()
             .execute();
+
         refresh();
-
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
-        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "f", "c" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "d", "e", "f", "c" );
     }
 
     @Test
@@ -141,11 +134,9 @@ public class SortNodeCommandTest_manualOrder
             .searchService( this.searchService )
             .build()
             .execute();
+
         refresh();
-
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
-        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
     }
 
     @Test
@@ -171,11 +162,9 @@ public class SortNodeCommandTest_manualOrder
             .searchService( this.searchService )
             .build()
             .execute();
+
         refresh();
-
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
-        assertThat(reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "e", "f" );
     }
 
     @Test
@@ -206,10 +195,8 @@ public class SortNodeCommandTest_manualOrder
             .execute();
 
         refresh();
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
         // `a` moved right in front of `e`
-        assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "d", "a", "e", "f", "b" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "d", "a", "e", "f", "b" );
     }
 
     @Test
@@ -240,10 +227,8 @@ public class SortNodeCommandTest_manualOrder
             .execute();
 
         refresh();
-        final FindNodesByParentResult reOrderedResult = findByParent( parentNode.path() );
-
         // `e` moved to the end but `a` left intact
-        assertThat( reOrderedResult.getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "f", "e" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "a", "b", "c", "d", "f", "e" );
     }
 
     private void manualOrderWithByNameSeed( final Node parentNode )

@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -12,7 +10,9 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
 public class ResolveInsertOrderValueCommand
@@ -35,23 +35,38 @@ public class ResolveInsertOrderValueCommand
     public long execute()
     {
         final Long manualOrderValue = NodeHelper.runAsAdmin( this::getManualOrderValue );
-        if ( manualOrderValue == null )
+        if ( referenceValue == null )
         {
-            return NodeManualOrderValueResolver.first();
+            if ( manualOrderValue == null )
+            {
+                return NodeManualOrderValueResolver.first();
+            }
+            else
+            {
+                return lower
+                    ? NodeManualOrderValueResolver.after( manualOrderValue )
+                    : NodeManualOrderValueResolver.before( manualOrderValue );
+            }
         }
-
-        return lower
-            ? NodeManualOrderValueResolver.after( manualOrderValue )
-            : ( referenceValue == null
-                ? NodeManualOrderValueResolver.before( manualOrderValue )
-                : NodeManualOrderValueResolver.between( referenceValue, manualOrderValue ) );
+        else
+        {
+            if ( manualOrderValue == null )
+            {
+                return lower ? NodeManualOrderValueResolver.before( referenceValue ) : NodeManualOrderValueResolver.after( referenceValue );
+            }
+            else
+            {
+                return lower
+                    ? NodeManualOrderValueResolver.after( manualOrderValue )
+                    : NodeManualOrderValueResolver.between( referenceValue, manualOrderValue );
+            }
+        }
     }
 
     private Long getManualOrderValue()
     {
         final ChildOrder childOrder = lower ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
 
-        refresh( RefreshMode.SEARCH );
         final NodeQuery.Builder query =
             NodeQuery.create().size( 1 ).parent( parentPath ).setOrderExpressions( childOrder.getOrderExpressions() );
 
@@ -61,22 +76,22 @@ public class ResolveInsertOrderValueCommand
                 CompareExpr.gt( FieldExpr.from( NodeIndexPath.MANUAL_ORDER_VALUE ), ValueExpr.number( referenceValue ) ) ) );
         }
 
+        refresh( RefreshMode.SEARCH );
         final SearchResult searchResult =
-            this.nodeSearchService.query( query.build(), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+            this.nodeSearchService.query( query.build(), ReturnFields.from( NodeIndexPath.MANUAL_ORDER_VALUE ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
         if ( searchResult.isEmpty() )
         {
             return null;
         }
         else
         {
-            final Node node = doGetById( NodeId.from( searchResult.getHits().getFirst().getId() ) );
-            final Long manualOrderValue = node.getManualOrderValue();
-            if ( manualOrderValue == null )
-            {
-                throw new IllegalStateException( "Node with id [" + node.id() + "] missing manual order value" );
-            }
-
-            return manualOrderValue;
+            final SearchHit hit = searchResult.getHits().getFirst();
+            return hit.getReturnValues()
+                .getOptional( NodeIndexPath.MANUAL_ORDER_VALUE.getPath() )
+                .map( Object::toString )
+                .map( Long::valueOf )
+                .orElseThrow(
+                    () -> new IllegalStateException( String.format( "Node with id [%s] missing manual order value", hit.getId() ) ) );
         }
     }
 
