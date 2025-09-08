@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.core.impl.form.mixin;
 
 import java.util.ArrayList;
 import java.util.HashSet;

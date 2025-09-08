@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema;
+package com.enonic.xp.core.impl.content.parser;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -42,6 +42,6 @@ public class YmlContentTypeParserTest
     private String readAsString( final String name )
         throws Exception
     {
-        return Files.readString( Paths.get( YmlTypeParserTest.class.getResource( name ).toURI() ), StandardCharsets.UTF_8 );
+        return Files.readString( Paths.get( YmlContentTypeParserTest.class.getResource( name ).toURI() ), StandardCharsets.UTF_8 );
     }
 }

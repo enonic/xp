@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.schema.mixin;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
-import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.app.ApplicationTestSupport;
+import com.enonic.xp.core.impl.form.mixin.MixinServiceImpl;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -22,18 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MixinServiceImplTest
-    extends AbstractSchemaTest
+    extends ApplicationTestSupport
 {
     protected MixinServiceImpl service;
-
-    protected ContentTypeServiceImpl contentTypeService;
 
     @Override
     protected void initialize()
     {
         this.service = new MixinServiceImpl( this.applicationService, this.resourceService );
-
-        this.contentTypeService = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.service );
     }
 
     @Test
@@ -158,9 +154,9 @@ public class MixinServiceImplTest
             .addFormItem( InlineMixin.create().mixin( "myapp2:inline1" ).build() )
             .build();
 
-            final IllegalArgumentException exception =
-                assertThrows( IllegalArgumentException.class, () -> service.inlineFormItems( form ) );
-            assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.", exception.getMessage() );
+        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> service.inlineFormItems( form ) );
+        assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.",
+                      exception.getMessage() );
     }
 
     @Test
@@ -201,5 +197,11 @@ public class MixinServiceImplTest
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.postalNo" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption1.address.country" ) );
         assertNotNull( transformedForm.getInput( "myOptionSet.myOptionSetOption2.myTextLine2" ) );
+    }
+
+    private void initializeApps()
+    {
+        addApplication( "myapp1", "/apps/myapp1" );
+        addApplication( "myapp2", "/apps/myapp2" );
     }
 }
