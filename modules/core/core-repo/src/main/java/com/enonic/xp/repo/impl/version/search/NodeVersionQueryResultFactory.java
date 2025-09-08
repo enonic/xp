@@ -25,6 +25,11 @@ public class NodeVersionQueryResultFactory
 {
     public static NodeVersionQueryResult create( final NodeVersionQuery query, final SearchResult searchResult )
     {
+        if ( searchResult.isEmpty() )
+        {
+            return NodeVersionQueryResult.empty( searchResult.getTotalHits() );
+        }
+
         final NodeVersionQueryResult.Builder findNodeVersionsResult = NodeVersionQueryResult.create();
 
         findNodeVersionsResult.hits( searchResult.getHits().size() );

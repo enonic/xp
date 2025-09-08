@@ -56,11 +56,11 @@ public class UpdateNodeExecutorTest
         final EditableNode editableNode = new EditableNode( originalNode );
 
         final PropertyTree updateScript = new PropertyTree();
-        updateScript.setString( "_childOrder", ChildOrder.reverseManualOrder().toString() );
+        updateScript.setString( "_childOrder", ChildOrder.name().toString() );
 
         UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( updateScript ).build().execute();
 
-        assertEquals( ChildOrder.reverseManualOrder(), editableNode.childOrder );
+        assertEquals( ChildOrder.name(), editableNode.childOrder );
     }
 
     @Test

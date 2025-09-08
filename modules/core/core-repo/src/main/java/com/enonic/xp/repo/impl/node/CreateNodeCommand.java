@@ -75,22 +75,22 @@ public final class CreateNodeCommand
 
         final AccessControlList permissions = params.isInheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
 
-        final Long manualOrderValue = NodeHelper.runAsAdmin( () -> resolvePotentialManualOrderValue( parentNode ) );
+        final Long manualOrderValue = resolvePotentialManualOrderValue( parentNode );
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
-        final Node.Builder nodeBuilder = Node.create().
-            id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() ).
-            parentPath( params.getParent() ).
-            name( params.getName() ).
-            data( params.getData() ).
-            indexConfigDocument( params.getIndexConfigDocument() ).
-            childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() ).
-            manualOrderValue( manualOrderValue ).
-            permissions( permissions ).
-            nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION ).
-            attachedBinaries( attachedBinaries ).
-            timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
+        final Node.Builder nodeBuilder = Node.create()
+            .id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() )
+            .parentPath( params.getParent() )
+            .name( params.getName() )
+            .data( params.getData() )
+            .indexConfigDocument( params.getIndexConfigDocument() )
+            .childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() )
+            .manualOrderValue( manualOrderValue )
+            .permissions( permissions )
+            .nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION )
+            .attachedBinaries( attachedBinaries )
+            .timestamp( this.timestamp != null ? this.timestamp : Instant.now( CLOCK ) );
 
         final Node newNode = this.nodeStorageService.store( StoreNodeParams.newVersion( nodeBuilder.build() ),
                                                             InternalContext.from( ContextAccessor.current() ) ).node();
@@ -117,7 +117,7 @@ public final class CreateNodeCommand
                 throw new NodeBinaryReferenceException( "No binary with reference " + binaryRef + " attached in createNodeParams" );
             }
 
-            final AttachedBinary attachedBinary = this.binaryService.store(repositoryId, binaryAttachment );
+            final AttachedBinary attachedBinary = this.binaryService.store( repositoryId, binaryAttachment );
             builder.add( attachedBinary );
         }
 
@@ -159,30 +159,24 @@ public final class CreateNodeCommand
 
         if ( parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
         {
-            return doResolveManualOrderValue( parentNode );
+            final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
+
+            if ( InsertManualStrategy.MANUAL.equals( insertManualStrategy ) )
+            {
+                return params.getManualOrderValue();
+            }
+            else
+            {
+                return ResolveInsertOrderValueCommand.create( this )
+                    .parentPath( parentNode.path() )
+                    .build()
+                    .insert( InsertManualStrategy.LAST.equals( insertManualStrategy ) );
+            }
         }
 
         return null;
     }
 
-
-    private Long doResolveManualOrderValue( final Node parentNode )
-    {
-        final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
-
-        if ( InsertManualStrategy.MANUAL.equals( insertManualStrategy ) )
-        {
-            return params.getManualOrderValue();
-        }
-        else
-        {
-            return ResolveInsertOrderValueCommand.create( this ).
-                parentPath( parentNode.path() ).
-                insertManualStrategy( insertManualStrategy ).
-                build().
-                execute();
-        }
-    }
 
     private void verifyNotExistsAlready()
     {
@@ -198,11 +192,7 @@ public final class CreateNodeCommand
 
         NodePath nodePath = new NodePath( params.getParent(), params.getName() );
 
-        CheckNodeExistsCommand.create( this ).
-            nodePath( nodePath ).
-            throwIfExists().
-            build().
-            execute();
+        CheckNodeExistsCommand.create( this ).nodePath( nodePath ).throwIfExists().build().execute();
     }
 
     public static class Builder

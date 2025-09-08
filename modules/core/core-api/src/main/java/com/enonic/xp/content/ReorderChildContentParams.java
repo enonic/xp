@@ -1,15 +1,19 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public final class ReorderChildParams
+public final class ReorderChildContentParams
 {
     private final ContentId contentToMove;
 
     private final ContentId contentToMoveBefore;
 
-    private ReorderChildParams( final Builder builder )
+    private ReorderChildContentParams( final Builder builder )
     {
         contentToMove = builder.contentToMove;
         contentToMoveBefore = builder.contentToMoveBefore;
@@ -52,9 +56,12 @@ public final class ReorderChildParams
             return this;
         }
 
-        public ReorderChildParams build()
+        public ReorderChildContentParams build()
         {
-            return new ReorderChildParams( this );
+            Objects.requireNonNull( contentToMove, "contentToMove is required" );
+            Preconditions.checkArgument( !contentToMove.equals( contentToMoveBefore ),
+                                         "contentToMove and contentToMoveBefore must be different" );
+            return new ReorderChildContentParams( this );
         }
     }
 }

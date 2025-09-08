@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
@@ -54,10 +55,13 @@ public class BaseNodeHandlerTest
 
     protected NodeBranchEntry createEntry( final String id, final String path )
     {
-        return NodeBranchEntry.create().
-            nodeId( NodeId.from( id ) ).
-            nodePath( new NodePath( "/" + path ) ).
-            build();
+        return NodeBranchEntry.create()
+            .nodeId( NodeId.from( id ) )
+            .nodePath( new NodePath( "/" + path ) )
+            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
+            .nodeVersionId( new NodeVersionId() )
+            .timestamp( Instant.EPOCH )
+            .build();
     }
 
     protected Node createNode()

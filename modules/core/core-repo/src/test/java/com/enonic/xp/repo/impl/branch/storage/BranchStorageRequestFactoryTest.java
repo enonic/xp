@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.blob.NodeVersionKey;
@@ -25,6 +27,7 @@ public class BranchStorageRequestFactoryTest
             nodePath( new NodePath( "/nodePath" ) ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
+            timestamp( Instant.EPOCH ).
             build(), RepositoryId.from( "my-repo-id" ), Branch.from( "myBranch" ) );
 
         assertEquals( storeRequest.getId(), "nodeId_myBranch" );

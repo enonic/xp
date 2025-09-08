@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.FindContentByParentParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 
 final class SortedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -27,7 +27,7 @@ final class SortedEventSyncCommand
     @Override
     protected void doSync()
     {
-        params.getContents().forEach( this::doSync );
+        contentToSync.forEach( this::doSync );
     }
 
     private void doSync( final ContentToSync content )
@@ -37,18 +37,18 @@ final class SortedEventSyncCommand
             {
                 if ( needToSort( content.getSourceContent(), content.getTargetContent() ) )
                 {
-                    final SetContentChildOrderParams sortParams = SetContentChildOrderParams.create()
+                    final SortContentParams sortParams = SortContentParams.create()
                         .childOrder( content.getSourceContent().getChildOrder() )
                         .contentId( content.getSourceContent().getId() )
                         .stopInherit( false )
                         .build();
 
-                    contentService.setChildOrder( sortParams );
+                    contentService.sort( sortParams );
                 }
-                if ( needToReorderChildren( content.getSourceContent() ) )
+                if ( content.getSourceContent().getChildOrder().isManualOrder() )
                 {
                     final List<ContentToSync> childrenToSync = contentService.findByParent(
-                        FindContentByParentParams.create().parentId( content.getTargetContent().getId() ).size( -1 ).build() )
+                            FindContentByParentParams.create().parentId( content.getTargetContent().getId() ).size( -1 ).build() )
                         .getContents()
                         .stream()
                         .map( currContent -> {
@@ -68,9 +68,9 @@ final class SortedEventSyncCommand
 
                     if ( !childrenToSync.isEmpty() )
                     {
-                        ManualOrderUpdatedEventSyncCommand.create()
+                        UpdatedEventSyncCommand.create()
                             .contentService( contentService )
-                            .params( ContentEventSyncCommandParams.create().addContents( childrenToSync ).build() )
+                            .contentToSync( childrenToSync )
                             .build()
                             .sync();
                     }
@@ -89,11 +89,6 @@ final class SortedEventSyncCommand
         return !Objects.equals( sourceContent.getChildOrder(), targetContent.getChildOrder() );
     }
 
-    private boolean needToReorderChildren( final Content sourceContent )
-    {
-        return sourceContent.getChildOrder().isManualOrder();
-    }
-
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
     {
@@ -101,9 +96,9 @@ final class SortedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getSourceContent() != null ),
                                          "sourceContent must be set" );
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getTargetContent() != null ),
                                          "targetContent must be set" );
         }
 

@@ -23,10 +23,9 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildParams;
+import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.core.impl.content.ContentEventsSyncParams;
@@ -64,117 +63,6 @@ public class ParentContentSynchronizerTest
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
     }
-
-    private Content syncCreated( final ContentId contentId )
-    {
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( project.getName() )
-                               .targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.CREATED )
-                               .build() );
-
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( layer.getName() )
-                               .targetProject( childLayer.getName() )
-                               .syncEventType( ContentSyncEventType.CREATED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
-
-    private Content syncUpdated( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.UPDATED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncRenamed( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.RENAMED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncMoved( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.MOVED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncSorted( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.SORTED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncDeleted( final ContentId contentId )
-    {
-        synchronizer.sync( ContentEventsSyncParams.create()
-                               .addContentId( contentId )
-                               .sourceProject( project.getName() )
-                               .targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.DELETED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
-
-    private Content syncManualOrderUpdated( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                               .syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED )
-                               .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
-
-    private void sync( final ContentId contentId, final boolean includeChildren )
-    {
-        final ContentSyncParams.Builder builder = ContentSyncParams.create()
-            .sourceProject( project.getName() )
-            .targetProject( layer.getName() )
-            .includeChildren( includeChildren );
-
-        if ( contentId != null )
-        {
-            builder.addContentId( contentId );
-        }
-        synchronizer.sync( builder.build() );
-    }
-
-    private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
-    {
-        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
-
-        if ( contentId != null )
-        {
-            builder.addContentId( contentId );
-        }
-        synchronizer.sync( builder.build() );
-    }
-
 
     @Test
     public void testCreatedChild()
@@ -226,15 +114,11 @@ public class ParentContentSynchronizerTest
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
-        final Content targetContent1 = syncCreated( sourceContent.getId() );
+        syncCreated( sourceContent.getId() );
+        // second "create" that might appear in multi inheritance must not throw, but targetContent should remain equal to sourceContent
+        final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertThrows( IllegalArgumentException.class, () -> syncCreated( sourceContent.getId() ), "targetContent must be set." );
-
-        final Content targetContent2 = layerContext.callWith( () -> contentService.getById( sourceContent.getId() ) );
-
-        assertEquals( targetContent1, targetContent2 );
-
-        compareSynched( sourceContent, targetContent1 );
+        compareSynched( sourceContent, targetContent );
     }
 
     @Test
@@ -627,7 +511,7 @@ public class ParentContentSynchronizerTest
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetParent = syncCreated( sourceParent.getId() );
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceParent.getId() )
                                                                         .childOrder( ChildOrder.from( "modifiedTime ASC" ) )
                                                                         .build() ) );
@@ -651,39 +535,30 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceChild2.getId() );
         syncCreated( sourceChild3.getId() );
 
-        projectContext.runWith( () -> {
-            contentService.setChildOrder(
-                SetContentChildOrderParams.create().contentId( sourceParent.getId() ).childOrder( ChildOrder.manualOrder() ).build() );
-
-            contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                .contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create()
-                                                          .contentToMove( sourceChild1.getId() )
-                                                          .contentToMoveBefore( sourceChild3.getId() )
-                                                          .build() )
-                                                .build() );
-
-
-        } );
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
+                                 .contentId( sourceParent.getId() )
+                                 .childOrder( ChildOrder.manualOrder() )
+                                 .addManualOrder( ReorderChildContentParams.create()
+                                                      .contentToMove( sourceChild1.getId() )
+                                                      .contentToMoveBefore( sourceChild3.getId() )
+                                                      .build() )
+                                 .build() ) );
 
         syncSorted( sourceParent.getId() );
-        syncManualOrderUpdated( sourceChild1.getId() );
-        syncManualOrderUpdated( sourceChild2.getId() );
-        syncManualOrderUpdated( sourceChild3.getId() );
+        syncUpdated( sourceChild1.getId() );
+        syncUpdated( sourceChild2.getId() );
+        syncUpdated( sourceChild3.getId() );
 
         layerContext.runWith( () -> {
-            contentService.setChildOrder( SetContentChildOrderParams.create()
-                                              .contentId( sourceParent.getId() )
-                                              .childOrder( ChildOrder.manualOrder() )
-                                              .stopInherit( true )
-                                              .build() );
-
-            contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                .contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create().contentToMove( sourceChild1.getId() )
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
+                                                          .contentToMove( sourceChild1.getId() )
                                                           .contentToMoveBefore( sourceChild2.getId() )
                                                           .build() )
-                                                .build() );
+                                     .stopInherit( true )
+                                     .build() );
 
             syncContentService.resetInheritance( ResetContentInheritParams.create()
                                                      .contentId( sourceParent.getId() )
@@ -694,7 +569,7 @@ public class ParentContentSynchronizerTest
 
         syncSorted( sourceParent.getId() );
 
-        Thread.sleep( 1000 );
+        refresh();
 
         final FindContentByParentResult sourceOrderedChildren = projectContext.callWith(
             () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceParent.getId() ).build() ) );
@@ -901,7 +776,7 @@ public class ParentContentSynchronizerTest
     public void updateManualOrderNotExisted()
         throws Exception
     {
-        assertNull( syncManualOrderUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
+        assertNull( syncUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
     }
 
     @Test
@@ -910,7 +785,7 @@ public class ParentContentSynchronizerTest
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        assertThrows( IllegalArgumentException.class, () -> syncManualOrderUpdated( sourceContent.getId() ), "sourceContent must be set." );
+        assertThrows( IllegalArgumentException.class, () -> syncUpdated( sourceContent.getId() ), "sourceContent must be set." );
     }
 
     @Test
@@ -920,13 +795,12 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertEquals( targetContent, syncManualOrderUpdated( sourceContent.getId() ) );
+        assertEquals( targetContent, syncUpdated( sourceContent.getId() ) );
 
     }
 
     @Test
     public void updateManualOrderValue()
-        throws Exception
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceParent.getPath(), "child1" ) );
@@ -937,39 +811,136 @@ public class ParentContentSynchronizerTest
         syncCreated( sourceChild2.getId() );
 
         projectContext.runWith( () -> {
-            contentService.setChildOrder(
-                SetContentChildOrderParams.create().contentId( sourceParent.getId() ).childOrder( ChildOrder.manualOrder() ).build() );
-
-            assertTrue( syncSorted( sourceParent.getId() ).getChildOrder().isManualOrder() );
-
-            syncManualOrderUpdated( sourceChild1.getId() );
-            syncManualOrderUpdated( sourceChild2.getId() );
-
-            contentService.reorderChildren( ReorderChildContentsParams.create().contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create()
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
                                                           .contentToMove( sourceChild1.getId() )
                                                           .contentToMoveBefore( sourceChild2.getId() )
                                                           .build() )
-                                                .build() );
+                                     .build() );
 
-            Long newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
-            Long newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
+            assertTrue( syncSorted( sourceParent.getId() ).getChildOrder().isManualOrder() );
 
-            assertTrue( newManualOrderValue1 > newManualOrderValue2 );
+            Long newManualOrderValue1 = syncUpdated( sourceChild1.getId() ).getManualOrderValue();
+            Long newManualOrderValue2 = syncUpdated( sourceChild2.getId() ).getManualOrderValue();
 
-            contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                .contentId( sourceParent.getId() )
-                                                .add( ReorderChildParams.create()
+            assertThat( newManualOrderValue1 ).isGreaterThan( newManualOrderValue2 );
+
+            contentService.sort( SortContentParams.create()
+                                     .contentId( sourceParent.getId() )
+                                     .childOrder( ChildOrder.manualOrder() )
+                                     .addManualOrder( ReorderChildContentParams.create()
                                                           .contentToMove( sourceChild2.getId() )
                                                           .contentToMoveBefore( sourceChild1.getId() )
                                                           .build() )
-                                                .build() );
+                                     .build() );
 
-            newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
-            newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
+            newManualOrderValue1 = syncUpdated( sourceChild1.getId() ).getManualOrderValue();
+            newManualOrderValue2 = syncUpdated( sourceChild2.getId() ).getManualOrderValue();
 
-            assertTrue( newManualOrderValue1 < newManualOrderValue2 );
+            assertThat( newManualOrderValue1 ).isLessThan( newManualOrderValue2 );
         } );
+    }
 
+    private Content syncCreated( final ContentId contentId )
+    {
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
+                               .syncEventType( ContentSyncEventType.CREATED )
+                               .build() );
+
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( layer.getName() )
+                               .targetProject( childLayer.getName() )
+                               .syncEventType( ContentSyncEventType.CREATED )
+                               .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+    }
+
+    private Content syncUpdated( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.UPDATED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncRenamed( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.RENAMED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncMoved( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.MOVED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncSorted( final ContentId contentId )
+    {
+        synchronizer.sync(
+            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
+                .syncEventType( ContentSyncEventType.SORTED )
+                .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+
+    }
+
+    private Content syncDeleted( final ContentId contentId )
+    {
+        synchronizer.sync( ContentEventsSyncParams.create()
+                               .addContentId( contentId )
+                               .sourceProject( project.getName() )
+                               .targetProject( layer.getName() )
+                               .syncEventType( ContentSyncEventType.DELETED )
+                               .build() );
+
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
+    }
+
+
+    private void sync( final ContentId contentId, final boolean includeChildren )
+    {
+        final ContentSyncParams.Builder builder = ContentSyncParams.create()
+            .sourceProject( project.getName() )
+            .targetProject( layer.getName() )
+            .includeChildren( includeChildren );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
+    }
+
+    private void sync( final ContentId contentId, final ProjectName sourceProject, final ProjectName targetProject )
+    {
+        final ContentSyncParams.Builder builder = ContentSyncParams.create().sourceProject( sourceProject ).targetProject( targetProject );
+
+        if ( contentId != null )
+        {
+            builder.addContentId( contentId );
+        }
+        synchronizer.sync( builder.build() );
     }
 }

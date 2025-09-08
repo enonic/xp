@@ -6,7 +6,6 @@ import java.util.Objects;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeResult;
@@ -176,7 +175,13 @@ public class MoveNodeCommand
 
             if ( !isRenaming )
             {
-                updateStoredNodeProperties( newParentPath, nodeToMoveBuilder );
+                final Node parentNode = doGetByPath( newParentPath );
+                if ( parentNode.getChildOrder().isManualOrder() )
+                {
+                    final long newOrderValue =
+                        ResolveInsertOrderValueCommand.create( this ).parentPath( newParentPath ).build().insert( false );
+                    nodeToMoveBuilder.manualOrderValue( newOrderValue );
+                }
             }
         }
 
@@ -202,25 +207,6 @@ public class MoveNodeCommand
         }
 
         return movedNode;
-    }
-
-    private void updateStoredNodeProperties( final NodePath newParentPath, final Node.Builder nodeToMoveBuilder )
-    {
-        if ( newParentPath.equals( this.newParentPath ) )
-        {
-            final Node parentNode = doGetByPath( newParentPath );
-            if ( parentNode.getChildOrder().isManualOrder() )
-            {
-
-                final Long newOrderValue = ResolveInsertOrderValueCommand.create( this )
-                    .parentPath( newParentPath )
-                    .insertManualStrategy( InsertManualStrategy.FIRST )
-                    .build()
-                    .execute();
-
-                nodeToMoveBuilder.manualOrderValue( newOrderValue );
-            }
-        }
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

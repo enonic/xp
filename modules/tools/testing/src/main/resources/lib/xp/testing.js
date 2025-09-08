@@ -82,7 +82,7 @@ exports.assertNotEquals = function (expected, actual, message) {
 exports.assertJson = function (expected, actual, message) {
     var expectedJson = JSON.stringify(expected, replaceJava, 2);
     var actualJson = JSON.stringify(actual, replaceJava, 2);
-    helper.assertEquals(expectedJson, actualJson, message);
+    helper.assertEquals(expectedJson, actualJson, message || '');
 };
 
 function replaceJava(key, value) {

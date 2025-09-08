@@ -18,9 +18,8 @@ import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildContentsResult;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.SortContentResult;
+import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -52,11 +51,7 @@ interface ContentAuditLogSupport
 
     void rename( RenameContentParams params, Content content );
 
-    void setChildOrder( SetContentChildOrderParams params, Content content );
-
-    void reorderChildren( ReorderChildContentsParams params, ReorderChildContentsResult result );
+    void sort( SortContentParams params, SortContentResult result );
 
     void applyPermissions( ApplyContentPermissionsParams params, ApplyContentPermissionsResult result );
-
-    void reprocess( Content content );
 }

@@ -18,6 +18,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
@@ -50,15 +51,16 @@ import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
+import com.enonic.xp.node.SortNodeParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryNotFoundException;
@@ -419,32 +421,45 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void testReorderChildren()
+    public void testSort()
     {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
 
         final Node child1 = createNode( CreateNodeParams.create().name( "my-child-1" ).parent( parent.path() ).build() );
-
         final Node child2 = createNode( CreateNodeParams.create().name( "my-child-2" ).parent( parent.path() ).build() );
-
         final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
 
-        final ReorderChildNodesParams params = ReorderChildNodesParams.create()
-            .add( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() )
-            .add( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ).processor( ( data, path ) -> {
-                data.addString( "processedValue", "value" );
-                return data;
+        refresh();
+        // my-child-3 my-child-2 my-child-1 to start with
+
+        final SortNodeParams params = SortNodeParams.create()
+            .nodeId( parent.id() )
+            .childOrder( ChildOrder.manualOrder() )
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() ) // my-child-3 my-child-1 my-child-2
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // my-child-2 my-child-3 my-child-1
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // duplicate, does not change order
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ) // does not change order
+            .processor( ( data, path ) -> {
+                final PropertyTree copy = data.copy();
+                copy.addString( "processedValue", "value" );
+                return copy;
             } )
             .build();
 
-        final ReorderChildNodesResult result = this.nodeService.reorderChildren( params );
+        final SortNodeResult result = this.nodeService.sort( params );
 
-        assertThat( result.getNodeIds() ).containsExactly( child1.id(), child3.id() );
-        assertThat( result.getParentNodes().getIds() ).containsExactly( parent.id() );
-        assertThat(
-            nodeService.findByParent( FindNodesByParentParams.create().parentId( parent.id() ).build() ).getNodeIds() ).containsExactly(
-            child3.id(), child1.id(), child2.id() );
+        assertThat( result.getReorderedNodes() ).extracting( Node::name )
+            .extracting( NodeName::toString )
+            .containsExactlyInAnyOrder( "my-child-1", "my-child-2" );
+
+        assertEquals( parent.id(), result.getNode().id() );
+
+        refresh();
+        assertThat( findByParent( parent.path() ).getNodeIds() ).map( nodeService::getById )
+            .extracting( Node::name )
+            .extracting( NodeName::toString )
+            .containsExactly( "my-child-2", "my-child-3", "my-child-1" );
 
         final Node processedParent = this.nodeService.getById( parent.id() );
 
@@ -593,7 +608,14 @@ public class NodeServiceImplTest
         nodeService.refresh( RefreshMode.SEARCH );
 
         final NodeQuery nodeQuery =
-            NodeQuery.create().parent( NodePath.ROOT ).path( NodePath.create().addElement( "my-node" ).build() ).build();
+            NodeQuery.create().parent( NodePath.ROOT ).addQueryFilter( ValueFilter.create()
+                                                                           .fieldName( NodeIndexPath.PATH.getPath() )
+                                                                           .addValue( ValueFactory.newString(
+                                                                               NodePath.create( NodePath.ROOT )
+                                                                                   .addElement( "my-node" )
+                                                                                   .build()
+                                                                                   .toString() ) )
+                                                                           .build() ).build();
 
         final SearchTargets searchTargets = SearchTargets.create()
             .add( SearchTarget.create()

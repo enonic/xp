@@ -1,15 +1,10 @@
 package com.enonic.xp.core.content;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
@@ -33,9 +28,9 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentsParams;
-import com.enonic.xp.content.ReorderChildParams;
-import com.enonic.xp.content.SetContentChildOrderParams;
+import com.enonic.xp.content.ReorderChildContentParams;
+import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -60,36 +55,25 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ProjectContentEventListenerTest
     extends AbstractContentSynchronizerTest
 {
-    private ProjectContentEventListener listener;
-
-    private ArgumentCaptor<Event> eventCaptor;
-
-    private Set<Event> handledEvents;
-
-
     private SyncContentServiceImpl syncContentService;
-
 
     @BeforeEach
     void setUp()
     {
         final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
-        listener = new ProjectContentEventListener( this.projectService, synchronizer );
-
-        eventCaptor = ArgumentCaptor.forClass( Event.class );
-        handledEvents = new HashSet<>();
+        listener = new ProjectContentEventListener( this.projectService, synchronizer, Runnable::run );
 
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
@@ -97,7 +81,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testCreatedDiffParentsSameName()
-        throws InterruptedException
     {
         final Content firstContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content secondContent = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
@@ -114,7 +97,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testCreated()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -136,7 +118,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testSyncCreateWithExistedLocalName()
-        throws InterruptedException
     {
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
@@ -152,7 +133,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testSyncDuplicateWithExistedLocalName()
-        throws InterruptedException
     {
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy" ) );
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy-1" ) );
@@ -178,7 +158,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testDuplicateInherited()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
@@ -198,7 +177,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testDuplicateInheritedWithChildren()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
@@ -227,25 +205,18 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testUpdated()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        final Content updatedContent = projectContext.callWith( () -> {
-
-            final Content updated = contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
+        final Content updatedContent = projectContext.callWith(
+            () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
                 edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = createPage();
-
-            } ) ) );
-
-            return updated;
-
-        } );
+            } ) ) ) );
 
         handleEvents();
 
@@ -257,26 +228,19 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testUpdatedInSecondParent()
-        throws InterruptedException
     {
         projectContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name2" ) );
 
-        final Content updatedContent = secondProjectContext.callWith( () -> {
-
-            final Content updated = contentService.update( new UpdateContentParams().contentId( sourceContent2.getId() ).editor( ( edit -> {
+        final Content updatedContent = secondProjectContext.callWith(
+            () -> contentService.update( new UpdateContentParams().contentId( sourceContent2.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
                 edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = createPage();
-
-            } ) ) );
-
-            return updated;
-
-        } );
+            } ) ) ) );
 
         handleEvents();
 
@@ -286,10 +250,8 @@ public class ProjectContentEventListenerTest
         assertEquals( 4, targetContent.getInherit().size() );
     }
 
-
     @Test
     public void testUpdatedFromReadyToInProgress()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -319,7 +281,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testUpdatedLocally()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -344,7 +305,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testMoved()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
@@ -366,7 +326,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testMovedToContentFromOtherProjectAndRemove()
-        throws InterruptedException
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -395,7 +354,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testMovedLocally()
-        throws InterruptedException
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -422,7 +380,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testMovedToExistedPath()
-        throws InterruptedException
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -443,7 +400,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testArchived()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
@@ -463,7 +419,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testMovedArchivedAndRestored()
-        throws InterruptedException
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -495,7 +450,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testArchivedNotInherited()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -517,7 +471,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testArchivedAndRestoreAlreadyArchived()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -542,7 +495,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testArchivePublishedInLayer()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -571,7 +523,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testArchiveAndCreateChild()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -597,7 +548,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testRestored()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
@@ -629,7 +579,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testSorted()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -638,55 +587,46 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            final Iterator<Content> iterator = result.getContents().iterator();
-
-            assertEquals( sourceChild3.getId(), iterator.next().getId() );
-            assertEquals( sourceChild2.getId(), iterator.next().getId() );
-            assertEquals( sourceChild1.getId(), iterator.next().getId() );
-        } );
-
+        final FindContentByParentResult result = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( result.getContents() ).map( Content::getId )
+            .containsExactly( sourceChild3.getId(), sourceChild2.getId(), sourceChild1.getId() );
     }
 
     @Test
     public void testSortedLocally()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
         handleEvents();
 
-        final Content sortedInChild = layerContext.callWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        final SortContentResult sortedInChild = layerContext.callWith( () -> contentService.sort( SortContentParams.create()
                                                                                                      .contentId( sourceContent.getId() )
                                                                                                      .childOrder(
                                                                                                          ChildOrder.from( "_name DESC" ) )
                                                                                                      .build() ) );
 
-        assertEquals( 3, sortedInChild.getInherit().size() );
-        assertFalse( sortedInChild.getInherit().contains( ContentInheritType.SORT ) );
+        assertEquals( 3, sortedInChild.getContent().getInherit().size() );
+        assertFalse( sortedInChild.getContent().getInherit().contains( ContentInheritType.SORT ) );
 
-        final Content sortedInParent = projectContext.callWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
+        final SortContentResult  sortedInParent = projectContext.callWith( () -> contentService.sort(
+            SortContentParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.from( "_name ASC" ) ).build() ) );
 
         handleEvents();
 
-        assertNotEquals( sortedInParent.getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getId() ) ).getChildOrder() );
+        assertNotEquals( sortedInParent.getContent().getChildOrder(), layerContext.callWith( () -> contentService.getById( sortedInChild.getContent().getId() ) ).getChildOrder() );
 
     }
 
     @Test
     public void testManualOrderUpdated()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -695,59 +635,41 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
+        final FindContentByParentResult intermediateResult = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( intermediateResult.getContents() ).map( Content::getName )
+            .containsExactly( sourceChild3.getName(), sourceChild2.getName(), sourceChild1.getName() );
 
-            final Iterator<Content> iterator = result.getContents().iterator();
-
-            assertEquals( sourceChild3.getId(), iterator.next().getId() );
-            assertEquals( sourceChild2.getId(), iterator.next().getId() );
-            assertEquals( sourceChild1.getId(), iterator.next().getId() );
-        } );
-
-        projectContext.runWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
-
-        handleEvents();
-
-        projectContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                                          .contentId( sourceContent.getId() )
-                                                                          .add( ReorderChildParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
+                                                               .contentId( sourceContent.getId() )
+                                                               .childOrder( ChildOrder.manualOrder() )
+                                                               .addManualOrder( ReorderChildContentParams.create()
                                                                                     .contentToMove( sourceChild2.getId() )
                                                                                     .contentToMoveBefore( sourceChild3.getId() )
                                                                                     .build() )
-                                                                          .add( ReorderChildParams.create()
+                                                               .addManualOrder( ReorderChildContentParams.create()
                                                                                     .contentToMove( sourceChild1.getId() )
                                                                                     .contentToMoveBefore( sourceChild3.getId() )
                                                                                     .build() )
-                                                                          .build() ) );
+                                                               .build() ) );
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            final Iterator<Content> iterator = result.getContents().iterator();
-
-            assertEquals( sourceChild2.getId(), iterator.next().getId() );
-            assertEquals( sourceChild1.getId(), iterator.next().getId() );
-            assertEquals( sourceChild3.getId(), iterator.next().getId() );
-        } );
-
+        final FindContentByParentResult result = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( result.getContents() ).map( Content::getName )
+            .containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
     }
 
     @Test
     public void testManualOrderLocally()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -756,54 +678,47 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
 
         handleEvents();
 
-        layerContext.runWith( () -> contentService.setChildOrder(
-            SetContentChildOrderParams.create().contentId( sourceContent.getId() ).childOrder( ChildOrder.manualOrder() ).build() ) );
-
-        layerContext.runWith( () -> contentService.reorderChildren( ReorderChildContentsParams.create()
-                                                                        .contentId( sourceContent.getId() )
-                                                                        .add( ReorderChildParams.create()
+        layerContext.runWith( () -> contentService.sort( SortContentParams.create()
+                                                             .contentId( sourceContent.getId() )
+                                                             .childOrder( ChildOrder.manualOrder() )
+                                                             .addManualOrder( ReorderChildContentParams.create()
                                                                                   .contentToMove( sourceChild2.getId() )
                                                                                   .contentToMoveBefore( sourceChild3.getId() )
                                                                                   .build() )
-                                                                        .add( ReorderChildParams.create()
+                                                             .addManualOrder( ReorderChildContentParams.create()
                                                                                   .contentToMove( sourceChild1.getId() )
                                                                                   .contentToMoveBefore( sourceChild3.getId() )
                                                                                   .build() )
-                                                                        .build() ) );
+                                                             .build() ) );
 
-        projectContext.runWith( () -> contentService.setChildOrder( SetContentChildOrderParams.create()
+        handleEvents();
+
+        projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                         .contentId( sourceContent.getId() )
                                                                         .childOrder( ChildOrder.from( "_name DESC" ) )
                                                                         .build() ) );
 
         handleEvents();
 
+        final FindContentByParentResult result = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( result.getContents() ).map( Content::getName )
+            .containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
+
         layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            final Iterator<Content> iterator = result.getContents().iterator();
-
-            assertEquals( sourceChild2.getId(), iterator.next().getId() );
-            assertEquals( sourceChild1.getId(), iterator.next().getId() );
-            assertEquals( sourceChild3.getId(), iterator.next().getId() );
-
             assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() );
         } );
-
     }
-
 
     @Test
     public void testRenamed()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -847,7 +762,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testRenameToExisted()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -868,7 +782,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testDeleted()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -890,7 +803,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testDeletedInherited()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -912,7 +824,6 @@ public class ProjectContentEventListenerTest
 
     @Test
     public void testDeletedAndRestoredFromTheCorrectParent()
-        throws InterruptedException
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -948,12 +859,18 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testDeactivated()
+    public void repoIsNotProject()
     {
-        listener.deactivate();
-        projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
+        eventPublisher.publish( Event.create( "node.created" )
+                                    .value( "nodes", List.of( ImmutableMap.builder()
+                                                                  .put( "id", "123" )
+                                                                  .put( "path", "/content/something" )
+                                                                  .put( "branch", "draft" )
+                                                                  .put( "repo", "not-a-project" )
+                                                                  .build() ) )
+                                    .build() );
 
-        assertThrows( RejectedExecutionException.class, this::handleEvents );
+        assertDoesNotThrow( this::handleEvents );
     }
 
     private ExtraData createExtraData()
@@ -990,31 +907,5 @@ public class ProjectContentEventListenerTest
                              .build() );
 
         return Page.create().template( PageTemplateKey.from( "mypagetemplate" ) ).regions( regions ).build();
-    }
-
-    @Test
-    public void repoIsNotProject()
-        throws Exception
-    {
-        eventPublisher.publish( Event.create( "node.created" )
-                                    .value( "nodes", List.of( ImmutableMap.builder()
-                                                                  .put( "id", "123" )
-                                                                  .put( "path", "/content/something" )
-                                                                  .put( "branch", "draft" )
-                                                                  .put( "repo", "not-a-project" )
-                                                                  .build() ) )
-                                    .build() );
-
-        assertDoesNotThrow( this::handleEvents );
-    }
-
-    private void handleEvents()
-        throws InterruptedException
-    {
-        Mockito.verify( eventPublisher, Mockito.atLeastOnce() ).publish( eventCaptor.capture() );
-        eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
-        handledEvents.addAll( eventCaptor.getAllValues() );
-        Thread.sleep( 1000 );
-
     }
 }

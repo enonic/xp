@@ -16,7 +16,7 @@ public interface BranchService
 
     NodeBranchEntry get( NodeId nodeId, InternalContext context );
 
-    NodeBranchEntries get( Collection<NodeId> nodeIds, InternalContext context );
+    NodeBranchEntries get( Iterable<NodeId> nodeIds, InternalContext context );
 
     NodeBranchEntry get( NodePath nodePath, InternalContext context );
 

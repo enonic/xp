@@ -16,16 +16,21 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.SortNodeParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.repo.impl.node.SetNodeChildOrderCommand;
+import com.enonic.xp.repo.impl.node.SortNodeCommand;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SetNodeChildOrderCommandTest
+public class SortNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -95,23 +100,23 @@ public class SetNodeChildOrderCommandTest
         final Node node = createParentNode();
         createChildNodes( node );
 
-        setChildOrder( node, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
+        final SortNodeResult sortNodeResult = setChildOrder( node, ChildOrder.manualOrder() );
+
+        assertEquals( node.id(), sortNodeResult.getNode().id() );
+
         refresh();
+        final FindNodesByParentResult result = findByParent( node.path() );
 
-        final FindNodesByParentResult result = findChildren( node );
-
-        Long previousOrderValue = null;
+        Long previousOrderValue = Long.MAX_VALUE;
 
         for ( final NodeId n : result.getNodeIds() )
         {
-            final Node currentNode = getNode( n );
+            final Long manualOrderValue = getNode( n ).getManualOrderValue();
 
-            assertTrue( previousOrderValue == null || currentNode.getManualOrderValue() > previousOrderValue ,
-                    "Wrong orderValue, previousOrderValue = " + previousOrderValue + ", current = " + currentNode.getManualOrderValue());
-
-            previousOrderValue = currentNode.getManualOrderValue();
+            assertThat( manualOrderValue ).isLessThan( previousOrderValue );
+            previousOrderValue = manualOrderValue;
         }
+        assertThat( result.getNodeIds() ).containsExactlyInAnyOrderElementsOf( sortNodeResult.getReorderedNodes().getIds() );
     }
 
     @Test
@@ -126,11 +131,10 @@ public class SetNodeChildOrderCommandTest
         refresh();
 
         // Now set order manual
-        setChildOrder( node, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC ) ).build() );
-        refresh();
+        setChildOrder( node, ChildOrder.manualOrder() );
 
-        final FindNodesByParentResult result = findChildren( node );
+        refresh();
+        final FindNodesByParentResult result = findByParent( node.path() );
 
         // Verify same order as initial ordering, name desc
         String previousName = "";
@@ -170,34 +174,21 @@ public class SetNodeChildOrderCommandTest
             permissions( AccessControlList.of( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) ).
             build() );
 
-        // Tests the check of the DELETE right on the moved node
-        boolean createRightChecked = false;
-        try
-        {
-            setChildOrder( createUngrantedNode, ChildOrder.create().add(
-                FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
-        }
-        catch ( NodeAccessException e )
-        {
-            createRightChecked = true;
-        }
-        assertTrue( createRightChecked );
+        assertThrows( NodeAccessException.class, () -> setChildOrder( createUngrantedNode, ChildOrder.manualOrder() ) );
 
         // Tests the correct behaviour if the right is granted
-        setChildOrder( createGrantedNode, ChildOrder.create().add(
-            FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.ASC ) ).build() );
+        setChildOrder( createGrantedNode, ChildOrder.manualOrder() );
     }
 
-    private void setChildOrder( final Node node, final ChildOrder childOrder )
+    private SortNodeResult setChildOrder( final Node node, final ChildOrder childOrder )
     {
-        SetNodeChildOrderCommand.create().
-            nodeId( node.id() ).
-            childOrder( childOrder ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        return SortNodeCommand.create()
+            .params( SortNodeParams.create().nodeId( node.id() ).childOrder( childOrder ).build() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
     }
 
     private FindNodesByParentResult createNodeAndReturnOrderedChildren( final IndexPath path, final OrderExpr.Direction direction )
@@ -208,22 +199,18 @@ public class SetNodeChildOrderCommandTest
 
         refresh();
 
-        SetNodeChildOrderCommand.create().
-            nodeId( node.id() ).
-            childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() ).
-            indexServiceInternal( indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            build().
-            execute();
+        SortNodeCommand.create()
+            .params( SortNodeParams.create()
+                         .nodeId( node.id() )
+                         .childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() )
+                         .build() )
+            .indexServiceInternal( indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
 
         refresh();
-
-        return findChildren( node );
-    }
-
-    private FindNodesByParentResult findChildren( final Node node )
-    {
         return findByParent( node.path() );
     }
 

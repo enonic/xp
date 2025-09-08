@@ -20,11 +20,12 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.ResolveSyncWorkResult;
+import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
 import com.enonic.xp.repo.impl.node.MoveNodeCommand;
 import com.enonic.xp.repo.impl.node.ResolveSyncWorkCommand;
-import com.enonic.xp.repo.impl.node.SetNodeChildOrderCommand;
+import com.enonic.xp.repo.impl.node.SortNodeCommand;
 import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -1157,9 +1158,8 @@ public class ResolveSyncWorkCommandTest
         pushNodes( WS_OTHER, Node.ROOT_UUID, NodeId.from( "node1" ), NodeId.from( "node1_1" ), NodeId.from( "node1_2" ),
                    NodeId.from( "node1_3" ), NodeId.from( "node1_4" ) );
 
-        SetNodeChildOrderCommand.create()
-            .nodeId( node1.id() )
-            .childOrder( ChildOrder.manualOrder() )
+        SortNodeCommand.create()
+            .params( SortNodeParams.create().nodeId( node1.id() ).childOrder( ChildOrder.manualOrder() ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )

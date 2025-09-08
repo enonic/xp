@@ -144,7 +144,12 @@ public class NodeExporter
 
             final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( version.getNodeVersionKey() );
 
-            final Node exportNode = NodeFromNodeVersionBuilder.create( version, nodeVersion );
+            final Node exportNode = Node.create( nodeVersion )
+                .name( version.getNodePath().getName() )
+                .parentPath( version.getNodePath().getParentPath() )
+                .timestamp( version.getTimestamp() )
+                .nodeVersionId( version.getNodeVersionId() )
+                .build();
 
             writeVersion( exportNode, resolveNodeVersionBasePath( node, version ) );
         }

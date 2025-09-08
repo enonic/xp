@@ -43,7 +43,6 @@ class NodeQueryTranslator
         final QueryBuilderFactory.Builder queryBuilderBuilder = createQuery( nodeQuery );
         queryBuilderBuilder.addQueryFilters( additionalFilters );
         addParentFilter( nodeQuery, queryBuilderBuilder );
-        addPathFilter( nodeQuery, queryBuilderBuilder );
 
         return queryBuilderBuilder.build().create();
     }
@@ -54,17 +53,6 @@ class NodeQueryTranslator
             queryExpr( nodeQuery.getQuery() ).
             addQueryFilters( nodeQuery.getQueryFilters() ).
             fieldNameResolver( this.fieldNameResolver );
-    }
-
-    private void addPathFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )
-    {
-        if ( nodeQuery.getPath() != null )
-        {
-            queryBuilderBuilder.addQueryFilter( ValueFilter.create().
-                fieldName( NodeIndexPath.PATH.getPath() ).
-                addValue( ValueFactory.newString( nodeQuery.getPath().toString() ) ).
-                build() );
-        }
     }
 
     private void addParentFilter( final NodeQuery nodeQuery, final QueryBuilderFactory.Builder queryBuilderBuilder )

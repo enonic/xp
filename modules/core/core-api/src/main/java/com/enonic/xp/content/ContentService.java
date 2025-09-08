@@ -44,9 +44,7 @@ public interface ContentService
 
     RestoreContentsResult restore( RestoreContentParams params );
 
-    Content setChildOrder( SetContentChildOrderParams params );
-
-    ReorderChildContentsResult reorderChildren( ReorderChildContentsParams params );
+    SortContentResult sort( SortContentParams params );
 
     Boolean hasUnpublishedChildren( HasUnpublishedChildrenParams params );
 

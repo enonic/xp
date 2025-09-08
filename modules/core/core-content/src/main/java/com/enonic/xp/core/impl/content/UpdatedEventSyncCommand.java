@@ -30,7 +30,7 @@ final class UpdatedEventSyncCommand
     @Override
     protected void doSync()
     {
-        params.getContents().forEach( this::doSync );
+        contentToSync.forEach( this::doSync );
     }
 
     private void doSync( final ContentToSync content )
@@ -110,6 +110,7 @@ final class UpdatedEventSyncCommand
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             !Objects.equals( sourceContent.getAttachments(), targetContent.getAttachments() ) ||
+            !Objects.equals( sourceContent.getManualOrderValue(), targetContent.getManualOrderValue() ) ||
             sourceContent.isValid() != targetContent.isValid();
     }
 
@@ -128,6 +129,7 @@ final class UpdatedEventSyncCommand
                 edit.page = source.getPage();
                 edit.thumbnail = source.getThumbnail();
                 edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
+                edit.manualOrderValue = source.getManualOrderValue();
             } );
     }
 
@@ -138,9 +140,9 @@ final class UpdatedEventSyncCommand
         void validate()
         {
             super.validate();
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getSourceContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getSourceContent() != null ),
                                          "sourceContent must be set" );
-            Preconditions.checkArgument( params.getContents().stream().allMatch( content -> content.getTargetContent() != null ),
+            Preconditions.checkArgument( contentToSync.stream().allMatch( content -> content.getTargetContent() != null ),
                                          "targetContent must be set" );
         }
 

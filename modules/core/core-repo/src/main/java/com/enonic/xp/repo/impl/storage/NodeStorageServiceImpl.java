@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -44,6 +45,8 @@ import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
+
 @Component
 public class NodeStorageServiceImpl
     implements NodeStorageService
@@ -75,6 +78,7 @@ public class NodeStorageServiceImpl
     {
         final Node node = params.getNode();
 
+        final Instant timestamp = node.getTimestamp() == null ? Instant.now( CLOCK ) : node.getTimestamp();
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeVersionKey nodeVersionKey = nodeVersionService.store( NodeVersion.from( node ), context );
 
@@ -85,7 +89,7 @@ public class NodeStorageServiceImpl
             .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
             .nodePath( node.path() )
             .nodeCommitId( params.getNodeCommitId() )
-            .timestamp( node.getTimestamp() )
+            .timestamp( timestamp )
             .build();
 
         this.versionService.store( nodeVersionMetadata, context );
@@ -95,10 +99,10 @@ public class NodeStorageServiceImpl
                                       .nodeVersionId( nodeVersionId )
                                       .nodeVersionKey( nodeVersionKey )
                                       .nodePath( node.path() )
-                                      .timestamp( node.getTimestamp() )
+                                      .timestamp( timestamp )
                                       .build(), params.movedFrom(), context );
 
-        final Node newNode = Node.create( node ).nodeVersionId( nodeVersionId ).build();
+        final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
 
         this.indexDataService.store( newNode, context );
 
@@ -234,7 +238,7 @@ public class NodeStorageServiceImpl
         {
             return Nodes.empty();
         }
-        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds.getSet(), context ).stream();
+        final Stream<NodeBranchEntry> stream = this.branchService.get( nodeIds, context ).stream();
         return doReturnNodes( stream, context );
     }
 
@@ -288,7 +292,7 @@ public class NodeStorageServiceImpl
     @Override
     public NodeBranchEntries getBranchNodeVersions( final NodeIds nodeIds, final InternalContext context )
     {
-        return this.branchService.get( nodeIds.getSet(), context );
+        return this.branchService.get( nodeIds, context );
     }
 
     @Override

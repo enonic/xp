@@ -69,13 +69,12 @@ import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RenameNodeParams;
-import com.enonic.xp.node.ReorderChildNodesParams;
-import com.enonic.xp.node.ReorderChildNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SearchTarget;
-import com.enonic.xp.node.SetNodeChildOrderParams;
+import com.enonic.xp.node.SortNodeParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -392,16 +391,15 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        result.getResults().forEach( ( branchResult ) -> {
+        for ( PatchNodeResult.BranchResult branchResult : result.getResults() )
+        {
             if ( branchResult.node() != null )
             {
-                ContextBuilder.from( ContextAccessor.current() )
-                    .branch( branchResult.branch() )
-                    .build()
-                    .runWith( () -> this.eventPublisher.publish(
-                        NodeEvents.updated( branchResult.node(), InternalContext.from( ContextAccessor.current() ) ) ) );
+                final InternalContext internalContext =
+                    InternalContext.create( ContextAccessor.current() ).branch( branchResult.branch() ).build();
+                this.eventPublisher.publish( NodeEvents.updated( branchResult.node(), internalContext ) );
             }
-        } );
+        }
 
         return result.getResult( ContextAccessor.current().getBranch() );
     }
@@ -638,9 +636,7 @@ public class NodeServiceImpl
     public NodeVersion getByNodeVersionKey( final NodeVersionKey nodeVersionKey )
     {
         verifyContext();
-
-        final Context currentContext = ContextAccessor.current();
-        return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( currentContext ) );
+        return this.nodeStorageService.getNodeVersion( nodeVersionKey, InternalContext.from( ContextAccessor.current() ) );
     }
 
     @Override
@@ -663,48 +659,26 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node setChildOrder( final SetNodeChildOrderParams params )
+    public SortNodeResult sort( final SortNodeParams params )
     {
         verifyContext();
-        final Node sortedNode = SetNodeChildOrderCommand.create()
+        final SortNodeResult result = SortNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
-            .childOrder( params.getChildOrder() )
-            .nodeId( params.getNodeId() )
-            .processor( params.getProcessor() )
-            .refresh( params.getRefresh() )
-            .build()
-            .execute();
-
-        this.eventPublisher.publish( NodeEvents.sorted( sortedNode, InternalContext.from( ContextAccessor.current() ) ) );
-
-        return sortedNode;
-    }
-
-    @Override
-    public ReorderChildNodesResult reorderChildren( final ReorderChildNodesParams params )
-    {
-        verifyContext();
-        final ReorderChildNodesResult reorderChildNodesResult = ReorderChildNodesCommand.create()
             .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
             .build()
             .execute();
 
-        for ( Node parentNode : reorderChildNodesResult.getParentNodes() )
-        {
-            this.eventPublisher.publish( NodeEvents.sorted( parentNode, InternalContext.from( ContextAccessor.current() ) ) );
-        }
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        for ( NodeId nodeId : reorderChildNodesResult.getNodeIds() )
-        {
-            this.eventPublisher.publish( NodeEvents.manualOrderUpdated( getById( nodeId ), InternalContext.from( ContextAccessor.current() ) ) );
-        }
+        this.eventPublisher.publish( NodeEvents.sorted( result.getNode(), internalContext ) );
 
-        return reorderChildNodesResult;
+        result.getReorderedNodes()
+            .stream()
+            .map( node -> NodeEvents.updated( node, internalContext ) )
+            .forEach( this.eventPublisher::publish );
+        return result;
     }
 
     @Override

@@ -1,14 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +17,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.project.Project;
@@ -42,24 +39,16 @@ public final class ProjectContentEventListener
 
     private final ContentEventsSynchronizer contentSynchronizer;
 
-    private final SimpleExecutor simpleExecutor;
+    private final Executor executor;
 
     @Activate
     public ProjectContentEventListener( @Reference final ProjectService projectService,
-                                        @Reference final ContentEventsSynchronizer contentSynchronizer )
+                                        @Reference final ContentEventsSynchronizer contentSynchronizer,
+                                        @Reference(service = ProjectContentSyncExecutor.class) final Executor executor )
     {
         this.projectService = projectService;
         this.contentSynchronizer = contentSynchronizer;
-
-        this.simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "project-node-sync-thread",
-                                                  e -> LOG.error( "Project node sync failed", e ) );
-    }
-
-    @Deactivate
-    public void deactivate()
-    {
-        this.simpleExecutor.shutdownAndAwaitTermination( Duration.ZERO, neverCommenced -> {
-        } );
+        this.executor = executor;
     }
 
     @Override
@@ -87,7 +76,7 @@ public final class ProjectContentEventListener
         if ( isContentEvent )
         {
             Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-            this.simpleExecutor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event.getType() ) ) );
+            this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event.getType() ) ) );
         }
     }
 
@@ -95,7 +84,7 @@ public final class ProjectContentEventListener
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
             "node.duplicated".equals( type ) || "node.renamed".equals( type ) || "node.moved".equals( type ) ||
-            "node.deleted".equals( type ) || "node.sorted".equals( type ) || "node.manualOrderUpdated".equals( type );
+            "node.deleted".equals( type ) || "node.sorted".equals( type );
     }
 
     private void doHandleContentEvent( final List<Map<String, String>> nodes, final String type )
@@ -152,9 +141,6 @@ public final class ProjectContentEventListener
                         case "node.updated":
                         case "node.pushed":
                             paramsBuilder.syncEventType( ContentSyncEventType.UPDATED );
-                            break;
-                        case "node.manualOrderUpdated":
-                            paramsBuilder.syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED );
                             break;
                         case "node.sorted":
                             paramsBuilder.syncEventType( ContentSyncEventType.SORTED );
