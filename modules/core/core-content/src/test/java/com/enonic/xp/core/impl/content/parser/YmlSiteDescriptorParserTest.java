@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.model;
+package com.enonic.xp.core.impl.content.parser;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

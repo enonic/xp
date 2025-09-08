@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.model;
+package com.enonic.xp.core.impl.content.parser;
 
 import java.io.IOException;
 import java.util.List;

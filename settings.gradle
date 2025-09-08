@@ -59,7 +59,6 @@ include 'core:core-internal'
 include 'core:core-project'
 include 'core:core-scheduler'
 include 'core:core-shared'
-include 'core:core-model'
 
 include 'server:server-config'
 include 'server:server-deploy'

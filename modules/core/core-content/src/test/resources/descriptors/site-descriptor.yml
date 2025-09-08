@@ -1,3 +1,4 @@
+# TODO should be cms/cms.yml
 x:
   - name: "all-except-folders"
     allowContentTypes: "^(?!base:folder$).*"
@@ -17,6 +18,7 @@ form:
         text: "Grey"
     default: "white"
 
+# TODO should be site/site.yml
 processors:
   - name: "background-color-filter"
     order: 10
