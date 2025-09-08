@@ -27,7 +27,7 @@ import com.enonic.xp.content.processor.ProcessCreateParams;
 import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.content.processor.ProcessUpdateParams;
 import com.enonic.xp.content.processor.ProcessUpdateResult;
-import com.enonic.xp.core.impl.schema.xdata.BuiltinXDataTypesAccessor;
+import com.enonic.xp.core.impl.content.schema.BuiltinXDataTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;

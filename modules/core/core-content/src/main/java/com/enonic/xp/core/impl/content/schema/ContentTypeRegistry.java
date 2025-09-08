@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.content;
+package com.enonic.xp.core.impl.content.schema;
 
 import java.util.Objects;
 import java.util.stream.Stream;

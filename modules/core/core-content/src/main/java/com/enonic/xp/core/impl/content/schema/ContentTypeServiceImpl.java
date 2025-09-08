@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.content;
+package com.enonic.xp.core.impl.content.schema;
 
 import java.util.Set;
 
@@ -8,7 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.schema.YmlContentTypeParser;
+import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;

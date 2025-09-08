@@ -17,7 +17,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
+import com.enonic.xp.core.impl.content.schema.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;

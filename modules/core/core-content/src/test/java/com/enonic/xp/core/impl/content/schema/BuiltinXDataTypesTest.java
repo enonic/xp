@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.xdata;
+package com.enonic.xp.core.impl.content.schema;
 
 import org.junit.jupiter.api.Test;
 

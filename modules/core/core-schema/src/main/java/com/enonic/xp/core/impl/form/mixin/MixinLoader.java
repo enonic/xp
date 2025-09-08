@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.core.impl.form.mixin;
 
 import java.time.Instant;
 
