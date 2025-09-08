@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.mapper.ApplicationKeyMixIn;
 import com.enonic.xp.core.impl.schema.mapper.DescriptorKeyDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.DescriptorKeysDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.FieldSetMapper;
@@ -22,6 +23,7 @@ import com.enonic.xp.core.impl.schema.mapper.MixinNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.OccurrencesMapper;
 import com.enonic.xp.core.impl.schema.mapper.PrincipalKeyMapper;
 import com.enonic.xp.core.impl.schema.mapper.PrincipalKeysDeserializer;
+import com.enonic.xp.core.impl.schema.mapper.ResourceKeyDeserializer;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.form.FieldSet;
@@ -32,6 +34,7 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -48,9 +51,11 @@ public final class YmlParserBase
         module.addDeserializer( PrincipalKeys.class, new PrincipalKeysDeserializer() );
         module.addDeserializer( DescriptorKeys.class, new DescriptorKeysDeserializer() );
         module.addDeserializer( DescriptorKey.class, new DescriptorKeyDeserializer() );
+        module.addDeserializer( ResourceKey.class, new ResourceKeyDeserializer() );
 
         mapper.registerModule( module );
 
+        mapper.addMixIn( ApplicationKey.class, ApplicationKeyMixIn.class );
         mapper.addMixIn( PrincipalKey.class, PrincipalKeyMapper.class );
         mapper.addMixIn( Occurrences.class, OccurrencesMapper.class );
 
