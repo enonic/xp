@@ -1,7 +1,8 @@
-package com.enonic.xp.core.impl.schema;
+package com.enonic.xp.core.impl.content.parser;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
+import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeBuilderMapper;
 import com.enonic.xp.core.impl.schema.mapper.ContentTypeNameMapper;
 import com.enonic.xp.schema.content.ContentType;
