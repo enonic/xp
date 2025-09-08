@@ -90,7 +90,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
 
-        doUnpublishContent(content);
+        doUnpublishContent( content);
 
         doPublishContent( content );
 
@@ -149,7 +149,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
 
     private void doUnpublishContent( final Content content )
     {
-        this.contentService.unpublishContent( UnpublishContentParams.create().
+        this.contentService.unpublish( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
     }

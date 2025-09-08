@@ -28,7 +28,7 @@ public interface ContentService
 
     PublishContentResult publish( PushContentParams params );
 
-    UnpublishContentsResult unpublishContent( UnpublishContentParams params );
+    UnpublishContentsResult unpublish( UnpublishContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 

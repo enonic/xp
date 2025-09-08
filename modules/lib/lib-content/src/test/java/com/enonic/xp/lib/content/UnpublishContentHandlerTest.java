@@ -65,7 +65,7 @@ public class UnpublishContentHandlerTest
         when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
 
         final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
-        when( this.contentService.unpublishContent( captor.capture() ) ).thenReturn( exampleResult() );
+        when( this.contentService.unpublish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runScript( "/lib/xp/examples/content/unpublish.js" );
 
@@ -77,7 +77,7 @@ public class UnpublishContentHandlerTest
     public void unpublishById()
     {
         final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
-        when( this.contentService.unpublishContent( captor.capture() ) ).thenReturn( exampleResult() );
+        when( this.contentService.unpublish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishById" );
 
@@ -95,7 +95,7 @@ public class UnpublishContentHandlerTest
         when( this.contentService.getByPath( ContentPath.from( "/yourfolder/yourcontent" ) ) ).thenReturn( yourContent );
 
         final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
-        when( this.contentService.unpublishContent( captor.capture() ) ).thenReturn( exampleResult() );
+        when( this.contentService.unpublish( captor.capture() ) ).thenReturn( exampleResult() );
 
         runFunction( "/test/UnpublishContentHandlerTest.js", "unpublishByPath" );
 
