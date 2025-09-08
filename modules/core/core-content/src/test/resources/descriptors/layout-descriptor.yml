@@ -1,0 +1,31 @@
+displayName: "3 columns"
+description:
+  text: "Layout with 3 columns"
+  i18n: "layout.description.3columns"
+form:
+  - type: "ComboBox"
+    name: "columnConfig"
+    label: "Column configuration"
+    default: "25-50-25"
+    occurrences:
+      minimum: 1
+      maximum: 1
+    options:
+      - value: "25-50-25"
+        text: "25-50-25"
+      - value: "30-50-20"
+        text: "30-50-20"
+regions:
+  - "left"
+  - "middle"
+  - "right"
+config:
+  - name: "p1"
+    value:
+      - value: "p1v1"
+        attr1: "attr1"
+      - value: "p1v2"
+  - name: "p2"
+    value:
+      - value: "p2v1"
+      - value: "p2v2"

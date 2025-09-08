@@ -9,6 +9,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.LocalizedText;
 
 @PublicApi
 public abstract class ComponentDescriptor
@@ -136,6 +137,13 @@ public abstract class ComponentDescriptor
             return typecastToBuilder( this );
         }
 
+        public final T displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return typecastToBuilder( this );
+        }
+
         public final T description( String description )
         {
             this.description = description;
@@ -145,6 +153,13 @@ public abstract class ComponentDescriptor
         public final T descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return typecastToBuilder( this );
+        }
+
+        public final T description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
             return typecastToBuilder( this );
         }
 
