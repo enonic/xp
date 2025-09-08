@@ -41,7 +41,7 @@ public final class PropertyTreeTranslator
 
     public PropertyTree translate( Map<String, Object> map )
     {
-        return marshaller.marshal( map );
+        return marshaller.marshal( map, Form.create().build(), false );
     }
 
     public PropertyTree translate( Map<String, Object> map, ContentTypeName contentTypeName )
