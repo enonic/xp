@@ -157,7 +157,7 @@ public class SortNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final LinkedHashMap<NodeId, Node> knownOrderValues = new LinkedHashMap<>();
+        final LinkedHashMap<NodeId, Node> visitedNodes = new LinkedHashMap<>();
 
         for ( final ReorderChildNodeParams reorderChildNodeParams : reorderChildNodes )
         {
@@ -168,7 +168,7 @@ public class SortNodeCommand
             }
             else
             {
-                final Node toMoveBefore = memoNode( reorderChildNodeParams.getMoveBefore(), parentPath, knownOrderValues );
+                final Node toMoveBefore = memoNode( reorderChildNodeParams.getMoveBefore(), parentPath, visitedNodes );
                 if ( toMoveBefore == null )
                 {
                     continue;
@@ -181,7 +181,7 @@ public class SortNodeCommand
                 }
             }
 
-            final Node node = memoNode( reorderChildNodeParams.getNodeId(), parentPath, knownOrderValues );
+            final Node node = memoNode( reorderChildNodeParams.getNodeId(), parentPath, visitedNodes );
             if ( node == null )
             {
                 continue;
@@ -202,7 +202,7 @@ public class SortNodeCommand
             }
             final Node updatedNode = Node.create( node ).timestamp( Instant.now( CLOCK ) ).manualOrderValue( newOrderValue ).build();
             final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
-            knownOrderValues.put( storedNode.id(), storedNode );
+            visitedNodes.put( storedNode.id(), storedNode );
 
             result.addReorderedNode( storedNode );
         }

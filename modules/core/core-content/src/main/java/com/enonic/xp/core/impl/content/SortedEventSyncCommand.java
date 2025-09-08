@@ -68,7 +68,7 @@ final class SortedEventSyncCommand
 
                     if ( !childrenToSync.isEmpty() )
                     {
-                        ManualOrderUpdatedEventSyncCommand.create()
+                        UpdatedEventSyncCommand.create()
                             .contentService( contentService )
                             .contentToSync( childrenToSync )
                             .build()

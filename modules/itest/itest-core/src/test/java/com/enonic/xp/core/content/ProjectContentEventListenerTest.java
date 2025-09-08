@@ -1,6 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -595,17 +594,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            final Iterator<Content> iterator = result.getContents().iterator();
-
-            assertEquals( sourceChild3.getId(), iterator.next().getId() );
-            assertEquals( sourceChild2.getId(), iterator.next().getId() );
-            assertEquals( sourceChild1.getId(), iterator.next().getId() );
-        } );
-
+        final FindContentByParentResult result = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( result.getContents() ).map( Content::getId )
+            .containsExactly( sourceChild3.getId(), sourceChild2.getId(), sourceChild1.getId() );
     }
 
     @Test
@@ -650,13 +642,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            assertThat( result.getContents() ).map( Content::getName )
-                .containsExactly( sourceChild3.getName(), sourceChild2.getName(), sourceChild1.getName() );
-        } );
+        final FindContentByParentResult intermediateResult = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( intermediateResult.getContents() ).map( Content::getName )
+            .containsExactly( sourceChild3.getName(), sourceChild2.getName(), sourceChild1.getName() );
 
         projectContext.runWith( () -> contentService.sort( SortContentParams.create()
                                                                .contentId( sourceContent.getId() )
@@ -673,12 +662,10 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
-        layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            assertThat( result.getContents() ).map( Content::getName ).containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
-        } );
+        final FindContentByParentResult result = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( result.getContents() ).map( Content::getName )
+            .containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
     }
 
     @Test
@@ -720,16 +707,12 @@ public class ProjectContentEventListenerTest
 
         handleEvents();
 
+        final FindContentByParentResult result = layerContext.callWith(
+            () -> contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() ) );
+        assertThat( result.getContents() ).map( Content::getName )
+            .containsExactly( sourceChild2.getName(), sourceChild1.getName(), sourceChild3.getName() );
+
         layerContext.runWith( () -> {
-            final FindContentByParentResult result =
-                contentService.findByParent( FindContentByParentParams.create().parentId( sourceContent.getId() ).build() );
-
-            final Iterator<Content> iterator = result.getContents().iterator();
-
-            assertEquals( sourceChild2.getId(), iterator.next().getId() );
-            assertEquals( sourceChild1.getId(), iterator.next().getId() );
-            assertEquals( sourceChild3.getId(), iterator.next().getId() );
-
             assertTrue( contentService.getById( sourceContent.getId() ).getChildOrder().isManualOrder() );
         } );
     }

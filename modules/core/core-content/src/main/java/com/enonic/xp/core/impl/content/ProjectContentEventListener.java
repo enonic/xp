@@ -84,7 +84,7 @@ public final class ProjectContentEventListener
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
             "node.duplicated".equals( type ) || "node.renamed".equals( type ) || "node.moved".equals( type ) ||
-            "node.deleted".equals( type ) || "node.sorted".equals( type ) || "node.manualOrderUpdated".equals( type );
+            "node.deleted".equals( type ) || "node.sorted".equals( type );
     }
 
     private void doHandleContentEvent( final List<Map<String, String>> nodes, final String type )
@@ -141,9 +141,6 @@ public final class ProjectContentEventListener
                         case "node.updated":
                         case "node.pushed":
                             paramsBuilder.syncEventType( ContentSyncEventType.UPDATED );
-                            break;
-                        case "node.manualOrderUpdated":
-                            paramsBuilder.syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED );
                             break;
                         case "node.sorted":
                             paramsBuilder.syncEventType( ContentSyncEventType.SORTED );

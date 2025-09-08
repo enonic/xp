@@ -36,8 +36,6 @@ public class NodeEvents
 
     public static final String NODE_SORTED_EVENT = "node.sorted";
 
-    public static final String NODE_MANUAL_ORDER_EVENT = "node.manualOrderUpdated";
-
     public static final String NODE_PERMISSIONS_UPDATED = "node.permissionsUpdated";
 
     public static Event created( final Node createdNode, final InternalContext internalContext )
@@ -97,11 +95,6 @@ public class NodeEvents
     public static Event sorted( final Node sortedNode, final InternalContext internalContext )
     {
         return event( NODE_SORTED_EVENT, sortedNode, internalContext );
-    }
-
-    public static Event manualOrderUpdated( final Node sortedNode, final InternalContext internalContext )
-    {
-        return event( NODE_MANUAL_ORDER_EVENT, sortedNode, internalContext );
     }
 
     private static Event event( String type, Node node, InternalContext internalContext )

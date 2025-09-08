@@ -184,7 +184,6 @@ public final class ParentContentSynchronizer
                 return Stream.of( createEventCommand( singleContent, ContentSyncEventType.MOVED ),
                                   createEventCommand( singleContent, ContentSyncEventType.RENAMED ),
                                   createEventCommand( singleContent, ContentSyncEventType.SORTED ),
-                                  createEventCommand( singleContent, ContentSyncEventType.MANUAL_ORDER_UPDATED ),
                                   createEventCommand( singleContent, ContentSyncEventType.UPDATED ) );
             }
             else
@@ -263,7 +262,6 @@ public final class ParentContentSynchronizer
             case MOVED -> MovedEventSyncCommand.create();
             case RENAMED -> RenamedEventSyncCommand.create();
             case SORTED -> SortedEventSyncCommand.create();
-            case MANUAL_ORDER_UPDATED -> ManualOrderUpdatedEventSyncCommand.create();
             case UPDATED -> UpdatedEventSyncCommand.create();
             case DELETED -> DeletedEventSyncCommand.create();
         } ).contentService( contentService ).contentToSync( contentToSync ).build();

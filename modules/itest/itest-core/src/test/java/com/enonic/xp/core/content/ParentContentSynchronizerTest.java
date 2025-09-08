@@ -545,9 +545,9 @@ public class ParentContentSynchronizerTest
                                  .build() ) );
 
         syncSorted( sourceParent.getId() );
-        syncManualOrderUpdated( sourceChild1.getId() );
-        syncManualOrderUpdated( sourceChild2.getId() );
-        syncManualOrderUpdated( sourceChild3.getId() );
+        syncUpdated( sourceChild1.getId() );
+        syncUpdated( sourceChild2.getId() );
+        syncUpdated( sourceChild3.getId() );
 
         layerContext.runWith( () -> {
             contentService.sort( SortContentParams.create()
@@ -776,7 +776,7 @@ public class ParentContentSynchronizerTest
     public void updateManualOrderNotExisted()
         throws Exception
     {
-        assertNull( syncManualOrderUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
+        assertNull( syncUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
     }
 
     @Test
@@ -785,7 +785,7 @@ public class ParentContentSynchronizerTest
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
-        assertThrows( IllegalArgumentException.class, () -> syncManualOrderUpdated( sourceContent.getId() ), "sourceContent must be set." );
+        assertThrows( IllegalArgumentException.class, () -> syncUpdated( sourceContent.getId() ), "sourceContent must be set." );
     }
 
     @Test
@@ -795,7 +795,7 @@ public class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertEquals( targetContent, syncManualOrderUpdated( sourceContent.getId() ) );
+        assertEquals( targetContent, syncUpdated( sourceContent.getId() ) );
 
     }
 
@@ -822,8 +822,8 @@ public class ParentContentSynchronizerTest
 
             assertTrue( syncSorted( sourceParent.getId() ).getChildOrder().isManualOrder() );
 
-            Long newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
-            Long newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
+            Long newManualOrderValue1 = syncUpdated( sourceChild1.getId() ).getManualOrderValue();
+            Long newManualOrderValue2 = syncUpdated( sourceChild2.getId() ).getManualOrderValue();
 
             assertThat( newManualOrderValue1 ).isGreaterThan( newManualOrderValue2 );
 
@@ -836,8 +836,8 @@ public class ParentContentSynchronizerTest
                                                           .build() )
                                      .build() );
 
-            newManualOrderValue1 = syncManualOrderUpdated( sourceChild1.getId() ).getManualOrderValue();
-            newManualOrderValue2 = syncManualOrderUpdated( sourceChild2.getId() ).getManualOrderValue();
+            newManualOrderValue1 = syncUpdated( sourceChild1.getId() ).getManualOrderValue();
+            newManualOrderValue2 = syncUpdated( sourceChild2.getId() ).getManualOrderValue();
 
             assertThat( newManualOrderValue1 ).isLessThan( newManualOrderValue2 );
         } );
@@ -918,15 +918,6 @@ public class ParentContentSynchronizerTest
         return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
-    private Content syncManualOrderUpdated( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                .syncEventType( ContentSyncEventType.MANUAL_ORDER_UPDATED )
-                .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-    }
 
     private void sync( final ContentId contentId, final boolean includeChildren )
     {

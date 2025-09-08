@@ -676,7 +676,7 @@ public class NodeServiceImpl
 
         result.getReorderedNodes()
             .stream()
-            .map( node -> NodeEvents.manualOrderUpdated( node, internalContext ) )
+            .map( node -> NodeEvents.updated( node, internalContext ) )
             .forEach( this.eventPublisher::publish );
         return result;
     }

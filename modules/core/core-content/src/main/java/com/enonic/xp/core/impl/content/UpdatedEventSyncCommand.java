@@ -110,6 +110,7 @@ final class UpdatedEventSyncCommand
             !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             !Objects.equals( sourceContent.getAttachments(), targetContent.getAttachments() ) ||
+            !Objects.equals( sourceContent.getManualOrderValue(), targetContent.getManualOrderValue() ) ||
             sourceContent.isValid() != targetContent.isValid();
     }
 
@@ -128,6 +129,7 @@ final class UpdatedEventSyncCommand
                 edit.page = source.getPage();
                 edit.thumbnail = source.getThumbnail();
                 edit.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
+                edit.manualOrderValue = source.getManualOrderValue();
             } );
     }
 
