@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.content;
+package com.enonic.xp.core.impl.content.schema;
 
 import java.util.Collection;
 
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
+import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ContentTypeServiceTest
-    extends AbstractSchemaTest
+    extends ApplicationTestSupport
 {
     protected ContentTypeServiceImpl service;
 
@@ -51,7 +51,8 @@ public class ContentTypeServiceTest
     public void testApplications()
         throws Exception
     {
-        initializeApps();
+        addApplication( "myapp1", "/apps/myapp1" );
+        addApplication( "myapp2", "/apps/myapp2" );
 
         final ContentTypes types1 = this.service.getAll();
         assertNotNull( types1 );
@@ -135,7 +136,5 @@ public class ContentTypeServiceTest
 
         final Collection<String> vectorMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.vectorMedia() ) );
         assertEquals( vectorMimeTypes.size(), 1 );
-
-
     }
 }

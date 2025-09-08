@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.content;
+package com.enonic.xp.core.impl.content.schema;
 
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;

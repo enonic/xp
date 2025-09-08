@@ -1,10 +1,9 @@
-package com.enonic.xp.core.impl.schema.xdata;
+package com.enonic.xp.core.impl.content.schema;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.AbstractSchemaTest;
-import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
+import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class XDataServiceImplTest
-    extends AbstractSchemaTest
+    extends ApplicationTestSupport
 {
     protected XDataServiceImpl service;
 
@@ -82,7 +81,8 @@ public class XDataServiceImplTest
     @Test
     public void testApplications()
     {
-        initializeApps();
+        addApplication( "myapp1", "/apps/myapp1" );
+        addApplication( "myapp2", "/apps/myapp2" );
 
         final XDatas types1 = this.service.getAll();
         assertNotNull( types1 );
