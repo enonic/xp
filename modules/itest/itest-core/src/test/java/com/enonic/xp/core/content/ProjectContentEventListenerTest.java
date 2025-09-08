@@ -1242,6 +1242,7 @@ public class ProjectContentEventListenerTest
                              .displayName( "Landing page" )
                              .config( pageDescriptorForm )
                              .key( DescriptorKey.from( "module:landing-page" ) )
+                             .regions( RegionDescriptors.create().build() )
                              .build() );
 
         return Page.create().descriptor( pageDescriptorKey ).config( config ).regions( PageRegions.create().build() ).build();

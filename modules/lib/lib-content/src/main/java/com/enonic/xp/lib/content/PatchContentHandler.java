@@ -69,7 +69,7 @@ public final class PatchContentHandler
 
         if ( branches != null )
         {
-            params.branches( branches.stream().map( Branch::from ).collect( Branches.collecting() ) );
+            params.branches( branches.stream().map( Branch::from ).collect( Branches.collector() ) );
         }
 
         final PatchContentResult result;
