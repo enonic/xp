@@ -19,7 +19,6 @@ public final class ReorderChildNodeParams
         moveBefore = builder.moveBefore;
     }
 
-
     public NodeId getNodeId()
     {
         return nodeId;
@@ -34,7 +33,6 @@ public final class ReorderChildNodeParams
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {

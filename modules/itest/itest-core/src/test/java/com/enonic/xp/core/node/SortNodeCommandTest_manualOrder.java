@@ -186,7 +186,11 @@ public class SortNodeCommandTest_manualOrder
                          .addManualOrder(
                              ReorderChildNodeParams.create().nodeId( NodeId.from( "a" ) ).moveBefore( NodeId.from( "e" ) ).build() )
                          .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "a" ) ).moveBefore( NodeId.from( "e" ) ).build() ) // intentional duplicate
+                         .addManualOrder(
                              ReorderChildNodeParams.create().nodeId( NodeId.from( "b" ) ).build() )
+                         .addManualOrder(
+                             ReorderChildNodeParams.create().nodeId( NodeId.from( "f" ) ).moveBefore( NodeId.from( "c" ) ).build() )
                          .build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
@@ -195,8 +199,7 @@ public class SortNodeCommandTest_manualOrder
             .execute();
 
         refresh();
-        // `a` moved right in front of `e`
-        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "c", "d", "a", "e", "f", "b" );
+        assertThat( findByParent( parentNode.path() ).getNodeIds() ).map( NodeId::toString ).containsExactly( "f", "c", "d", "a", "e", "b" );
     }
 
     @Test

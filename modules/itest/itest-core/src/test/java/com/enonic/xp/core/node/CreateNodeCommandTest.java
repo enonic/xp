@@ -127,7 +127,9 @@ public class CreateNodeCommandTest
             name( "child-node-3" ).
             build() );
 
-        assertTrue( c1.getManualOrderValue() != null && c2.getManualOrderValue() != null && c3.getManualOrderValue() != null );
+        assertNotNull( c1.getManualOrderValue() );
+        assertNotNull( c2.getManualOrderValue() );
+        assertNotNull( c3.getManualOrderValue() );
         assertTrue( c1.getManualOrderValue() < c2.getManualOrderValue() );
         assertTrue( c2.getManualOrderValue() < c3.getManualOrderValue() );
     }
@@ -163,9 +165,10 @@ public class CreateNodeCommandTest
             name( "child-node-3" ).
             insertManualStrategy( InsertManualStrategy.LAST ).
             build() );
-        refresh();
 
-        assertTrue( c1.getManualOrderValue() != null && c2.getManualOrderValue() != null && c3.getManualOrderValue() != null );
+        assertNotNull( c1.getManualOrderValue() );
+        assertNotNull( c2.getManualOrderValue() );
+        assertNotNull( c3.getManualOrderValue() );
         assertTrue( c1.getManualOrderValue() > c2.getManualOrderValue() );
         assertTrue( c2.getManualOrderValue() > c3.getManualOrderValue() );
     }

@@ -148,7 +148,7 @@ public class SortNodeCommand
             final Node node = doGetById( nodeId );
             final Node updatedNode = Node.create( node ).manualOrderValue( resolver.getAsLong() ).timestamp( Instant.now( CLOCK ) ).build();
             final Node storedNode = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext ).node();
-            result.node( storedNode );
+            result.addReorderedNode( storedNode );
         }
     }
 
@@ -188,12 +188,8 @@ public class SortNodeCommand
             }
             final Long currentValue = node.getManualOrderValue();
 
-            final long newOrderValue = ResolveInsertOrderValueCommand.create( this )
-                .parentPath( parentPath )
-                .referenceValue( toMoveBeforeValue )
-                .lower( true )
-                .build()
-                .execute();
+            final long newOrderValue =
+                ResolveInsertOrderValueCommand.create( this ).parentPath( parentPath ).build().reorder( toMoveBeforeValue, currentValue );
 
             if ( currentValue != null && newOrderValue == currentValue )
             {

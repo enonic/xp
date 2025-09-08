@@ -17,6 +17,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.SortNodeParams;
+import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
@@ -25,6 +26,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -98,7 +100,9 @@ public class SortNodeCommandTest
         final Node node = createParentNode();
         createChildNodes( node );
 
-        setChildOrder( node, ChildOrder.manualOrder() );
+        final SortNodeResult sortNodeResult = setChildOrder( node, ChildOrder.manualOrder() );
+
+        assertEquals( node.id(), sortNodeResult.getNode().id() );
 
         refresh();
         final FindNodesByParentResult result = findByParent( node.path() );
@@ -110,9 +114,9 @@ public class SortNodeCommandTest
             final Long manualOrderValue = getNode( n ).getManualOrderValue();
 
             assertThat( manualOrderValue ).isLessThan( previousOrderValue );
-
             previousOrderValue = manualOrderValue;
         }
+        assertThat( result.getNodeIds() ).containsExactlyInAnyOrderElementsOf( sortNodeResult.getReorderedNodes().getIds() );
     }
 
     @Test
@@ -176,9 +180,9 @@ public class SortNodeCommandTest
         setChildOrder( createGrantedNode, ChildOrder.manualOrder() );
     }
 
-    private void setChildOrder( final Node node, final ChildOrder childOrder )
+    private SortNodeResult setChildOrder( final Node node, final ChildOrder childOrder )
     {
-        SortNodeCommand.create()
+        return SortNodeCommand.create()
             .params( SortNodeParams.create().nodeId( node.id() ).childOrder( childOrder ).build() )
             .indexServiceInternal( indexServiceInternal )
             .storageService( this.storageService )

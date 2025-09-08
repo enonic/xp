@@ -20,53 +20,45 @@ public class ResolveInsertOrderValueCommand
 {
     private final NodePath parentPath;
 
-    private final boolean lower;
-
-    private final Long referenceValue;
 
     private ResolveInsertOrderValueCommand( final Builder builder )
     {
         super( builder );
         parentPath = builder.parentPath;
-        referenceValue = builder.referenceValue;
-        lower = builder.lower;
     }
 
-    public long execute()
+    public long insert( final boolean last )
     {
-        final Long manualOrderValue = NodeHelper.runAsAdmin( this::getManualOrderValue );
-        if ( referenceValue == null )
+        final Long manualOrderValue = NodeHelper.runAsAdmin(
+            () -> this.getManualOrderValue( last ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder(), null ) );
+        if ( manualOrderValue == null )
         {
-            if ( manualOrderValue == null )
-            {
-                return NodeManualOrderValueResolver.first();
-            }
-            else
-            {
-                return lower
-                    ? NodeManualOrderValueResolver.after( manualOrderValue )
-                    : NodeManualOrderValueResolver.before( manualOrderValue );
-            }
+            return NodeManualOrderValueResolver.first();
         }
         else
         {
-            if ( manualOrderValue == null )
-            {
-                return lower ? NodeManualOrderValueResolver.before( referenceValue ) : NodeManualOrderValueResolver.after( referenceValue );
-            }
-            else
-            {
-                return lower
-                    ? NodeManualOrderValueResolver.after( manualOrderValue )
-                    : NodeManualOrderValueResolver.between( referenceValue, manualOrderValue );
-            }
+            return last ? NodeManualOrderValueResolver.after( manualOrderValue ) : NodeManualOrderValueResolver.before( manualOrderValue );
         }
     }
 
-    private Long getManualOrderValue()
+    public long reorder( final Long before, final Long current )
     {
-        final ChildOrder childOrder = lower ? ChildOrder.reverseManualOrder() : ChildOrder.manualOrder();
+        final Long manualOrderValue = NodeHelper.runAsAdmin( () -> this.getManualOrderValue( ChildOrder.reverseManualOrder(), before ) );
 
+        if ( manualOrderValue == null )
+        {
+            return NodeManualOrderValueResolver.before( before );
+        }
+        else
+        {
+            return before == null
+                ? NodeManualOrderValueResolver.after( manualOrderValue )
+                : ( manualOrderValue.equals( current ) ? current : NodeManualOrderValueResolver.between( before, manualOrderValue ) );
+        }
+    }
+
+    private Long getManualOrderValue( ChildOrder childOrder, Long referenceValue )
+    {
         final NodeQuery.Builder query =
             NodeQuery.create().size( 1 ).parent( parentPath ).setOrderExpressions( childOrder.getOrderExpressions() );
 
@@ -78,7 +70,8 @@ public class ResolveInsertOrderValueCommand
 
         refresh( RefreshMode.SEARCH );
         final SearchResult searchResult =
-            this.nodeSearchService.query( query.build(), ReturnFields.from( NodeIndexPath.MANUAL_ORDER_VALUE ), SingleRepoSearchSource.from( ContextAccessor.current() ) );
+            this.nodeSearchService.query( query.build(), ReturnFields.from( NodeIndexPath.MANUAL_ORDER_VALUE ),
+                                          SingleRepoSearchSource.from( ContextAccessor.current() ) );
         if ( searchResult.isEmpty() )
         {
             return null;
@@ -110,10 +103,6 @@ public class ResolveInsertOrderValueCommand
     {
         private NodePath parentPath;
 
-        private boolean lower;
-
-        private Long referenceValue;
-
         private Builder()
         {
         }
@@ -126,18 +115,6 @@ public class ResolveInsertOrderValueCommand
         public Builder parentPath( final NodePath val )
         {
             parentPath = val;
-            return this;
-        }
-
-        public Builder lower( final boolean val )
-        {
-            lower = val;
-            return this;
-        }
-
-        public Builder referenceValue( final Long val )
-        {
-            referenceValue = val;
             return this;
         }
 

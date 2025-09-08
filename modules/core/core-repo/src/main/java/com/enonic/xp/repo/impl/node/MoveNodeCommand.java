@@ -178,8 +178,8 @@ public class MoveNodeCommand
                 final Node parentNode = doGetByPath( newParentPath );
                 if ( parentNode.getChildOrder().isManualOrder() )
                 {
-                    final long newOrderValue = ResolveInsertOrderValueCommand.create( this ).parentPath( newParentPath ).build().execute();
-
+                    final long newOrderValue =
+                        ResolveInsertOrderValueCommand.create( this ).parentPath( newParentPath ).build().insert( false );
                     nodeToMoveBuilder.manualOrderValue( newOrderValue );
                 }
             }

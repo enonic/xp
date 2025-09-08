@@ -390,8 +390,8 @@ export interface SortNodeParams {
 }
 
 export interface SortNodeResult<NodeData> {
-    node: Node<NodeData>
-    reorderedNodes?: Node<NodeData>[]
+    node: Node<NodeData>;
+    reorderedNodes?: Node<NodeData>[];
 }
 
 export interface QueryNodeParams<AggregationInput extends Aggregations = never> {
