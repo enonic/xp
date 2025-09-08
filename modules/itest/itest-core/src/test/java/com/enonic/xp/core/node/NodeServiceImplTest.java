@@ -439,7 +439,7 @@ public class NodeServiceImplTest
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() ) // my-child-3 my-child-1 my-child-2
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // my-child-2 my-child-3 my-child-1
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // duplicate, does not change order
-            .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ) // does not change order but changes value
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ) // does not change order
             .processor( ( data, path ) -> {
                 final PropertyTree copy = data.copy();
                 copy.addString( "processedValue", "value" );
@@ -451,7 +451,7 @@ public class NodeServiceImplTest
 
         assertThat( result.getReorderedNodes() ).extracting( Node::name )
             .extracting( NodeName::toString )
-            .containsExactlyInAnyOrder( "my-child-1", "my-child-2", "my-child-3" );
+            .containsExactlyInAnyOrder( "my-child-1", "my-child-2" );
 
         assertEquals( parent.id(), result.getNode().id() );
 
