@@ -3,8 +3,6 @@ package com.enonic.xp.core.impl.content.parser;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
-import com.enonic.xp.core.impl.schema.mapper.ContentTypeBuilderMapper;
-import com.enonic.xp.core.impl.schema.mapper.ContentTypeNameMapper;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -14,8 +12,8 @@ public final class YmlContentTypeParser
 
     static
     {
-        PARSER.addMixIn( ContentTypeName.class, ContentTypeNameMapper.class );
-        PARSER.addMixIn( ContentType.Builder.class, ContentTypeBuilderMapper.class );
+        PARSER.addMixIn( ContentTypeName.class, ContentTypeNameMixIn.class );
+        PARSER.addMixIn( ContentType.Builder.class, ContentTypeBuilderMixIn.class );
     }
 
     public static ContentType.Builder parse( final String resource, final ApplicationKey currentApplication )

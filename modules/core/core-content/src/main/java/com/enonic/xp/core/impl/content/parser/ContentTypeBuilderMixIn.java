@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.mapper;
+package com.enonic.xp.core.impl.content.parser;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import com.enonic.xp.schema.content.ContentDisplayName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
-public abstract class ContentTypeBuilderMapper
+abstract class ContentTypeBuilderMixIn
 {
     @JsonCreator
     public static ContentType.Builder create()
