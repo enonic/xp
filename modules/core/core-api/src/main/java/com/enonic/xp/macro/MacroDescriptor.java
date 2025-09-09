@@ -6,6 +6,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.LocalizedText;
 
 @PublicApi
 public final class MacroDescriptor
@@ -156,6 +157,13 @@ public final class MacroDescriptor
             return this;
         }
 
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return this;
+        }
+
         public Builder description( final String description )
         {
             this.description = description;
@@ -165,6 +173,13 @@ public final class MacroDescriptor
         public Builder descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return this;
+        }
+
+        public Builder description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
             return this;
         }
 
