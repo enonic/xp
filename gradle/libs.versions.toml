@@ -1,5 +1,5 @@
 [versions]
-jackson = "2.19.2"
+jackson = "2.20"
 junit5 = "5.13.4"
 mockito = "5.19.0"
 slf4j = "2.0.17"
