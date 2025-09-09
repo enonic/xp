@@ -30,7 +30,7 @@ public final class PublishContentHandler
 
     private Map<String, Object> contentPublishInfo;
 
-    private String[] excludeChildrenIds;
+    private String[] excludeDescendantsOf;
 
     private Boolean includeDependencies;
 
@@ -83,9 +83,9 @@ public final class PublishContentHandler
                 build();
             builder.contentPublishInfo( contentPublishInfo );
         }
-        if ( this.excludeChildrenIds != null )
+        if ( this.excludeDescendantsOf != null )
         {
-            builder.excludeChildrenIds( ContentIds.from( this.excludeChildrenIds ) );
+            builder.excludeDescendantsOf( ContentIds.from( this.excludeDescendantsOf ) );
         }
         if ( this.includeDependencies != null )
         {
@@ -114,9 +114,9 @@ public final class PublishContentHandler
         this.keys = keys;
     }
 
-    public void setExcludeChildrenIds( final String[] excludeChildrenIds )
+    public void setExcludeDescendantsOf( final String[] excludeDescendantsOf )
     {
-        this.excludeChildrenIds = excludeChildrenIds;
+        this.excludeDescendantsOf = excludeDescendantsOf;
     }
 
     public void setIncludeDependencies( final Boolean includeDependencies )

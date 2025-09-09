@@ -9,12 +9,12 @@ public final class ResolvePublishDependenciesParams
 
     private final ContentIds excludedContentIds;
 
-    private final ContentIds excludeChildrenIds;
+    private final ContentIds excludeDescendantsOf;
 
     private ResolvePublishDependenciesParams( Builder builder )
     {
         contentIds = builder.contentIds;
-        excludeChildrenIds = builder.excludeChildrenIds;
+        excludeDescendantsOf = builder.excludeDescendantsOf;
         excludedContentIds = builder.excludedContentIds;
     }
 
@@ -33,9 +33,9 @@ public final class ResolvePublishDependenciesParams
         return excludedContentIds;
     }
 
-    public ContentIds getExcludeChildrenIds()
+    public ContentIds getExcludeDescendantsOf()
     {
-        return excludeChildrenIds;
+        return excludeDescendantsOf;
     }
 
     public static final class Builder
@@ -44,7 +44,7 @@ public final class ResolvePublishDependenciesParams
 
         private ContentIds excludedContentIds;
 
-        private ContentIds excludeChildrenIds;
+        private ContentIds excludeDescendantsOf;
 
         private Builder()
         {
@@ -62,9 +62,9 @@ public final class ResolvePublishDependenciesParams
             return this;
         }
 
-        public Builder excludeChildrenIds( ContentIds excludeChildrenIds )
+        public Builder excludeDescendantsOf( ContentIds excludeDescendantsOf )
         {
-            this.excludeChildrenIds = excludeChildrenIds;
+            this.excludeDescendantsOf = excludeDescendantsOf;
             return this;
         }
 

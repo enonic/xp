@@ -191,7 +191,7 @@ public class ContentServiceImplTest_publish
 
         final PushContentParams pushParams = PushContentParams.create()
             .contentIds( ContentIds.from( content1_1.getId() ) )
-            .excludeChildrenIds( ContentIds.from( content1_1.getId() ) )
+            .excludeDescendantsOf( ContentIds.from( content1_1.getId() ) )
             .build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
@@ -227,7 +227,7 @@ public class ContentServiceImplTest_publish
         final PushContentParams pushParams = PushContentParams.create()
             .contentIds( ContentIds.from( content1.getId() ) )
             .excludedContentIds( ContentIds.from( content1_1.getId() ) )
-            .excludeChildrenIds( ContentIds.from( content1.getId() ) )
+            .excludeDescendantsOf( ContentIds.from( content1.getId() ) )
             .build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
@@ -297,7 +297,7 @@ public class ContentServiceImplTest_publish
 
         this.contentService.publish( PushContentParams.create()
                                          .contentIds( ContentIds.from( content1.getId() ) )
-                                         .excludeChildrenIds( ContentIds.from( content1.getId() ) )
+                                         .excludeDescendantsOf( ContentIds.from( content1.getId() ) )
                                          .build() );
 
         final MoveContentParams params =

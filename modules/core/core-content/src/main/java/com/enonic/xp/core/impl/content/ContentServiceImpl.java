@@ -320,7 +320,7 @@ public class ContentServiceImpl
             .contentIds( params.getContentIds() )
             .excludedContentIds( params.getExcludedContentIds() )
             .contentPublishInfo( params.getContentPublishInfo() )
-            .excludeChildrenIds( params.getExcludeChildrenIds() )
+            .excludeDescendantsOf( params.getExcludeDescendantsOf() )
             .includeDependencies( params.isIncludeDependencies() )
             .pushListener( params.getPublishContentListener() )
             .message( params.getMessage() )
@@ -342,7 +342,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .contentIds( params.getContentIds() )
             .excludedContentIds( params.getExcludedContentIds() )
-            .excludeChildrenIds( params.getExcludeChildrenIds() )
+            .excludeDescendantsOf( params.getExcludeDescendantsOf() )
             .build()
             .execute();
     }

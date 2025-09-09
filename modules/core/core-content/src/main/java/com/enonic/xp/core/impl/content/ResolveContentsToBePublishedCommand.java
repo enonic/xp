@@ -22,7 +22,7 @@ public class ResolveContentsToBePublishedCommand
 
     private final ContentIds excludedContentIds;
 
-    private final ContentIds excludeChildrenIds;
+    private final ContentIds excludeDescendantsOf;
 
     private final CompareContentResults.Builder resultBuilder;
 
@@ -34,7 +34,7 @@ public class ResolveContentsToBePublishedCommand
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
         this.resultBuilder = CompareContentResults.create();
-        this.excludeChildrenIds = builder.excludeChildrenIds;
+        this.excludeDescendantsOf = builder.excludeDescendantsOf;
         this.includeDependencies = builder.includeDependencies;
     }
 
@@ -64,7 +64,7 @@ public class ResolveContentsToBePublishedCommand
     {
         final NodeIds nodeIds = excludedContentIds != null ? ContentNodeHelper.toNodeIds( excludedContentIds ) : NodeIds.empty();
 
-        final boolean includeChildren = excludeChildrenIds == null || !this.excludeChildrenIds.contains( contentId );
+        final boolean includeChildren = excludeDescendantsOf == null || !this.excludeDescendantsOf.contains( contentId );
 
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create()
                                                 .includeChildren( includeChildren )
@@ -91,7 +91,7 @@ public class ResolveContentsToBePublishedCommand
 
         private ContentIds excludedContentIds;
 
-        private ContentIds excludeChildrenIds;
+        private ContentIds excludeDescendantsOf;
 
         private boolean includeDependencies = true;
 
@@ -107,9 +107,9 @@ public class ResolveContentsToBePublishedCommand
             return this;
         }
 
-        public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
+        public Builder excludeDescendantsOf( final ContentIds excludeDescendantsOf )
         {
-            this.excludeChildrenIds = excludeChildrenIds;
+            this.excludeDescendantsOf = excludeDescendantsOf;
             return this;
         }
 

@@ -36,7 +36,7 @@ public class PublishContentCommand
 
     private final ContentIds excludedContentIds;
 
-    private final ContentIds excludeChildrenIds;
+    private final ContentIds excludeDescendantsOf;
 
     private final ContentPublishInfo contentPublishInfo;
 
@@ -55,7 +55,7 @@ public class PublishContentCommand
         this.excludedContentIds = builder.excludedContentIds;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.includeDependencies = builder.includeDependencies;
-        this.excludeChildrenIds = builder.excludeChildrenIds;
+        this.excludeDescendantsOf = builder.excludeDescendantsOf;
         this.resultBuilder = PublishContentResult.create();
         this.publishContentListener = builder.publishContentListener;
         this.message = builder.message;
@@ -118,7 +118,7 @@ public class PublishContentCommand
         return adminContext.callWith( ResolveContentsToBePublishedCommand.create()
                                           .contentIds( this.contentIds )
                                           .excludedContentIds( this.excludedContentIds )
-                                          .excludeChildrenIds( this.excludeChildrenIds )
+                                          .excludeDescendantsOf( this.excludeDescendantsOf )
                                           .includeDependencies( this.includeDependencies )
                                           .contentTypeService( this.contentTypeService )
                                           .eventPublisher( this.eventPublisher )
@@ -215,10 +215,7 @@ public class PublishContentCommand
                 }
 
             } ).id( id ).build() );
-            if ( publishContentListener != null )
-            {
-                publishContentListener.contentPushed( 1 );
-            }
+            publishContentListener.contentPushed( 1 );
         }
     }
 
@@ -246,7 +243,7 @@ public class PublishContentCommand
 
         private ContentIds excludedContentIds;
 
-        private ContentIds excludeChildrenIds;
+        private ContentIds excludeDescendantsOf;
 
         private ContentPublishInfo contentPublishInfo;
 
@@ -268,9 +265,9 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder excludeChildrenIds( final ContentIds excludeChildrenIds )
+        public Builder excludeDescendantsOf( final ContentIds excludeDescendantsOf )
         {
-            this.excludeChildrenIds = excludeChildrenIds;
+            this.excludeDescendantsOf = excludeDescendantsOf;
             return this;
         }
 

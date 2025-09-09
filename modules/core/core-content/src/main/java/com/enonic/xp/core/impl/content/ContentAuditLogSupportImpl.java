@@ -36,8 +36,8 @@ import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -250,10 +250,10 @@ public class ContentAuditLogSupportImpl
             paramsSet.addStrings( "excludedContentIds",
                                   params.getExcludedContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         }
-        if ( params.getExcludeChildrenIds() != null )
+        if ( params.getExcludeDescendantsOf() != null )
         {
-            paramsSet.addStrings( "excludeChildrenIds",
-                                  params.getExcludeChildrenIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
+            paramsSet.addStrings( "excludeDescendantsOf",
+                                  params.getExcludeDescendantsOf().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         }
         if ( params.getContentPublishInfo() != null )
         {
