@@ -61,26 +61,9 @@ final class YmlLayoutDescriptorParser
         abstract LayoutDescriptor.Builder schemaConfig( InputTypeConfig value );
     }
 
-    private static class RegionDescriptorDeserializer
-        extends JsonDeserializer<RegionDescriptor>
-    {
-        @Override
-        public RegionDescriptor deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
-            throws IOException
-        {
-            final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-            final JsonNode node = mapper.readTree( jsonParser );
-
-            return RegionDescriptor.create().name( node.asText() ).build();
-        }
-    }
-
-
     private static final class RegionDescriptorsDeserializer
         extends JsonDeserializer<RegionDescriptors>
     {
-        private final RegionDescriptorDeserializer regionDeserializer = new RegionDescriptorDeserializer();
-
         @Override
         public RegionDescriptors deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
             throws IOException
@@ -90,12 +73,9 @@ final class YmlLayoutDescriptorParser
 
             final RegionDescriptors.Builder builder = RegionDescriptors.create();
 
-            for ( JsonNode child : node )
+            for ( JsonNode region : node )
             {
-                final JsonParser childParser = child.traverse( mapper );
-                childParser.nextToken();
-                RegionDescriptor rd = regionDeserializer.deserialize( childParser, ctxt );
-                builder.add( rd );
+                builder.add( RegionDescriptor.create().name( region.asText() ).build() );
             }
 
             return builder.build();
@@ -105,7 +85,6 @@ final class YmlLayoutDescriptorParser
     private static final class InputTypeConfigDeserializer
         extends JsonDeserializer<InputTypeConfig>
     {
-
         @Override
         public InputTypeConfig deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
             throws IOException
@@ -115,24 +94,22 @@ final class YmlLayoutDescriptorParser
 
             final InputTypeConfig.Builder builder = InputTypeConfig.create();
 
-            for ( JsonNode child : node )
+            for ( JsonNode property : node )
             {
-                final String propertyName = child.get( "name" ).asText();
-                for ( JsonNode valueItem : child.get( "value" ) )
-                {
-                    final InputTypeProperty.Builder propertyBuilder =
-                        InputTypeProperty.create( propertyName, valueItem.get( "value" ).asText() );
+                final String name = property.get( "name" ).asText();
+                final String value = property.get( "value" ).asText();
 
-                    valueItem.fieldNames().forEachRemaining( attr -> {
-                        if ( "value".equals( attr ) )
-                        {
-                            return;
-                        }
-                        propertyBuilder.attribute( attr, valueItem.get( attr ).asText() );
-                    } );
+                final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( name, value );
 
-                    builder.property( propertyBuilder.build() );
-                }
+                property.fieldNames().forEachRemaining( attr -> {
+                    if ( "value".equals( attr ) || "name".equals( attr ) )
+                    {
+                        return;
+                    }
+                    propertyBuilder.attribute( attr, property.get( attr ).asText() );
+                } );
+
+                builder.property( propertyBuilder.build() );
             }
 
             return builder.build();
