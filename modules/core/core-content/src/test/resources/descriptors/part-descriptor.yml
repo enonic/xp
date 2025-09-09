@@ -1,0 +1,13 @@
+displayName: "My Part"
+description:
+  text: "Description of My Part"
+  i18n: "part.description.myPart"
+form:
+  - type: "TextLine"
+    name: "myField"
+    label: "My Field"
+config:
+  - name: "p1"
+    value: "p1v1"
+  - name: "p2"
+    value: "p2v1"
