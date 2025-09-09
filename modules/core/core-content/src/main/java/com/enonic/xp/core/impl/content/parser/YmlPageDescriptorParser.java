@@ -8,47 +8,47 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.LocalizedText;
 
-final class YmlLayoutDescriptorParser
+public final class YmlPageDescriptorParser
 {
     private static final YmlParserBase PARSER = new YmlParserBase();
 
     static
     {
-        PARSER.addMixIn( LayoutDescriptor.Builder.class, LayoutDescriptorBuilderMixIn.class );
+        PARSER.addMixIn( PageDescriptor.Builder.class, PageDescriptorBuilderMixIn.class );
     }
 
-    static LayoutDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
+    public static PageDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
-        return PARSER.parse( resource, LayoutDescriptor.Builder.class, currentApplication );
+        return PARSER.parse( resource, PageDescriptor.Builder.class, currentApplication );
     }
 
-    private abstract static class LayoutDescriptorBuilderMixIn
+    private abstract static class PageDescriptorBuilderMixIn
     {
         @JsonCreator
-        static LayoutDescriptor.Builder create()
+        static PageDescriptor.Builder create()
         {
-            return LayoutDescriptor.create();
+            return PageDescriptor.create();
         }
 
         @JsonProperty("displayName")
-        abstract LayoutDescriptor.Builder displayName( LocalizedText text );
+        abstract PageDescriptor.Builder displayName( LocalizedText text );
 
         @JsonProperty("description")
-        abstract LayoutDescriptor.Builder description( LocalizedText text );
+        abstract PageDescriptor.Builder description( LocalizedText text );
 
         @JsonProperty("form")
-        abstract LayoutDescriptor.Builder config( Form config );
+        abstract PageDescriptor.Builder config( Form config );
 
         @JsonProperty("regions")
         @JsonDeserialize(using = RegionDescriptorsDeserializer.class)
-        abstract LayoutDescriptor.Builder regions( RegionDescriptors value );
+        abstract PageDescriptor.Builder regions( RegionDescriptors value );
 
         @JsonProperty("config")
         @JsonDeserialize(using = InputTypeConfigDeserializer.class)
-        abstract LayoutDescriptor.Builder schemaConfig( InputTypeConfig value );
+        abstract PageDescriptor.Builder schemaConfig( InputTypeConfig value );
     }
 }
