@@ -161,7 +161,7 @@ public class ContentServiceImplTest_versions
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
-        this.contentService.unpublishContent( UnpublishContentParams.create().
+        this.contentService.unpublish( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 

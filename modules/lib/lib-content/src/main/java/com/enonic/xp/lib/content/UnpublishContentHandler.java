@@ -34,7 +34,7 @@ public final class UnpublishContentHandler
             contentIds( contentIds ).
             build();
 
-        final UnpublishContentsResult result = this.contentService.unpublishContent( unpublishContentParams );
+        final UnpublishContentsResult result = this.contentService.unpublish( unpublishContentParams );
         return result.getUnpublishedContents().stream().map( ContentId::toString ).collect( Collectors.toList() );
     }
 

@@ -71,11 +71,11 @@ import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -374,7 +374,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public UnpublishContentsResult unpublishContent( final UnpublishContentParams params )
+    public UnpublishContentsResult unpublish( final UnpublishContentParams params )
     {
         final UnpublishContentsResult result = UnpublishContentCommand.create()
             .params( params )

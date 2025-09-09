@@ -51,7 +51,7 @@ public class ContentServiceImplTest_unpublish
 
         assertTrue( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
 
-        this.contentService.unpublishContent( UnpublishContentParams.create().
+        this.contentService.unpublish( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
@@ -93,7 +93,7 @@ public class ContentServiceImplTest_unpublish
         assertTrue( masterContext.callWith( () -> contentService.contentExists( content.getId() ) ) );
         assertTrue( masterContext.callWith( () -> contentService.contentExists( child.getId() ) ) );
 
-        this.contentService.unpublishContent( UnpublishContentParams.create().
+        this.contentService.unpublish( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
@@ -128,7 +128,7 @@ public class ContentServiceImplTest_unpublish
 
         Mockito.reset( auditLogService );
 
-        this.contentService.unpublishContent( UnpublishContentParams.create().
+        this.contentService.unpublish( UnpublishContentParams.create().
             contentIds( ContentIds.from( content.getId() ) ).
             build() );
 
