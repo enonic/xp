@@ -54,7 +54,7 @@ final class YmlLayoutDescriptorParser
 
         @JsonProperty("regions")
         @JsonDeserialize(using = RegionDescriptorsDeserializer.class)
-        abstract LayoutDescriptor.Builder regions( final RegionDescriptors value );
+        abstract LayoutDescriptor.Builder regions( RegionDescriptors value );
 
         @JsonProperty("config")
         @JsonDeserialize(using = InputTypeConfigDeserializer.class)
