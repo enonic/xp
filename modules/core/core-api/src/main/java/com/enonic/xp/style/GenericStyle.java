@@ -4,6 +4,8 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+import com.enonic.xp.schema.LocalizedText;
+
 public final class GenericStyle
     implements ElementStyle
 {
@@ -71,12 +73,12 @@ public final class GenericStyle
     @Override
     public String toString()
     {
-        return MoreObjects.toStringHelper( this ).
-            add( "element", STYLE_ELEMENT_NAME ).
-            add( "name", name ).
-            add( "displayName", displayName ).
-            add( "displayNameI18nKey", displayNameI18nKey ).
-            toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "element", STYLE_ELEMENT_NAME )
+            .add( "name", name )
+            .add( "displayName", displayName )
+            .add( "displayNameI18nKey", displayNameI18nKey )
+            .toString();
     }
 
     public static Builder create()
@@ -111,6 +113,13 @@ public final class GenericStyle
         public Builder displayNameI18nKey( final String displayNameI18nKey )
         {
             this.displayNameI18nKey = displayNameI18nKey;
+            return this;
+        }
+
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
             return this;
         }
 

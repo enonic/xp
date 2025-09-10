@@ -1,0 +1,19 @@
+css: "assets/styles.css"
+
+generic:
+  - name: "warning"
+    displayName:
+      text: "Warning"
+      i18n: "warning.displayName"
+
+image:
+  - name: "editor-width-auto"
+    displayName:
+      text: "Override ${width}"
+      i18n: "editor-width-auto-text"
+  - name: "editor-style-cinema"
+    displayName:
+      text: "Cinema"
+      i18n: "editor-style-cinema-text"
+    aspectRatio: "21:9"
+    filter: "pixelate(10)"
