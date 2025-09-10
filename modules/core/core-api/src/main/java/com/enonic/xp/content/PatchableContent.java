@@ -63,7 +63,7 @@ public class PatchableContent
 
     public PatchableField<ContentTypeName> type;
 
-    public PatchableField<ChildOrder> childOrder; // TODO: discuss
+    public PatchableField<ChildOrder> childOrder;
 
     public PatchableField<ProjectName> originProject;
 
