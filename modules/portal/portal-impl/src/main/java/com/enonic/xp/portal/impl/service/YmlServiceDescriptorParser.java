@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.service;
+package com.enonic.xp.portal.impl.service;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;

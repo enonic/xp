@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.service;
+package com.enonic.xp.portal.impl.service;
 
 import java.util.ArrayList;
 import java.util.List;
