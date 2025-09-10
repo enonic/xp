@@ -85,14 +85,15 @@ var expectedJson = {
                                         'text': ''
                                     }
                                 ],
-                                name: 'left'
+                                'name': 'left'
                             },
                             'right': {
                                 'components': [
                                     {
                                         'path': '/top/1/right/0',
                                         'type': 'image',
-                                        'image': 'image-id'
+                                        'image': 'image-id',
+                                        'config': {}
                                     },
                                     {
                                         'path': '/top/1/right/1',
@@ -100,7 +101,7 @@ var expectedJson = {
                                         'fragment': '213sda-ss222'
                                     }
                                 ],
-                                name: 'right'
+                                'name': 'right'
                             }
                         }
                     },
@@ -126,14 +127,18 @@ var expectedJson = {
                     {
                         'path': '/bottom/1',
                         'type': 'image',
-                        'image': 'img-id-x'
+                        'image': 'img-id-x',
+                        'config': {
+                            'caption': 'Caption'
+                        }
                     },
                     {
                         'path': '/bottom/2',
-                        'type': 'image'
+                        'type': 'image',
+                        'config': {}
                     }
                 ],
-                name: 'bottom'
+                'name': 'bottom'
             }
         }
     },

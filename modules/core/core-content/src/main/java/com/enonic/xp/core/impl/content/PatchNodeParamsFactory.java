@@ -103,6 +103,7 @@ public class PatchNodeParamsFactory
         return editableNode -> {
             editableNode.indexConfigDocument = indexConfigFactory.produce();
             editableNode.data = nodeData;
+            editableNode.childOrder = editedContent.getChildOrder();
             editableNode.manualOrderValue = editedContent.getManualOrderValue();
         };
     }

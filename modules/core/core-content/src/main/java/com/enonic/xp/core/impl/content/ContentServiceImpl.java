@@ -67,6 +67,8 @@ import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
@@ -286,6 +288,35 @@ public class ContentServiceImpl
         contentAuditLogSupport.update( params, content );
 
         return content;
+    }
+
+    @Override
+    public PatchContentResult patch( final PatchContentParams params )
+    {
+
+        // only content admin access is allowed to patch content
+
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
+        final PatchContentResult result = PatchContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.patch( params, result );
+
+        return result;
     }
 
     @Override

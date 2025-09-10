@@ -99,7 +99,7 @@ public abstract class AbstractRegions
 
     public abstract AbstractRegions copy();
 
-    public static class Builder<BUILDER extends Builder>
+    public abstract static class Builder<BUILDER extends Builder>
     {
         private final List<Region> regions = new ArrayList<>();
 
@@ -126,6 +126,8 @@ public abstract class AbstractRegions
             regions.add( region );
             return getThis();
         }
+
+        public abstract AbstractRegions build();
     }
 }
 

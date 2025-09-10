@@ -174,12 +174,11 @@ public class RepositoryEntryServiceImpl
 
     private RepositoryEntry updateRepositoryNode( final UpdateNodeParams updateNodeParams )
     {
-        final Node updatedNode =
-            createContext().callWith( () -> PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) ).
+        final Node updatedNode = createContext().callWith(
+            () -> PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) ).binaryService( this.binaryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
-            binaryService( this.binaryService ).
             build().execute().getResult( ContextAccessor.current().getBranch() ) );
 
         eventPublisher.publish( NodeEvents.updated( updatedNode, createInternalContext() ) );

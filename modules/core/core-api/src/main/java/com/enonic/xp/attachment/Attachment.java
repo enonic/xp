@@ -151,6 +151,7 @@ public final class Attachment
             this.label = attachment.label;
             this.size = attachment.size;
             this.textContent = attachment.textContent;
+            this.sha512 = attachment.sha512;
         }
 
         public Builder mimeType( final String mimeType )

@@ -235,7 +235,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_without_modify_permission()
+    public void archive_without_patch_permission()
         throws Exception
     {
         final Content content = createContent( ContentPath.ROOT, "content", AccessControlList.create()

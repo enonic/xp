@@ -27,6 +27,7 @@ import type {
     FormItem,
     Highlight,
     HighlightResult,
+    PatchableContent,
     PublishInfo,
     QueryDsl,
     ScriptValue,
@@ -700,6 +701,24 @@ export interface UpdateContentParams<Data, Type extends string> {
     requireValid?: boolean;
 }
 
+export interface PatchContentParams {
+    key: string;
+    patcher: (v: PatchableContent) => PatchableContent;
+    attachments?: any;
+    branches?: string[];
+    skipSync?: boolean;
+}
+
+export interface PatchContentResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    contentId: string;
+    results: BranchPatchResult<Data, Type>[];
+}
+
+export interface BranchPatchResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    branch: string;
+    content: Content<Data, Type> | null;
+}
+
 interface UpdateContentHandler {
     setKey(value: string): void;
 
@@ -708,6 +727,20 @@ interface UpdateContentHandler {
     setRequireValid(value: boolean): void;
 
     execute<Data, Type extends string>(): Content<Data, Type> | null;
+}
+
+interface PatchContentHandler {
+    setKey(value: string): void;
+
+    setPatcher(value: ScriptValue): void;
+
+    setAttachments(value: ScriptValue): void;
+
+    setBranches(value: string[]): void;
+
+    setSkipSync(value: boolean): void;
+
+    execute(): PatchContentResult;
 }
 
 /**
@@ -752,7 +785,11 @@ export function modify<Data = Record<string, unknown>, Type extends string = str
  *
  * @returns {object} Modified content as JSON.
  */
-export function update<Data = Record<string, unknown>, Type extends string = string>(params: UpdateContentParams<Data, Type>): Content<Data, Type> | null {
+
+// update<number, string>({key: '/my/content', editor: (v) => {return v} });
+
+
+export function update<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string>(params: UpdateContentParams<Data, Type>): Content<Data, Type> | null {
     checkRequired(params, 'key');
 
     const {
@@ -768,6 +805,42 @@ export function update<Data = Record<string, unknown>, Type extends string = str
     bean.setRequireValid(requireValid);
 
     return __.toNativeObject(bean.execute<Data, Type>());
+}
+
+
+/**
+ * This function patches a content.
+ *
+ * @example-ref examples/content/patch.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {function} params.patcher Patcher callback function.
+ * @param {boolean} [params.skipSync=false] If true, the content will not be immediately synced to the child projects.
+ * @param {string[]} [params.branches=[]] List of branches to patch the content in. If not specified, the context's branch is used.
+ *
+ * @returns {object} Patched content as JSON.
+ */
+export function patch(params: PatchContentParams): PatchContentResult {
+    checkRequired(params, 'key');
+
+    const {
+        key,
+        patcher,
+        attachments,
+        branches = [],
+        skipSync = false,
+    } = params ?? {};
+
+    const bean: PatchContentHandler = __.newBean<PatchContentHandler>('com.enonic.xp.lib.content.PatchContentHandler');
+
+    bean.setKey(key);
+    bean.setPatcher(__.toScriptValue(patcher));
+    bean.setAttachments(__.toScriptValue(attachments));
+    bean.setBranches(branches);
+    bean.setSkipSync(skipSync);
+
+    return __.toNativeObject(bean.execute());
 }
 
 export interface PublishContentParams {

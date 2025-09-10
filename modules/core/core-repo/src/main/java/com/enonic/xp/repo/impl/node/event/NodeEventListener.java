@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -102,7 +103,7 @@ public class NodeEventListener
     @SuppressWarnings("unchecked")
     private InternalContext createNodeContext( final Map<String, Object> data )
     {
-        final List<Map<String, String>> nodes = (List<Map<String, String>>) data.get( "nodes" );
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) data.get( EventConstants.NODES_FIELD );
 
         if ( nodes == null || nodes.isEmpty() )
         {

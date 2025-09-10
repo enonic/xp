@@ -22,6 +22,8 @@ public interface ContentService
 
     Content update( UpdateMediaParams params );
 
+    PatchContentResult patch( PatchContentParams params );
+
     Content rename( RenameContentParams params );
 
     DeleteContentsResult delete( DeleteContentParams params );

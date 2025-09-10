@@ -108,5 +108,11 @@ public final class ComponentMapper
     private void serialize( final MapGenerator gen, final ImageComponent comp )
     {
         gen.value( IMAGE, comp.getImage() );
+        if ( comp.getConfig() != null )
+        {
+            gen.map( CONFIG );
+            new PropertyTreeMapper( comp.getConfig() ).serialize( gen );
+            gen.end();
+        }
     }
 }

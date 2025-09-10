@@ -18,6 +18,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -28,6 +29,8 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+
+import static com.enonic.xp.core.impl.content.Constants.CONTENT_SKIP_SYNC;
 
 @Component(immediate = true)
 public final class ProjectContentEventListener
@@ -67,16 +70,18 @@ public final class ProjectContentEventListener
 
     private void handleContentEvent( final Event event )
     {
-        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( "nodes" );
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( EventConstants.NODES_FIELD );
 
         final boolean isContentEvent = nodes.stream()
             .map( map -> map.get( "path" ) )
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
-        if ( isContentEvent )
+        final boolean isSkipSync = Boolean.parseBoolean( (String) event.getData().getOrDefault( CONTENT_SKIP_SYNC, "false" ) );
+
+        if ( isContentEvent && !isSkipSync )
         {
             Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-            this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event.getType() ) ) );
+            this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event ) ) );
         }
     }
 
@@ -87,7 +92,7 @@ public final class ProjectContentEventListener
             "node.deleted".equals( type ) || "node.sorted".equals( type );
     }
 
-    private void doHandleContentEvent( final List<Map<String, String>> nodes, final String type )
+    private void doHandleContentEvent( final List<Map<String, String>> nodes, final Event event )
     {
         createAdminContext().runWith( () -> {
 
@@ -128,11 +133,9 @@ public final class ProjectContentEventListener
                 .forEach( targetProject -> {
 
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
-                        .addContentIds( contentIds )
-                        .sourceProject( sourceProject.getName() )
-                        .targetProject( targetProject.getName() );
+                        .addContentIds( contentIds ).sourceProject( sourceProject.getName() ).targetProject( targetProject.getName() );
 
-                    switch ( type )
+                    switch ( event.getType() )
                     {
                         case "node.created":
                         case "node.duplicated":
@@ -155,7 +158,7 @@ public final class ProjectContentEventListener
                             paramsBuilder.syncEventType( ContentSyncEventType.DELETED );
                             break;
                         default:
-                            LOG.debug( "Ignoring node type: {}", type );
+                            LOG.debug( "Ignoring node type: {}", event.getType() );
                             break;
                     }
                     final ContentEventsSyncParams params = paramsBuilder.build();
@@ -165,7 +168,7 @@ public final class ProjectContentEventListener
                     }
                 } );
 
-            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( type ) )
+            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( event.getType() ) )
             {
                 sourceProject.getParents()
                     .stream()
@@ -184,10 +187,7 @@ public final class ProjectContentEventListener
     private Context createAdminContext()
     {
         final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() )
-            .branch( ContentConstants.BRANCH_DRAFT )
-            .authInfo( authInfo )
-            .build();
+        return ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).authInfo( authInfo ).build();
     }
 
     private AuthenticationInfo createAdminAuthInfo()

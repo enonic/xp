@@ -1,11 +1,15 @@
 package com.enonic.xp.repo.impl;
 
+import java.util.Map;
 import java.util.Objects;
+
+import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
+
 
 public class InternalContext
 {
@@ -19,6 +23,8 @@ public class InternalContext
 
     private final SearchPreference searchPreference;
 
+    private final Map<String, String> eventMetadata;
+
     private InternalContext( final Builder builder )
     {
         this.repositoryId = builder.repositoryId;
@@ -26,15 +32,17 @@ public class InternalContext
         this.principalsKeys = Objects.requireNonNullElse( builder.principalsKeys, PrincipalKeys.empty() );
         this.skipConstraints = builder.skipConstraints;
         this.searchPreference = builder.searchPreference;
+        this.eventMetadata = builder.eventMetadata.build();
     }
 
     public static InternalContext from( final Context context )
     {
-        return InternalContext.create().
-            branch( context.getBranch() ).
-            repositoryId( context.getRepositoryId() ).
-            principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() ).
-            build();
+        return InternalContext.create()
+            .branch( context.getBranch() )
+            .repositoryId( context.getRepositoryId() )
+            .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
+            .eventMetadata( (Map) context.getAttribute( "eventMetadata" ) )
+            .build();
     }
 
     public RepositoryId getRepositoryId()
@@ -63,12 +71,8 @@ public class InternalContext
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() )
             .skipConstraints( context.skipConstraints )
-            .searchPreference( context.searchPreference );
-    }
-
-    public static Builder create()
-    {
-        return new Builder();
+            .searchPreference( context.searchPreference )
+            .eventMetadata( context.eventMetadata );
     }
 
     public static Builder create( final Context context )
@@ -76,7 +80,17 @@ public class InternalContext
         return create()
             .principalsKeys( context.getAuthInfo() != null ? context.getAuthInfo().getPrincipals() : PrincipalKeys.empty() )
             .branch( context.getBranch() )
-            .repositoryId( context.getRepositoryId() );
+            .repositoryId( context.getRepositoryId() ).eventMetadata( (Map) context.getAttribute( "eventMetadata" ) );
+    }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public Map<String, String> getEventMetadata()
+    {
+        return eventMetadata;
     }
 
     public SearchPreference getSearchPreference()
@@ -98,13 +112,13 @@ public class InternalContext
         final InternalContext that = (InternalContext) o;
         return skipConstraints == that.skipConstraints && Objects.equals( repositoryId, that.repositoryId ) &&
             Objects.equals( branch, that.branch ) && Objects.equals( principalsKeys, that.principalsKeys ) &&
-            Objects.equals( searchPreference, that.searchPreference );
+            Objects.equals( searchPreference, that.searchPreference ) && Objects.equals( eventMetadata, that.eventMetadata );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( repositoryId, branch, principalsKeys, skipConstraints, searchPreference );
+        return Objects.hash( repositoryId, branch, principalsKeys, skipConstraints, searchPreference, eventMetadata );
     }
 
     public static final class Builder
@@ -118,6 +132,8 @@ public class InternalContext
         private boolean skipConstraints;
 
         private SearchPreference searchPreference;
+
+        private final ImmutableMap.Builder<String, String> eventMetadata = ImmutableMap.builder();
 
         private Builder()
         {
@@ -150,6 +166,15 @@ public class InternalContext
         public Builder searchPreference( final SearchPreference searchPreference )
         {
             this.searchPreference = searchPreference;
+            return this;
+        }
+
+        public Builder eventMetadata( final Map<String, String> eventMetadata )
+        {
+            if ( eventMetadata != null )
+            {
+                this.eventMetadata.putAll( eventMetadata );
+            }
             return this;
         }
 

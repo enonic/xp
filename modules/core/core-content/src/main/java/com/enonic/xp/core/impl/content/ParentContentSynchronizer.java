@@ -181,10 +181,10 @@ public final class ParentContentSynchronizer
 
             if ( contentToSync.getSourceContent() != null )
             {
-                return Stream.of( createEventCommand( singleContent, ContentSyncEventType.MOVED ),
-                                  createEventCommand( singleContent, ContentSyncEventType.RENAMED ),
+                return Stream.of( createEventCommand( singleContent, ContentSyncEventType.RENAMED ),
                                   createEventCommand( singleContent, ContentSyncEventType.SORTED ),
-                                  createEventCommand( singleContent, ContentSyncEventType.UPDATED ) );
+                                  createEventCommand( singleContent, ContentSyncEventType.UPDATED ),
+                                  createEventCommand( singleContent, ContentSyncEventType.MOVED ) );
             }
             else
             {
