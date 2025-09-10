@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.service;
+package com.enonic.xp.portal.impl.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

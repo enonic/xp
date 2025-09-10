@@ -5,7 +5,6 @@ dependencies {
     testImplementation project( ':core:core-schema' )
     testImplementation project( ':core:core-event' )
     testImplementation project( ':core:core-media' )
-    testImplementation project( ':core:core-site' )
     testImplementation project( ':core:core-project' )
     testImplementation project( ':core:core-scheduler' )
     testImplementation project( ':core:core-app' )
