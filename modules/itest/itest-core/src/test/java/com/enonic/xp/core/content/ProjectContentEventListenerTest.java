@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +57,6 @@ import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
@@ -70,7 +67,6 @@ import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
-import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
