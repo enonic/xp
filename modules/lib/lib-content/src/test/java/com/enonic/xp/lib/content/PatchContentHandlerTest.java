@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,11 +46,9 @@ public class PatchContentHandlerTest
     @Test
     public void testExample()
     {
-        GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.unstructured() );
-        when( this.contentTypeService.getByName( getContentType ) ).thenReturn(
-            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
-
         final Content content = TestDataFixtures.newExampleContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -63,6 +62,8 @@ public class PatchContentHandlerTest
     public void patchSiteConfig()
     {
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -92,6 +93,8 @@ public class PatchContentHandlerTest
     public void patchSiteSingleDescriptor()
     {
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -121,6 +124,8 @@ public class PatchContentHandlerTest
                                              TestDataFixtures.newSmallContent() ) );
 
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
         mockXData();
@@ -133,6 +138,8 @@ public class PatchContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -149,6 +156,8 @@ public class PatchContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -171,6 +180,8 @@ public class PatchContentHandlerTest
     public void patchWorkflowInfo()
     {
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -187,7 +198,8 @@ public class PatchContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
-
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -204,6 +216,8 @@ public class PatchContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -224,7 +238,8 @@ public class PatchContentHandlerTest
         throws Exception
     {
         final Content content = TestDataFixtures.newSmallContent();
-
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -260,7 +275,8 @@ public class PatchContentHandlerTest
                                         .build() )
                               .build() )
             .build();
-
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
@@ -355,7 +371,8 @@ public class PatchContentHandlerTest
         throws Exception
     {
         final Content contentWithoutAttachments = TestDataFixtures.newSmallContent();
-
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getByPath( contentWithoutAttachments.getPath() ) ).thenReturn( contentWithoutAttachments );
 
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
