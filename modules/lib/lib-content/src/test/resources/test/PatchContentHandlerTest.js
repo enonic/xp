@@ -160,7 +160,7 @@ function globalPatcher(c) {
     c.data.a++;
     c.data.z = '99';
     c.data.c[1].d = false;
-    c.data.c[1].e[1] = 42;
+    c.data.c[1].e[1] = '42';
 
     if (!c.x['com-enonic-myapplication']) {
         c.x['com-enonic-myapplication'] = {};
