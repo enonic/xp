@@ -1028,6 +1028,7 @@ public class ParentContentSynchronizerTest
                 .syncEventType( ContentSyncEventType.SORTED )
                 .build() );
 
+        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
     private ExtraData createExtraData()
