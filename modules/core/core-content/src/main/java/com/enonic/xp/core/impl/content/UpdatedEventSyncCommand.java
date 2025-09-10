@@ -12,10 +12,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.User;
 
 final class UpdatedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -97,24 +93,6 @@ final class UpdatedEventSyncCommand
 
     private boolean needToUpdate( final Content sourceContent, final Content targetContent )
     {
-        //type
-        //createdTime
-        //modifiedTime
-        //modifier
-        //creator
-        // archivedBy
-        // archivedTime
-        // variantOf
-
-        //not syncable
-        // publishInfo
-        // inherit
-        // originProject
-        // childOrder
-        // permissions
-
-        // noProjectSync flag to events
-
         return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
             !Objects.equals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() ) ||
             !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
@@ -134,6 +112,7 @@ final class UpdatedEventSyncCommand
             !Objects.equals( sourceContent.getArchivedBy(), targetContent.getArchivedBy() ) ||
             !Objects.equals( sourceContent.getArchivedTime(), targetContent.getArchivedTime() ) ||
             !Objects.equals( sourceContent.getVariantOf(), targetContent.getVariantOf() ) ||
+//            !Objects.equals( sourceContent.getChildOrder(), targetContent.getChildOrder() ) ||
             !Objects.equals( sourceContent.getManualOrderValue(), targetContent.getManualOrderValue() ) ||
             sourceContent.isValid() != targetContent.isValid();
     }
@@ -162,17 +141,19 @@ final class UpdatedEventSyncCommand
             edit.archivedTime.setValue( source.getArchivedTime() );
             edit.variantOf.setValue( source.getVariantOf() );
 
+            edit.manualOrderValue.setValue( source.getManualOrderValue() );
+
             edit.valid.setValue( source.isValid() );
             edit.validationErrors.setValue( source.getValidationErrors() );
         } );
     }
 
-    private PrincipalKey getCurrentUser()
-    {
-        final Context context = ContextAccessor.current();
-
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : User.ANONYMOUS.getKey();
-    }
+//    private PrincipalKey getCurrentUser()
+//    {
+//        final Context context = ContextAccessor.current();
+//
+//        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : User.ANONYMOUS.getKey();
+//    }
 
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>
