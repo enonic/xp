@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
-import com.enonic.xp.style.GenericStyle;
+import com.enonic.xp.style.ElementStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -29,9 +29,6 @@ final class YmlStyleDescriptorParser
 
         PARSER.addMixIn( ImageStyle.class, ImageStyleMixIn.class );
         PARSER.addMixIn( ImageStyle.Builder.class, ImageStyleMixIn.Builder.class );
-
-        PARSER.addMixIn( GenericStyle.class, GenericStyleMixIn.class );
-        PARSER.addMixIn( GenericStyle.Builder.class, GenericStyleMixIn.Builder.class );
     }
 
     static StyleDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
@@ -52,11 +49,7 @@ final class YmlStyleDescriptorParser
 
         @JsonProperty("image")
         @JsonDeserialize(using = ImageStyleDeserializer.class)
-        abstract StyleDescriptor.Builder addImageStyles( Iterable<ImageStyle> elements );
-
-        @JsonProperty("generic")
-        @JsonDeserialize(using = GenericStyleDeserializer.class)
-        abstract StyleDescriptor.Builder addGenericStyles( Iterable<GenericStyle> elements );
+        abstract StyleDescriptor.Builder addStyleElements( Iterable<ElementStyle> elements );
     }
 
     @JsonDeserialize(builder = ImageStyle.Builder.class)
@@ -85,47 +78,12 @@ final class YmlStyleDescriptorParser
         }
     }
 
-    @JsonDeserialize(builder = GenericStyle.Builder.class)
-    private abstract static class GenericStyleMixIn
-    {
-        @JsonCreator
-        static GenericStyle.Builder create()
-        {
-            return GenericStyle.create();
-        }
-
-        @JsonPOJOBuilder(withPrefix = "")
-        abstract static class Builder
-        {
-            @JsonProperty("name")
-            abstract GenericStyle.Builder name( String name );
-
-            @JsonProperty("displayName")
-            abstract GenericStyle.Builder displayName( LocalizedText text );
-        }
-    }
-
     private static final class ImageStyleDeserializer
         extends JsonDeserializer<Iterable<ImageStyle>>
     {
 
         @Override
         public Iterable<ImageStyle> deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
-            throws IOException
-        {
-            final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-            return mapper.readValue( jsonParser, new TypeReference<>()
-            {
-            } );
-        }
-    }
-
-    private static final class GenericStyleDeserializer
-        extends JsonDeserializer<Iterable<GenericStyle>>
-    {
-
-        @Override
-        public Iterable<GenericStyle> deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
             throws IOException
         {
             final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();

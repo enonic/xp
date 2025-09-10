@@ -1,11 +1,5 @@
 css: "assets/styles.css"
 
-generic:
-  - name: "warning"
-    displayName:
-      text: "Warning"
-      i18n: "warning.displayName"
-
 image:
   - name: "editor-width-auto"
     displayName:

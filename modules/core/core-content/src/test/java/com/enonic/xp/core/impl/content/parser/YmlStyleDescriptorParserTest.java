@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.style.ElementStyle;
-import com.enonic.xp.style.GenericStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -38,16 +37,11 @@ public class YmlStyleDescriptorParserTest
 
         final List<ElementStyle> elements = descriptor.getElements();
         assertNotNull( elements );
-        assertEquals( 3, elements.size() );
+        assertEquals( 2, elements.size() );
 
-        final ElementStyle genericStyle = elements.getFirst();
-        assertInstanceOf( GenericStyle.class, genericStyle );
-        assertEquals( "warning", genericStyle.getName() );
-        assertEquals( "Warning", genericStyle.getDisplayName() );
-        assertEquals( "warning.displayName", genericStyle.getDisplayNameI18nKey() );
-
-        final ElementStyle imageStyle_1 = elements.get( 1 );
+        final ElementStyle imageStyle_1 = elements.getFirst();
         assertInstanceOf( ImageStyle.class, imageStyle_1 );
+
         assertEquals( "editor-width-auto", imageStyle_1.getName() );
         assertEquals( "Override ${width}", imageStyle_1.getDisplayName() );
         assertEquals( "editor-width-auto-text", imageStyle_1.getDisplayNameI18nKey() );
