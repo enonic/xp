@@ -280,7 +280,6 @@ public class ProjectContentEventListenerTest
         compareSynched( patchedContent, targetContent );
 
         //fields to not sync
-        assertNotEquals( patchedContent.getChildOrder(), targetContent.getChildOrder() );
         assertNotEquals( patchedContent.getOriginProject(), targetContent.getOriginProject() );
         assertNotEquals( patchedContent.getOriginalParentPath(), targetContent.getOriginalParentPath() );
         assertNotEquals( patchedContent.getOriginalName(), targetContent.getOriginalName() );

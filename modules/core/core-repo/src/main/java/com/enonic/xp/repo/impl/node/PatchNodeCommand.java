@@ -116,6 +116,10 @@ public final class PatchNodeCommand
 
     private void requirePermission( final InternalContext internalContext, final Permission permission, final Node node )
     {
+        if ( node == null )
+        {
+            throw new NodeNotFoundException( "Node not found." );
+        }
         if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), permission, node.getPermissions() ) )
         {
             throw new NodeAccessException( ContextAccessor.current().getAuthInfo().getUser(), node.path(), permission );
