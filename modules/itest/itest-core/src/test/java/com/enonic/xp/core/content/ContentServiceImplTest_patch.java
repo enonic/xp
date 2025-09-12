@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -165,5 +166,41 @@ public class ContentServiceImplTest_patch
         assertEquals( "text content added", attachment2.getTextContent() );
         assertEquals( 3, attachment2.getSize() );
         assertEquals( 128, attachment2.getSha512().length() );
+    }
+
+    @Test
+    public void patch_content_thumbnail()
+        throws Exception
+    {
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( new PropertyTree() )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .createAttachments( CreateAttachments.empty() )
+            .type( ContentTypeName.folder() )
+            .build();
+
+        final Content content = this.contentService.create( createContentParams );
+
+        final PatchContentParams patchContentParams = PatchContentParams.create()
+            .contentId( content.getId() )
+            .createAttachments( CreateAttachments.create()
+                                    .add( CreateAttachment.create()
+                                              .name( AttachmentNames.THUMBNAIL )
+                                              .label( "test-label-edited" )
+                                              .mimeType( "image/jpeg" )
+                                              .text( "text content added" )
+                                              .byteSource( ByteSource.wrap( "ABC".getBytes() ) )
+                                              .build() )
+                                    .build() )
+            .build();
+
+        this.contentService.patch( patchContentParams );
+
+        final Content patchedContent = this.contentService.getById( content.getId() );
+
+        assertEquals( "image/jpeg", patchedContent.getThumbnail().getMimeType() );
+        assertEquals( AttachmentNames.THUMBNAIL, patchedContent.getThumbnail().getBinaryReference().toString() );
+        assertEquals( 3, patchedContent.getThumbnail().getSize() );
     }
 }
