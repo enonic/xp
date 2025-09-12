@@ -112,14 +112,14 @@ final class UpdatedEventSyncCommand
             !Objects.equals( sourceContent.getArchivedBy(), targetContent.getArchivedBy() ) ||
             !Objects.equals( sourceContent.getArchivedTime(), targetContent.getArchivedTime() ) ||
             !Objects.equals( sourceContent.getVariantOf(), targetContent.getVariantOf() ) ||
-//            !Objects.equals( sourceContent.getChildOrder(), targetContent.getChildOrder() ) ||
+            !Objects.equals( sourceContent.getChildOrder(), targetContent.getChildOrder() ) ||
             !Objects.equals( sourceContent.getManualOrderValue(), targetContent.getManualOrderValue() ) ||
             sourceContent.isValid() != targetContent.isValid();
     }
 
     private PatchContentParams.Builder updateParams( final Content source )
     {
-        return PatchContentParams.create().contentId( source.getId() )/*.requireValid( false ).stopInherit( false )*/.patcher( edit -> {
+        return PatchContentParams.create().contentId( source.getId() ).patcher( edit -> {
             edit.data.setValue( source.getData() );
             edit.extraDatas.setValue( source.getAllExtraData() );
             edit.displayName.setValue( source.getDisplayName() );
@@ -142,18 +142,12 @@ final class UpdatedEventSyncCommand
             edit.variantOf.setValue( source.getVariantOf() );
 
             edit.manualOrderValue.setValue( source.getManualOrderValue() );
+            edit.childOrder.setValue( source.getChildOrder() );
 
             edit.valid.setValue( source.isValid() );
             edit.validationErrors.setValue( source.getValidationErrors() );
         } );
     }
-
-//    private PrincipalKey getCurrentUser()
-//    {
-//        final Context context = ContextAccessor.current();
-//
-//        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : User.ANONYMOUS.getKey();
-//    }
 
     public static class Builder
         extends AbstractContentEventSyncCommand.Builder<Builder>

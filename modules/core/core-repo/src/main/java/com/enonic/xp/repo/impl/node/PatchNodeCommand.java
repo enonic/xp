@@ -17,6 +17,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
@@ -65,6 +66,7 @@ public final class PatchNodeCommand
 
         context.runWith( () -> {
             verifyBranch();
+            verifyPermissions();
             doPatchNode();
         } );
 
@@ -78,6 +80,50 @@ public final class PatchNodeCommand
         Preconditions.checkState( this.branches.contains( ContextAccessor.current().getBranch() ),
                                   "Current(source) branch '%s' is not in the list of branches for patch: %s",
                                   ContextAccessor.current().getBranch(), this.branches );
+    }
+
+    private void verifyPermissions()
+    {
+        final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
+        final Branch firstBranch = this.branches.first();
+        final Node persistedNode = getPersistedNode( firstBranch );
+
+        if ( this.branches.getSize() == 1 )
+        {
+            requirePermission( internalContext, Permission.MODIFY, persistedNode );
+            return;
+        }
+
+        final Map<Branch, Node> activeNodeMap = getActiveNodes( this.branches );
+
+        for ( Branch branch : this.branches )
+        {
+            Permission requiredPermission;
+
+            if ( firstBranch.equals( branch ) ||
+                !activeNodeMap.get( firstBranch ).getNodeVersionId().equals( persistedNode.getNodeVersionId() ) )
+            {
+                requiredPermission = Permission.MODIFY;
+            }
+            else
+            {
+                requiredPermission = Permission.PUBLISH;
+            }
+
+            requirePermission( internalContext, requiredPermission, persistedNode );
+        }
+    }
+
+    private void requirePermission( final InternalContext internalContext, final Permission permission, final Node node )
+    {
+        if ( node == null )
+        {
+            throw new NodeNotFoundException( "Node not found." );
+        }
+        if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), permission, node.getPermissions() ) )
+        {
+            throw new NodeAccessException( ContextAccessor.current().getAuthInfo().getUser(), node.path(), permission );
+        }
     }
 
     private void doPatchNode()

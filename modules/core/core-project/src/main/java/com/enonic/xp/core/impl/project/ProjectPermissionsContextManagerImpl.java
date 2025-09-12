@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectAccessVerifier;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.PrincipalKeys;
@@ -19,7 +19,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
 public final class ProjectPermissionsContextManagerImpl
-    implements ProjectPermissionsContextManager
+    implements ProjectPermissionsContextManager, ProjectAccessVerifier
 {
     @Override
     public Context initGetContext( final ProjectName projectName )
