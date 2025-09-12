@@ -1015,7 +1015,6 @@ public class ContentServiceImpl
     @Override
     public PatchContentResult patch( final PatchContentParams params )
     {
-
         requireAdminRole();
 
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
