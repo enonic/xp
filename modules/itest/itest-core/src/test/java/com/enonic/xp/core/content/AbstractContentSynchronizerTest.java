@@ -386,6 +386,7 @@ public abstract class AbstractContentSynchronizerTest
 
         assertTrue( targetContent.getInherit().containsAll( EnumSet.allOf( ContentInheritType.class ) ) );
 
+        assertEquals( sourceContent.getChildOrder(), targetContent.getChildOrder() );
         assertEquals( sourceContent.getModifier(), targetContent.getModifier() );
         assertEquals( sourceContent.getModifiedTime(), targetContent.getModifiedTime() );
         assertEquals( sourceContent.getArchivedTime(), targetContent.getArchivedTime() );
