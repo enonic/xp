@@ -99,7 +99,6 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -293,7 +292,6 @@ public class ContentServiceImpl
     private void requireAdminRole()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
 
         if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
         {
