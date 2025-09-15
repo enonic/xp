@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.content.CompareContentResults;
@@ -215,7 +214,10 @@ public class PublishContentCommand
                 }
 
             } ).id( id ).build() );
-            publishContentListener.contentPushed( 1 );
+            if ( publishContentListener != null )
+            {
+                publishContentListener.contentPushed( 1 );
+            }
         }
     }
 
@@ -310,7 +312,6 @@ public class PublishContentCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( contentIds, "contentIds is required" );
             ContentPublishInfoPreconditions.check( contentPublishInfo );
         }
 

@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -13,9 +15,9 @@ public final class ResolvePublishDependenciesParams
 
     private ResolvePublishDependenciesParams( Builder builder )
     {
-        contentIds = builder.contentIds;
-        excludeDescendantsOf = builder.excludeDescendantsOf;
-        excludedContentIds = builder.excludedContentIds;
+        contentIds = Objects.requireNonNullElse( builder.contentIds, ContentIds.empty() );
+        excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
+        excludedContentIds = Objects.requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
     }
 
     public static Builder create()

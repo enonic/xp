@@ -62,15 +62,11 @@ public class ResolveContentsToBePublishedCommand
 
     private ResolveSyncWorkResult getWorkResult( final ContentId contentId )
     {
-        final NodeIds nodeIds = excludedContentIds != null ? ContentNodeHelper.toNodeIds( excludedContentIds ) : NodeIds.empty();
-
-        final boolean includeChildren = excludeDescendantsOf == null || !this.excludeDescendantsOf.contains( contentId );
-
         return nodeService.resolveSyncWork( SyncWorkResolverParams.create()
-                                                .includeChildren( includeChildren )
+                                                .includeChildren( !this.excludeDescendantsOf.contains( contentId ) )
                                                 .includeDependencies( this.includeDependencies )
                                                 .nodeId( NodeId.from( contentId ) )
-                                                .excludedNodeIds( nodeIds )
+                                                .excludedNodeIds( ContentNodeHelper.toNodeIds( excludedContentIds ) )
                                                 .branch( ContentConstants.BRANCH_MASTER )
                                                 .statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) )
                                                 .filter( ( ids ) -> nodeService.getByIds( ids )

@@ -1,5 +1,9 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -24,10 +28,10 @@ public final class PushContentParams
         this.contentIds = builder.contentIds;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.includeDependencies = builder.includeDependencies;
-        this.excludeDescendantsOf = builder.excludeDescendantsOf;
+        this.excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
         this.publishContentListener = builder.publishContentListener;
         this.message = builder.message;
-        this.excludedContentIds = builder.excludedContentIds;
+        this.excludedContentIds = Objects.requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
     }
 
     public static Builder create()
@@ -134,6 +138,7 @@ public final class PushContentParams
 
         public PushContentParams build()
         {
+            Preconditions.checkArgument( contentIds != null && !contentIds.isEmpty(), "contentIds is required" );
             return new PushContentParams( this );
         }
     }
