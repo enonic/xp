@@ -98,7 +98,7 @@ final class UpdateContentCommand
 
         validate( editedContent );
 
-        if ( isStoppingInheritContent( editedContent.getInherit() ) )
+        if ( isStoppingInheritContent( contentBeforeChange.getInherit() ) )
         {
             nodeService.commit( NodeCommitEntry.create().message( "Base inherited version" ).build(),
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
@@ -193,7 +193,8 @@ final class UpdateContentCommand
     {
         final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
 
-        if ( !params.isClearAttachments() && editedContent.getValidationErrors() != null )
+        if ( !params.isClearAttachments() && editedContent.getValidationErrors() != null &&
+            editedContent.getValidationErrors().hasErrors() )
         {
             editedContent.getValidationErrors().stream()
                 .filter( validationError -> validationError instanceof AttachmentValidationError )
