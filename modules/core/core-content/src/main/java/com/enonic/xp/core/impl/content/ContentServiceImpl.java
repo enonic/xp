@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -100,9 +99,7 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.project.ProjectAccessVerifier;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -151,8 +148,6 @@ public class ContentServiceImpl
 
     private final LayoutDescriptorService layoutDescriptorService;
 
-    private final ProjectAccessVerifier projectAccessVerifier;
-
     private ContentAuditLogSupport contentAuditLogSupport;
 
     private final ContentConfig config;
@@ -160,15 +155,13 @@ public class ContentServiceImpl
     @Activate
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
-                               @Reference final LayoutDescriptorService layoutDescriptorService,
-                               @Reference ProjectAccessVerifier projectAccessVerifier, ContentConfig config )
+                               @Reference final LayoutDescriptorService layoutDescriptorService, ContentConfig config )
     {
         this.config = config;
         this.nodeService = nodeService;
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.projectAccessVerifier = projectAccessVerifier;
         this.translator = new ContentNodeTranslator( nodeService, new ContentDataSerializer() );
     }
 
@@ -302,8 +295,7 @@ public class ContentServiceImpl
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         final ProjectName projectName = ProjectName.from( ContextAccessor.current().getRepositoryId() );
 
-        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ||
-            projectAccessVerifier.hasAnyProjectRole( authInfo, projectName, Set.of( ProjectRole.OWNER ) ) ) )
+        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
