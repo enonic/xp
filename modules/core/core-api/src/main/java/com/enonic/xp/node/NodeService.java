@@ -70,10 +70,6 @@ public interface NodeService
 
     ByteSource getBinary( NodeId nodeId, NodeVersionId nodeVersionId, BinaryReference reference );
 
-    String getBinaryKey( NodeId nodeId, BinaryReference reference );
-
-    Node getRoot();
-
     ImportNodeResult importNode( ImportNodeParams params );
 
     LoadNodeResult loadNode( LoadNodeParams params );

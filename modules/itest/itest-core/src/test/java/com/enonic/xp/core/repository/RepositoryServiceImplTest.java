@@ -161,7 +161,7 @@ class RepositoryServiceImplTest
         assertNotNull( repo );
         assertEquals( RepositoryId.from( "fisk" ), repo.getId() );
 
-        final Node rootNode = createAdminContext().callWith( () -> this.nodeService.getRoot() );
+        final Node rootNode = createAdminContext().callWith( () -> getNodeById( Node.ROOT_UUID ) );
         final AccessControlList acl = rootNode.getPermissions();
 
         System.out.println( acl.toString() );

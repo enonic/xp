@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.util.BinaryReference;
@@ -27,9 +28,9 @@ final class GetBinaryKeyCommand
 
     public String execute()
     {
+        final Node node = nodeService.getById( NodeId.from( contentId ) );
         if ( shouldFilterScheduledPublished() )
         {
-            final Node node = nodeService.getById( NodeId.from( contentId ) );
             if ( node == null || contentPendingOrExpired( node, Instant.now() ) )
             {
                 throw ContentNotFoundException.create()
@@ -40,7 +41,9 @@ final class GetBinaryKeyCommand
                     .build();
             }
         }
-        return nodeService.getBinaryKey( NodeId.from( contentId ), binaryReference );
+        final AttachedBinary attachedBinary = node.getAttachedBinaries().getByBinaryReference( this.binaryReference );
+
+        return attachedBinary == null ? null : attachedBinary.getBlobKey();
     }
 
     public static Builder create( final ContentId contentId, final BinaryReference binaryReference )

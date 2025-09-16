@@ -939,7 +939,7 @@ public final class SecurityServiceImpl
                 AccessControlList groupsNodePermissions =
                     IdProviderNodeTranslator.idProviderPermissionsToGroupsNodePermissions( permissions );
 
-                final Node rootNode = nodeService.getRoot();
+                final Node rootNode = nodeService.getById( Node.ROOT_UUID );
                 idProviderNodePermissions = mergeWithRootPermissions( idProviderNodePermissions, rootNode.getPermissions() );
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );
@@ -1022,7 +1022,7 @@ public final class SecurityServiceImpl
                 AccessControlList groupsNodePermissions =
                     IdProviderNodeTranslator.idProviderPermissionsToGroupsNodePermissions( permissions );
 
-                final Node rootNode = nodeService.getRoot();
+                final Node rootNode = nodeService.getById( Node.ROOT_UUID );
                 idProviderNodePermissions = mergeWithRootPermissions( idProviderNodePermissions, rootNode.getPermissions() );
                 usersNodePermissions = mergeWithRootPermissions( usersNodePermissions, rootNode.getPermissions() );
                 groupsNodePermissions = mergeWithRootPermissions( groupsNodePermissions, rootNode.getPermissions() );

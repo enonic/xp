@@ -363,7 +363,7 @@ public class DumpServiceImplTest
 
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
-        final Node loadedRootNode = newContext.callWith( () -> this.nodeService.getRoot() );
+        final Node loadedRootNode = newContext.callWith( () -> getNodeById( Node.ROOT_UUID ) );
 
         assertEquals( newRepoACL, loadedRootNode.getPermissions() );
     }
