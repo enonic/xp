@@ -141,17 +141,15 @@ public class RepoDumper
 
     private void dumpBranch( final BranchDumpResult.Builder dumpResult, Consumer<NodeId> nodeIdsAccumulator )
     {
-        final Node rootNode = this.nodeService.getRoot();
-
         final FindNodesByParentResult children = this.nodeService.findByParent(
-            FindNodesByParentParams.create().parentId( rootNode.id() ).recursive( true ).childOrder( ChildOrder.path() ).build() );
+            FindNodesByParentParams.create().parentId( Node.ROOT_UUID ).recursive( true ).childOrder( ChildOrder.path() ).build() );
 
         final Branch branch = ContextAccessor.current().getBranch();
         this.listener.dumpingBranch( repository.getId(), branch, children.getTotalHits() + 1 );
         LOG.info( "Dumping repository [{}], branch [{}]", repository.getId(), branch );
 
-        doDumpNode( rootNode.id(), dumpResult );
-        nodeIdsAccumulator.accept( rootNode.id() );
+        doDumpNode( Node.ROOT_UUID, dumpResult );
+        nodeIdsAccumulator.accept( Node.ROOT_UUID );
 
         for ( final NodeId child : children.getNodeIds() )
         {

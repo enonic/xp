@@ -819,45 +819,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    public String getBinaryKey( final NodeId nodeId, final BinaryReference reference )
-    {
-        verifyContext();
-        return Tracer.trace( "node.getBinaryKey", trace -> {
-            trace.put( "id", nodeId );
-            trace.put( "reference", reference );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
-        }, () -> executeGetBinaryKey( nodeId, reference ), ( trace, binaryKey ) -> trace.put( "binaryKey", binaryKey ) );
-    }
-
-    private String executeGetBinaryKey( final NodeId nodeId, final BinaryReference reference )
-    {
-        return GetBinaryKeyCommand.create()
-            .binaryReference( reference )
-            .nodeId( nodeId )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-    }
-
-    @Override
-    public Node getRoot()
-    {
-        verifyContext();
-
-        final Node node = executeGetByPath( NodePath.ROOT );
-
-        if ( node == null || node.isRoot() )
-        {
-            return node;
-        }
-
-        throw new RuntimeException( "Expected node with path " + NodePath.ROOT + " to be of type RootNode, found " + node.id() );
-    }
-
-    @Override
     public ImportNodeResult importNode( final ImportNodeParams params )
     {
         verifyContext();

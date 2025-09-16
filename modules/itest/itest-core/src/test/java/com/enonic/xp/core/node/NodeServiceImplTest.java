@@ -308,28 +308,6 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void test_get_binary_key()
-    {
-
-        final PropertyTree data = new PropertyTree();
-        final BinaryReference binaryRef1 = BinaryReference.from( "binary" );
-        data.addBinaryReference( "my-binary-1", binaryRef1 );
-
-        final String binarySource = "binary_source";
-
-        final Node node = this.nodeService.create( CreateNodeParams.create()
-                                                       .name( "my-node" )
-                                                       .parent( NodePath.ROOT )
-                                                       .data( data )
-                                                       .attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) )
-                                                       .build() );
-
-        final String key = this.nodeService.getBinaryKey( node.id(), binaryRef1 );
-
-        assertNotNull( key );
-    }
-
-    @Test
     public void test_get_binary()
         throws IOException
     {
