@@ -774,7 +774,11 @@ export interface PublishContentParams {
     keys: string[];
     schedule?: Schedule;
     includeChildren?: boolean;
+    /**
+     * @deprecated Use excludeDescendantsOf instead.
+     */
     excludeChildrenIds?: string[];
+    excludeDescendantsOf?: string[];
     includeDependencies?: boolean;
     message?: string;
 }
@@ -789,7 +793,7 @@ interface PublishContentHandler {
 
     setContentPublishInfo(value: ScriptValue): void;
 
-    setExcludeChildrenIds(value: string[]): void;
+    setExcludeDescendantsOf(value: string[]): void;
 
     setIncludeDependencies(value?: boolean): void;
 
@@ -809,7 +813,8 @@ interface PublishContentHandler {
  * @param {object} [params.schedule] Schedule the publish.
  * @param {string} [params.schedule.from] Time from which the content is considered published. Defaults to the time of the publish
  * @param {string} [params.schedule.to] Time until which the content is considered published.
- * @param {string[]} [params.excludeChildrenIds] List of all content keys which children should be excluded from publishing content.
+ * @param {string[]} [params.excludeChildrenIds] Deprecated. Use excludeDescendantsOf instead.
+ * @param {string[]} [params.excludeDescendantsOf] List of all content keys which children should be excluded from publishing content.
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
  * @param {string} [params.message] Publish message.
  *
@@ -823,8 +828,10 @@ export function publish(params: PublishContentParams): PublishContentResult {
     if (params.schedule) {
         bean.setContentPublishInfo(__.toScriptValue(params.schedule));
     }
-    if (params.excludeChildrenIds) {
-        bean.setExcludeChildrenIds(params.excludeChildrenIds);
+    if (params.excludeDescendantsOf) {
+        bean.setExcludeDescendantsOf(params.excludeDescendantsOf);
+    } else if (params.excludeChildrenIds) {
+        bean.setExcludeDescendantsOf(params.excludeChildrenIds);
     }
     if (!__.nullOrValue(params.includeDependencies)) {
         bean.setIncludeDependencies(params.includeDependencies);

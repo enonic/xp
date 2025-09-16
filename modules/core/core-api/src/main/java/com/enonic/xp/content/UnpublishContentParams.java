@@ -1,6 +1,6 @@
 package com.enonic.xp.content;
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
 
 public final class UnpublishContentParams
 {
@@ -53,7 +53,7 @@ public final class UnpublishContentParams
 
         public UnpublishContentParams build()
         {
-            Objects.requireNonNull( contentIds, "contentIds is required" );
+            Preconditions.checkArgument( contentIds != null && !contentIds.isEmpty(), "contentIds is required" );
             return new UnpublishContentParams( this );
         }
     }

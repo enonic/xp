@@ -1,5 +1,9 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -9,7 +13,7 @@ public final class PushContentParams
 
     private final ContentIds excludedContentIds;
 
-    private final ContentIds excludeChildrenIds;
+    private final ContentIds excludeDescendantsOf;
 
     private final ContentPublishInfo contentPublishInfo;
 
@@ -17,20 +21,17 @@ public final class PushContentParams
 
     private final PushContentListener publishContentListener;
 
-    private final DeleteContentListener deleteContentListener;
-
     private final String message;
 
     private PushContentParams( Builder builder )
     {
-        contentIds = builder.contentIds;
-        contentPublishInfo = builder.contentPublishInfo;
-        includeDependencies = builder.includeDependencies;
-        excludeChildrenIds = builder.excludeChildrenIds;
-        publishContentListener = builder.publishContentListener;
-        deleteContentListener = builder.deleteContentListener;
-        message = builder.message;
-        excludedContentIds = builder.excludedContentIds;
+        this.contentIds = builder.contentIds;
+        this.contentPublishInfo = builder.contentPublishInfo;
+        this.includeDependencies = builder.includeDependencies;
+        this.excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
+        this.publishContentListener = builder.publishContentListener;
+        this.message = builder.message;
+        this.excludedContentIds = Objects.requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
     }
 
     public static Builder create()
@@ -53,9 +54,9 @@ public final class PushContentParams
         return contentPublishInfo;
     }
 
-    public ContentIds getExcludeChildrenIds()
+    public ContentIds getExcludeDescendantsOf()
     {
-        return excludeChildrenIds;
+        return excludeDescendantsOf;
     }
 
     public boolean isIncludeDependencies()
@@ -68,11 +69,6 @@ public final class PushContentParams
         return publishContentListener;
     }
 
-    public DeleteContentListener getDeleteContentListener()
-    {
-        return deleteContentListener;
-    }
-
     public String getMessage()
     {
         return message;
@@ -82,17 +78,15 @@ public final class PushContentParams
     {
         private ContentIds contentIds;
 
-        private ContentIds excludedContentIds = ContentIds.empty();
+        private ContentIds excludedContentIds;
 
-        private ContentIds excludeChildrenIds = ContentIds.empty();
+        private ContentIds excludeDescendantsOf;
 
         private ContentPublishInfo contentPublishInfo;
 
         private boolean includeDependencies = true;
 
         private PushContentListener publishContentListener;
-
-        private DeleteContentListener deleteContentListener;
 
         private String message;
 
@@ -112,9 +106,9 @@ public final class PushContentParams
             return this;
         }
 
-        public Builder excludeChildrenIds( ContentIds excludeChildrenIds )
+        public Builder excludeDescendantsOf( ContentIds excludeDescendantsOf )
         {
-            this.excludeChildrenIds = excludeChildrenIds;
+            this.excludeDescendantsOf = excludeDescendantsOf;
             return this;
         }
 
@@ -136,12 +130,6 @@ public final class PushContentParams
             return this;
         }
 
-        public Builder deleteContentListener( final DeleteContentListener deleteContentListener )
-        {
-            this.deleteContentListener = deleteContentListener;
-            return this;
-        }
-
         public Builder message( final String message )
         {
             this.message = message;
@@ -150,6 +138,7 @@ public final class PushContentParams
 
         public PushContentParams build()
         {
+            Preconditions.checkArgument( contentIds != null && !contentIds.isEmpty(), "contentIds is required" );
             return new PushContentParams( this );
         }
     }

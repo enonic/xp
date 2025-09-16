@@ -41,7 +41,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
         final CompareContentResults result = this.contentService.resolvePublishDependencies( ResolvePublishDependenciesParams.create()
                                                                                                  .contentIds(
                                                                                                      ContentIds.from( content.getId() ) )
-                                                                                                 .excludeChildrenIds(
+                                                                                                 .excludeDescendantsOf(
                                                                                                      ContentIds.from( content.getId() ) )
                                                                                                  .build() );
 

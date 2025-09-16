@@ -1,5 +1,7 @@
 package com.enonic.xp.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -9,13 +11,13 @@ public final class ResolvePublishDependenciesParams
 
     private final ContentIds excludedContentIds;
 
-    private final ContentIds excludeChildrenIds;
+    private final ContentIds excludeDescendantsOf;
 
     private ResolvePublishDependenciesParams( Builder builder )
     {
-        contentIds = builder.contentIds;
-        excludeChildrenIds = builder.excludeChildrenIds;
-        excludedContentIds = builder.excludedContentIds;
+        contentIds = Objects.requireNonNullElse( builder.contentIds, ContentIds.empty() );
+        excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
+        excludedContentIds = Objects.requireNonNullElse( builder.excludedContentIds, ContentIds.empty() );
     }
 
     public static Builder create()
@@ -33,9 +35,9 @@ public final class ResolvePublishDependenciesParams
         return excludedContentIds;
     }
 
-    public ContentIds getExcludeChildrenIds()
+    public ContentIds getExcludeDescendantsOf()
     {
-        return excludeChildrenIds;
+        return excludeDescendantsOf;
     }
 
     public static final class Builder
@@ -44,7 +46,7 @@ public final class ResolvePublishDependenciesParams
 
         private ContentIds excludedContentIds;
 
-        private ContentIds excludeChildrenIds;
+        private ContentIds excludeDescendantsOf;
 
         private Builder()
         {
@@ -62,9 +64,9 @@ public final class ResolvePublishDependenciesParams
             return this;
         }
 
-        public Builder excludeChildrenIds( ContentIds excludeChildrenIds )
+        public Builder excludeDescendantsOf( ContentIds excludeDescendantsOf )
         {
-            this.excludeChildrenIds = excludeChildrenIds;
+            this.excludeDescendantsOf = excludeDescendantsOf;
             return this;
         }
 

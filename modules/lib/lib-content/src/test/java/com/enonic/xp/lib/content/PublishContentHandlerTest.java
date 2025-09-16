@@ -124,7 +124,7 @@ public class PublishContentHandlerTest
 
         runFunction( "/test/PublishContentHandlerTest.js", "publishWithoutChildrenOrDependencies" );
 
-        assertThat( captor.getValue() ).extracting( "contentIds", "excludeChildrenIds", "includeDependencies" )
+        assertThat( captor.getValue() ).extracting( "contentIds", "excludeDescendantsOf", "includeDependencies" )
             .containsExactly( ContentIds.from( PUB_ID_3 ), ContentIds.from( PUB_ID_3 ), false );
     }
 
