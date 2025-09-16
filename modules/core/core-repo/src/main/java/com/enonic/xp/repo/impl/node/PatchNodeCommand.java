@@ -17,6 +17,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
@@ -57,11 +58,6 @@ public final class PatchNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public PatchNodeResult execute()
     {
         final Context context = this.branches.getSize() == 1
@@ -70,8 +66,11 @@ public final class PatchNodeCommand
 
         context.runWith( () -> {
             verifyBranch();
+            verifyPermissions();
             doPatchNode();
         } );
+
+        refresh( params.getRefresh() );
 
         return results.build();
     }
@@ -83,13 +82,58 @@ public final class PatchNodeCommand
                                   ContextAccessor.current().getBranch(), this.branches );
     }
 
+    private void verifyPermissions()
+    {
+        final InternalContext internalContext = InternalContext.create( ContextAccessor.current() ).build();
+        final Branch firstBranch = this.branches.first();
+        final Node persistedNode = getPersistedNode( firstBranch );
+
+        if ( this.branches.getSize() == 1 )
+        {
+            requirePermission( internalContext, Permission.MODIFY, persistedNode );
+            return;
+        }
+
+        final Map<Branch, Node> activeNodeMap = getActiveNodes( this.branches );
+
+        for ( Branch branch : this.branches )
+        {
+            Permission requiredPermission;
+
+            if ( firstBranch.equals( branch ) ||
+                !activeNodeMap.get( firstBranch ).getNodeVersionId().equals( persistedNode.getNodeVersionId() ) )
+            {
+                requiredPermission = Permission.MODIFY;
+            }
+            else
+            {
+                requiredPermission = Permission.PUBLISH;
+            }
+
+            requirePermission( internalContext, requiredPermission, persistedNode );
+        }
+    }
+
+    private void requirePermission( final InternalContext internalContext, final Permission permission, final Node node )
+    {
+        if ( node == null )
+        {
+            throw new NodeNotFoundException( "Node not found." );
+        }
+        if ( !NodePermissionsResolver.hasPermission( internalContext.getPrincipalsKeys(), permission, node.getPermissions() ) )
+        {
+            throw new NodeAccessException( ContextAccessor.current().getAuthInfo().getUser(), node.path(), permission );
+        }
+    }
+
     private void doPatchNode()
     {
         final Map<Branch, Node> activeNodeMap = getActiveNodes( this.branches );
 
         final Map<NodeVersionId, NodeVersionMetadata> patchedVersions = new HashMap<>(); // old version id -> new version metadata
 
-        this.branches.forEach( targetBranch -> {
+        for ( Branch targetBranch : this.branches )
+        {
 
             final NodeVersionData updatedTargetNode = patchNodeInBranch( Optional.ofNullable( activeNodeMap.get( targetBranch ) )
                                                                              .map( activeNode -> patchedVersions.get(
@@ -103,7 +147,8 @@ public final class PatchNodeCommand
             }
 
             results.addResult( targetBranch, updatedTargetNode != null ? updatedTargetNode.node() : null );
-        } );
+        }
+
     }
 
     private NodeVersionData patchNodeInBranch( final NodeVersionMetadata patchedVersionMetadata, final Branch branch )
@@ -131,8 +176,6 @@ public final class PatchNodeCommand
                                                        .build() ), branch, l -> {
             }, internalContext );
 
-            refresh( params.getRefresh() );
-
             return new NodeVersionData( nodeStorageService.get( persistedNode.id(), internalContext ), patchedVersionMetadata );
         }
         else
@@ -159,11 +202,7 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext );
-
-            refresh( params.getRefresh() );
-
-            return result;
+            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext );
         }
     }
 

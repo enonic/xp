@@ -687,6 +687,40 @@ export interface Content<
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
+export interface PatchableContent<
+    Data extends Record<string, unknown> = Record<string, unknown>,
+    Type extends string = string,
+> {
+    displayName: string;
+    data: Type extends 'portal:fragment' ? Record<string, never> : Data;
+    x: XpXData; // extraData
+    page: Type extends 'portal:fragment' ? never : _Component;
+    valid: boolean;
+    //thumbnail
+    owner: UserKey;
+    language: string;
+    creator: UserKey;
+    createdTime: string;
+    modifier: UserKey;
+    modifiedTime: string;
+    publishInfo: PublishInfo;
+    processedReferences: string[];
+    workflowInfo: Workflow;
+    manualOrderValue: number;
+    inherit: ContentInheritValue[];
+    variantOf: string;
+    modifyAttachments: Attachment;
+    removeAttachments: string[];
+    createAttachments: AddAttachmentParam[];
+    // validationErrors:
+    type: Type;
+    childOrder: string;
+    originProject: string;
+    originalParentPath: string;
+    archivedTime: string;
+    archivedBy: UserKey;
+}
+
 export type Workflow = {
     state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
     checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;

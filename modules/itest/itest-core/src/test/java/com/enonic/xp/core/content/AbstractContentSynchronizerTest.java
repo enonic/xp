@@ -381,9 +381,16 @@ public abstract class AbstractContentSynchronizerTest
         assertEquals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() );
         assertEquals( sourceContent.getPage(), targetContent.getPage() );
         assertEquals( sourceContent.isValid(), targetContent.isValid() );
+        assertEquals( sourceContent.getValidationErrors(), targetContent.getValidationErrors() );
         assertEquals( sourceContent.getCreatedTime(), targetContent.getCreatedTime() );
 
         assertTrue( targetContent.getInherit().containsAll( EnumSet.allOf( ContentInheritType.class ) ) );
+
+        assertEquals( sourceContent.getChildOrder(), targetContent.getChildOrder() );
+        assertEquals( sourceContent.getModifier(), targetContent.getModifier() );
+        assertEquals( sourceContent.getModifiedTime(), targetContent.getModifiedTime() );
+        assertEquals( sourceContent.getArchivedTime(), targetContent.getArchivedTime() );
+        assertEquals( sourceContent.getArchivedBy(), targetContent.getArchivedBy() );
     }
 
     protected void handleEvents()

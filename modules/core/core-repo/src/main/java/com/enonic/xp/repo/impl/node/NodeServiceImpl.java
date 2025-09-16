@@ -382,10 +382,8 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        final PatchNodeResult result = PatchNodeCommand.create()
-            .params( convertUpdateParams( params ) )
+        final PatchNodeResult result = PatchNodeCommand.create().params( convertUpdateParams( params ) ).binaryService( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
-            .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -410,7 +408,9 @@ public class NodeServiceImpl
         verifyContext();
 
         final PatchNodeResult result = PatchNodeCommand.create()
-            .params( params ).indexServiceInternal( this.indexServiceInternal ).binaryService( this.binaryService )
+            .params( params )
+            .indexServiceInternal( this.indexServiceInternal )
+            .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -431,7 +431,7 @@ public class NodeServiceImpl
                 final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
                 if ( ( br.branch().equals( mainBranch ) ) || !br.node().getNodeVersionId().equals( mainBranchVersion ) )
                 {
-                    eventPublisher.publish( NodeEvents.updated( br.node(), internalContext ) );
+                    eventPublisher.publish( NodeEvents.patched( br.node(), internalContext ) );
                 }
                 else
                 {
@@ -518,8 +518,10 @@ public class NodeServiceImpl
 
         if ( !pushNodesResult.getSuccessfulEntries().isEmpty() )
         {
-            this.eventPublisher.publish(
-                NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(), target, ContextAccessor.current().getRepositoryId() ) );
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(),
+                                                            InternalContext.create( ContextAccessor.current() )
+                                                                .branch( target )
+                                                                .build() ) );
         }
 
         return pushNodesResult;

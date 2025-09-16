@@ -71,6 +71,7 @@ import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.SiteServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
@@ -160,6 +161,8 @@ public abstract class AbstractContentServiceTest
 
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
+    protected EventPublisher eventPublisher;
+
     private ExecutorService executorService;
 
     private Context initialContext;
@@ -221,7 +224,7 @@ public abstract class AbstractContentServiceTest
 
         final StorageDaoImpl storageDao = new StorageDaoImpl( client );
 
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
+        this.eventPublisher = new EventPublisherImpl( executorService );
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 

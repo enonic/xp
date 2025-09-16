@@ -15,12 +15,14 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -31,6 +33,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -126,7 +129,8 @@ public class PatchNodeCommandTest
 
         assertEquals( 5, capturedEvents.stream()
             .filter( event -> NodeEvents.NODE_UPDATED_EVENT.equals( event.getType() ) &&
-                NodeId.from( ( (List<Map>) event.getData().get( "nodes" ) ).getFirst().get( "id" ) ).equals( createdNode.id() ) )
+                NodeId.from( ( (List<Map>) event.getData().get( EventConstants.NODES_FIELD ) ).getFirst().get( "id" ) )
+                    .equals( createdNode.id() ) )
             .count() );
     }
 
@@ -158,7 +162,7 @@ public class PatchNodeCommandTest
             {
                 return false;
             }
-            final Map node = ( (List<Map>) event.getData().get( "nodes" ) ).getFirst();
+            final Map node = ( (List<Map>) event.getData().get( EventConstants.NODES_FIELD ) ).getFirst();
             return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) && node.get( "branch" ).equals( branch.getValue() );
         } ).count() );
 
@@ -167,7 +171,7 @@ public class PatchNodeCommandTest
             {
                 return false;
             }
-            final Map node = ( (List<Map>) event.getData().get( "nodes" ) ).getFirst();
+            final Map node = ( (List<Map>) event.getData().get( EventConstants.NODES_FIELD ) ).getFirst();
             return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) &&
                 node.get( "branch" ).equals( RepositoryConstants.MASTER_BRANCH.getValue() );
         } ).count() );
@@ -253,7 +257,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_by_user_without_permissions()
+    public void modify_by_user_without_permissions_for_master()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -299,5 +303,43 @@ public class PatchNodeCommandTest
 
         assertEquals( "stuff2", result.getResult( branch ).data().getString( "another" ) );
         assertNull( result.getResult( RepositoryConstants.MASTER_BRANCH ) );
+    }
+
+    @Test
+    public void modify_by_user_without_permissions()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        final PrincipalKey userWithoutPermissions = PrincipalKey.from( "user:system:test" );
+
+        nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                          .nodeId( createdNode.id() )
+                                          .addPermissions( AccessControlList.create()
+                                                               .add( AccessControlEntry.create()
+                                                                         .allow( Permission.READ )
+                                                                         .principal( userWithoutPermissions )
+                                                                         .build() )
+                                                               .build() )
+                                          .build() );
+
+        nodeService.refresh( RefreshMode.ALL );
+
+        final Context userContext = ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create()
+                           .user( User.create().login( "test" ).displayName( "test" ).key( userWithoutPermissions ).build() )
+                           .build() )
+            .build();
+
+        assertThrows( NodeAccessException.class, () -> userContext.callWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                                                                          .id( createdNode.id() )
+                                                                                                          .addBranches( Branches.from(
+                                                                                                              ContextAccessor.current()
+                                                                                                                  .getBranch() ) )
+                                                                                                          .editor( toBeEdited -> {
+                                                                                                              toBeEdited.data.addString(
+                                                                                                                  "another", "stuff2" );
+                                                                                                          } )
+                                                                                                          .build() ) ) );
+
     }
 }

@@ -11,8 +11,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
@@ -67,6 +65,8 @@ import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
@@ -86,6 +86,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
@@ -104,7 +105,9 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Tracer;
@@ -115,8 +118,6 @@ public class ContentServiceImpl
     implements ContentService
 {
     public static final ContentName TEMPLATES_FOLDER_NAME = ContentName.from( "_templates" );
-
-    private static final Logger LOG = LoggerFactory.getLogger( ContentServiceImpl.class );
 
     private static final String TEMPLATES_FOLDER_DISPLAY_NAME = "Templates";
 
@@ -286,6 +287,16 @@ public class ContentServiceImpl
         contentAuditLogSupport.update( params, content );
 
         return content;
+    }
+
+    private void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+
+        if ( !( authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN ) ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
     }
 
     @Override
@@ -788,9 +799,11 @@ public class ContentServiceImpl
             for ( final ReorderChildContentParams param : params.getReorderChildContents() )
             {
                 paramsBuilder.addManualOrder( ReorderChildNodeParams.create()
-                                            .nodeId( NodeId.from( param.getContentToMove() ) )
-                                            .moveBefore( param.getContentToMoveBefore() == null ? null : NodeId.from( param.getContentToMoveBefore() ) )
-                                            .build() );
+                                                  .nodeId( NodeId.from( param.getContentToMove() ) )
+                                                  .moveBefore( param.getContentToMoveBefore() == null
+                                                                   ? null
+                                                                   : NodeId.from( param.getContentToMoveBefore() ) )
+                                                  .build() );
             }
 
             if ( params.stopInherit() )
@@ -987,6 +1000,34 @@ public class ContentServiceImpl
         {
             throw new IllegalStateException( String.format( "Branch must be %s", branch ) );
         }
+    }
+
+    @Override
+    public PatchContentResult patch( final PatchContentParams params )
+    {
+        requireAdminRole();
+
+        verifyContextBranch( ContentConstants.BRANCH_DRAFT );
+
+        final PatchContentResult result = PatchContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.patch( params, result );
+
+        return result;
     }
 
     @Reference

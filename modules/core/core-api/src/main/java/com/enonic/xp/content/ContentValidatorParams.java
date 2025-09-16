@@ -2,6 +2,8 @@ package com.enonic.xp.content;
 
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
@@ -135,8 +137,14 @@ public final class ContentValidatorParams
             return this;
         }
 
+        private void validate()
+        {
+            Preconditions.checkNotNull( contentType, "contentType must be set." );
+        }
+
         public ContentValidatorParams build()
         {
+            validate();
             return new ContentValidatorParams( this );
         }
     }

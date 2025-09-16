@@ -42,14 +42,18 @@ class ContentValidatorParamsTest
     @Test
     void extraDatas_null_safe()
     {
-        final ContentValidatorParams params = ContentValidatorParams.create().build();
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )
+            .build();
         assertNotNull( params.getExtraDatas() );
     }
 
     @Test
     void createAttachments_null_safe()
     {
-        final ContentValidatorParams params = ContentValidatorParams.create().build();
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )
+            .build();
         assertNotNull( params.getCreateAttachments() );
     }
 }

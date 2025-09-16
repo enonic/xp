@@ -3,6 +3,7 @@ package com.enonic.xp.core.node;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -293,7 +294,8 @@ public class NodeServiceImplTest
                                                                     .nodeId( node_1_1.id() )
                                                                     .includeChildren( false )
                                                                     .name( "duplicated-of-child-1" )
-                                                                    .parent( node_1_2.path() ).dataProcessor( ( originalData, path ) -> {
+                                                                    .parent( node_1_2.path() )
+                                                                    .dataProcessor( ( originalData, path ) -> {
                                                                         originalData.setString( "extraProp", "extraPropValue" );
                                                                         return originalData;
                                                                     } )
@@ -439,7 +441,8 @@ public class NodeServiceImplTest
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child1.id() ).moveBefore( child2.id() ).build() ) // my-child-3 my-child-1 my-child-2
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // my-child-2 my-child-3 my-child-1
             .addManualOrder( ReorderChildNodeParams.create().nodeId( child2.id() ).moveBefore( child3.id() ).build() ) // duplicate, does not change order
-            .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() ) // does not change order
+            .addManualOrder( ReorderChildNodeParams.create().nodeId( child3.id() ).moveBefore( child1.id() ).build() )
+            // does not change order
             .processor( ( data, path ) -> {
                 final PropertyTree copy = data.copy();
                 copy.addString( "processedValue", "value" );
@@ -597,6 +600,32 @@ public class NodeServiceImplTest
         assertEquals( 4, publishedEvents.size() );
         assertEquals( NodeEvents.NODE_UPDATED_EVENT, publishedEvents.get( 2 ).getType() );
         assertEquals( NodeEvents.NODE_PUSHED_EVENT, publishedEvents.get( 3 ).getType() );
+    }
+
+    @Test
+    public void testPatchWithEventMetadata()
+    {
+        final Node nodeToPatch = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
+
+        Mockito.clearInvocations( eventPublisher );
+
+        ContextBuilder.from( ContextAccessor.current() ).attribute( "eventMetadata", Map.of( "key1", "value1", "key2", "value2" ) )
+            .build()
+            .callWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                    .id( nodeToPatch.id() )
+                                                    .editor( node -> node.data.addString( "test", "test1" ) )
+                                                    .addBranches(
+                                                        Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                                    .build() ) );
+
+        final ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 1 ) ).publish( captor.capture() );
+
+        final List<Event> patchedEvents = captor.getAllValues();
+
+        assertEquals( "value1", ( patchedEvents.get( 0 ).getData().get( "key1" ) ) );
+        assertEquals( "value2", ( patchedEvents.get( 0 ).getData().get( "key2" ) ) );
     }
 
     @Test

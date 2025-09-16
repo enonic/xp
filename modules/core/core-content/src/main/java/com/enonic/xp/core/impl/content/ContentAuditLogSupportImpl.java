@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -13,10 +14,13 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
+import com.enonic.xp.attachment.CreateAttachment;
+import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
@@ -33,6 +37,8 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PatchContentParams;
+import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
@@ -168,6 +174,43 @@ public class ContentAuditLogSupportImpl
         addContent( resultSet, content );
 
         log( "system.content.update", data, content.getId(), rootContext );
+    }
+
+    @Override
+    public void patch( final PatchContentParams params, final PatchContentResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doPatch( params, result, context ) );
+    }
+
+    private void doPatch( final PatchContentParams params, final PatchContentResult result, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        final PrincipalKey modifier =
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+
+        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+        paramsSet.addString( "modifier", nullToNull( modifier ) );
+        paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
+        addCreateAttachments( paramsSet, params.getCreateAttachments() );
+        paramsSet.addBoolean( "skipSync", params.isSkipSync() );
+
+        result.getResults().forEach( ( branchResult ) -> {
+            final Branch branch = branchResult.branch();
+            final Content content = branchResult.content();
+
+            final PropertySet branchSet = resultSet.addSet( branch.toString() );
+            if ( content != null )
+            {
+                addContent( branchSet, content );
+            }
+        } );
+
+        log( "system.content.patch", data, params.getContentId(), rootContext );
     }
 
     @Override
@@ -505,6 +548,27 @@ public class ContentAuditLogSupportImpl
     {
         targetSet.addStrings( name, contents.stream().map( ContentId::toString ).collect( Collectors.toList() ) );
     }
+
+    private void addCreateAttachments( final PropertySet targetSet, final CreateAttachments attachments )
+    {
+        for ( final CreateAttachment attachment : attachments )
+        {
+            final PropertySet attachmentSet = targetSet.addSet( "createAttachments" );
+            addCreateAttachment( attachmentSet, attachment );
+        }
+    }
+
+    private void addCreateAttachment( final PropertySet targetSet, final CreateAttachment attachment )
+    {
+        targetSet.addString( "name", attachment.getName() );
+        targetSet.addString( "mimeType", attachment.getMimeType() );
+        targetSet.addString( "label", attachment.getLabel() );
+        attachment.getByteSource().sizeIfKnown().toJavaUtil().ifPresent( ( size -> targetSet.addLong( "byteSize", size ) ) );
+        targetSet.addLong( "textSize", Optional.ofNullable( attachment.getTextContent() )
+            .map( textContent -> (long) textContent.length() )
+            .orElse( null ) );
+    }
+
 
     private void log( final String type, final PropertyTree data, final ContentPaths contentPaths, final Context rootContext )
     {
