@@ -6,6 +6,8 @@ import java.util.Map;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.util.BinaryReference;
 
 public final class ValidationErrorsDeserializer
 {
@@ -39,10 +41,35 @@ public final class ValidationErrorsDeserializer
             final String i18n = asString( errorMap.get( "i18n" ) );
             final List<Object> args = (List<Object>) errorMap.get( "args" );
 
-            final ValidationError.Builder errorBuilder =
-                ValidationError.generalError( errorCode ).message( message ).i18n( i18n );
+            final String attachmentStr = asString( errorMap.get( "attachment" ) );
+            final String propertyPathStr = asString( errorMap.get( "propertyPath" ) );
 
-            if ( args != null )
+            ValidationError.Builder errorBuilder;
+
+            if ( attachmentStr != null )
+            {
+                errorBuilder = ValidationError.attachmentError( errorCode, BinaryReference.from( attachmentStr ) );
+            }
+            else if ( propertyPathStr != null )
+            {
+                errorBuilder = ValidationError.dataError( errorCode, PropertyPath.from( propertyPathStr ) );
+            }
+            else
+            {
+                errorBuilder = ValidationError.generalError( errorCode );
+            }
+
+            if ( message != null )
+            {
+                errorBuilder.message( message );
+            }
+
+            if ( i18n != null )
+            {
+                errorBuilder.i18n( i18n );
+            }
+
+            if ( args != null && !args.isEmpty() )
             {
                 errorBuilder.args( args.toArray() );
             }

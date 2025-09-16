@@ -11,7 +11,8 @@ import java.util.stream.Collectors;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.BinaryReference;
 
-public class ValidationError
+public sealed class ValidationError
+    permits DataValidationError, AttachmentValidationError
 {
     private final ValidationErrorCode errorCode;
 
