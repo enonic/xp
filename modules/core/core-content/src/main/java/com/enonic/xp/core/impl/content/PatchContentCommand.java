@@ -43,11 +43,6 @@ public class PatchContentCommand
         return create().params( params );
     }
 
-    public static Builder create( final AbstractCreatingOrUpdatingContentCommand source )
-    {
-        return new Builder( source );
-    }
-
     PatchContentResult execute()
     {
         validateCreateAttachments( params.getCreateAttachments() );
@@ -165,11 +160,6 @@ public class PatchContentCommand
 
         private Builder()
         {
-        }
-
-        private Builder( final AbstractCreatingOrUpdatingContentCommand source )
-        {
-            super( source );
         }
 
         public Builder params( final PatchContentParams params )
