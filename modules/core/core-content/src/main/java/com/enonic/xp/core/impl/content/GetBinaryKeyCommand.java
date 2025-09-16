@@ -29,17 +29,14 @@ final class GetBinaryKeyCommand
     public String execute()
     {
         final Node node = nodeService.getById( NodeId.from( contentId ) );
-        if ( shouldFilterScheduledPublished() )
+        if ( shouldFilterScheduledPublished() && contentPendingOrExpired( node, Instant.now() ) )
         {
-            if ( node == null || contentPendingOrExpired( node, Instant.now() ) )
-            {
-                throw ContentNotFoundException.create()
-                    .contentId( contentId )
-                    .repositoryId( ContextAccessor.current().getRepositoryId() )
-                    .branch( ContextAccessor.current().getBranch() )
-                    .contentRoot( ContentNodeHelper.getContentRoot() )
-                    .build();
-            }
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( ContextAccessor.current().getRepositoryId() )
+                .branch( ContextAccessor.current().getBranch() )
+                .contentRoot( ContentNodeHelper.getContentRoot() )
+                .build();
         }
         final AttachedBinary attachedBinary = node.getAttachedBinaries().getByBinaryReference( this.binaryReference );
 
