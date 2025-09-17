@@ -291,8 +291,8 @@ exports.patchNotMappedXDataFieldName = function () {
         }
     });
 
-    assert.assertJsonEquals("test", result.results[0].content.x['com-enonic-myapplication'].other.name);
-    assert.assertJsonEquals("value", result.results[0].content.x['com-enonic-myapplication'].other.notMappedField);
+    assert.assertJsonEquals('test', result.results[0].content.x['com-enonic-myapplication'].other.name);
+    assert.assertJsonEquals('value', result.results[0].content.x['com-enonic-myapplication'].other.notMappedField);
 
 
 };
@@ -301,10 +301,10 @@ exports.patchNotMappedXDataFieldName = function () {
 exports.patchWorkflowInfo = function () {
 
     var expected = {
-        "state": "IN_PROGRESS",
-        "checks": {
-            "a": "PENDING",
-            "b": "APPROVED"
+        'state': 'IN_PROGRESS',
+        'checks': {
+            'a': 'PENDING',
+            'b': 'APPROVED'
         }
     };
 
@@ -459,7 +459,14 @@ exports.patchValidationErrors = function () {
                 {
                     errorCode: 'com.enonic.myapp:INVALID',
                     message: 'Invalid value: {0}',
+                    propertyPath: 'set.field2',
                     args: ['field2']
+                },
+                {
+                    errorCode: 'com.enonic.myapp:INVALID',
+                    message: 'Invalid attachment',
+                    attachment: 'image.png',
+                    args: []
                 }
             ];
             return c;
@@ -476,7 +483,15 @@ exports.patchValidationErrors = function () {
         {
             errorCode: 'com.enonic.myapp:INVALID',
             message: 'Invalid value: field2',
-            args: ['field2']
+            propertyPath: 'set.field2',
+            args: [
+                'field2'
+            ]
+        },
+        {
+            errorCode: 'com.enonic.myapp:INVALID',
+            message: 'Invalid attachment',
+            attachment: 'image.png'
         }
     ];
 
@@ -515,7 +530,7 @@ exports.patchAttachments = function () {
                 sha512: '2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae',
                 size: 14
             }],
-            removeAttachments: ["file2.txt"],
+            removeAttachments: ['file2.txt'],
             createAttachments: [{
                 mimeType: 'text/plain',
                 name: 'file4.txt',

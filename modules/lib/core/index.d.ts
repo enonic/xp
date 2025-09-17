@@ -524,6 +524,28 @@ export interface Attachment {
     mimeType: string;
 }
 
+export interface DataValidationError
+    extends ValidationError {
+    propertyPath: string;
+}
+
+export interface AttachmentValidationError
+    extends ValidationError {
+    attachment: string;
+}
+
+export interface ValidationError {
+    message: string;
+    i18n: string;
+    errorCode: ValidationErrorCode;
+    args: any[];
+}
+
+export interface ValidationErrorCode {
+    applicationKey: string;
+    code: string;
+}
+
 export interface PublishInfo {
     from?: string;
     to?: string;
@@ -712,7 +734,7 @@ export interface PatchableContent<
     modifyAttachments: Attachment;
     removeAttachments: string[];
     createAttachments: AddAttachmentParam[];
-    // validationErrors:
+    validationErrors: ValidationError[];
     type: Type;
     childOrder: string;
     originProject: string;

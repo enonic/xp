@@ -312,6 +312,23 @@ public class PatchContentHandlerTest
         assertEquals( "data 1", patchedAttachment.getTextContent() );
     }
 
+    @Test
+    public void patchAttachmentsNonExistingAttachment()
+        throws Exception
+    {
+        final Content contentWithoutAttachments = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
+        when( this.contentService.getByPath( contentWithoutAttachments.getPath() ) ).thenReturn( contentWithoutAttachments );
+
+        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], contentWithoutAttachments ) );
+
+        mockXData();
+
+        assertThrowsExactly( RuntimeException.class, () -> runFunction( "/test/PatchContentHandlerTest.js", "patchAttachments" ) );
+    }
+
     private void mockXData()
     {
         final FormItemSet cSet = FormItemSet.create()
@@ -364,22 +381,5 @@ public class PatchContentHandlerTest
             .contentId( params.getContentId() )
             .addResult( ContentConstants.BRANCH_DRAFT, patchable.build() )
             .build();
-    }
-
-    @Test
-    public void patchAttachmentsNonExistingAttachment()
-        throws Exception
-    {
-        final Content contentWithoutAttachments = TestDataFixtures.newSmallContent();
-        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
-            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
-        when( this.contentService.getByPath( contentWithoutAttachments.getPath() ) ).thenReturn( contentWithoutAttachments );
-
-        when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
-            invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], contentWithoutAttachments ) );
-
-        mockXData();
-
-        assertThrowsExactly( RuntimeException.class, () -> runFunction( "/test/PatchContentHandlerTest.js", "patchAttachments" ) );
     }
 }
