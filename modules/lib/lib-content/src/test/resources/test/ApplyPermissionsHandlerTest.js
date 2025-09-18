@@ -61,7 +61,7 @@ exports.applyPermissionsAddRemove = function () {
             allow: ['READ']
         }, {
             principal: 'role:system.everyone',
-            allow: ['READ']
+            allow: ['READ', 'CREATE']
         }],
         removePermissions: [{
             principal: 'user:system:anonymous',
@@ -69,7 +69,23 @@ exports.applyPermissionsAddRemove = function () {
         }]
     });
 
-    assert.assertEquals(1, result['123456'].branchResults.length);
+    assert.assertJsonEquals([
+        {
+            principal: 'user:system:anonymous',
+            allow: [
+                'READ'
+            ],
+            deny: []
+        },
+        {
+            principal: 'role:system.everyone',
+            allow: [
+                'READ',
+                'CREATE'
+            ],
+            deny: []
+        }
+    ], result['123456'].branchResults[0].permissions);
 };
 
 exports.applyPermissionsTreeScope = function () {
@@ -80,6 +96,6 @@ exports.applyPermissionsTreeScope = function () {
             principal: 'user:system:anonymous',
             allow: ['READ']
         }],
-        scope: "TREE"
+        scope: 'TREE'
     });
 };

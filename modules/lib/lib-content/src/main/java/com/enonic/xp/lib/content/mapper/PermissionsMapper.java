@@ -1,36 +1,32 @@
 package com.enonic.xp.lib.content.mapper;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 public final class PermissionsMapper
     implements MapSerializable
 {
+    private final AccessControlList permissions;
 
-    private final Content content;
-
-    public PermissionsMapper( final Content content )
+    public PermissionsMapper( final AccessControlList permissions )
     {
-        this.content = content;
+        this.permissions = permissions;
     }
 
     @Override
     public void serialize( final MapGenerator gen )
     {
-        if ( !content.getPermissions().isEmpty() )
-        {
             gen.array( "permissions" );
-            for ( AccessControlEntry accessControlEntry : content.getPermissions() )
+        for ( AccessControlEntry accessControlEntry : permissions )
             {
                 gen.map();
                 serialize( gen, accessControlEntry );
                 gen.end();
             }
             gen.end();
-        }
     }
 
     private void serialize( final MapGenerator gen, final AccessControlEntry accessControlEntry )

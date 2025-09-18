@@ -30,7 +30,7 @@ public class ApplyPermissionsResultMapper
             entry.getValue().forEach( branchResult -> {
                 gen.map();
                 gen.value( "branch", branchResult.branch() );
-                gen.value( "content", new ContentMapper( branchResult.content() ) );
+                gen.value( "content", new PermissionsMapper( branchResult.content() ) );
                 gen.end();
             } );
             gen.end();

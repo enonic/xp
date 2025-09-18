@@ -16,13 +16,14 @@ declare global {
     interface XpXData {}
 }
 
-import type {
+import {
     Aggregations,
     AggregationsResult,
     AggregationsToAggregationResults,
     ByteSource,
     Content,
     ContentInheritValue,
+    ContentWithPermissions,
     Filter,
     FormItem,
     Highlight,
@@ -704,7 +705,7 @@ export interface UpdateContentParams<Data, Type extends string> {
 export interface PatchContentParams {
     key: string;
     patcher: (v: PatchableContent) => PatchableContent;
-    attachments?: any;
+    attachments?: AddAttachmentParam[];
     branches?: string[];
     skipSync?: boolean;
 }
@@ -1154,7 +1155,7 @@ export interface ApplyPermissionsResult {
 
 export interface BranchResult {
     branch: string;
-    content: Content;
+    content: ContentWithPermissions;
 }
 
 export interface Permissions {

@@ -23,13 +23,10 @@ final class ApplyContentPermissionsCommand
 {
     private final ApplyContentPermissionsParams params;
 
-    private final ContentNodeTranslator contentNodeTranslator;
-
     private ApplyContentPermissionsCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.contentNodeTranslator = new ContentNodeTranslator( this.nodeService );
     }
 
     ApplyContentPermissionsResult execute()
@@ -54,8 +51,7 @@ final class ApplyContentPermissionsCommand
             branchResult.forEach( br -> builder.addResult( ContentId.from( id ), br.branch(), br.node() != null
                                                                      ? ContextBuilder.from( ContextAccessor.current() )
                                                                      .branch( br.branch() )
-                                                                     .build()
-                                                                     .callWith( () -> contentNodeTranslator.fromNode( br.node(), true ) )
+                                                                     .build().callWith( () -> br.node().getPermissions() )
                                                                      : null ) );
         } );
 
