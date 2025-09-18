@@ -78,8 +78,7 @@ public class ContentServiceImplTest_applyPermissions
 
         assertEquals( 1, result.getResults().size() );
 
-        assertEquals( content.getPermissions(),
-                      result.getResult( content.getId(), ContextAccessor.current().getBranch() ).getPermissions() );
+        assertEquals( content.getPermissions(), result.getResult( content.getId(), ContextAccessor.current().getBranch() ) );
         assertNull( result.getResult( content.getId(), ContentConstants.BRANCH_MASTER ) );
     }
 
