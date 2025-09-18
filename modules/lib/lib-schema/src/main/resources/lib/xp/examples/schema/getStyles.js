@@ -21,7 +21,6 @@ assert.assertJsonEquals({
     resource: '<styles><some-data></some-data></styles>',
     elements: [
         {
-            element: 'style',
             displayName: 'Style display name',
             name: 'mystyle'
         }

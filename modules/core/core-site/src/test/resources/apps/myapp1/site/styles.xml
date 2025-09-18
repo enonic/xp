@@ -1,7 +1,7 @@
 <styles css="assets/styles.css">
-  <style name="warning">
+  <image name="warning">
     <displayName>Warning</displayName>
-  </style>
+  </image>
   <image name="editor-align-justify">
     <displayName i18n="style.editor.align.justify">Justify</displayName>
   </image>

@@ -41,7 +41,7 @@ public class UpdateDynamicStylesHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( stylesParams.getResource() );
 
-            return new DynamicSchemaResult<StyleDescriptor>( builder.build(), resource );
+            return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
         runScript( "/lib/xp/examples/schema/updateStyles.js" );

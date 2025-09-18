@@ -3,12 +3,12 @@ package com.enonic.xp.style;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public final class ImageStyle
-    implements ElementStyle
 {
-    public static final String STYLE_ELEMENT_NAME = "image";
-
     private final String name;
 
     private final String displayName;
@@ -21,32 +21,23 @@ public final class ImageStyle
 
     private ImageStyle( final Builder builder )
     {
-        this.name = builder.name.trim();
+        this.name = builder.name;
         this.displayName = builder.displayName;
         this.displayNameI18nKey = builder.displayNameI18nKey;
         this.aspectRatio = builder.aspectRatio;
         this.filter = builder.filter;
     }
 
-    @Override
-    public String getElement()
-    {
-        return STYLE_ELEMENT_NAME;
-    }
-
-    @Override
     public String getName()
     {
         return name;
     }
 
-    @Override
     public String getDisplayName()
     {
         return displayName;
     }
 
-    @Override
     public String getDisplayNameI18nKey()
     {
         return displayNameI18nKey;
@@ -89,7 +80,6 @@ public final class ImageStyle
     public String toString()
     {
         return MoreObjects.toStringHelper( this ).
-            add( "element", STYLE_ELEMENT_NAME ).
             add( "name", name ).
             add( "displayName", displayName ).
             add( "displayNameI18nKey", displayNameI18nKey ).
@@ -151,7 +141,7 @@ public final class ImageStyle
 
         public ImageStyle build()
         {
-            Objects.requireNonNull( this.name, "name is required" );
+            Preconditions.checkArgument( !nullToEmpty( this.name ).isBlank(), "name is required for an ImageStyle" );
             return new ImageStyle( this );
         }
     }

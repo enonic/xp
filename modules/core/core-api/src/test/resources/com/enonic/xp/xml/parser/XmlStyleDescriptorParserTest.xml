@@ -1,7 +1,4 @@
 <styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0">
-  <style name="warning">
-    <display-name i18n="warning.displayName">Warning</display-name>
-  </style>
   <image name="editor-align-justify">
     <display-name i18n="style.editor.align.justify">Justify</display-name>
   </image>

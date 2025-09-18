@@ -5,9 +5,6 @@ var assert = require('/lib/xp/testing');
 
 let resource = '<?xml version="1.0" encoding="UTF-8"?>' +
                '<styles css="assets/styles.css" xmlns="urn:enonic:xp:model:1.0">' +
-               '<style name="warning">' +
-               '<display-name i18n="warning.displayName">Warning</display-name>' +
-               '</style>' +
                '<image name="editor-width-auto">' +
                '<display-name i18n="editor-width-auto-text">Override ${width}</display-name>' +
                '</image>' +
@@ -38,8 +35,6 @@ assert.assertJsonEquals({
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: '<?xml version=\"1.0\" encoding=\"UTF-8\"?>' +
               '<styles css=\"assets/styles.css\" xmlns=\"urn:enonic:xp:model:1.0\">' +
-              '<style name=\"warning\">' +
-              '<display-name i18n=\"warning.displayName\">Warning</display-name></style>' +
               '<image name=\"editor-width-auto\">' +
               '<display-name i18n=\"editor-width-auto-text\">Override ${width}</display-name>' +
               '</image><image name=\"editor-style-cinema\">' +
@@ -49,17 +44,10 @@ assert.assertJsonEquals({
               '</styles>',
     elements: [
         {
-            element: 'style',
-            displayName: 'Warning',
-            name: 'warning'
-        },
-        {
-            element: 'image',
             displayName: 'Override ${width}',
             name: 'editor-width-auto'
         },
         {
-            element: 'image',
             displayName: 'Cinema',
             name: 'editor-style-cinema'
         }

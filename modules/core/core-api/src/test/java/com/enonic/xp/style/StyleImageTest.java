@@ -18,7 +18,6 @@ public class StyleImageTest
             filter( "pixelate(10)" ).
             build();
 
-        assertEquals( "image", styleImage.getElement() );
         assertEquals( "editor-style-cinema", styleImage.getName() );
         assertEquals( "Cinema", styleImage.getDisplayName() );
         assertEquals( "editor-style-cinema-text", styleImage.getDisplayNameI18nKey() );
