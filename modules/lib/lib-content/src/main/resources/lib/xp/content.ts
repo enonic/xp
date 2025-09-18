@@ -23,7 +23,6 @@ import {
     ByteSource,
     Content,
     ContentInheritValue,
-    ContentWithPermissions,
     Filter,
     FormItem,
     Highlight,
@@ -1155,7 +1154,7 @@ export interface ApplyPermissionsResult {
 
 export interface BranchResult {
     branch: string;
-    content: ContentWithPermissions;
+    permissions: AccessControlEntry[];
 }
 
 export interface Permissions {
