@@ -35,8 +35,6 @@ public final class EditableContent
 
     public WorkflowInfo workflowInfo;
 
-    public Long manualOrderValue;
-
     public EnumSet<ContentInheritType> inherit;
 
     public ContentId variantOf;
@@ -54,7 +52,6 @@ public final class EditableContent
         this.publishInfo = source.getPublishInfo();
         this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
-        this.manualOrderValue = source.getManualOrderValue();
         this.inherit = source.getInherit().isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( source.getInherit() );
         this.variantOf = source.getVariantOf();
     }
@@ -72,7 +69,6 @@ public final class EditableContent
             publishInfo( publishInfo ).
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
-            manualOrderValue( manualOrderValue ).
             setInherit( inherit ).
             variantOf( variantOf ).
             build();
