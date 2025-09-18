@@ -56,6 +56,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component(configurationPid = "com.enonic.xp.content")
@@ -506,9 +507,9 @@ public class ContentAuditLogSupportImpl
             branchResults.forEach( branchResult -> {
 
                 final PropertySet branchSet = contentSet.addSet( branchResult.branch().toString() );
-                if ( branchResult.content() != null )
+                if ( branchResult.permissions() != null )
                 {
-                    addContentWithPermissions( branchSet, branchResult.content() );
+                    addPermissions( branchSet, branchResult.permissions() );
                 }
             } );
         } );
@@ -518,8 +519,8 @@ public class ContentAuditLogSupportImpl
             .stream()
             .flatMap( entry -> entry.getValue()
                 .stream()
-                .map( branchResult -> branchResult.content() != null ? createAuditLogUri( entry.getKey(),
-                                                                                          ContextBuilder.from( rootContext )
+                .map( branchResult -> branchResult.permissions() != null ? createAuditLogUri( entry.getKey(),
+                                                                                              ContextBuilder.from( rootContext )
                                                                                                  .branch( branchResult.branch() )
                                                                                                  .build() ) : null )
                 .filter( Objects::nonNull ) )
@@ -534,10 +535,9 @@ public class ContentAuditLogSupportImpl
         targetSet.setString( "path", content.getPath().toString() );
     }
 
-    private void addContentWithPermissions( final PropertySet targetSet, final Content content )
+    private void addPermissions( final PropertySet targetSet, final AccessControlList permissions )
     {
-        this.addContent( targetSet, content );
-        targetSet.addStrings( "permissions", content.getPermissions()
+        targetSet.addStrings( "permissions", permissions
             .getEntries()
             .stream()
             .map( AccessControlEntry::toString )

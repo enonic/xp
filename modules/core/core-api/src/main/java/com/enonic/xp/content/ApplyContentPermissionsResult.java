@@ -36,14 +36,13 @@ public final class ApplyContentPermissionsResult
         final List<BranchResult> results = this.results.get( contentId );
         return results != null ? this.results.get( contentId )
             .stream()
-            .filter( br -> br.branch().equals( branch ) )
-            .map( BranchResult::content )
+            .filter( br -> br.branch().equals( branch ) ).map( BranchResult::permissions )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
     }
 
-    public record BranchResult(Branch branch, AccessControlList content)
+    public record BranchResult(Branch branch, AccessControlList permissions)
     {
     }
 
