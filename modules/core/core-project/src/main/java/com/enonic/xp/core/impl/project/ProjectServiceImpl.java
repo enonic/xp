@@ -93,22 +93,19 @@ public class ProjectServiceImpl
 
     private final SecurityService securityService;
 
-    private final ProjectPermissionsContextManager projectPermissionsContextManager;
-
     private final EventPublisher eventPublisher;
 
     private final ProjectConfig config;
 
     public ProjectServiceImpl( final RepositoryService repositoryService, final IndexService indexService, final NodeService nodeService,
                                final SecurityService securityService,
-                               final ProjectPermissionsContextManager projectPermissionsContextManager, final EventPublisher eventPublisher,
+                               final EventPublisher eventPublisher,
                                final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
-        this.projectPermissionsContextManager = projectPermissionsContextManager;
         this.eventPublisher = eventPublisher;
         this.config = config;
     }
@@ -343,10 +340,8 @@ public class ProjectServiceImpl
             final Projects projects = this.doList();
 
             return projects.stream()
-                                      .filter( project -> ProjectAccessHelper.hasAdminAccess( authenticationInfo ) ||
-                                          projectPermissionsContextManager.hasAnyProjectRole( authenticationInfo, project.getName(),
-                                                                                              EnumSet.allOf( ProjectRole.class ) ) )
-                                      .collect( Projects.collector() );
+                .filter( project -> ProjectAccessHelper.hasAccess( authenticationInfo, project.getName(), ProjectRole.values() ) )
+                .collect( Projects.collector() );
         } );
     }
 
@@ -593,27 +588,27 @@ public class ProjectServiceImpl
 
     private <T> T callWithCreateContext( final Callable<T> runnable )
     {
-        return projectPermissionsContextManager.initCreateContext().callWith( runnable );
+        return ProjectPermissionsContextManager.initCreateContext().callWith( runnable );
     }
 
     private <T> T callWithUpdateContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return projectPermissionsContextManager.initUpdateContext( projectName ).callWith( runnable );
+        return ProjectPermissionsContextManager.initUpdateContext( projectName ).callWith( runnable );
     }
 
     private <T> T callWithGetContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return projectPermissionsContextManager.initGetContext( projectName ).callWith( runnable );
+        return ProjectPermissionsContextManager.initGetContext( projectName ).callWith( runnable );
     }
 
     private <T> T callWithListContext( final Callable<T> runnable )
     {
-        return projectPermissionsContextManager.initListContext().callWith( runnable );
+        return ProjectPermissionsContextManager.initListContext().callWith( runnable );
     }
 
     private <T> T callWithDeleteContext( final Callable<T> runnable, final ProjectName projectName )
     {
-        return projectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
+        return ProjectPermissionsContextManager.initDeleteContext( projectName ).callWith( runnable );
     }
 
     private Project doModify( final ModifyProjectParams params )

@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.project;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
@@ -35,16 +34,6 @@ public class ProjectAccessSiteProcessorTest
         build();
 
     private final ProjectAccessSiteProcessor projectAccessSiteProcessor = new ProjectAccessSiteProcessor();
-
-    private ProjectPermissionsContextManagerImpl projectPermissionsContextManager;
-
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        this.projectPermissionsContextManager = new ProjectPermissionsContextManagerImpl();
-        this.projectAccessSiteProcessor.setProjectPermissionsContextManager( this.projectPermissionsContextManager );
-    }
 
     @Test
     public void testSupports()

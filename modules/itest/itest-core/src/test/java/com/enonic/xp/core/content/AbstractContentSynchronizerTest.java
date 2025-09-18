@@ -34,7 +34,6 @@ import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
-import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
@@ -186,8 +185,7 @@ public abstract class AbstractContentSynchronizerTest
                 .build()
                 .initialize();
 
-            projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
-                                                     new ProjectPermissionsContextManagerImpl(), eventPublisher, projectConfig );
+            projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
 
             project = projectService.create( CreateProjectParams.create()
                                                  .name( ProjectName.from( "source_project" ) )
