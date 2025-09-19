@@ -1,6 +1,6 @@
 package com.enonic.xp.core.impl.project;
 
-import java.util.Collection;
+import java.util.Arrays;
 
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
@@ -16,14 +16,8 @@ public class ProjectAccessHelper
 
     public static PrincipalKey createRoleKey( final ProjectName projectName, final ProjectRole projectRole )
     {
-        return doCreateRoleKey( projectName, projectRole );
-    }
-
-    public static PrincipalKeys createRoleKeys( final ProjectName projectName, final Collection<ProjectRole> projectRoles )
-    {
-        return projectRoles.stream()
-                                       .map( projectRole -> doCreateRoleKey( projectName, projectRole ) )
-                                       .collect( PrincipalKeys.collector() );
+        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + projectRole.name().toLowerCase();
+        return PrincipalKey.ofRole( roleName );
     }
 
     public static boolean hasAdminAccess( final AuthenticationInfo authenticationInfo )
@@ -31,9 +25,16 @@ public class ProjectAccessHelper
         return ADMIN_ACCESS.stream().anyMatch( authenticationInfo::hasRole );
     }
 
-    private static PrincipalKey doCreateRoleKey( final ProjectName projectName, final ProjectRole projectRole )
+    public static boolean hasAccess( AuthenticationInfo authenticationInfo, ProjectName projectName, ProjectRole... projectRole )
     {
-        final String roleName = ProjectConstants.PROJECT_NAME_PREFIX + projectName + "." + projectRole.name().toLowerCase();
-        return PrincipalKey.ofRole( roleName );
+        return hasAdminAccess( authenticationInfo ) || hasPermissions( authenticationInfo, projectName, projectRole );
+    }
+
+    private static boolean hasPermissions( final AuthenticationInfo authenticationInfo, final ProjectName projectName,
+                                          ProjectRole... projectRoles )
+    {
+        return Arrays.stream( projectRoles )
+            .map( projectRole -> createRoleKey( projectName, projectRole ) )
+            .anyMatch( authenticationInfo::hasRole );
     }
 }

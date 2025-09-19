@@ -26,7 +26,6 @@ import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.core.impl.project.ProjectCircleDependencyException;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectMultipleParentsException;
-import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
@@ -194,11 +193,8 @@ class ProjectServiceImplTest
                 .build()
                 .initialize();
 
-            final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
-
             projectService =
-                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
-                                        eventPublisher, projectConfig );
+                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
 
             projectService.initialize();
         } );
@@ -509,7 +505,7 @@ class ProjectServiceImplTest
 
             final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
-            assertEquals( "Denied [user:system:custom-user] user access for [delete] operation", ex.getMessage() );
+            assertEquals( "Denied [user:system:custom-user] user access to [test-project] project for [delete] operation", ex.getMessage() );
         } );
     }
 
@@ -525,7 +521,7 @@ class ProjectServiceImplTest
 
         final RuntimeException ex = assertThrows( RuntimeException.class, () -> projectService.delete( projectName ) );
 
-        assertEquals( "Denied [user:system:test-user] user access for [delete] operation", ex.getMessage() );
+        assertEquals( "Denied [user:system:test-user] user access to [test-project] project for [delete] operation", ex.getMessage() );
     }
 
     @Test

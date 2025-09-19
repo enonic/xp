@@ -60,7 +60,6 @@ import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
-import com.enonic.xp.core.impl.project.ProjectPermissionsContextManagerImpl;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.schema.content.ContentTypeServiceImpl;
@@ -153,7 +152,6 @@ public abstract class AbstractContentServiceTest
     protected MixinService mixinService;
 
     protected XDataService xDataService;
-
 
     protected AuditLogService auditLogService;
 
@@ -317,10 +315,7 @@ public abstract class AbstractContentServiceTest
             .build()
             .initialize();
 
-        final ProjectPermissionsContextManagerImpl projectAccessContextManager = new ProjectPermissionsContextManagerImpl();
-
-        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectAccessContextManager,
-                                                 eventPublisher, projectConfig );
+        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
         projectService.initialize();
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );

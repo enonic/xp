@@ -25,8 +25,6 @@ public class ProjectServiceActivator
 
     private final SecurityService securityService;
 
-    private final ProjectPermissionsContextManager projectPermissionsContextManager;
-
     private final EventPublisher eventPublisher;
 
     private ServiceRegistration<ProjectService> service;
@@ -43,7 +41,6 @@ public class ProjectServiceActivator
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.securityService = securityService;
-        this.projectPermissionsContextManager = projectPermissionsContextManager;
         this.eventPublisher = eventPublisher;
         this.config = config;
     }
@@ -52,7 +49,7 @@ public class ProjectServiceActivator
     public void activate( final BundleContext context )
     {
         final ProjectServiceImpl projectService =
-            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager,
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService,
                                     eventPublisher, config );
         projectService.initialize();
         service = context.registerService( ProjectService.class, projectService, null );
