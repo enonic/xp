@@ -48,9 +48,6 @@ class ProjectServiceActivatorTest
     SecurityService securityService;
 
     @Mock(stubOnly = true)
-    ProjectPermissionsContextManager projectPermissionsContextManager;
-
-    @Mock(stubOnly = true)
     EventPublisher eventPublisher;
 
     @Mock(stubOnly = true)
@@ -71,7 +68,7 @@ class ProjectServiceActivatorTest
     void lifecycle()
     {
         final ProjectServiceActivator activator =
-            new ProjectServiceActivator( repositoryService, indexService, nodeService, securityService, projectPermissionsContextManager,
+            new ProjectServiceActivator( repositoryService, indexService, nodeService, securityService,
                                          eventPublisher, config );
 
         when( bundleContext.registerService( same( ProjectService.class ), any( ProjectService.class ), isNull() ) ).

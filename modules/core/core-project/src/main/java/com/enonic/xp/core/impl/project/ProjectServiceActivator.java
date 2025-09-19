@@ -34,7 +34,6 @@ public class ProjectServiceActivator
     @Activate
     public ProjectServiceActivator( @Reference final RepositoryService repositoryService, @Reference final IndexService indexService,
                                     @Reference final NodeService nodeService, @Reference final SecurityService securityService,
-                                    @Reference final ProjectPermissionsContextManager projectPermissionsContextManager,
                                     @Reference final EventPublisher eventPublisher, final ProjectConfig config )
     {
         this.repositoryService = repositoryService;
