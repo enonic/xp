@@ -18,7 +18,7 @@ public final class StyleDescriptor
 
     private final String cssPath;
 
-    private final ImmutableList<ElementStyle> elements;
+    private final ImmutableList<ImageStyle> elements;
 
     private final Instant modifiedTime;
 
@@ -40,7 +40,7 @@ public final class StyleDescriptor
         return cssPath;
     }
 
-    public List<ElementStyle> getElements()
+    public List<ImageStyle> getElements()
     {
         return elements;
     }
@@ -106,7 +106,7 @@ public final class StyleDescriptor
 
         private Instant modifiedTime;
 
-        private final ImmutableList.Builder<ElementStyle> elements;
+        private final ImmutableList.Builder<ImageStyle> elements;
 
         private final Set<String> elementNames;
 
@@ -143,7 +143,7 @@ public final class StyleDescriptor
             return this;
         }
 
-        public Builder addStyleElement( final ElementStyle element )
+        public Builder addStyleElement( final ImageStyle element )
         {
             if ( this.elementNames.contains( element.getName() ) )
             {

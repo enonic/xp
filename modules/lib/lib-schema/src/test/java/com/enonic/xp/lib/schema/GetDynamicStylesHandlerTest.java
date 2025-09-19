@@ -11,7 +11,7 @@ import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.style.GenericStyle;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
 import static org.mockito.ArgumentMatchers.isA;
@@ -32,7 +32,7 @@ public class GetDynamicStylesHandlerTest
 
             StyleDescriptor styleDescriptor = StyleDescriptor.create()
                 .application( applicationKey )
-                .addStyleElement( GenericStyle.create()
+                .addStyleElement( ImageStyle.create()
                                       .displayName( "Style display name" )
                                       .name( "mystyle" )
                                       .displayNameI18nKey( "style.display" )
@@ -44,7 +44,7 @@ public class GetDynamicStylesHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( "<styles><some-data></some-data></styles>" );
 
-            return new DynamicSchemaResult<StyleDescriptor>( styleDescriptor, resource );
+            return new DynamicSchemaResult<>( styleDescriptor, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getStyles.js" );

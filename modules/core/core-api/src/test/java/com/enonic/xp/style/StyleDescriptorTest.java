@@ -15,7 +15,7 @@ public class StyleDescriptorTest
     @Test
     public void testCreate()
     {
-        ElementStyle element = ImageStyle.create().
+        ImageStyle element = ImageStyle.create().
             name( "editor-style-cinema" ).
             displayName( "Cinema" ).
             displayNameI18nKey( "editor-style-cinema-text" ).
@@ -36,14 +36,14 @@ public class StyleDescriptorTest
     @Test
     public void testDuplicateStyles()
     {
-        ElementStyle element = ImageStyle.create().
+        ImageStyle element = ImageStyle.create().
             name( "editor-style-cinema" ).
             displayName( "Cinema" ).
             displayNameI18nKey( "editor-style-cinema-text" ).
             aspectRatio( "21:9" ).
             build();
 
-        ElementStyle element2 = ImageStyle.create().
+        ImageStyle element2 = ImageStyle.create().
             name( "editor-style-cinema" ).
             displayName( "Cinema" ).
             build();
@@ -67,7 +67,7 @@ public class StyleDescriptorTest
     @Test
     public void testEquals()
     {
-        ElementStyle element = ImageStyle.create().
+        ImageStyle element = ImageStyle.create().
             name( "editor-style-cinema" ).
             displayName( "Cinema" ).
             displayNameI18nKey( "editor-style-cinema-text" ).
@@ -80,7 +80,7 @@ public class StyleDescriptorTest
             addStyleElement( element ).
             build();
 
-        ElementStyle element2 = ImageStyle.create().
+        ImageStyle element2 = ImageStyle.create().
             name( "editor-style-cinema" ).
             displayName( "Cinema" ).
             displayNameI18nKey( "editor-style-cinema-text" ).

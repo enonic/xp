@@ -5,7 +5,7 @@ import java.util.List;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.style.ElementStyle;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
 public class StyleDescriptorMapper
@@ -32,17 +32,16 @@ public class StyleDescriptorMapper
         serializeElements( gen, descriptor.getElements() );
     }
 
-    private void serializeElements( final MapGenerator gen, final List<ElementStyle> elementStyles )
+    private void serializeElements( final MapGenerator gen, final List<ImageStyle> elementStyles )
     {
         if ( elementStyles != null )
         {
             gen.array( "elements" );
 
-            for ( final ElementStyle element : elementStyles )
+            for ( final ImageStyle element : elementStyles )
             {
                 gen.map();
 
-                gen.value( "element", element.getElement() );
                 gen.value( "displayName", element.getDisplayName() );
                 gen.value( "name", element.getName() );
 
