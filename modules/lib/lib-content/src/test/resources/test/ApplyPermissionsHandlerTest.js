@@ -85,7 +85,7 @@ exports.applyPermissionsAddRemove = function () {
             ],
             deny: []
         }
-    ], result['123456'].branchResults[0].permissions);
+    ], result['123456'].permissions);
 };
 
 exports.applyPermissionsTreeScope = function () {
