@@ -35,8 +35,6 @@ public final class EditableContent
 
     public WorkflowInfo workflowInfo;
 
-    public EnumSet<ContentInheritType> inherit;
-
     public ContentId variantOf;
 
     public EditableContent( final Content source )
@@ -69,7 +67,6 @@ public final class EditableContent
             publishInfo( publishInfo ).
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
-            setInherit( inherit ).
             variantOf( variantOf ).
             build();
     }
