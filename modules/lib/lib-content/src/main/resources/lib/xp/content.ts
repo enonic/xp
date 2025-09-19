@@ -16,7 +16,7 @@ declare global {
     interface XpXData {}
 }
 
-import {
+import type {
     Aggregations,
     AggregationsResult,
     AggregationsToAggregationResults,
