@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 
-import java.util.EnumSet;
 import java.util.Locale;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -35,8 +34,6 @@ public final class EditableContent
 
     public WorkflowInfo workflowInfo;
 
-    public EnumSet<ContentInheritType> inherit;
-
     public ContentId variantOf;
 
     public EditableContent( final Content source )
@@ -52,7 +49,6 @@ public final class EditableContent
         this.publishInfo = source.getPublishInfo();
         this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
-        this.inherit = source.getInherit().isEmpty() ? EnumSet.noneOf( ContentInheritType.class ) : EnumSet.copyOf( source.getInherit() );
         this.variantOf = source.getVariantOf();
     }
 
@@ -69,7 +65,6 @@ public final class EditableContent
             publishInfo( publishInfo ).
             processedReferences( processedReferences.build() ).
             workflowInfo( workflowInfo ).
-            setInherit( inherit ).
             variantOf( variantOf ).
             build();
     }
