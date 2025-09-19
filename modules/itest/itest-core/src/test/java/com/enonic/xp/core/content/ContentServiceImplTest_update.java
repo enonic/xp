@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
@@ -30,7 +31,6 @@ import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -367,8 +367,9 @@ public class ContentServiceImplTest_update
         this.contentService.update( updateContentParams );
 
         final Content updatedContent = this.contentService.getById( content.getId() );
-        assertNotNull( updatedContent.getThumbnail() );
-        assertEquals( thumbnail.size(), updatedContent.getThumbnail().getSize() );
+        final Attachment updatedContentThumbnail = updatedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertNotNull( updatedContentThumbnail );
+        assertEquals( thumbnail.size(), updatedContentThumbnail.getSize() );
 
         final UpdateContentParams updateContentParams2 = new UpdateContentParams();
         updateContentParams2.contentId( content.getId() ).
@@ -379,8 +380,9 @@ public class ContentServiceImplTest_update
         this.contentService.update( updateContentParams2 );
 
         final Content reUpdatedContent = this.contentService.getById( content.getId() );
-        assertNotNull( reUpdatedContent.getThumbnail() );
-        assertEquals( thumbnail.size(), reUpdatedContent.getThumbnail().getSize() );
+        final Attachment reUpdatedContentThumbnail = reUpdatedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertNotNull( reUpdatedContentThumbnail );
+        assertEquals( thumbnail.size(), reUpdatedContentThumbnail.getSize() );
         assertEquals( "brand new display name", reUpdatedContent.getDisplayName() );
     }
 
@@ -413,8 +415,9 @@ public class ContentServiceImplTest_update
         this.contentService.update( updateContentParams );
 
         final Content updatedContent = this.contentService.getById( content.getId() );
-        assertNotNull( updatedContent.getThumbnail() );
-        assertEquals( thumbnail.size(), updatedContent.getThumbnail().getSize() );
+        final Attachment updatedContentThumbnail = updatedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertNotNull( updatedContentThumbnail );
+        assertEquals( thumbnail.size(), updatedContentThumbnail.getSize() );
 
         final ByteSource newThumbnail = loadImage( "darth-small.jpg" );
 
@@ -432,10 +435,9 @@ public class ContentServiceImplTest_update
         this.contentService.update( updateContentParams2 );
 
         final Content reUpdatedContent = this.contentService.getById( content.getId() );
-
-        assertNotNull( reUpdatedContent.getThumbnail() );
-        final Thumbnail thumbnailAttachment = reUpdatedContent.getThumbnail();
-        assertEquals( newThumbnail.size(), thumbnailAttachment.getSize() );
+        final Attachment reUpdatedContentThumbnail = reUpdatedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertNotNull( reUpdatedContentThumbnail );
+        assertEquals( newThumbnail.size(), reUpdatedContentThumbnail.getSize() );
     }
 
     @Test
@@ -460,8 +462,9 @@ public class ContentServiceImplTest_update
 
 
         final Content createdContent = this.contentService.getById( content.getId() );
-        assertNotNull( createdContent.getThumbnail() );
-        assertEquals( thumbnail.size(), createdContent.getThumbnail().getSize() );
+        final Attachment createdContentThumbnail = createdContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertNotNull( createdContentThumbnail );
+        assertEquals( thumbnail.size(), createdContentThumbnail.getSize() );
 
         final ByteSource newThumbnail = loadImage( "cat-small.jpg" );
 
@@ -477,9 +480,9 @@ public class ContentServiceImplTest_update
 
         final Content updatedContent = this.contentService.getById( content.getId() );
         assertEquals( content.getModifiedTime(), updatedContent.getModifiedTime() );
-        assertNotNull( updatedContent.getThumbnail() );
-        final Thumbnail thumbnailAttachment = updatedContent.getThumbnail();
-        assertEquals( thumbnail.size(), thumbnailAttachment.getSize() );
+        final Attachment updatedContentThumbnail = updatedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertNotNull( updatedContentThumbnail );
+        assertEquals( thumbnail.size(), updatedContentThumbnail.getSize() );
     }
     @Test
     public void update_publish_info()

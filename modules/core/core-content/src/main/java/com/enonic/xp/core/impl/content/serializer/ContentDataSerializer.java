@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.AttachmentSerializer;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
@@ -22,13 +21,11 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
@@ -294,15 +291,6 @@ public final class ContentDataSerializer
     {
         final Attachments attachments = dataToAttachments( contentAsSet.getSets( ATTACHMENT ) );
         builder.attachments( attachments );
-
-        final Attachment thumbnailAttachment = attachments.byName( AttachmentNames.THUMBNAIL );
-        if ( thumbnailAttachment != null )
-        {
-            final BinaryReference thumbnailBinaryRef = thumbnailAttachment.getBinaryReference();
-            final Thumbnail thumbnail =
-                Thumbnail.from( thumbnailBinaryRef, thumbnailAttachment.getMimeType(), thumbnailAttachment.getSize() );
-            builder.thumbnail( thumbnail );
-        }
     }
 
     private void extractPage( final PropertySet contentAsSet, final Content.Builder<?> builder )

@@ -29,16 +29,6 @@ public final class Attachments
         return stream().filter( a -> label.equals( a.getLabel() ) ).findFirst().orElse( null );
     }
 
-    public boolean hasByName( final String name )
-    {
-        return byName( name ) != null;
-    }
-
-    public boolean hasByLabel( final String label )
-    {
-        return byLabel( label ) != null;
-    }
-
     public static Attachments empty()
     {
         return EMPTY;

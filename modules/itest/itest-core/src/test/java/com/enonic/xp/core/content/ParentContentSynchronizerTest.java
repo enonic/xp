@@ -463,7 +463,7 @@ public class ParentContentSynchronizerTest
 
         final Content targetContentUpdated = syncUpdated( sourceContent.getId() );
 
-        assertNotNull( targetContentUpdated.getThumbnail() );
+        assertNotNull( targetContentUpdated.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
     }
 
     @Test
@@ -519,7 +519,8 @@ public class ParentContentSynchronizerTest
 
         final Content thumbnailUpdated = syncUpdated( sourceContent.getId() );
 
-        assertNotEquals( thumbnailCreated.getThumbnail().getSize(), thumbnailUpdated.getThumbnail().getSize() );
+        assertNotEquals( thumbnailCreated.getAttachments().byName( AttachmentNames.THUMBNAIL ).getSize(),
+                         thumbnailUpdated.getAttachments().byName( AttachmentNames.THUMBNAIL ).getSize() );
     }
 
     @Test
@@ -545,7 +546,7 @@ public class ParentContentSynchronizerTest
 
         final Content targetContentWithThumbnail = syncUpdated( sourceContent.getId() );
 
-        assertTrue( targetContentWithThumbnail.hasThumbnail() );
+        assertNotNull( targetContentWithThumbnail.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
 
         projectContext.runWith( () -> {
             contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
@@ -556,8 +557,7 @@ public class ParentContentSynchronizerTest
 
         final Content targetContentWithoutThumbnail = syncUpdated( sourceContent.getId() );
 
-        assertFalse( targetContentWithoutThumbnail.hasThumbnail() );
-
+        assertNull( targetContentWithoutThumbnail.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
     }
 
     @Test

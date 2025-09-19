@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -22,8 +21,6 @@ public final class EditableContent
     public ExtraDatas extraDatas;
 
     public Page page;
-
-    public Thumbnail thumbnail;
 
     public PrincipalKey owner;
 
@@ -46,7 +43,6 @@ public final class EditableContent
         this.data = source.getData().copy();
         this.extraDatas = source.getAllExtraData().copy();
         this.page = source.getPage() != null ? source.getPage().copy() : null;
-        this.thumbnail = source.getThumbnail();
         this.owner = source.getOwner();
         this.language = source.getLanguage();
         this.publishInfo = source.getPublishInfo();
@@ -63,7 +59,6 @@ public final class EditableContent
             data( data ).
             extraDatas( extraDatas ).
             page( page ).
-            thumbnail( thumbnail ).
             owner( owner ).
             language( language ).
             publishInfo( publishInfo ).

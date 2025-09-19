@@ -9,7 +9,6 @@ import java.util.function.Function;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.project.ProjectName;
@@ -30,8 +29,6 @@ public class PatchableContent
     public PatchableField<Page> page;
 
     public PatchableField<Boolean> valid;
-
-    public PatchableField<Thumbnail> thumbnail;
 
     public PatchableField<PrincipalKey> owner;
 
@@ -83,7 +80,6 @@ public class PatchableContent
         this.extraDatas = new PatchableField<>( source.getAllExtraData().copy() );
         this.page = new PatchableField<>( source.getPage() != null ? source.getPage().copy() : null );
         this.valid = new PatchableField<>( source.isValid() );
-        this.thumbnail = new PatchableField<>( source.getThumbnail() );
         this.owner = new PatchableField<>( source.getOwner() );
         this.language = new PatchableField<>( source.getLanguage() );
         this.creator = new PatchableField<>( source.getCreator() );
@@ -117,7 +113,6 @@ public class PatchableContent
             .data( data.produce() )
             .extraDatas( extraDatas.produce() )
             .page( page.produce() )
-            .thumbnail( thumbnail.produce() )
             .owner( owner.produce() )
             .language( language.produce() )
             .creator( creator.produce() )
