@@ -25,8 +25,8 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -60,8 +60,6 @@ public class ContentServiceImplTest_applyPermissions
             .build();
 
         final Content content = this.contentService.create( createContentParams );
-//        final Content child =
-//            this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
 
         final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
 
@@ -114,7 +112,8 @@ public class ContentServiceImplTest_applyPermissions
 
         verify( listener, times( 2 ) ).notEnoughRights( 1 );
 
-        assertTrue( result.getResults().isEmpty() );
+        assertEquals( 2, result.getResults().size() );
+        assertNull( result.getResult( content.getId() ) );
     }
 
     @Test

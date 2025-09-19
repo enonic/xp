@@ -502,9 +502,15 @@ public class ContentAuditLogSupportImpl
         }
 
         result.getResults().forEach( ( contentId, permissions ) -> {
-            ;
             final PropertySet contentSet = resultSet.addSet( params.getContentId().toString() );
-            addPermissions( contentSet, permissions );
+            if ( permissions != null )
+            {
+                addPermissions( contentSet, permissions );
+            }
+            else
+            {
+                contentSet.addString( "permissions", null );
+            }
         } );
 
         log( "system.content.applyPermissions", data, ContentIds.from( result.getResults().keySet() ), rootContext );

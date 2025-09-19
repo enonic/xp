@@ -1,8 +1,8 @@
 package com.enonic.xp.content;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -14,7 +14,7 @@ public final class ApplyContentPermissionsResult
 
     private ApplyContentPermissionsResult( Builder builder )
     {
-        this.results = builder.results.build();
+        this.results = Collections.unmodifiableMap( builder.results );
     }
 
     public static Builder create()
@@ -34,7 +34,7 @@ public final class ApplyContentPermissionsResult
 
     public static final class Builder
     {
-        private final ImmutableMap.Builder<ContentId, AccessControlList> results = ImmutableMap.builder();
+        private final Map<ContentId, AccessControlList> results = new HashMap<>();
 
         private Builder()
         {

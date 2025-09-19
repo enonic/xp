@@ -51,11 +51,8 @@ final class ApplyContentPermissionsCommand
             {
                 if ( branchResult.branch().equals( ContextAccessor.current().getBranch() ) )
                 {
-                    if ( branchResult.node() != null )
-                    {
-                        builder.addResult( ContentId.from( id ), branchResult.node().getPermissions() );
-                        break;
-                    }
+                    builder.addResult( ContentId.from( id ), branchResult.node() != null ? branchResult.node().getPermissions() : null );
+                    break;
                 }
             }
         } );
