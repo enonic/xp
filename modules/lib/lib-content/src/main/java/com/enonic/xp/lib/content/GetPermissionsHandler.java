@@ -23,7 +23,7 @@ public class GetPermissionsHandler
         final Content content = getContent();
         if ( content != null )
         {
-            return new PermissionsMapper( content );
+            return new PermissionsMapper( content.getPermissions() );
         }
         return null;
     }

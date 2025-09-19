@@ -704,7 +704,7 @@ export interface UpdateContentParams<Data, Type extends string> {
 export interface PatchContentParams {
     key: string;
     patcher: (v: PatchableContent) => PatchableContent;
-    attachments?: any;
+    attachments?: AddAttachmentParam[];
     branches?: string[];
     skipSync?: boolean;
 }
@@ -1154,7 +1154,7 @@ export interface ApplyPermissionsResult {
 
 export interface BranchResult {
     branch: string;
-    content: Content;
+    permissions: AccessControlEntry[];
 }
 
 export interface Permissions {

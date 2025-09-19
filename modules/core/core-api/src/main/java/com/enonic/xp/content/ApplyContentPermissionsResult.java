@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class ApplyContentPermissionsResult
@@ -30,19 +31,18 @@ public final class ApplyContentPermissionsResult
         return results;
     }
 
-    public Content getResult( final ContentId contentId, final Branch branch )
+    public AccessControlList getResult( final ContentId contentId, final Branch branch )
     {
         final List<BranchResult> results = this.results.get( contentId );
         return results != null ? this.results.get( contentId )
             .stream()
-            .filter( br -> br.branch().equals( branch ) )
-            .map( BranchResult::content )
+            .filter( br -> br.branch().equals( branch ) ).map( BranchResult::permissions )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
     }
 
-    public record BranchResult(Branch branch, Content content)
+    public record BranchResult(Branch branch, AccessControlList permissions)
     {
     }
 
@@ -54,9 +54,9 @@ public final class ApplyContentPermissionsResult
         {
         }
 
-        public Builder addResult( ContentId contentId, Branch branch, Content content )
+        public Builder addResult( ContentId contentId, Branch branch, AccessControlList permissions )
         {
-            results.put( contentId, new BranchResult( branch, content ) );
+            results.put( contentId, new BranchResult( branch, permissions ) );
             return this;
         }
 

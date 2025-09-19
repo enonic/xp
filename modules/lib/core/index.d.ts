@@ -718,7 +718,6 @@ export interface PatchableContent<
     x: XpXData; // extraData
     page: Type extends 'portal:fragment' ? never : _Component;
     valid: boolean;
-    //thumbnail
     owner: UserKey;
     language: string;
     creator: UserKey;

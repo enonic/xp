@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
@@ -17,6 +18,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -129,8 +131,21 @@ public class ApplyPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
-        when( contentService.applyPermissions( Mockito.any() ) ).thenReturn(
-            ApplyContentPermissionsResult.create().addResult( content.getId(), ContentConstants.BRANCH_MASTER, content ).build() );
+        when( contentService.applyPermissions( Mockito.any() ) ).thenAnswer( (Answer<ApplyContentPermissionsResult>) invocation -> {
+            final ApplyContentPermissionsParams params = invocation.getArgument( 0 );
+
+            final AccessControlList.Builder aclBuilder = AccessControlList.create( content.getPermissions() );
+
+            params.getRemovePermissions().asMap().keySet().forEach( aclBuilder::remove );
+
+            params.getAddPermissions().asMap().forEach( ( principal, entry ) -> aclBuilder.add( entry ) );
+
+            final Content updatedContent = Content.create( content ).permissions( aclBuilder.build() ).build();
+
+            return ApplyContentPermissionsResult.create()
+                .addResult( content.getId(), ContentConstants.BRANCH_MASTER, updatedContent.getPermissions() )
+                .build();
+        } );
 
         runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsAddRemove" );
 
@@ -163,8 +178,11 @@ public class ApplyPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
-        when( contentService.applyPermissions( Mockito.any() ) ).thenReturn(
-            ApplyContentPermissionsResult.create().addResult( content.getId(), ContentConstants.BRANCH_MASTER, content ).build() );
+        when( contentService.applyPermissions( Mockito.any() ) ).thenReturn( ApplyContentPermissionsResult.create()
+                                                                                 .addResult( content.getId(),
+                                                                                             ContentConstants.BRANCH_MASTER,
+                                                                                             content.getPermissions() )
+                                                                                 .build() );
 
         runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsTreeScope" );
 
