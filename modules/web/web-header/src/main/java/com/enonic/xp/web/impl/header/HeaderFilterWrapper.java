@@ -3,7 +3,7 @@ package com.enonic.xp.web.impl.header;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.jetty.ee10.servlets.HeaderFilter;
+import org.eclipse.jetty.ee11.servlets.HeaderFilter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 

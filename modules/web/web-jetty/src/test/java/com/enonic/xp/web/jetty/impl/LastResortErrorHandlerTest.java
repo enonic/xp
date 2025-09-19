@@ -14,7 +14,7 @@ class LastResortErrorHandlerTest
         throws Exception
     {
         final StringWriter writer = new StringWriter();
-        new LastResortErrorHandler().writeErrorHtml( null, writer, StandardCharsets.UTF_8, 400, "message ignored", null, true );
+        new LastResortErrorHandler().writeErrorHtml( null, writer, StandardCharsets.UTF_8, 400, "message ignored", null );
         assertEquals( "<!DOCTYPE html>\n<html>\n<head>\n<title>400 - Bad Request</title>\n</head>\n<body>400 - Bad Request</body>\n</html>",
                       writer.toString() );
     }
