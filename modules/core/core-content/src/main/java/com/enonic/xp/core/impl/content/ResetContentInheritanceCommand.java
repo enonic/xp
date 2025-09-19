@@ -12,8 +12,8 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -71,13 +71,12 @@ final class ResetContentInheritanceCommand
 
                 if ( !typesToReset.isEmpty() )
                 {
-                    final UpdateContentParams updateParams =
-                        new UpdateContentParams().contentId( targetContent.getId() ).stopInherit( false ).editor( edit -> {
-                            edit.inherit = processInherit( edit.inherit, typesToReset );
-                            edit.workflowInfo = WorkflowInfo.inProgress();
-                        } );
+                    final PatchContentParams patchParams = PatchContentParams.create().skipSync( true ).contentId( targetContent.getId() ).patcher( edit -> {
+                        edit.inherit.setValue( processInherit( edit.inherit.originalValue, typesToReset ) );
+                        edit.workflowInfo.setValue( WorkflowInfo.inProgress() );
+                    } ).build();
 
-                    contentService.update( updateParams );
+                    contentService.patch( patchParams );
 
                     syncContent( targetContent.getId(), params.getProjectName() );
                 }
