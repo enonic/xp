@@ -501,32 +501,13 @@ public class ContentAuditLogSupportImpl
                 .collect( Collectors.toList() ) );
         }
 
-        result.getResults().forEach( ( contentId, branchResults ) -> {
-
-            final PropertySet contentSet = resultSet.addSet( contentId.toString() );
-            branchResults.forEach( branchResult -> {
-
-                final PropertySet branchSet = contentSet.addSet( branchResult.branch().toString() );
-                if ( branchResult.permissions() != null )
-                {
-                    addPermissions( branchSet, branchResult.permissions() );
-                }
-            } );
+        result.getResults().forEach( ( contentId, permissions ) -> {
+            ;
+            final PropertySet contentSet = resultSet.addSet( params.getContentId().toString() );
+            addPermissions( contentSet, permissions );
         } );
 
-        final AuditLogUris auditLogUris = result.getResults()
-            .entrySet()
-            .stream()
-            .flatMap( entry -> entry.getValue()
-                .stream()
-                .map( branchResult -> branchResult.permissions() != null ? createAuditLogUri( entry.getKey(),
-                                                                                              ContextBuilder.from( rootContext )
-                                                                                                 .branch( branchResult.branch() )
-                                                                                                 .build() ) : null )
-                .filter( Objects::nonNull ) )
-            .collect( AuditLogUris.collector() );
-
-        log( "system.content.applyPermissions", data, auditLogUris, rootContext );
+        log( "system.content.applyPermissions", data, ContentIds.from( result.getResults().keySet() ), rootContext );
     }
 
     private void addContent( final PropertySet targetSet, final Content content )

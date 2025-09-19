@@ -1,12 +1,12 @@
 package com.enonic.xp.lib.content.mapper;
 
-import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.security.acl.AccessControlList;
 
 public class ApplyPermissionsResultMapper
     implements MapSerializable
@@ -22,18 +22,10 @@ public class ApplyPermissionsResultMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        for ( Map.Entry<ContentId, List<ApplyContentPermissionsResult.BranchResult>> entry : result.getResults().entrySet() )
+        for ( Map.Entry<ContentId, AccessControlList> entry : result.getResults().entrySet() )
         {
             gen.map( entry.getKey().toString() );
-
-            gen.array( "branchResults" );
-            entry.getValue().forEach( branchResult -> {
-                gen.map();
-                gen.value( "branch", branchResult.branch() );
-                new PermissionsMapper( branchResult.permissions() ).serialize( gen );
-                gen.end();
-            } );
-            gen.end();
+            new PermissionsMapper( entry.getValue() ).serialize( gen );
             gen.end();
         }
     }
