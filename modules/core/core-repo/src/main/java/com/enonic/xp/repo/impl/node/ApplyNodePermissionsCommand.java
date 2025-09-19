@@ -99,8 +99,7 @@ public class ApplyNodePermissionsCommand
     {
         refresh( RefreshMode.SEARCH );
 
-        final Node persistedNode =
-            ContextBuilder.from( ContextAccessor.current() ).build().callWith( () -> doGetById( params.getNodeId() ) );
+        final Node persistedNode = doGetById( params.getNodeId() );
 
         if ( persistedNode == null )
         {
@@ -109,7 +108,9 @@ public class ApplyNodePermissionsCommand
 
         final List<Map<Branch, Node>> versionsToApply = findVersionsToApply();
 
-        doApply( versionsToApply );
+        doApply( versionsToApply,
+                 compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
+                                        params.getRemovePermissions() ) );
 
         refresh( RefreshMode.STORAGE );
     }
@@ -151,18 +152,17 @@ public class ApplyNodePermissionsCommand
         return result;
     }
 
-
-    private void doApply( List<Map<Branch, Node>> versionsToApply )
+    private void doApply( List<Map<Branch, Node>> versionsToApply, final AccessControlList permissions )
     {
         for ( Branch branch : branches )
         {
             versionsToApply.stream()
                 .map( versionMap -> versionMap.get( branch ) )
-                .forEach( versionMetadata -> doApplyOnNode( versionMetadata, branch ) );
+                .forEach( versionMetadata -> doApplyOnNode( versionMetadata, branch, permissions ) );
         }
     }
 
-    private void doApplyOnNode( final Node node, final Branch branch )
+    private void doApplyOnNode( final Node node, final Branch branch, final AccessControlList permissions )
     {
         if ( node == null )
         {
@@ -170,7 +170,7 @@ public class ApplyNodePermissionsCommand
         }
 
         final NodeVersionData updatedSourceNode =
-            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch );
+            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch, permissions );
 
         if ( updatedSourceNode != null )
         {
@@ -181,7 +181,7 @@ public class ApplyNodePermissionsCommand
     }
 
     private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
-                                                       final Branch branch )
+                                                       final Branch branch, final AccessControlList permissions )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
 
@@ -216,11 +216,7 @@ public class ApplyNodePermissionsCommand
             }
             else
             {
-                final Node editedNode = Node.create( persistedNode )
-                    .timestamp( Instant.now( CLOCK ) )
-                    .permissions(
-                        compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
-                                                         params.getRemovePermissions() ) )
+                final Node editedNode = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions )
                     .build();
                 final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
 

@@ -9,7 +9,6 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -47,12 +46,15 @@ final class ApplyContentPermissionsCommand
 
         final ApplyContentPermissionsResult.Builder builder = ApplyContentPermissionsResult.create();
 
-        result.getResults().forEach( ( id, branchResult ) -> {
-            branchResult.forEach( br -> builder.addResult( ContentId.from( id ), br.branch(), br.node() != null
-                                                                     ? ContextBuilder.from( ContextAccessor.current() )
-                                                                     .branch( br.branch() )
-                                                                     .build().callWith( () -> br.node().getPermissions() )
-                                                                     : null ) );
+        result.getResults().forEach( ( id, branchResults ) -> {
+            for ( ApplyNodePermissionsResult.BranchResult branchResult : branchResults )
+            {
+                if ( branchResult.branch().equals( ContextAccessor.current().getBranch() ) )
+                {
+                    builder.addResult( ContentId.from( id ), branchResult.node() != null ? branchResult.node().getPermissions() : null );
+                    break;
+                }
+            }
         } );
 
         return builder.build();

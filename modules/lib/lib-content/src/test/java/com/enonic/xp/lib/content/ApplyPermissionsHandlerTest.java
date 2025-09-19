@@ -10,7 +10,6 @@ import org.mockito.stubbing.Answer;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.security.Principal;
@@ -142,9 +141,7 @@ public class ApplyPermissionsHandlerTest
 
             final Content updatedContent = Content.create( content ).permissions( aclBuilder.build() ).build();
 
-            return ApplyContentPermissionsResult.create()
-                .addResult( content.getId(), ContentConstants.BRANCH_MASTER, updatedContent.getPermissions() )
-                .build();
+            return ApplyContentPermissionsResult.create().addResult( content.getId(), updatedContent.getPermissions() ).build();
         } );
 
         runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsAddRemove" );
@@ -178,11 +175,8 @@ public class ApplyPermissionsHandlerTest
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( Mockito.any( PrincipalKey.class ) ) )
             .thenReturn( value );
 
-        when( contentService.applyPermissions( Mockito.any() ) ).thenReturn( ApplyContentPermissionsResult.create()
-                                                                                 .addResult( content.getId(),
-                                                                                             ContentConstants.BRANCH_MASTER,
-                                                                                             content.getPermissions() )
-                                                                                 .build() );
+        when( contentService.applyPermissions( Mockito.any() ) ).thenReturn(
+            ApplyContentPermissionsResult.create().addResult( content.getId(), content.getPermissions() ).build() );
 
         runFunction( "/test/ApplyPermissionsHandlerTest.js", "applyPermissionsTreeScope" );
 
