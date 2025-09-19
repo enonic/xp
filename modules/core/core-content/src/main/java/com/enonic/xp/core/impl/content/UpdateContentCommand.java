@@ -141,7 +141,7 @@ final class UpdateContentCommand
             Objects.equals( c1.getType(), c2.getType() ) && Objects.equals( c1.getCreator(), c2.getCreator() ) &&
             Objects.equals( c1.getOwner(), c2.getOwner() ) && Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) &&
             Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
-            Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) && Objects.equals( c1.getThumbnail(), c2.getThumbnail() ) &&
+            Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
             Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
             Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
             Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&

@@ -199,8 +199,9 @@ public class ContentServiceImplTest_patch
 
         final Content patchedContent = this.contentService.getById( content.getId() );
 
-        assertEquals( "image/jpeg", patchedContent.getThumbnail().getMimeType() );
-        assertEquals( AttachmentNames.THUMBNAIL, patchedContent.getThumbnail().getBinaryReference().toString() );
-        assertEquals( 3, patchedContent.getThumbnail().getSize() );
+        final Attachment thumbnail = patchedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
+        assertEquals( "image/jpeg", thumbnail.getMimeType() );
+        assertEquals( AttachmentNames.THUMBNAIL, thumbnail.getBinaryReference().toString() );
+        assertEquals( 3, thumbnail.getSize() );
     }
 }

@@ -100,7 +100,6 @@ final class UpdatedEventSyncCommand
             !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
             !Objects.equals( sourceContent.getLanguage(), targetContent.getLanguage() ) ||
             !Objects.equals( sourceContent.getWorkflowInfo(), targetContent.getWorkflowInfo() ) ||
-            !Objects.equals( sourceContent.getThumbnail(), targetContent.getThumbnail() ) ||
             !Objects.equals( sourceContent.getProcessedReferences(), targetContent.getProcessedReferences() ) ||
             !Objects.equals( sourceContent.getAttachments(), targetContent.getAttachments() ) ||
             !Objects.equals( sourceContent.getValidationErrors(), targetContent.getValidationErrors() ) ||
@@ -127,7 +126,6 @@ final class UpdatedEventSyncCommand
             edit.language.setValue( source.getLanguage() );
             edit.workflowInfo.setValue( source.getWorkflowInfo() );
             edit.page.setValue( source.getPage() );
-            edit.thumbnail.setValue( source.getThumbnail() );
             edit.processedReferences.setValue( ContentIds.create().addAll( source.getProcessedReferences() ).build() );
 
             edit.attachments.setValue( source.getAttachments() );

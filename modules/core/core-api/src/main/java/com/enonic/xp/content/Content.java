@@ -11,11 +11,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.icon.Thumbnail;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
@@ -66,8 +63,6 @@ public class Content
 
     private final boolean hasChildren;
 
-    private final Thumbnail thumbnail;
-
     private final ChildOrder childOrder;
 
     private final AccessControlList permissions;
@@ -110,7 +105,6 @@ public class Content
         this.modifier = builder.modifier;
         this.owner = builder.owner;
         this.page = builder.page;
-        this.thumbnail = builder.thumbnail;
         this.hasChildren = builder.hasChildren;
         this.inherit = Sets.immutableEnumSet( builder.inherit );
         this.originProject = builder.originProject;
@@ -296,16 +290,6 @@ public class Content
         return page;
     }
 
-    public boolean hasThumbnail()
-    {
-        return this.thumbnail != null;
-    }
-
-    public Thumbnail getThumbnail()
-    {
-        return thumbnail;
-    }
-
     public ChildOrder getChildOrder()
     {
         return childOrder;
@@ -382,7 +366,7 @@ public class Content
             Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
             hasChildren == other.hasChildren && Objects.equals( inherit, other.inherit ) &&
             Objects.equals( originProject, other.originProject ) && Objects.equals( childOrder, other.childOrder ) &&
-            Objects.equals( thumbnail, other.thumbnail ) && Objects.equals( permissions, other.permissions ) &&
+            Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
             Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( publishInfo, other.publishInfo ) &&
@@ -396,7 +380,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherit, originProject, childOrder, thumbnail, permissions, attachments, data,
+                             hasChildren, inherit, originProject, childOrder, permissions, attachments, data,
                              extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
                              originalParentPath, archivedTime, archivedBy, variantOf );
     }
@@ -436,8 +420,6 @@ public class Content
         protected PrincipalKey creator;
 
         protected PrincipalKey modifier;
-
-        protected Thumbnail thumbnail;
 
         protected boolean hasChildren;
 
@@ -498,7 +480,6 @@ public class Content
             this.inherit.addAll( source.inherit );
             this.originProject = source.originProject;
             this.page = source.page != null ? source.page.copy() : null;
-            this.thumbnail = source.thumbnail;
             this.childOrder = source.childOrder;
             this.permissions = source.permissions;
             this.language = source.language;
@@ -580,13 +561,6 @@ public class Content
         public BUILDER attachments( final Attachments attachments )
         {
             this.attachments = attachments;
-
-            final Attachment thumbnailAttachment = attachments.byName( AttachmentNames.THUMBNAIL );
-            if ( thumbnailAttachment != null )
-            {
-                thumbnail( Thumbnail.from( thumbnailAttachment.getBinaryReference(), thumbnailAttachment.getMimeType(),
-                                           thumbnailAttachment.getSize() ) );
-            }
             return (BUILDER) this;
         }
 
@@ -681,12 +655,6 @@ public class Content
         public BUILDER page( final Page page )
         {
             this.page = page;
-            return (BUILDER) this;
-        }
-
-        public BUILDER thumbnail( final Thumbnail thumbnail )
-        {
-            this.thumbnail = thumbnail;
             return (BUILDER) this;
         }
 

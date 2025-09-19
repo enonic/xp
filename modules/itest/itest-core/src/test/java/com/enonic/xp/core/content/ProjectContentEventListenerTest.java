@@ -357,10 +357,14 @@ public class ProjectContentEventListenerTest
             .build()
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
+        Attachments attachments3 = targetContent.getAttachments();
+        assertTrue( attachments3.byName( "MyImage1.gif" ) != null );
+        Attachments attachments2 = targetContent.getAttachments();
+        assertTrue( attachments2.byName( "MyImage1.gif" ) != null );
+        Attachments attachments1 = contentInMaster.getAttachments();
+        assertTrue( attachments1.byName( "MyImage2.gif" ) != null );
+        Attachments attachments = contentInMaster.getAttachments();
+        assertTrue( attachments.byName( "MyImage2.gif" ) != null );
     }
 
     @Test
@@ -411,10 +415,14 @@ public class ProjectContentEventListenerTest
             .build()
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage1.gif" ) );
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage2.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
+        Attachments attachments9 = targetContent.getAttachments();
+        assertTrue( attachments9.byName( "MyImage1.gif" ) != null );
+        Attachments attachments8 = contentInMaster.getAttachments();
+        assertTrue( attachments8.byName( "MyImage1.gif" ) != null );
+        Attachments attachments7 = targetContent.getAttachments();
+        assertTrue( attachments7.byName( "MyImage2.gif" ) != null );
+        Attachments attachments6 = contentInMaster.getAttachments();
+        assertTrue( attachments6.byName( "MyImage2.gif" ) != null );
 
         //remove attachment
         projectContext.callWith( () -> {
@@ -452,12 +460,18 @@ public class ProjectContentEventListenerTest
             .build()
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
-        assertFalse( targetContent.getAttachments().hasByName( "MyImage1.gif" ) );
-        assertFalse( contentInMaster.getAttachments().hasByName( "MyImage1.gif" ) );
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage2.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage2.gif" ) );
-        assertTrue( targetContent.getAttachments().hasByName( "MyImage3.gif" ) );
-        assertTrue( contentInMaster.getAttachments().hasByName( "MyImage3.gif" ) );
+        Attachments attachments5 = targetContent.getAttachments();
+        assertFalse( attachments5.byName( "MyImage1.gif" ) != null );
+        Attachments attachments4 = contentInMaster.getAttachments();
+        assertFalse( attachments4.byName( "MyImage1.gif" ) != null );
+        Attachments attachments3 = targetContent.getAttachments();
+        assertTrue( attachments3.byName( "MyImage2.gif" ) != null );
+        Attachments attachments2 = contentInMaster.getAttachments();
+        assertTrue( attachments2.byName( "MyImage2.gif" ) != null );
+        Attachments attachments1 = targetContent.getAttachments();
+        assertTrue( attachments1.byName( "MyImage3.gif" ) != null );
+        Attachments attachments = contentInMaster.getAttachments();
+        assertTrue( attachments.byName( "MyImage3.gif" ) != null );
     }
 
     @Test
