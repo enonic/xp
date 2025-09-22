@@ -44,8 +44,6 @@ public final class CreateContentParams
 
     private final ContentPublishInfo contentPublishInfo;
 
-    private final ContentIds processedIds;
-
     private final WorkflowInfo workflowInfo;
 
     private CreateContentParams( Builder builder )
@@ -65,7 +63,6 @@ public final class CreateContentParams
         this.language = builder.language;
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
-        this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
     }
 
@@ -154,11 +151,6 @@ public final class CreateContentParams
         return refresh;
     }
 
-    public ContentIds getProcessedIds()
-    {
-        return processedIds;
-    }
-
     public WorkflowInfo getWorkflowInfo()
     {
         return workflowInfo;
@@ -195,8 +187,6 @@ public final class CreateContentParams
         private ContentPublishInfo contentPublishInfo;
 
         private boolean refresh = true;
-
-        private final ContentIds.Builder processedIds = ContentIds.create();
 
         private WorkflowInfo workflowInfo;
 
@@ -317,12 +307,6 @@ public final class CreateContentParams
         public Builder contentPublishInfo( final ContentPublishInfo info )
         {
             this.contentPublishInfo = info;
-            return this;
-        }
-
-        public Builder addProcessedIds( final ContentIds processedIds )
-        {
-            this.processedIds.addAll( processedIds );
             return this;
         }
 

@@ -15,6 +15,7 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
@@ -23,10 +24,6 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.schema.xdata.BuiltinXDataTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -91,7 +88,7 @@ public class ImageContentProcessorTest
         final CreateContentParams params = createContentParams( createAttachments );
 
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            build() );
+            build(), ContentIds.empty() );
 
         assertThrows(IllegalArgumentException.class, () -> this.imageContentProcessor.processCreate( processCreateParams ) );
     }
@@ -103,7 +100,7 @@ public class ImageContentProcessorTest
         final CreateContentParams params = createContentParams( createAttachments );
 
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            build() );
+            build(), ContentIds.empty() );
 
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
 
@@ -115,7 +112,7 @@ public class ImageContentProcessorTest
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build() );
+            addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build(), ContentIds.empty() );
         final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final ExtraData geoExtraData = result.getCreateContentParams().getExtraDatas().getMetadata( MediaInfo.GPS_INFO_METADATA_NAME );
@@ -127,7 +124,7 @@ public class ImageContentProcessorTest
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() );
+            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build(), ContentIds.empty() );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final ExtraDatas extraDatas = result.getCreateContentParams().getExtraDatas();
         assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );

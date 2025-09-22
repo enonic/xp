@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.project;
 
 import java.util.Objects;
 
-import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;

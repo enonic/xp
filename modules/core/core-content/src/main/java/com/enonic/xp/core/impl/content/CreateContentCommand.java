@@ -12,16 +12,17 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -82,9 +83,9 @@ final class CreateContentCommand
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
-        CreateContentParams processedParams = runContentProcessors( this.params, contentType );
+        ProcessCreateResult processedParams = runContentProcessors( this.params, contentType );
 
-        validateBlockingChecks( processedParams );
+        validateBlockingChecks( processedParams.getCreateContentParams() );
 
         final CreateContentTranslatorParams createContentTranslatorParams = createContentTranslatorParams( processedParams );
 
@@ -158,9 +159,11 @@ final class CreateContentCommand
         }
     }
 
-    private CreateContentTranslatorParams createContentTranslatorParams( final CreateContentParams processedContent )
+    private CreateContentTranslatorParams createContentTranslatorParams( final ProcessCreateResult processedResult )
     {
+        final CreateContentParams processedContent = processedResult.getCreateContentParams();
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent )
+            .processedIds( processedResult.getProcessedIds() )
             .creator( getCurrentUser().getKey() )
             .owner( getDefaultOwner( processedContent ) );
         populateName( builder );
@@ -172,21 +175,20 @@ final class CreateContentCommand
         return builder.build();
     }
 
-    private CreateContentParams runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
+    private ProcessCreateResult runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
     {
-        CreateContentParams processedParams = createContentParams;
+        ProcessCreateResult processedResult = new ProcessCreateResult( createContentParams, ContentIds.empty() );
 
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
             if ( contentProcessor.supports( contentType ) )
             {
-                final ProcessCreateResult result = contentProcessor.processCreate( new ProcessCreateParams( processedParams, mediaInfo ) );
-
-                processedParams = CreateContentParams.create( result.getCreateContentParams() ).build();
+                processedResult = contentProcessor.processCreate(
+                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo, processedResult.getProcessedIds() ) );
             }
         }
 
-        return processedParams;
+        return processedResult;
     }
 
     private void populateLanguage( final CreateContentTranslatorParams.Builder builder )

@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.project;
+package com.enonic.xp.core.impl.content;
 
 import java.text.MessageFormat;
 import java.util.Arrays;

@@ -102,11 +102,6 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "name", nullToNull( params.getName() ) );
         paramsSet.addBoolean( "requireValid", params.isRequireValid() );
 
-        if ( params.getProcessedIds() != null )
-        {
-            paramsSet.addStrings( "processedIds",
-                                  params.getProcessedIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
-        }
         if ( params.getPermissions() != null )
         {
             paramsSet.addStrings( "permissions", params.getPermissions()

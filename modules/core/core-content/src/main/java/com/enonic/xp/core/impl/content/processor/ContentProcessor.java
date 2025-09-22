@@ -1,4 +1,4 @@
-package com.enonic.xp.content.processor;
+package com.enonic.xp.core.impl.content.processor;
 
 import com.enonic.xp.schema.content.ContentType;
 

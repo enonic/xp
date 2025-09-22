@@ -50,17 +50,33 @@ public final class EditableContent
 
     public Content build()
     {
-        return Content.create( this.source ).
-            displayName( displayName ).
-            data( data ).
-            extraDatas( extraDatas ).
-            page( page ).
-            owner( owner ).
-            language( language ).
-            publishInfo( publishInfo ).
-            processedReferences( processedReferences.build() ).
-            workflowInfo( workflowInfo ).
-            variantOf( variantOf ).
-            build();
+        return Content.create( this.source )
+            .displayName( displayName )
+            .data( data )
+            .extraDatas( extraDatas )
+            .page( page )
+            .owner( owner )
+            .language( language )
+            .publishInfo( buildPublishInfo() )
+            .processedReferences( processedReferences.build() )
+            .workflowInfo( workflowInfo )
+            .variantOf( variantOf )
+            .build();
+    }
+
+    private ContentPublishInfo buildPublishInfo()
+    {
+        final ContentPublishInfo sourcePublishInfo = source.getPublishInfo();
+        if ( sourcePublishInfo == null )
+        {
+            return publishInfo != null ? ContentPublishInfo.create().from( publishInfo.getFrom() ).to( publishInfo.getTo() ).build() : null;
+        }
+        else
+        {
+            return publishInfo != null ? ContentPublishInfo.create().first( sourcePublishInfo.getFirst() )
+                .from( publishInfo.getFrom() )
+                .to( publishInfo.getTo() )
+                .build() : sourcePublishInfo;
+        }
     }
 }

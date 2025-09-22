@@ -33,11 +33,6 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
@@ -242,7 +237,7 @@ public final class ImageContentProcessor
         return new ProcessCreateResult( CreateContentParams.create( createContentParams )
                                             .createAttachments( originalAttachments )
                                             .extraDatas( extraDatas )
-                                            .build() );
+                                            .build(), params.getProcessedReferences() );
     }
 
 
@@ -357,7 +352,7 @@ public final class ImageContentProcessor
 
             };
         }
-        return new ProcessUpdateResult( editor );
+        return new ProcessUpdateResult( editor, params.getEditedContent().getProcessedReferences() );
 
     }
 

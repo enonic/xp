@@ -18,11 +18,6 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
-import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.internal.processor.InternalHtmlSanitizer;
 import com.enonic.xp.data.Property;
@@ -115,15 +110,14 @@ public class HtmlAreaContentProcessor
         processContentData( createContentParams.getData(), contentType, processedIds );
         processExtraData( createContentParams.getExtraDatas(), processedIds );
 
-        return new ProcessCreateResult( CreateContentParams.create( createContentParams ).addProcessedIds( processedIds.build() ).build() );
+        return new ProcessCreateResult( createContentParams, processedIds.build() );
     }
 
     @Override
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
+        final ContentIds.Builder processedIds = ContentIds.create();
         final ContentEditor editor = editable -> {
-            final ContentIds.Builder processedIds = ContentIds.create();
-
             final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( editable.source.getType() ) );
 
             processContentData( editable.data, contentType, processedIds );
@@ -139,7 +133,7 @@ public class HtmlAreaContentProcessor
             editable.processedReferences = processedIds;
         };
 
-        return new ProcessUpdateResult( editor );
+        return new ProcessUpdateResult( editor, processedIds.build() );
     }
 
     private void processSiteConfigData( final SiteConfigs siteConfigs, final ContentIds.Builder processedIds )

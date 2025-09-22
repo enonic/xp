@@ -124,7 +124,6 @@ public final class UpdateContentHandler
         return ContentPublishInfo.create()
             .from( getInstant( value, "from" ) )
             .to( getInstant( value, "to" ) )
-            .first( getInstant( value, "first" ) )
             .build();
     }
 

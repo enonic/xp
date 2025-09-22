@@ -16,10 +16,6 @@ import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -628,8 +624,8 @@ public class HtmlAreaContentProcessorTest
 
         verify( contentTypeService ).getByName( captor.capture() );
         assertEquals( contentTypeName, captor.getValue().getContentTypeName() );
-        assertEquals( 2, result.getCreateContentParams().getProcessedIds().getSize() );
-        assertTrue( result.getCreateContentParams().getProcessedIds().contains( ContentId.from( "image-id1" ) ) );
-        assertTrue( result.getCreateContentParams().getProcessedIds().contains( ContentId.from( "image-id2" ) ) );
+        assertEquals( 2, result.getProcessedIds().getSize() );
+        assertTrue( result.getProcessedIds().contains( ContentId.from( "image-id1" ) ) );
+        assertTrue( result.getProcessedIds().contains( ContentId.from( "image-id2" ) ) );
     }
 }

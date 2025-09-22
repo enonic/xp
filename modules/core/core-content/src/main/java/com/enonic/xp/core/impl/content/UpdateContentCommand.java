@@ -18,16 +18,16 @@ import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.ContentPatcher;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -37,9 +37,13 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
 
 final class UpdateContentCommand
@@ -89,12 +93,14 @@ final class UpdateContentCommand
 
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( contentBeforeChange, editedContent );
-        editedContent = editContentMetadata( getPatcher(), editedContent );
+        editedContent = editContentMetadata( editedContent );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
             return contentBeforeChange;
         }
+
+        validateProjectAccess(contentBeforeChange, editedContent);
 
         validate( editedContent );
 
@@ -121,23 +127,24 @@ final class UpdateContentCommand
         final PatchNodeResult result = this.nodeService.patch( patchNodeParams );
 
         return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
-
     }
 
-    private Content editContentMetadata( ContentPatcher contentPatcher, Content content )
+    private Content editContentMetadata( Content content )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
-
-        contentPatcher.patch( patchableContent );
-
+        patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
+        patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
+        patchableContent.modifier.setValue( getCurrentUser().getKey() );
+        patchableContent.modifiedTime.setValue( Instant.now() );
+        patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
+        patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         return patchableContent.build();
     }
 
     private BiPredicate<Content, Content> isContentTheSame()
     {
-
-        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getName(), c2.getName() ) &&
-            Objects.equals( c1.getParentPath(), c2.getParentPath() ) && Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) &&
+        return ( c1, c2 ) -> Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() )
+            && Objects.equals( c1.getDisplayName(), c2.getDisplayName() ) &&
             Objects.equals( c1.getType(), c2.getType() ) && Objects.equals( c1.getCreator(), c2.getCreator() ) &&
             Objects.equals( c1.getOwner(), c2.getOwner() ) && Objects.equals( c1.getCreatedTime(), c2.getCreatedTime() ) &&
             Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
@@ -151,20 +158,6 @@ final class UpdateContentCommand
             Objects.equals( c1.getOriginalParentPath(), c2.getOriginalParentPath() ) &&
             Objects.equals( c1.getArchivedTime(), c2.getArchivedTime() ) && Objects.equals( c1.getArchivedBy(), c2.getArchivedBy() ) &&
             Objects.equals( c1.getVariantOf(), c2.getVariantOf() );
-    }
-
-    private ContentPatcher getPatcher()
-    {
-        return edit -> {
-            edit.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
-            edit.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
-
-            edit.modifier.setValue( getCurrentUser().getKey() );
-            edit.modifiedTime.setValue( Instant.now() );
-
-            edit.validationErrors.setPatcher( c -> validateContent( c.source ) );
-            edit.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
-        };
     }
 
     private boolean isStoppingInheritContent( final Set<ContentInheritType> currentInherit )
@@ -203,7 +196,7 @@ final class UpdateContentCommand
                 .forEach( validationErrorsBuilder::add );
         }
 
-        final ValidationErrors validationErrors = ValidateContentDataCommand.create()
+        return ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
             .extraDatas( editedContent.getAllExtraData() )
@@ -216,8 +209,6 @@ final class UpdateContentCommand
             .validationErrorsBuilder( validationErrorsBuilder )
             .build()
             .execute();
-
-        return validationErrors;
     }
 
     private Attachments mergeExistingAndUpdatedAttachments( final Attachments originalAttachments )
@@ -262,7 +253,6 @@ final class UpdateContentCommand
                     .contentType( contentType )
                     .mediaInfo( mediaInfo )
                     .createAttachments( params.getCreateAttachments() )
-                    .originalContent( originalContent )
                     .editedContent( editedContent )
                     .build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
@@ -284,6 +274,24 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
         return editableContent.build();
+    }
+
+    private void validateProjectAccess( final Content originalContent, final Content editedContent )
+    {
+        if ( originalContent instanceof Site originalSite )
+        {
+            if ( !Objects.equals( originalSite.getSiteConfigs(), ( (Site) editedContent ).getSiteConfigs() ) )
+            {
+                final Context context = ContextAccessor.current();
+                final AuthenticationInfo authenticationInfo = context.getAuthInfo();
+                final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
+
+                if ( !ProjectAccessHelper.hasAccess( authenticationInfo, projectName, ProjectRole.OWNER ) )
+                {
+                    throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey(), ProjectRole.OWNER );
+                }
+            }
+        }
     }
 
     private void validate( final Content editedContent )
