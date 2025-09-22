@@ -31,8 +31,8 @@ public class AttachmentsTest
 
         assertFalse( attachments.isEmpty() );
 
-        assertTrue( attachments.hasByLabel( "My Image 1" ) );
-        assertFalse( attachments.hasByLabel( "My Image 3" ) );
+        assertTrue( attachments.byLabel( "My Image 1" ) != null );
+        assertFalse( attachments.byLabel( "My Image 3" ) != null );
 
         assertEquals( a1, attachments.byLabel( "My Image 1" ) );
         assertNull( attachments.byLabel( "My Image 3" ) );
@@ -57,8 +57,8 @@ public class AttachmentsTest
 
         assertFalse( attachments.isEmpty() );
 
-        assertTrue( attachments.hasByName( "MyImage.something.gif" ) );
-        assertFalse( attachments.hasByName( "MyImage.gif" ) );
+        assertTrue( attachments.byName( "MyImage.something.gif" ) != null );
+        assertFalse( attachments.byName( "MyImage.gif" ) != null );
 
         assertEquals( a2, attachments.byName( "MyImage.something.gif" ) );
         assertNull( attachments.byName( "MyImage.gif" ) );
