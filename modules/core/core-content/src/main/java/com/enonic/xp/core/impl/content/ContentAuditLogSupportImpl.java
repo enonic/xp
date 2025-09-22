@@ -502,7 +502,7 @@ public class ContentAuditLogSupportImpl
         }
 
         result.getResults().forEach( ( contentId, permissions ) -> {
-            final PropertySet contentSet = resultSet.addSet( params.getContentId().toString() );
+            final PropertySet contentSet = resultSet.addSet( contentId.toString() );
             if ( permissions != null )
             {
                 addPermissions( contentSet, permissions );
