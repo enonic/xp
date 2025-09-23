@@ -28,7 +28,6 @@ import com.enonic.xp.core.impl.schema.xdata.BuiltinXDataTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.util.GeoPoint;
@@ -60,13 +59,8 @@ public class ImageContentProcessorTest
     @Test
     public void testSupports()
     {
-
-        ContentType contentType =
-            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.imageMedia() ).build();
-        assertTrue( imageContentProcessor.supports( contentType ) );
-
-        contentType = ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.media() ).build();
-        assertFalse( imageContentProcessor.supports( contentType ) );
+        assertTrue( imageContentProcessor.supports( ContentTypeName.imageMedia() ) );
+        assertFalse( imageContentProcessor.supports( ContentTypeName.media() ) );
     }
 
     @Test
@@ -138,12 +132,7 @@ public class ImageContentProcessorTest
     {
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( this.loadImage( "cat-small.jpg" ) );
 
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-                name( ContentTypeName.imageMedia() ).
-                superType( ContentTypeName.imageMedia() ).
-                build() ).
-            build();
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().build();
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
@@ -179,12 +168,7 @@ public class ImageContentProcessorTest
         when( byteSource.openStream() ).thenThrow( new IOException() );
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( byteSource );
 
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-            name( ContentTypeName.imageMedia() ).
-            superType( ContentTypeName.imageMedia() ).
-            build() ).
-            build();
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().build();
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
@@ -213,15 +197,9 @@ public class ImageContentProcessorTest
     @Test
     public void testProcessUpdateWithMediaInfo()
     {
-        final CreateAttachments createAttachments = createAttachments();
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-                superType( ContentTypeName.imageMedia() ).
-                name( "myContent" ).
-                build() ).
             mediaInfo( MediaInfo.create().
                 addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() ).
-            createAttachments( createAttachments ).
             build();
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
         final PropertyTree data = new PropertyTree();
@@ -237,7 +215,6 @@ public class ImageContentProcessorTest
     public void testProcessUpdateWithMediaInfoOverwritten()
     {
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
-            .contentType( ContentType.create().superType( ContentTypeName.imageMedia() ).name( "myContent" ).build() )
             .mediaInfo( MediaInfo.create()
                             .addMetadata( "exposure time", "1" )
                             .addMetadata( "exif Subifd Exposure Time", "2" )

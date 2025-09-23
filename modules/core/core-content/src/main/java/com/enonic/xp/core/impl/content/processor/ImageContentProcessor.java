@@ -42,7 +42,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -202,9 +202,9 @@ public final class ImageContentProcessor
     }
 
     @Override
-    public boolean supports( final ContentType contentType )
+    public boolean supports( final ContentTypeName contentType )
     {
-        return contentType.getName().isImageMedia();
+        return contentType.isImageMedia();
     }
 
     // Helper function to create a map where each key in the list points to the same value
@@ -341,19 +341,9 @@ public final class ImageContentProcessor
         }
         else
         {
-            editor = editable -> {
-
-                if ( !params.getContentType().getName().isDescendantOfMedia() )
-                {
-                    return;
-                }
-
-                editable.extraDatas = updateImageMetadata( editable );
-
-            };
+            editor = editable -> editable.extraDatas = updateImageMetadata( editable );
         }
         return new ProcessUpdateResult( editor, params.getEditedContent().getProcessedReferences() );
-
     }
 
     private ExtraData extractGeoLocation( final MediaInfo mediaInfo )
@@ -380,7 +370,7 @@ public final class ImageContentProcessor
         return extraData;
     }
 
-    private Double parseDouble( final String str )
+    private static Double parseDouble( final String str )
     {
         if ( str == null )
         {

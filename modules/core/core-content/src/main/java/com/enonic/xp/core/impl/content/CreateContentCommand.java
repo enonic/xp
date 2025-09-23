@@ -35,6 +35,7 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -83,7 +84,7 @@ final class CreateContentCommand
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
-        ProcessCreateResult processedParams = runContentProcessors( this.params, contentType );
+        ProcessCreateResult processedParams = runContentProcessors( this.params, params.getType() );
 
         validateBlockingChecks( processedParams.getCreateContentParams() );
 
@@ -163,7 +164,7 @@ final class CreateContentCommand
     {
         final CreateContentParams processedContent = processedResult.getCreateContentParams();
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent )
-            .processedIds( processedResult.getProcessedIds() )
+            .processedIds( processedResult.getProcessedReferences() )
             .creator( getCurrentUser().getKey() )
             .owner( getDefaultOwner( processedContent ) );
         populateName( builder );
@@ -175,7 +176,7 @@ final class CreateContentCommand
         return builder.build();
     }
 
-    private ProcessCreateResult runContentProcessors( final CreateContentParams createContentParams, final ContentType contentType )
+    private ProcessCreateResult runContentProcessors( final CreateContentParams createContentParams, final ContentTypeName contentType )
     {
         ProcessCreateResult processedResult = new ProcessCreateResult( createContentParams, ContentIds.empty() );
 
@@ -184,7 +185,7 @@ final class CreateContentCommand
             if ( contentProcessor.supports( contentType ) )
             {
                 processedResult = contentProcessor.processCreate(
-                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo, processedResult.getProcessedIds() ) );
+                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo, processedResult.getProcessedReferences() ) );
             }
         }
 

@@ -49,17 +49,18 @@ final class UpdateMediaCommand
     private Content doExecute()
     {
         final MediaInfo mediaInfo = mediaInfoService.parseMediaInfo( params.getByteSource() );
-        if ( ( params.getMimeType() == null || isBinaryContentType( params.getMimeType() ) ) && mediaInfo.getMediaType() != null )
+        String mediaType = params.getMimeType();
+        if ( ( mediaType == null || isBinaryContentType( mediaType ) ) && mediaInfo.getMediaType() != null )
         {
-            params.mimeType( mediaInfo.getMediaType() );
+            mediaType = mediaInfo.getMediaType();
         }
 
-        Objects.requireNonNull( params.getMimeType(), "Unable to resolve media type" );
+        Objects.requireNonNull( mediaType, "Unable to resolve media type" );
 
-        final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( params.getMimeType() );
+        final ContentTypeName resolvedTypeFromMimeType = ContentTypeFromMimeTypeResolver.resolve( mediaType );
         final ContentTypeName type = resolvedTypeFromMimeType != null
             ? resolvedTypeFromMimeType
-            : isExecutableContentType( params.getMimeType(), params.getName() )
+            : isExecutableContentType( mediaType, params.getName() )
                 ? ContentTypeName.executableMedia()
                 : ContentTypeName.unknownMedia();
 
@@ -69,7 +70,7 @@ final class UpdateMediaCommand
 
         final CreateAttachment mediaAttachment = CreateAttachment.create()
             .name( params.getName().toString() )
-            .mimeType( params.getMimeType() )
+            .mimeType( mediaType )
             .label( "source" )
             .byteSource( params.getByteSource() )
             .text( type.isTextualMedia() ? mediaInfo.getTextContent() : null )

@@ -17,6 +17,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
@@ -91,8 +92,8 @@ final class UpdateContentCommand
 
         Content editedContent;
 
-        editedContent = editContent( params.getEditor(), contentBeforeChange );
-        editedContent = processContent( contentBeforeChange, editedContent );
+        editedContent = editContent( params.getEditor(), contentBeforeChange, contentBeforeChange.getProcessedReferences() );
+        editedContent = processContent( editedContent );
         editedContent = editContentMetadata( editedContent );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
@@ -100,7 +101,7 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
-        validateProjectAccess(contentBeforeChange, editedContent);
+        validateProjectAccess( contentBeforeChange, editedContent );
 
         validate( editedContent );
 
@@ -241,39 +242,35 @@ final class UpdateContentCommand
         return Attachments.from( attachments.values() );
     }
 
-    private Content processContent( final Content originalContent, Content editedContent )
+    private Content processContent( Content editedContent )
     {
-        final ContentType contentType = getContentType( editedContent.getType() );
-
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
-            if ( contentProcessor.supports( contentType ) )
+            if ( contentProcessor.supports( editedContent.getType() ) )
             {
                 final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
-                    .contentType( contentType )
                     .mediaInfo( mediaInfo )
-                    .createAttachments( params.getCreateAttachments() )
                     .editedContent( editedContent )
                     .build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
 
                 if ( result != null )
                 {
-                    editedContent = editContent( result.getEditor(), editedContent );
+                    editedContent = editContent( result.getEditor(), editedContent, result.getProcessedReferences() );
                 }
             }
         }
         return editedContent;
     }
 
-    private Content editContent( final ContentEditor editor, final Content original )
+    private Content editContent( final ContentEditor editor, final Content original, final ContentIds processedReferences )
     {
         final EditableContent editableContent = new EditableContent( original );
         if ( editor != null )
         {
             editor.edit( editableContent );
         }
-        return editableContent.build();
+        return Content.create( editableContent.build() ).processedReferences( processedReferences ).build();
     }
 
     private void validateProjectAccess( final Content originalContent, final Content editedContent )

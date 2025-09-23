@@ -12,7 +12,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.CreateContentParams;
@@ -40,13 +40,13 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -93,7 +93,7 @@ public class HtmlAreaContentProcessor
     }
 
     @Override
-    public boolean supports( final ContentType contentType )
+    public boolean supports( final ContentTypeName contentType )
     {
         return true;
     }
@@ -117,23 +117,19 @@ public class HtmlAreaContentProcessor
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
         final ContentIds.Builder processedIds = ContentIds.create();
-        final ContentEditor editor = editable -> {
-            final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( editable.source.getType() ) );
+        final Content inputContent = params.getEditedContent();
+        final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( inputContent.getType() ) );
 
-            processContentData( editable.data, contentType, processedIds );
-            processExtraData( editable.extraDatas, processedIds );
-            editable.page = processPageData( editable.page, processedIds );
+        processContentData( inputContent.getData(), contentType, processedIds );
+        processExtraData( inputContent.getAllExtraData(), processedIds );
 
-            if ( editable.source instanceof Site )
-            {
-                final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( editable.data.getRoot() ).build();
-                processSiteConfigData( siteConfigs, processedIds );
-            }
+        if ( inputContent instanceof Site site )
+        {
+            processSiteConfigData( site.getSiteConfigs(), processedIds );
+        }
+        final Page page = processPageData( inputContent.getPage(), processedIds );
 
-            editable.processedReferences = processedIds;
-        };
-
-        return new ProcessUpdateResult( editor, processedIds.build() );
+        return new ProcessUpdateResult( editable -> editable.page = page, processedIds.build() );
     }
 
     private void processSiteConfigData( final SiteConfigs siteConfigs, final ContentIds.Builder processedIds )
@@ -232,6 +228,12 @@ public class HtmlAreaContentProcessor
     }
 
     private void processContentData( final PropertyTree contentData, final ContentType contentType, final ContentIds.Builder processedIds )
+    {
+        final Collection<Property> properties = getProperties( contentData, contentType.getForm() );
+        processDataTree( properties, processedIds );
+    }
+
+    private void processSiteConfig( final PropertyTree contentData, final ContentType contentType, final ContentIds.Builder processedIds )
     {
         final Collection<Property> properties = getProperties( contentData, contentType.getForm() );
         processDataTree( properties, processedIds );

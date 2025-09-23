@@ -5,19 +5,19 @@ import com.enonic.xp.content.CreateContentParams;
 
 public final class ProcessCreateResult
 {
-    private final ContentIds processedIds;
+    private final ContentIds processedReferences;
 
     private final CreateContentParams createContentParams;
 
-    public ProcessCreateResult( final CreateContentParams createContentParams, final ContentIds processedIds )
+    public ProcessCreateResult( final CreateContentParams createContentParams, final ContentIds processedReferences )
     {
-        this.processedIds = processedIds;
+        this.processedReferences = processedReferences;
         this.createContentParams = createContentParams;
     }
 
-    public ContentIds getProcessedIds()
+    public ContentIds getProcessedReferences()
     {
-        return processedIds;
+        return processedReferences;
     }
 
     public CreateContentParams getCreateContentParams()

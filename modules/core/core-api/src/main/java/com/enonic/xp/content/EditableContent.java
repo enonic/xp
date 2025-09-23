@@ -43,7 +43,6 @@ public final class EditableContent
         this.owner = source.getOwner();
         this.language = source.getLanguage();
         this.publishInfo = source.getPublishInfo();
-        this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
         this.variantOf = source.getVariantOf();
     }
@@ -58,7 +57,6 @@ public final class EditableContent
             .owner( owner )
             .language( language )
             .publishInfo( buildPublishInfo() )
-            .processedReferences( processedReferences.build() )
             .workflowInfo( workflowInfo )
             .variantOf( variantOf )
             .build();

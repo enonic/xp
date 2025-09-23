@@ -1,14 +1,12 @@
 package com.enonic.xp.core.impl.content.processor;
 
-import java.io.IOException;
-
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
@@ -55,6 +53,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,8 +63,6 @@ import static org.mockito.Mockito.when;
 
 public class HtmlAreaContentProcessorTest
 {
-    private ProcessUpdateResult result;
-
     private HtmlAreaContentProcessor htmlAreaContentProcessor;
 
     private ContentTypeService contentTypeService;
@@ -82,11 +79,8 @@ public class HtmlAreaContentProcessorTest
 
     private ContentTypeName contentTypeName;
 
-    private ContentType contentType;
-
     @BeforeEach
     public void setUp()
-        throws Exception
     {
 
         this.siteService = Mockito.mock( SiteService.class );
@@ -98,15 +92,13 @@ public class HtmlAreaContentProcessorTest
 
         contentTypeName = ContentTypeName.from( "myContentType" );
 
-        contentType = ContentType.create()
+        final ContentType contentType = ContentType.create()
             .name( contentTypeName )
             .superType( ContentTypeName.folder() )
             .form( Form.create()
                        .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
                        .build() )
             .build();
-
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().contentType( contentType ).build();
 
         when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
@@ -119,48 +111,37 @@ public class HtmlAreaContentProcessorTest
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
-
-        result = htmlAreaContentProcessor.processUpdate( processUpdateParams );
     }
 
     @Test
     public void empty_data()
-        throws IOException
     {
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).build() )
+            .build();
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        result.getEditor().edit( editableContent );
-
-        assertEquals( 0, editableContent.processedReferences.build().getSize() );
+        assertThat(result.processedReferences ).isEmpty();
     }
 
     @Test
     public void content_data()
-        throws IOException
     {
-
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
+            .build();
 
-        final EditableContent editableContent = new EditableContent(
-            Media.create().name( "myContentName" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        result.getEditor().edit( editableContent );
-
-        assertEquals( 1, editableContent.processedReferences.build().getSize() );
-        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
     public void content_deep_data()
-        throws IOException
     {
 
         final ContentTypeName deepTypeName = ContentTypeName.from( "deepContentType" );
@@ -204,19 +185,19 @@ public class HtmlAreaContentProcessorTest
         option3.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans04.jpg\" data-src=\"image://image-id4\" src=\"image/123\"/>" ) );
 
-        final EditableContent editableContent = new EditableContent(
-            Media.create().name( "myContentName" ).type( deepTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Content.create().name( "name" ).type( deepTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
+            .build();
 
-        result.getEditor().edit( editableContent );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        Assertions.assertThat( editableContent.processedReferences.build() )
+        assertThat( result.processedReferences )
             .containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
                        ContentId.from( "image-id4" ) );
     }
 
     @Test
     public void site_config_data()
-        throws IOException
     {
         when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
             .thenReturn( SiteDescriptor.create()
@@ -233,28 +214,25 @@ public class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
-        final EditableContent editableSite = new EditableContent( Site.create()
-                                                                .name( "myContentName" )
-                                                                .type( ContentTypeName.site() )
-                                                                .parentPath( ContentPath.ROOT )
-                                                                .data( new PropertyTree() )
-                                                                .siteConfigs( SiteConfigs.create()
-                                                                                  .add( SiteConfig.create()
-                                                                                            .config( data )
-                                                                                            .application( ApplicationKey.SYSTEM )
-                                                                                            .build() )
-                                                                                  .build() )
-                                                                .build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Site.create()
+                                .name( "myContentName" )
+                                .type( ContentTypeName.site() )
+                                .parentPath( ContentPath.ROOT )
+                                .data( new PropertyTree() )
+                                .siteConfigs( SiteConfigs.create()
+                                                  .add( SiteConfig.create().config( data ).application( ApplicationKey.SYSTEM ).build() )
+                                                  .build() )
+                                .build() )
+            .build();
 
-        result.getEditor().edit( editableSite );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertEquals( 1, editableSite.processedReferences.build().getSize() );
-        assertTrue( editableSite.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
     public void extra_data()
-        throws IOException
     {
         final XDataName xDataName = XDataName.from( "xDataName" );
 
@@ -269,26 +247,26 @@ public class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
-        final EditableContent editableSite = new EditableContent( Site.create()
-                                                                .name( "myContentName" )
-                                                                .type( ContentTypeName.site() )
-                                                                .parentPath( ContentPath.ROOT )
-                                                                .data( new PropertyTree() )
-                                                                .extraDatas( ExtraDatas.create()
-                                                                                 .add(
-                                                                                     new ExtraData( XDataName.from( "xDataName" ), data ) )
-                                                                                 .build() )
-                                                                .build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Site.create()
+                                .name( "myContentName" )
+                                .type( ContentTypeName.site() )
+                                .parentPath( ContentPath.ROOT )
+                                .data( new PropertyTree() )
+                                .extraDatas( ExtraDatas.create()
+                                                 .add(
+                                                     new ExtraData( XDataName.from( "xDataName" ), data ) )
+                                                 .build() )
+                                .build() )
+            .build();
 
-        result.getEditor().edit( editableSite );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertEquals( 1, editableSite.processedReferences.build().getSize() );
-        assertTrue( editableSite.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
     public void page_config_data()
-        throws IOException
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( "<img src =\"source\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
@@ -306,24 +284,23 @@ public class HtmlAreaContentProcessorTest
 
         final Page page = Page.create().config( data ).descriptor( pageDescriptor.getKey() ).build();
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .page( page )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Media.create()
+                                .name( "myContentName" )
+                                .type( contentTypeName )
+                                .page( page )
+                                .parentPath( ContentPath.ROOT )
+                                .data( new PropertyTree() )
+                                .build() )
+            .build();
 
-        result.getEditor().edit( editableContent );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertEquals( 1, editableContent.processedReferences.build().getSize() );
-        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
-
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
     public void component_config_data()
-        throws IOException
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\" src=\"image/123\"/>" ) );
@@ -351,24 +328,23 @@ public class HtmlAreaContentProcessorTest
             .regions( PageRegions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
             .build();
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .page( page )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Media.create()
+                                .name( "myContentName" )
+                                .type( contentTypeName )
+                                .page( page )
+                                .parentPath( ContentPath.ROOT )
+                                .data( new PropertyTree() )
+                                .build() )
+            .build();
 
-        result.getEditor().edit( editableContent );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertEquals( 1, editableContent.processedReferences.build().getSize() );
-        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
-
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
     public void inner_component_data()
-        throws IOException
     {
         final PropertyTree data1 = new PropertyTree();
         data1.addProperty( "htmlData",
@@ -415,25 +391,23 @@ public class HtmlAreaContentProcessorTest
             .regions( PageRegions.create().add( Region.create().name( "region" ).add( layoutComponent ).build() ).build() )
             .build();
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .page( page )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Media.create()
+                                .name( "myContentName" )
+                                .type( contentTypeName )
+                                .page( page )
+                                .parentPath( ContentPath.ROOT )
+                                .data( new PropertyTree() )
+                                .build() )
+            .build();
 
-        result.getEditor().edit( editableContent );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertEquals( 2, editableContent.processedReferences.build().getSize() );
-        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id1" ) ) );
-        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id2" ) ) );
-
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
     }
 
     @Test
     public void text_component_value()
-        throws IOException
     {
         final TextComponent textComponent = TextComponent.create().text( "<img data-src=\"image://image-id\" src=\"image/123\"/>" ).build();
 
@@ -461,24 +435,23 @@ public class HtmlAreaContentProcessorTest
                           .build() )
             .build();
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .page( page )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( Media.create()
+                                .name( "myContentName" )
+                                .type( contentTypeName )
+                                .page( page )
+                                .parentPath( ContentPath.ROOT )
+                                .data( new PropertyTree() )
+                                .build() )
+            .build();
 
-        result.getEditor().edit( editableContent );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertEquals( 1, editableContent.processedReferences.build().getSize() );
-        assertTrue( editableContent.processedReferences.build().contains( ContentId.from( "image-id" ) ) );
-
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
     public void text_component_sanitized()
-        throws IOException
     {
         final TextComponent textComponent = TextComponent.create().text( "<img data-src=\"image://image-id\"/>" ).build();
 
@@ -506,24 +479,29 @@ public class HtmlAreaContentProcessorTest
                           .build() )
             .build();
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .page( page )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final Media content = Media.create()
+            .name( "myContentName" )
+            .type( contentTypeName )
+            .page( page )
+            .parentPath( ContentPath.ROOT )
+            .data( new PropertyTree() )
+            .build();
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .editedContent( content )
+            .build();
 
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
+
+        final EditableContent editableContent = new EditableContent( content );
         result.getEditor().edit( editableContent );
 
-        assertEquals( 1, editableContent.processedReferences.build().getSize() );
+        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
         assertEquals( "<img data-src=\"image://image-id\"/>",
                       ( (TextComponent) editableContent.page.getComponent( ComponentPath.from( "/region/1" ) ) ).getText() );
     }
 
     @Test
     public void component_config_sanitized_enabled()
-        throws IOException
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\" />" ) );
@@ -551,7 +529,15 @@ public class HtmlAreaContentProcessorTest
             .regions( PageRegions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
             .build();
 
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().contentType( contentType ).build();
+        final Media content = Media.create()
+            .name( "myContentName" )
+            .type( contentTypeName )
+            .page( page )
+            .parentPath( ContentPath.ROOT )
+            .data( new PropertyTree() )
+            .build();
+
+        final ProcessUpdateParams params = ProcessUpdateParams.create().editedContent( content ).build();
 
         final ContentConfig contentConfig = Mockito.mock( ContentConfig.class, invocation -> true );
 
@@ -563,33 +549,24 @@ public class HtmlAreaContentProcessorTest
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
 
-        result = htmlAreaContentProcessor.processUpdate( processUpdateParams );
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        final EditableContent editableContent = new EditableContent( Media.create()
-                                                                         .name( "myContentName" )
-                                                                         .type( contentTypeName )
-                                                                         .page( page )
-                                                                         .parentPath( ContentPath.ROOT )
-                                                                         .data( new PropertyTree() )
-                                                                         .build() );
+        final EditableContent editableContent = new EditableContent( content );
 
         result.getEditor().edit( editableContent );
 
-        assertEquals( 0, editableContent.processedReferences.build().getSize() );
+        assertThat( result.processedReferences ).isEmpty();
     }
 
 
     @Test
     public void supports()
-        throws IOException
     {
-        assertTrue( htmlAreaContentProcessor.supports(
-            ContentType.create().name( contentTypeName ).superType( ContentTypeName.folder() ).build() ) );
+        assertTrue( htmlAreaContentProcessor.supports( contentTypeName  ) );
     }
 
     @Test
     public void create()
-        throws IOException
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -624,8 +601,7 @@ public class HtmlAreaContentProcessorTest
 
         verify( contentTypeService ).getByName( captor.capture() );
         assertEquals( contentTypeName, captor.getValue().getContentTypeName() );
-        assertEquals( 2, result.getProcessedIds().getSize() );
-        assertTrue( result.getProcessedIds().contains( ContentId.from( "image-id1" ) ) );
-        assertTrue( result.getProcessedIds().contains( ContentId.from( "image-id2" ) ) );
+        assertThat( result.getProcessedReferences() ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
+
     }
 }
