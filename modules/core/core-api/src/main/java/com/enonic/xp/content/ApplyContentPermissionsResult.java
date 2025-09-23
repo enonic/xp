@@ -1,24 +1,20 @@
 package com.enonic.xp.content;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class ApplyContentPermissionsResult
 {
-    private final Map<ContentId, List<BranchResult>> results;
+    private final Map<ContentId, AccessControlList> results;
 
     private ApplyContentPermissionsResult( Builder builder )
     {
-        this.results = (ImmutableMap) builder.results.build().asMap();
+        this.results = Collections.unmodifiableMap( builder.results );
     }
 
     public static Builder create()
@@ -26,37 +22,27 @@ public final class ApplyContentPermissionsResult
         return new Builder();
     }
 
-    public Map<ContentId, List<BranchResult>> getResults()
+    public Map<ContentId, AccessControlList> getResults()
     {
         return results;
     }
 
-    public AccessControlList getResult( final ContentId contentId, final Branch branch )
+    public AccessControlList getResult( final ContentId contentId )
     {
-        final List<BranchResult> results = this.results.get( contentId );
-        return results != null ? this.results.get( contentId )
-            .stream()
-            .filter( br -> br.branch().equals( branch ) ).map( BranchResult::permissions )
-            .filter( Objects::nonNull )
-            .findAny()
-            .orElse( null ) : null;
-    }
-
-    public record BranchResult(Branch branch, AccessControlList permissions)
-    {
+        return this.results.get( contentId );
     }
 
     public static final class Builder
     {
-        private final ImmutableListMultimap.Builder<ContentId, BranchResult> results = ImmutableListMultimap.builder();
+        private final Map<ContentId, AccessControlList> results = new HashMap<>();
 
         private Builder()
         {
         }
 
-        public Builder addResult( ContentId contentId, Branch branch, AccessControlList permissions )
+        public Builder addResult( ContentId contentId, AccessControlList permissions )
         {
-            results.put( contentId, new BranchResult( branch, permissions ) );
+            results.put( contentId, permissions );
             return this;
         }
 

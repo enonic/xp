@@ -9,7 +9,6 @@ import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
@@ -61,8 +60,6 @@ public class ContentServiceImplTest_applyPermissions
             .build();
 
         final Content content = this.contentService.create( createContentParams );
-        final Content child =
-            this.contentService.create( CreateContentParams.create( createContentParams ).parent( content.getPath() ).build() );
 
         final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
 
@@ -78,8 +75,7 @@ public class ContentServiceImplTest_applyPermissions
 
         assertEquals( 1, result.getResults().size() );
 
-        assertEquals( content.getPermissions(), result.getResult( content.getId(), ContextAccessor.current().getBranch() ) );
-        assertNull( result.getResult( content.getId(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( content.getPermissions(), result.getResult( content.getId() ) );
     }
 
     @Test
@@ -117,7 +113,7 @@ public class ContentServiceImplTest_applyPermissions
         verify( listener, times( 2 ) ).notEnoughRights( 1 );
 
         assertEquals( 2, result.getResults().size() );
-        assertNull( result.getResult( content.getId(), ContextAccessor.current().getBranch() ) );
+        assertNull( result.getResult( content.getId() ) );
     }
 
     @Test
