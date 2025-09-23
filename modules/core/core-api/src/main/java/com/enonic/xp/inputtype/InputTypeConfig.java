@@ -7,8 +7,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.SetMultimap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.convert.Converters;
@@ -48,7 +46,7 @@ public final class InputTypeConfig
     public String getValue( final String name )
     {
         final InputTypeProperty property = getProperty( name );
-        return property != null ? property.getValue() : null;
+        return property != null ? ( (StringPropertyValue) property.getValue() ).value() : null;
     }
 
     public <T> T getValue( final String name, final Class<T> type )

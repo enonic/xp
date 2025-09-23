@@ -12,3 +12,12 @@ allowPath:
   - "./*"
 treeMode: true
 hideToggleIcon: true
+#config:
+#  allowContentType:
+#    - "myapp:landing-page1"
+#    - "myapp:landing-page2"
+#  allowPath:
+#    - "${site}/people/"
+#    - "./*"
+#  treeMode: true
+#  hideToggleIcon: true

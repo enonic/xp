@@ -5,3 +5,7 @@ default: "<h3>Enter description here</h3>"
 exclude: "*"
 include: "JustifyLeft JustifyRight | Bold Italic"
 allowHeadings: "h2 h4 h6"
+#config:
+#  exclude: "*"
+#  include: "JustifyLeft JustifyRight | Bold Italic"
+#  allowHeadings: "h2 h4 h6"

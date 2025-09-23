@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.xml.DomElement;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -61,7 +62,7 @@ final class XmlInputTypeConfigMapper
         final String name = nameResolver.apply( root.getTagName() );
         final String value = valueResolver.apply( name, root.getValue() );
 
-        final InputTypeProperty.Builder builder = InputTypeProperty.create( name, value );
+        final InputTypeProperty.Builder builder = InputTypeProperty.create( name, new StringPropertyValue( value ) );
         for ( final Attr attr : root.getAttributes() )
         {
             addPropertyAttribute( builder, attr );

@@ -16,6 +16,7 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -66,7 +67,7 @@ final class BuiltinContentTypes
                           .helpTextI18nKey( "base.shortcut.target.helpText" )
                           .inputType( InputTypeName.CONTENT_SELECTOR )
                           .inputTypeConfig(
-                              InputTypeConfig.create().property( InputTypeProperty.create( "allowPath", "*" ).build() ).build() )
+                              InputTypeConfig.create().property( InputTypeProperty.create( "allowPath", new StringPropertyValue( "*" ) ).build() ).build() )
                           .required( true )
                           .build() )
         .addFormItem( FormItemSet.create()

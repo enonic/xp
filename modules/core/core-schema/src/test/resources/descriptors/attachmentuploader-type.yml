@@ -1,3 +1,4 @@
 type: "AttachmentUploader"
 name: "myattachmentUploader"
 label: "My AttachmentUploader"
+config: {}

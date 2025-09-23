@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 
 final class InputTypeConfigDeserializer
     extends JsonDeserializer<InputTypeConfig>
@@ -28,7 +29,7 @@ final class InputTypeConfigDeserializer
             final String name = property.get( "name" ).asText();
             final String value = property.get( "value" ).asText();
 
-            final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( name, value );
+            final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( name, new StringPropertyValue( value ) );
 
             property.fieldNames().forEachRemaining( attr -> {
                 if ( "value".equals( attr ) || "name".equals( attr ) )

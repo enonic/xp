@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.form.Input;
@@ -11,6 +12,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.LocalizedText;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class InputYml
 {
     private final InputTypeName inputTypeName;

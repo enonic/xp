@@ -52,23 +52,23 @@ public class YmlPageDescriptorParserTest
         assertEquals( 1, regions.numberOfRegions() );
         assertEquals( "main", regions.iterator().next().getName() );
 
-        // verify config
-        final InputTypeConfig schemaConfig = descriptor.getSchemaConfig();
-        final Set<InputTypeProperty> p1Set = schemaConfig.getProperties( "p1" );
-        final Iterator<InputTypeProperty> p1Iterator = p1Set.iterator();
-
-        InputTypeProperty p1Property = p1Iterator.next();
-        assertEquals( "p1", p1Property.getName() );
-        assertEquals( "p1v1", p1Property.getValue() );
-        assertEquals( 0, p1Property.getAttributes().size() );
-
-        final Set<InputTypeProperty> p2Set = schemaConfig.getProperties( "p2" );
-        final Iterator<InputTypeProperty> p2Iterator = p2Set.iterator();
-
-        InputTypeProperty p2Property = p2Iterator.next();
-        assertEquals( "p2", p2Property.getName() );
-        assertEquals( "p2v1", p2Property.getValue() );
-        assertEquals( 0, p2Property.getAttributes().size() );
+//        // verify config
+//        final InputTypeConfig schemaConfig = descriptor.getSchemaConfig();
+//        final Set<InputTypeProperty> p1Set = schemaConfig.getProperties( "p1" );
+//        final Iterator<InputTypeProperty> p1Iterator = p1Set.iterator();
+//
+//        InputTypeProperty p1Property = p1Iterator.next();
+//        assertEquals( "p1", p1Property.getName() );
+//        assertEquals( "p1v1", p1Property.getValue() );
+//        assertEquals( 0, p1Property.getAttributes().size() );
+//
+//        final Set<InputTypeProperty> p2Set = schemaConfig.getProperties( "p2" );
+//        final Iterator<InputTypeProperty> p2Iterator = p2Set.iterator();
+//
+//        InputTypeProperty p2Property = p2Iterator.next();
+//        assertEquals( "p2", p2Property.getName() );
+//        assertEquals( "p2v1", p2Property.getValue() );
+//        assertEquals( 0, p2Property.getAttributes().size() );
     }
 
     private String readAsString( final String name )

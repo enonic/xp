@@ -10,3 +10,25 @@ options:
     text: "Option One"
   - value: "two"
     text: "Option Two"
+#options:
+#  - value: "one"
+#    label: "Option One"
+#  - value: "two"
+#    label: # TODO LocalizeText
+#      text: "Option Two"
+#      i18n: "combobox.option2"
+#
+#config: {}
+config:
+  p1: 123
+  p2: "String"
+  p3:
+    - 0
+    - 1
+    - 2
+  p4:
+    k1: "v1"
+    k2:
+      k21: "vk21"
+      k22: "vk22"
+    k3: true

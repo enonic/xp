@@ -10,7 +10,7 @@ public final class InputTypeProperty
 {
     private final String name;
 
-    private final String value;
+    private final PropertyValue value;
 
     private final ImmutableMap<String, String> attributes;
 
@@ -26,7 +26,7 @@ public final class InputTypeProperty
         return this.name;
     }
 
-    public String getValue()
+    public PropertyValue getValue()
     {
         return this.value;
     }
@@ -65,27 +65,32 @@ public final class InputTypeProperty
     @Override
     public String toString()
     {
-        return this.name + "=" + this.value +
+        return this.name + "=" + this.value.getRawValue() +
             this.attributes.entrySet().stream().map( e -> e.getKey() + "=" + e.getValue() ).collect( Collectors.joining( ",", "[", "]" ) );
+    }
+
+    public static Builder create( final String name, final PropertyValue value )
+    {
+        return new Builder( name, value );
     }
 
     public static Builder create( final String name, final String value )
     {
-        return new Builder( name, value );
+        return new Builder( name, new StringPropertyValue( value ) );
     }
 
     public static final class Builder
     {
         private final String name;
 
-        private final String value;
+        private final PropertyValue value;
 
         private final ImmutableMap.Builder<String, String> attributes;
 
-        private Builder( final String name, final String value )
+        private Builder( final String name, final PropertyValue value )
         {
             this.name = name;
-            this.value = value != null ? value : "";
+            this.value = value != null ? value : new StringPropertyValue( "" );
             this.attributes = ImmutableMap.builder();
         }
 

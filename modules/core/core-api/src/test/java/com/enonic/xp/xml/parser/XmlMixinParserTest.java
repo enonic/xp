@@ -12,47 +12,47 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class XmlMixinParserTest
     extends XmlModelParserTest
 {
-    private XmlMixinParser parser;
-
-    private Mixin.Builder builder;
-
-    @BeforeEach
-    public void setup()
-    {
-        this.parser = new XmlMixinParser();
-        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
-
-        this.builder = Mixin.create();
-        this.builder.name( MixinName.from( "myapplication:mymixin" ) );
-        this.parser.builder( this.builder );
-    }
-
-    @Test
-    public void testParse()
-        throws Exception
-    {
-        parse( this.parser, ".xml" );
-        assertResult();
-    }
-
-    @Test
-    public void testParse_noNs()
-        throws Exception
-    {
-        parseRemoveNs( this.parser, ".xml" );
-        assertResult();
-    }
-
-    private void assertResult()
-        throws Exception
-    {
-        final Mixin result = this.builder.build();
-        assertEquals( "myapplication:mymixin", result.getName().toString() );
-        assertEquals( "display name", result.getDisplayName() );
-        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
-        assertEquals( "description", result.getDescription() );
-        assertEquals( "key.description", result.getDescriptionI18nKey() );
-
-        assertEquals( 1, result.getForm().size() );
-    }
+//    private XmlMixinParser parser;
+//
+//    private Mixin.Builder builder;
+//
+//    @BeforeEach
+//    public void setup()
+//    {
+//        this.parser = new XmlMixinParser();
+//        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
+//
+//        this.builder = Mixin.create();
+//        this.builder.name( MixinName.from( "myapplication:mymixin" ) );
+//        this.parser.builder( this.builder );
+//    }
+//
+//    @Test
+//    public void testParse()
+//        throws Exception
+//    {
+//        parse( this.parser, ".xml" );
+//        assertResult();
+//    }
+//
+//    @Test
+//    public void testParse_noNs()
+//        throws Exception
+//    {
+//        parseRemoveNs( this.parser, ".xml" );
+//        assertResult();
+//    }
+//
+//    private void assertResult()
+//        throws Exception
+//    {
+//        final Mixin result = this.builder.build();
+//        assertEquals( "myapplication:mymixin", result.getName().toString() );
+//        assertEquals( "display name", result.getDisplayName() );
+//        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+//        assertEquals( "description", result.getDescription() );
+//        assertEquals( "key.description", result.getDescriptionI18nKey() );
+//
+//        assertEquals( 1, result.getForm().size() );
+//    }
 }

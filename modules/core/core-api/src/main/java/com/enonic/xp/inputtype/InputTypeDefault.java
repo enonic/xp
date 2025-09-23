@@ -51,7 +51,7 @@ public final class InputTypeDefault
     public String getValue( final String name )
     {
         final InputTypeProperty property = getProperty( name );
-        return property != null ? property.getValue() : null;
+        return property != null ? ((StringPropertyValue) property.getValue()).value() : null;
     }
 
     public <T> T getValue( final String name, final Class<T> type )
