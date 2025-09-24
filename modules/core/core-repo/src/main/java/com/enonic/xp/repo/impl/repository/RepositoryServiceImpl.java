@@ -357,7 +357,7 @@ public class RepositoryServiceImpl
         return attachedBinary == null ? null : repositoryEntryService.getBinary( attachedBinary );
     }
 
-    private void requireAdminRole()
+    private static void requireAdminRole()
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN );

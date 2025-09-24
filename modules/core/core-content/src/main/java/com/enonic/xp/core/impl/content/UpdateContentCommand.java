@@ -29,6 +29,7 @@ import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
@@ -274,12 +275,12 @@ final class UpdateContentCommand
             !Objects.equals( originalSite.getSiteConfigs(), editedSite.getSiteConfigs() ) )
         {
             final Context context = ContextAccessor.current();
-            final AuthenticationInfo authenticationInfo = context.getAuthInfo();
+            final AuthenticationInfo authInfo = context.getAuthInfo();
             final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
 
-            if ( !ProjectAccessHelper.hasAccess( authenticationInfo, projectName, ProjectRole.OWNER ) )
+            if ( !ProjectAccessHelper.hasAccess( authInfo, projectName, ProjectRole.OWNER ) )
             {
-                throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey(), ProjectRole.OWNER );
+                throw new ForbiddenAccessException( authInfo.getUser() );
             }
         }
     }
