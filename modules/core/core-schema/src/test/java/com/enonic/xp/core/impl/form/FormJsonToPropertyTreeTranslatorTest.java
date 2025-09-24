@@ -216,8 +216,8 @@ public class FormJsonToPropertyTreeTranslatorTest
                 name( "comboBox" ).
                 label( "Combobox" ).
                 inputType( InputTypeName.COMBO_BOX ).
-                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
-                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
+//                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
+//                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
                 build() ).
             addFormItem( Input.create().
                 name( "checkbox" ).

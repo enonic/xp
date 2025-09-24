@@ -36,7 +36,7 @@ final class InputTypeConfigDeserializer
                 {
                     return;
                 }
-                propertyBuilder.attribute( attr, property.get( attr ).asText() );
+//                propertyBuilder.attribute( attr, property.get( attr ).asText() );
             } );
 
             builder.property( propertyBuilder.build() );

@@ -50,7 +50,7 @@ final class XmlInputTypeDefaultMapper
     private void addPropertyAttribute( final InputTypeProperty.Builder builder, final Attr attr )
     {
         final String name = XmlInputTypeDefaultMapper.resolveName( attr.getName() );
-        builder.attribute( name, attr.getValue() );
+//        builder.attribute( name, attr.getValue() );
     }
 
     public static String resolveName( final String name )

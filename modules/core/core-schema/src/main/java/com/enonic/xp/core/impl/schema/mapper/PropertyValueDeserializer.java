@@ -44,17 +44,17 @@ public class PropertyValueDeserializer
         {
             return new StringPropertyValue( node.asText() );
         }
-        else if ( node.canConvertToLong() )
+        else if ( node.isDouble() )
         {
-            return new LongPropertyValue( node.asLong() );
+            return new DoublePropertyValue( node.asDouble() );
         }
         else if ( node.canConvertToInt() )
         {
             return new IntegerPropertyValue( node.asInt() );
         }
-        else if ( node.isDouble() )
+        else if ( node.canConvertToLong() )
         {
-            return new DoublePropertyValue( node.asDouble() );
+            return new LongPropertyValue( node.asLong() );
         }
         else if ( node.isBoolean() )
         {

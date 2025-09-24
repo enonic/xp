@@ -1,28 +1,17 @@
 package com.enonic.xp.inputtype;
 
+import java.util.Objects;
+
 public record StringPropertyValue(String value)
     implements PropertyValue
 {
-    @Override
-    public Object getRawValue()
+    public StringPropertyValue( String value )
     {
-        return value;
+        this.value = Objects.requireNonNull( value );
     }
 
     @Override
     public String toString()
-    {
-        return value;
-    }
-
-    @Override
-    public boolean isString()
-    {
-        return true;
-    }
-
-    @Override
-    public String asString()
     {
         return value;
     }

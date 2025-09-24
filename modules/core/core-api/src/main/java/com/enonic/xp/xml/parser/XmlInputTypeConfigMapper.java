@@ -75,7 +75,7 @@ final class XmlInputTypeConfigMapper
     {
         final String name = nameResolver.apply( attr.getName() );
         final String value = valueResolver.apply( name, attr.getValue() );
-        builder.attribute( name, value );
+//        builder.attribute( name, value );
     }
 
     private static class DefaultResolveValue

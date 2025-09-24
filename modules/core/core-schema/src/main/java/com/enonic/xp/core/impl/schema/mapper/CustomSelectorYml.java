@@ -40,12 +40,12 @@ public class CustomSelectorYml
                     .build() );
         }
 
-        if ( params != null )
-        {
-            params.forEach( ( key, value ) -> {
-                configBuilder.property( InputTypeProperty.create( "param", value ).attribute( "value", key ).build() );
-            } );
-        }
+//        if ( params != null )
+//        {
+//            params.forEach( ( key, value ) -> {
+//                configBuilder.property( InputTypeProperty.create( "param", value ).attribute( "value", key ).build() );
+//            } );
+//        }
 
         builder.inputTypeConfig( configBuilder.build() );
     }

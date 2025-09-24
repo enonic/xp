@@ -1,31 +1,20 @@
 package com.enonic.xp.inputtype;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public record ListPropertyValue(List<PropertyValue> value)
     implements PropertyValue
 {
-    @Override
-    public Object getRawValue()
+    public ListPropertyValue( final List<PropertyValue> value )
     {
-        return value;
+        this.value = Collections.unmodifiableList( Objects.requireNonNull( value ) );
     }
 
     @Override
     public String toString()
     {
-        return "[" + value + "]";
-    }
-
-    @Override
-    public boolean isList()
-    {
-        return true;
-    }
-
-    @Override
-    public List<PropertyValue> asList()
-    {
-        return value;
+        return value.toString();
     }
 }

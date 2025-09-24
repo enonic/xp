@@ -22,17 +22,17 @@ public class RadioButtonYml
     @Override
     public void customizeInputType( final Input.Builder builder )
     {
-        if ( options != null )
-        {
-            final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
-            options.forEach( option -> {
-                final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( "option", option.text );
-                propertyBuilder.attribute( "value", option.value );
-                option.getAttributes().forEach( propertyBuilder::attribute );
-                configBuilder.property( propertyBuilder.build() );
-            } );
-            builder.inputTypeConfig( configBuilder.build() );
-        }
+//        if ( options != null )
+//        {
+//            final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
+//            options.forEach( option -> {
+//                final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( "option", option.text );
+//                propertyBuilder.attribute( "value", option.value );
+//                option.getAttributes().forEach( propertyBuilder::attribute );
+//                configBuilder.property( propertyBuilder.build() );
+//            } );
+//            builder.inputTypeConfig( configBuilder.build() );
+//        }
     }
 
 }

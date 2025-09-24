@@ -7,18 +7,11 @@ occurrences:
   maximum: 2
 options:
   - value: "one"
-    text: "Option One"
+    label: "Option One"
   - value: "two"
-    text: "Option Two"
-#options:
-#  - value: "one"
-#    label: "Option One"
-#  - value: "two"
-#    label: # TODO LocalizeText
-#      text: "Option Two"
-#      i18n: "combobox.option2"
-#
-#config: {}
+    label:
+      text: "Option Two"
+      i18n: "combobox.option2"
 config:
   p1: 123
   p2: "String"

@@ -1,23 +1,11 @@
 package com.enonic.xp.inputtype;
 
-public record DoublePropertyValue(Double value)
+public record DoublePropertyValue(double value)
     implements PropertyValue
 {
     @Override
-    public Object getRawValue()
+    public String toString()
     {
-        return value;
-    }
-
-    @Override
-    public boolean isDouble()
-    {
-        return true;
-    }
-
-    @Override
-    public Double asDouble()
-    {
-        return value;
+        return Double.toString( value );
     }
 }

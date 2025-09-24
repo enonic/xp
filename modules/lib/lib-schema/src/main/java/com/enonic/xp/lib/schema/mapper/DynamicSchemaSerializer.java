@@ -176,10 +176,10 @@ public class DynamicSchemaSerializer
     {
         gen.map();
         gen.value( "value", property.getValue() );
-        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
-        {
-            gen.value( "@" + attribute.getKey(), attribute.getValue() );
-        }
+//        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
+//        {
+//            gen.value( "@" + attribute.getKey(), attribute.getValue() );
+//        }
         gen.end();
     }
 

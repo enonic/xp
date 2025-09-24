@@ -1,25 +1,27 @@
 package com.enonic.xp.inputtype;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public record ObjectPropertyValue(Map<String, PropertyValue> value)
     implements PropertyValue
 {
-    @Override
-    public Object getRawValue()
+    public ObjectPropertyValue( final Map<String, PropertyValue> value )
     {
-        return value;
+        this.value = Collections.unmodifiableMap( Objects.requireNonNull( value ) );
     }
 
     @Override
-    public boolean isObject()
+    public Set<Map.Entry<String, PropertyValue>> getProperties()
     {
-        return true;
+        return value.entrySet();
     }
 
     @Override
-    public Map<String, PropertyValue> asObject()
+    public String toString()
     {
-        return value;
+        return value.toString();
     }
 }

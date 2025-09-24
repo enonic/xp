@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,27 +31,34 @@ public class ComboBoxYml
     {
         final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
 
-//        if ( options != null )
-//        {
-//            options.forEach( option -> {
-//                final Map<String, PropertyValue> optionConfig = new LinkedHashMap<>();
-//                optionConfig.put( "option", new StringPropertyValue( option.text ) );
-//                optionConfig.put( "value", new StringPropertyValue(  option.value ) );
-//                option.getAttributes().forEach((k, v) -> optionConfig.put( k, new StringPropertyValue( v ) ) );
-//
-//                final ObjectPropertyValue optionPropertyValue = new ObjectPropertyValue( optionConfig );
-//
-//
-//                final InputTypeProperty.Builder propertyBuilder =
-//                    InputTypeProperty.create( "option", new StringPropertyValue( option.text ) );
-//                propertyBuilder.attribute( "value", new StringPropertyValue( option.value ) );
-//                configBuilder.property( propertyBuilder.build() );
-//            } );
-//        }
+        if ( options != null )
+        {
+            options.forEach( option -> {
+                final Map<String, PropertyValue> optionMap = new LinkedHashMap<>();
+
+                optionMap.put( "value", new StringPropertyValue( option.value ) );
+                if ( option.label != null )
+                {
+                    final Map<String, PropertyValue> optionTextMap = new LinkedHashMap<>();
+                    optionTextMap.put( "text", new StringPropertyValue( option.label.text() ) );
+                    if ( option.label.i18n() != null )
+                    {
+                        optionTextMap.put( "i18n", new StringPropertyValue( option.label.i18n() ) );
+                    }
+                    optionMap.put( "label", new ObjectPropertyValue( optionTextMap ) );
+                }
+
+                optionMap.putAll( option.getAttributes() );
+
+                final InputTypeProperty.Builder propertyBuilder =
+                    InputTypeProperty.create( "option", new ObjectPropertyValue( optionMap ) );
+                configBuilder.property( propertyBuilder.build() );
+            } );
+        }
 
         if ( config != null )
         {
-            config.forEach( ( key, value ) -> configBuilder.property( InputTypeProperty.create( key, value ).build() ) );
+            config.forEach( ( name, value ) -> configBuilder.property( InputTypeProperty.create( name, value ).build() ) );
         }
 
         builder.inputTypeConfig( configBuilder.build() );

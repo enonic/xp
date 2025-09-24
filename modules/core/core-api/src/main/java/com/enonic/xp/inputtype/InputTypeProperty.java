@@ -1,10 +1,6 @@
 package com.enonic.xp.inputtype;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableMap;
 
 public final class InputTypeProperty
 {
@@ -12,13 +8,10 @@ public final class InputTypeProperty
 
     private final PropertyValue value;
 
-    private final ImmutableMap<String, String> attributes;
-
     private InputTypeProperty( final Builder builder )
     {
         this.name = builder.name;
         this.value = builder.value;
-        this.attributes = builder.attributes.build();
     }
 
     public String getName()
@@ -29,16 +22,6 @@ public final class InputTypeProperty
     public PropertyValue getValue()
     {
         return this.value;
-    }
-
-    public Map<String, String> getAttributes()
-    {
-        return this.attributes;
-    }
-
-    public String getAttribute( final String name )
-    {
-        return this.attributes.get( name );
     }
 
     @Override
@@ -53,20 +36,19 @@ public final class InputTypeProperty
             return false;
         }
         final InputTypeProperty that = (InputTypeProperty) o;
-        return Objects.equals( name, that.name ) && Objects.equals( value, that.value ) && Objects.equals( attributes, that.attributes );
+        return Objects.equals( name, that.name ) && Objects.equals( value, that.value );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, value, attributes );
+        return Objects.hash( name, value );
     }
 
     @Override
     public String toString()
     {
-        return this.name + "=" + this.value.getRawValue() +
-            this.attributes.entrySet().stream().map( e -> e.getKey() + "=" + e.getValue() ).collect( Collectors.joining( ",", "[", "]" ) );
+        return this.name + "=" + this.value;
     }
 
     public static Builder create( final String name, final PropertyValue value )
@@ -85,19 +67,10 @@ public final class InputTypeProperty
 
         private final PropertyValue value;
 
-        private final ImmutableMap.Builder<String, String> attributes;
-
         private Builder( final String name, final PropertyValue value )
         {
             this.name = name;
             this.value = value != null ? value : new StringPropertyValue( "" );
-            this.attributes = ImmutableMap.builder();
-        }
-
-        public Builder attribute( final String name, final String value )
-        {
-            this.attributes.put( name, value != null ? value : "" );
-            return this;
         }
 
         public InputTypeProperty build()

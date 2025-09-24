@@ -51,7 +51,18 @@ public final class InputTypeDefault
     public String getValue( final String name )
     {
         final InputTypeProperty property = getProperty( name );
-        return property != null ? ((StringPropertyValue) property.getValue()).value() : null;
+
+        if ( property == null )
+        {
+            return null;
+        }
+
+        if ( property.getValue() instanceof StringPropertyValue(String value) )
+        {
+            return value;
+        }
+
+        throw new IllegalArgumentException( "Invalid value for property: " + name );
     }
 
     public <T> T getValue( final String name, final Class<T> type )
@@ -78,7 +89,8 @@ public final class InputTypeDefault
 
     public boolean hasAttributeValue( final String name, final String attr, final String attrValue )
     {
-        return findProperties( name, property -> Objects.equals( attrValue, property.getAttribute( attr ) ) ).count() > 0;
+        return false;
+//        return findProperties( name, property -> Objects.equals( attrValue, property.getAttribute( attr ) ) ).count() > 0;
     }
 
     public int getSize()

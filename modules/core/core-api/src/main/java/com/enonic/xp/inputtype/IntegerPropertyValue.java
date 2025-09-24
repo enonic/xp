@@ -1,23 +1,11 @@
 package com.enonic.xp.inputtype;
 
-public record IntegerPropertyValue(Integer value)
+public record IntegerPropertyValue(int value)
     implements PropertyValue
 {
     @Override
-    public Object getRawValue()
+    public String toString()
     {
-        return value;
-    }
-
-    @Override
-    public boolean isInteger()
-    {
-        return true;
-    }
-
-    @Override
-    public Integer asInteger()
-    {
-        return value;
+        return Integer.toString( value );
     }
 }
