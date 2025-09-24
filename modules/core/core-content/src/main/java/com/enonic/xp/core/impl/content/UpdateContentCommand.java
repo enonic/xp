@@ -17,7 +17,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.Media;
@@ -92,7 +91,7 @@ final class UpdateContentCommand
 
         Content editedContent;
 
-        editedContent = editContent( params.getEditor(), contentBeforeChange, contentBeforeChange.getProcessedReferences() );
+        editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( editedContent );
         editedContent = editContentMetadata( editedContent );
 
@@ -259,14 +258,14 @@ final class UpdateContentCommand
         return content;
     }
 
-    private Content editContent( final ContentEditor editor, final Content original, final ContentIds processedReferences )
+    private Content editContent( final ContentEditor editor, final Content original )
     {
         final EditableContent editableContent = new EditableContent( original );
         if ( editor != null )
         {
             editor.edit( editableContent );
         }
-        return Content.create( editableContent.build() ).processedReferences( processedReferences ).build();
+        return Content.create( editableContent.build() ).build();
     }
 
     private void validateProjectAccess( final Content originalContent, final Content editedContent )
