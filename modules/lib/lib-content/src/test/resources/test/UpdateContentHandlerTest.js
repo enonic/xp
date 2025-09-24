@@ -338,3 +338,120 @@ exports.updateNotMappedXDataFieldName_notStricted = function () {
 
     assert.assertNotNull(result);
 };
+
+exports.updatePageAllComponents = function () {
+    var result = content.update({
+        key: '/a/b/mycontent',
+        editor(c) {
+            c.page = {
+                type: 'page',
+                path: '/',
+                descriptor: 'app:main-page',
+                config: {
+                    greeting: 'Hello'
+                },
+                regions: {
+                    main: {
+                        components: [
+                            {
+                                type: 'part',
+                                descriptor: 'app:part-1',
+                                config: {
+                                    enabled: true
+                                }
+                            },
+                            {
+                                type: 'text',
+                                text: 'Some text content'
+                            },
+                            {
+                                type: 'layout',
+                                descriptor: 'app:layout-1',
+                                config: {
+                                    layout: 'grid'
+                                },
+                                regions: {
+                                    section: {
+                                        components: [
+                                            {
+                                                type: 'image',
+                                                image: 'image-id-001',
+                                                config: {
+                                                    caption: 'An image caption'
+                                                }
+                                            },
+                                            {
+                                                type: 'fragment',
+                                                fragment: 'fragment-id-001'
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            };
+            return c;
+        }
+    });
+
+    var expected = {
+        type: 'page',
+        path: '/',
+        descriptor: 'app:main-page',
+        config: {
+            greeting: 'Hello'
+        },
+        regions: {
+            main: {
+                components: [
+                    {
+                        path: '/main/0',
+                        type: 'part',
+                        descriptor: 'app:part-1',
+                        config: {
+                            enabled: true
+                        }
+                    },
+                    {
+                        path: '/main/1',
+                        type: 'text',
+                        text: 'Some text content'
+                    },
+                    {
+                        path: '/main/2',
+                        type: 'layout',
+                        descriptor: 'app:layout-1',
+                        config: {
+                            layout: 'grid'
+                        },
+                        regions: {
+                            section: {
+                                components: [
+                                    {
+                                        path: '/main/2/section/0',
+                                        type: 'image',
+                                        image: 'image-id-001',
+                                        config: {
+                                            caption: 'An image caption'
+                                        }
+                                    },
+                                    {
+                                        path: '/main/2/section/1',
+                                        type: 'fragment',
+                                        fragment: 'fragment-id-001'
+                                    }
+                                ],
+                                name: 'section'
+                            }
+                        }
+                    }
+                ],
+                name: 'main'
+            }
+        }
+    };
+
+    assert.assertJsonEquals(expected, result.page);
+};

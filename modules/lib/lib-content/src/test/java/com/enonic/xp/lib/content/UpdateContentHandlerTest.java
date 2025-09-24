@@ -15,6 +15,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
@@ -25,6 +26,7 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 public class UpdateContentHandlerTest
@@ -164,6 +166,24 @@ public class UpdateContentHandlerTest
     public void updateNotFound()
     {
         runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" );
+    }
+
+    @Test
+    public void updatePageAllComponents()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
+            ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/UpdateContentHandlerTest.js", "updatePageAllComponents" );
     }
 
     private void mockXData()

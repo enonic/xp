@@ -110,6 +110,7 @@ public class HtmlAreaContentProcessor
 
         processContentData( createContentParams.getData(), contentType, processedIds );
         processExtraData( createContentParams.getExtraDatas(), processedIds );
+        processPageData( createContentParams.getPage(), processedIds );
 
         return new ProcessCreateResult( createContentParams, processedIds.build() );
     }
