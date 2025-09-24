@@ -7,8 +7,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -37,7 +35,6 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;

@@ -229,17 +229,17 @@ public final class ImageContentProcessor
         }
         else
         {
-            final ExtraData imageMetadata = updateImageMetadata( (Media) params.getContent(), params.getContent()
+            final ExtraData updatedImageMetadata = updateImageMetadata( (Media) params.getContent(), params.getContent()
                 .getAllExtraData()
                 .getMetadata( IMAGE_INFO_METADATA_NAME ) );
-            if ( imageMetadata == null )
+            if ( updatedImageMetadata == null )
             {
                 return new ProcessUpdateResult( params.getContent() );
             }
             else
             {
                 extraDatas =
-                    ExtraDatas.create().addAll( params.getContent().getAllExtraData().copy() ).add( imageMetadata ).buildKeepingLast();
+                    ExtraDatas.create().addAll( params.getContent().getAllExtraData().copy() ).add( updatedImageMetadata ).buildKeepingLast();
             }
         }
 

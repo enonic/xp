@@ -290,9 +290,9 @@ public class Content
     }
 
     public ChildOrder getChildOrder()
-        {
-            return childOrder;
-        }
+    {
+        return childOrder;
+    }
 
     public AccessControlList getPermissions()
     {
