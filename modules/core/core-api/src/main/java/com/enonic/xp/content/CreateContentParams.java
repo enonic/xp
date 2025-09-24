@@ -48,17 +48,17 @@ public final class CreateContentParams
 
     private CreateContentParams( Builder builder )
     {
-        this.data = builder.data;
-        this.extraDatas = builder.extraDatas;
-        this.type = builder.type;
+        this.data = Objects.requireNonNull( builder.data, "data is required" );
+        this.extraDatas = Objects.requireNonNullElse( builder.extraDatas, ExtraDatas.empty() );
+        this.type = Objects.requireNonNull( builder.type, "type is required" );
         this.owner = builder.owner;
         this.displayName = builder.displayName;
         this.name = builder.name;
-        this.parentContentPath = builder.parentPath;
+        this.parentContentPath = Objects.requireNonNull( builder.parentPath, "parentPath is required" );
         this.requireValid = builder.requireValid;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
-        this.createAttachments = builder.createAttachments;
+        this.createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
         this.childOrder = builder.childOrder;
         this.language = builder.language;
         this.refresh = builder.refresh;
@@ -178,7 +178,7 @@ public final class CreateContentParams
 
         private boolean inheritPermissions = true;
 
-        private CreateAttachments createAttachments = CreateAttachments.empty();
+        private CreateAttachments createAttachments;
 
         private ChildOrder childOrder;
 
@@ -316,17 +316,8 @@ public final class CreateContentParams
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( parentPath, "parentPath is required" );
-            Objects.requireNonNull( data, "data is required" );
-            Objects.requireNonNull( createAttachments, "createAttachments is required" );
-            Objects.requireNonNull( type, "type is required" );
-        }
-
         public CreateContentParams build()
         {
-            this.validate();
             return new CreateContentParams( this );
         }
     }
