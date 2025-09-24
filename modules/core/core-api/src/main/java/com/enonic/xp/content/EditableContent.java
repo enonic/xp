@@ -43,24 +43,38 @@ public final class EditableContent
         this.owner = source.getOwner();
         this.language = source.getLanguage();
         this.publishInfo = source.getPublishInfo();
-        this.processedReferences = ContentIds.create().addAll( source.getProcessedReferences() );
         this.workflowInfo = source.getWorkflowInfo();
         this.variantOf = source.getVariantOf();
     }
 
     public Content build()
     {
-        return Content.create( this.source ).
-            displayName( displayName ).
-            data( data ).
-            extraDatas( extraDatas ).
-            page( page ).
-            owner( owner ).
-            language( language ).
-            publishInfo( publishInfo ).
-            processedReferences( processedReferences.build() ).
-            workflowInfo( workflowInfo ).
-            variantOf( variantOf ).
-            build();
+        return Content.create( this.source )
+            .displayName( displayName )
+            .data( data )
+            .extraDatas( extraDatas )
+            .page( page )
+            .owner( owner )
+            .language( language )
+            .publishInfo( buildPublishInfo() )
+            .workflowInfo( workflowInfo )
+            .variantOf( variantOf )
+            .build();
+    }
+
+    private ContentPublishInfo buildPublishInfo()
+    {
+        final ContentPublishInfo sourcePublishInfo = source.getPublishInfo();
+        if ( sourcePublishInfo == null )
+        {
+            return publishInfo != null ? ContentPublishInfo.create().from( publishInfo.getFrom() ).to( publishInfo.getTo() ).build() : null;
+        }
+        else
+        {
+            return publishInfo != null ? ContentPublishInfo.create().first( sourcePublishInfo.getFirst() )
+                .from( publishInfo.getFrom() )
+                .to( publishInfo.getTo() )
+                .build() : sourcePublishInfo;
+        }
     }
 }

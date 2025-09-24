@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -97,7 +96,7 @@ public class Content
         this.id = builder.id;
         this.data = builder.data;
         this.attachments = requireNonNullElse( builder.attachments, Attachments.empty() );
-        this.extraDatas = builder.extraDatas;
+        this.extraDatas = Objects.requireNonNull( builder.extraDatas );
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.publishInfo = builder.publishInfo;
@@ -564,15 +563,9 @@ public class Content
             return (BUILDER) this;
         }
 
-        public BUILDER addExtraData( final ExtraData extraData )
-        {
-            this.extraDatas = Stream.concat( this.extraDatas.stream(), Stream.of( extraData ) ).collect( ExtraDatas.collector() );
-            return (BUILDER) this;
-        }
-
         public BUILDER extraDatas( final ExtraDatas extraDatas )
         {
-            this.extraDatas = Objects.requireNonNull( extraDatas );
+            this.extraDatas = extraDatas;
             return (BUILDER) this;
         }
 
@@ -693,7 +686,6 @@ public class Content
             this.manualOrderValue = manualOrderValue;
             return (BUILDER) this;
         }
-
 
         public BUILDER originalName( final ContentName name )
         {

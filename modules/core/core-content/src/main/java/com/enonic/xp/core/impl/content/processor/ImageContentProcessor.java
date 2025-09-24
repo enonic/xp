@@ -19,25 +19,17 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.attachment.Attachment;
-import com.enonic.xp.attachment.CreateAttachments;
-import com.enonic.xp.content.ContentEditor;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.processor.ContentProcessor;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
@@ -47,7 +39,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataNames;
@@ -200,112 +192,118 @@ public final class ImageContentProcessor
     private final XDatas xDatas;
 
     @Activate
-    public ImageContentProcessor( @Reference final ContentService contentService, @Reference final  XDataService xDataService )
+    public ImageContentProcessor( @Reference final ContentService contentService, @Reference final XDataService xDataService )
     {
         this.contentService = contentService;
-        this.xDatas = xDataService.getByNames( XDataNames.from( IMAGE_INFO_METADATA_NAME, CAMERA_INFO_METADATA_NAME, GPS_INFO_METADATA_NAME ) );
+        this.xDatas =
+            xDataService.getByNames( XDataNames.from( IMAGE_INFO_METADATA_NAME, CAMERA_INFO_METADATA_NAME, GPS_INFO_METADATA_NAME ) );
     }
 
     @Override
-    public boolean supports( final ContentType contentType )
+    public boolean supports( final ContentTypeName contentType )
     {
-        return contentType.getName().isImageMedia();
-    }
-
-    // Helper function to create a map where each key in the list points to the same value
-    private static ImmutableMap<String, String> getFlattenedMap( List<String> keys, String value )
-    {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for ( String key : keys )
-        {
-            builder.put( key, value );
-        }
-        return builder.build();
+        return contentType.isImageMedia();
     }
 
     @Override
     public ProcessCreateResult processCreate( final ProcessCreateParams params )
     {
-        final CreateContentParams createContentParams = params.getCreateContentParams();
         final MediaInfo mediaInfo = params.getMediaInfo();
+        final ExtraDatas extraDatas = mediaInfo != null ? extractMetadata( mediaInfo ) : null;
 
-        final CreateAttachments originalAttachments = createContentParams.getCreateAttachments();
-        Preconditions.checkArgument( originalAttachments.getSize() == 1, "Expected only one attachment" );
-
-        ExtraDatas extraDatas = null;
-
-        if ( mediaInfo != null )
-        {
-            extraDatas = extractMetadata( mediaInfo );
-        }
-
-        return new ProcessCreateResult( CreateContentParams.create( createContentParams )
-                                            .createAttachments( originalAttachments )
-                                            .extraDatas( extraDatas )
-                                            .build() );
+        return new ProcessCreateResult( CreateContentParams.create( params.getCreateContentParams() ).extraDatas( extraDatas ).build(),
+                                        params.getProcessedReferences() );
     }
 
-
-    private ExtraDatas updateImageMetadata( final EditableContent editable )
+    @Override
+    public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
-        final Media media = (Media) editable.source;
+        final MediaInfo mediaInfo = params.getMediaInfo();
+        final ExtraDatas extraDatas;
+        if ( mediaInfo != null )
+        {
+            extraDatas = ExtraDatas.create()
+                .addAll( params.getContent().getAllExtraData().copy() )
+                .addAll( extractMetadata( mediaInfo ) )
+                .buildKeepingLast();
+        }
+        else
+        {
+            final ExtraData updatedImageMetadata = updateImageMetadata( (Media) params.getContent(), params.getContent()
+                .getAllExtraData()
+                .getMetadata( IMAGE_INFO_METADATA_NAME ) );
+            if ( updatedImageMetadata == null )
+            {
+                return new ProcessUpdateResult( params.getContent() );
+            }
+            else
+            {
+                extraDatas =
+                    ExtraDatas.create().addAll( params.getContent().getAllExtraData().copy() ).add( updatedImageMetadata ).buildKeepingLast();
+            }
+        }
+
+        return new ProcessUpdateResult( Content.create( params.getContent() ).extraDatas( extraDatas ).build() );
+    }
+
+    private ExtraData updateImageMetadata( final Media media,final ExtraData imageMetadata )
+    {
+        if ( imageMetadata == null )
+        {
+            return null;
+        }
+
         final Attachment mediaAttachment = media.getMediaAttachment();
         if ( mediaAttachment == null )
         {
-            return editable.extraDatas;
+            return null;
         }
-
-        final ByteSource binary = contentService.getBinary( editable.source.getId(), mediaAttachment.getBinaryReference() );
+        final ByteSource binary = contentService.getBinary( media.getId(), mediaAttachment.getBinaryReference() );
         if ( binary == null )
         {
-            return editable.extraDatas;
+            return null;
         }
-
         final BufferedImage image = toBufferedImage( binary );
         if ( image == null )
         {
-            return editable.extraDatas;
+            return null;
         }
-
         final Cropping cropping = media.getCropping();
-        final long byteSize = mediaAttachment.getSize();
 
         final long imageWidth;
         final long imageHeight;
-        final long imageSize;
         if ( cropping == null || cropping.isUnmodified() )
         {
             imageWidth = image.getWidth();
             imageHeight = image.getHeight();
-            imageSize = imageWidth * imageHeight;
         }
         else
         {
             final BufferedImage croppedImage = cropImage( image, cropping );
             imageWidth = croppedImage.getWidth();
             imageHeight = croppedImage.getHeight();
-            imageSize = imageWidth * imageHeight;
         }
 
-        ExtraData extraData = editable.extraDatas.getMetadata( IMAGE_INFO_METADATA_NAME );
-        if ( extraData != null )
-        {
-            final PropertyTree xData = extraData.getData();
-            setLongProperty( xData, IMAGE_INFO_PIXEL_SIZE, imageSize );
-            setLongProperty( xData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
-            setLongProperty( xData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
-            setLongProperty( xData, MEDIA_INFO_BYTE_SIZE, byteSize );
-        }
+        final PropertyTree xData = imageMetadata.getData();
+        setLongProperty( xData, IMAGE_INFO_PIXEL_SIZE, imageWidth * imageHeight );
+        setLongProperty( xData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
+        setLongProperty( xData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
+        setLongProperty( xData, MEDIA_INFO_BYTE_SIZE, mediaAttachment.getSize() );
 
-        return editable.extraDatas;
+        return imageMetadata;
     }
 
-    private void setLongProperty( final PropertyTree propertyTree, final String path, final Long value )
+    private void setLongProperty( final PropertyTree propertyTree, final String path, final long value )
     {
         propertyTree.removeProperties( path );
         propertyTree.setLong( path, value );
     }
 
+    private void setGeoPointProperty( final PropertyTree propertyTree, final String path, final double geoLat,final double geoLong )
+    {
+        propertyTree.removeProperties( path );
+        propertyTree.setGeoPoint( path, new GeoPoint( geoLat, geoLong ) );
+    }
     private BufferedImage toBufferedImage( final ByteSource source )
     {
         try (InputStream stream = source.openStream())
@@ -327,89 +325,9 @@ public final class ImageContentProcessor
                                   (int) ( height * cropping.height() ) );
     }
 
-    @Override
-    public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
-    {
-        final MediaInfo mediaInfo = params.getMediaInfo();
-
-        final ContentEditor editor;
-        if ( mediaInfo != null )
-        {
-            editor = editable -> {
-                final ExtraDatas.Builder builder = ExtraDatas.create();
-                builder.addAll( editable.extraDatas );
-
-                extractMetadata( mediaInfo ).forEach( builder::add );
-
-                editable.extraDatas = builder.buildKeepingLast();
-            };
-        }
-        else
-        {
-            editor = editable -> {
-
-                if ( !params.getContentType().getName().isDescendantOfMedia() )
-                {
-                    return;
-                }
-
-                editable.extraDatas = updateImageMetadata( editable );
-
-            };
-        }
-        return new ProcessUpdateResult( editor );
-
-    }
-
-    private ExtraData extractGeoLocation( final MediaInfo mediaInfo )
-    {
-        final Multimap<String, String> mediaItems = mediaInfo.getMetadata();
-        final Double geoLat = parseDouble( mediaItems.get( GEO_LATITUDE ).stream().findFirst().orElse( null ) );
-        final Double geoLong = parseDouble( mediaItems.get( GEO_LONGITUDE ).stream().findFirst().orElse( null ) );
-        if ( geoLat == null || geoLong == null )
-        {
-            return null;
-        }
-        final XData geoMixin = xDatas.getXData( GPS_INFO_METADATA_NAME );
-        final ExtraData extraData = new ExtraData( GPS_INFO_METADATA_NAME, new PropertyTree() );
-        final FormItem formItem = geoMixin.getForm().getFormItem( FormItemPath.from( MediaInfo.GPS_INFO_GEO_POINT ) );
-        if ( FormItemType.INPUT.equals( formItem.getType() ) )
-        {
-            final Input input = (Input) formItem;
-            if ( InputTypeName.GEO_POINT.equals( input.getInputType() ) )
-            {
-                final GeoPoint geoPoint = new GeoPoint( geoLat, geoLong );
-                extraData.getData().addGeoPoint( formItem.getName(), ValueTypes.GEO_POINT.convert( geoPoint ) );
-            }
-        }
-        return extraData;
-    }
-
-    private Double parseDouble( final String str )
-    {
-        if ( str == null )
-        {
-            return null;
-        }
-        try
-        {
-            return Double.parseDouble( str );
-        }
-        catch ( NumberFormatException e )
-        {
-            return null;
-        }
-    }
-
     private ExtraDatas extractMetadata( final MediaInfo mediaInfo )
     {
         final Map<XDataName, ExtraData> metadataMap = new LinkedHashMap<>();
-
-        final ExtraData geoData = extractGeoLocation( mediaInfo );
-        if ( geoData != null )
-        {
-            metadataMap.put( GPS_INFO_METADATA_NAME, geoData );
-        }
 
         final Set<String> visitedFormItems = new HashSet<>();
 
@@ -433,7 +351,6 @@ public final class ImageContentProcessor
                     priorityList.stream().map( mediaInfo.getMetadata().asMap()::get ).filter( Objects::nonNull ).findFirst().orElseThrow();
 
                 visitedFormItems.add( formItemName );
-
             }
             else
             {
@@ -444,19 +361,9 @@ public final class ImageContentProcessor
             for ( XData xData : xDatas )
             {
                 final FormItem formItem = xData.getForm().getFormItem( FormItemPath.from( formItemName ) );
-                if ( formItem == null )
+                if ( formItem instanceof Input input )
                 {
-                    continue;
-                }
-                ExtraData extraData = getOrCreate( metadataMap, xData.getName() );
-                if ( extraData == null )
-                {
-                    extraData = new ExtraData( xData.getName(), new PropertyTree() );
-                    metadataMap.put( xData.getName(), extraData );
-                }
-                if ( FormItemType.INPUT.equals( formItem.getType() ) )
-                {
-                    Input input = (Input) formItem;
+                    final ExtraData extraData = getOrCreate( metadataMap, xData.getName() );
                     if ( InputTypeName.DATE_TIME.equals( input.getInputType() ) )
                     {
                         extraData.getData()
@@ -475,24 +382,62 @@ public final class ImageContentProcessor
             }
         }
 
+        final Multimap<String, String> mediaItems = mediaInfo.getMetadata();
+
+        final Double geoLat = parseDouble( mediaItems.get( GEO_LATITUDE ).stream().findFirst().orElse( null ) );
+        final Double geoLong = parseDouble( mediaItems.get( GEO_LONGITUDE ).stream().findFirst().orElse( null ) );
+        if ( geoLat != null && geoLong != null )
+        {
+            final ExtraData geoInfoExtraData = getOrCreate( metadataMap, GPS_INFO_METADATA_NAME );
+            setGeoPointProperty(geoInfoExtraData.getData(), MediaInfo.GPS_INFO_GEO_POINT, geoLat, geoLong);
+        }
+
         final ExtraData imageInfoExtraData = getOrCreate( metadataMap, IMAGE_INFO_METADATA_NAME );
         final PropertyTree imageInfoExtraDataData = imageInfoExtraData.getData();
         final Long imageHeight = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
         final Long imageWidth = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_WIDTH );
         if ( imageHeight != null && imageWidth != null )
         {
-            imageInfoExtraDataData.setLong( IMAGE_INFO_PIXEL_SIZE, imageHeight * imageWidth );
+            setLongProperty( imageInfoExtraDataData, IMAGE_INFO_PIXEL_SIZE, imageHeight * imageWidth );
         }
-        final Collection<String> imageSize = mediaInfo.getMetadata().get( "bytesize" );
+        final Collection<String> imageSize = mediaItems.get( "bytesize" );
         if ( !imageSize.isEmpty() )
         {
-            imageInfoExtraDataData.setLong( MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
+            setLongProperty( imageInfoExtraDataData, MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
         }
 
         return metadataMap.values().stream().collect( ExtraDatas.collector() );
     }
 
-    private static ExtraData getOrCreate(Map<XDataName, ExtraData> metadataMap, XDataName name) {
+    private static Double parseDouble( final String str )
+    {
+        if ( str == null )
+        {
+            return null;
+        }
+        try
+        {
+            return Double.parseDouble( str );
+        }
+        catch ( NumberFormatException e )
+        {
+            return null;
+        }
+    }
+
+    private static ExtraData getOrCreate( Map<XDataName, ExtraData> metadataMap, XDataName name )
+    {
         return metadataMap.computeIfAbsent( name, n -> new ExtraData( n, new PropertyTree() ) );
+    }
+
+    // Helper function to create a map where each key in the list points to the same value
+    private static ImmutableMap<String, String> getFlattenedMap( List<String> keys, String value )
+    {
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        for ( String key : keys )
+        {
+            builder.put( key, value );
+        }
+        return builder.build();
     }
 }

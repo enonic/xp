@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -19,6 +21,11 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
+import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
@@ -26,6 +33,7 @@ import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
@@ -50,9 +58,13 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -142,6 +154,105 @@ public class UpdateContentCommandTest
 
         verify( nodeService, times( 1 ) ).commit( isA( NodeCommitEntry.class ),
                                                   eq( NodeIds.from( NodeId.from( existingContent.getId().toString() ) ) ) );
+    }
+
+    @Test
+    void site_config_modified_no_project_owner_role_throws_exception() {
+        final Content existingContent = Site.create()
+            .id( ContentId.from( "mycontent" ) )
+            .name( "myContentName" )
+            .type( ContentTypeName.site() )
+            .parentPath( ContentPath.ROOT )
+            .data( new PropertyTree() )
+            .siteConfigs( SiteConfigs.create()
+                              .add( SiteConfig.create().config( new PropertyTree() ).application( ApplicationKey.SYSTEM ).build() )
+                              .build() )
+            .build();
+
+        final UpdateContentParams params =
+            new UpdateContentParams().editor( c -> c.data.removeProperties( "siteConfig" ) ).contentId( existingContent.getId() );
+
+        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
+            .params( params )
+            .build();
+
+        Node mockNode = Node.create().build();
+        when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
+
+        final ContentType contentType = ContentType.create()
+            .superType( ContentTypeName.structured() )
+            .name( "myapplication:my_type" )
+            .addFormItem( FieldSet.create()
+                              .label( "My layout" )
+                              .addFormItem( FormItemSet.create()
+                                                .name( "mySet" )
+                                                .required( true )
+                                                .addFormItem( Input.create()
+                                                                  .name( "myInput" )
+                                                                  .label( "Input" )
+                                                                  .inputType( InputTypeName.TEXT_LINE )
+                                                                  .build() )
+                                                .build() )
+                              .build() )
+            .build();
+
+        when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        assertThrows( ForbiddenAccessException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId(  "com.enonic.cms.context-repo" )
+            .branch( ContentConstants.BRANCH_DRAFT )
+            .build()
+            .runWith( command::execute ) );
+    }
+
+    @Test
+    void processors_can_modify_content()
+    {
+        Content existingContent = createContent( new PropertyTree() );
+
+        final UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() );
+
+        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
+            .params( params )
+            .contentProcessors( List.of( new ContentProcessor()
+            {
+                @Override
+                public boolean supports( final ContentTypeName contentType )
+                {
+                    return true;
+                }
+
+                @Override
+                public ProcessCreateResult processCreate( final ProcessCreateParams params )
+                {
+                    return null;
+                }
+
+                @Override
+                public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
+                {
+                    // without content modification node API will not be called
+                    return new ProcessUpdateResult( Content.create(params.getContent()).name( "newName" ).build() );
+                }
+            } ) )
+            .build();
+
+        Node mockNode = Node.create().build();
+        when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
+        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
+
+        ContentType contentType = mock( ContentType.class );
+        when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
+        when( contentType.getForm() ).thenReturn( Form.empty() );
+        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().build() );
+
+        ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
+
+        final ArgumentCaptor<PatchNodeParams> captor = ArgumentCaptor.forClass( PatchNodeParams.class );
+        verify( nodeService, times(1) ).patch( captor.capture() );
     }
 
     @Test

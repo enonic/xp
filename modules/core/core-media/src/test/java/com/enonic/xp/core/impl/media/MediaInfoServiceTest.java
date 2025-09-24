@@ -12,16 +12,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.Media;
-import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -74,18 +66,4 @@ public class MediaInfoServiceTest
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
     }
 
-    private Media createMedia( String name, ContentPath parentPath, boolean addOrientation )
-    {
-        final PropertyTree imageDataTree = new PropertyTree();
-        if ( addOrientation )
-        {
-            imageDataTree.addProperty( ContentPropertyNames.ORIENTATION, ValueFactory.newString( "3" ) );
-        }
-        final ExtraData eData = new ExtraData( MediaInfo.CAMERA_INFO_METADATA_NAME, imageDataTree );
-
-        final Content content = Content.create( ContentTypeName.imageMedia() ).name( name ).parentPath( parentPath ).addExtraData( eData ).build();
-        final Media media = (Media) content;
-
-        return media;
-    }
 }

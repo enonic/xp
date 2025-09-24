@@ -44,28 +44,25 @@ public final class CreateContentParams
 
     private final ContentPublishInfo contentPublishInfo;
 
-    private final ContentIds processedIds;
-
     private final WorkflowInfo workflowInfo;
 
     private CreateContentParams( Builder builder )
     {
-        this.data = builder.data;
-        this.extraDatas = builder.extraDatas;
-        this.type = builder.type;
+        this.data = Objects.requireNonNull( builder.data, "data is required" );
+        this.extraDatas = Objects.requireNonNullElse( builder.extraDatas, ExtraDatas.empty() );
+        this.type = Objects.requireNonNull( builder.type, "type is required" );
         this.owner = builder.owner;
         this.displayName = builder.displayName;
         this.name = builder.name;
-        this.parentContentPath = builder.parentPath;
+        this.parentContentPath = Objects.requireNonNull( builder.parentPath, "parentPath is required" );
         this.requireValid = builder.requireValid;
         this.permissions = builder.permissions;
         this.inheritPermissions = builder.inheritPermissions;
-        this.createAttachments = builder.createAttachments;
+        this.createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
         this.childOrder = builder.childOrder;
         this.language = builder.language;
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
-        this.processedIds = builder.processedIds.build();
         this.workflowInfo = builder.workflowInfo;
     }
 
@@ -154,11 +151,6 @@ public final class CreateContentParams
         return refresh;
     }
 
-    public ContentIds getProcessedIds()
-    {
-        return processedIds;
-    }
-
     public WorkflowInfo getWorkflowInfo()
     {
         return workflowInfo;
@@ -186,7 +178,7 @@ public final class CreateContentParams
 
         private boolean inheritPermissions = true;
 
-        private CreateAttachments createAttachments = CreateAttachments.empty();
+        private CreateAttachments createAttachments;
 
         private ChildOrder childOrder;
 
@@ -195,8 +187,6 @@ public final class CreateContentParams
         private ContentPublishInfo contentPublishInfo;
 
         private boolean refresh = true;
-
-        private final ContentIds.Builder processedIds = ContentIds.create();
 
         private WorkflowInfo workflowInfo;
 
@@ -320,29 +310,14 @@ public final class CreateContentParams
             return this;
         }
 
-        public Builder addProcessedIds( final ContentIds processedIds )
-        {
-            this.processedIds.addAll( processedIds );
-            return this;
-        }
-
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( parentPath, "parentPath is required" );
-            Objects.requireNonNull( data, "data is required" );
-            Objects.requireNonNull( createAttachments, "createAttachments is required" );
-            Objects.requireNonNull( type, "type is required" );
-        }
-
         public CreateContentParams build()
         {
-            this.validate();
             return new CreateContentParams( this );
         }
     }

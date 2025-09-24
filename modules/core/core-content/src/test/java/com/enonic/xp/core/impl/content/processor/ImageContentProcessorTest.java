@@ -15,31 +15,26 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.content.processor.ProcessCreateParams;
-import com.enonic.xp.content.processor.ProcessCreateResult;
-import com.enonic.xp.content.processor.ProcessUpdateParams;
-import com.enonic.xp.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.schema.xdata.BuiltinXDataTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.util.GeoPoint;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -63,37 +58,8 @@ public class ImageContentProcessorTest
     @Test
     public void testSupports()
     {
-
-        ContentType contentType =
-            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.imageMedia() ).build();
-        assertTrue( imageContentProcessor.supports( contentType ) );
-
-        contentType = ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.media() ).build();
-        assertFalse( imageContentProcessor.supports( contentType ) );
-    }
-
-    @Test
-    public void testCreateMoreThanOneAttachmentFails()
-    {
-        final CreateAttachments createAttachments = CreateAttachments.create().
-            add( CreateAttachment.create().
-                name( "myAtt1" ).
-                byteSource( ByteSource.wrap( "this is 1st stuff".getBytes() ) ).
-                text( "This is the text" ).
-                build() ).
-            add( CreateAttachment.create().
-                name( "myAtt2" ).
-                byteSource( ByteSource.wrap( "this is 2nd stuff".getBytes() ) ).
-                text( "This is the text" ).
-                build() ).
-            build();
-
-        final CreateContentParams params = createContentParams( createAttachments );
-
-        final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            build() );
-
-        assertThrows(IllegalArgumentException.class, () -> this.imageContentProcessor.processCreate( processCreateParams ) );
+        assertTrue( imageContentProcessor.supports( ContentTypeName.imageMedia() ) );
+        assertFalse( imageContentProcessor.supports( ContentTypeName.media() ) );
     }
 
     @Test
@@ -103,7 +69,7 @@ public class ImageContentProcessorTest
         final CreateContentParams params = createContentParams( createAttachments );
 
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            build() );
+            build(), ContentIds.empty() );
 
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
 
@@ -115,7 +81,7 @@ public class ImageContentProcessorTest
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build() );
+            addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build(), ContentIds.empty() );
         final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final ExtraData geoExtraData = result.getCreateContentParams().getExtraDatas().getMetadata( MediaInfo.GPS_INFO_METADATA_NAME );
@@ -127,7 +93,7 @@ public class ImageContentProcessorTest
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
-            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() );
+            addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build(), ContentIds.empty() );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final ExtraDatas extraDatas = result.getCreateContentParams().getExtraDatas();
         assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
@@ -141,33 +107,23 @@ public class ImageContentProcessorTest
     {
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( this.loadImage( "cat-small.jpg" ) );
 
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-                name( ContentTypeName.imageMedia() ).
-                superType( ContentTypeName.imageMedia() ).
-                build() ).
-            build();
-
-        final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
-
         final PropertyTree data = new PropertyTree();
         data.addProperty( ContentPropertyNames.MEDIA, ValueFactory.newString( "MyImage.jpg" ) );
 
-        final EditableContent editableContent = new EditableContent( Media.create().
-            name( "myContentName" ).
-            type( ContentTypeName.imageMedia() ).
-            parentPath( ContentPath.ROOT ).
-            data( data ).
-            addExtraData( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).
-            attachments( Attachments.from( Attachment.create().
-                mimeType( "image/jpeg" ).
-                name( "MyImage.jpg" ).
-                build() ) ).
-            build() );
+        final Media content = Media.create()
+            .name( "myContentName" )
+            .type( ContentTypeName.imageMedia() )
+            .parentPath( ContentPath.ROOT )
+            .data( data )
+            .extraDatas( ExtraDatas.create().add( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).build() )
+            .attachments( Attachments.from( Attachment.create().mimeType( "image/jpeg" ).name( "MyImage.jpg" ).build() ) )
+            .build();
 
-        result.getEditor().edit( editableContent );
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content ).build();
 
-        final ExtraData extraData = editableContent.extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
+
+        final ExtraData extraData = result.getContent().getAllExtraData().getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
         assertNotNull( extraData.getData().getLong( "pixelSize", 0 ) );
         assertNotNull( extraData.getData().getLong( "imageHeight", 0 ) );
         assertNotNull( extraData.getData().getLong( "imageWidth", 0 ) );
@@ -182,76 +138,57 @@ public class ImageContentProcessorTest
         when( byteSource.openStream() ).thenThrow( new IOException() );
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( byteSource );
 
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-            name( ContentTypeName.imageMedia() ).
-            superType( ContentTypeName.imageMedia() ).
-            build() ).
-            build();
+        final PropertyTree data = new PropertyTree();
+        data.addProperty( ContentPropertyNames.MEDIA, ValueFactory.newString( "CorruptedImage.jpg" ) );
+        final Media content = Media.create()
+            .name( "myContentName" )
+            .type( ContentTypeName.imageMedia() )
+            .parentPath( ContentPath.ROOT )
+            .data( data )
+            .extraDatas( ExtraDatas.create().add( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).build() )
+            .attachments( Attachments.from( Attachment.create().mimeType( "image/jpeg" ).name( "CorruptedImage.jpg" ).build() ) )
+            .build();
+
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content ).build();
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final PropertyTree data = new PropertyTree();
-        data.addProperty( ContentPropertyNames.MEDIA, ValueFactory.newString( "CorruptedImage.jpg" ) );
-
-        final EditableContent editableContent = new EditableContent( Media.create().
-            name( "myContentName" ).
-            type( ContentTypeName.imageMedia() ).
-            parentPath( ContentPath.ROOT ).
-            data( data ).
-            addExtraData( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).
-            attachments( Attachments.from( Attachment.create().
-            mimeType( "image/jpeg" ).
-            name( "CorruptedImage.jpg" ).
-            build() ) ).
-            build() );
-
-        result.getEditor().edit( editableContent );
-
-        final ExtraData extraData = editableContent.extraDatas.first();
-        assertNotNull( extraData );
-        assertEquals( MediaInfo.IMAGE_INFO_METADATA_NAME, extraData.getName() );
+        assertThat(result.getContent().getAllExtraData()).map( ExtraData::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
     }
 
     @Test
     public void testProcessUpdateWithMediaInfo()
     {
-        final CreateAttachments createAttachments = createAttachments();
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().
-            contentType( ContentType.create().
-                superType( ContentTypeName.imageMedia() ).
-                name( "myContent" ).
-                build() ).
+        final Content content = Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).build();
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content ).
             mediaInfo( MediaInfo.create().
                 addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build() ).
-            createAttachments( createAttachments ).
             build();
+
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
-        final PropertyTree data = new PropertyTree();
-        final EditableContent editableContent =
-            new EditableContent( Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( data ).build() );
-        result.getEditor().edit( editableContent );
-        assertEquals( "1", editableContent.extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
-        assertEquals( "2", editableContent.extraDatas.getMetadata( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
-        assertEquals( 13, editableContent.extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
+
+        final ExtraDatas extraDatas = result.getContent().getAllExtraData();
+        assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
+        assertEquals( "2", extraDatas.getMetadata( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
+        assertEquals( 13, extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     @Test
     public void testProcessUpdateWithMediaInfoOverwritten()
     {
-        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
-            .contentType( ContentType.create().superType( ContentTypeName.imageMedia() ).name( "myContent" ).build() )
+        final Content content = Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( new PropertyTree() ).build();
+        final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content )
             .mediaInfo( MediaInfo.create()
                             .addMetadata( "exposure time", "1" )
                             .addMetadata( "exif Subifd Exposure Time", "2" )
                             .addMetadata( "shutter Time", "3" )
                             .build() )
             .build();
+
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
-        final EditableContent editableContent = new EditableContent(
-            Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( new PropertyTree() ).build() );
-        result.getEditor().edit( editableContent );
-        assertEquals( "2", editableContent.extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
+
+        final ExtraDatas extraDatas = result.getContent().getAllExtraData();
+        assertEquals( "2", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
     }
 
     private CreateAttachments createAttachments()

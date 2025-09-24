@@ -262,7 +262,6 @@ public class CreateContentTranslatorParams
             this.childOrder = params.getChildOrder();
             this.language = params.getLanguage();
             this.contentPublishInfo = params.getContentPublishInfo();
-            this.processedIds = params.getProcessedIds();
             this.workflowInfo = params.getWorkflowInfo();
         }
 

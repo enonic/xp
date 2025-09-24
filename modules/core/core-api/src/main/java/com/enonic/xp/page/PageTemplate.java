@@ -24,11 +24,6 @@ public final class PageTemplate
         return PageTemplateKey.from( getId() );
     }
 
-    public PropertyTree getConfig()
-    {
-        return getPage().getConfig();
-    }
-
     public DescriptorKey getController()
     {
         if ( this.getPage() == null )
@@ -47,16 +42,6 @@ public final class PageTemplate
     public boolean canRender( ContentTypeName name )
     {
         return this.getCanRender().contains( name );
-    }
-
-    public boolean hasRegions()
-    {
-        return getPage().hasRegions();
-    }
-
-    public PageRegions getRegions()
-    {
-        return getPage().getRegions();
     }
 
     public static PageTemplate.Builder newPageTemplate()
@@ -86,13 +71,6 @@ public final class PageTemplate
         public Builder key( final PageTemplateKey value )
         {
             this.id = value.getContentId();
-            return this;
-        }
-
-        @Override
-        public Builder id( final ContentId value )
-        {
-            super.id( value );
             return this;
         }
 

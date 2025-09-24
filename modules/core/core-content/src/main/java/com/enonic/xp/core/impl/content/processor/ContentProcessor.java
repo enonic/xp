@@ -1,10 +1,10 @@
-package com.enonic.xp.content.processor;
+package com.enonic.xp.core.impl.content.processor;
 
-import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
 
 public interface ContentProcessor
 {
-    boolean supports( ContentType contentType );
+    boolean supports( ContentTypeName contentType );
 
     ProcessCreateResult processCreate( ProcessCreateParams params );
 
