@@ -270,18 +270,16 @@ final class UpdateContentCommand
 
     private void validateProjectAccess( final Content originalContent, final Content editedContent )
     {
-        if ( originalContent instanceof Site originalSite )
+        if ( originalContent instanceof Site originalSite && editedContent instanceof Site editedSite &&
+            !Objects.equals( originalSite.getSiteConfigs(), editedSite.getSiteConfigs() ) )
         {
-            if ( !Objects.equals( originalSite.getSiteConfigs(), ( (Site) editedContent ).getSiteConfigs() ) )
-            {
-                final Context context = ContextAccessor.current();
-                final AuthenticationInfo authenticationInfo = context.getAuthInfo();
-                final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
+            final Context context = ContextAccessor.current();
+            final AuthenticationInfo authenticationInfo = context.getAuthInfo();
+            final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
 
-                if ( !ProjectAccessHelper.hasAccess( authenticationInfo, projectName, ProjectRole.OWNER ) )
-                {
-                    throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey(), ProjectRole.OWNER );
-                }
+            if ( !ProjectAccessHelper.hasAccess( authenticationInfo, projectName, ProjectRole.OWNER ) )
+            {
+                throw new ProjectAccessRequiredException( authenticationInfo.getUser().getKey(), ProjectRole.OWNER );
             }
         }
     }
