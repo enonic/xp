@@ -37,7 +37,7 @@ public class PageTemplateTest
         assertTrue( pageTemplate.canRender( ContentTypeName.from( "mainmodule:article" ) ) );
         assertTrue( pageTemplate.canRender( ContentTypeName.from( "mainmodule:banner" ) ) );
         assertEquals( DescriptorKey.from( ApplicationKey.from( "mainmodule" ), "landing-page" ), pageTemplate.getController() );
-        assertEquals( pageTemplateConfig, pageTemplate.getConfig() );
-        assertTrue( pageTemplate.hasRegions() );
+        assertEquals( pageTemplateConfig, pageTemplate.getPage().getConfig() );
+        assertTrue( pageTemplate.getPage().hasRegions() );
     }
 }

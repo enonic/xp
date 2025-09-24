@@ -8,9 +8,9 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
@@ -117,12 +117,12 @@ public class HtmlAreaContentProcessorTest
     public void empty_data()
     {
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).build() )
+            .content( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat(result.processedReferences ).isEmpty();
+        assertThat(result.getContent().getProcessedReferences() ).isEmpty();
     }
 
     @Test
@@ -132,12 +132,12 @@ public class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
+            .content( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
@@ -186,12 +186,12 @@ public class HtmlAreaContentProcessorTest
             "<img alt=\"Dictyophorus_spumans04.jpg\" data-src=\"image://image-id4\" src=\"image/123\"/>" ) );
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Content.create().name( "name" ).type( deepTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
+            .content( Content.create().name( "name" ).type( deepTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences )
+        assertThat( result.getContent().getProcessedReferences() )
             .containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
                        ContentId.from( "image-id4" ) );
     }
@@ -215,7 +215,7 @@ public class HtmlAreaContentProcessorTest
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Site.create()
+            .content( Site.create()
                                 .name( "myContentName" )
                                 .type( ContentTypeName.site() )
                                 .parentPath( ContentPath.ROOT )
@@ -228,7 +228,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
@@ -248,7 +248,7 @@ public class HtmlAreaContentProcessorTest
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Site.create()
+            .content( Site.create()
                                 .name( "myContentName" )
                                 .type( ContentTypeName.site() )
                                 .parentPath( ContentPath.ROOT )
@@ -262,7 +262,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
@@ -285,7 +285,7 @@ public class HtmlAreaContentProcessorTest
         final Page page = Page.create().config( data ).descriptor( pageDescriptor.getKey() ).build();
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Media.create()
+            .content( Media.create()
                                 .name( "myContentName" )
                                 .type( contentTypeName )
                                 .page( page )
@@ -296,7 +296,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
@@ -329,7 +329,7 @@ public class HtmlAreaContentProcessorTest
             .build();
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Media.create()
+            .content( Media.create()
                                 .name( "myContentName" )
                                 .type( contentTypeName )
                                 .page( page )
@@ -340,7 +340,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
@@ -392,7 +392,7 @@ public class HtmlAreaContentProcessorTest
             .build();
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Media.create()
+            .content( Media.create()
                                 .name( "myContentName" )
                                 .type( contentTypeName )
                                 .page( page )
@@ -403,7 +403,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
     }
 
     @Test
@@ -436,7 +436,7 @@ public class HtmlAreaContentProcessorTest
             .build();
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( Media.create()
+            .content( Media.create()
                                 .name( "myContentName" )
                                 .type( contentTypeName )
                                 .page( page )
@@ -447,7 +447,7 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
     }
 
     @Test
@@ -487,17 +487,14 @@ public class HtmlAreaContentProcessorTest
             .data( new PropertyTree() )
             .build();
         final ProcessUpdateParams params = ProcessUpdateParams.create()
-            .editedContent( content )
+            .content( content )
             .build();
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        final EditableContent editableContent = new EditableContent( content );
-        result.getEditor().edit( editableContent );
-
-        assertThat( result.processedReferences ).containsExactly( ContentId.from( "image-id" ) );
+        assertThat( result.getContent().getProcessedReferences() ).containsExactly( ContentId.from( "image-id" ) );
         assertEquals( "<img data-src=\"image://image-id\"/>",
-                      ( (TextComponent) editableContent.page.getComponent( ComponentPath.from( "/region/1" ) ) ).getText() );
+                      ( (TextComponent) result.getContent().getPage().getComponent( ComponentPath.from( "/region/1" ) ) ).getText() );
     }
 
     @Test
@@ -537,7 +534,7 @@ public class HtmlAreaContentProcessorTest
             .data( new PropertyTree() )
             .build();
 
-        final ProcessUpdateParams params = ProcessUpdateParams.create().editedContent( content ).build();
+        final ProcessUpdateParams params = ProcessUpdateParams.create().content( content ).build();
 
         final ContentConfig contentConfig = Mockito.mock( ContentConfig.class, invocation -> true );
 
@@ -551,13 +548,8 @@ public class HtmlAreaContentProcessorTest
 
         final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
 
-        final EditableContent editableContent = new EditableContent( content );
-
-        result.getEditor().edit( editableContent );
-
-        assertThat( result.processedReferences ).isEmpty();
+        assertThat( result.getContent().getProcessedReferences() ).isEmpty();
     }
-
 
     @Test
     public void supports()
@@ -585,16 +577,13 @@ public class HtmlAreaContentProcessorTest
 
         when( xDataService.getByName( xDataName ) ).thenReturn( xData );
 
-        final ProcessCreateParams processCreateParams = Mockito.mock( ProcessCreateParams.class );
         final CreateContentParams createContentParams = CreateContentParams.create()
             .parent( ContentPath.ROOT )
             .contentData( data )
             .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "xDataName" ), extraData ) ).build() )
             .type( contentTypeName )
             .build();
-
-        when( processCreateParams.getCreateContentParams() ).thenReturn( createContentParams );
-
+        final ProcessCreateParams processCreateParams = new ProcessCreateParams( createContentParams, null, ContentIds.empty() );
         final ProcessCreateResult result = htmlAreaContentProcessor.processCreate( processCreateParams );
 
         var captor = ArgumentCaptor.forClass( GetContentTypeParams.class );
@@ -602,6 +591,5 @@ public class HtmlAreaContentProcessorTest
         verify( contentTypeService ).getByName( captor.capture() );
         assertEquals( contentTypeName, captor.getValue().getContentTypeName() );
         assertThat( result.getProcessedReferences() ).containsExactly( ContentId.from( "image-id1"), ContentId.from("image-id2" ) );
-
     }
 }

@@ -10,6 +10,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -214,7 +215,8 @@ public class ContentMappingConstraintTest
         builder.valid( true );
         builder.language( Locale.FRENCH );
 
-        builder.addExtraData( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) );
+        builder.extraDatas(
+            ExtraDatas.create().add( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) ).build() );
         builder.page( newPage() );
 
         return builder.build();

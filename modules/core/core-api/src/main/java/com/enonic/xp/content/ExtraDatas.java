@@ -38,7 +38,7 @@ public final class ExtraDatas
 
     public ExtraDatas copy()
     {
-        return stream().map( ExtraData::copy ).collect( collector() );
+        return isEmpty() ? EMPTY : stream().map( ExtraData::copy ).collect( collector() );
     }
 
     public static ExtraDatas empty()

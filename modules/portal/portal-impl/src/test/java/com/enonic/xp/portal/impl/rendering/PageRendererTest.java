@@ -13,6 +13,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -250,7 +251,7 @@ public class PageRendererTest
             .modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( contentTypeName ) )
-            .addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) )
+            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).build() )
             .build();
     }
 
@@ -272,7 +273,7 @@ public class PageRendererTest
             .modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.fragment() )
-            .addExtraData( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) )
+            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).build() )
             .build();
     }
 }

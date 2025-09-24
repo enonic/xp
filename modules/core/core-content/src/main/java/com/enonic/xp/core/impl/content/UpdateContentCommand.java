@@ -242,25 +242,21 @@ final class UpdateContentCommand
         return Attachments.from( attachments.values() );
     }
 
-    private Content processContent( Content editedContent )
+    private Content processContent( Content content )
     {
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
-            if ( contentProcessor.supports( editedContent.getType() ) )
+            if ( contentProcessor.supports( content.getType() ) )
             {
                 final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create()
                     .mediaInfo( mediaInfo )
-                    .editedContent( editedContent )
+                    .content( content )
                     .build();
                 final ProcessUpdateResult result = contentProcessor.processUpdate( processUpdateParams );
-
-                if ( result != null )
-                {
-                    editedContent = editContent( result.getEditor(), editedContent, result.getProcessedReferences() );
-                }
+                content = result.getContent();
             }
         }
-        return editedContent;
+        return content;
     }
 
     private Content editContent( final ContentEditor editor, final Content original, final ContentIds processedReferences )

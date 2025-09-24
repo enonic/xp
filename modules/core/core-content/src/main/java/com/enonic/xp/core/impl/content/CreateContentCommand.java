@@ -7,6 +7,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -84,7 +86,7 @@ final class CreateContentCommand
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         // TODO apply default values to xData
 
-        ProcessCreateResult processedParams = runContentProcessors( this.params, params.getType() );
+        ProcessCreateResult processedParams = runContentProcessors( params );
 
         validateBlockingChecks( processedParams.getCreateContentParams() );
 
@@ -125,6 +127,15 @@ final class CreateContentCommand
         validateParentChildRelations( params.getParent(), params.getType() );
         validatePropertyTree( params );
         validateCreateAttachments( params.getCreateAttachments() );
+        validateImageAttachment( params );
+    }
+
+    private void validateImageAttachment( final CreateContentParams params )
+    {
+        if ( params.getType().isImageMedia() && params.getCreateAttachments().getSize() != 1 )
+        {
+            throw new IllegalArgumentException( "Expected exactly one attachment" );
+        }
     }
 
     private void validateContentType( final ContentType contentType )
@@ -176,19 +187,18 @@ final class CreateContentCommand
         return builder.build();
     }
 
-    private ProcessCreateResult runContentProcessors( final CreateContentParams createContentParams, final ContentTypeName contentType )
+    private ProcessCreateResult runContentProcessors( final CreateContentParams createContentParams )
     {
         ProcessCreateResult processedResult = new ProcessCreateResult( createContentParams, ContentIds.empty() );
 
         for ( final ContentProcessor contentProcessor : this.contentProcessors )
         {
-            if ( contentProcessor.supports( contentType ) )
+            if ( contentProcessor.supports( createContentParams.getType() ) )
             {
                 processedResult = contentProcessor.processCreate(
                     new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo, processedResult.getProcessedReferences() ) );
             }
         }
-
         return processedResult;
     }
 

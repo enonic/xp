@@ -1,22 +1,18 @@
 package com.enonic.xp.core.impl.content.processor;
 
-import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.media.MediaInfo;
 
 public final class ProcessUpdateParams
 {
-    private final CreateAttachments createAttachments;
-
     private final MediaInfo mediaInfo;
 
-    private final Content editedContent;
+    private final Content content;
 
     private ProcessUpdateParams( final Builder builder )
     {
-        this.createAttachments = builder.createAttachments;
         mediaInfo = builder.mediaInfo;
-        editedContent = builder.editedContent;
+        content = builder.content;
     }
 
     public static Builder create()
@@ -29,23 +25,16 @@ public final class ProcessUpdateParams
         return mediaInfo;
     }
 
-    public CreateAttachments getCreateAttachments()
+    public Content getContent()
     {
-        return createAttachments;
-    }
-
-    public Content getEditedContent()
-    {
-        return editedContent;
+        return content;
     }
 
     public static final class Builder
     {
         private MediaInfo mediaInfo;
 
-        private CreateAttachments createAttachments;
-
-        private Content editedContent;
+        private Content content;
 
         private Builder()
         {
@@ -57,15 +46,9 @@ public final class ProcessUpdateParams
             return this;
         }
 
-        public Builder createAttachments( final CreateAttachments createAttachments )
+        public Builder content( final Content content )
         {
-            this.createAttachments = createAttachments;
-            return this;
-        }
-
-        public Builder editedContent( final Content editedContent )
-        {
-            this.editedContent = editedContent;
+            this.content = content;
             return this;
         }
 

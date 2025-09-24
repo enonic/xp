@@ -1,28 +1,19 @@
 package com.enonic.xp.core.impl.content.processor;
 
-import com.enonic.xp.content.ContentEditor;
-import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.Content;
 
 
 public final class ProcessUpdateResult
 {
-    final ContentEditor editor;
+    private final Content content;
 
-    final ContentIds processedReferences;
-
-    public ProcessUpdateResult( final ContentEditor editor, final ContentIds processedReferences )
+    public ProcessUpdateResult( final Content content )
     {
-        this.editor = editor;
-        this.processedReferences = processedReferences;
+        this.content = content;
     }
 
-    public ContentEditor getEditor()
+    public Content getContent()
     {
-        return editor;
-    }
-
-    public ContentIds getProcessedReferences()
-    {
-        return processedReferences;
+        return content;
     }
 }

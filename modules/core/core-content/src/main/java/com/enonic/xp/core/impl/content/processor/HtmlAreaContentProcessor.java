@@ -46,6 +46,7 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
@@ -117,7 +118,7 @@ public class HtmlAreaContentProcessor
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
         final ContentIds.Builder processedIds = ContentIds.create();
-        final Content inputContent = params.getEditedContent();
+        final Content inputContent = params.getContent();
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( inputContent.getType() ) );
 
         processContentData( inputContent.getData(), contentType, processedIds );
@@ -129,23 +130,23 @@ public class HtmlAreaContentProcessor
         }
         final Page page = processPageData( inputContent.getPage(), processedIds );
 
-        return new ProcessUpdateResult( editable -> editable.page = page, processedIds.build() );
+        return new ProcessUpdateResult( Content.create( inputContent ).page( page ).processedReferences( processedIds.build() ).build()  );
     }
 
     private void processSiteConfigData( final SiteConfigs siteConfigs, final ContentIds.Builder processedIds )
     {
-        siteConfigs.forEach( siteConfig -> {
-
+        for ( SiteConfig siteConfig : siteConfigs )
+        {
             final SiteDescriptor siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
 
             if ( siteDescriptor == null )
             {
-                return;
+                continue;
             }
 
             final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm() );
             processDataTree( properties, processedIds );
-        } );
+        }
     }
 
     private Page processPageData( final Page page, final ContentIds.Builder processedIds )
@@ -169,7 +170,7 @@ public class HtmlAreaContentProcessor
             return Page.create( page ).regions( pageRegions ).build();
         }
 
-        return page;
+        return page.copy();
     }
 
     private PageRegions processRegionsData( final AbstractRegions regions, final ContentIds.Builder processedIds )
@@ -214,34 +215,23 @@ public class HtmlAreaContentProcessor
 
     private void processExtraData( final ExtraDatas extraDatas, final ContentIds.Builder processedIds )
     {
-        if ( extraDatas != null )
+        for ( ExtraData extraData : extraDatas )
         {
-            for ( ExtraData extraData : extraDatas )
+            final XData xData = xDataService.getByName( extraData.getName() );
+            if ( xData != null )
             {
-                final XData xData = xDataService.getByName( extraData.getName() );
-                if ( xData != null )
-                {
-                    processDataTree( getProperties( extraData.getData(), xData.getForm() ), processedIds );
-                }
+                processDataTree( getProperties( extraData.getData(), xData.getForm() ), processedIds );
             }
         }
     }
 
     private void processContentData( final PropertyTree contentData, final ContentType contentType, final ContentIds.Builder processedIds )
     {
-        final Collection<Property> properties = getProperties( contentData, contentType.getForm() );
-        processDataTree( properties, processedIds );
-    }
-
-    private void processSiteConfig( final PropertyTree contentData, final ContentType contentType, final ContentIds.Builder processedIds )
-    {
-        final Collection<Property> properties = getProperties( contentData, contentType.getForm() );
-        processDataTree( properties, processedIds );
+        processDataTree( getProperties( contentData, contentType.getForm() ), processedIds );
     }
 
     private Collection<Property> getProperties( final PropertyTree data, final Iterable<FormItem> formItems )
     {
-
         if ( data == null || data.getTotalSize() == 0 )
         {
             return Collections.emptyList();
@@ -260,11 +250,12 @@ public class HtmlAreaContentProcessor
 
     private void processDataTree( final Collection<Property> properties, final ContentIds.Builder processedIds )
     {
-        properties.forEach( property -> {
+        for ( Property property : properties )
+        {
             final String processedValue = processString( property.getString(), processedIds );
 
             property.setValue( ValueFactory.newString( processedValue ) );
-        } );
+        }
     }
 
     private void processComponent( final DescriptorBasedComponent component, final ContentIds.Builder processedIds )
@@ -307,7 +298,7 @@ public class HtmlAreaContentProcessor
             return null;
         }
 
-        final String processedValue = sanitizingEnabled ? InternalHtmlSanitizer.richText().sanitize(value ) : value;
+        final String processedValue = sanitizingEnabled ? InternalHtmlSanitizer.richText().sanitize( value ) : value;
 
         final Matcher contentMatcher = CONTENT_PATTERN.matcher( processedValue );
 
