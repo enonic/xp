@@ -60,10 +60,6 @@ public class CreateContentCommandTest
 
     private PageDescriptorService pageDescriptorService;
 
-    private PartDescriptorService partDescriptorService;
-
-    private LayoutDescriptorService layoutDescriptorService;
-
     private ContentNodeTranslator translator;
 
     private EventPublisher eventPublisher;
@@ -78,8 +74,6 @@ public class CreateContentCommandTest
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
-        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
 
         this.translator = new ContentNodeTranslator( nodeService );
 
