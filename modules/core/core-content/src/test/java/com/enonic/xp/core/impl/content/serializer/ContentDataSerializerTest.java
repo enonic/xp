@@ -26,7 +26,15 @@ import com.enonic.xp.core.impl.content.CreateContentTranslatorParams;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
@@ -84,11 +92,26 @@ public class ContentDataSerializerTest
         final String binaryLabel = "myLabel";
         final String binaryMimeType = "myMimeType";
 
+        final PropertyTree tree = new PropertyTree();
+        tree.addProperty( "htmlData", ValueFactory.newString( "<img src =\"source\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
+
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
+
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .config( form )
+            .regions( RegionDescriptors.create().build() )
+            .key( DescriptorKey.from( "aaa:bbb" ) )
+            .build();
+
+        final Page page = Page.create().config( tree ).descriptor( pageDescriptor.getKey() ).build();
+
         final Content content = Content.create()
             .name( "myContent" )
             .parentPath( ContentPath.ROOT )
             .creator( PrincipalKey.ofAnonymous() )
-            .modifier( PrincipalKey.ofAnonymous() )
+            .modifier( PrincipalKey.ofAnonymous() ).page( page )
             .attachments( Attachments.from(
                 Attachment.create().label( binaryLabel ).size( 11 ).mimeType( binaryMimeType ).name( binaryName ).build() ) )
             .validationErrors( ValidationErrors.create()
@@ -234,6 +257,48 @@ public class ContentDataSerializerTest
         assertNotNull( contentData );
         assertNotNull( contentData.getString( "myData" ) );
         assertEquals( "myValue", contentData.getString( "myData" ) );
+    }
+
+    @Test
+    public void create_add_page()
+    {
+        final PropertyTree tree = new PropertyTree();
+        tree.addProperty( "htmlData", ValueFactory.newString( "<img src =\"source\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
+
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
+
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .config( form )
+            .regions( RegionDescriptors.create().build() )
+            .key( DescriptorKey.from( "aaa:bbb" ) )
+            .build();
+
+        final Page page = Page.create().config( tree ).descriptor( pageDescriptor.getKey() ).build();
+
+        final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+
+        final PropertyTree propertyTree = new PropertyTree();
+        propertyTree.setString( "myData", "myValue" );
+
+        final PropertyTree data = contentDataSerializer.toCreateNodeData( CreateContentTranslatorParams.create()
+                                                                              .parent( ContentPath.ROOT )
+                                                                              .name( "myContentName" )
+                                                                              .contentData( new PropertyTree() )
+                                                                              .displayName( "myDisplayName" )
+                                                                              .type( ContentTypeName.codeMedia() )
+                                                                              .creator( PrincipalKey.ofAnonymous() )
+                                                                              .childOrder( ChildOrder.defaultOrder() )
+                                                                              .contentData( propertyTree )
+                                                                              .page( page )
+                                                                              .build() );
+
+        final PropertySet pageData = data.getSet( "components" ).getSet( "page" );
+        assertNotNull( pageData );
+        assertEquals( pageDescriptor.getKey().toString(), pageData.getString( "descriptor" ) );
+        assertEquals( "<img src =\"source\" data-src=\"image://image-id\" src=\"image/123\"/>",
+                      pageData.getSet( "config" ).getSet( "aaa" ).getSet( "bbb" ).getString( "htmlData" ) );
     }
 
     @Test

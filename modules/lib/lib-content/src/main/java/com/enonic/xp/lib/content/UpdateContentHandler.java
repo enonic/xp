@@ -100,6 +100,12 @@ public final class UpdateContentHandler
             target.extraDatas = createExtraDatas( (Map) extraData, existingContent.getType() );
         }
 
+        final Object page = map.get( "page" );
+        if ( page instanceof Map )
+        {
+            target.page = createPage( (Map) page );
+        }
+
         final Object publishInfo = map.get( "publish" );
 
         if ( publishInfo instanceof Map )

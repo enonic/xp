@@ -7,6 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -46,6 +47,8 @@ public final class CreateContentParams
 
     private final WorkflowInfo workflowInfo;
 
+    private final Page page;
+
     private CreateContentParams( Builder builder )
     {
         this.data = Objects.requireNonNull( builder.data, "data is required" );
@@ -64,6 +67,7 @@ public final class CreateContentParams
         this.refresh = builder.refresh;
         this.contentPublishInfo = builder.contentPublishInfo;
         this.workflowInfo = builder.workflowInfo;
+        this.page = builder.page;
     }
 
     public static Builder create()
@@ -156,6 +160,11 @@ public final class CreateContentParams
         return workflowInfo;
     }
 
+    public Page getPage()
+    {
+        return page;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -190,6 +199,8 @@ public final class CreateContentParams
 
         private WorkflowInfo workflowInfo;
 
+        private Page page;
+
         private Builder()
         {
         }
@@ -211,6 +222,7 @@ public final class CreateContentParams
             this.language = source.language;
             this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
+            this.page = source.page;
         }
 
         public Builder contentData( final PropertyTree data )
@@ -313,6 +325,12 @@ public final class CreateContentParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
             return this;
         }
 

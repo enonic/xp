@@ -31,6 +31,8 @@ public final class CreateContentHandler
 
     private Map<String, Object> data;
 
+    private Map<String, Object> page;
+
     private Map<String, Object> x;
 
     private String contentType;
@@ -71,7 +73,7 @@ public final class CreateContentHandler
             requireValid( this.requireValid ).
             type( contentTypeName ).
             contentData( createPropertyTree( data, contentTypeName ) ).
-            extraDatas( createExtraDatas( x, contentTypeName ) ).
+            extraDatas( createExtraDatas( x, contentTypeName ) ).page( createPage( page ) ).
             language( language != null ? Locale.forLanguageTag( language ) : null ).
             childOrder( childOrder != null ? ChildOrder.from( childOrder ) : null ).
             refresh( this.refresh ).
@@ -143,6 +145,11 @@ public final class CreateContentHandler
     public void setData( final ScriptValue data )
     {
         this.data = data != null ? data.getMap() : null;
+    }
+
+    public void setPage( final ScriptValue page )
+    {
+        this.page = page != null ? page.getMap() : null;
     }
 
     public void setX( final ScriptValue x )
