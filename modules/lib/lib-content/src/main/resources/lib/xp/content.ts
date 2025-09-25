@@ -16,7 +16,7 @@ declare global {
     interface XpXData {}
 }
 
-import type {
+import {
     Aggregations,
     AggregationsResult,
     AggregationsToAggregationResults,
@@ -27,6 +27,12 @@ import type {
     FormItem,
     Highlight,
     HighlightResult,
+    Layout,
+    LayoutComponent,
+    Page,
+    PageComponent,
+    Part,
+    PartComponent,
     PatchableContent,
     PublishInfo,
     QueryDsl,
@@ -131,7 +137,7 @@ export type {
 
 type Attachments = Content['attachments'];
 
-export type PageComponentWhenAutomaticTemplate = Record<string,never>;
+export type PageComponentWhenAutomaticTemplate = Record<string, never>;
 
 export interface PageComponentWhenSpecificTemplate {
     path: '/';
@@ -508,7 +514,15 @@ export function getChildren<
 
 export type IdGeneratorSupplier = (value: string) => string;
 
-export interface CreateContentParams<Data, Type extends string> {
+export interface CreateContentParams<Data, Type extends string, _Component extends (
+    Type extends 'portal:fragment'
+    ? LayoutComponent | PartComponent
+    : PageComponent
+    ) = (
+    Type extends 'portal:fragment'
+    ? Layout | Part
+    : Page
+    )> {
     name?: string;
     parentPath: string;
     displayName?: string;
@@ -518,6 +532,7 @@ export interface CreateContentParams<Data, Type extends string> {
     language?: string;
     childOrder?: string;
     data: Data;
+    page?: Type extends 'portal:fragment' ? never : _Component;
     x?: XpXData;
     idGenerator?: IdGeneratorSupplier;
     workflow?: Workflow;
@@ -541,6 +556,8 @@ interface CreateContentHandler {
     setChildOrder(value?: string | null): void;
 
     setData(value: ScriptValue): void;
+
+    setPage(value: ScriptValue): void;
 
     setX(value: ScriptValue): void;
 
@@ -592,6 +609,7 @@ export function create<
         language,
         childOrder,
         data,
+        page,
         x,
         idGenerator,
         workflow,
@@ -610,6 +628,7 @@ export function create<
 
     bean.setData(__.toScriptValue(data));
     bean.setX(__.toScriptValue(x));
+    bean.setPage(__.toScriptValue(page));
 
     bean.setIdGenerator(__.nullOrValue(idGenerator));
     bean.setWorkflow(__.toScriptValue(workflow));
@@ -1333,7 +1352,8 @@ interface GetOutboundDependenciesHandler {
 export function getOutboundDependencies(params: GetOutboundDependenciesParams): string[] {
     checkRequired(params, 'key');
 
-    const bean: GetOutboundDependenciesHandler = __.newBean<GetOutboundDependenciesHandler>('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
+    const bean: GetOutboundDependenciesHandler = __.newBean<GetOutboundDependenciesHandler>(
+        'com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
 
     bean.setKey(params.key);
 
