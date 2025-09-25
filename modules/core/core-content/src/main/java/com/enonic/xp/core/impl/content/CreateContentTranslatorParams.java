@@ -15,6 +15,7 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -63,6 +64,8 @@ public class CreateContentTranslatorParams
 
     private final WorkflowInfo workflowInfo;
 
+    private final Page page;
+
     private CreateContentTranslatorParams( Builder builder )
     {
         final Instant now = Instant.now();
@@ -88,6 +91,7 @@ public class CreateContentTranslatorParams
         this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
+        this.page = builder.page;
     }
 
     public static Builder create( final CreateContentParams source )
@@ -205,6 +209,11 @@ public class CreateContentTranslatorParams
         return workflowInfo;
     }
 
+    public Page getPage()
+    {
+        return page;
+    }
+
     public static final class Builder
     {
         private PropertyTree data;
@@ -243,6 +252,8 @@ public class CreateContentTranslatorParams
 
         private WorkflowInfo workflowInfo;
 
+        private Page page;
+
         private Builder()
         {
         }
@@ -263,6 +274,7 @@ public class CreateContentTranslatorParams
             this.language = params.getLanguage();
             this.contentPublishInfo = params.getContentPublishInfo();
             this.workflowInfo = params.getWorkflowInfo();
+            this.page = params.getPage();
         }
 
         public Builder contentData( final PropertyTree data )
@@ -376,6 +388,12 @@ public class CreateContentTranslatorParams
         public Builder workflowInfo( final WorkflowInfo workflowInfo )
         {
             this.workflowInfo = workflowInfo;
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
             return this;
         }
 

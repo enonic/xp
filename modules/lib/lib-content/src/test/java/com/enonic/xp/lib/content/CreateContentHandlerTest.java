@@ -124,6 +124,13 @@ public class CreateContentHandlerTest
     }
 
     @Test
+    public void createContentWithPage()
+    {
+        mockCreateContent();
+        runFunction( "/test/CreateContentHandlerTest.js", "createContentWithPage" );
+    }
+
+    @Test
     public void createContentAlreadyExists()
     {
         final Exception alreadyExistException =
@@ -191,6 +198,7 @@ public class CreateContentHandlerTest
         builder.valid( false );
         builder.type( params.getType() );
         builder.data( params.getData() );
+        builder.page( params.getPage() );
         builder.creator( PrincipalKey.ofAnonymous() );
         builder.createdTime( Instant.parse( "1975-01-08T00:00:00Z" ) );
         builder.language( params.getLanguage() );
