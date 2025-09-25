@@ -1352,8 +1352,7 @@ interface GetOutboundDependenciesHandler {
 export function getOutboundDependencies(params: GetOutboundDependenciesParams): string[] {
     checkRequired(params, 'key');
 
-    const bean: GetOutboundDependenciesHandler = __.newBean<GetOutboundDependenciesHandler>(
-        'com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
+    const bean: GetOutboundDependenciesHandler = __.newBean<GetOutboundDependenciesHandler>('com.enonic.xp.lib.content.GetOutboundDependenciesHandler');
 
     bean.setKey(params.key);
 
