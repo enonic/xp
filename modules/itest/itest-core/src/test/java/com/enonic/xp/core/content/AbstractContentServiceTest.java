@@ -159,6 +159,8 @@ public abstract class AbstractContentServiceTest
 
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
+    protected PageDescriptorService pageDescriptorService;
+
     protected EventPublisher eventPublisher;
 
     private ExecutorService executorService;
@@ -286,7 +288,7 @@ public abstract class AbstractContentServiceTest
 
         ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
-        PageDescriptorService pageDescriptorService = mock( PageDescriptorService.class );
+        this.pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
