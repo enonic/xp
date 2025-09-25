@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xp.enonic.com/schemas/json/input.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://xp.enonic.com/schemas/json/form-item.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "indexed": {
+          "type": "boolean"
+        },
+        "customText": {
+          "type": "string"
+        },
+        "helpText": {
+          "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+        },
+        "validationRegexp": {
+          "type": "string"
+        },
+        "occurrences": {
+          "$ref": "https://xp.enonic.com/schemas/json/occurrence.schema.json"
+        },
+        "maximize": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ]
+    }
+  ]
+}

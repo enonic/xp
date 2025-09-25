@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xp.enonic.com/schemas/json/content-type.schema.json",
+  "type": "object",
+  "properties": {
+    "label": {
+      "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+    },
+    "description": {
+      "$ref": "https://xp.enonic.com/schemas/json/i18n.schema.json"
+    },
+    "displayName": {
+      "$ref": "https://xp.enonic.com/schemas/json/display-name.schema.json"
+    },
+    "superType": {
+      "type": "string"
+    },
+    "isAbstract": {
+      "type": "boolean"
+    },
+    "isFinal": {
+      "type": "boolean"
+    },
+    "allowChildContent": {
+      "type": "boolean"
+    },
+    "allowChildContentType": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "xData": {
+      "type": "array",
+      "items": {
+        "$ref": "https://xp.enonic.com/schemas/json/xdata.schema.json"
+      }
+    },
+    "config": {
+      "$ref": "https://xp.enonic.com/schemas/json/config.schema.json"
+    },
+    "form": {
+      "$ref": "https://xp.enonic.com/schemas/json/form.schema.json"
+    }
+  },
+  "additionalProperties": false
+}
