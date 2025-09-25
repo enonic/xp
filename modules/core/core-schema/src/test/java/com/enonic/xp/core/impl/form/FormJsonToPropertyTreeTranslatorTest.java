@@ -16,8 +16,10 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,10 +49,10 @@ public class FormJsonToPropertyTreeTranslatorTest
     {
         final JsonNode node = loadJson( "propertyNotInForm" );
 
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+        final IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> {
             new FormJsonToPropertyTreeTranslator( createFormForAllInputTypes(), true ).translate( node );
-        });
-        assertEquals( "No mapping defined for property cheesecake with value not allowed", ex.getMessage());
+        } );
+        assertEquals( "No mapping defined for property cheesecake with value not allowed", ex.getMessage() );
     }
 
     @Test
@@ -85,8 +87,8 @@ public class FormJsonToPropertyTreeTranslatorTest
 
         final Property property = data.getProperty( "checkbox" );
 
-        assertTrue( property.getValue().isBoolean());
-        assertEquals( true, property.getBoolean());
+        assertTrue( property.getValue().isBoolean() );
+        assertEquals( true, property.getBoolean() );
     }
 
     @Test
@@ -166,157 +168,103 @@ public class FormJsonToPropertyTreeTranslatorTest
 
     private Form createFormForAllInputTypes()
     {
-        final FormItemSet set = FormItemSet.create().
-            name( "set" ).
-            addFormItem( Input.create().
-                name( "setString" ).
-                label( "String" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "setDouble" ).
-                label( "Double" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            build();
+        final FormItemSet set = FormItemSet.create()
+            .name( "set" )
+            .addFormItem( Input.create().name( "setString" ).label( "String" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "setDouble" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )
+            .build();
 
-        final FormOptionSet formOptionSet = FormOptionSet.create().
-            name( "myOptionSet" ).
-            label( "My option set" ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption1" ).label( "option label1" ).
-                addFormItem(
-                    Input.create().name( "myTextLine1" ).label( "myTextLine1" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
-            addOptionSetOption( FormOptionSetOption.create().name( "myOptionSetOption2" ).label( "option label2" ).
-                addFormItem(
-                    Input.create().name( "myTextLine2" ).label( "myTextLine2" ).inputType( InputTypeName.TEXT_LINE ).build() ).build() ).
-            build();
+        final FormOptionSet formOptionSet = FormOptionSet.create()
+            .name( "myOptionSet" )
+            .label( "My option set" )
+            .addOptionSetOption( FormOptionSetOption.create()
+                                     .name( "myOptionSetOption1" )
+                                     .label( "option label1" )
+                                     .addFormItem( Input.create()
+                                                       .name( "myTextLine1" )
+                                                       .label( "myTextLine1" )
+                                                       .inputType( InputTypeName.TEXT_LINE )
+                                                       .build() )
+                                     .build() )
+            .addOptionSetOption( FormOptionSetOption.create()
+                                     .name( "myOptionSetOption2" )
+                                     .label( "option label2" )
+                                     .addFormItem( Input.create()
+                                                       .name( "myTextLine2" )
+                                                       .label( "myTextLine2" )
+                                                       .inputType( InputTypeName.TEXT_LINE )
+                                                       .build() )
+                                     .build() )
+            .build();
 
-        return Form.create().
-            addFormItem( Input.create().
-                name( "textLine" ).
-                label( "Textline" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "stringArray" ).
-                label( "String array" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "double" ).
-                label( "Double" ).
-                inputType( InputTypeName.DOUBLE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "long" ).
-                label( "Long" ).
-                inputType( InputTypeName.LONG ).
-                build() ).
-            addFormItem( Input.create().
-                name( "comboBox" ).
-                label( "Combobox" ).
-                inputType( InputTypeName.COMBO_BOX ).
+        return Form.create()
+            .addFormItem( Input.create().name( "textLine" ).label( "Textline" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "stringArray" ).label( "String array" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( Input.create().name( "double" ).label( "Double" ).inputType( InputTypeName.DOUBLE ).build() )
+            .addFormItem( Input.create().name( "long" ).label( "Long" ).inputType( InputTypeName.LONG ).build() )
+            .addFormItem( Input.create().name( "comboBox" ).label( "Combobox" ).inputType( InputTypeName.COMBO_BOX ).
 //                inputTypeProperty( InputTypeProperty.create( "option", "label1" ).attribute( "value", "value1" ).build() ).
 //                inputTypeProperty( InputTypeProperty.create( "option", "label2" ).attribute( "value", "value2" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "checkbox" ).
-                label( "Checkbox" ).
-                inputType( InputTypeName.CHECK_BOX ).
-                build() ).
-            addFormItem( Input.create().
-                name( "tag" ).
-                label( "Tag" ).
-                inputType( InputTypeName.TAG ).
-                build() ).
-            addFormItem( Input.create().
-                name( "contentSelector" ).
-                label( "Content selector" ).
-                inputType( InputTypeName.CONTENT_SELECTOR ).
-                inputTypeProperty( InputTypeProperty.create( "allowContentType", ContentTypeName.folder().toString() ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "contentTypeFilter" ).
-                label( "Content type filter" ).
-                inputType( InputTypeName.CONTENT_TYPE_FILTER ).
-                build() ).
-            addFormItem( Input.create().
-                name( "siteConfigurator" ).
-                inputType( InputTypeName.SITE_CONFIGURATOR ).
-                label( "Site configurator" ).
-                build() ).
-            addFormItem( Input.create().
-                name( "date" ).
-                label( "Date" ).
-                inputType( InputTypeName.DATE ).
-                build() ).
-            addFormItem( Input.create().
-                name( "time" ).
-                label( "Time" ).
-                inputType( InputTypeName.TIME ).
-                build() ).
-            addFormItem( Input.create().
-                name( "geoPoint" ).
-                label( "Geo point" ).
-                inputType( InputTypeName.GEO_POINT ).
-                build() ).
-            addFormItem( Input.create().
-                name( "htmlArea" ).
-                label( "Html area" ).
-                inputType( InputTypeName.HTML_AREA ).
-                build() ).
-            addFormItem( Input.create().
-                name( "localDateTime" ).
-                label( "Local datetime" ).
-                inputType( InputTypeName.DATE_TIME ).
-                inputTypeProperty( InputTypeProperty.create( "timezone", "false" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "dateTime" ).
-                label( "Datetime" ).
-                inputType( InputTypeName.DATE_TIME ).
-                inputTypeProperty( InputTypeProperty.create( "timezone", "true" ).build() ).
-                build() ).
-            addFormItem( Input.create().
-                name( "media" ).
-                label( "Image Uploader" ).
-                inputType( InputTypeName.IMAGE_UPLOADER ).
-                build() ).
-            addFormItem( set ).
-            addFormItem( formOptionSet ).
-            build();
+    build() )
+            .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
+            .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
+            .addFormItem( Input.create()
+                              .name( "contentSelector" )
+                              .label( "Content selector" )
+                              .inputType( InputTypeName.CONTENT_SELECTOR )
+                              .inputTypeProperty( InputTypeProperty.create( "allowContentType",
+                                                                            new StringPropertyValue( ContentTypeName.folder().toString() ) )
+                                                      .build() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "contentTypeFilter" )
+                              .label( "Content type filter" )
+                              .inputType( InputTypeName.CONTENT_TYPE_FILTER )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "siteConfigurator" )
+                              .inputType( InputTypeName.SITE_CONFIGURATOR )
+                              .label( "Site configurator" )
+                              .build() )
+            .addFormItem( Input.create().name( "date" ).label( "Date" ).inputType( InputTypeName.DATE ).build() )
+            .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
+            .addFormItem( Input.create().name( "geoPoint" ).label( "Geo point" ).inputType( InputTypeName.GEO_POINT ).build() )
+            .addFormItem( Input.create().name( "htmlArea" ).label( "Html area" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .addFormItem( Input.create()
+                              .name( "localDateTime" )
+                              .label( "Local datetime" )
+                              .inputType( InputTypeName.DATE_TIME )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", new BooleanPropertyValue( false ) ).build() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "dateTime" )
+                              .label( "Datetime" )
+                              .inputType( InputTypeName.DATE_TIME )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", new BooleanPropertyValue( true ) ).build() )
+                              .build() )
+            .addFormItem( Input.create().name( "media" ).label( "Image Uploader" ).inputType( InputTypeName.IMAGE_UPLOADER ).build() )
+            .addFormItem( set )
+            .addFormItem( formOptionSet )
+            .build();
     }
 
     private Form createFormForFieldSet()
     {
-        final FieldSet fieldSet1 = FieldSet.create().
-            label( "Properties" ).
-            addFormItem( Input.create().
-                name( "number" ).
-                label( "Number" ).
-                inputType( InputTypeName.LONG ).
-                build() ).
-            build();
+        final FieldSet fieldSet1 = FieldSet.create()
+            .label( "Properties" )
+            .addFormItem( Input.create().name( "number" ).label( "Number" ).inputType( InputTypeName.LONG ).build() )
+            .build();
 
-        final FormItemSet itemSet = FormItemSet.create().
-            name( "attributes" ).
-            occurrences( 0, 0 ).
-            addFormItem( Input.create().
-                name( "key" ).
-                label( "Key" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            addFormItem( fieldSet1 ).
-            build();
+        final FormItemSet itemSet = FormItemSet.create()
+            .name( "attributes" )
+            .occurrences( 0, 0 )
+            .addFormItem( Input.create().name( "key" ).label( "Key" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .addFormItem( fieldSet1 )
+            .build();
 
-        final FieldSet fieldSet = FieldSet.create().
-            label( "Attributes" ).
-            addFormItem( itemSet ).
-            build();
+        final FieldSet fieldSet = FieldSet.create().label( "Attributes" ).addFormItem( itemSet ).build();
 
-        return Form.create().
-            addFormItem( fieldSet ).
-            build();
+        return Form.create().addFormItem( fieldSet ).build();
     }
 }
 

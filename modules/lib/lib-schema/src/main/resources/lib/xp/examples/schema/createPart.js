@@ -25,6 +25,8 @@ let resource = `<?xml version='1.0' encoding='UTF-8'?>
                 </part>
                 `;
 
+// {input=[input=[name=width,type=Double]]}
+
 // BEGIN
 // Create virtual part.
 var result = schemaLib.createComponent({

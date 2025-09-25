@@ -63,20 +63,22 @@ public class DoubleTypeTest
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
     @Test
     public void testValidate_invalidMin()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5.0" ).build( )).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2.4 ), config ));
+        final InputTypeConfig config =
+            InputTypeConfig.create().property( InputTypeProperty.create( "min", new DoublePropertyValue( 5.0 ) ).build() ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 2.4 ), config ) );
     }
 
     @Test
     public void testValidate_invalidMax()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5.0" ).build( )).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7.3 ), config ));
+        final InputTypeConfig config =
+            InputTypeConfig.create().property( InputTypeProperty.create( "max", new DoublePropertyValue( 5.0 ) ).build() ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( doubleProperty( 7.3 ), config ) );
     }
 }

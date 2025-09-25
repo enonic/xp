@@ -1,16 +1,17 @@
 package com.enonic.xp.core.impl.content.parser;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 
 final class InputTypeConfigDeserializer
     extends JsonDeserializer<InputTypeConfig>
@@ -20,28 +21,12 @@ final class InputTypeConfigDeserializer
         throws IOException
     {
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-        final JsonNode node = mapper.readTree( jsonParser );
+        final Map<String, PropertyValue> configNode = mapper.readValue( jsonParser, new TypeReference<>()
+        {
+        } );
 
         final InputTypeConfig.Builder builder = InputTypeConfig.create();
-
-        for ( JsonNode property : node )
-        {
-            final String name = property.get( "name" ).asText();
-            final String value = property.get( "value" ).asText();
-
-            final InputTypeProperty.Builder propertyBuilder = InputTypeProperty.create( name, new StringPropertyValue( value ) );
-
-            property.fieldNames().forEachRemaining( attr -> {
-                if ( "value".equals( attr ) || "name".equals( attr ) )
-                {
-                    return;
-                }
-//                propertyBuilder.attribute( attr, property.get( attr ).asText() );
-            } );
-
-            builder.property( propertyBuilder.build() );
-        }
-
+        configNode.forEach( ( name, value ) -> builder.property( InputTypeProperty.create( name, value ).build() ) );
         return builder.build();
     }
 }

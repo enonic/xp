@@ -66,21 +66,21 @@ public class TextLineTypeTest
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
     @Test
     public void testValidateRegexInvalid()
     {
         final InputTypeConfig config = newValidConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ) );
     }
 
     @Test
     public void testValidateRegexEmptyValue()
     {
         final InputTypeConfig config = newValidConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "" ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "" ), config ) );
     }
 
     @Test
@@ -94,27 +94,26 @@ public class TextLineTypeTest
     public void testValidateMalformedRegex()
     {
         final InputTypeConfig config = newInvalidConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ) );
     }
 
     @Test
     public void testValidate_invalidMaxLength()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", "5" ).build() ).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ));
+        final InputTypeConfig config =
+            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", new IntegerPropertyValue( 5 ) ).build() ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ) );
     }
 
     private InputTypeConfig newValidConfig()
     {
-        return InputTypeConfig.create().
-            property( InputTypeProperty.create( "regexp", IP_ADDRESS_REGEXP ).build() ).
-            build();
+        return InputTypeConfig.create()
+            .property( InputTypeProperty.create( "regexp", new StringPropertyValue( IP_ADDRESS_REGEXP ) ).build() )
+            .build();
     }
 
     private InputTypeConfig newInvalidConfig()
     {
-        return InputTypeConfig.create().
-            property( InputTypeProperty.create( "regexp", "[" ).build() ).
-            build();
+        return InputTypeConfig.create().property( InputTypeProperty.create( "regexp", new StringPropertyValue( "[" ) ).build() ).build();
     }
 }

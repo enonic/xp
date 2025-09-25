@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.DoublePropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -26,11 +27,11 @@ public class DoubleYml
 
         if ( min != null )
         {
-            configBuilder.property( InputTypeProperty.create( "min", min.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "min", new DoublePropertyValue( min ) ).build() );
         }
         if ( max != null )
         {
-            configBuilder.property( InputTypeProperty.create( "max", max.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "max", new DoublePropertyValue( max ) ).build() );
         }
 
         builder.inputTypeConfig( configBuilder.build() );

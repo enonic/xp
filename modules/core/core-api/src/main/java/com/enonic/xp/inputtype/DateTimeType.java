@@ -26,7 +26,12 @@ final class DateTimeType
 
     private boolean useTimeZone( final InputTypeConfig config )
     {
-        return config.getValue( "timezone", boolean.class, false );
+        return config.getProperty( "timezone" )
+            .map( InputTypeProperty::getValue )
+            .filter( BooleanPropertyValue.class::isInstance )
+            .map( BooleanPropertyValue.class::cast )
+            .map( BooleanPropertyValue::value )
+            .orElse( false );
     }
 
     @Override

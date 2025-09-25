@@ -56,11 +56,6 @@ public final class InputTypeProperty
         return new Builder( name, value );
     }
 
-    public static Builder create( final String name, final String value )
-    {
-        return new Builder( name, new StringPropertyValue( value ) );
-    }
-
     public static final class Builder
     {
         private final String name;

@@ -80,17 +80,13 @@ public abstract class BaseInputTypeTest
         return tree.addLong( "test", value );
     }
 
-    protected final Input.Builder getDefaultInputBuilder( final InputTypeName inputTypeName, final String defaultValue ) {
-
-        final InputTypeProperty defaultProperty = InputTypeProperty.create( "default", defaultValue ).build();
+    protected final Input.Builder getDefaultInputBuilder( final InputTypeName inputTypeName, final String defaultValue )
+    {
+        final InputTypeProperty defaultProperty = InputTypeProperty.create( "default", new StringPropertyValue( defaultValue ) ).build();
 
         final InputTypeDefault inputTypeDefault = InputTypeDefault.create().property( defaultProperty ).build();
 
-        return Input.create().
-            name( "inputName" ).
-            label( "label" ).
-            inputType( inputTypeName ).
-            defaultValue( inputTypeDefault );
+        return Input.create().name( "inputName" ).label( "label" ).inputType( inputTypeName ).defaultValue( inputTypeDefault );
 
     }
 }

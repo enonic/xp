@@ -4,6 +4,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.LongPropertyValue;
 
 public class LongYml
     extends InputYml
@@ -27,11 +28,11 @@ public class LongYml
 
         if ( min != null )
         {
-            configBuilder.property( InputTypeProperty.create( "min", min.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "min", new LongPropertyValue( min ) ).build() );
         }
         if ( max != null )
         {
-            configBuilder.property( InputTypeProperty.create( "max", max.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "max", new LongPropertyValue( max ) ).build() );
         }
 
         builder.inputTypeConfig( configBuilder.build() );

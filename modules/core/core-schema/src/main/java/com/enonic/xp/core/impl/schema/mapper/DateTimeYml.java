@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -24,7 +25,7 @@ public class DateTimeYml
 
         if ( timezone != null )
         {
-            configBuilder.property( InputTypeProperty.create( "timezone", timezone.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "timezone", new BooleanPropertyValue( timezone ) ).build() );
         }
 
         builder.inputTypeConfig( configBuilder.build() );
