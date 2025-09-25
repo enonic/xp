@@ -293,19 +293,16 @@ public final class ParentContentSynchronizer
                     createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
                 }
 
-                if ( currentContent.hasChildren() )
-                {
-                    final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create()
-                                                                                              .parentId( currentContent.getId() )
-                                                                                              .recursive( false )
-                                                                                              .childOrder( currentContent.getChildOrder() )
-                                                                                              .size( -1 )
-                                                                                              .build() );
+                final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create()
+                                                                                          .parentId( currentContent.getId() )
+                                                                                          .recursive( false )
+                                                                                          .childOrder( currentContent.getChildOrder() )
+                                                                                          .size( -1 )
+                                                                                          .build() );
 
-                    for ( final Content content : result.getContents() )
-                    {
-                        queue.offer( content );
-                    }
+                for ( final Content content : result.getContents() )
+                {
+                    queue.offer( content );
                 }
             }
         } );

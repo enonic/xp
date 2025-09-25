@@ -7,7 +7,6 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -26,14 +25,9 @@ final class IssueCommentQueryNodeQueryTranslator
             addValue( ValueFactory.newString( IssueCommentConstants.NODE_COLLECTION.getName() ) ).
             build();
 
-        if ( issueCommentQuery.isCount() )
-        {
-            builder.searchMode( SearchMode.COUNT );
-        }
-
         builder.
-            from( issueCommentQuery.getFrom() ).
-            size( issueCommentQuery.getSize() ).
+            from( issueCommentQuery.isCount() ? 0 : issueCommentQuery.getFrom() ).
+            size( issueCommentQuery.isCount() ? 0 : issueCommentQuery.getSize() ).
             addQueryFilter( issueCommentsCollectionFilter );
 
         final PrincipalKey creator = issueCommentQuery.getCreator();

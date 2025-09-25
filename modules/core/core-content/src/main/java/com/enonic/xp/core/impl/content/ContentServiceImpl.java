@@ -83,7 +83,6 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -161,7 +160,7 @@ public class ContentServiceImpl
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.translator = new ContentNodeTranslator( nodeService, new ContentDataSerializer() );
+        this.translator = new ContentNodeTranslator();
     }
 
     @Override
@@ -568,13 +567,18 @@ public class ContentServiceImpl
     @Override
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {
-        return FindContentIdsByParentCommand.create( params )
+        final FindContentIdsByParentCommand command = FindContentIdsByParentCommand.create( params )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .build()
-            .execute();
+            .build();
+
+        return Tracer.trace( "content.findIdsByParent", trace -> {
+            trace.put( "query", params.getParentPath() != null ? params.getParentPath() : params.getParentId() );
+            trace.put( "from", params.getFrom() );
+            trace.put( "size", params.getSize() );
+        }, command::execute, ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }
 
     @Override
@@ -813,7 +817,7 @@ public class ContentServiceImpl
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
-            final Content content = translator.fromNode( sortNodeResult.getNode(), true );
+            final Content content = translator.fromNode( sortNodeResult.getNode() );
 
             final SortContentResult result = SortContentResult.create()
                 .content( content )
@@ -832,7 +836,7 @@ public class ContentServiceImpl
     }
 
     @Override
-    public Boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
+    public boolean hasUnpublishedChildren( final HasUnpublishedChildrenParams params )
     {
         return nodeService.hasUnpublishedChildren( NodeId.from( params.getContentId() ), ContentConstants.BRANCH_MASTER );
     }

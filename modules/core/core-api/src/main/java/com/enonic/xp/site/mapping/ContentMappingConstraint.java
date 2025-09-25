@@ -32,8 +32,6 @@ public final class ContentMappingConstraint
 
     private static final String DISPLAY_NAME_PROPERTY = "displayName";
 
-    private static final String HAS_CHILDREN_PROPERTY = "hasChildren";
-
     private static final String LANGUAGE_PROPERTY = "language";
 
     private static final String VALID_PROPERTY = "valid";
@@ -74,10 +72,6 @@ public final class ContentMappingConstraint
         else if ( DISPLAY_NAME_PROPERTY.equals( this.id ) )
         {
             return valueMatches( val, content.getDisplayName() );
-        }
-        else if ( HAS_CHILDREN_PROPERTY.equals( this.id ) )
-        {
-            return valueMatches( val, content.hasChildren() );
         }
         else if ( LANGUAGE_PROPERTY.equals( this.id ) )
         {

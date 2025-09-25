@@ -29,6 +29,7 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.ContextAccessor;
@@ -75,9 +76,11 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void root_is_published()
-        throws Exception
+    void root_is_published()
     {
+        final ContentId rootId = this.contentService.getByPath( ContentPath.ROOT ).getId();
+        this.contentService.update( new UpdateContentParams().contentId( rootId ).editor( c -> c.data.setString( "foo", "bar" ) ) );
+
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
             .displayName( "This is my content" )
@@ -88,11 +91,11 @@ public class ContentServiceImplTest_publish
 
         final Content content = this.contentService.create( createContentParams );
 
-        Content draftRoot = this.contentService.getByPath( ContentPath.ROOT );
+        Content draftRoot = this.contentService.getById( rootId );
         Content masterRoot = ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_MASTER )
             .build()
-            .callWith( () -> this.contentService.getByPath( ContentPath.ROOT ) );
+            .callWith( () -> this.contentService.getById( rootId ) );
 
         assertNotEquals( draftRoot, masterRoot );
 

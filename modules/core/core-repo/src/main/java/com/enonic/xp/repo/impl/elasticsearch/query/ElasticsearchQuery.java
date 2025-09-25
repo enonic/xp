@@ -15,7 +15,6 @@ import org.elasticsearch.search.suggest.SuggestBuilder;
 
 import com.google.common.collect.ImmutableList;
 
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.node.SearchOptimizer;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
@@ -50,8 +49,6 @@ public class ElasticsearchQuery
 
     private final ReturnFields returnFields;
 
-    private final SearchMode searchMode;
-
     private final SearchOptimizer searchOptimizer;
 
     private final SearchPreference searchPreference;
@@ -70,7 +67,6 @@ public class ElasticsearchQuery
         this.suggestions = ImmutableList.copyOf( builder.suggestions );
         this.highlight = builder.highlight;
         this.returnFields = builder.returnFields;
-        this.searchMode = builder.searchMode;
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
         this.searchPreference = builder.searchPreference;
@@ -136,11 +132,6 @@ public class ElasticsearchQuery
         return sortBuilders;
     }
 
-    public SearchMode getSearchMode()
-    {
-        return searchMode;
-    }
-
     public SearchOptimizer getSearchOptimizer()
     {
         return searchOptimizer;
@@ -201,8 +192,6 @@ public class ElasticsearchQuery
         private ElasticHighlightQuery highlight = ElasticHighlightQuery.empty();
 
         private ReturnFields returnFields = ReturnFields.empty();
-
-        private SearchMode searchMode = SearchMode.SEARCH;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
 
@@ -299,12 +288,6 @@ public class ElasticsearchQuery
         public Builder setReturnFields( final ReturnFields returnFields )
         {
             this.returnFields = returnFields;
-            return this;
-        }
-
-        public Builder searchMode( final SearchMode searchMode )
-        {
-            this.searchMode = searchMode;
             return this;
         }
 

@@ -68,15 +68,6 @@ public class SearchRequestBuilderFactory
         return searchRequestBuilder;
     }
 
-    public SearchRequestBuilder createCountRequest()
-    {
-        return client.prepareSearch( query.getIndexNames() )
-            .setTypes( query.getIndexTypes() )
-            .setQuery( query.getQuery() )
-            .setSize( 0 )
-            .setPreference( Objects.requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
-    }
-
     private SearchRequestBuilder initRequestBuilder()
     {
         final SearchRequestBuilder searchRequestBuilder = client.prepareSearch( query.getIndexNames() );

@@ -31,7 +31,6 @@ var expectedJson = {
     "creator": "user:system:anonymous",
     "createdTime": "1975-01-08T00:00:00Z",
     "type": "base:unstructured",
-    "hasChildren": false,
     "valid": false,
     "data": {
         "caption": "Caption",

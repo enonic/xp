@@ -116,7 +116,7 @@ final class CreateContentCommand
             throw new ContentAccessException( e );
         }
 
-        return translator.fromNode( createdNode, false );
+        return translator.fromNode( createdNode );
     }
 
     private void validateBlockingChecks( final CreateContentParams params )

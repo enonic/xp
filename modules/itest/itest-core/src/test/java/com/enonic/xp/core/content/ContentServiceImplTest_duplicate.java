@@ -6,13 +6,13 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -34,10 +34,8 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
@@ -88,7 +86,8 @@ public class ContentServiceImplTest_duplicate
 
         final Content duplicatedContent = this.contentService.getById( result.getDuplicatedContents().first() );
 
-        assertFalse( duplicatedContent.hasChildren() );
+        assertEquals( 0, this.contentService.findIdsByParent(
+            FindContentByParentParams.create().parentId( duplicatedContent.getId() ).build() ).getHits() );
     }
 
     @Test

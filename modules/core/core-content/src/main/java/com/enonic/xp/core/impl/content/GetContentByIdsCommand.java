@@ -31,7 +31,7 @@ final class GetContentByIdsCommand
 
         final Nodes nodes = nodeService.getByIds( nodeIds );
 
-        return this.translator.fromNodes( nodes, true );
+        return this.translator.fromNodes( nodes );
     }
 
     public static Builder create( final GetContentByIdsParams params )

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.aggregation.AggregationsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
@@ -48,11 +47,7 @@ public class SearchExecutor
     {
         final ElasticsearchQuery query = ESQueryTranslator.translate( searchRequest );
 
-        if (  SearchMode.COUNT == query.getSearchMode() )
-        {
-            return count( query );
-        }
-        else if ( NodeSearchService.GET_ALL_SIZE_FLAG == query.getSize() )
+        if ( NodeSearchService.GET_ALL_SIZE_FLAG == query.getSize() )
         {
             return scroll( query );
         }
@@ -60,17 +55,6 @@ public class SearchExecutor
         {
             return search( query );
         }
-    }
-
-    private SearchResult count( final ElasticsearchQuery query )
-    {
-        final SearchRequestBuilder searchRequestBuilder = SearchRequestBuilderFactory.newFactory()
-            .query( query )
-            .client( this.client )
-            .build()
-            .createCountRequest();
-
-        return doSearchRequest( searchRequestBuilder );
     }
 
     private SearchResult search( final ElasticsearchQuery query )

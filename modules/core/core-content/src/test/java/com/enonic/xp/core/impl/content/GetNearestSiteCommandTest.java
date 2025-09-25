@@ -54,7 +54,7 @@ public class GetNearestSiteCommandTest
         final Site site = Site.create().path( "/mycontent" ).id( contentId ).build();
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node, true ) ).thenReturn( site );
+        Mockito.when( this.translator.fromNode( node ) ).thenReturn( site );
 
         assertEquals( site, createCommand( contentId ).execute() );
     }
@@ -84,7 +84,7 @@ public class GetNearestSiteCommandTest
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node, true ) ).thenReturn( content, parent );
+        Mockito.when( this.translator.fromNode( node ) ).thenReturn( content, parent );
 
         assertEquals( parent, createCommand( contentId ).execute() );
     }
@@ -120,7 +120,7 @@ public class GetNearestSiteCommandTest
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node, true ) ).thenReturn( content, parent, parentOfParent );
+        Mockito.when( this.translator.fromNode( node ) ).thenReturn( content, parent, parentOfParent );
 
         assertEquals( parentOfParent, createCommand( contentId ).execute() );
     }
@@ -143,7 +143,7 @@ public class GetNearestSiteCommandTest
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
         Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node, true ) ).thenReturn( content, parent );
+        Mockito.when( this.translator.fromNode( node ) ).thenReturn( content, parent );
 
         assertNull( createCommand( contentId ).execute() );
     }

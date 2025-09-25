@@ -80,8 +80,6 @@ public interface NodeService
 
     NodeCommitEntry getCommit( NodeCommitId nodeCommitId );
 
-    boolean hasChildren( Node node );
-
     boolean nodeExists( NodeId nodeId );
 
     boolean nodeExists( NodePath nodePath );

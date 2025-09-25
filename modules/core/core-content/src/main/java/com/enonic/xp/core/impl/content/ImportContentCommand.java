@@ -47,7 +47,7 @@ final class ImportContentCommand
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );
 
-        return ImportContentResult.create().content( translator.fromNode( result.getNode(), false ) ).build();
+        return ImportContentResult.create().content( translator.fromNode( result.getNode() ) ).build();
     }
 
     static class Builder

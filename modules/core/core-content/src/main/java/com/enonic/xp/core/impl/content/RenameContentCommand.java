@@ -105,7 +105,7 @@ final class RenameContentCommand
 
         final Node node = nodeService.rename( builder.build() );
 
-        return translator.fromNode( node, true );
+        return translator.fromNode( node );
     }
 
     public static class Builder

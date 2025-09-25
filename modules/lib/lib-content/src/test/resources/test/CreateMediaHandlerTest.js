@@ -10,7 +10,6 @@ var expectedJson = {
     'creator': 'user:system:anonymous',
     'createdTime': '1975-01-08T00:00:00Z',
     'type': 'base:unstructured',
-    'hasChildren': false,
     'valid': false,
     'data': {},
     'x': {},
@@ -54,7 +53,6 @@ var expectedJsonAutoGenerateName = {
     'creator': 'user:system:anonymous',
     'createdTime': '1975-01-08T00:00:00Z',
     'type': 'base:unstructured',
-    'hasChildren': false,
     'valid': false,
     'data': {},
     'x': {},
@@ -90,7 +88,6 @@ var expectedDocumentJson = {
     'createdTime': '1975-01-08T00:00:00Z',
     'type': 'media:document',
     'displayName': 'documentName.pdf',
-    'hasChildren': false,
     'valid': true,
     'data': {
         'media': {

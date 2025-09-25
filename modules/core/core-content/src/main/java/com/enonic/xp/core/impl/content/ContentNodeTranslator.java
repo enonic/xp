@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.function.Function;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,57 +10,35 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 
 public class ContentNodeTranslator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
 
-    private final NodeService nodeService;
-
-    private final ContentDataSerializer contentDataSerializer;
-
-    public ContentNodeTranslator( final NodeService nodeService )
-    {
-        this(nodeService, new ContentDataSerializer());
-    }
-
-    public ContentNodeTranslator( final NodeService nodeService, final ContentDataSerializer contentDataSerializer )
-    {
-        this.nodeService = nodeService;
-        this.contentDataSerializer = contentDataSerializer;
-    }
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     public ContentDataSerializer getContentDataSerializer()
     {
         return contentDataSerializer;
     }
 
-    public Contents fromNodes( final Nodes nodes, final boolean resolveHasChildren )
+    public Contents fromNodes( final Nodes nodes )
     {
-        if ( resolveHasChildren )
-        {
-            return doTranslate( nodes, nodeService::hasChildren );
-        }
-        else
-        {
-            return doTranslate( nodes, n -> false );
-        }
+        return doTranslate( nodes );
     }
 
-    public Content fromNode( final Node node, final boolean resolveHasChildren )
+    public Content fromNode( final Node node )
     {
-        return fromNode( node, resolveHasChildren, false );
+        return doTranslate( node, false );
     }
 
-    public Content fromNode( final Node node, final boolean resolveHasChildren, final boolean allowAltRootPath )
+    public Content fromNodeWithAnyRootPath( final Node node )
     {
-        final boolean hasChildren = resolveHasChildren && this.nodeService.hasChildren( node );
-        return doTranslate( node, hasChildren, allowAltRootPath );
+        return doTranslate( node, true );
     }
 
-    private Contents doTranslate( final Nodes nodes, final Function<Node, Boolean> hasChildrenFn )
+    private Contents doTranslate( final Nodes nodes )
     {
         final Contents.Builder contents = Contents.create();
 
@@ -70,7 +46,7 @@ public class ContentNodeTranslator
         {
             try
             {
-                contents.add( doTranslate( node, hasChildrenFn.apply( node ) ) );
+                contents.add( doTranslate( node, false ) );
             }
             catch ( final ContentNotFoundException e )
             {
@@ -86,12 +62,7 @@ public class ContentNodeTranslator
     }
 
 
-    private Content doTranslate( final Node node, final boolean hasChildren )
-    {
-        return doTranslate( node, hasChildren, false );
-    }
-
-    private Content doTranslate( final Node node, final boolean hasChildren, final boolean allowAltRootPath )
+    private Content doTranslate( final Node node, final boolean allowAltRootPath )
     {
         final ContentId contentId = ContentId.from( node.id() );
 
@@ -120,7 +91,6 @@ public class ContentNodeTranslator
         builder.id( contentId )
             .childOrder( node.getChildOrder() )
             .permissions( node.getPermissions() )
-            .hasChildren( hasChildren )
             .manualOrderValue( node.getManualOrderValue() );
 
         return builder.build();

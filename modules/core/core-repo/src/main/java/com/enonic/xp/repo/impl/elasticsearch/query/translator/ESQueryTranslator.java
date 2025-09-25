@@ -94,7 +94,6 @@ public class ESQueryTranslator
             .sortBuilders( sortBuilders )
             .filter( filterBuilder )
             .batchSize( queryTypeTranslator.getBatchSize() )
-            .searchMode( query.getSearchMode() )
             .searchOptimizer( queryTypeTranslator.getSearchOptimizer() )
             .searchPreference( request.getSearchPreference() )
             .build();

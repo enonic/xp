@@ -87,7 +87,7 @@ public class PatchContentCommand
 
         result.getResults()
             .forEach( branchResult -> builder.addResult( branchResult.branch(), branchResult.node() != null
-                ? translator.fromNode( branchResult.node(), true )
+                ? translator.fromNode( branchResult.node() )
                 : null ) );
 
         return builder.build();

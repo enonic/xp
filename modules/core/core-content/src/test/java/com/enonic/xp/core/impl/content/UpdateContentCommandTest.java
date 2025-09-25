@@ -120,7 +120,7 @@ public class UpdateContentCommandTest
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( mock( ContentType.class ) );
 
         command.execute();
@@ -142,7 +142,7 @@ public class UpdateContentCommandTest
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         ContentType contentType = mock( ContentType.class );
@@ -178,7 +178,7 @@ public class UpdateContentCommandTest
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         final ContentType contentType = ContentType.create()
@@ -241,7 +241,7 @@ public class UpdateContentCommandTest
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         ContentType contentType = mock( ContentType.class );
@@ -274,7 +274,7 @@ public class UpdateContentCommandTest
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
+        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         final ContentType contentType = ContentType.create()

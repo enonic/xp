@@ -11,7 +11,6 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -88,9 +87,8 @@ public class FindNodeIdsByParentCommand
 
         final NodeQuery.Builder builder = NodeQuery.create()
             .addQueryFilters( queryFilters )
-            .from( from )
-            .size( size )
-            .searchMode( countOnly ? SearchMode.COUNT : SearchMode.SEARCH )
+            .from( countOnly ? 0 : from )
+            .size( countOnly ? 0 : size )
             .setOrderExpressions( order.getOrderExpressions() );
 
         if ( !recursive )
@@ -165,9 +163,9 @@ public class FindNodeIdsByParentCommand
 
         private ChildOrder childOrder;
 
-        private boolean countOnly = false;
+        private boolean countOnly;
 
-        private boolean recursive = false;
+        private boolean recursive;
 
         public Builder()
         {
