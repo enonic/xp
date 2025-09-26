@@ -3,19 +3,17 @@ package com.enonic.xp.inputtype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.convert.ConvertException;
 import com.enonic.xp.data.Property;
 
 abstract class TextInputTypeBase
     extends InputTypeBase
 {
-    private static final Logger LOG = LoggerFactory.getLogger( LongType.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TextInputTypeBase.class );
 
     TextInputTypeBase( final InputTypeName name )
     {
         super( name );
     }
-
 
     @Override
     public void validate( final Property property, final InputTypeConfig config )
@@ -25,20 +23,19 @@ abstract class TextInputTypeBase
 
     private void validateMaxLength( final Property property, final InputTypeConfig config )
     {
-        try
-        {
-            final Integer maxLength = config.getValue( "maxLength", Integer.class );
-            final String value = property.getString();
+        final Integer maxLength = config.getProperty( "maxLength" )
+            .map( InputTypeProperty::getValue )
+            .filter( IntegerPropertyValue.class::isInstance )
+            .map( IntegerPropertyValue.class::cast )
+            .map( IntegerPropertyValue::value )
+            .orElse( null );
 
-            if ( maxLength != null && value != null )
-            {
-                validateValue( property, value.length() <= maxLength,
-                               String.format( "Limit of %d character%s exceeded", maxLength, maxLength == 1 ? "" : 's' ) );
-            }
-        }
-        catch ( ConvertException e )
+        final String propertyValue = property.getString();
+
+        if ( maxLength != null && propertyValue != null )
         {
-            LOG.warn( "Cannot convert 'max-length' config", e );
+            validateValue( property, propertyValue.length() <= maxLength,
+                           String.format( "Limit of %d character%s exceeded", maxLength, maxLength == 1 ? "" : "s" ) );
         }
     }
 }

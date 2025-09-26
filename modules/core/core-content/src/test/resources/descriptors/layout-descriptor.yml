@@ -20,9 +20,15 @@ regions:
   - "middle"
   - "right"
 config:
+  myString: "String value"
+  myInt: 42
+  myList:
   - name: "p1"
     value: "p1v1"
     attr1: "attr1"
+    p1:
+      p11: "p11v"
+      p12: "p12v"
   - name: "p1"
     value: "p1v2"
   - name: "p2"

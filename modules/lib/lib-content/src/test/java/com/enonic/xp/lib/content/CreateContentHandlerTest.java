@@ -17,6 +17,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -55,8 +56,10 @@ public class CreateContentHandlerTest
                               .label( "instant" )
                               .name( "instant" )
                               .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeConfig(
-                                  InputTypeConfig.create().property( InputTypeProperty.create( "timezone", "true" ).build() ).build() )
+                              .inputTypeConfig( InputTypeConfig.create()
+                                                    .property(
+                                                        InputTypeProperty.create( "timezone", new BooleanPropertyValue( true ) ).build() )
+                                                    .build() )
                               .build() )
             .build();
 
@@ -146,7 +149,7 @@ public class CreateContentHandlerTest
 
         final ContentType contentType = ContentType.create().name( "test:myContentType" ).superType( ContentTypeName.structured() ).build();
 
-        when( this.contentTypeService.getByName(any() ) ).thenReturn( contentType );
+        when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
         runFunction( "/test/CreateContentHandlerTest.js", "createContentAutoGenerateName" );
     }

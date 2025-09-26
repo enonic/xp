@@ -80,11 +80,7 @@ var expected = {
                 'minimum': 1
             },
             'config': {
-                'regexp': [
-                    {
-                        'value': '^[^@]+@[^@]+\\.[^@]+$'
-                    }
-                ]
+                'regexp': '^[^@]+@[^@]+\\.[^@]+$'
             }
         },
         {
@@ -98,9 +94,7 @@ var expected = {
             },
             'config': {
                 'allowContentType': [
-                    {
-                        'value': 'com.enonic.myapp:country'
-                    }
+                    'com.enonic.myapp:country'
                 ]
             }
         }

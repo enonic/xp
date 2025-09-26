@@ -3,9 +3,11 @@ package com.enonic.xp.core.impl.schema.mapper;
 import java.util.List;
 
 import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 
 public class ContentSelectorYml
     extends InputYml
@@ -32,20 +34,21 @@ public class ContentSelectorYml
 
         if ( hideToggleIcon != null )
         {
-            configBuilder.property( InputTypeProperty.create( "hideToggleIcon", hideToggleIcon.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "hideToggleIcon", new BooleanPropertyValue( hideToggleIcon ) ).build() );
         }
         if ( treeMode != null )
         {
-            configBuilder.property( InputTypeProperty.create( "treeMode", treeMode.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "treeMode", new BooleanPropertyValue( treeMode ) ).build() );
         }
         if ( allowContentType != null )
         {
-            allowContentType.forEach(
-                allowType -> configBuilder.property( InputTypeProperty.create( "allowContentType", allowType ).build() ) );
+            allowContentType.forEach( allowType -> configBuilder.property(
+                InputTypeProperty.create( "allowContentType", new StringPropertyValue( allowType ) ).build() ) );
         }
         if ( allowPath != null )
         {
-            allowPath.forEach( allowPath -> configBuilder.property( InputTypeProperty.create( "allowPath", allowPath ).build() ) );
+            allowPath.forEach( allowPath -> configBuilder.property(
+                InputTypeProperty.create( "allowPath", new StringPropertyValue( allowPath ) ).build() ) );
         }
 
         builder.inputTypeConfig( configBuilder.build() );

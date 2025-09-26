@@ -8,3 +8,13 @@ options:
   - value: "privacy"
     text: "Privacy"
 default: "cookie"
+#options:
+#  - value: "cookie"
+#    label:
+#      text: "Cookie"
+#      i18n: "i18n.rbg.cookie"
+#  - value: "privacy"
+#    label: "Privacy"
+#default: "cookie"
+#config:
+#  theme: "Dark"

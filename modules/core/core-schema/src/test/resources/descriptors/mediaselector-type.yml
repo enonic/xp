@@ -11,3 +11,11 @@ allowPath:
   - "${site}/*"
 treeMode: true
 hideToggleIcon: true
+#config:
+#  allowContentType:
+#    - "media:image"
+#    - "media:video"
+#  allowPath:
+#    - "${site}/*"
+#  treeMode: true
+#  hideToggleIcon: true

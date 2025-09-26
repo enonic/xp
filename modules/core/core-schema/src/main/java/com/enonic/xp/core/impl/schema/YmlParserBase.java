@@ -23,6 +23,7 @@ import com.enonic.xp.core.impl.schema.mapper.MixinNameMapper;
 import com.enonic.xp.core.impl.schema.mapper.OccurrencesMapper;
 import com.enonic.xp.core.impl.schema.mapper.PrincipalKeyMapper;
 import com.enonic.xp.core.impl.schema.mapper.PrincipalKeysDeserializer;
+import com.enonic.xp.core.impl.schema.mapper.PropertyValueDeserializer;
 import com.enonic.xp.core.impl.schema.mapper.ResourceKeyDeserializer;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -34,6 +35,7 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
@@ -52,6 +54,7 @@ public final class YmlParserBase
         module.addDeserializer( DescriptorKeys.class, new DescriptorKeysDeserializer() );
         module.addDeserializer( DescriptorKey.class, new DescriptorKeyDeserializer() );
         module.addDeserializer( ResourceKey.class, new ResourceKeyDeserializer() );
+        module.addDeserializer( PropertyValue.class, new PropertyValueDeserializer() );
 
         mapper.registerModule( module );
 

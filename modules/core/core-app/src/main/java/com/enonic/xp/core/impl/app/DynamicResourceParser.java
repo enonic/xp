@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -24,7 +25,6 @@ import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
-import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 import com.enonic.xp.xml.parser.XmlSiteParser;
 import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
 import com.enonic.xp.xml.parser.XmlXDataParser;
@@ -100,21 +100,8 @@ final class DynamicResourceParser
 
     private PartDescriptor parsePartDescriptor( final DescriptorKey key, final String resource )
     {
-        final PartDescriptor.Builder builder = PartDescriptor.create();
+        final PartDescriptor.Builder builder = YmlPartDescriptorParser.parse( resource, key.getApplicationKey() );
         builder.key( key );
-        try
-        {
-            final XmlPartDescriptorParser parser = new XmlPartDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic part descriptor [" + key + "]" );
-        }
-
         return builder.build();
     }
 

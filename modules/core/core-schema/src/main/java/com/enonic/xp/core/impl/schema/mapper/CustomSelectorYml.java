@@ -10,6 +10,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 
 public class CustomSelectorYml
     extends InputYml
@@ -35,17 +36,16 @@ public class CustomSelectorYml
 
         if ( service != null )
         {
-            configBuilder.property(
-                InputTypeProperty.create( "service", new ApplicationRelativeResolver( currentApplication ).toServiceUrl( service ) )
-                    .build() );
+            configBuilder.property( InputTypeProperty.create( "service", new StringPropertyValue(
+                new ApplicationRelativeResolver( currentApplication ).toServiceUrl( service ) ) ).build() );
         }
 
-        if ( params != null )
-        {
-            params.forEach( ( key, value ) -> {
-                configBuilder.property( InputTypeProperty.create( "param", value ).attribute( "value", key ).build() );
-            } );
-        }
+//        if ( params != null )
+//        {
+//            params.forEach( ( key, value ) -> {
+//                configBuilder.property( InputTypeProperty.create( "param", value ).attribute( "value", key ).build() );
+//            } );
+//        }
 
         builder.inputTypeConfig( configBuilder.build() );
     }

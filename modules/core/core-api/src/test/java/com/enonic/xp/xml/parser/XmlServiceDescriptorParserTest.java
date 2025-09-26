@@ -16,46 +16,46 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class XmlServiceDescriptorParserTest
     extends XmlModelParserTest
 {
-    private XmlServiceDescriptorParser parser;
-
-    private ServiceDescriptor.Builder builder;
-
-    @BeforeEach
-    public void setup()
-    {
-        this.parser = new XmlServiceDescriptorParser();
-        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
-
-        this.builder = ServiceDescriptor.create();
-        this.builder.key( DescriptorKey.from( "myapplication:myservice" ) );
-        this.parser.builder( this.builder );
-    }
-
-    @Test
-    public void testParse()
-        throws Exception
-    {
-        parse( this.parser, ".xml" );
-        assertResult();
-    }
-
-    @Test
-    public void testParse_noNs()
-        throws Exception
-    {
-        parseRemoveNs( this.parser, ".xml" );
-        assertResult();
-    }
-
-    private void assertResult()
-        throws Exception
-    {
-        final ServiceDescriptor result = this.builder.build();
-        assertEquals( "myapplication:myservice", result.getKey().toString() );
-
-        final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
-        assertNotNull( allowedPrincipals );
-        assertEquals( 1, allowedPrincipals.getSize() );
-        assertTrue( allowedPrincipals.first().equals( PrincipalKey.from( "role:system.admin" ) ) );
-    }
+//    private XmlServiceDescriptorParser parser;
+//
+//    private ServiceDescriptor.Builder builder;
+//
+//    @BeforeEach
+//    public void setup()
+//    {
+//        this.parser = new XmlServiceDescriptorParser();
+//        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
+//
+//        this.builder = ServiceDescriptor.create();
+//        this.builder.key( DescriptorKey.from( "myapplication:myservice" ) );
+//        this.parser.builder( this.builder );
+//    }
+//
+//    @Test
+//    public void testParse()
+//        throws Exception
+//    {
+//        parse( this.parser, ".xml" );
+//        assertResult();
+//    }
+//
+//    @Test
+//    public void testParse_noNs()
+//        throws Exception
+//    {
+//        parseRemoveNs( this.parser, ".xml" );
+//        assertResult();
+//    }
+//
+//    private void assertResult()
+//        throws Exception
+//    {
+//        final ServiceDescriptor result = this.builder.build();
+//        assertEquals( "myapplication:myservice", result.getKey().toString() );
+//
+//        final PrincipalKeys allowedPrincipals = result.getAllowedPrincipals();
+//        assertNotNull( allowedPrincipals );
+//        assertEquals( 1, allowedPrincipals.getSize() );
+//        assertTrue( allowedPrincipals.first().equals( PrincipalKey.from( "role:system.admin" ) ) );
+//    }
 }

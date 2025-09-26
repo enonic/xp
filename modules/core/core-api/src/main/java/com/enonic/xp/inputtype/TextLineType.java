@@ -22,7 +22,12 @@ final class TextLineType
 
     private String regexp( final InputTypeConfig config )
     {
-        return config.getValue( "regexp", String.class, "" );
+        return config.getProperty( "regexp" )
+            .map( InputTypeProperty::getValue )
+            .filter( StringPropertyValue.class::isInstance )
+            .map( StringPropertyValue.class::cast )
+            .map( StringPropertyValue::value )
+            .orElse( "" );
     }
 
     @Override

@@ -40,11 +40,7 @@ var expected = [
                     'minimum': 1
                 },
                 'config': {
-                    'regexp': [
-                        {
-                            'value': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
-                        }
-                    ]
+                    'regexp': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
                 }
             },
             {
@@ -74,14 +70,23 @@ var expected = [
                 'config': {
                     'option': [
                         {
-                            'value': 'Option One',
-                            '@value': 'one'
+                            'value': 'one',
+                            'label': {
+                                'text': 'Value One'
+                            }
                         },
                         {
-                            'value': 'Option Two',
-                            '@value': 'two'
+                            'value': 'two',
+                            'label': {
+                                'text': 'Value Two'
+                            }
                         }
-                    ]
+                    ],
+                    'theme': [
+                        'dark',
+                        'light'
+                    ],
+                    'disabled': false
                 }
             },
             {

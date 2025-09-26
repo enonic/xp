@@ -1,5 +1,7 @@
 package com.enonic.xp.inputtype;
 
+import java.util.Objects;
+
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -41,7 +43,19 @@ final class ComboBoxType
         validateType( property, ValueTypes.STRING );
 
         final String valueAsString = property.getString();
-        final boolean flag = ( valueAsString != null ) && config.hasAttributeValue( "option", "value", valueAsString );
+        final boolean flag = ( valueAsString != null ) && config.getProperties( "option" )
+            .stream()
+            .map( InputTypeProperty::getValue )
+            .filter( ObjectPropertyValue.class::isInstance )
+            .map( ObjectPropertyValue.class::cast )
+            .map( ObjectPropertyValue::value )
+            .map( m -> m.get( "value" ) )
+            .filter( Objects::nonNull )
+            .filter( StringPropertyValue.class::isInstance )
+            .map( StringPropertyValue.class::cast )
+            .map( StringPropertyValue::value )
+            .anyMatch( valueAsString::equals );
+
         validateValue( property, flag, "Value is not a valid option" );
     }
 }

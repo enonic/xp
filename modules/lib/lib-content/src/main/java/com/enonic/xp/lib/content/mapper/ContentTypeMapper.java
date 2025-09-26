@@ -1,6 +1,11 @@
 package com.enonic.xp.lib.content.mapper;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
@@ -13,9 +18,17 @@ import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.BooleanPropertyValue;
+import com.enonic.xp.inputtype.DoublePropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.inputtype.IntegerPropertyValue;
+import com.enonic.xp.inputtype.ListPropertyValue;
+import com.enonic.xp.inputtype.LongPropertyValue;
+import com.enonic.xp.inputtype.ObjectPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -167,25 +180,102 @@ public final class ContentTypeMapper
         gen.map( "config" );
         for ( String name : config.getNames() )
         {
-            gen.array( name );
-            for ( final InputTypeProperty property : config.getProperties( name ) )
+            final Set<InputTypeProperty> properties = config.getProperties( name );
+            if ( properties.size() > 1 )
             {
-                serializeConfigProperty( gen, property );
+                gen.array( name );
+                for ( final InputTypeProperty property : properties )
+                {
+                    serializeConfigProperty( gen, property, true );
+                }
+                gen.end();
             }
-            gen.end();
+            else
+            {
+                serializeConfigProperty( gen, properties.iterator().next(), false );
+            }
         }
         gen.end();
     }
 
-    private void serializeConfigProperty( final MapGenerator gen, final InputTypeProperty property )
+    private void serializeConfigProperty( final MapGenerator gen, final InputTypeProperty property, final boolean withoutName )
     {
-        gen.map();
-        gen.value( "value", property.getValue() );
-        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
+        final PropertyValue propertyValue = property.getValue();
+
+        switch ( propertyValue )
         {
-            gen.value( "@" + attribute.getKey(), attribute.getValue() );
+            case StringPropertyValue(String value) -> writeValue( gen, property.getName(), value, withoutName );
+            case BooleanPropertyValue(boolean value) -> writeValue( gen, property.getName(), value, withoutName );
+            case DoublePropertyValue(double value) -> writeValue( gen, property.getName(), value, withoutName );
+            case LongPropertyValue(long value) -> writeValue( gen, property.getName(), value, withoutName );
+            case IntegerPropertyValue(int value) -> writeValue( gen, property.getName(), value, withoutName );
+            case ListPropertyValue(List<PropertyValue> value) ->
+                writeArray( gen, property.getName(), withoutName, g -> value.forEach( pv -> g.value( unwrapScalarOrComposite( pv ) ) ) );
+            case ObjectPropertyValue objectPropertyValue -> writeMap( gen, property.getName(), withoutName,
+                                                                      g -> objectPropertyValue.getProperties()
+                                                                          .forEach( entry -> g.value( entry.getKey(),
+                                                                                                      unwrapScalarOrComposite(
+                                                                                                          entry.getValue() ) ) ) );
+            default -> throw new IllegalArgumentException( "Unrecognized property type: " + property.getValue() );
         }
+    }
+
+    private void writeValue( final MapGenerator gen, final String name, final Object value, final boolean withoutName )
+    {
+        if ( withoutName )
+        {
+            gen.value( value );
+        }
+        else
+        {
+            gen.value( name, value );
+        }
+    }
+
+    private void writeMap( final MapGenerator gen, final String name, final boolean withoutName, final Consumer<MapGenerator> mapContent )
+    {
+        if ( withoutName )
+        {
+            gen.map();
+        }
+        else
+        {
+            gen.map( name );
+        }
+        mapContent.accept( gen );
         gen.end();
+    }
+
+    private void writeArray( final MapGenerator gen, final String name, final boolean withoutName,
+                             final Consumer<MapGenerator> arrayContent )
+    {
+        if ( withoutName )
+        {
+            gen.array();
+        }
+        else
+        {
+            gen.array( name );
+        }
+        arrayContent.accept( gen );
+        gen.end();
+    }
+
+    private Object unwrapScalarOrComposite( final PropertyValue propertyValue )
+    {
+        return switch ( propertyValue )
+        {
+            case StringPropertyValue spv -> spv.value();
+            case BooleanPropertyValue bpv -> bpv.value();
+            case IntegerPropertyValue ipv -> ipv.value();
+            case DoublePropertyValue dpv -> dpv.value();
+            case LongPropertyValue lpv -> lpv.value();
+            case ListPropertyValue lpv -> lpv.value().stream().map( this::unwrapScalarOrComposite ).toList();
+            case ObjectPropertyValue opv -> opv.getProperties()
+                .stream()
+                .collect( Collectors.toMap( Map.Entry::getKey, e -> unwrapScalarOrComposite( e.getValue() ), ( a, b ) -> a,
+                                            LinkedHashMap::new ) );
+        };
     }
 
     private void serializeDefaultValue( final MapGenerator gen, final Input input )
@@ -194,8 +284,7 @@ public final class ContentTypeMapper
         {
             try
             {
-                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
-                    createDefaultValue( input );
+                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
                 if ( defaultValue != null )
                 {
                     gen.map( "default" );

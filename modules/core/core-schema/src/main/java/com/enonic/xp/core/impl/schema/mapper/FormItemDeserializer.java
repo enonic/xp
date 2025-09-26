@@ -33,7 +33,7 @@ public class FormItemDeserializer
             case "ItemSet" -> mapper.treeToValue( node, FormItemSet.class );
             case "OptionSet" -> mapper.treeToValue( node, FormOptionSet.class );
             case "OptionSetOption" -> mapper.treeToValue( node, FormOptionSetOption.class );
-            case "InlineMixin" -> mapper.treeToValue( node, InlineMixin.class );
+            case "FormFragment" -> mapper.treeToValue( node, InlineMixin.class );
             default ->
             {
                 final InputYml inputYml = mapper.treeToValue( node, InputRegistry.getInputType( type ) );

@@ -8,3 +8,8 @@ allowPath:
   - "${site}/*"
 treeMode: true
 hideToggleIcon: true
+#config:
+#  allowPath:
+#    - "${site}/*"
+#  treeMode: true
+#  hideToggleIcon: true

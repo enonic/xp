@@ -36,8 +36,8 @@ form:
         label:
           text: "Description"
 
-  - type: "InlineMixin"
-    mixin: "myapp:mymixin"
+  - type: "FormFragment"
+    name: "myapp:mymixin"
 
   - type: "ItemSet"
     name: "Panel"

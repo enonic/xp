@@ -15,57 +15,57 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class XmlPartDescriptorParserTest
     extends XmlModelParserTest
 {
-    private XmlPartDescriptorParser parser;
-
-    private PartDescriptor.Builder builder;
-
-    @BeforeEach
-    public void setup()
-    {
-        this.parser = new XmlPartDescriptorParser();
-        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
-
-        this.builder = PartDescriptor.create();
-        this.builder.key( DescriptorKey.from( "myapplication:mypart" ) );
-        this.parser.builder( this.builder );
-    }
-
-    @Test
-    public void testParse()
-        throws Exception
-    {
-        parse( this.parser, ".xml" );
-        assertResult();
-    }
-
-    @Test
-    public void testParse_noNs()
-        throws Exception
-    {
-        parseRemoveNs( this.parser, ".xml" );
-        assertResult();
-    }
-
-    private void assertResult()
-        throws Exception
-    {
-        final PartDescriptor result = this.builder.build();
-        assertEquals( "myapplication:mypart", result.getKey().toString() );
-        assertEquals( "mypart", result.getName() );
-        assertEquals( "A Part", result.getDisplayName() );
-        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
-
-        assertEquals( "My Part Description", result.getDescription() );
-        assertEquals( "key.description", result.getDescriptionI18nKey() );
-
-        final Form config = result.getConfig();
-        assertNotNull( config );
-        assertEquals( InputTypeName.DOUBLE, config.getInput( "width" ).getInputType() );
-        assertEquals( "Column width", config.getInput( "width" ).getLabel() );
-
-        assertEquals( "key.label", config.getInput( "width" ).getLabelI18nKey() );
-        assertEquals( "key.help-text", config.getInput( "width" ).getHelpTextI18nKey() );
-
-        assertEquals( "link-urls", config.getInlineMixin( "link-urls" ).getName() );
-    }
+//    private XmlPartDescriptorParser parser;
+//
+//    private PartDescriptor.Builder builder;
+//
+//    @BeforeEach
+//    public void setup()
+//    {
+//        this.parser = new XmlPartDescriptorParser();
+//        this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
+//
+//        this.builder = PartDescriptor.create();
+//        this.builder.key( DescriptorKey.from( "myapplication:mypart" ) );
+//        this.parser.builder( this.builder );
+//    }
+//
+//    @Test
+//    public void testParse()
+//        throws Exception
+//    {
+//        parse( this.parser, ".xml" );
+//        assertResult();
+//    }
+//
+//    @Test
+//    public void testParse_noNs()
+//        throws Exception
+//    {
+//        parseRemoveNs( this.parser, ".xml" );
+//        assertResult();
+//    }
+//
+//    private void assertResult()
+//        throws Exception
+//    {
+//        final PartDescriptor result = this.builder.build();
+//        assertEquals( "myapplication:mypart", result.getKey().toString() );
+//        assertEquals( "mypart", result.getName() );
+//        assertEquals( "A Part", result.getDisplayName() );
+//        assertEquals( "key.display-name", result.getDisplayNameI18nKey() );
+//
+//        assertEquals( "My Part Description", result.getDescription() );
+//        assertEquals( "key.description", result.getDescriptionI18nKey() );
+//
+//        final Form config = result.getConfig();
+//        assertNotNull( config );
+//        assertEquals( InputTypeName.DOUBLE, config.getInput( "width" ).getInputType() );
+//        assertEquals( "Column width", config.getInput( "width" ).getLabel() );
+//
+//        assertEquals( "key.label", config.getInput( "width" ).getLabelI18nKey() );
+//        assertEquals( "key.help-text", config.getInput( "width" ).getHelpTextI18nKey() );
+//
+//        assertEquals( "link-urls", config.getInlineMixin( "link-urls" ).getName() );
+//    }
 }

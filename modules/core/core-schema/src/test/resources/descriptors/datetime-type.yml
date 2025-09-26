@@ -2,5 +2,6 @@ type: "DateTime"
 name: "mydatetime"
 label: "My DateTime"
 default: "2025-08-29T07:44:27Z"
-timezone: true
+timezone: true # TODO WTF? That should be InstantInputType
+config: {}
 
