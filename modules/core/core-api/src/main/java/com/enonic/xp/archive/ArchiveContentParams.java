@@ -19,7 +19,7 @@ public final class ArchiveContentParams
     private ArchiveContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
-        this.archiveContentListener = builder.archiveContentListener;
+        this.archiveContentListener = Objects.requireNonNullElse( builder.archiveContentListener, NoopArchiveContentListener.INSTANCE );
         this.stopInherit = builder.stopInherit;
         this.message = builder.message;
     }
@@ -96,6 +96,22 @@ public final class ArchiveContentParams
         {
             validate();
             return new ArchiveContentParams( this );
+        }
+
+    }
+
+    private enum NoopArchiveContentListener
+        implements ArchiveContentListener {
+        INSTANCE;
+
+        @Override
+        public void setTotal( final int count )
+        {
+        }
+
+        @Override
+        public void contentArchived( final int count )
+        {
         }
     }
 }

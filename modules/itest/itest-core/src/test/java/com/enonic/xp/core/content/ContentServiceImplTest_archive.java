@@ -142,8 +142,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_dont_stop_inherited()
-        throws Exception
+    void archive_dont_stop_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -158,7 +157,7 @@ public class ContentServiceImplTest_archive
 
         archiveContext().runWith( () -> {
             final Content archived = this.contentService.getById( content.getId() );
-            assertEquals( 4, archived.getInherit().size() );
+            assertThat( archived.getInherit() ).containsExactly( ContentInheritType.values() );
         } );
     }
 
@@ -257,8 +256,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_check_properties()
-        throws Exception
+    void archive_check_properties()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child = createContent( parent.getPath(), "content" );

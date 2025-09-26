@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.MoveNodeParams;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -36,12 +37,16 @@ public class MoveNodeHandlerTest
         Mockito.when( this.nodeService.rename( Mockito.any() ) ).thenAnswer( invocation -> {
             final RenameNodeParams renameNodeParams = invocation.getArgument( 0 );
             name = renameNodeParams.getNewNodeName().toString();
-            return createNode();
+            return MoveNodeResult.create()
+                .addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
+                .build();
         } );
         Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
             final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
             parentPath = moveNodeParams.getParentNodePath();
-            return createNode();
+            return MoveNodeResult.create()
+                .addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
+                .build();
         } );
     }
 

@@ -16,13 +16,13 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -30,7 +30,7 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeEventListenerTest
+class NodeEventListenerTest
 {
     private NodeEventListener nodeEventListener;
 
@@ -133,12 +133,10 @@ public class NodeEventListenerTest
 
         final Node movedNode = Node.create( sourceNode ).parentPath( new NodePath( "/newParent" ) ).build();
 
-        final Event localEvent = NodeEvents.moved( MoveNodeResult.create()
-                                                       .addMovedNode( MoveNodeResult.MovedNode.create()
+        final Event localEvent = NodeEvents.moved( List.of( MoveNodeResult.MovedNode.create()
                                                                           .node( movedNode )
                                                                           .previousPath( sourceNode.path() )
-                                                                          .build() )
-                                                       .build(), createInternalContext() );
+                                                                          .build() ), createInternalContext() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
@@ -196,18 +194,10 @@ public class NodeEventListenerTest
         final NodePath nodePath = new NodePath( "/nodeName" );
         final NodePath previousNodePath = new NodePath( "/previousName" );
 
-        final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.create()
-            .nodeId( nodeId )
-            .nodeVersionId( new NodeVersionId() )
-            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
-            .timestamp( Instant.EPOCH )
-            .nodePath( nodePath )
-            .build();
-        final PushNodeEntry pushNodeEntry =
-            PushNodeEntry.create().nodeBranchEntry( nodeBranchEntry ).currentTargetPath( previousNodePath ).build();
-
         final InternalContext internalContext = createInternalContext();
-        final Event localEvent = NodeEvents.pushed( List.of( pushNodeEntry ), internalContext );
+        final Event localEvent =
+            NodeEvents.pushed( List.of( PushNodeResult.success( nodeId, new NodeVersionId(), nodePath, previousNodePath ) ),
+                               internalContext );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 

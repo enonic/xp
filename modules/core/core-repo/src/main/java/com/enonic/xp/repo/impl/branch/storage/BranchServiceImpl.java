@@ -18,12 +18,12 @@ import com.google.common.cache.CacheBuilder;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
@@ -66,7 +66,7 @@ public class BranchServiceImpl
     }
 
     @Override
-    public void store( final NodeBranchEntry nodeBranchEntry, final NodePath movedFrom, final InternalContext context )
+    public void store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         final RepositoryId repositoryId = context.getRepositoryId();
         final Branch branch = context.getBranch();
@@ -92,10 +92,6 @@ public class BranchServiceImpl
         if ( exists.get() )
         {
             throw new NodeAlreadyExistAtPathException( cacheKey.getPath(), cacheKey.getRepositoryId(), cacheKey.getBranch() );
-        }
-        if ( movedFrom != null && !nodePath.equals( movedFrom ) )
-        {
-            cache.invalidate( new BranchPath( repositoryId, branch, movedFrom ) );
         }
     }
 

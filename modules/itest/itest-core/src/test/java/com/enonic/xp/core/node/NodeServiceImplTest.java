@@ -35,7 +35,7 @@ import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeHits;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
@@ -75,7 +75,6 @@ import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -88,7 +87,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class NodeServiceImplTest
+class NodeServiceImplTest
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -161,15 +160,12 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void move_to_the_same_parent()
-        throws Exception
+    void move_to_the_same_parent()
+
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        final Node movedNode =
-            nodeService.move( MoveNodeParams.create().nodeId( createdNode.id() ).parentNodePath( createdNode.parentPath() ).build() );
-
-        assertEquals( createdNode, movedNode );
+        assertThrows( NodeAlreadyExistAtPathException.class, () -> nodeService.move( MoveNodeParams.create().nodeId( createdNode.id() ).parentNodePath( createdNode.parentPath() ).build() ) );
     }
 
     @Test
@@ -460,9 +456,9 @@ public class NodeServiceImplTest
         final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
 
         final DeleteNodeResult result = nodeService.delete( DeleteNodeParams.create().nodePath( parent.path() ).build() );
-        assertThat( result.getNodeBranchEntries() ).map( NodeBranchEntry::getNodeId, NodeBranchEntry::getNodePath )
-            .containsExactlyInAnyOrder( tuple( child3.id(), child3.path() ), tuple( child2.id(), child2.path() ),
-                                        tuple( child1.id(), child1.path() ), tuple( parent.id(), parent.path() ) );
+        assertThat( result.getNodeIds() )
+            .containsExactlyInAnyOrder( child3.id(), child2.id(),
+                                        child1.id(), parent.id() );
     }
 
     @Test
@@ -478,9 +474,7 @@ public class NodeServiceImplTest
         final Node child3 = createNode( CreateNodeParams.create().name( "my-child-3" ).parent( parent.path() ).build() );
 
         final DeleteNodeResult result = nodeService.delete( DeleteNodeParams.create().nodeId( parent.id() ).build() );
-        assertThat( result.getNodeBranchEntries() ).map( NodeBranchEntry::getNodeId, NodeBranchEntry::getNodePath )
-            .containsExactlyInAnyOrder( tuple( child3.id(), child3.path() ), tuple( child2.id(), child2.path() ),
-                                        tuple( child1.id(), child1.path() ), tuple( parent.id(), parent.path() ) );
+        assertThat( result.getNodeIds() ).containsExactlyInAnyOrder( child3.id(), child2.id(), child1.id(), parent.id() );
     }
 
     @Test

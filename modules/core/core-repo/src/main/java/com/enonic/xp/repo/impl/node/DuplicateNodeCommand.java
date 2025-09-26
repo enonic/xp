@@ -163,16 +163,17 @@ public final class DuplicateNodeCommand
     {
         refresh( RefreshMode.SEARCH );
 
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
                                                                                     .size( NodeSearchService.GET_ALL_SIZE_FLAG )
                                                                                     .parent( originalParent.path() )
                                                                                     .setOrderExpressions( originalParent.getChildOrder()
                                                                                                               .getOrderExpressions() )
                                                                                     .build(),
-                                                                                SingleRepoSearchSource.from( ContextAccessor.current() ) )
+                                                                                SingleRepoSearchSource.from( internalContext ) )
                                                       .getIds() );
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( ContextAccessor.current() ) );
+        final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
         for ( final Node node : children )
         {
@@ -218,11 +219,12 @@ public final class DuplicateNodeCommand
 
     private void updateChildReferences( final Node duplicatedParent, final NodeReferenceUpdatesHolder nodeReferenceUpdatesHolder )
     {
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query(
             NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( duplicatedParent.path() ).build(),
-            SingleRepoSearchSource.from( ContextAccessor.current() ) ).getIds() );
+            SingleRepoSearchSource.from( internalContext ) ).getIds() );
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from( ContextAccessor.current() ) );
+        final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
         for ( final Node node : children )
         {

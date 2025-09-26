@@ -19,8 +19,6 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
@@ -31,11 +29,12 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.commit.CommitService;
@@ -100,7 +99,11 @@ public class NodeStorageServiceImpl
                                       .nodeVersionKey( nodeVersionKey )
                                       .nodePath( node.path() )
                                       .timestamp( timestamp )
-                                      .build(), params.movedFrom(), context );
+                                      .build(), context );
+        if ( params.movedFrom() != null )
+        {
+            this.branchService.evictPath( params.movedFrom(), context );
+        }
 
         final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
 
@@ -110,22 +113,21 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void push( final Collection<PushNodeEntry> entries, final Branch target, final PushNodesListener pushListener,
+    public void push( final Collection<NodeBranchEntry> entries, final Branch target, final PushNodesListener pushListener,
                       final InternalContext context )
     {
         final InternalContext targetContext = InternalContext.create( context ).skipConstraints( true ).branch( target ).build();
 
-        for ( final PushNodeEntry entry : entries )
+        for ( final NodeBranchEntry entry : entries )
         {
-            final NodeBranchEntry nodeBranchEntry = entry.getNodeBranchEntry();
-            final NodePath movedFrom = entry.getCurrentTargetPath();
-            this.branchService.store( nodeBranchEntry, movedFrom, targetContext );
+            this.branchService.store( entry, targetContext );
 
             pushListener.nodesPushed( 1 );
         }
+        this.branchService.evictAllPaths();
 
         final Collection<NodeId> nodeIds =
-            entries.stream().map( entry -> entry.getNodeBranchEntry().getNodeId() ).collect( Collectors.toList() );
+            entries.stream().map( NodeBranchEntry::getNodeId ).collect( Collectors.toList() );
 
         this.indexDataService.push( IndexPushNodeParams.create().nodeIds( nodeIds ).targetBranch( target ).build(), context );
     }

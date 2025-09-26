@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 public final class MoveNodeParams
 {
     private final NodeId nodeId;
@@ -17,7 +19,7 @@ public final class MoveNodeParams
         this.nodeId = builder.nodeId;
         this.parentNodePath = builder.parentNodePath;
         this.moveListener = builder.moveListener;
-        this.processor = builder.processor;
+        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n);
         this.refresh = builder.refresh;
     }
 
@@ -59,7 +61,7 @@ public final class MoveNodeParams
 
         private MoveNodeListener moveListener;
 
-        private NodeDataProcessor processor = ( n, p ) -> n;
+        private NodeDataProcessor processor;
 
         private RefreshMode refresh;
 

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,14 +18,13 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
@@ -195,7 +194,7 @@ public class RepositoryServiceImpl
                 throw new NodeNotFoundException( "Cannot find root-node in repository [" + previousRepository.getId() + "]" );
             }
 
-            this.nodeStorageService.push( Collections.singleton( PushNodeEntry.create().nodeBranchEntry( rootNode ).build()), newBranch,
+            this.nodeStorageService.push( List.of( rootNode ), newBranch,
                                           c -> {
             }, internalContext );
 

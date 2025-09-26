@@ -1,7 +1,5 @@
 package com.enonic.xp.core.impl.audit;
 
-import java.time.Instant;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -15,7 +13,6 @@ import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
-import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -25,16 +22,12 @@ import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.RepositoryService;
 
@@ -48,7 +41,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AuditLogServiceImplTest
+class AuditLogServiceImplTest
 {
     private NodeService nodeService;
 
@@ -262,15 +255,7 @@ public class AuditLogServiceImplTest
     private static DeleteNodeResult answerDeleted( InvocationOnMock answer )
     {
         return DeleteNodeResult.create()
-            .nodeBranchEntries( NodeBranchEntries.create()
-                                    .add( NodeBranchEntry.create()
-                                              .nodeId( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() )
-                                              .nodeVersionId( new NodeVersionId() )
-                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
-                                              .timestamp( Instant.EPOCH )
-                                              .nodePath( NodePath.ROOT )
-                                              .build() )
-                                    .build() )
+            .nodeIds( NodeIds.from( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() ) )
             .build();
     }
 }

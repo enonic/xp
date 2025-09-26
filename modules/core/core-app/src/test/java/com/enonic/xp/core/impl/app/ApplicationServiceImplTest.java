@@ -26,7 +26,6 @@ import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
-import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
@@ -40,15 +39,12 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +66,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class ApplicationServiceImplTest
+class ApplicationServiceImplTest
     extends BundleBasedTest
 {
     private final ApplicationRepoServiceImpl repoService = mock( ApplicationRepoServiceImpl.class );
@@ -188,15 +184,7 @@ public class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .nodeBranchEntries( NodeBranchEntries.create()
-                                    .add( NodeBranchEntry.create()
-                                              .nodeId( NodeId.from( "nodeId" ) )
-                                              .nodePath( new NodePath( "/app1" ) )
-                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
-                                              .nodeVersionId( new NodeVersionId() )
-                                              .timestamp( Instant.EPOCH )
-                                              .build() )
-                                    .build() )
+            .nodeIds( NodeIds.from( NodeId.from( "nodeId" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
@@ -209,15 +197,7 @@ public class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .nodeBranchEntries( NodeBranchEntries.create()
-                                    .add( NodeBranchEntry.create()
-                                              .nodeId( NodeId.from( "nodeId" ) )
-                                              .nodePath( new NodePath( "/app1" ) )
-                                              .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
-                                              .nodeVersionId( new NodeVersionId() )
-                                              .timestamp( Instant.EPOCH )
-                                              .build() )
-                                    .build() )
+            .nodeIds( NodeIds.from( NodeId.from( "nodeId" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 

@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 
 
 public class NodeFactory

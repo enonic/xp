@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeDataProcessor;
@@ -14,7 +14,6 @@ final class CompositeNodeDataProcessor
 
     CompositeNodeDataProcessor( final List<NodeDataProcessor> processors )
     {
-        Objects.requireNonNull( processors, "processors cannot be null" );
         this.processors = processors;
     }
 
@@ -26,5 +25,26 @@ final class CompositeNodeDataProcessor
             transformedData = processor.process(transformedData, nodePath);
         }
         return transformedData;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static class Builder
+    {
+        private final List<NodeDataProcessor> processors = new ArrayList<>();
+
+        public Builder add( final NodeDataProcessor processor )
+        {
+            this.processors.add( processor );
+            return this;
+        }
+
+        public CompositeNodeDataProcessor build()
+        {
+            return new CompositeNodeDataProcessor( processors );
+        }
     }
 }

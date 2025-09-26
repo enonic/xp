@@ -2,13 +2,12 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 
 public class CompareNodeCommand
     extends AbstractCompareNodeCommand
@@ -36,14 +35,12 @@ public class CompareNodeCommand
             branch( this.target ).
             build() );
 
-        final CompareStatus compareStatus = CompareStatusResolver.create().
+        return CompareStatusResolver.create().
             source( sourceWsVersion ).
             target( targetWsVersion ).
             storageService( this.nodeStorageService ).
             build().
             resolve();
-
-        return new NodeComparison( sourceWsVersion, targetWsVersion, compareStatus );
     }
 
     public static final class Builder

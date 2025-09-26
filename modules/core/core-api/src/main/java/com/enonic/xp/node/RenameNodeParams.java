@@ -2,6 +2,8 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -9,17 +11,24 @@ public final class RenameNodeParams
 {
     private final NodeId nodeId;
 
-    private final NodeName newNodeName;
+    private final NodeName nodeName;
+
+    private final NodePath parentPath;
+
+    private final MoveNodeListener moveListener;
 
     private final NodeDataProcessor processor;
 
     private final RefreshMode refresh;
 
-    private RenameNodeParams( Builder builder )
+    private RenameNodeParams( final Builder builder )
     {
-        this.nodeId = builder.nodeId;
-        this.newNodeName = builder.newNodeName;
-        this.processor = builder.processor;
+        this.nodeId = Objects.requireNonNull( builder.nodeId, "nodeId is required" );
+        this.nodeName = builder.nodeName;
+        this.parentPath = builder.parentPath;
+        this.moveListener = Objects.requireNonNullElse( builder.moveListener, count -> {
+        } );
+        this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n);
         this.refresh = builder.refresh;
     }
 
@@ -35,7 +44,17 @@ public final class RenameNodeParams
 
     public NodeName getNewNodeName()
     {
-        return newNodeName;
+        return nodeName;
+    }
+
+    public NodePath getNewParentPath()
+    {
+        return parentPath;
+    }
+
+    public MoveNodeListener getMoveListener()
+    {
+        return moveListener;
     }
 
     public NodeDataProcessor getProcessor()
@@ -52,9 +71,13 @@ public final class RenameNodeParams
     {
         private NodeId nodeId;
 
-        private NodeName newNodeName;
+        private NodeName nodeName;
 
-        private NodeDataProcessor processor = ( n, p ) -> n;
+        private NodePath parentPath;
+
+        private MoveNodeListener moveListener;
+
+        private NodeDataProcessor processor;
 
         private RefreshMode refresh;
 
@@ -70,7 +93,19 @@ public final class RenameNodeParams
 
         public Builder nodeName( final NodeName nodeName )
         {
-            this.newNodeName = nodeName;
+            this.nodeName = nodeName;
+            return this;
+        }
+
+        public Builder parentPath( NodePath parentPath )
+        {
+            this.parentPath = parentPath;
+            return this;
+        }
+
+        public Builder moveListener( MoveNodeListener moveListener )
+        {
+            this.moveListener = moveListener;
             return this;
         }
 
@@ -86,16 +121,9 @@ public final class RenameNodeParams
             return this;
         }
 
-        private void validate()
-        {
-            Objects.requireNonNull( this.nodeId, "nodeId is required" );
-            Objects.requireNonNull( this.newNodeName, "newNodeName is required" );
-            Objects.requireNonNull( this.processor, "processor cannot be null" );
-        }
-
         public RenameNodeParams build()
         {
-            this.validate();
+            Preconditions.checkArgument( this.nodeName != null || this.parentPath != null , "nodeName or parentPath is required" );
             return new RenameNodeParams( this );
         }
     }

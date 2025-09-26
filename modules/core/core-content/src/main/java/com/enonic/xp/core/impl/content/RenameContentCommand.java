@@ -1,9 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentName;
@@ -59,14 +56,17 @@ final class RenameContentCommand
 
     private NodeDataProcessor initProcessors()
     {
-        final List<NodeDataProcessor> processors = new ArrayList<>();
-
+        final var processors = CompositeNodeDataProcessor.create().add( updateValid() );
         if ( params.stopInherit() )
         {
             processors.add( InheritedContentDataProcessor.NAME );
         }
+        return processors.build();
+    }
 
-        processors.add( ( data, newNodePath ) -> {
+    private NodeDataProcessor updateValid()
+    {
+        return ( data, nodePath ) -> {
             data = data.copy();
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
@@ -78,7 +78,7 @@ final class RenameContentCommand
                 .data( contentData )
                 .extraDatas( extraData )
                 .contentTypeName( type )
-                .contentName( ContentName.from( newNodePath.getName().toString() ) )
+                .contentName( ContentName.from( nodePath.getName().toString() ) )
                 .displayName( displayName )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
@@ -89,21 +89,17 @@ final class RenameContentCommand
             new ValidationErrorsSerializer().toData( validationErrors, data.getRoot() );
 
             return data;
-        } );
-
-        return new CompositeNodeDataProcessor( processors );
+        };
     }
 
     private Content doExecute()
     {
-        final NodeId nodeId = NodeId.from( params.getContentId() );
+        final RenameNodeParams builder =
+            RenameNodeParams.create().nodeId(
+                NodeId.from( params.getContentId() ) ).refresh( RefreshMode.ALL ).nodeName(
+                NodeName.from( params.getNewName() ) ).processor( initProcessors() ).build();
 
-        final NodeName nodeName = NodeName.from( params.getNewName() );
-
-        final RenameNodeParams.Builder builder =
-            RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName ).processor( initProcessors() );
-
-        final Node node = nodeService.rename( builder.build() );
+        final Node node = nodeService.rename( builder ).getMovedNodes().getFirst().getNode();
 
         return translator.fromNode( node );
     }
@@ -131,7 +127,5 @@ final class RenameContentCommand
         }
 
     }
-
-
 }
 

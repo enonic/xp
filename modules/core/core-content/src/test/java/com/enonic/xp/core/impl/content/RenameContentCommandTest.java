@@ -21,6 +21,7 @@ import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -94,7 +95,12 @@ class RenameContentCommandTest
 
         mockNode = Node.create().id( NodeId.from( "testId" ) ).build();
 
-        when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenReturn( mockNode );
+        when( nodeService.rename( any() ) ).thenReturn( MoveNodeResult.create()
+                                                            .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                                               .previousPath( new NodePath( "/path" ) )
+                                                                               .node( mockNode )
+                                                                               .build() )
+                                                            .build() );
         final PatchNodeResult patchNodeResult = mock( PatchNodeResult.class );
         when( patchNodeResult.getNodeId() ).thenReturn( mockNode.id() );
         when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( patchNodeResult );
