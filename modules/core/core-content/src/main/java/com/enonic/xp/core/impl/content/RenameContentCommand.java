@@ -103,7 +103,7 @@ final class RenameContentCommand
         final RenameNodeParams.Builder builder =
             RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName ).processor( initProcessors() );
 
-        final Node node = nodeService.rename( builder.build() );
+        final Node node = nodeService.rename( builder.build() ).getMovedNodes().getFirst().getNode();
 
         return translator.fromNode( node );
     }

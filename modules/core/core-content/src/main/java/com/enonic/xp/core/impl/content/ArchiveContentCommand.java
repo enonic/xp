@@ -168,19 +168,17 @@ final class ArchiveContentCommand
 
     }
 
-    private Node rename( final Node node )
+    private void rename( final Node node )
     {
         final NodePath newPath = pathResolver.buildArchivedPath( node );
         if ( !newPath.getName().equals( node.name() ) )
         {
-            return nodeService.rename(
+            nodeService.rename(
                 RenameNodeParams.create().nodeId( node.id() ).nodeName( newPath.getName() ).build() );
         }
-
-        return node;
     }
 
-    private Node move( final NodeId nodeId )
+    private void move( final NodeId nodeId )
     {
         final MoveNodeParams.Builder builder =
             MoveNodeParams.create().nodeId( nodeId ).parentNodePath( ArchiveConstants.ARCHIVE_ROOT_PATH ).moveListener( this );
@@ -190,7 +188,7 @@ final class ArchiveContentCommand
             builder.processor( InheritedContentDataProcessor.ALL );
         }
 
-        return nodeService.move( builder.build() );
+        nodeService.move( builder.build() );
     }
 
     private void validateLocation()

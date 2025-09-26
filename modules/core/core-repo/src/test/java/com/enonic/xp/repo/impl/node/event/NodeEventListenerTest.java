@@ -133,12 +133,10 @@ public class NodeEventListenerTest
 
         final Node movedNode = Node.create( sourceNode ).parentPath( new NodePath( "/newParent" ) ).build();
 
-        final Event localEvent = NodeEvents.moved( MoveNodeResult.create()
-                                                       .addMovedNode( MoveNodeResult.MovedNode.create()
+        final Event localEvent = NodeEvents.moved( List.of( MoveNodeResult.MovedNode.create()
                                                                           .node( movedNode )
                                                                           .previousPath( sourceNode.path() )
-                                                                          .build() )
-                                                       .build(), createInternalContext() );
+                                                                          .build() ), createInternalContext() );
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 

@@ -82,7 +82,10 @@ public final class MoveNodeHandler
 
     private Node move( final NodeId sourceId, final NodePath newPath )
     {
-        return nodeService.move( MoveNodeParams.create().nodeId( sourceId ).parentNodePath( newPath ).build() );
+        return nodeService.move( MoveNodeParams.create().nodeId( sourceId ).parentNodePath( newPath ).build() )
+            .getMovedNodes()
+            .getFirst()
+            .getNode();
     }
 
     private Node rename( final NodeId sourceId, final NodeName newName )
@@ -91,7 +94,7 @@ public final class MoveNodeHandler
             nodeId( sourceId ).
             nodeName( newName ).
             build();
-        return nodeService.rename( renameParams );
+        return nodeService.rename( renameParams ).getMovedNodes().getFirst().getNode();
     }
 
     private NodeName uniqueName()

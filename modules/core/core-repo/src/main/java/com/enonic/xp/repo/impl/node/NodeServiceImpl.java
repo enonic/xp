@@ -444,7 +444,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node rename( final RenameNodeParams params )
+    public MoveNodeResult rename( final RenameNodeParams params )
     {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
@@ -458,17 +458,34 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        if ( !moveNodeResult.getMovedNodes().isEmpty() )
-        {
-            final MoveNodeResult.MovedNode movedNode = moveNodeResult.getMovedNodes().get( 0 );
-            this.eventPublisher.publish(
-                NodeEvents.renamed( movedNode.getPreviousPath(), movedNode.getNode(), InternalContext.from( ContextAccessor.current() ) ) );
-            return movedNode.getNode();
-        }
-        else
-        {
-            return doGetById( params.getNodeId() );
-        }
+        final List<MoveNodeResult.MovedNode> movedNodes = moveNodeResult.getMovedNodes();
+        final MoveNodeResult.MovedNode movedNode = movedNodes.getFirst();
+        this.eventPublisher.publish(
+            NodeEvents.renamed( movedNode.getPreviousPath(), movedNode.getNode(), InternalContext.from( ContextAccessor.current() ) ) );
+
+        this.eventPublisher.publish(
+            NodeEvents.moved( movedNodes.subList( 1, movedNodes.size() ), InternalContext.from( ContextAccessor.current() ) ) );
+        return moveNodeResult;
+    }
+
+    @Override
+    public MoveNodeResult move( final MoveNodeParams params )
+    {
+        verifyContext();
+        final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
+            .id( params.getNodeId() )
+            .newParent( params.getParentNodePath() )
+            .refresh( params.getRefresh() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .moveListener( params.getMoveListener() )
+            .processor( params.getProcessor() )
+            .build()
+            .execute();
+
+        this.eventPublisher.publish( NodeEvents.moved( moveNodeResult.getMovedNodes(), InternalContext.from( ContextAccessor.current() ) ) );
+        return moveNodeResult;
     }
 
     @Override
@@ -546,33 +563,6 @@ public class NodeServiceImpl
         result.getChildren().forEach( child -> this.eventPublisher.publish( NodeEvents.created( child, internalContext ) ) );
 
         return result.getNode();
-    }
-
-    @Override
-    public Node move( final MoveNodeParams params )
-    {
-        verifyContext();
-        final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
-            .id( params.getNodeId() )
-            .newParent( params.getParentNodePath() )
-            .refresh( params.getRefresh() )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .moveListener( params.getMoveListener() )
-            .processor( params.getProcessor() )
-            .build()
-            .execute();
-
-        if ( !moveNodeResult.getMovedNodes().isEmpty() )
-        {
-            this.eventPublisher.publish( NodeEvents.moved( moveNodeResult, InternalContext.from( ContextAccessor.current() ) ) );
-            return moveNodeResult.getMovedNodes().get( 0 ).getNode();
-        }
-        else
-        {
-            return doGetById( params.getNodeId() );
-        }
     }
 
     @Override

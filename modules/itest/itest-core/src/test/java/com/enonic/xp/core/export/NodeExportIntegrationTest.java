@@ -102,10 +102,11 @@ public class NodeExportIntegrationTest
     {
         final Node originalNode = createNode( NodePath.ROOT, "initial-name" );
 
-        final Node renamedNode = this.nodeService.rename( RenameNodeParams.create().
-            nodeId( originalNode.id() ).
-            nodeName( NodeName.from( "new-node-name" ) ).
-            build() );
+        final Node renamedNode = this.nodeService.rename(
+                RenameNodeParams.create().nodeId( originalNode.id() ).nodeName( NodeName.from( "new-node-name" ) ).build() )
+            .getMovedNodes()
+            .getFirst()
+            .getNode();
 
         final NodeExportResult result = doExportRoot( true );
 

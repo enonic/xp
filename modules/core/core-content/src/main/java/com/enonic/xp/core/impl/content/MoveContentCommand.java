@@ -15,7 +15,7 @@ import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -88,9 +88,9 @@ final class MoveContentCommand
             builder.processor( InheritedContentDataProcessor.PARENT );
         }
 
-        final Node movedNode = nodeService.move( builder.build() );
+        final MoveNodeResult movedNode = nodeService.move( builder.build() );
 
-        final Content movedContent = translator.fromNode( movedNode );
+        final Content movedContent = translator.fromNode( movedNode.getMovedNodes().getFirst().getNode() );
 
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
     }

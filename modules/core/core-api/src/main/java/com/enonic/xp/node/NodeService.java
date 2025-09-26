@@ -16,7 +16,7 @@ public interface NodeService
 
     PatchNodeResult patch( PatchNodeParams params );
 
-    Node rename( RenameNodeParams params );
+    MoveNodeResult rename( RenameNodeParams params );
 
     PushNodesResult push( NodeIds ids, Branch target );
 
@@ -36,7 +36,7 @@ public interface NodeService
 
     Node duplicate( DuplicateNodeParams params );
 
-    Node move( MoveNodeParams params );
+    MoveNodeResult move( MoveNodeParams params );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 

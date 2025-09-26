@@ -35,6 +35,7 @@ import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.MultiRepoNodeHits;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
@@ -161,15 +162,12 @@ public class NodeServiceImplTest
     }
 
     @Test
-    public void move_to_the_same_parent()
-        throws Exception
+    void move_to_the_same_parent()
+
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        final Node movedNode =
-            nodeService.move( MoveNodeParams.create().nodeId( createdNode.id() ).parentNodePath( createdNode.parentPath() ).build() );
-
-        assertEquals( createdNode, movedNode );
+        assertThrows( NodeAlreadyExistAtPathException.class, () -> nodeService.move( MoveNodeParams.create().nodeId( createdNode.id() ).parentNodePath( createdNode.parentPath() ).build() ) );
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -78,9 +79,9 @@ public final class NodeEvents
         return event( NODE_PERMISSIONS_UPDATED, updatedNode, internalContext );
     }
 
-    public static Event moved( final MoveNodeResult result, final InternalContext internalContext )
+    public static Event moved( final List<MoveNodeResult.MovedNode> movedNodes, final InternalContext internalContext )
     {
-        return Event.create( NODE_MOVED_EVENT ).distributed( true ).value( NODES_FIELD, result.getMovedNodes()
+        return Event.create( NODE_MOVED_EVENT ).distributed( true ).value( NODES_FIELD, movedNodes
                 .stream()
                 .map( movedNode -> createMoved( movedNode.getPreviousPath(), movedNode.getNode(), internalContext ) )
                 .collect( Collectors.toList() ) )

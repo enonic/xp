@@ -10,6 +10,7 @@ import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
@@ -90,9 +91,11 @@ public class MoveNodeCommand
 
         final NodePath newParentPath = Objects.requireNonNullElseGet( this.newParentPath, existingNode::parentPath );
 
+        final Context context = ContextAccessor.current();
+
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
-            return result.build();
+            throw new NodeAlreadyExistAtPathException( new NodePath( newParentPath, newNodeName ), context.getRepositoryId(), context.getBranch() );
         }
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath, newNodeName );
@@ -103,7 +106,6 @@ public class MoveNodeCommand
 
         verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
-        final Context context = ContextAccessor.current();
 
         final Context adminContext = ContextBuilder.from( context )
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )

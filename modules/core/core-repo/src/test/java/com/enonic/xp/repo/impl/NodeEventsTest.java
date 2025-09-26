@@ -130,12 +130,9 @@ public class NodeEventsTest
         final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
         final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myId" );
 
-        Event event = NodeEvents.moved( MoveNodeResult.create()
-                                            .addMovedNode( MoveNodeResult.MovedNode.create()
-                                                               .node( targetNode )
-                                                               .previousPath( sourceNode.path() )
-                                                               .build() )
-                                            .build(), InternalContext.from( createContext( "draft" ) ) );
+        Event event =
+            NodeEvents.moved( List.of( MoveNodeResult.MovedNode.create().node( targetNode ).previousPath( sourceNode.path() ).build() ),
+                              InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
