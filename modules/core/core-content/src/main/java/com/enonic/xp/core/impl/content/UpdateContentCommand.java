@@ -127,7 +127,7 @@ final class UpdateContentCommand
 
         final PatchNodeResult result = this.nodeService.patch( patchNodeParams );
 
-        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ), true );
+        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
     }
 
     private Content editContentMetadata( Content content )

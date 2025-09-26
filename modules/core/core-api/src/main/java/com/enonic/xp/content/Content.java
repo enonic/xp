@@ -60,8 +60,6 @@ public class Content
 
     private final Page page;
 
-    private final boolean hasChildren;
-
     private final ChildOrder childOrder;
 
     private final AccessControlList permissions;
@@ -104,7 +102,6 @@ public class Content
         this.modifier = builder.modifier;
         this.owner = builder.owner;
         this.page = builder.page;
-        this.hasChildren = builder.hasChildren;
         this.inherit = Sets.immutableEnumSet( builder.inherit );
         this.originProject = builder.originProject;
         this.childOrder = builder.childOrder;
@@ -259,11 +256,6 @@ public class Content
         return id;
     }
 
-    public boolean hasChildren()
-    {
-        return this.hasChildren;
-    }
-
     public Set<ContentInheritType> getInherit()
     {
         return inherit;
@@ -363,7 +355,7 @@ public class Content
             Objects.equals( modifier, other.modifier ) && Objects.equals( validationErrors, other.validationErrors ) &&
             Objects.equals( creator, other.creator ) && Objects.equals( owner, other.owner ) &&
             Objects.equals( createdTime, other.createdTime ) && Objects.equals( modifiedTime, other.modifiedTime ) &&
-            hasChildren == other.hasChildren && Objects.equals( inherit, other.inherit ) &&
+            Objects.equals( inherit, other.inherit ) &&
             Objects.equals( originProject, other.originProject ) && Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
@@ -379,7 +371,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             hasChildren, inherit, originProject, childOrder, permissions, attachments, data,
+                             inherit, originProject, childOrder, permissions, attachments, data,
                              extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
                              originalParentPath, archivedTime, archivedBy, variantOf );
     }
@@ -475,7 +467,6 @@ public class Content
             this.modifiedTime = source.modifiedTime;
             this.creator = source.creator;
             this.modifier = source.modifier;
-            this.hasChildren = source.hasChildren;
             this.inherit.addAll( source.inherit );
             this.originProject = source.originProject;
             this.page = source.page != null ? source.page.copy() : null;

@@ -94,15 +94,6 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesHasChildren()
-        throws Exception
-    {
-        final Content content = newContent();
-        assertTrue( ContentMappingConstraint.parse( "hasChildren:true" ).matches( content ) );
-        assertFalse( ContentMappingConstraint.parse( "hasChildren:false" ).matches( content ) );
-    }
-
-    @Test
     public void testMatchesLanguage()
         throws Exception
     {
@@ -211,7 +202,6 @@ public class ContentMappingConstraintTest
         builder.creator( PrincipalKey.from( "user:system:admin" ) );
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
-        builder.hasChildren( true );
         builder.valid( true );
         builder.language( Locale.FRENCH );
 

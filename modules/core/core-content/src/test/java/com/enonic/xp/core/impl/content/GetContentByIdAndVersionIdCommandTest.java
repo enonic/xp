@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -67,7 +66,7 @@ public class GetContentByIdAndVersionIdCommandTest
             build();
 
         when( nodeService.getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) ) ).thenReturn( node );
-        when( translator.fromNode( any( Node.class ), anyBoolean(), anyBoolean() ) ).thenReturn( content );
+        when( translator.fromNodeWithAnyRootPath( any( Node.class ) ) ).thenReturn( content );
 
         final Content result = createInstance().execute();
 
@@ -75,7 +74,7 @@ public class GetContentByIdAndVersionIdCommandTest
         assertEquals( content, result );
 
         verify( nodeService, times( 1 ) ).getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) );
-        verify( translator, times( 1 ) ).fromNode( any( Node.class ), anyBoolean(), anyBoolean() );
+        verify( translator, times( 1 ) ).fromNodeWithAnyRootPath( any( Node.class ) );
         verifyNoMoreInteractions( nodeService, translator );
     }
 
@@ -95,12 +94,12 @@ public class GetContentByIdAndVersionIdCommandTest
     public void testExecute_ContentNotFound()
     {
         when( nodeService.getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) ) ).thenReturn( node );
-        when( translator.fromNode( any( Node.class ), anyBoolean(), anyBoolean() ) ).thenThrow( ContentNotFoundException.class );
+        when( translator.fromNodeWithAnyRootPath( any( Node.class ) ) ).thenThrow( ContentNotFoundException.class );
 
         assertThrows( ContentNotFoundException.class, () -> createInstance().execute() );
 
         verify( nodeService, times( 1 ) ).getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) );
-        verify( translator, times( 1 ) ).fromNode( any( Node.class ), anyBoolean(), anyBoolean() );
+        verify( translator, times( 1 ) ).fromNodeWithAnyRootPath( any( Node.class ) );
         verifyNoMoreInteractions( nodeService, translator );
     }
 

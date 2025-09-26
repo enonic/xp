@@ -67,7 +67,7 @@ final class ContentExistsCommand
 
         try
         {
-            return filter( translator.fromNode( node, false ) );
+            return filter( translator.fromNode( node ) );
         }
         catch ( Exception e )
         {

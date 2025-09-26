@@ -40,7 +40,6 @@ var expected = {
     'modifiedTime': '1970-01-01T00:00:00Z',
     'type': 'base:unstructured',
     'displayName': 'My Content',
-    'hasChildren': false,
     'language': 'en',
     'valid': true,
     'childOrder': '_ts DESC, _name ASC',

@@ -2,7 +2,6 @@ package com.enonic.xp.query;
 
 import java.util.List;
 
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -30,8 +29,5 @@ public interface Query
 
     int getSize();
 
-    SearchMode getSearchMode();
-
     boolean isExplain();
-
 }

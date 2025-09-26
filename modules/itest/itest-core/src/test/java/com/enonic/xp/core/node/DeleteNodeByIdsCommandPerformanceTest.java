@@ -12,7 +12,6 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 
@@ -37,7 +36,7 @@ public class DeleteNodeByIdsCommandPerformanceTest
 
         refresh();
 
-        final NodeQuery query = NodeQuery.create().searchMode( SearchMode.COUNT ).build();
+        final NodeQuery query = NodeQuery.create().size( 0 ).build();
 
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().query( query ).searchService( this.searchService ).storageService( this.storageService ).indexServiceInternal( this.indexServiceInternal ).build().execute();
 

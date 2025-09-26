@@ -55,7 +55,7 @@ final class DuplicateContentCommand
 
         final Node duplicatedNode = nodeService.duplicate( createDuplicateNodeParams( sourceNode ) );
 
-        final Content duplicatedContent = translator.fromNode( duplicatedNode, true );
+        final Content duplicatedContent = translator.fromNode( duplicatedNode );
 
         final ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
 

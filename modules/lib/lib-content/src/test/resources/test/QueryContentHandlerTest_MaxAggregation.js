@@ -15,7 +15,6 @@ var expectedJson = {
             'modifiedTime': '1970-01-01T00:00:00Z',
             'type': 'base:unstructured',
             'displayName': 'My Content 1',
-            'hasChildren': false,
             'valid': false,
             'data': {
                 'category': 'books',
@@ -41,7 +40,6 @@ var expectedJson = {
             'modifiedTime': '1970-01-01T00:00:00Z',
             'type': 'base:unstructured',
             'displayName': 'My Content 2',
-            'hasChildren': false,
             'valid': false,
             'data': {
                 'category': 'books',
@@ -67,7 +65,6 @@ var expectedJson = {
             'modifiedTime': '1970-01-01T00:00:00Z',
             'type': 'base:unstructured',
             'displayName': 'My Content 3',
-            'hasChildren': false,
             'valid': false,
             'data': {
                 'category': 'books',
@@ -93,7 +90,6 @@ var expectedJson = {
             'modifiedTime': '1970-01-01T00:00:00Z',
             'type': 'base:unstructured',
             'displayName': 'My Content 4',
-            'hasChildren': false,
             'valid': false,
             'data': {
                 'category': 'books',
@@ -119,7 +115,6 @@ var expectedJson = {
             'modifiedTime': '1970-01-01T00:00:00Z',
             'type': 'base:unstructured',
             'displayName': 'My Content 5',
-            'hasChildren': false,
             'valid': false,
             'data': {
                 'category': 'books',

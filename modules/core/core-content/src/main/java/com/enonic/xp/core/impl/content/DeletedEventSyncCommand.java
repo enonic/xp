@@ -85,8 +85,7 @@ final class DeletedEventSyncCommand
 
     private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return !contentToSync.getTargetContent().hasChildren() ||
-            getAllChildren( contentToSync.getTargetContent().getId() ).stream().allMatch( idsToRemove::contains );
+        return getAllChildren( contentToSync.getTargetContent().getId() ).stream().allMatch( idsToRemove::contains );
     }
 
     private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )

@@ -10,8 +10,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
@@ -57,7 +57,6 @@ public final class ContentMapper
         gen.value( "owner", value.getOwner() );
         gen.value( "type", value.getType() );
         gen.value( "displayName", value.getDisplayName() );
-        gen.value( "hasChildren", value.hasChildren() );
         gen.value( "language", value.getLanguage() );
         gen.value( "valid", value.isValid() );
         gen.value( "originProject", value.getOriginProject() );

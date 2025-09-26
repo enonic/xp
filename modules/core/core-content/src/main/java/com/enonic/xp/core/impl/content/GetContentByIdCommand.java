@@ -27,7 +27,7 @@ final class GetContentByIdCommand
         try
         {
             final Node node = nodeService.getById( nodeId );
-            content = filter( translator.fromNode( node, true ) );
+            content = filter( translator.fromNode( node ) );
         }
         catch ( NodeNotFoundException | ContentNotFoundException e )
         {

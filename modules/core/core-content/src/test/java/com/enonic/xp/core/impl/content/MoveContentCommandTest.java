@@ -92,15 +92,15 @@ public class MoveContentCommandTest
 
         Mockito.when( nodeService.move( Mockito.any( MoveNodeParams.class ) ) ).thenReturn( mockNode );
 
-        Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
-        Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 
         final Node mockFolderNode = Node.create().parentPath( NodePath.ROOT ).build();
 
         Mockito.when( nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( existingFolder.getPath() ) ) )
             .thenReturn( mockFolderNode );
-        Mockito.when( translator.fromNode( mockFolderNode, true ) ).thenReturn( existingFolder );
-        Mockito.when( translator.fromNode( mockFolderNode, false ) ).thenReturn( existingFolder );
+        Mockito.when( translator.fromNode( mockFolderNode ) ).thenReturn( existingFolder );
+        Mockito.when( translator.fromNode( mockFolderNode ) ).thenReturn( existingFolder );
 
         final ContentType contentType =
             ContentType.create().name( "folder" ).displayName( "folder" ).setBuiltIn().setFinal( false ).setAbstract( false ).build();
@@ -140,8 +140,8 @@ public class MoveContentCommandTest
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
         Mockito.when( nodeService.nodeExists( mockNode.path() )).thenReturn( true );
-        Mockito.when( translator.fromNode( mockNode, true ) ).thenReturn( existingContent );
-        Mockito.when( translator.fromNode( mockNode, false ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
+        Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
 
         // exercise
         assertThrows( ContentAlreadyMovedException.class, command::execute );

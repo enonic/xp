@@ -43,7 +43,7 @@ public class SyncContentServiceImpl
         this.projectService = projectService;
         this.contentService = contentService;
         this.contentSynchronizer = contentSynchronizer;
-        this.translator = new ContentNodeTranslator( nodeService );
+        this.translator = new ContentNodeTranslator();
     }
 
     @Override

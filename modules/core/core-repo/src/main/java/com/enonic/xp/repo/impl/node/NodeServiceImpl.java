@@ -885,19 +885,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    public boolean hasChildren( final Node node )
-    {
-        verifyContext();
-        return Tracer.trace( "node.hasChildren", trace -> {
-                                 trace.put( "path", node.path() );
-                                 trace.put( "repo", ContextAccessor.current().getRepositoryId() );
-                                 trace.put( "branch", ContextAccessor.current().getBranch() );
-                             }, () -> NodeHasChildResolver.create().searchService( this.nodeSearchService ).build().resolve( node.path() ),
-                             ( trace, hasChildren ) -> trace.put( "hasChildren", hasChildren ) );
-
-    }
-
-    @Override
     public boolean hasUnpublishedChildren( final NodeId parent, final Branch target )
     {
         verifyContext();

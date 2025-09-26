@@ -22,25 +22,19 @@ public interface ContentService
 
     Content update( UpdateMediaParams params );
 
-    PatchContentResult patch( PatchContentParams params );
+    DeleteContentsResult delete( DeleteContentParams params );
 
     Content rename( RenameContentParams params );
 
-    DeleteContentsResult delete( DeleteContentParams params );
+    MoveContentsResult move( MoveContentParams params );
 
     PublishContentResult publish( PushContentParams params );
 
     UnpublishContentsResult unpublish( UnpublishContentParams params );
 
-    CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
-
-    ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
-
-    ContentValidityResult getContentValidity( ContentValidityParams params );
+    PatchContentResult patch( PatchContentParams params );
 
     DuplicateContentsResult duplicate( DuplicateContentParams params );
-
-    MoveContentsResult move( MoveContentParams params );
 
     ArchiveContentsResult archive( ArchiveContentParams params );
 
@@ -48,9 +42,17 @@ public interface ContentService
 
     SortContentResult sort( SortContentParams params );
 
-    Boolean hasUnpublishedChildren( HasUnpublishedChildrenParams params );
-
     ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
+
+    ImportContentResult importContent( ImportContentParams params );
+
+    CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
+
+    ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );
+
+    ContentValidityResult getContentValidity( ContentValidityParams params );
+
+    boolean hasUnpublishedChildren( HasUnpublishedChildrenParams params );
 
     Content getById( ContentId contentId );
 
@@ -97,6 +99,4 @@ public interface ContentService
     boolean contentExists( ContentPath contentPath );
 
     Content getByIdAndVersionId( ContentId contentId, ContentVersionId versionId );
-
-    ImportContentResult importContent( ImportContentParams params );
 }

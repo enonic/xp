@@ -40,8 +40,6 @@ public class AbstractQuery
 
     private final int batchSize;
 
-    private final SearchMode searchMode;
-
     private final SearchOptimizer searchOptimizer;
 
     private final ImmutableList<OrderExpr> orderBys;
@@ -54,7 +52,6 @@ public class AbstractQuery
         this.from = builder.from;
         this.size = builder.size;
         this.batchSize = builder.batchSize;
-        this.searchMode = builder.searchMode;
         this.aggregationQueries = builder.aggregationQueries.build();
         this.suggestionQueries = builder.suggestionQueries.build();
         this.highlight = builder.highlight;
@@ -144,12 +141,6 @@ public class AbstractQuery
         return batchSize;
     }
 
-    @Override
-    public SearchMode getSearchMode()
-    {
-        return searchMode;
-    }
-
     public SearchOptimizer getSearchOptimizer()
     {
         return searchOptimizer;
@@ -176,8 +167,6 @@ public class AbstractQuery
         private int batchSize = 5_000;
 
         private final List<OrderExpr> orderBys = new ArrayList<>();
-
-        private SearchMode searchMode = SearchMode.SEARCH;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.SPEED;
 
@@ -303,13 +292,6 @@ public class AbstractQuery
         public B setOrderExpressions( final OrderExpressions orderExpressions )
         {
             orderExpressions.forEach( this.orderBys::add );
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B searchMode( SearchMode searchMode )
-        {
-            this.searchMode = searchMode;
             return (B) this;
         }
 

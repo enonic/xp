@@ -108,8 +108,8 @@ class RenameContentCommandTest
         final Content content = createContent( true );
 
         when( this.nodeService.getById( any( NodeId.class ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode, false ) ).thenReturn( content );
-        when( translator.fromNode( mockNode, true ) ).thenReturn( content );
+        when( translator.fromNode( mockNode ) ).thenReturn( content );
+        when( translator.fromNode( mockNode ) ).thenReturn( content );
 
         final RenameContentParams params =
             RenameContentParams.create().contentId( content.getId() ).newName( ContentName.uniqueUnnamed() ).build();

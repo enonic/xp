@@ -30,7 +30,7 @@ final class GetContentByPathCommand
             return null;
         }
 
-        final Content content = translator.fromNode( node, true );
+        final Content content = translator.fromNode( node );
         return filter( content );
     }
 

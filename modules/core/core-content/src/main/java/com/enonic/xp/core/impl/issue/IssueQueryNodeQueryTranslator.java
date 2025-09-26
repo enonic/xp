@@ -9,7 +9,6 @@ import com.enonic.xp.issue.IssueStatus;
 import com.enonic.xp.issue.IssueType;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.SearchMode;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.Filter;
@@ -35,14 +34,9 @@ final class IssueQueryNodeQueryTranslator
             addValue( ValueFactory.newString( IssueConstants.ISSUE_NODE_COLLECTION.getName() ) ).
             build();
 
-        if ( issueQuery.isCount() )
-        {
-            builder.searchMode( SearchMode.COUNT );
-        }
-
         builder.
-            from( issueQuery.getFrom() ).
-            size( issueQuery.getSize() ).
+            from( issueQuery.isCount() ? 0 : issueQuery.getFrom() ).
+            size( issueQuery.isCount() ? 0 : issueQuery.getSize() ).
             addQueryFilter( issueCollectionFilter );
 
         final PrincipalKey creator = issueQuery.getCreator();
