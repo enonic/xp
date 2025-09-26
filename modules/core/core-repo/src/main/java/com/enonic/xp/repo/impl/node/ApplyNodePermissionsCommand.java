@@ -5,21 +5,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
@@ -27,9 +27,9 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
@@ -48,7 +48,7 @@ public class ApplyNodePermissionsCommand
 
     private final ApplyNodePermissionsResult.Builder results;
 
-    private final ApplyPermissionsListener listener;
+    private final ApplyNodePermissionsListener listener;
 
     private final Map<NodeVersionId, NodeVersionMetadata> appliedVersions; // old version id -> new version metadata
 
@@ -60,7 +60,7 @@ public class ApplyNodePermissionsCommand
         this.params = builder.params;
         this.results = ApplyNodePermissionsResult.create();
         this.appliedVersions = new HashMap<>();
-        this.listener = params.getListener() != null ? params.getListener() : new EmptyApplyPermissionsListener();
+        this.listener = Objects.requireNonNullElse( params.getListener(), NoopApplyNodePermissionsListener.INSTANCE );
         this.branches = params.getBranches().isEmpty() ? Branches.from( ContextAccessor.current().getBranch() ) : params.getBranches();
     }
 
@@ -108,6 +108,11 @@ public class ApplyNodePermissionsCommand
 
         final List<Map<Branch, Node>> versionsToApply = findVersionsToApply();
 
+        if ( listener != NoopApplyNodePermissionsListener.INSTANCE )
+        {
+            listener.setTotal( versionsToApply.stream().mapToInt( Map::size ).sum() );
+        }
+
         doApply( versionsToApply,
                  compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
                                         params.getRemovePermissions() ) );
@@ -139,11 +144,13 @@ public class ApplyNodePermissionsCommand
     {
         final List<Map<Branch, Node>> result = new ArrayList<>();
 
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+
         final NodeIds childrenIds = NodeIds.from(
             this.nodeSearchService.query( NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( node.path() ).build(),
-                                          SingleRepoSearchSource.from(  ContextAccessor.current() ) ).getIds() );
+                                          SingleRepoSearchSource.from(  internalContext ) ).getIds() );
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, InternalContext.from(  ContextAccessor.current() ) );
+        final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
         children.stream().map( child -> getActiveNodes( child.id(), this.branches ) ).forEach( result::add );
 
@@ -198,16 +205,14 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionMetadata != null )
             {
-                this.nodeStorageService.push( List.of( PushNodeEntry.create()
-                                                           .nodeBranchEntry( NodeBranchEntry.create()
+                this.nodeStorageService.push( List.of( NodeBranchEntry.create()
                                                                                  .nodeVersionId( updatedVersionMetadata.getNodeVersionId() )
                                                                                  .nodePath( updatedVersionMetadata.getNodePath() )
                                                                                  .nodeVersionKey(
                                                                                      updatedVersionMetadata.getNodeVersionKey() )
                                                                                  .nodeId( updatedVersionMetadata.getNodeId() )
                                                                                  .timestamp( updatedVersionMetadata.getTimestamp() )
-                                                                                 .build() )
-                                                           .build() ), branch, l -> {
+                                                                                 .build() ), branch, l -> {
                 }, targetContext );
 
                 return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(),
@@ -298,26 +303,6 @@ public class ApplyNodePermissionsCommand
         return AccessControlList.create().addAll( newPermissions.values() ).build();
     }
 
-    private static class EmptyApplyPermissionsListener
-        implements ApplyPermissionsListener
-    {
-        @Override
-        public void permissionsApplied( final int count )
-        {
-        }
-
-        @Override
-        public void notEnoughRights( final int count )
-        {
-        }
-
-        @Override
-        public void setTotal( final int count )
-        {
-        }
-    }
-
-
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
@@ -341,6 +326,27 @@ public class ApplyNodePermissionsCommand
         public ApplyNodePermissionsCommand build()
         {
             return new ApplyNodePermissionsCommand( this );
+        }
+    }
+
+    private enum NoopApplyNodePermissionsListener
+        implements ApplyNodePermissionsListener
+    {
+        INSTANCE;
+
+        @Override
+        public void setTotal( final int count )
+        {
+        }
+
+        @Override
+        public void permissionsApplied( final int count )
+        {
+        }
+
+        @Override
+        public void notEnoughRights( final int count )
+        {
         }
     }
 }

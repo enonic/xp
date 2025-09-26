@@ -1,10 +1,8 @@
 package com.enonic.xp.repo.impl.branch.storage;
 
-import java.time.Instant;
-
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageData;

@@ -3,8 +3,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -18,12 +16,12 @@ import com.google.common.cache.CacheBuilder;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
@@ -51,7 +49,7 @@ public class BranchServiceImpl
                            BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
                            BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
-    private final Cache<BranchPath, NodeId> cache =
+    private final Cache<BranchPath, NodeBranchEntry> cache =
         CacheBuilder.newBuilder().maximumSize( 100000 ).expireAfterWrite( Duration.ofMinutes( 10 ) ).build();
 
     private final StorageDao storageDao;
@@ -66,36 +64,25 @@ public class BranchServiceImpl
     }
 
     @Override
-    public void store( final NodeBranchEntry nodeBranchEntry, final NodePath movedFrom, final InternalContext context )
+    public void store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         final RepositoryId repositoryId = context.getRepositoryId();
         final Branch branch = context.getBranch();
-        final NodePath nodePath = nodeBranchEntry.getNodePath();
 
-        final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
-
-        final boolean checkAlreadyExists = !context.isSkipConstraints();
-        final NodeId nodeId = nodeBranchEntry.getNodeId();
-
-        final AtomicBoolean exists = new AtomicBoolean();
-        cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
-            if ( checkAlreadyExists && inCache != null && !inCache.equals( nodeId ) )
+        final boolean[] alreadyExists = {false};
+        cache.asMap().compute( new BranchPath( repositoryId, branch, nodeBranchEntry.getNodePath() ), ( cK, inCache ) -> {
+            if ( inCache != null && !context.isSkipConstraints() && !inCache.getNodeId().equals( nodeBranchEntry.getNodeId() ) )
             {
-                exists.set( true );
+                alreadyExists[0] = true;
                 return inCache;
             }
 
             this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, cK.getRepositoryId(), cK.getBranch() ) );
-            return nodeId;
-
+            return nodeBranchEntry;
         } );
-        if ( exists.get() )
+        if ( alreadyExists[0] )
         {
-            throw new NodeAlreadyExistAtPathException( cacheKey.getPath(), cacheKey.getRepositoryId(), cacheKey.getBranch() );
-        }
-        if ( movedFrom != null && !nodePath.equals( movedFrom ) )
-        {
-            cache.invalidate( new BranchPath( repositoryId, branch, movedFrom ) );
+            throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath(), repositoryId, branch );
         }
     }
 
@@ -184,20 +171,13 @@ public class BranchServiceImpl
         final Branch branch = context.getBranch();
         final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
 
-        final AtomicReference<NodeBranchEntry> found = new AtomicReference<>();
-        cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
+        return cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
             if ( inCache != null )
             {
-                final NodeBranchEntry nodeBranchEntry = doGetById( inCache, context );
-
-                if ( nodeBranchEntry == null )
+                final NodeBranchEntry nodeBranchEntry = doGetById( inCache.getNodeId(), context );
+                if ( nodeBranchEntry != null && nodeBranchEntry.getNodePath().equals( nodePath ) )
                 {
-                    return null;
-                }
-                else
-                {
-                    found.set( nodeBranchEntry );
-                    return nodeBranchEntry.getNodeId();
+                    return nodeBranchEntry;
                 }
             }
 
@@ -226,12 +206,8 @@ public class BranchServiceImpl
             {
                 return null;
             }
-            final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
-            found.set( nodeBranchEntry );
-            return nodeBranchEntry.getNodeId();
+            return NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
         } );
-
-        return found.get();
     }
 
     @Override

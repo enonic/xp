@@ -1,9 +1,6 @@
 package com.enonic.xp.core.impl.content;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentName;
@@ -16,13 +13,13 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.serializer.ValidationErrorsSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -59,14 +56,17 @@ final class RenameContentCommand
 
     private NodeDataProcessor initProcessors()
     {
-        final List<NodeDataProcessor> processors = new ArrayList<>();
-
+        final var processors = CompositeNodeDataProcessor.create().add( updateValid() );
         if ( params.stopInherit() )
         {
             processors.add( InheritedContentDataProcessor.NAME );
         }
+        return processors.build();
+    }
 
-        processors.add( ( data, newNodePath ) -> {
+    private NodeDataProcessor updateValid()
+    {
+        return ( data, nodePath ) -> {
             data = data.copy();
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
@@ -78,7 +78,7 @@ final class RenameContentCommand
                 .data( contentData )
                 .extraDatas( extraData )
                 .contentTypeName( type )
-                .contentName( ContentName.from( newNodePath.getName().toString() ) )
+                .contentName( ContentName.from( nodePath.getName().toString() ) )
                 .displayName( displayName )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
@@ -89,21 +89,19 @@ final class RenameContentCommand
             new ValidationErrorsSerializer().toData( validationErrors, data.getRoot() );
 
             return data;
-        } );
-
-        return new CompositeNodeDataProcessor( processors );
+        };
     }
 
     private Content doExecute()
     {
-        final NodeId nodeId = NodeId.from( params.getContentId() );
+        final MoveNodeParams moveParams = MoveNodeParams.create()
+            .nodeId( NodeId.from( params.getContentId() ) )
+            .newName( NodeName.from( params.getNewName() ) )
+            .processor( initProcessors() )
+            .refresh( RefreshMode.ALL )
+            .build();
 
-        final NodeName nodeName = NodeName.from( params.getNewName() );
-
-        final RenameNodeParams.Builder builder =
-            RenameNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.ALL ).nodeName( nodeName ).processor( initProcessors() );
-
-        final Node node = nodeService.rename( builder.build() );
+        final Node node = nodeService.move( moveParams ).getMovedNodes().getFirst().getNode();
 
         return translator.fromNode( node );
     }
@@ -131,7 +129,5 @@ final class RenameContentCommand
         }
 
     }
-
-
 }
 

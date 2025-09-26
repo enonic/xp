@@ -5,6 +5,7 @@ import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 
 public class FindContentVersionsCommand
@@ -54,11 +55,14 @@ public class FindContentVersionsCommand
 
         final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.nodeService );
 
-        final ContentVersions contentVersions = contentVersionFactory.create( nodeId, nodeVersionQueryResult.getNodeVersionsMetadata() );
+        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().contentId( ContentId.from( nodeId ) );
 
-        findContentVersionsResultBuilder.contentVersions( contentVersions );
+        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionQueryResult.getNodeVersionsMetadata() )
+        {
+            contentVersionsBuilder.add( contentVersionFactory.create( nodeVersionMetadata ) );
+        }
 
-        return findContentVersionsResultBuilder.build();
+        return findContentVersionsResultBuilder.contentVersions( contentVersionsBuilder.build() ).build();
     }
 
     public static final class Builder

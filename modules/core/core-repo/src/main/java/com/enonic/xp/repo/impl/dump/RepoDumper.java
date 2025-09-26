@@ -49,6 +49,7 @@ import com.enonic.xp.repo.impl.dump.writer.DumpWriter;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
+import com.enonic.xp.repository.RepositoryId;
 
 public class RepoDumper
 {
@@ -82,7 +83,7 @@ public class RepoDumper
         this.dumpResult = RepoDumpResult.create( this.repository.getId() );
         this.maxAge = builder.maxAge;
         this.maxVersions = builder.maxVersions;
-        this.listener = Objects.requireNonNullElseGet( builder.listener, NullSystemDumpListener::new );
+        this.listener = Objects.requireNonNullElse( builder.listener, NoopSystemDumpListener.INSTANCE );
     }
 
     public RepoDumpResult execute()
@@ -429,6 +430,27 @@ public class RepoDumper
         public RepoDumper build()
         {
             return new RepoDumper( this );
+        }
+    }
+
+    public enum NoopSystemDumpListener
+        implements SystemDumpListener
+    {
+        INSTANCE;
+
+        @Override
+        public void totalBranches( final long total )
+        {
+        }
+
+        @Override
+        public void dumpingBranch( final RepositoryId repositoryId, final Branch branch, final long total )
+        {
+        }
+
+        @Override
+        public void nodeDumped()
+        {
         }
     }
 }

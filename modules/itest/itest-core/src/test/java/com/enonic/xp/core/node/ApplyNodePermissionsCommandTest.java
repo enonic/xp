@@ -6,12 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyPermissionsScope;
@@ -302,7 +302,7 @@ public class ApplyNodePermissionsCommandTest
 
         refresh();
 
-        final ApplyPermissionsListener listener = mock( ApplyPermissionsListener.class );
+        final ApplyNodePermissionsListener listener = mock( ApplyNodePermissionsListener.class );
         final ApplyNodePermissionsResult result = nodeService.applyPermissions(
             ApplyNodePermissionsParams.create()
                 .nodeId( createdNode.id() )
@@ -509,7 +509,7 @@ public class ApplyNodePermissionsCommandTest
             .nodeId( topNode.id() )
             .permissions( topNode.getPermissions() )
             .scope( ApplyPermissionsScope.TREE )
-            .applyPermissionsListener( mock( ApplyPermissionsListener.class ) )
+            .applyPermissionsListener( mock( ApplyNodePermissionsListener.class ) )
             .build();
 
         final ApplyNodePermissionsResult updateNodes = nodeService.applyPermissions( params );

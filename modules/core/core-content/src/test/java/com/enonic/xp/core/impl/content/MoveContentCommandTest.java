@@ -12,8 +12,10 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.MoveNodeParams;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -86,11 +88,12 @@ public class MoveContentCommandTest
             eventPublisher( this.eventPublisher ).
             build();
 
-        final Node mockNode = Node.create().parentPath( NodePath.ROOT ).build();
+        final Node mockNode = Node.create().parentPath( NodePath.ROOT ).name( "node-name" ).build();
 
         Mockito.when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
 
-        Mockito.when( nodeService.move( Mockito.any( MoveNodeParams.class ) ) ).thenReturn( mockNode );
+        Mockito.when( nodeService.move( Mockito.any( MoveNodeParams.class ) ) )
+            .thenReturn( MoveNodeResult.create().addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath(NodePath.ROOT, NodeName.from("a") ) ).node( mockNode ).build() ).build() );
 
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         Mockito.when( translator.fromNode( mockNode ) ).thenReturn( existingContent );

@@ -16,12 +16,12 @@ public final class NodeComparison
 
     private final CompareStatus compareStatus;
 
-    public NodeComparison( final NodeBranchEntry sourceEntry, final NodeBranchEntry targetEntry, final CompareStatus compareStatus )
+    public NodeComparison( final NodeId sourceId, final NodePath sourcePath, NodeId targetId, NodePath targetPath, final CompareStatus compareStatus )
     {
-        this.sourceId = sourceEntry != null ? sourceEntry.getNodeId() : null;
-        this.targetId = targetEntry != null ? targetEntry.getNodeId() : null;
-        this.sourcePath = sourceEntry != null ? sourceEntry.getNodePath() : null;
-        this.targetPath = targetEntry != null ? targetEntry.getNodePath() : null;
+        this.sourceId = sourceId;
+        this.targetId = targetId;
+        this.sourcePath = sourcePath;
+        this.targetPath = targetPath;
 
         this.compareStatus = compareStatus;
     }

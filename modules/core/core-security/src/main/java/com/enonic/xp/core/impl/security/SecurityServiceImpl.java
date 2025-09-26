@@ -39,6 +39,7 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -822,15 +823,14 @@ public final class SecurityServiceImpl
     @Override
     public void deleteIdProvider( final IdProviderKey idProviderKey )
     {
-        final Set<NodeId> deletedNodes;
+        final NodeIds deletedNodes;
         try
         {
             deletedNodes = callWithContext( () -> {
                 final NodePath idProviderNodePath = IdProviderNodeTranslator.toIdProviderNodePath( idProviderKey );
                 return this.nodeService.delete(
                         DeleteNodeParams.create().nodePath( idProviderNodePath ).refresh( RefreshMode.ALL ).build() )
-                    .getNodeBranchEntries()
-                    .getKeys();
+                    .getNodeIds();
             } );
         }
         catch ( NodeAccessException e )
@@ -852,7 +852,7 @@ public final class SecurityServiceImpl
             throw new IllegalArgumentException( String.format( "[%s] principal cannot be removed", principalKey ) );
         }
 
-        final Set<NodeId> deletedNodes;
+        final NodeIds deletedNodes;
         try
         {
             deletedNodes = callWithContext( () -> {
@@ -861,8 +861,7 @@ public final class SecurityServiceImpl
 
                 return this.nodeService.delete(
                         DeleteNodeParams.create().nodePath( principalKey.toPath() ).refresh( RefreshMode.ALL ).build() )
-                    .getNodeBranchEntries()
-                    .getKeys();
+                    .getNodeIds();
             } );
         }
         catch ( NodeNotFoundException e ) // catch doRemoveRelationships and doRemoveMemberships leak of permissions

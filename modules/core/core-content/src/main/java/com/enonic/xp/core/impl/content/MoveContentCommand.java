@@ -9,13 +9,11 @@ import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentException;
-import com.enonic.xp.content.MoveContentListener;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.node.MoveNodeException;
-import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
-import com.enonic.xp.node.Node;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -24,17 +22,13 @@ import com.enonic.xp.node.RefreshMode;
 
 final class MoveContentCommand
     extends AbstractContentCommand
-    implements MoveNodeListener
 {
     private final MoveContentParams params;
-
-    private final MoveContentListener moveContentListener;
 
     private MoveContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.moveContentListener = builder.moveContentListener;
     }
 
     public static Builder create( final MoveContentParams params )
@@ -80,28 +74,26 @@ final class MoveContentCommand
 
         final NodeId sourceNodeId = NodeId.from( contentId );
 
-        final MoveNodeParams.Builder builder =
-            MoveNodeParams.create().nodeId( sourceNodeId ).parentNodePath( newParentPath ).refresh( RefreshMode.ALL ).moveListener( this );
+        final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
+            .nodeId( sourceNodeId )
+            .newParentPath( newParentPath )
+            .refresh( RefreshMode.ALL );
+
+        if ( params.getMoveContentListener() != null )
+        {
+            moveParams.moveListener( this.params.getMoveContentListener()::contentMoved );
+        }
 
         if ( params.stopInherit() )
         {
-            builder.processor( InheritedContentDataProcessor.PARENT );
+            moveParams.processor( InheritedContentDataProcessor.PARENT );
         }
 
-        final Node movedNode = nodeService.move( builder.build() );
+        final MoveNodeResult movedNode = nodeService.move( moveParams.build() );
 
-        final Content movedContent = translator.fromNode( movedNode );
+        final Content movedContent = translator.fromNode( movedNode.getMovedNodes().getFirst().getNode() );
 
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
-    }
-
-    @Override
-    public void nodesMoved( final int count )
-    {
-        if ( moveContentListener != null )
-        {
-            moveContentListener.contentMoved( count );
-        }
     }
 
     public static class Builder
@@ -109,17 +101,9 @@ final class MoveContentCommand
     {
         private final MoveContentParams params;
 
-        private MoveContentListener moveContentListener;
-
         Builder( final MoveContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder moveListener( final MoveContentListener moveContentListener )
-        {
-            this.moveContentListener = moveContentListener;
-            return this;
         }
 
         @Override

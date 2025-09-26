@@ -49,7 +49,7 @@ public final class CreateNodeParams
         this.indexConfigDocument = builder.indexConfigDocument;
         this.childOrder = builder.childOrder;
         this.nodeId = builder.nodeId;
-        this.permissions = builder.permissions;
+        this.permissions = Objects.requireNonNullElse( builder.permissions, AccessControlList.empty() );
         this.inheritPermissions = builder.inheritPermissions;
         this.insertManualStrategy = Objects.requireNonNullElse( builder.insertManualStrategy, InsertManualStrategy.FIRST );
         this.manualOrderValue = builder.manualOrderValue;
@@ -159,7 +159,7 @@ public final class CreateNodeParams
 
         private NodeId nodeId;
 
-        private AccessControlList permissions = AccessControlList.empty();
+        private AccessControlList permissions;
 
         private boolean inheritPermissions;
 

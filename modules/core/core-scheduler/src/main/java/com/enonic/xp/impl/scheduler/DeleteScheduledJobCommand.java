@@ -34,7 +34,7 @@ public class DeleteScheduledJobCommand
         return nodeService.delete( DeleteNodeParams.create()
                                        .nodePath( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) )
                                        .refresh( RefreshMode.ALL )
-                                       .build() ).getNodeBranchEntries().isNotEmpty();
+                                       .build() ).getNodeIds().isNotEmpty();
     }
 
     public static final class Builder

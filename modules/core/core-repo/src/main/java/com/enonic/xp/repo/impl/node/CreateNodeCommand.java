@@ -25,7 +25,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -71,9 +70,7 @@ public final class CreateNodeCommand
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
 
-        final PrincipalKey user = getCurrentPrincipalKey();
-
-        final AccessControlList permissions = params.isInheritPermissions() ? parentNode.getPermissions() : getAccessControlEntries( user );
+        final AccessControlList permissions = getAccessControlEntries( parentNode );
 
         final Long manualOrderValue = resolvePotentialManualOrderValue( parentNode );
 
@@ -124,18 +121,14 @@ public final class CreateNodeCommand
         return builder.build();
     }
 
-    private AccessControlList getAccessControlEntries( final PrincipalKey creator )
+    private AccessControlList getAccessControlEntries( final Node parentNode )
     {
-        final AccessControlList paramPermissions = params.getPermissions();
+        if ( params.isInheritPermissions() )
+        {
+            return parentNode.getPermissions();
+        }
 
-        if ( paramPermissions == null || paramPermissions.isEmpty() )
-        {
-            return NodeDefaultAclFactory.create( creator );
-        }
-        else
-        {
-            return paramPermissions;
-        }
+        return params.getPermissions().isEmpty() ? NodeDefaultAclFactory.create( getCurrentPrincipalKey() ) : params.getPermissions();
     }
 
     private Node getParentNode()

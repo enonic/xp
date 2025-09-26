@@ -601,7 +601,6 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .duplicateListener( params.getDuplicateContentListener() )
             .build()
             .execute();
 
@@ -620,7 +619,6 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .moveListener( params.getMoveContentListener() )
             .build()
             .execute();
 
@@ -657,7 +655,6 @@ public class ContentServiceImpl
             .translator( translator )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
-            .restoreListener( params.getRestoreContentListener() )
             .build()
             .execute();
 

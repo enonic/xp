@@ -15,7 +15,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PushNodesCommandTest
+class PushNodesCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
@@ -85,7 +85,7 @@ public class PushNodesCommandTest
         createNode( CreateNodeParams.create().parent( node.path() ).name( "my-child2" ).build() );
 
         final PushNodesResult result = pushNodes( WS_OTHER, node.id() );
-        assertThat( result.getSuccessfulEntries() ).extracting( p -> p.getNodeBranchEntry().getNodeId() ).containsExactly( node.id() );
+        assertThat( result.getSuccessful() ).extracting( PushNodeResult::getNodeId ).containsExactly( node.id() );
 
         final FindNodesByQueryResult allNodesInOther = ctxOther().callWith( () -> FindNodesByQueryCommand.create()
             .query( NodeQuery.create().parent( NodePath.ROOT ).build() )
@@ -119,9 +119,9 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, node.id(), child.id() );
 
-        assertEquals( 1, result.getSuccessfulEntries().size() );
-        assertEquals( 1, result.getFailedEntries().size() );
-        assertEquals( PushNodesResult.Reason.ACCESS_DENIED, result.getFailedEntries().iterator().next().getReason() );
+        assertEquals( 1, result.getSuccessful().size() );
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( PushNodeResult.Reason.ACCESS_DENIED, result.getFailed().iterator().next().getFailureReason() );
     }
 
     @Test
@@ -135,9 +135,9 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, node.id() );
 
-        assertEquals( 1, result.getFailedEntries().size() );
-        assertEquals( 0, result.getSuccessfulEntries().size() );
-        assertEquals( PushNodesResult.Reason.ALREADY_EXIST, result.getFailedEntries().iterator().next().getReason() );
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( 0, result.getSuccessful().size() );
+        assertEquals( PushNodeResult.Reason.ALREADY_EXIST, result.getFailed().iterator().next().getFailureReason() );
     }
 
 
@@ -150,7 +150,7 @@ public class PushNodesCommandTest
         //Creates and pushes a content
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
         result = pushNodes( WS_OTHER, node.id() );
-        assertEquals( 1, result.getSuccessfulEntries().size() );
+        assertEquals( 1, result.getSuccessful().size() );
         assertNotNull( getNodeByPath( new NodePath( "/my-node" ) ) );
         assertNotNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
 
@@ -165,9 +165,9 @@ public class PushNodesCommandTest
         //Pushed the renames content
 
         result = pushNodes( WS_OTHER, node.id() );
-        assertEquals( 1, result.getSuccessfulEntries().size() );
-        assertNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
+        assertEquals( 1, result.getSuccessful().size() );
         assertNotNull( getNodeByPathInOther( new NodePath( "/my-node-renamed" ) ) );
+        assertNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
     }
 
     @Test
@@ -181,8 +181,8 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, child.id() );
 
-        assertEquals( 1, result.getFailedEntries().size() );
-        assertEquals( PushNodesResult.Reason.PARENT_NOT_FOUND, result.getFailedEntries().iterator().next().getReason() );
+        assertEquals( 1, result.getFailed().size() );
+        assertEquals( PushNodeResult.Reason.PARENT_NOT_FOUND, result.getFailed().iterator().next().getFailureReason() );
     }
 
     @Test
@@ -216,7 +216,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, child2_1.id(), child1_1.id(), child1.id(), child2.id(), node.id() );
 
-        assertTrue( result.getFailedEntries().isEmpty() );
+        assertTrue( result.getFailed().isEmpty() );
 
         ctxOther().runWith( () -> {
             assertNotNull( getNodeById( node.id() ) );
@@ -295,7 +295,7 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, parent.id(), child1.id() );
 
-        assertEquals( 2, result.getSuccessfulEntries().size() );
+        assertEquals( 2, result.getSuccessful().size() );
     }
 
     @Test
@@ -318,9 +318,8 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, b.id() );
 
-        assertThat( result.getSuccessfulEntries() ).extracting( p -> p.getNodeBranchEntry().getNodeId(),
-                                                                p -> p.getNodeBranchEntry().getNodePath(),
-                                                                PushNodeEntry::getCurrentTargetPath )
+        assertThat( result.getSuccessful() ).extracting( PushNodeResult::getNodeId, PushNodeResult::getNodePath,
+                                                         PushNodeResult::getTargetPath )
             .containsExactly( tuple( b.id(), new NodePath( "/a/b" ), new NodePath( "/b" ) ),
                               tuple( c.id(), new NodePath( "/a/b/c" ), new NodePath( "/b/c" ) ),
                               tuple( d.id(), new NodePath( "/a/b/c/d" ), new NodePath( "/b/c/d" ) ) );
@@ -343,8 +342,8 @@ public class PushNodesCommandTest
 
         final PushNodesResult result = pushNodes( WS_OTHER, b.id(), a.id() );
 
-        assertEquals( 0, result.getFailedEntries().size() );
-        assertEquals( 2, result.getSuccessfulEntries().size() );
+        assertEquals( 0, result.getFailed().size() );
+        assertEquals( 2, result.getSuccessful().size() );
     }
 
     @Test
@@ -402,7 +401,7 @@ public class PushNodesCommandTest
         final PushNodesResult result =
             pushNodes( WS_OTHER, child1_1_1.id(), child1_1.id(), node.id(), child2_1.id(), node2.id(), child1.id(), child2.id() );
 
-        assertEquals( 7, result.getSuccessfulEntries().size() );
+        assertEquals( 7, result.getSuccessful().size() );
     }
 
     @Test
@@ -477,7 +476,7 @@ public class PushNodesCommandTest
         started.stop();
 
         final long elapsed = started.elapsed( TimeUnit.SECONDS );
-        final int number = result.getSuccessfulEntries().size();
+        final int number = result.getSuccessful().size();
 
         System.out.println( "Pushed : " + number + " in " + started + ", " + ( elapsed == 0 ? "n/a" : ( number / elapsed ) + "/s" ) );
     }

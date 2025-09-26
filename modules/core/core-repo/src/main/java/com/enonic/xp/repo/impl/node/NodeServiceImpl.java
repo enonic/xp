@@ -44,7 +44,6 @@ import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeCommitQuery;
@@ -68,7 +67,6 @@ import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -80,6 +78,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.binary.BinaryService;
@@ -444,12 +443,14 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node rename( final RenameNodeParams params )
+    public MoveNodeResult move( final MoveNodeParams params )
     {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
             .id( params.getNodeId() )
             .newNodeName( params.getNewNodeName() )
+            .newParent( params.getNewParentPath() )
+            .moveListener( params.getMoveListener() )
             .processor( params.getProcessor() )
             .refresh( params.getRefresh() )
             .indexServiceInternal( this.indexServiceInternal )
@@ -458,17 +459,22 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        if ( !moveNodeResult.getMovedNodes().isEmpty() )
+        final List<MoveNodeResult.MovedNode> movedNodes = moveNodeResult.getMovedNodes();
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+        if ( params.getNewParentPath() == null )
         {
-            final MoveNodeResult.MovedNode movedNode = moveNodeResult.getMovedNodes().get( 0 );
-            this.eventPublisher.publish(
-                NodeEvents.renamed( movedNode.getPreviousPath(), movedNode.getNode(), InternalContext.from( ContextAccessor.current() ) ) );
-            return movedNode.getNode();
+            this.eventPublisher.publish( NodeEvents.renamed( movedNodes.getFirst(), internalContext ) );
+            if ( movedNodes.size() > 1 )
+            {
+                this.eventPublisher.publish( NodeEvents.moved( movedNodes.subList( 1, movedNodes.size() ), internalContext ) );
+            }
         }
         else
         {
-            return doGetById( params.getNodeId() );
+            this.eventPublisher.publish( NodeEvents.moved( movedNodes, internalContext ) );
         }
+
+        return moveNodeResult;
     }
 
     @Override
@@ -491,7 +497,7 @@ public class NodeServiceImpl
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes, InternalContext.from( ContextAccessor.current() ) ) );
         }
 
-        return DeleteNodeResult.create().nodeBranchEntries( deletedNodes ).build();
+        return DeleteNodeResult.create().nodeIds( NodeIds.from( deletedNodes.getKeys() ) ).build();
     }
 
     @Override
@@ -516,9 +522,9 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        if ( !pushNodesResult.getSuccessfulEntries().isEmpty() )
+        if ( !pushNodesResult.getSuccessful().isEmpty() )
         {
-            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessfulEntries(),
+            this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful(),
                                                             InternalContext.create( ContextAccessor.current() )
                                                                 .branch( target )
                                                                 .build() ) );
@@ -546,33 +552,6 @@ public class NodeServiceImpl
         result.getChildren().forEach( child -> this.eventPublisher.publish( NodeEvents.created( child, internalContext ) ) );
 
         return result.getNode();
-    }
-
-    @Override
-    public Node move( final MoveNodeParams params )
-    {
-        verifyContext();
-        final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
-            .id( params.getNodeId() )
-            .newParent( params.getParentNodePath() )
-            .refresh( params.getRefresh() )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .moveListener( params.getMoveListener() )
-            .processor( params.getProcessor() )
-            .build()
-            .execute();
-
-        if ( !moveNodeResult.getMovedNodes().isEmpty() )
-        {
-            this.eventPublisher.publish( NodeEvents.moved( moveNodeResult, InternalContext.from( ContextAccessor.current() ) ) );
-            return moveNodeResult.getMovedNodes().get( 0 ).getNode();
-        }
-        else
-        {
-            return doGetById( params.getNodeId() );
-        }
     }
 
     @Override

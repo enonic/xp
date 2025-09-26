@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
-import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
@@ -24,7 +23,7 @@ public final class ApplyNodePermissionsParams
 
     private final ApplyPermissionsScope scope;
 
-    private final ApplyPermissionsListener listener;
+    private final ApplyNodePermissionsListener listener;
 
     private final Branches branches;
 
@@ -72,7 +71,7 @@ public final class ApplyNodePermissionsParams
         return scope;
     }
 
-    public ApplyPermissionsListener getListener()
+    public ApplyNodePermissionsListener getListener()
     {
         return listener;
     }
@@ -94,7 +93,7 @@ public final class ApplyNodePermissionsParams
 
         private ApplyPermissionsScope scope;
 
-        private ApplyPermissionsListener listener;
+        private ApplyNodePermissionsListener listener;
 
         private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
 
@@ -141,7 +140,7 @@ public final class ApplyNodePermissionsParams
             return this;
         }
 
-        public Builder applyPermissionsListener( final ApplyPermissionsListener listener )
+        public Builder applyPermissionsListener( final ApplyNodePermissionsListener listener )
         {
             this.listener = listener;
             return this;

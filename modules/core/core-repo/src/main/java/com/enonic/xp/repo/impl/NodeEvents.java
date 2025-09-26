@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Collection;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -10,11 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodeResult;
 
 import static com.enonic.xp.event.EventConstants.NODES_FIELD;
 
@@ -43,9 +39,9 @@ public final class NodeEvents
         return event( NODE_CREATED_EVENT, createdNode, internalContext );
     }
 
-    public static Event pushed( final Collection<PushNodeEntry> pushNodeEntries, final InternalContext internalContext )
+    public static Event pushed( final Collection<PushNodeResult> pushNodeResults, final InternalContext internalContext )
     {
-        return event( NODE_PUSHED_EVENT, pushNodeEntries, internalContext );
+        return buildEvent( NODE_PUSHED_EVENT, pushNodeResults.stream(), internalContext, n -> createPushed( n, internalContext ) );
     }
 
     public static Event pushed( final Node node, final InternalContext internalContext )
@@ -55,7 +51,7 @@ public final class NodeEvents
 
     public static Event deleted( final NodeBranchEntries deletedNodes, final InternalContext internalContext )
     {
-        return event( NODE_DELETED_EVENT, deletedNodes, internalContext );
+        return buildEvent( NODE_DELETED_EVENT, deletedNodes.stream(), internalContext, node -> nodeToMap( node, internalContext ) );
     }
 
     public static Event duplicated( final Node duplicatedNode, final InternalContext internalContext )
@@ -68,9 +64,9 @@ public final class NodeEvents
         return event( NODE_UPDATED_EVENT, updatedNode, internalContext );
     }
 
-    public static Event patched( final Node updatedNode, final InternalContext internalContext )
+    public static Event patched( final Node patchedNode, final InternalContext internalContext )
     {
-        return event( NODE_UPDATED_EVENT, updatedNode, internalContext );
+        return event( NODE_UPDATED_EVENT, patchedNode, internalContext );
     }
 
     public static Event permissionsUpdated( final Node updatedNode, final InternalContext internalContext )
@@ -78,21 +74,14 @@ public final class NodeEvents
         return event( NODE_PERMISSIONS_UPDATED, updatedNode, internalContext );
     }
 
-    public static Event moved( final MoveNodeResult result, final InternalContext internalContext )
+    public static Event moved( final Collection<MoveNodeResult.MovedNode> movedNodes, final InternalContext internalContext )
     {
-        return Event.create( NODE_MOVED_EVENT ).distributed( true ).value( NODES_FIELD, result.getMovedNodes()
-                .stream()
-                .map( movedNode -> createMoved( movedNode.getPreviousPath(), movedNode.getNode(), internalContext ) )
-                .collect( Collectors.toList() ) )
-            .build();
+        return buildEvent( NODE_MOVED_EVENT, movedNodes.stream(), internalContext, n -> createMoved( n, internalContext ) );
     }
 
-    public static Event renamed( final NodePath previousPath, final Node targetNode, final InternalContext internalContext )
+    public static Event renamed( final MoveNodeResult.MovedNode movedNode, final InternalContext internalContext )
     {
-        return Event.create( NODE_RENAMED_EVENT )
-            .distributed( true )
-            .value( NODES_FIELD, ImmutableList.of( createMoved( previousPath, targetNode, internalContext ) ) )
-            .build();
+        return buildEvent( NODE_RENAMED_EVENT, Stream.of( movedNode ), internalContext, n -> createMoved( n, internalContext ) );
     }
 
     public static Event sorted( final Node sortedNode, final InternalContext internalContext )
@@ -102,57 +91,20 @@ public final class NodeEvents
 
     private static Event event( String type, Node node, InternalContext internalContext )
     {
-        if ( node != null )
-        {
-            return event( type, Nodes.from( node ), internalContext );
-        }
-        return null;
+        return buildEvent( type, Stream.of( node ), internalContext, n -> nodeToMap( n, internalContext ) );
     }
 
-    private static Event event( String type, Nodes nodes, InternalContext internalContext )
-    {
-        return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (Nodes) n, ctx ) );
-    }
-
-    private static Event event( String type, NodeBranchEntries nodes, InternalContext internalContext )
-    {
-        return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (NodeBranchEntries) n, ctx ) );
-    }
-
-    private static Event event( String type, Collection<PushNodeEntry> nodes, InternalContext internalContext )
-    {
-        return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (Collection<PushNodeEntry>) n, ctx ) );
-    }
-
-    private static Event buildEvent( String type, Object nodes, InternalContext internalContext,
-                                     BiFunction<Object, InternalContext, ImmutableList<ImmutableMap<String, String>>> nodesMapper )
+    private static <T> Event buildEvent( String type, Stream<T> nodes, InternalContext internalContext,
+                                         Function<T, ImmutableMap<String, String>> nodesMapper )
     {
         final Event.Builder builder = Event.create( type ).distributed( true );
         if ( internalContext.getEventMetadata() != null )
         {
             internalContext.getEventMetadata().forEach( builder::value );
         }
-        builder.value( NODES_FIELD, nodesMapper.apply( nodes, internalContext ) );
+        builder.value( NODES_FIELD, nodes.map( nodesMapper ).collect( ImmutableList.toImmutableList() ) );
 
         return builder.build();
-    }
-
-    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Nodes nodes, final InternalContext internalContext )
-    {
-        return nodes.stream().map( node -> NodeEvents.nodeToMap( node, internalContext ) ).collect( ImmutableList.toImmutableList() );
-    }
-
-    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final NodeBranchEntries nodes,
-                                                                            final InternalContext internalContext )
-    {
-        return nodes.stream().map( node -> NodeEvents.nodeToMap( node, internalContext ) ).collect( ImmutableList.toImmutableList() );
-    }
-
-    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Collection<PushNodeEntry> pushNodeEntries,
-                                                                            final InternalContext internalContext )
-    {
-        return pushNodeEntries.stream().map( node -> NodeEvents.nodeToMap( node, internalContext ) )
-            .collect( ImmutableList.toImmutableList() );
     }
 
     private static ImmutableMap<String, String> nodeToMap( final NodeBranchEntry node, final InternalContext internalContext )
@@ -175,29 +127,28 @@ public final class NodeEvents
             .build();
     }
 
-    private static ImmutableMap<String, String> nodeToMap( final PushNodeEntry node, final InternalContext internalContext )
+    private static ImmutableMap<String, String> createPushed( final PushNodeResult node, final InternalContext internalContext )
     {
         final ImmutableMap.Builder<String, String> nodeAsMap = ImmutableMap.<String, String>builder()
-            .put( "id", node.getNodeBranchEntry().getNodeId().toString() )
-            .put( "path", node.getNodeBranchEntry().getNodePath().toString() )
+            .put( "id", node.getNodeId().toString() )
+            .put( "path", node.getNodePath().toString() )
             .put( "branch", internalContext.getBranch().getValue() )
             .put( "repo", internalContext.getRepositoryId().toString() );
-        if ( node.getCurrentTargetPath() != null )
+        if ( node.getTargetPath() != null )
         {
-            nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath().toString() );
+            nodeAsMap.put( "currentTargetPath", node.getTargetPath().toString() );
         }
         return nodeAsMap.build();
     }
 
-    private static ImmutableMap<String, String> createMoved( final NodePath previousPath, final Node targetNode,
-                                                             final InternalContext internalContext )
+    private static ImmutableMap<String, String> createMoved( final MoveNodeResult.MovedNode node, final InternalContext internalContext )
     {
         return ImmutableMap.<String, String>builder()
-            .put( "id", targetNode.id().toString() )
-            .put( "path", previousPath.toString() )
+            .put( "id", node.getNode().id().toString() )
+            .put( "path", node.getPreviousPath().toString() )
             .put( "branch", internalContext.getBranch().getValue() )
             .put( "repo", internalContext.getRepositoryId().toString() )
-            .put( "newPath", targetNode.path().toString() )
+            .put( "newPath", node.getNode().path().toString() )
             .build();
     }
 }

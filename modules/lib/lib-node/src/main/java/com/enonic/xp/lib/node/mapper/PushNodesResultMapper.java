@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.node.mapper;
 
-import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -26,11 +26,11 @@ public class PushNodesResultMapper
     {
         gen.array( "failed" );
 
-        for ( final PushNodesResult.Failed entry : this.result.getFailedEntries() )
+        for ( final PushNodeResult entry : this.result.getFailed() )
         {
             gen.map();
-            gen.value( "id", entry.getNodeBranchEntry().getNodeId() );
-            gen.value( "reason", entry.getReason().toString() );
+            gen.value( "id", entry.getNodeId() );
+            gen.value( "reason", entry.getFailureReason().toString() );
             gen.end();
         }
 
@@ -40,9 +40,9 @@ public class PushNodesResultMapper
     private void addSuccessful( final MapGenerator gen )
     {
         gen.array( "success" );
-        for ( final PushNodeEntry success : result.getSuccessfulEntries() )
+        for ( final PushNodeResult success : result.getSuccessful() )
         {
-            gen.value( success.getNodeBranchEntry().getNodeId() );
+            gen.value( success.getNodeId() );
         }
         gen.end();
     }

@@ -11,8 +11,6 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -25,6 +23,8 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
@@ -52,7 +52,8 @@ public class DeleteNodeCommand
         super( builder );
         this.nodeId = builder.nodeId;
         this.nodePath = builder.nodePath;
-        this.deleteNodeListener = Objects.requireNonNullElseGet( builder.deleteNodeListener, EmptyDeleteNodeListener::new );
+        this.deleteNodeListener = Objects.requireNonNullElse( builder.deleteNodeListener, count -> {
+        } );
         this.refresh = builder.refresh;
     }
 
@@ -173,21 +174,6 @@ public class DeleteNodeCommand
         {
             this.validate();
             return new DeleteNodeCommand( this );
-        }
-
-    }
-
-    private static class EmptyDeleteNodeListener
-        implements DeleteNodeListener
-    {
-        @Override
-        public void nodesDeleted( final int count )
-        {
-        }
-
-        @Override
-        public void totalToDelete( final int count )
-        {
         }
     }
 }

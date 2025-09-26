@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.ReindexListener;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.task.ProgressReporter;
 
@@ -53,7 +52,7 @@ public class ReindexListenerImpl
     }
 
     @Override
-    public void branchEntry( final NodeBranchEntry entry )
+    public void branchEntry()
     {
         currentBranchProgress++;
 

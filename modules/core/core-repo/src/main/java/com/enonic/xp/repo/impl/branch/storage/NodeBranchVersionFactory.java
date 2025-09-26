@@ -3,10 +3,10 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.time.Instant;
 
 import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnValues;
 
 public class NodeBranchVersionFactory

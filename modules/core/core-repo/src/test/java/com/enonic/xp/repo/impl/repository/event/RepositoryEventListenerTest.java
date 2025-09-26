@@ -8,52 +8,43 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.repo.impl.RepositoryEvents;
-import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
-public class RepositoryEventListenerTest
+class RepositoryEventListenerTest
 {
     private RepositoryEventListener repositoryEventListener;
-
-    private NodeStorageService storageService;
 
     private InternalRepositoryService repositoryService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
-        this.storageService = Mockito.mock( NodeStorageService.class );
         this.repositoryService = Mockito.mock( InternalRepositoryService.class );
 
-        repositoryEventListener = new RepositoryEventListener( repositoryService, storageService );
+        repositoryEventListener = new RepositoryEventListener( repositoryService );
     }
 
     @Test
-    public void node_restored_event()
-        throws Exception
+    void node_restored_event()
     {
         executeInContext( () -> {
             final Event localEvent = RepositoryEvents.restored();
             repositoryEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
         } );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).invalidate();
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
     }
 
 
     @Test
-    public void node_restore_initialized()
-        throws Exception
+    void node_restore_initialized()
     {
         executeInContext( () -> {
             final Event localEvent = RepositoryEvents.restoreInitialized();
             repositoryEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
         } );
 
-        Mockito.verify( storageService, Mockito.times( 1 ) ).invalidate();
         Mockito.verify( repositoryService, Mockito.times( 1 ) ).invalidateAll();
     }
 
@@ -64,6 +55,4 @@ public class RepositoryEventListenerTest
             .build()
             .runWith( runnable );
     }
-
-
 }
