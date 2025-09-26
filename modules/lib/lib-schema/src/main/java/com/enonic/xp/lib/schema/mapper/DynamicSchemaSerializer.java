@@ -1,6 +1,9 @@
 package com.enonic.xp.lib.schema.mapper;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
@@ -13,9 +16,17 @@ import com.enonic.xp.form.InlineMixin;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.inputtype.BooleanPropertyValue;
+import com.enonic.xp.inputtype.DoublePropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.inputtype.IntegerPropertyValue;
+import com.enonic.xp.inputtype.ListPropertyValue;
+import com.enonic.xp.inputtype.LongPropertyValue;
+import com.enonic.xp.inputtype.ObjectPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.script.serializer.MapGenerator;
 
@@ -49,12 +60,20 @@ public class DynamicSchemaSerializer
         gen.map( "config" );
         for ( String name : config.getNames() )
         {
-            gen.array( name );
-            for ( final InputTypeProperty property : config.getProperties( name ) )
+            final Set<InputTypeProperty> properties = config.getProperties( name );
+            if ( properties.size() > 1 )
             {
-                serializeConfigProperty( gen, property );
+                gen.array( name );
+                for ( final InputTypeProperty property : properties )
+                {
+                    serializeConfigProperty( gen, property );
+                }
+                gen.end();
             }
-            gen.end();
+            else
+            {
+                serializeConfigProperty( gen, properties.iterator().next() );
+            }
         }
         gen.end();
     }
@@ -167,20 +186,69 @@ public class DynamicSchemaSerializer
     private static void serializeInlineMixin( final MapGenerator gen, final InlineMixin inlineMixin )
     {
         gen.map();
-        gen.value( "formItemType", "InlineMixin" );
+        gen.value( "formItemType", "FormFragment" );
         gen.value( "name", inlineMixin.getMixinName() );
         gen.end();
     }
 
     private static void serializeConfigProperty( final MapGenerator gen, final InputTypeProperty property )
     {
-        gen.map();
-        gen.value( "value", property.getValue() );
-//        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
-//        {
-//            gen.value( "@" + attribute.getKey(), attribute.getValue() );
-//        }
-        gen.end();
+        final PropertyValue propertyValue = property.getValue();
+
+        if ( propertyValue instanceof StringPropertyValue(String value) )
+        {
+            gen.value( property.getName(), value );
+        }
+        else if ( propertyValue instanceof BooleanPropertyValue(boolean value) )
+        {
+            gen.value( property.getName(), value );
+        }
+        else if ( propertyValue instanceof DoublePropertyValue(double value) )
+        {
+            gen.value( property.getName(), value );
+        }
+        else if ( propertyValue instanceof LongPropertyValue(long value) )
+        {
+            gen.value( property.getName(), value );
+        }
+        else if ( propertyValue instanceof IntegerPropertyValue(int value) )
+        {
+            gen.value( property.getName(), value );
+        }
+        else if ( propertyValue instanceof ListPropertyValue(List<PropertyValue> value) )
+        {
+            gen.array( property.getName() );
+            value.forEach( pv -> gen.value( unwrapScalarOrComposite( pv ) ) );
+            gen.end();
+        }
+        else if ( propertyValue instanceof ObjectPropertyValue objectPropertyValue )
+        {
+            gen.map(property.getName());
+            objectPropertyValue.getProperties()
+                .forEach( entry -> gen.value( entry.getKey(), unwrapScalarOrComposite( entry.getValue() ) ) );
+            gen.end();
+        }
+        else
+        {
+            throw new IllegalArgumentException( "Unrecognized property type: " + property.getValue() );
+        }
+    }
+
+    private static Object unwrapScalarOrComposite( final PropertyValue propertyValue )
+    {
+        return switch ( propertyValue )
+        {
+            case StringPropertyValue spv -> spv.value();
+            case BooleanPropertyValue bpv -> bpv.value();
+            case IntegerPropertyValue ipv -> ipv.value();
+            case DoublePropertyValue dpv -> dpv.value();
+            case LongPropertyValue lpv -> lpv.value();
+            case ListPropertyValue lpv -> lpv.value().stream().map( DynamicSchemaSerializer::unwrapScalarOrComposite ).toList();
+            case ObjectPropertyValue opv -> opv.value()
+                .entrySet()
+                .stream()
+                .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, e -> unwrapScalarOrComposite( e.getValue() ) ) );
+        };
     }
 
     private static void serializeDefaultValue( final MapGenerator gen, final Input input )

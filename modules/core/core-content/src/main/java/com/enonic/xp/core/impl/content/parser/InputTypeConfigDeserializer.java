@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.parser;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -21,7 +22,7 @@ final class InputTypeConfigDeserializer
         throws IOException
     {
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-        final Map<String, PropertyValue> configNode = mapper.readValue( jsonParser, new TypeReference<>()
+        final LinkedHashMap<String, PropertyValue> configNode = mapper.readValue( jsonParser, new TypeReference<>()
         {
         } );
 

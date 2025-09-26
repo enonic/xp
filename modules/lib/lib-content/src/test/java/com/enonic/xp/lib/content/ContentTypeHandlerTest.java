@@ -3,8 +3,8 @@ package com.enonic.xp.lib.content;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -176,12 +176,22 @@ public class ContentTypeHandlerTest
             .name( "myRadioButton" )
             .inputType( InputTypeName.RADIO_BUTTON )
             .label( "Radio button" )
-            .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                Map.of( "value", new StringPropertyValue( "one" ), "label",
-                        new ObjectPropertyValue( Map.of( "text", new StringPropertyValue( "Value One" ) ) ) ) ) ).build() )
-            .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                Map.of( "value", new StringPropertyValue( "two" ), "label",
-                        new ObjectPropertyValue( Map.of( "text", new StringPropertyValue( "Value Two" ) ) ) ) ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+            {{
+                put( "value", new StringPropertyValue( "one" ) );
+                put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                {{
+                    put( "text", new StringPropertyValue( "Value One" ) );
+                }} ) );
+            }} ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+            {{
+                put( "value", new StringPropertyValue( "two" ) );
+                put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                {{
+                    put( "text", new StringPropertyValue( "Value Two" ) );
+                }} ) );
+            }} ) ).build() )
             .inputTypeProperty( InputTypeProperty.create( "theme", new ListPropertyValue(
                 List.of( new StringPropertyValue( "dark" ), new StringPropertyValue( "light" ) ) ) ).build() )
             .inputTypeProperty( InputTypeProperty.create( "disabled", new BooleanPropertyValue( false ) ).build() )

@@ -34,12 +34,12 @@ public class ComboBoxYml
         if ( options != null )
         {
             options.forEach( option -> {
-                final Map<String, PropertyValue> optionMap = new LinkedHashMap<>();
+                final LinkedHashMap<String, PropertyValue> optionMap = new LinkedHashMap<>();
 
                 optionMap.put( "value", new StringPropertyValue( option.value ) );
                 if ( option.label != null )
                 {
-                    final Map<String, PropertyValue> optionTextMap = new LinkedHashMap<>();
+                    final LinkedHashMap<String, PropertyValue> optionTextMap = new LinkedHashMap<>();
                     optionTextMap.put( "text", new StringPropertyValue( option.label.text() ) );
                     if ( option.label.i18n() != null )
                     {

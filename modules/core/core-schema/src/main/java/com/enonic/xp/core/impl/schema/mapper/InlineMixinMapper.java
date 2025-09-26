@@ -21,7 +21,7 @@ public abstract class InlineMixinMapper
             return InlineMixin.create();
         }
 
-        @JsonProperty("mixin")
+        @JsonProperty("name")
         abstract InlineMixin.Builder mixin( String mixin );
     }
 }

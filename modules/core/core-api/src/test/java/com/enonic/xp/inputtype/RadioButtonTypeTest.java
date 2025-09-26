@@ -1,6 +1,6 @@
 package com.enonic.xp.inputtype;
 
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.Test;
 
@@ -79,13 +79,20 @@ public class RadioButtonTypeTest
 
     private InputTypeConfig newValidConfig()
     {
-        return InputTypeConfig.create()
-            .property( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                Map.of( "value", new StringPropertyValue( "one" ), "label",
-                        new ObjectPropertyValue( Map.of( "text", new StringPropertyValue( "Value One" ) ) ) ) ) ).build() )
-            .property( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                Map.of( "value", new StringPropertyValue( "two" ), "label",
-                        new ObjectPropertyValue( Map.of( "text", new StringPropertyValue( "Value Two" ) ) ) ) ) ).build() )
-            .build();
+        return InputTypeConfig.create().property( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+        {{
+            put( "value", new StringPropertyValue( "one" ) );
+            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+            {{
+                put( "text", new StringPropertyValue( "Value One" ) );
+            }} ) );
+        }} ) ).build() ).property( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+        {{
+            put( "value", new StringPropertyValue( "two" ) );
+            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+            {{
+                put( "text", new StringPropertyValue( "Value Two" ) );
+            }} ) );
+        }} ) ).build() ).build();
     }
 }

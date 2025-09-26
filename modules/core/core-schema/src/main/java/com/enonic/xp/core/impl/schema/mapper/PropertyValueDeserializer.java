@@ -2,9 +2,8 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -68,7 +67,7 @@ public class PropertyValueDeserializer
         }
         else if ( node.isObject() )
         {
-            final Map<String, PropertyValue> properties = new HashMap<>();
+            final LinkedHashMap<String, PropertyValue> properties = new LinkedHashMap<>();
             node.fieldNames().forEachRemaining( fieldName -> properties.put( fieldName, fromYml( node.get( fieldName ) ) ) );
             return new ObjectPropertyValue( properties );
         }

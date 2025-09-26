@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -505,14 +506,24 @@ public abstract class AbstractContentServiceTest
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
                               .inputTypeConfig( InputTypeConfig.create()
-                                                    .property( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                                                        Map.of( "value", new StringPropertyValue( "value1" ), "label",
-                                                                new ObjectPropertyValue(
-                                                                    Map.of( "text", new StringPropertyValue( "label1" ) ) ) ) ) ).build() )
-                                                    .property( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                                                        Map.of( "value", new StringPropertyValue( "value2" ), "label",
-                                                                new ObjectPropertyValue(
-                                                                    Map.of( "text", new StringPropertyValue( "label2" ) ) ) ) ) ).build() )
+                                                    .property(
+                                                        InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                        {{
+                                                            put( "value", new StringPropertyValue( "value1" ) );
+                                                            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                            {{
+                                                                put( "text", new StringPropertyValue( "label1" ) );
+                                                            }} ) );
+                                                        }} ) ).build() )
+                                                    .property(
+                                                        InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                        {{
+                                                            put( "value", new StringPropertyValue( "value2" ) );
+                                                            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                            {{
+                                                                put( "text", new StringPropertyValue( "label2" ) );
+                                                            }} ) );
+                                                        }} ) ).build() )
                                                     .build() )
                               .build() )
             .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )

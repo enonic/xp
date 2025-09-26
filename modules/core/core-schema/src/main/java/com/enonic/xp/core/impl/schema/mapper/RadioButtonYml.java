@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -34,12 +33,12 @@ public class RadioButtonYml
             if ( options != null )
             {
                 options.forEach( option -> {
-                    final Map<String, PropertyValue> optionMap = new LinkedHashMap<>();
+                    final LinkedHashMap<String, PropertyValue> optionMap = new LinkedHashMap<>();
 
                     optionMap.put( "value", new StringPropertyValue( option.value ) );
                     if ( option.label != null )
                     {
-                        final Map<String, PropertyValue> optionTextMap = new LinkedHashMap<>();
+                        final LinkedHashMap<String, PropertyValue> optionTextMap = new LinkedHashMap<>();
                         optionTextMap.put( "text", new StringPropertyValue( option.label.text() ) );
                         if ( option.label.i18n() != null )
                         {

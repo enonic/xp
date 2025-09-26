@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.BooleanPropertyValue;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
@@ -200,12 +201,26 @@ public class InputValidatorTest
                               .name( "comboBox" )
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                                  Map.of( "value", new StringPropertyValue( "value1" ), "label",
-                                          new ObjectPropertyValue( Map.of( "text", new StringPropertyValue( "label1" ) ) ) ) ) ).build() )
-                              .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue(
-                                  Map.of( "value", new StringPropertyValue( "value2" ), "label",
-                                          new ObjectPropertyValue( Map.of( "text", new StringPropertyValue( "label2" ) ) ) ) ) ).build() )
+                              .inputTypeConfig( InputTypeConfig.create()
+                                                    .property(
+                                                        InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                        {{
+                                                            put( "value", new StringPropertyValue( "value1" ) );
+                                                            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                            {{
+                                                                put( "text", new StringPropertyValue( "label1" ) );
+                                                            }} ) );
+                                                        }} ) ).build() )
+                                                    .property(
+                                                        InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                        {{
+                                                            put( "value", new StringPropertyValue( "value2" ) );
+                                                            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                            {{
+                                                                put( "text", new StringPropertyValue( "label2" ) );
+                                                            }} ) );
+                                                        }} ) ).build() )
+                                                    .build() )
                               .build() )
             .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
             .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
