@@ -27,8 +27,6 @@ public final class EditableContent
 
     public ContentPublishInfo publishInfo;
 
-    public ContentIds.Builder processedReferences;
-
     public WorkflowInfo workflowInfo;
 
     public ContentId variantOf;
