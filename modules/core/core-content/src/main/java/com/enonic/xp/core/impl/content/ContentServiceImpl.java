@@ -186,6 +186,7 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )

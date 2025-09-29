@@ -312,14 +312,14 @@ public abstract class AbstractContentSynchronizerTest
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, ( form, data ) -> {
+            }, ( page ) -> {
+            }, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
-        contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
-        } );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
     }
 
