@@ -47,8 +47,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
         if ( key instanceof ContentTypeName )
         {
-            processor.keyTranslator(
-                contentTypeName -> toResourceKey( contentTypeName, ( (ContentTypeName) contentTypeName ).getExtension() ) );
+            processor.keyTranslator( contentTypeName -> toResourceKey( contentTypeName, "yml" ) );
         }
         else
         {
@@ -93,8 +92,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     public final Set<N> findNames( final ApplicationKey key )
     {
-        return descriptorKeyLocator.findKeys( key ).stream().map( this::newName ).collect(
-            Collectors.toCollection( LinkedHashSet::new ) );
+        return descriptorKeyLocator.findKeys( key ).stream().map( this::newName ).collect( Collectors.toCollection( LinkedHashSet::new ) );
     }
 
     protected abstract N newName( DescriptorKey descriptorKey );

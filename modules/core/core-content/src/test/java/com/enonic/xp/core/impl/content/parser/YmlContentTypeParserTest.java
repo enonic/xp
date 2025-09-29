@@ -8,11 +8,14 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class YmlContentTypeParserTest
 {
@@ -34,9 +37,17 @@ public class YmlContentTypeParserTest
         assertEquals( ContentTypeName.from( "myapp:article" ), contentType.getName() );
         assertEquals( "Article", contentType.getDisplayName() );
         assertEquals( "i18n.article.displayName", contentType.getDisplayNameI18nKey() );
-        assertEquals( "${expression}", contentType.getDisplayNameExpression() );
+        assertNull( contentType.getDisplayNameExpression() );
         assertNotNull( contentType.getForm() );
         assertEquals( now, contentType.getCreatedTime() );
+        assertNotNull( contentType.getSchemaConfig() );
+        assertEquals( "${expression}", contentType.getSchemaConfig()
+            .getProperty( "displayNameExpression" )
+            .map( InputTypeProperty::getValue )
+            .filter( StringPropertyValue.class::isInstance )
+            .map( StringPropertyValue.class::cast )
+            .map( StringPropertyValue::value )
+            .orElse( null ) );
     }
 
     private String readAsString( final String name )

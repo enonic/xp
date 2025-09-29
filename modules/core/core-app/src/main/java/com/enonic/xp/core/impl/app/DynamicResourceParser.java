@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -13,7 +14,6 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
@@ -21,7 +21,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
@@ -31,13 +30,6 @@ import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class DynamicResourceParser
 {
-    private final ContentTypeService contentTypeService;
-
-    DynamicResourceParser( final ContentTypeService contentTypeService )
-    {
-        this.contentTypeService = contentTypeService;
-    }
-
     ComponentDescriptor parseComponent( final DescriptorKey key, final DynamicComponentType type, final String resource )
     {
         switch ( type )
@@ -126,38 +118,15 @@ final class DynamicResourceParser
 
     private ContentType parseContentTypeDescriptor( final ContentTypeName name, final String resource )
     {
-        // TODO: Remove later, kept just for testing
-        if ( "xml".equals( name.getExtension() ) )
+        try
         {
-            try
-            {
-                final ContentType.Builder builder = ContentType.create();
-                final XmlContentTypeParser parser = new XmlContentTypeParser();
-                parser.currentApplication( name.getApplicationKey() );
-                parser.source( resource );
-                parser.builder( builder );
-                parser.parse();
-                builder.name( name );
-
-                return builder.build();
-            }
-            catch ( Exception e )
-            {
-                throw new XmlException( e, "Could not parse dynamic content type [" + name + "]" );
-            }
+            final ContentType.Builder builder = YmlContentTypeParser.parse( resource, name.getApplicationKey() );
+            builder.name( name );
+            return builder.build();
         }
-        else
+        catch ( Exception e )
         {
-            try
-            {
-                final ContentType.Builder builder = contentTypeService.createContentTypeFromYml( resource, name.getApplicationKey() );
-                builder.name( name );
-                return builder.build();
-            }
-            catch ( Exception e )
-            {
-                throw new RuntimeException( String.format( "Could not parse dynamic content type [%s]", name ), e );
-            }
+            throw new RuntimeException( String.format( "Could not parse dynamic content type [%s]", name ), e );
         }
     }
 

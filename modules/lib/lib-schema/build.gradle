@@ -1,7 +1,9 @@
 dependencies {
     compileOnly project( ':core:core-api' )
     compileOnly project( ':script:script-api' )
+    compileOnly project( ':core:core-schema' )
 
     testImplementation project( ':core:core-content' )
+    testImplementation project( ':core:core-schema' )
     testImplementation project( ':tools:testing' )
 }

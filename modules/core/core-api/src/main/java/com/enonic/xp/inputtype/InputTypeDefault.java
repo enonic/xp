@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableSetMultimap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.convert.Converters;
 
 @PublicApi
 public final class InputTypeDefault
@@ -63,34 +62,6 @@ public final class InputTypeDefault
         }
 
         throw new IllegalArgumentException( "Invalid value for property: " + name );
-    }
-
-    public <T> T getValue( final String name, final Class<T> type )
-    {
-        return getValue( name, type, null );
-    }
-
-    public <T> T getValue( final String name, final Class<T> type, final T defValue )
-    {
-        final String value = getValue( name );
-        if ( value == null )
-        {
-            return defValue;
-        }
-
-        final T converted = Converters.convert( value, type );
-        return converted != null ? converted : defValue;
-    }
-
-    public boolean hasPropertyValue( final String name, final String value )
-    {
-        return findProperties( name, property -> Objects.equals( value, property.getValue() ) ).count() > 0;
-    }
-
-    public boolean hasAttributeValue( final String name, final String attr, final String attrValue )
-    {
-        return false;
-//        return findProperties( name, property -> Objects.equals( attrValue, property.getAttribute( attr ) ) ).count() > 0;
     }
 
     public int getSize()

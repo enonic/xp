@@ -43,7 +43,6 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
@@ -64,11 +63,10 @@ public class DynamicSchemaServiceImpl
     private final DynamicResourceParser dynamicResourceParser;
 
     @Activate
-    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService,
-                                     @Reference final ContentTypeService contentTypeService )
+    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService, resourceService );
-        this.dynamicResourceParser = new DynamicResourceParser( contentTypeService );
+        this.dynamicResourceParser = new DynamicResourceParser();
     }
 
     @Override
@@ -480,6 +478,6 @@ public class DynamicSchemaServiceImpl
 
     private String resolveExtension( final DynamicContentSchemaType schemaType, final BaseSchemaName schemaName )
     {
-        return schemaType == CONTENT_TYPE ? ( (ContentTypeName) schemaName ).getExtension() : "xml";
+        return schemaType == CONTENT_TYPE ? "yml" : "xml";
     }
 }

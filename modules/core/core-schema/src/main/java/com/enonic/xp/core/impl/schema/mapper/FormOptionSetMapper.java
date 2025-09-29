@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.schema.LocalizedText;
 
 @JsonDeserialize(builder = FormOptionSet.Builder.class)
@@ -32,5 +33,8 @@ public abstract class FormOptionSetMapper
 
         @JsonProperty("helpText")
         abstract FormOptionSet.Builder setHelpText( LocalizedText value );
+
+        @JsonProperty("selected")
+        abstract FormOptionSet.Builder multiselection( final Occurrences value );
     }
 }
