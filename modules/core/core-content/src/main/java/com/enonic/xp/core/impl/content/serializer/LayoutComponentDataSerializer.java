@@ -11,9 +11,9 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 
 final class LayoutComponentDataSerializer
     extends DescriptorBasedComponentDataSerializer<LayoutComponent>
@@ -57,21 +57,21 @@ final class LayoutComponentDataSerializer
             layoutBuilder
                 .descriptor( descriptorKey )
                 .config( getConfigFromData( layoutDataSet, descriptorKey ) )
-                .regions( buildLayoutRegions( layoutData.getString( PATH ), componentsAsData ) );
+                .regions( buildRegions( layoutData.getString( PATH ), componentsAsData ) );
         }
 
         return layoutBuilder.build();
     }
 
-    private LayoutRegions buildLayoutRegions( final String layoutPath, final List<PropertySet> componentsAsData )
+    private Regions buildRegions( final String layoutPath, final List<PropertySet> componentsAsData )
     {
-        final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
 
         getRegionDescriptors( layoutPath, componentsAsData ).forEach( regionDescriptor -> {
-            layoutRegionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
+            regionsBuilder.add( regionDataSerializer.fromData( regionDescriptor, layoutPath, componentsAsData ) );
         } );
 
-        return layoutRegionsBuilder.build();
+        return regionsBuilder.build();
     }
 
     private RegionDescriptors getRegionDescriptors( final String layoutPath, final List<PropertySet> componentsAsData )

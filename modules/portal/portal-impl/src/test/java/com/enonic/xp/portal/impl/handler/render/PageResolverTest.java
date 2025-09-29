@@ -18,12 +18,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -37,6 +36,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -66,9 +66,9 @@ public class PageResolverTest
 
     private PropertyTree configB;
 
-    private PageRegions regionsA;
+    private Regions regionsA;
 
-    private PageRegions regionsB;
+    private Regions regionsB;
 
     @Mock
     PageTemplateService pageTemplateService;
@@ -90,11 +90,11 @@ public class PageResolverTest
         configB = new PropertyTree();
         configB.addString( "b", "1" );
 
-        regionsA = PageRegions.create()
+        regionsA = Regions.create()
             .add( Region.create().name( "regionA" ).add( PartComponent.create().descriptor( "myapp:my-part" ).build() ).build() )
             .build();
 
-        regionsB = PageRegions.create()
+        regionsB = Regions.create()
             .add( Region.create().name( "regionB" ).add( PartComponent.create().descriptor( "myapp:my-part" ).build() ).build() )
             .build();
 
@@ -331,8 +331,8 @@ public class PageResolverTest
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp:my-descriptor" );
         final Region region2 = Region.create().name( "regionWithTextComponent" ).add( TextComponent.create().build() ).build();
         final Region region3 = Region.create().name( "regionWithLayoutComponent" ).add( LayoutComponent.create().build() ).build();
-        final PageRegions pageRegions = PageRegions.create().add( region2 ).add( region3 ).build();
-        final Page page = Page.create().descriptor( descriptorKey ).regions( pageRegions ).config( configB ).build();
+        final Regions regions = Regions.create().add( region2 ).add( region3 ).build();
+        final Page page = Page.create().descriptor( descriptorKey ).regions( regions ).config( configB ).build();
 
         final Content content = Content.create()
             .parentPath( site.getPath() )

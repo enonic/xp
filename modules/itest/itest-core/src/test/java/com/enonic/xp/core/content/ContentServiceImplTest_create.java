@@ -28,8 +28,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -239,7 +239,7 @@ public class ContentServiceImplTest_create
                              .key( DescriptorKey.from( "module:landing-page" ) )
                              .build() );
 
-        final Page page = Page.create().descriptor( pageDescriptorKey ).config( config ).regions( PageRegions.create().build() ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( config ).regions( Regions.create().build() ).build();
 
         final PropertyTree contentData = new PropertyTree();
         contentData.addString( "title", "This is my page" );

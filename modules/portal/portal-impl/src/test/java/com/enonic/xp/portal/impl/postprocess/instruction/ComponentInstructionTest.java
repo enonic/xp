@@ -10,7 +10,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -19,9 +18,9 @@ import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
@@ -116,8 +115,8 @@ public class ComponentInstructionTest
     public void testFragmentContentThrowsWhenComponentNotFound()
     {
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapplication:layout" );
-        final LayoutRegions regions =
-            LayoutRegions.create().add( Region.create().name( "r1" ).build() ).add( Region.create().name( "r2" ).build() ).build();
+        final Regions regions =
+            Regions.create().add( Region.create().name( "r1" ).build() ).add( Region.create().name( "r2" ).build() ).build();
         final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regions ).build();
 
         final PortalRequest portalRequest = new PortalRequest();
@@ -135,7 +134,7 @@ public class ComponentInstructionTest
 
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapplication:layout" );
         final PartComponent partComponent = createPartComponent();
-        final LayoutRegions regions = LayoutRegions.create()
+        final Regions regions = Regions.create()
             .add( Region.create().name( "r1" ).add( partComponent ).build() )
             .add( Region.create().name( "r2" ).build() )
             .build();
@@ -189,8 +188,8 @@ public class ComponentInstructionTest
         returnOnRender( "<b>part content</b>" );
 
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapplication:layout" );
-        final LayoutRegions regions =
-            LayoutRegions.create().add( Region.create().name( "r1" ).build() ).add( Region.create().name( "r2" ).build() ).build();
+        final Regions regions =
+            Regions.create().add( Region.create().name( "r1" ).build() ).add( Region.create().name( "r2" ).build() ).build();
         final LayoutComponent layoutComponent = LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regions ).build();
 
         doReturn( layoutComponent ).when( componentService ).getByKey( isA( DescriptorKey.class ) );
@@ -267,10 +266,9 @@ public class ComponentInstructionTest
             add( regionComponent ).
             build();
 
-        PageRegions pageRegions = PageRegions.create().add( region ).build();
+        Regions regions = Regions.create().add( region ).build();
         Page page = Page.create().
-            template( PageTemplateKey.from( "my-page" ) ).
-            regions( pageRegions ).
+            template( PageTemplateKey.from( "my-page" ) ).regions( regions ).
             build();
 
         return Content.create().

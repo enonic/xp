@@ -9,12 +9,12 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.util.Reference;
 
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
@@ -200,18 +200,18 @@ final class PageDataSerializer
         return page.build();
     }
 
-    private PageRegions getPageRegions( final List<PropertySet> componentsAsData )
+    private Regions getPageRegions( final List<PropertySet> componentsAsData )
     {
         final RegionDescriptors regionDescriptors =
             componentDataSerializerProvider.getRegionDataSerializer().getRegionDescriptorsAtLevel( 1, componentsAsData );
 
-        final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
 
         regionDescriptors.forEach( regionDescriptor -> {
-            pageRegionsBuilder.add( componentDataSerializerProvider.getRegionDataSerializer()
+            regionsBuilder.add( componentDataSerializerProvider.getRegionDataSerializer()
                                         .fromData( regionDescriptor, ComponentPath.DIVIDER, componentsAsData ) );
         } );
 
-        return pageRegionsBuilder.build();
+        return regionsBuilder.build();
     }
 }

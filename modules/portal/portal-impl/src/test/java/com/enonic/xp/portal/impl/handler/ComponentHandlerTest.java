@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -23,8 +22,8 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -353,9 +352,9 @@ public class ComponentHandlerTest
     public void testFragmentComponentAsLayoutComponent()
         throws Exception
     {
-        final LayoutRegions layoutRegions =
-            LayoutRegions.create().add( Region.create().name( "main-region" ).add( TextComponent.create().build() ).build() ).build();
-        final LayoutComponent layoutComponent = LayoutComponent.create().regions( layoutRegions ).build();
+        final Regions regions =
+            Regions.create().add( Region.create().name( "main-region" ).add( TextComponent.create().build() ).build() ).build();
+        final LayoutComponent layoutComponent = LayoutComponent.create().regions( regions ).build();
         final Content content = createPageThatIsFragment( layoutComponent );
 
         testFragmentContent( content, "/_/component/main-region/0" );
@@ -431,11 +430,11 @@ public class ComponentHandlerTest
 
     private Content createPageWithFragment( final ContentId fragmentId )
     {
-        PageRegions pageRegions = PageRegions.create()
+        Regions regions = Regions.create()
             .add( Region.create().name( "main-region" ).add( FragmentComponent.create().fragment( fragmentId ).build() ).build() )
             .build();
 
-        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( new PropertyTree() ).build();
+        Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( regions ).config( new PropertyTree() ).build();
 
         return createContentWithPage( page, ContentTypeName.from( "contentTypeName" ) );
     }

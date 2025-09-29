@@ -13,8 +13,8 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
@@ -82,11 +82,11 @@ public class LayoutDataSerializerTest
 
     private LayoutComponent createLayoutComponent( final DescriptorKey layoutDescriptorKey, final String... regionNames )
     {
-        final LayoutRegions.Builder layoutRegionsBuilder = LayoutRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
         Arrays.stream( regionNames )
             .map( regionName -> Region.create().name( regionName ).add( TextComponent.create().build() ).build() )
-            .forEach( layoutRegionsBuilder::add );
+            .forEach( regionsBuilder::add );
 
-        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( layoutRegionsBuilder.build() ).build();
+        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regionsBuilder.build() ).build();
     }
 }

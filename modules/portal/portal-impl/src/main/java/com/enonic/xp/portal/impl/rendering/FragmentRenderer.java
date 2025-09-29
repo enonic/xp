@@ -18,8 +18,8 @@ import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.web.HttpStatus;
 
 public final class FragmentRenderer
@@ -162,7 +162,7 @@ public final class FragmentRenderer
     private LayoutComponent buildLayoutWithRegions( final LayoutComponent existingLayout, final LayoutDescriptor layoutDescriptor )
     {
         final LayoutComponent.Builder layoutBuilder = LayoutComponent.create( existingLayout );
-        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
 
         if ( layoutDescriptor.getRegions() != null )
         {

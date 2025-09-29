@@ -62,11 +62,12 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -486,7 +487,7 @@ public class ProjectContentEventListenerTest
                 edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
-                edit.page = createPage();
+                edit.page = new EditablePage( createPage() );
             } ) ) ) );
 
         handleEvents();
@@ -510,7 +511,7 @@ public class ProjectContentEventListenerTest
                 edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
-                edit.page = createPage();
+                edit.page = new EditablePage( createPage() );
             } ) ) ) );
 
         handleEvents();
@@ -1173,6 +1174,6 @@ public class ProjectContentEventListenerTest
                              .regions( RegionDescriptors.create().build() )
                              .build() );
 
-        return Page.create().descriptor( pageDescriptorKey ).config( config ).regions( PageRegions.create().build() ).build();
+        return Page.create().descriptor( pageDescriptorKey ).config( config ).regions( Regions.create().build() ).build();
     }
 }

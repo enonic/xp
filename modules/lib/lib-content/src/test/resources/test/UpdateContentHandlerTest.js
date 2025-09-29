@@ -47,7 +47,7 @@ var expectedJson = {
         'path': '/',
         'descriptor': 'my-app-key:mycontroller',
         'config': {
-            'a': '1'
+            'a': 1
         },
         'regions': {
             'top': {
@@ -348,7 +348,7 @@ exports.updatePageAllComponents = function () {
                 path: '/',
                 descriptor: 'app:main-page',
                 config: {
-                    greeting: 'Hello'
+                    b: 'Hello'
                 },
                 regions: {
                     main: {
@@ -401,7 +401,7 @@ exports.updatePageAllComponents = function () {
         path: '/',
         descriptor: 'app:main-page',
         config: {
-            greeting: 'Hello'
+            b: 'Hello'
         },
         regions: {
             main: {

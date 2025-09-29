@@ -18,6 +18,8 @@ import com.enonic.xp.lib.content.deserializer.SiteConfigDeserializer;
 import com.enonic.xp.lib.content.deserializer.ValidationErrorsDeserializer;
 import com.enonic.xp.lib.content.deserializer.WorkflowDeserializer;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
@@ -63,6 +65,16 @@ public abstract class BaseContentHandler
     protected Page createPage( final Map<String, Object> pageMap )
     {
         return contentDataDeserializer.toPage( pageMap );
+    }
+
+    protected Regions createRegions( final Map<String, Object> regionsMap )
+    {
+        return contentDataDeserializer.toRegions( regionsMap );
+    }
+
+    protected Component createComponent( final Map<String, Object> componentMap )
+    {
+        return contentDataDeserializer.toComponent( componentMap );
     }
 
     protected ValidationErrors createValidationErrors( final List<Object> validationErrors )

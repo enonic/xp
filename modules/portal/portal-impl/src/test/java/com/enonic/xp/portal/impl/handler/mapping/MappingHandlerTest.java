@@ -19,7 +19,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -37,6 +36,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
@@ -416,11 +416,11 @@ public class MappingHandlerTest
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create()
+            Regions regions = Regions.create()
                 .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
                 .build();
 
-            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
+            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( regions ).config( rootDataSet ).build();
             content.page( page );
         }
         return content.build();

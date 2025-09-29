@@ -6,11 +6,11 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
@@ -37,16 +37,15 @@ class GetComponentByKeyCommand
         if ( layoutDescriptor != null && componentExists( layoutDescriptor.getComponentPath() ) )
         {
             return LayoutComponent.create().
-                descriptor( layoutDescriptor.getKey() ).
-                regions( buildLayoutRegions( layoutDescriptor ) ).
+                descriptor( layoutDescriptor.getKey() ).regions( buildRegions( layoutDescriptor ) ).
                 build();
         }
         return null;
     }
 
-    private LayoutRegions buildLayoutRegions( final LayoutDescriptor layoutDescriptor )
+    private Regions buildRegions( final LayoutDescriptor layoutDescriptor )
     {
-        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
         layoutDescriptor.getRegions()
             .forEach( regionDescriptor -> regionsBuilder.add( Region.create().name( regionDescriptor.getName() ).build() ) );
 

@@ -5,7 +5,7 @@ import java.util.Locale;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.Page;
+import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.security.PrincipalKey;
 
 @PublicApi
@@ -19,7 +19,7 @@ public final class EditableContent
 
     public ExtraDatas extraDatas;
 
-    public Page page;
+    public EditablePage page;
 
     public PrincipalKey owner;
 
@@ -37,7 +37,7 @@ public final class EditableContent
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
         this.extraDatas = source.getAllExtraData().copy();
-        this.page = source.getPage() != null ? source.getPage().copy() : null;
+        this.page = source.getPage() != null ? new EditablePage( source.getPage() ) : null;
         this.owner = source.getOwner();
         this.language = source.getLanguage();
         this.publishInfo = source.getPublishInfo();
@@ -50,8 +50,7 @@ public final class EditableContent
         return Content.create( this.source )
             .displayName( displayName )
             .data( data )
-            .extraDatas( extraDatas )
-            .page( page )
+            .extraDatas( extraDatas ).page( page != null ? page.build() : null )
             .owner( owner )
             .language( language )
             .publishInfo( buildPublishInfo() )
