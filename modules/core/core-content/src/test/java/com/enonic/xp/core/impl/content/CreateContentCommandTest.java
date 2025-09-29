@@ -583,6 +583,7 @@ public class CreateContentCommandTest
             .siteService( this.siteService )
             .pageDescriptorService( this.pageDescriptorService )
             .formDefaultValuesProcessor( ( form, data ) -> {
+            } ).pageFormDefaultValuesProcessor( ( page ) -> {
             } )
             .build();
     }

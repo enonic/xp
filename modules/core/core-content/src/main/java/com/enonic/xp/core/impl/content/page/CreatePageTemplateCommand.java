@@ -1,16 +1,13 @@
 package com.enonic.xp.core.impl.content.page;
 
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.region.Regions;
@@ -89,17 +86,18 @@ class CreatePageTemplateCommand
         final PropertyTree data = new PropertyTree();
         new PageTemplateFormDataBuilder().supports( supports ).appendData( data.getRoot() );
 
-        final Content content = contentService.create( CreateContentParams.create()
-                                                           .name( name )
-                                                           .displayName( displayName )
-                                                           .owner( PrincipalKey.ofAnonymous() )
-                                                           .contentData( data )
-                                                           .type( ContentTypeName.pageTemplate() )
-                                                           .parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) )
-                                                           .build() );
-
-        return (PageTemplate) contentService.update( new UpdateContentParams().contentId( content.getId() ).editor( edit -> {
-            edit.page = new EditablePage( Page.create().descriptor( controller ).config( pageConfig ).regions( regions ).build() );
-        } ) );
+        return (PageTemplate) contentService.create( CreateContentParams.create()
+                                                         .name( name )
+                                                         .displayName( displayName )
+                                                         .owner( PrincipalKey.ofAnonymous() )
+                                                         .contentData( data )
+                                                         .type( ContentTypeName.pageTemplate() )
+                                                         .parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) )
+                                                         .page( Page.create()
+                                                                    .descriptor( controller )
+                                                                    .config( pageConfig )
+                                                                    .regions( regions )
+                                                                    .build() )
+                                                         .build() );
     }
 }

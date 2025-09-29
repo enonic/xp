@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -18,6 +15,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.PageDefaultValuesProcessor;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -44,13 +42,13 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private static final Logger LOG = LoggerFactory.getLogger( CreateContentCommand.class );
-
     private final CreateContentParams params;
 
     private final MediaInfo mediaInfo;
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
+
+    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
     private CreateContentCommand( final Builder builder )
     {
@@ -58,6 +56,7 @@ final class CreateContentCommand
         this.params = builder.params;
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
     }
 
     static Builder create()
@@ -81,6 +80,7 @@ final class CreateContentCommand
         validateContentType( contentType );
 
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
+        pageFormDefaultValuesProcessor.applyDefaultValues( params.getPage() );
         // TODO apply default values to xData
 
         ProcessCreateResult processedParams = runContentProcessors( params );
@@ -311,6 +311,8 @@ final class CreateContentCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
+
         private Builder()
         {
         }
@@ -338,12 +340,19 @@ final class CreateContentCommand
             return this;
         }
 
+        Builder pageFormDefaultValuesProcessor( final PageDefaultValuesProcessor pageFormDefaultValuesProcessor )
+        {
+            this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
+            return this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( formDefaultValuesProcessor );
+            Objects.requireNonNull( pageFormDefaultValuesProcessor );
             ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 
