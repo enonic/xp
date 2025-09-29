@@ -1,13 +1,9 @@
 type: "CustomSelector"
 name: "musicTrack"
 label: "Intro song"
-service: "spotify-music-selector"
-params:
-  genre: "classic"
-  sortBy: "length"
-#config:
-#  service: "spotify-music-selector"
-#  params:
-#    genre: "classic"
-#    sortBy: "length"
+config:
+  service: "spotify-music-selector"
+  params:
+    genre: "classic"
+    sortBy: "length"
 default: "DefaultValue"

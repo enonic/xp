@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content.parser;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;

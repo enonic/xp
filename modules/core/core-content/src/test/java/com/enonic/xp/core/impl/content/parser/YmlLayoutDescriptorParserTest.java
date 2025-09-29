@@ -14,7 +14,6 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;

@@ -1,15 +1,10 @@
 package com.enonic.xp.inputtype;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.xp.data.Property;
 
 abstract class TextInputTypeBase
     extends InputTypeBase
 {
-    private static final Logger LOG = LoggerFactory.getLogger( TextInputTypeBase.class );
-
     TextInputTypeBase( final InputTypeName name )
     {
         super( name );

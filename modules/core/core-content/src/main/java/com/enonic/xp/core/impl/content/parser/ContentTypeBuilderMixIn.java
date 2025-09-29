@@ -53,5 +53,5 @@ abstract class ContentTypeBuilderMixIn
 
     @JsonProperty("config")
     @JsonDeserialize(using = InputTypeConfigDeserializer.class)
-    abstract ContentType.Builder schemaConfig( final InputTypeConfig config );
+    abstract ContentType.Builder schemaConfig( InputTypeConfig config );
 }

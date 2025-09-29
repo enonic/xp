@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.DoublePropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -21,10 +20,8 @@ public class DoubleYml
     }
 
     @Override
-    public void customizeInputType( final Input.Builder builder )
+    public void customizeInputType( final InputTypeConfig.Builder configBuilder )
     {
-        final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
-
         if ( min != null )
         {
             configBuilder.property( InputTypeProperty.create( "min", new DoublePropertyValue( min ) ).build() );
@@ -33,7 +30,5 @@ public class DoubleYml
         {
             configBuilder.property( InputTypeProperty.create( "max", new DoublePropertyValue( max ) ).build() );
         }
-
-        builder.inputTypeConfig( configBuilder.build() );
     }
 }

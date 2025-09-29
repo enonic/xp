@@ -4,6 +4,5 @@ label: "My ContentTypeFilter"
 occurrences:
   minimum: 0
   maximum: 1
-context: true
-#config:
-#  context: true
+config:
+  context: true

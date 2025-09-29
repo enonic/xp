@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
@@ -27,10 +26,8 @@ public class ComboBoxYml
     }
 
     @Override
-    public void customizeInputType( final Input.Builder builder )
+    public void customizeInputType( final InputTypeConfig.Builder configBuilder )
     {
-        final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
-
         if ( options != null )
         {
             options.forEach( option -> {
@@ -55,12 +52,5 @@ public class ComboBoxYml
                 configBuilder.property( propertyBuilder.build() );
             } );
         }
-
-        if ( config != null )
-        {
-            config.forEach( ( name, value ) -> configBuilder.property( InputTypeProperty.create( name, value ).build() ) );
-        }
-
-        builder.inputTypeConfig( configBuilder.build() );
     }
 }
