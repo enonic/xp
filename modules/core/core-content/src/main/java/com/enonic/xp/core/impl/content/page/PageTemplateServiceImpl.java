@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.util.Objects;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -19,7 +20,13 @@ import com.enonic.xp.page.PageTemplates;
 public final class PageTemplateServiceImpl
     implements PageTemplateService
 {
-    private ContentService contentService;
+    private final ContentService contentService;
+
+    @Activate
+    public PageTemplateServiceImpl( @Reference final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
 
     @Override
     public PageTemplate create( final CreatePageTemplateParams params )
@@ -64,11 +71,5 @@ public final class PageTemplateServiceImpl
             site( siteId ).
             contentService( this.contentService ).
             execute();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
     }
 }
