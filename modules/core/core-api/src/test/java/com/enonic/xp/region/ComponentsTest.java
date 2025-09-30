@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,8 +19,7 @@ public class ComponentsTest
 
         Page page = Page.create().
             template( PageTemplateKey.from( "pageTemplateName" ) ).
-            config( pageConfig ).
-            regions( PageRegions.create().build() ).
+            config( pageConfig ).regions( Regions.create().build() ).
             build();
 
         assertEquals( "pageTemplateName", page.getTemplate().toString() );

@@ -15,7 +15,6 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -28,6 +27,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
@@ -162,11 +162,11 @@ public abstract class RenderBaseHandlerTest
 
         if ( withPage )
         {
-            PageRegions pageRegions = PageRegions.create()
+            Regions regions = Regions.create()
                 .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
                 .build();
 
-            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( pageRegions ).config( rootDataSet ).build();
+            Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).regions( regions ).config( rootDataSet ).build();
             content.page( page );
         }
         return content.build();
@@ -195,14 +195,13 @@ public abstract class RenderBaseHandlerTest
         final PropertyTree pageTemplateConfig = new PropertyTree();
         pageTemplateConfig.addLong( "pause", 10000L );
 
-        PageRegions pageRegions = PageRegions.create()
+        Regions regions = Regions.create()
             .add( Region.create().name( "main-region" ).add( PartComponent.create().descriptor( "myapp:mypart" ).build() ).build() )
             .build();
 
         final PageTemplate.Builder builder = PageTemplate.newPageTemplate()
             .key( PageTemplateKey.from( "abc" ) )
-            .canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) )
-            .regions( pageRegions )
+            .canRender( ContentTypeNames.from( "myapplication:article", "myapplication:banner", "myapplication:ctype" ) ).regions( regions )
             .config( pageTemplateConfig );
 
         builder.controller( DescriptorKey.from( "mainapplication:landing-page" ) );

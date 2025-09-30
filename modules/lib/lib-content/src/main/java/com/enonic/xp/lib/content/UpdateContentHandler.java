@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentEditor;
@@ -14,7 +15,9 @@ import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
+import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.script.ScriptValue;
 
 public final class UpdateContentHandler
@@ -100,6 +103,8 @@ public final class UpdateContentHandler
             target.extraDatas = createExtraDatas( (Map) extraData, existingContent.getType() );
         }
 
+        updatePage( target, map );
+
         final Object publishInfo = map.get( "publish" );
 
         if ( publishInfo instanceof Map )
@@ -114,6 +119,40 @@ public final class UpdateContentHandler
         }
     }
 
+    private void updatePage( final EditableContent target, final Map<?, ?> map )
+    {
+        final Object page = map.get( "page" );
+        if ( page instanceof Map<?, ?> pageMap )
+        {
+            if ( pageMap.containsKey( "descriptor" ) )
+            {
+                target.page.descriptor =
+                    Optional.ofNullable( (String) pageMap.get( "descriptor" ) ).map( DescriptorKey::from ).orElse( null );
+            }
+            if ( pageMap.containsKey( "template" ) )
+            {
+                target.page.template =
+                    Optional.ofNullable( (String) pageMap.get( "template" ) ).map( PageTemplateKey::from ).orElse( null );
+            }
+            if ( pageMap.containsKey( "regions" ) )
+            {
+                target.page.regions =
+                    Optional.ofNullable( (Map<String, Object>) pageMap.get( "regions" ) ).map( this::createRegions ).orElse( null );
+            }
+            if ( pageMap.containsKey( "fragment" ) )
+            {
+                target.page.fragment =
+                    Optional.ofNullable( (Map<String, Object>) pageMap.get( "fragment" ) ).map( this::createComponent ).orElse( null );
+            }
+            if ( pageMap.containsKey( "config" ) )
+            {
+                target.page.config = Optional.ofNullable( (Map<String, Object>) pageMap.get( "config" ) )
+                    .map( dataMap -> createPropertyTree( dataMap, target.source.getType() ) )
+                    .orElse( null );
+            }
+        }
+    }
+
     private ContentPublishInfo createContentPublishInfo( final Map<String, Object> value )
     {
         if ( value == null )
@@ -121,10 +160,7 @@ public final class UpdateContentHandler
             return null;
         }
 
-        return ContentPublishInfo.create()
-            .from( getInstant( value, "from" ) )
-            .to( getInstant( value, "to" ) )
-            .build();
+        return ContentPublishInfo.create().from( getInstant( value, "from" ) ).to( getInstant( value, "to" ) ).build();
     }
 
     private Instant getInstant( final Map<String, Object> valueMap, final String key )

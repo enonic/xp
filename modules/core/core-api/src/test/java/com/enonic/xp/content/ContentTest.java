@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.region.Regions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,8 +49,7 @@ public class ContentTest
                     page(Page.create().
                             descriptor(DescriptorKey.from("abc:abc")).
                             template(PageTemplateKey.from("123")).
-                            config(new PropertyTree()).
-                            regions(PageRegions.create().build()).
+                            config(new PropertyTree()).regions( Regions.create().build() ).
                             build()).build();
         } );
     }

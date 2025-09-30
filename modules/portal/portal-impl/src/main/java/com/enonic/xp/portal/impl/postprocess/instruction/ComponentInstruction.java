@@ -19,7 +19,7 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ComponentService;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 
@@ -146,8 +146,8 @@ public final class ComponentInstruction
         }
 
         final LayoutComponent layout = (LayoutComponent) fragmentComponent;
-        final LayoutRegions pageRegions = layout.getRegions();
-        final Component component = pageRegions.getComponent( path );
+        final Regions regions = layout.getRegions();
+        final Component component = regions.getComponent( path );
 
         if ( component == null )
         {

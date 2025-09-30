@@ -14,6 +14,8 @@ import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.util.BinaryReferences;
@@ -98,6 +100,16 @@ public final class ContentDataDeserializer
     public Page toPage( Map<String, Object> pageMap )
     {
         return pageDeserializer.deserialize( pageMap );
+    }
+
+    public Regions toRegions( Map<String, Object> regionsMap )
+    {
+        return pageDeserializer.deserializeRegions( regionsMap );
+    }
+
+    public Component toComponent( Map<String, Object> componentMap )
+    {
+        return pageDeserializer.deserializeComponent( componentMap );
     }
 
     public Attachments toAttachments( List<Map<String, Object>> attachmentsMap, Attachments originalAttachments )

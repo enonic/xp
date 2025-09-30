@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +19,7 @@ public class EditablePageTest
         final EditablePage editablePage = new EditablePage( page );
 
         assertEquals( page.getConfig(), editablePage.config );
-        assertEquals( page.getDescriptor(), editablePage.controller );
+        assertEquals( page.getDescriptor(), editablePage.descriptor );
         assertEquals( page.getRegions(), editablePage.regions );
         assertEquals( page.getTemplate(), editablePage.template );
     }
@@ -31,7 +32,7 @@ public class EditablePageTest
         final Page page = editablePage.build();
 
         assertEquals( editablePage.config, page.getConfig() );
-        assertEquals( editablePage.controller, page.getDescriptor() );
+        assertEquals( editablePage.descriptor, page.getDescriptor() );
         assertEquals( editablePage.regions, page.getRegions() );
         assertEquals( editablePage.template, page.getTemplate() );
     }
@@ -55,8 +56,7 @@ public class EditablePageTest
 
         return Page.create().
             config( config1 ).
-            template( PageTemplateKey.from( "template-x" ) ).
-            regions( PageRegions.create().add( region1 ).build() ).
+            template( PageTemplateKey.from( "template-x" ) ).regions( Regions.create().add( region1 ).build() ).
             build();
     }
 }

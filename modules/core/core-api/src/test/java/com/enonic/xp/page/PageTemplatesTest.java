@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
@@ -60,14 +61,13 @@ public class PageTemplatesTest
     {
         return PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "testKey" ) ).
-            canRender( ContentTypeNames.from( ContentTypeName.archiveMedia(), ContentTypeName.imageMedia() ) ).
-            regions( PageRegions.create().build() ).
+            canRender( ContentTypeNames.from( ContentTypeName.archiveMedia(), ContentTypeName.imageMedia() ) ).regions(
+            Regions.create().build() ).
             name( "testContentName" ).
             id( ContentId.from( "id" ) ).
             parentPath( ContentPath.from( "path" ) ).
             page( Page.create().
-                descriptor( DescriptorKey.from( "app:page1" ) ).
-                regions( PageRegions.create().build() ).
+                descriptor( DescriptorKey.from( "app:page1" ) ).regions( Regions.create().build() ).
                 build() ).
             build();
     }
@@ -81,8 +81,7 @@ public class PageTemplatesTest
             name( "testContentName2" ).
             parentPath( ContentPath.from( "path2" ) ).
             page( Page.create().
-                descriptor( DescriptorKey.from( "app:page2" ) ).
-                regions( PageRegions.create().build() ).
+                descriptor( DescriptorKey.from( "app:page2" ) ).regions( Regions.create().build() ).
                 build() ).
             build();
     }
@@ -96,8 +95,7 @@ public class PageTemplatesTest
             name( "testContentName3" ).
             parentPath( ContentPath.from( "path3" ) ).
             page( Page.create().
-                descriptor( DescriptorKey.from( "app:page3" ) ).
-                regions( PageRegions.create().build() ).
+                descriptor( DescriptorKey.from( "app:page3" ) ).regions( Regions.create().build() ).
                 build() ).
             build();
     }

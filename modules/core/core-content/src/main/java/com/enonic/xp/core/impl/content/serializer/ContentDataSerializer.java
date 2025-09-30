@@ -111,6 +111,10 @@ public final class ContentDataSerializer
 
         addPublishInfo( contentAsData, params.getContentPublishInfo() );
         addWorkflowInfo( contentAsData, params.getWorkflowInfo() );
+        if ( params.getPage() != null )
+        {
+            toPageData( params.getPage(), contentAsData );
+        }
 
         final ExtraDatas extraData = params.getExtraDatas();
 
@@ -143,7 +147,7 @@ public final class ContentDataSerializer
 
         if ( content.getPage() != null )
         {
-            pageDataSerializer.toData( content.getPage(), contentAsData );
+            toPageData( content.getPage(), contentAsData );
         }
 
         addProcessedReferences( contentAsData, content.getProcessedReferences() );

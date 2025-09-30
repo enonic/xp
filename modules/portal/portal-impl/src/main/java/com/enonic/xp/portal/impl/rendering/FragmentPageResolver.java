@@ -3,12 +3,11 @@ package com.enonic.xp.portal.impl.rendering;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 
 public final class FragmentPageResolver
 {
@@ -18,20 +17,20 @@ public final class FragmentPageResolver
         ImmutableList<ComponentPath.RegionAndComponent> pathItems = ImmutableList.copyOf( path );
         if ( page.getRegions() != null )
         {
-            final PageRegions regions = this.replaceComponentInPage( page.getRegions(), pathItems, fragmentComponent );
+            final Regions regions = this.replaceComponentInPage( page.getRegions(), pathItems, fragmentComponent );
             return Page.create( page ).regions( regions ).build();
         }
         else if ( page.getFragment() != null && page.getFragment() instanceof LayoutComponent )
         {
             final LayoutComponent layoutComponent = (LayoutComponent) page.getFragment();
-            final LayoutRegions layoutRegions = this.replaceComponentInLayout( layoutComponent.getRegions(), pathItems, fragmentComponent );
-            final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( layoutRegions ).build();
+            final Regions regions = this.replaceComponentInLayout( layoutComponent.getRegions(), pathItems, fragmentComponent );
+            final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( regions ).build();
             return Page.create( page ).fragment( updatedLayout ).build();
         }
         return page;
     }
 
-    private PageRegions replaceComponentInPage( final PageRegions pageRegions,
+    private Regions replaceComponentInPage( final Regions pageRegions,
                                                 final ImmutableList<ComponentPath.RegionAndComponent> pathItems, final Component component )
     {
         final ComponentPath.RegionAndComponent regionCmp = pathItems.isEmpty() ? null : pathItems.get( 0 );
@@ -61,7 +60,7 @@ public final class FragmentPageResolver
                 return pageRegions;
             }
             final LayoutComponent layoutComponent = (LayoutComponent) existingCmp;
-            final LayoutRegions layoutRegions =
+            final Regions layoutRegions =
                 replaceComponentInLayout( layoutComponent.getRegions(), removeFirstLevel( pathItems ), component );
             final LayoutComponent updatedLayout = LayoutComponent.create( layoutComponent ).regions( layoutRegions ).build();
 
@@ -70,15 +69,15 @@ public final class FragmentPageResolver
         }
     }
 
-    private LayoutRegions replaceComponentInLayout( final LayoutRegions layoutRegions,
+    private Regions replaceComponentInLayout( final Regions regions,
                                                     final ImmutableList<ComponentPath.RegionAndComponent> pathItems,
                                                     final Component component )
     {
         final ComponentPath.RegionAndComponent regionCmp = pathItems.isEmpty() ? null : pathItems.get( 0 );
-        final Region region = regionCmp == null ? null : layoutRegions.getRegion( regionCmp.getRegionName() );
+        final Region region = regionCmp == null ? null : regions.getRegion( regionCmp.getRegionName() );
         if ( region == null )
         {
-            return layoutRegions.copy();
+            return regions.copy();
         }
 
         final int componentIndex = regionCmp.getComponentIndex();
@@ -86,14 +85,14 @@ public final class FragmentPageResolver
         if ( existingCmp != null )
         {
             final Region updatedRegion = Region.create( region ).set( componentIndex, component ).build();
-            return replaceRegionInLayout( layoutRegions, region, updatedRegion );
+            return replaceRegionInLayout( regions, region, updatedRegion );
         }
-        return layoutRegions.copy();
+        return regions.copy();
     }
 
-    private LayoutRegions replaceRegionInLayout( final LayoutRegions regions, final Region sourceRegion, final Region newRegion )
+    private Regions replaceRegionInLayout( final Regions regions, final Region sourceRegion, final Region newRegion )
     {
-        final LayoutRegions.Builder result = LayoutRegions.create();
+        final Regions.Builder result = Regions.create();
         for ( Region region : regions )
         {
             if ( region != sourceRegion )
@@ -108,9 +107,9 @@ public final class FragmentPageResolver
         return result.build();
     }
 
-    private PageRegions replaceRegionInPage( final PageRegions regions, final Region sourceRegion, final Region newRegion )
+    private Regions replaceRegionInPage( final Regions regions, final Region sourceRegion, final Region newRegion )
     {
-        final PageRegions.Builder result = PageRegions.create();
+        final Regions.Builder result = Regions.create();
         for ( Region region : regions )
         {
             if ( region != sourceRegion )

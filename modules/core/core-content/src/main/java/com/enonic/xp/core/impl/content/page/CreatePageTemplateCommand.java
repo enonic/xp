@@ -1,18 +1,16 @@
 package com.enonic.xp.core.impl.content.page;
 
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.page.CreatePageParams;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.page.PageService;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
@@ -20,8 +18,6 @@ import com.enonic.xp.security.PrincipalKey;
 class CreatePageTemplateCommand
 {
     private ContentService contentService;
-
-    private PageService pageService;
 
     private ContentPath site;
 
@@ -33,19 +29,13 @@ class CreatePageTemplateCommand
 
     private ContentTypeNames supports;
 
-    private PageRegions pageRegions;
+    private Regions regions;
 
     private PropertyTree pageConfig;
 
     public CreatePageTemplateCommand contentService( final ContentService contentService )
     {
         this.contentService = contentService;
-        return this;
-    }
-
-    public CreatePageTemplateCommand pageService( final PageService pageService )
-    {
-        this.pageService = pageService;
         return this;
     }
 
@@ -79,9 +69,9 @@ class CreatePageTemplateCommand
         return this;
     }
 
-    public CreatePageTemplateCommand pageRegions( final PageRegions pageRegions )
+    public CreatePageTemplateCommand regions( final Regions regions )
     {
-        this.pageRegions = pageRegions;
+        this.regions = regions;
         return this;
     }
 
@@ -94,23 +84,20 @@ class CreatePageTemplateCommand
     public PageTemplate execute()
     {
         final PropertyTree data = new PropertyTree();
-        new PageTemplateFormDataBuilder().
-            supports( supports ).
-            appendData( data.getRoot() );
+        new PageTemplateFormDataBuilder().supports( supports ).appendData( data.getRoot() );
 
-        final Content content = contentService.create( CreateContentParams.create().
-            name( name ).
-            displayName( displayName ).
-            owner( PrincipalKey.ofAnonymous() ).
-            contentData( data ).
-            type( ContentTypeName.pageTemplate() ).
-            parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) ).
-            build() );
-
-        return (PageTemplate) pageService.create( new CreatePageParams().
-            content( content.getId() ).
-            controller( controller ).
-            config( pageConfig ).
-            regions( pageRegions ) );
+        return (PageTemplate) contentService.create( CreateContentParams.create()
+                                                         .name( name )
+                                                         .displayName( displayName )
+                                                         .owner( PrincipalKey.ofAnonymous() )
+                                                         .contentData( data )
+                                                         .type( ContentTypeName.pageTemplate() )
+                                                         .parent( ContentPath.from( site, ContentServiceImpl.TEMPLATES_FOLDER_NAME ) )
+                                                         .page( Page.create()
+                                                                    .descriptor( controller )
+                                                                    .config( pageConfig )
+                                                                    .regions( regions )
+                                                                    .build() )
+                                                         .build() );
     }
 }

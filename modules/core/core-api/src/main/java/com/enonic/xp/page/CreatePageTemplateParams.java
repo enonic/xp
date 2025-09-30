@@ -1,11 +1,11 @@
 package com.enonic.xp.page;
 
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeNames;
 
 @PublicApi
@@ -21,7 +21,7 @@ public final class CreatePageTemplateParams
 
     private ContentTypeNames supports;
 
-    private PageRegions pageRegions;
+    private Regions regions;
 
     private PropertyTree pageConfig;
 
@@ -61,9 +61,9 @@ public final class CreatePageTemplateParams
         return this;
     }
 
-    public CreatePageTemplateParams pageRegions( final PageRegions pageRegions )
+    public CreatePageTemplateParams regions( final Regions regions )
     {
-        this.pageRegions = pageRegions;
+        this.regions = regions;
         return this;
     }
 
@@ -98,9 +98,9 @@ public final class CreatePageTemplateParams
         return supports;
     }
 
-    public PageRegions getPageRegions()
+    public Regions getRegions()
     {
-        return pageRegions;
+        return regions;
     }
 
     public PropertyTree getPageConfig()

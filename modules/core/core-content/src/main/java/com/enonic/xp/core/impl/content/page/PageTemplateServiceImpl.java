@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content.page;
 
 import java.util.Objects;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -10,7 +11,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.page.CreatePageTemplateParams;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
-import com.enonic.xp.page.PageService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -20,9 +20,13 @@ import com.enonic.xp.page.PageTemplates;
 public final class PageTemplateServiceImpl
     implements PageTemplateService
 {
-    private ContentService contentService;
+    private final ContentService contentService;
 
-    private PageService pageService;
+    @Activate
+    public PageTemplateServiceImpl( @Reference final ContentService contentService )
+    {
+        this.contentService = contentService;
+    }
 
     @Override
     public PageTemplate create( final CreatePageTemplateParams params )
@@ -32,11 +36,9 @@ public final class PageTemplateServiceImpl
             name( params.getName() ).
             displayName( params.getDisplayName() ).
             controller( params.getController() ).
-            supports( params.getSupports() ).
-            pageRegions( params.getPageRegions() ).
+            supports( params.getSupports() ).regions( params.getRegions() ).
             pageConfig( params.getPageConfig() ).
             contentService( this.contentService ).
-            pageService( this.pageService ).
             execute();
     }
 
@@ -69,17 +71,5 @@ public final class PageTemplateServiceImpl
             site( siteId ).
             contentService( this.contentService ).
             execute();
-    }
-
-    @Reference
-    public void setContentService( final ContentService contentService )
-    {
-        this.contentService = contentService;
-    }
-
-    @Reference
-    public void setPageService( final PageService pageService )
-    {
-        this.pageService = pageService;
     }
 }

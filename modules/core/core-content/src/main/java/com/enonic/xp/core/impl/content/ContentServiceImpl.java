@@ -65,6 +65,7 @@ import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
+import com.enonic.xp.content.PageDefaultValuesProcessor;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -138,7 +139,9 @@ public class ContentServiceImpl
 
     private final List<ContentValidator> contentValidators = new CopyOnWriteArrayList<>();
 
-    private FormDefaultValuesProcessor formDefaultValuesProcessor;
+    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
+
+    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -153,7 +156,9 @@ public class ContentServiceImpl
     @Activate
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
-                               @Reference final LayoutDescriptorService layoutDescriptorService, ContentConfig config )
+                               @Reference final LayoutDescriptorService layoutDescriptorService,
+                               @Reference FormDefaultValuesProcessor formDefaultValuesProcessor,
+                               @Reference PageDefaultValuesProcessor pageFormDefaultValuesProcessor, ContentConfig config )
     {
         this.config = config;
         this.nodeService = nodeService;
@@ -161,6 +166,9 @@ public class ContentServiceImpl
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
         this.translator = new ContentNodeTranslator();
+
+        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
+        this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
     }
 
     @Override
@@ -178,6 +186,7 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
@@ -223,6 +232,7 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
@@ -1085,12 +1095,6 @@ public class ContentServiceImpl
     public void removeContentValidator( final ContentValidator contentValidator )
     {
         this.contentValidators.remove( contentValidator );
-    }
-
-    @Reference
-    public void setFormDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-    {
-        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
     }
 
     @Reference

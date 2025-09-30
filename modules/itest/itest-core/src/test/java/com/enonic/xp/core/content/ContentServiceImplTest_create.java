@@ -22,6 +22,14 @@ import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -208,6 +216,46 @@ public class ContentServiceImplTest_create
         assertNotNull( storedContent.getWorkflowInfo() );
         assertEquals( WorkflowState.PENDING_APPROVAL, storedContent.getWorkflowInfo().getState() );
         assertEquals( Map.of( "My check", WorkflowCheckState.REJECTED ), storedContent.getWorkflowInfo().getChecks() );
+    }
+
+    @Test
+    public void create_with_page()
+        throws Exception
+    {
+        final PropertyTree config = new PropertyTree();
+        config.addString( "some", "line" );
+
+        final Form pageDescriptorForm = Form.create()
+            .addFormItem( Input.create().inputType( InputTypeName.TEXT_LINE ).name( "some" ).label( "label" ).build() )
+            .build();
+
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "abc:abc" );
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) )
+            .thenReturn( PageDescriptor.create()
+                             .displayName( "Landing page" )
+                             .config( pageDescriptorForm )
+                             .regions( RegionDescriptors.create().build() )
+                             .key( DescriptorKey.from( "module:landing-page" ) )
+                             .build() );
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( config ).regions( Regions.create().build() ).build();
+
+        final PropertyTree contentData = new PropertyTree();
+        contentData.addString( "title", "This is my page" );
+
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( contentData )
+            .displayName( "This is my page" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.site() )
+            .page( page )
+            .build();
+
+        final Content content = this.contentService.create( createContentParams );
+        assertNotNull( content.getPage() );
+        assertEquals( "abc:abc", content.getPage().getDescriptor().toString() );
+        assertEquals( "line", content.getPage().getConfig().getString( "some" ) );
     }
 
     @Test

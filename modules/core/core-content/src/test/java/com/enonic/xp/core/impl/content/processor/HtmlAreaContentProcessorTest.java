@@ -27,18 +27,17 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -325,7 +324,7 @@ public class HtmlAreaContentProcessorTest
         final Page page = Page.create()
             .config( new PropertyTree() )
             .descriptor( pageDescriptor.getKey() )
-            .regions( PageRegions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
+            .regions( Regions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
             .build();
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
@@ -374,7 +373,7 @@ public class HtmlAreaContentProcessorTest
         final LayoutComponent layoutComponent = LayoutComponent.create()
             .descriptor( "myapp:layout" )
             .descriptor( layoutDescriptor.getKey() )
-            .regions( LayoutRegions.create().add( Region.create().name( "part" ).add( partComponent ).build() ).build() )
+            .regions( Regions.create().add( Region.create().name( "part" ).add( partComponent ).build() ).build() )
             .config( data1 )
             .build();
 
@@ -388,7 +387,7 @@ public class HtmlAreaContentProcessorTest
         final Page page = Page.create()
             .config( new PropertyTree() )
             .descriptor( pageDescriptor.getKey() )
-            .regions( PageRegions.create().add( Region.create().name( "region" ).add( layoutComponent ).build() ).build() )
+            .regions( Regions.create().add( Region.create().name( "region" ).add( layoutComponent ).build() ).build() )
             .build();
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
@@ -421,8 +420,7 @@ public class HtmlAreaContentProcessorTest
 
         final Page page = Page.create()
             .config( new PropertyTree() )
-            .descriptor( pageDescriptor.getKey() )
-            .regions( PageRegions.create()
+            .descriptor( pageDescriptor.getKey() ).regions( Regions.create()
                           .add( Region.create()
                                     .name( "region" )
                                     .add( PartComponent.create()
@@ -465,8 +463,7 @@ public class HtmlAreaContentProcessorTest
 
         final Page page = Page.create()
             .config( new PropertyTree() )
-            .descriptor( pageDescriptor.getKey() )
-            .regions( PageRegions.create()
+            .descriptor( pageDescriptor.getKey() ).regions( Regions.create()
                           .add( Region.create()
                                     .name( "region" )
                                     .add( PartComponent.create()
@@ -523,7 +520,7 @@ public class HtmlAreaContentProcessorTest
         final Page page = Page.create()
             .config( new PropertyTree() )
             .descriptor( pageDescriptor.getKey() )
-            .regions( PageRegions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
+            .regions( Regions.create().add( Region.create().name( "region" ).add( partComponent ).build() ).build() )
             .build();
 
         final Media content = Media.create()

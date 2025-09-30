@@ -21,17 +21,16 @@ import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
@@ -236,9 +235,9 @@ public final class TestDataFixtures
         return builder.build();
     }
 
-    public static PageRegions newPageRegions()
+    public static Regions newPageRegions()
     {
-        return PageRegions.create().
+        return Regions.create().
             add( newTopRegion() ).
             add( newBottomRegion() ).
             build();
@@ -262,13 +261,6 @@ public final class TestDataFixtures
             add( createImageComponent( "img-id-x", "Image Component", newImageComponentPropertyTree() ) ).
             add( ImageComponent.create().build() ).
             build();
-    }
-
-    public static LayoutRegions newLayoutRegions()
-    {
-        final LayoutRegions.Builder builder = LayoutRegions.create();
-        builder.add( newBottomRegion() );
-        return builder.build();
     }
 
     public static Attachments newAttachments()
@@ -346,9 +338,9 @@ public final class TestDataFixtures
             add( createFragmentComponent( "213sda-ss222", "My Fragment" ) ).
             build();
 
-        final LayoutRegions layoutRegions = LayoutRegions.create().add( region1 ).add( region2 ).build();
+        final Regions regions = Regions.create().add( region1 ).add( region2 ).build();
 
-        return LayoutComponent.create().descriptor( "layoutDescriptor:name" ).regions( layoutRegions ).build();
+        return LayoutComponent.create().descriptor( "layoutDescriptor:name" ).regions( regions ).build();
     }
 
     public static Site newSite()

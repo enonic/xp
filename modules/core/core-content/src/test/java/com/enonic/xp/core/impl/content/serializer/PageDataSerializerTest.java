@@ -8,14 +8,13 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.COMPONENTS;
@@ -103,8 +102,7 @@ public class PageDataSerializerTest
 
         final Page page = Page.create().
             config( pageConfig ).
-            descriptor( pageDescriptorKey ).
-            regions( PageRegions.create().build() ).
+            descriptor( pageDescriptorKey ).regions( Regions.create().build() ).
             build();
 
         final PropertyTree pageAsData = new PropertyTree();
@@ -155,7 +153,7 @@ public class PageDataSerializerTest
             add( ImageComponent.create().build() ).
             build();
 
-        final PageRegions regions = PageRegions.create().
+        final Regions regions = Regions.create().
             add( mainRegion1 ).
             add( mainRegion2 ).
             build();
@@ -196,8 +194,8 @@ public class PageDataSerializerTest
             add( createFragmentComponent( "213sda-ss222", "My Fragment" ) ).
             build();
 
-        final LayoutRegions layoutRegions = LayoutRegions.create().add( region1 ).add( region2 ).build();
+        final Regions regions = Regions.create().add( region1 ).add( region2 ).build();
 
-        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( layoutRegions ).build();
+        return LayoutComponent.create().descriptor( layoutDescriptorKey ).regions( regions ).build();
     }
 }

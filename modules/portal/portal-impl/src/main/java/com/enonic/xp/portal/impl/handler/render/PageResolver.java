@@ -10,7 +10,6 @@ import com.enonic.xp.page.GetDefaultPageTemplateParams;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
@@ -18,9 +17,9 @@ import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptor;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 public class PageResolver
@@ -180,16 +179,16 @@ public class PageResolver
     private Page buildPageWithRegions( final Page sourcePage, final PageDescriptor pageDescriptor )
     {
         final Page.Builder pageBuilder = Page.create( sourcePage );
-        final PageRegions.Builder pageRegionsBuilder = PageRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
 
         if ( pageDescriptor.getRegions() != null )
         {
             pageDescriptor.getRegions().forEach( regionDescriptor -> {
-                pageRegionsBuilder.add( getOrCreatePageRegion( regionDescriptor, sourcePage ) );
+                regionsBuilder.add( getOrCreatePageRegion( regionDescriptor, sourcePage ) );
             } );
         }
 
-        return pageBuilder.regions( pageRegionsBuilder.build() ).build();
+        return pageBuilder.regions( regionsBuilder.build() ).build();
     }
 
     private Region getOrCreatePageRegion( final RegionDescriptor regionDescriptor, final Page sourcePage )
@@ -242,7 +241,7 @@ public class PageResolver
     private LayoutComponent buildLayoutWithRegions( final LayoutComponent existingLayout, final LayoutDescriptor layoutDescriptor )
     {
         final LayoutComponent.Builder layoutBuilder = LayoutComponent.create( existingLayout );
-        final LayoutRegions.Builder regionsBuilder = LayoutRegions.create();
+        final Regions.Builder regionsBuilder = Regions.create();
 
         if ( layoutDescriptor.getRegions() != null )
         {

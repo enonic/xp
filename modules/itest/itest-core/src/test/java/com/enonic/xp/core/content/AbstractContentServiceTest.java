@@ -159,6 +159,8 @@ public abstract class AbstractContentServiceTest
 
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
+    protected PageDescriptorService pageDescriptorService;
+
     protected EventPublisher eventPublisher;
 
     private ExecutorService executorService;
@@ -286,7 +288,7 @@ public abstract class AbstractContentServiceTest
 
         ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
-        PageDescriptorService pageDescriptorService = mock( PageDescriptorService.class );
+        this.pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );
@@ -322,14 +324,14 @@ public abstract class AbstractContentServiceTest
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, ( form, data ) -> {
+            }, ( page ) -> {
+            }, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
-        contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
-        } );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );

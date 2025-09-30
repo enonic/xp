@@ -21,7 +21,6 @@ import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.FragmentComponentType;
@@ -29,13 +28,13 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartComponentType;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponentType;
 
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
@@ -78,7 +77,7 @@ public class PageRegionsConfigProcessorTest
     public void test_size()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
+        final PatternIndexConfigDocument result = processPage( Page.create().regions( Regions.create().build() ).build(), null, null );
         assertEquals( 5, result.getPathIndexConfigs().size() );
     }
 
@@ -86,7 +85,7 @@ public class PageRegionsConfigProcessorTest
     public void test_text_component()
         throws Exception
     {
-        final PatternIndexConfigDocument result = processPage( Page.create().regions( PageRegions.create().build() ).build(), null, null );
+        final PatternIndexConfigDocument result = processPage( Page.create().regions( Regions.create().build() ).build(), null, null );
 
         assertEquals( TEXT_COMPONENT_INDEX_CONFIG,
                       result.getConfigForPath( IndexPath.from( String.join( ".", COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ) ) ));
@@ -105,8 +104,7 @@ public class PageRegionsConfigProcessorTest
         final DescriptorKey partDescriptorKey = DescriptorKey.from( "part1AppKey:name" );
         final String htmlarea = "htmlarea";
 
-        final Page page = Page.create()
-            .regions( PageRegions.create()
+        final Page page = Page.create().regions( Regions.create()
                           .add( Region.create()
                                     .name( "region1" )
                                     .add( PartComponent.create().descriptor( partDescriptorKey ).build() )
@@ -128,13 +126,11 @@ public class PageRegionsConfigProcessorTest
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutAppKey:name" );
         final String htmlarea = "htmlarea";
 
-        final Page page = Page.create()
-            .regions( PageRegions.create()
+        final Page page = Page.create().regions( Regions.create()
                           .add( Region.create()
                                     .name( "region1" )
                                     .add( LayoutComponent.create()
-                                              .descriptor( layoutDescriptorKey )
-                                              .regions( LayoutRegions.create().build() )
+                                              .descriptor( layoutDescriptorKey ).regions( Regions.create().build() )
                                               .build() )
                                     .build() )
                           .build() )
@@ -158,13 +154,11 @@ public class PageRegionsConfigProcessorTest
         final DescriptorKey partKey = DescriptorKey.from( "app:partAppKey" );
         final String htmlarea = "htmlarea";
 
-        final Page page = Page.create()
-            .regions( PageRegions.create()
+        final Page page = Page.create().regions( Regions.create()
                           .add( Region.create()
                                     .name( "region1" )
                                     .add( LayoutComponent.create()
-                                              .descriptor( layoutKey )
-                                              .regions( LayoutRegions.create()
+                                              .descriptor( layoutKey ).regions( Regions.create()
                                                             .add( Region.create()
                                                                       .name( "layoutRegion1" )
                                                                       .add( PartComponent.create().descriptor( partKey ).build() )
@@ -191,8 +185,7 @@ public class PageRegionsConfigProcessorTest
     public void test_fragment_component()
         throws Exception
     {
-        final Page page = Page.create()
-            .regions( PageRegions.create()
+        final Page page = Page.create().regions( Regions.create()
                           .add( Region.create()
                                     .name( "region1" )
                                     .add( FragmentComponent.create().fragment( ContentId.from( "content-id" ) ).build() )
@@ -217,11 +210,9 @@ public class PageRegionsConfigProcessorTest
         final DescriptorKey layoutKey = DescriptorKey.from( "app:layoutAppKey" );
         final DescriptorKey partKey = DescriptorKey.from( "app:partAppKey" );
 
-        final Page page = Page.create()
-            .regions( PageRegions.create().build() )
+        final Page page = Page.create().regions( Regions.create().build() )
             .fragment( LayoutComponent.create()
-                           .descriptor( layoutKey )
-                           .regions( LayoutRegions.create()
+                           .descriptor( layoutKey ).regions( Regions.create()
                                          .add( Region.create()
                                                    .name( "layoutRegion1" )
                                                    .add( PartComponent.create().descriptor( partKey ).build() )
@@ -254,8 +245,7 @@ public class PageRegionsConfigProcessorTest
         final PropertySet items = config.addSet( "items" );
         items.addStrings( "input", "a", "b", "c" );
 
-        final Page page = Page.create()
-            .regions( PageRegions.create()
+        final Page page = Page.create().regions( Regions.create()
                           .add( Region.create()
                                     .name( "region1" )
                                     .add( PartComponent.create()
@@ -264,8 +254,7 @@ public class PageRegionsConfigProcessorTest
                                               .build() )
                                     .add( LayoutComponent.create()
                                               .descriptor( DescriptorKey.from( "appKey2:layoutName" ) )
-                                              .config( new PropertyTree() )
-                                              .regions( LayoutRegions.create()
+                                              .config( new PropertyTree() ).regions( Regions.create()
                                                             .add( Region.create()
                                                                       .name( "region" )
                                                                       .add( PartComponent.create()
@@ -344,15 +333,15 @@ public class PageRegionsConfigProcessorTest
 
                 if ( layoutComponent.hasRegions() )
                 {
-                    processLayoutRegions( layoutComponent.getRegions(), partForms );
+                    processRegions( layoutComponent.getRegions(), partForms );
                 }
             }
         }
     }
 
-    private void processLayoutRegions( final LayoutRegions layoutRegions, ListIterator<Form> partForms )
+    private void processRegions( final Regions regions, ListIterator<Form> partForms )
     {
-        layoutRegions.forEach( layoutRegion -> layoutRegion.getComponents().forEach( component -> {
+        regions.forEach( layoutRegion -> layoutRegion.getComponents().forEach( component -> {
             if ( PartComponentType.INSTANCE == component.getType() )
             {
                 if ( partForms != null && partForms.hasNext() )

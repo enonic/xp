@@ -166,6 +166,22 @@ public class UpdateContentHandlerTest
         runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" );
     }
 
+    @Test
+    public void updatePageAllComponents()
+        throws Exception
+    {
+        final Content content = TestDataFixtures.newSmallContent();
+        when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
+
+        when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
+            invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
+                                              TestDataFixtures.newSmallContent() ) );
+
+        mockXData();
+
+        runFunction( "/test/UpdateContentHandlerTest.js", "updatePageAllComponents" );
+    }
+
     private void mockXData()
     {
         final FormItemSet cSet = FormItemSet.create()

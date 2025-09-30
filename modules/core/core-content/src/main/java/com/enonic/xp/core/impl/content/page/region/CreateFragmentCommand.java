@@ -12,6 +12,7 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.name.NamePrettyfier;
+import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -73,8 +74,7 @@ final class CreateFragmentCommand
             build();
 
         final UpdateContentParams params = new UpdateContentParams().
-            contentId( content.getId() ).
-            editor( edit -> edit.page = page );
+            contentId( content.getId() ).editor( edit -> edit.page = new EditablePage( page ) );
 
         return this.contentService.update( params );
     }

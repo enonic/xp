@@ -1,19 +1,19 @@
 package com.enonic.xp.page;
 
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.Component;
+import com.enonic.xp.region.Regions;
 
 @PublicApi
 public final class EditablePage
 {
-    public DescriptorKey controller;
+    public DescriptorKey descriptor;
 
     public PageTemplateKey template;
 
-    public PageRegions regions;
+    public Regions regions;
 
     public Component fragment;
 
@@ -23,7 +23,7 @@ public final class EditablePage
 
     public EditablePage( final Page source )
     {
-        this.controller = source.getDescriptor();
+        this.descriptor = source.getDescriptor();
         this.template = source.getTemplate();
         this.regions = source.hasRegions() ? source.getRegions().copy() : null;
         this.config = source.hasConfig() ? source.getConfig().copy() : null;
@@ -34,7 +34,7 @@ public final class EditablePage
     public Page build()
     {
         final Page.Builder builder = Page.create();
-        builder.descriptor( controller );
+        builder.descriptor( descriptor );
         builder.template( template );
         builder.regions( regions );
         builder.config( config );

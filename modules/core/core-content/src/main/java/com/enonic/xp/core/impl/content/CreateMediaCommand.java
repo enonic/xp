@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.PageDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
@@ -25,12 +26,15 @@ final class CreateMediaCommand
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
+
     private CreateMediaCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
+        this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
     }
 
     Content execute()
@@ -95,7 +99,8 @@ final class CreateMediaCommand
             params( createContentParams ).
             siteService( this.siteService ).
             xDataService( this.xDataService ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).
+            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).pageFormDefaultValuesProcessor(
+            this.pageFormDefaultValuesProcessor ).
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -126,6 +131,8 @@ final class CreateMediaCommand
 
         private FormDefaultValuesProcessor formDefaultValuesProcessor;
 
+        private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
+
         public Builder params( final CreateMediaParams params )
         {
             this.params = params;
@@ -144,12 +151,19 @@ final class CreateMediaCommand
             return this;
         }
 
+        public Builder pageFormDefaultValuesProcessor( final PageDefaultValuesProcessor pageFormDefaultValuesProcessor )
+        {
+            this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
+            return this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( formDefaultValuesProcessor );
+            Objects.requireNonNull( pageFormDefaultValuesProcessor );
         }
 
         public CreateMediaCommand build()

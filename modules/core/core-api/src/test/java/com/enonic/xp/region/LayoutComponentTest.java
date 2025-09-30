@@ -73,8 +73,7 @@ public class LayoutComponentTest
 
         return LayoutComponent.create().
             config( config1 ).
-            descriptor( DescriptorKey.from( "descriptor" ) ).
-            regions( LayoutRegions.create().add( Region.create().
+            descriptor( DescriptorKey.from( "descriptor" ) ).regions( Regions.create().add( Region.create().
                 name( "region" ).
                 add( TextComponent.create().
                     text( "text" ).

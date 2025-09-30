@@ -27,8 +27,6 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageRegions;
-import com.enonic.xp.region.AbstractRegions;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.region.LayoutComponent;
@@ -38,6 +36,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -110,6 +109,7 @@ public class HtmlAreaContentProcessor
 
         processContentData( createContentParams.getData(), contentType, processedIds );
         processExtraData( createContentParams.getExtraDatas(), processedIds );
+        processPageData( createContentParams.getPage(), processedIds );
 
         return new ProcessCreateResult( createContentParams, processedIds.build() );
     }
@@ -166,16 +166,16 @@ public class HtmlAreaContentProcessor
 
         if ( page.hasRegions() )
         {
-            final PageRegions pageRegions = processRegionsData( page.getRegions(), processedIds );
-            return Page.create( page ).regions( pageRegions ).build();
+            final Regions regions = processRegionsData( page.getRegions(), processedIds );
+            return Page.create( page ).regions( regions ).build();
         }
 
         return page.copy();
     }
 
-    private PageRegions processRegionsData( final AbstractRegions regions, final ContentIds.Builder processedIds )
+    private Regions processRegionsData( final Regions regions, final ContentIds.Builder processedIds )
     {
-        final PageRegions.Builder result = PageRegions.create();
+        final Regions.Builder result = Regions.create();
         for ( final Region region : regions )
         {
             final Region processedRegion = this.processRegionData( region, processedIds );

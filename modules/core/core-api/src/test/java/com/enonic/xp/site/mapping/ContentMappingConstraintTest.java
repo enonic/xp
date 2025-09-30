@@ -15,12 +15,11 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
@@ -246,9 +245,9 @@ public class ContentMappingConstraintTest
         return builder.build();
     }
 
-    private PageRegions newPageRegions()
+    private Regions newPageRegions()
     {
-        final PageRegions.Builder builder = PageRegions.create();
+        final Regions.Builder builder = Regions.create();
         builder.add( newTopRegion() );
         return builder.build();
     }
@@ -287,9 +286,9 @@ public class ContentMappingConstraintTest
         return builder.build();
     }
 
-    private LayoutRegions newLayoutRegions()
+    private Regions newLayoutRegions()
     {
-        final LayoutRegions.Builder builder = LayoutRegions.create();
+        final Regions.Builder builder = Regions.create();
         builder.add( newBottomRegion() );
         return builder.build();
     }

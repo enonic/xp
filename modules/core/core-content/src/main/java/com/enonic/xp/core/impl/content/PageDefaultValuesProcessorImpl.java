@@ -1,6 +1,4 @@
-package com.enonic.xp.core.impl.content.page;
-
-import java.util.Objects;
+package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -20,7 +18,8 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 
-final class PageDefaultValuesProcessor
+@org.osgi.service.component.annotations.Component(immediate = true)
+public final class PageDefaultValuesProcessorImpl
 {
     private final PageDescriptorService pageDescriptorService;
 
@@ -30,27 +29,14 @@ final class PageDefaultValuesProcessor
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
-    PageDefaultValuesProcessor( final PageDescriptorService pageDescriptorService, final PartDescriptorService partDescriptorService,
-                                final LayoutDescriptorService layoutDescriptorService,
-                                final FormDefaultValuesProcessor formDefaultValuesProcessor )
+    PageDefaultValuesProcessorImpl( final PageDescriptorService pageDescriptorService, final PartDescriptorService partDescriptorService,
+                                    final LayoutDescriptorService layoutDescriptorService,
+                                    final FormDefaultValuesProcessor formDefaultValuesProcessor )
     {
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-    }
-
-    void applyDefaultValues( final Page editedPage, final Page sourcePage )
-    {
-        if ( editedPage.getDescriptor() != null && !Objects.equals( editedPage.getDescriptor(), sourcePage.getDescriptor() ) )
-        {
-            applyPageDefaultValues( editedPage );
-        }
-
-        if ( editedPage.hasRegions() )
-        {
-            applyRegionsDefaultValues( editedPage, sourcePage );
-        }
     }
 
     void applyDefaultValues( final Page newPage )

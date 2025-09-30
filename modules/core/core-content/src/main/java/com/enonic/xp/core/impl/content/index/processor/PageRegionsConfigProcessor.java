@@ -8,7 +8,6 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.DescriptorBasedComponent;
 import com.enonic.xp.region.FragmentComponentType;
@@ -16,10 +15,10 @@ import com.enonic.xp.region.ImageComponentType;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutComponentType;
 import com.enonic.xp.region.LayoutDescriptorService;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.PartComponentType;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponentType;
 
 import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor.COMPONENTS;
@@ -75,14 +74,14 @@ public class PageRegionsConfigProcessor
         return builder;
     }
 
-    private void processPageRegions( final PageRegions pageRegions, final PatternIndexConfigDocument.Builder builder )
+    private void processPageRegions( final Regions regions, final PatternIndexConfigDocument.Builder builder )
     {
-        if ( pageRegions == null )
+        if ( regions == null )
         {
             return;
         }
 
-        pageRegions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
+        regions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
     }
 
     private void processPageFragment( final Component fragment, final PatternIndexConfigDocument.Builder builder )
@@ -127,7 +126,7 @@ public class PageRegionsConfigProcessor
 
         if ( component instanceof LayoutComponent )
         {
-            parseLayoutRegions( ( (LayoutComponent) component ).getRegions(), builder );
+            parseRegions( ( (LayoutComponent) component ).getRegions(), builder );
         }
     }
 
@@ -141,13 +140,13 @@ public class PageRegionsConfigProcessor
         return layoutDescriptorService.getByKey( component.getDescriptor() ).getConfig();
     }
 
-    private void parseLayoutRegions( final LayoutRegions layoutRegions, final PatternIndexConfigDocument.Builder builder )
+    private void parseRegions( final Regions regions, final PatternIndexConfigDocument.Builder builder )
     {
-        if ( layoutRegions == null )
+        if ( regions == null )
         {
             return;
         }
 
-        layoutRegions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
+        regions.forEach( pageRegion -> processComponents( pageRegion.getComponents(), builder ) );
     }
 }

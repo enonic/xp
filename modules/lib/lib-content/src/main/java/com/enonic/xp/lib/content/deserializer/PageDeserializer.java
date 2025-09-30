@@ -6,15 +6,14 @@ import java.util.Map;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
-import com.enonic.xp.page.PageRegions;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.ImageComponent;
 import com.enonic.xp.region.LayoutComponent;
-import com.enonic.xp.region.LayoutRegions;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 
 public final class PageDeserializer
@@ -60,36 +59,22 @@ public final class PageDeserializer
         final Object regions = map.get( "regions" );
         if ( regions instanceof Map )
         {
-            builder.regions( createPageRegions( (Map<String, Object>) regions ) );
+            builder.regions( deserializeRegions( (Map<String, Object>) regions ) );
         }
 
         // fragment
         final Object fragment = map.get( "fragment" );
         if ( fragment instanceof Map )
         {
-            builder.fragment( createComponent( (Map<String, Object>) fragment ) );
+            builder.fragment( deserializeComponent( (Map<String, Object>) fragment ) );
         }
 
         return builder.build();
     }
 
-    private PageRegions createPageRegions( final Map<String, Object> regions )
+    public Regions deserializeRegions( final Map<String, Object> regions )
     {
-        final PageRegions.Builder builder = PageRegions.create();
-        regions.forEach( ( regionName, regionObj ) -> {
-            if ( !( regionObj instanceof Map ) )
-            {
-                return;
-            }
-            final Region region = createRegion( regionName, (Map<String, Object>) regionObj );
-            builder.add( region );
-        } );
-        return builder.build();
-    }
-
-    private LayoutRegions createLayoutRegions( final Map<String, Object> regions )
-    {
-        final LayoutRegions.Builder builder = LayoutRegions.create();
+        final Regions.Builder builder = Regions.create();
         regions.forEach( ( regionName, regionObj ) -> {
             if ( !( regionObj instanceof Map ) )
             {
@@ -111,14 +96,14 @@ public final class PageDeserializer
             {
                 if ( comp instanceof Map )
                 {
-                    builder.add( createComponent( (Map<String, Object>) comp ) );
+                    builder.add( deserializeComponent( (Map<String, Object>) comp ) );
                 }
             }
         }
         return builder.build();
     }
 
-    private Component createComponent( final Map<String, Object> map )
+    public Component deserializeComponent( final Map<String, Object> map )
     {
         final String type = (String) map.get( "type" );
         if ( type == null )
@@ -162,7 +147,7 @@ public final class PageDeserializer
         final Object regions = map.get( "regions" );
         if ( regions instanceof Map )
         {
-            builder.regions( createLayoutRegions( (Map<String, Object>) regions ) );
+            builder.regions( deserializeRegions( (Map<String, Object>) regions ) );
         }
 
         return builder.build();

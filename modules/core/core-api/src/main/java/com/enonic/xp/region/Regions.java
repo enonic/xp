@@ -1,8 +1,6 @@
 package com.enonic.xp.region;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -11,14 +9,14 @@ import com.google.common.collect.ImmutableList;
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
-public abstract class AbstractRegions
+public final class Regions
     implements Iterable<Region>
 {
     private final ImmutableList<Region> regions;
 
-    protected AbstractRegions( final Builder builder )
+    private Regions( final Builder builder )
     {
-        this.regions = ImmutableList.copyOf( builder.regions );
+        this.regions = builder.regions.build();
     }
 
     public boolean isEmpty()
@@ -63,6 +61,11 @@ public abstract class AbstractRegions
         }
     }
 
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
     @Override
     public Iterator<Region> iterator()
     {
@@ -81,7 +84,7 @@ public abstract class AbstractRegions
             return false;
         }
 
-        final AbstractRegions other = (AbstractRegions) o;
+        final Regions other = (Regions) o;
         return regions.equals( other.regions );
     }
 
@@ -97,17 +100,20 @@ public abstract class AbstractRegions
         return regions.hashCode();
     }
 
-    public abstract AbstractRegions copy();
-
-    public abstract static class Builder<BUILDER extends Builder>
+    public Regions copy()
     {
-        private final List<Region> regions = new ArrayList<>();
+        return new Regions.Builder( this ).build();
+    }
 
-        protected Builder()
+    public static final class Builder
+    {
+        private final ImmutableList.Builder<Region> regions = ImmutableList.builder();
+
+        private Builder()
         {
         }
 
-        protected Builder( final AbstractRegions source )
+        private Builder( final Regions source )
         {
             for ( final Region sourceRegion : source )
             {
@@ -115,19 +121,16 @@ public abstract class AbstractRegions
             }
         }
 
-        @SuppressWarnings("unchecked")
-        private BUILDER getThis()
-        {
-            return (BUILDER) this;
-        }
-
-        public BUILDER add( final Region region )
+        public Builder add( final Region region )
         {
             regions.add( region );
-            return getThis();
+            return this;
         }
 
-        public abstract AbstractRegions build();
+        public Regions build()
+        {
+            return new Regions( this );
+        }
     }
 }
 

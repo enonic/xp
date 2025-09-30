@@ -240,3 +240,138 @@ exports.createContentWithWorkflow = function () {
 
     assert.assertJsonEquals(expectedJsonWithWorkflow, result);
 };
+
+var expectedJsonWithPage = {
+    '_id': '123456',
+    '_name': 'my-content',
+    '_path': '/a/b/my-content',
+    'creator': 'user:system:anonymous',
+    'createdTime': '1975-01-08T00:00:00Z',
+    'type': 'test:myContentType',
+    'displayName': 'My Content',
+    'valid': false,
+    'data': {},
+    'x': {},
+    'page': {
+        'type': 'page',
+        'path': '/',
+        'descriptor': 'app:main-page',
+        'config': {
+            'greeting': 'Hello'
+        },
+        'regions': {
+            'main': {
+                'components': [
+                    {
+                        'path': '/main/0',
+                        'type': 'part',
+                        'descriptor': 'app:part-1',
+                        'config': {
+                            'enabled': true
+                        }
+                    },
+                    {
+                        'path': '/main/1',
+                        'type': 'text',
+                        'text': 'Some text content'
+                    },
+                    {
+                        'path': '/main/2',
+                        'type': 'layout',
+                        'descriptor': 'app:layout-1',
+                        'config': {
+                            'layout': 'grid'
+                        },
+                        'regions': {
+                            'section': {
+                                'components': [
+                                    {
+                                        'path': '/main/2/section/0',
+                                        'type': 'image',
+                                        'image': 'image-id-001',
+                                        'config': {
+                                            'caption': 'An image caption'
+                                        }
+                                    },
+                                    {
+                                        'path': '/main/2/section/1',
+                                        'type': 'fragment',
+                                        'fragment': 'fragment-id-001'
+                                    }
+                                ],
+                                'name': 'section'
+                            }
+                        }
+                    }
+                ],
+                'name': 'main'
+            }
+        }
+    },
+    'attachments': {},
+    'publish': {},
+    'workflow': {
+        'state': 'READY',
+        'checks': {}
+    }
+};
+
+exports.createContentWithPage = function () {
+    var result = content.create({
+        parentPath: '/a/b',
+        displayName: 'My Content',
+        contentType: 'test:myContentType',
+        data: {},
+        page: {
+            type: 'page',
+            path: '/',
+            descriptor: 'app:main-page',
+            config: {
+                greeting: 'Hello'
+            },
+            regions: {
+                main: {
+                    components: [
+                        {
+                            type: 'part',
+                            descriptor: 'app:part-1',
+                            config: {
+                                enabled: true
+                            }
+                        },
+                        {
+                            type: 'text',
+                            text: 'Some text content'
+                        },
+                        {
+                            type: 'layout',
+                            descriptor: 'app:layout-1',
+                            config: {
+                                layout: 'grid'
+                            },
+                            regions: {
+                                section: {
+                                    components: [
+                                        {
+                                            type: 'image',
+                                            image: 'image-id-001',
+                                            config: {
+                                                caption: 'An image caption'
+                                            }
+                                        },
+                                        {
+                                            type: 'fragment',
+                                            fragment: 'fragment-id-001'
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    });
+
+    assert.assertJsonEquals(expectedJsonWithPage, result);
+};
