@@ -4,5 +4,5 @@ import com.enonic.xp.page.Page;
 
 public interface PageDefaultValuesProcessor
 {
-    void applyDefaultValues( final Page newPage );
+    void applyDefaultValues( Page newPage );
 }
