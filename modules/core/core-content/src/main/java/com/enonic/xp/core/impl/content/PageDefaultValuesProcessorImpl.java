@@ -1,5 +1,9 @@
 package com.enonic.xp.core.impl.content;
 
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Reference;
+
+import com.enonic.xp.content.PageDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
@@ -18,8 +22,9 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.region.Region;
 
-@org.osgi.service.component.annotations.Component(immediate = true)
+@org.osgi.service.component.annotations.Component
 public final class PageDefaultValuesProcessorImpl
+    implements PageDefaultValuesProcessor
 {
     private final PageDescriptorService pageDescriptorService;
 
@@ -29,9 +34,11 @@ public final class PageDefaultValuesProcessorImpl
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
-    PageDefaultValuesProcessorImpl( final PageDescriptorService pageDescriptorService, final PartDescriptorService partDescriptorService,
-                                    final LayoutDescriptorService layoutDescriptorService,
-                                    final FormDefaultValuesProcessor formDefaultValuesProcessor )
+    @Activate
+    public PageDefaultValuesProcessorImpl( @Reference final PageDescriptorService pageDescriptorService,
+                                           @Reference final PartDescriptorService partDescriptorService,
+                                           @Reference final LayoutDescriptorService layoutDescriptorService,
+                                           @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor )
     {
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
@@ -39,8 +46,13 @@ public final class PageDefaultValuesProcessorImpl
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
     }
 
-    void applyDefaultValues( final Page newPage )
+    public void applyDefaultValues( final Page newPage )
     {
+        if ( newPage == null )
+        {
+            return;
+        }
+
         if ( newPage.getDescriptor() != null )
         {
             applyPageDefaultValues( newPage );
