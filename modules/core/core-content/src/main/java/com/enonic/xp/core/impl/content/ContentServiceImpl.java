@@ -157,8 +157,8 @@ public class ContentServiceImpl
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
-                               @Reference FormDefaultValuesProcessor formDefaultValuesProcessor,
-                               @Reference PageDefaultValuesProcessor pageFormDefaultValuesProcessor, ContentConfig config )
+                               @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor,
+                               @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor, ContentConfig config )
     {
         this.config = config;
         this.nodeService = nodeService;
