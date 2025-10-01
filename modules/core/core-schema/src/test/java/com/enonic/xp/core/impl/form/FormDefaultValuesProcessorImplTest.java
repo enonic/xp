@@ -19,7 +19,7 @@ import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,12 +34,12 @@ public class FormDefaultValuesProcessorImplTest
         Input input = Input.create()
             .name( "testInput" )
             .label( "testInput" )
-            .inputTypeProperty( InputTypeProperty.create( "one", new StringPropertyValue( "one" ) ).build() )
-            .inputTypeProperty( InputTypeProperty.create( "two", new StringPropertyValue( "two" ) ).build() )
-            .inputTypeProperty( InputTypeProperty.create( "three", new StringPropertyValue( "three" ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "one", PropertyValue.stringValue( "one" ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "two", PropertyValue.stringValue( "two" ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "three", PropertyValue.stringValue( "three" ) ).build() )
             .inputType( inputTypeName )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "two" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "two" ) ).build() )
                                .build() )
             .build();
 
@@ -60,7 +60,7 @@ public class FormDefaultValuesProcessorImplTest
             .label( "testInput" )
             .inputType( InputTypeName.TEXT_LINE )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "two" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "two" ) ).build() )
                                .build() )
             .build();
 
@@ -94,7 +94,7 @@ public class FormDefaultValuesProcessorImplTest
             .label( "testInput" )
             .inputType( InputTypeName.CHECK_BOX )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "checked" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "checked" ) ).build() )
                                .build() )
             .build();
 
@@ -115,7 +115,7 @@ public class FormDefaultValuesProcessorImplTest
             .label( "testInput" )
             .inputType( InputTypeName.CHECK_BOX )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "unchecked" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "unchecked" ) ).build() )
                                .build() )
             .build();
 
@@ -140,7 +140,7 @@ public class FormDefaultValuesProcessorImplTest
                                  .label( "Input" )
                                  .inputType( InputTypeName.TEXT_LINE )
                                  .defaultValue( InputTypeDefault.create()
-                                                    .property( InputTypeProperty.create( "default", new StringPropertyValue( "default" ) )
+                                                    .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "default" ) )
                                                                    .build() )
                                                     .build() )
                                  .build() )
@@ -149,7 +149,8 @@ public class FormDefaultValuesProcessorImplTest
                               .label( "double" )
                               .inputType( InputTypeName.DOUBLE )
                               .defaultValue( InputTypeDefault.create()
-                                                 .property( InputTypeProperty.create( "default", new StringPropertyValue( "0" ) ).build() )
+                                                 .property(
+                                                     InputTypeProperty.create( "default", PropertyValue.stringValue( "0" ) ).build() )
                                                  .build() )
                               .build() );
 
@@ -179,7 +180,7 @@ public class FormDefaultValuesProcessorImplTest
                                  .label( "Input" )
                                  .inputType( InputTypeName.TEXT_LINE )
                                  .defaultValue( InputTypeDefault.create()
-                                                    .property( InputTypeProperty.create( "default", new StringPropertyValue( "default" ) )
+                                                    .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "default" ) )
                                                                    .build() )
                                                     .build() )
                                  .build() );
@@ -189,7 +190,7 @@ public class FormDefaultValuesProcessorImplTest
                                  .inputType( InputTypeName.DOUBLE )
                                  .defaultValue( InputTypeDefault.create()
                                                     .property(
-                                                        InputTypeProperty.create( "default", new StringPropertyValue( "0" ) ).build() )
+                                                        InputTypeProperty.create( "default", PropertyValue.stringValue( "0" ) ).build() )
                                                     .build() )
                                  .build() );
 
@@ -214,7 +215,7 @@ public class FormDefaultValuesProcessorImplTest
             .label( "testInput" )
             .inputType( InputTypeName.TEXT_LINE )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "Default Value" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "Default Value" ) ).build() )
                                .build() )
             .build();
 
@@ -241,7 +242,7 @@ public class FormDefaultValuesProcessorImplTest
             .label( "testInput" )
             .inputType( InputTypeName.TEXT_LINE )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "Default Value" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "Default Value" ) ).build() )
                                .build() )
             .occurrences( Occurrences.create( 3, 3 ) )
             .build();
@@ -274,7 +275,7 @@ public class FormDefaultValuesProcessorImplTest
                               .inputType( InputTypeName.TEXT_LINE )
                               .defaultValue( InputTypeDefault.create()
                                                  .property(
-                                                     InputTypeProperty.create( "default", new StringPropertyValue( "Default Value" ) )
+                                                     InputTypeProperty.create( "default", PropertyValue.stringValue( "Default Value" ) )
                                                          .build() )
                                                  .build() )
                               .occurrences( Occurrences.create( 3, 3 ) )
@@ -381,7 +382,7 @@ public class FormDefaultValuesProcessorImplTest
             .label( "testInput" )
             .inputType( InputTypeName.TEXT_LINE )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "Default Value" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "Default Value" ) ).build() )
                                .build() )
             .occurrences( Occurrences.create( 3, 3 ) )
             .build();
@@ -420,7 +421,7 @@ public class FormDefaultValuesProcessorImplTest
                                                    .inputType( InputTypeName.TEXT_LINE )
                                                    .defaultValue( InputTypeDefault.create()
                                                                       .property( InputTypeProperty.create( "default",
-                                                                                                           new StringPropertyValue(
+                                                                                                           PropertyValue.stringValue(
                                                                                                                "Default Value" ) ).build() )
                                                                       .build() )
                                                    .build() )
@@ -450,7 +451,7 @@ public class FormDefaultValuesProcessorImplTest
                               .inputType( InputTypeName.TEXT_LINE )
                               .defaultValue( InputTypeDefault.create()
                                                  .property(
-                                                     InputTypeProperty.create( "default", new StringPropertyValue( "Default Value" ) )
+                                                     InputTypeProperty.create( "default", PropertyValue.stringValue( "Default Value" ) )
                                                          .build() )
                                                  .build() )
                               .build() )
@@ -460,7 +461,7 @@ public class FormDefaultValuesProcessorImplTest
                               .inputType( InputTypeName.TEXT_LINE )
                               .defaultValue( InputTypeDefault.create()
                                                  .property(
-                                                     InputTypeProperty.create( "default", new StringPropertyValue( "Default Value 2" ) )
+                                                     InputTypeProperty.create( "default", PropertyValue.stringValue( "Default Value 2" ) )
                                                          .build() )
                                                  .build() )
                               .build() );

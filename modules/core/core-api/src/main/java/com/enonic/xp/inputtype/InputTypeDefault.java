@@ -56,9 +56,10 @@ public final class InputTypeDefault
             return null;
         }
 
-        if ( property.getValue() instanceof StringPropertyValue(String value) )
+        final PropertyValue propertyValue = property.getValue();
+        if ( propertyValue.getType() == PropertyValue.Type.STRING )
         {
-            return value;
+            return propertyValue.asString();
         }
 
         throw new IllegalArgumentException( "Invalid value for property: " + name );

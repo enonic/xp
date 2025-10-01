@@ -101,19 +101,19 @@ public class TextLineTypeTest
     public void testValidate_invalidMaxLength()
     {
         final InputTypeConfig config =
-            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", new IntegerPropertyValue( 5 ) ).build() ).build();
+            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( 5 ) ).build() ).build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ) );
     }
 
     private InputTypeConfig newValidConfig()
     {
         return InputTypeConfig.create()
-            .property( InputTypeProperty.create( "regexp", new StringPropertyValue( IP_ADDRESS_REGEXP ) ).build() )
+            .property( InputTypeProperty.create( "regexp", PropertyValue.stringValue( IP_ADDRESS_REGEXP ) ).build() )
             .build();
     }
 
     private InputTypeConfig newInvalidConfig()
     {
-        return InputTypeConfig.create().property( InputTypeProperty.create( "regexp", new StringPropertyValue( "[" ) ).build() ).build();
+        return InputTypeConfig.create().property( InputTypeProperty.create( "regexp", PropertyValue.stringValue( "[" ) ).build() ).build();
     }
 }

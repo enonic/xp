@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.mapper;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.IntegerPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 
 public class TextAreaYml
     extends InputYml
@@ -24,7 +24,7 @@ public class TextAreaYml
     {
         if ( maxLength != null )
         {
-            configBuilder.property( InputTypeProperty.create( "maxLength", new IntegerPropertyValue( maxLength ) ).build() );
+            configBuilder.property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( maxLength ) ).build() );
         }
     }
 }

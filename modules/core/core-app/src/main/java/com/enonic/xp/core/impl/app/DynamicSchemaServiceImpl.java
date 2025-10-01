@@ -52,8 +52,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
-import static com.enonic.xp.resource.DynamicContentSchemaType.CONTENT_TYPE;
-
 @Component(immediate = true, service = {DynamicSchemaService.class, DynamicSchemaServiceInternal.class})
 public class DynamicSchemaServiceImpl
     implements DynamicSchemaService, DynamicSchemaServiceInternal
@@ -110,8 +108,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
-            dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource(),
-                                                   resolveExtension( params.getType(), params.getName() ) );
+            dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
 
         return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
     }
@@ -125,8 +122,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource(),
-                                                   resolveExtension( params.getType(), params.getName() ) );
+            dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
         return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
     }
 
@@ -233,8 +229,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName(),
-                                                                      resolveExtension( params.getType(), params.getName() ) );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName() );
 
         if ( resource.exists() && resource.getSize() > 0 )
         {
@@ -295,8 +290,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true,
-                                                      resolveExtension( params.getType(), params.getName() ) );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true );
     }
 
     @Override
@@ -474,10 +468,5 @@ public class DynamicSchemaServiceImpl
         }
 
         throw new IllegalArgumentException( "unknown type of BaseSchema: " + baseSchema.getName() );
-    }
-
-    private String resolveExtension( final DynamicContentSchemaType schemaType, final BaseSchemaName schemaName )
-    {
-        return schemaType == CONTENT_TYPE ? "yml" : "xml";
     }
 }

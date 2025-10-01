@@ -77,12 +77,10 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.ObjectPropertyValue;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -507,21 +505,21 @@ public abstract class AbstractContentServiceTest
                               .inputType( InputTypeName.COMBO_BOX )
                               .inputTypeConfig( InputTypeConfig.create()
                                                     .property(
-                                                        InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                        InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
                                                         {{
-                                                            put( "value", new StringPropertyValue( "value1" ) );
-                                                            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                            put( "value", PropertyValue.stringValue( "value1" ) );
+                                                            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
                                                             {{
-                                                                put( "text", new StringPropertyValue( "label1" ) );
+                                                                put( "text", PropertyValue.stringValue( "label1" ) );
                                                             }} ) );
                                                         }} ) ).build() )
                                                     .property(
-                                                        InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                        InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
                                                         {{
-                                                            put( "value", new StringPropertyValue( "value2" ) );
-                                                            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                                                            put( "value", PropertyValue.stringValue( "value2" ) );
+                                                            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
                                                             {{
-                                                                put( "text", new StringPropertyValue( "label2" ) );
+                                                                put( "text", PropertyValue.stringValue( "label2" ) );
                                                             }} ) );
                                                         }} ) ).build() )
                                                     .build() )
@@ -532,9 +530,8 @@ public abstract class AbstractContentServiceTest
                               .name( "contentSelector" )
                               .label( "Content selector" )
                               .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty( InputTypeProperty.create( "allowContentType",
-                                                                            new StringPropertyValue( ContentTypeName.folder().toString() ) )
-                                                      .build() )
+                              .inputTypeProperty( InputTypeProperty.create( "allowContentType", PropertyValue.stringValue(
+                                  ContentTypeName.folder().toString() ) ).build() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "contentTypeFilter" )
@@ -554,13 +551,13 @@ public abstract class AbstractContentServiceTest
                               .name( "localDateTime" )
                               .label( "Local datetime" )
                               .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeProperty( InputTypeProperty.create( "timezone", new BooleanPropertyValue( false ) ).build() )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( false ) ).build() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "dateTime" )
                               .label( "Datetime" )
                               .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeProperty( InputTypeProperty.create( "timezone", new BooleanPropertyValue( true ) ).build() )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
                               .build() )
             .addFormItem( set )
             .build();

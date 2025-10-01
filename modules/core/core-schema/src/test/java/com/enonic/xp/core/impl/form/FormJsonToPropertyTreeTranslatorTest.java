@@ -16,10 +16,9 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -212,9 +211,8 @@ public class FormJsonToPropertyTreeTranslatorTest
                               .name( "contentSelector" )
                               .label( "Content selector" )
                               .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty( InputTypeProperty.create( "allowContentType",
-                                                                            new StringPropertyValue( ContentTypeName.folder().toString() ) )
-                                                      .build() )
+                              .inputTypeProperty( InputTypeProperty.create( "allowContentType", PropertyValue.stringValue(
+                                  ContentTypeName.folder().toString() ) ).build() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "contentTypeFilter" )
@@ -234,13 +232,13 @@ public class FormJsonToPropertyTreeTranslatorTest
                               .name( "localDateTime" )
                               .label( "Local datetime" )
                               .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeProperty( InputTypeProperty.create( "timezone", new BooleanPropertyValue( false ) ).build() )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( false ) ).build() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "dateTime" )
                               .label( "Datetime" )
                               .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeProperty( InputTypeProperty.create( "timezone", new BooleanPropertyValue( true ) ).build() )
+                              .inputTypeProperty( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
                               .build() )
             .addFormItem( Input.create().name( "media" ).label( "Image Uploader" ).inputType( InputTypeName.IMAGE_UPLOADER ).build() )
             .addFormItem( set )

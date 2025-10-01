@@ -89,11 +89,6 @@ final class LongType
 
     private Long getLongValueFromConfig( final InputTypeConfig config, final String key )
     {
-        return config.getProperty( key )
-            .map( InputTypeProperty::getValue )
-            .filter( LongPropertyValue.class::isInstance )
-            .map( LongPropertyValue.class::cast )
-            .map( LongPropertyValue::value )
-            .orElse( null );
+        return config.getProperty( key ).map( InputTypeProperty::getValue ).map( PropertyValue::asLong ).orElse( null );
     }
 }

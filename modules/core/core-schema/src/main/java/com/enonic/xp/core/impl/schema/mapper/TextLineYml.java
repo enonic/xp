@@ -3,8 +3,7 @@ package com.enonic.xp.core.impl.schema.mapper;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.IntegerPropertyValue;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 
 public class TextLineYml
     extends InputYml
@@ -25,12 +24,12 @@ public class TextLineYml
     {
         if ( maxLength != null )
         {
-            configBuilder.property( InputTypeProperty.create( "maxLength", new IntegerPropertyValue( maxLength ) ).build() );
+            configBuilder.property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( maxLength ) ).build() );
         }
 
         if ( regexp != null )
         {
-            configBuilder.property( InputTypeProperty.create( "regexp", new StringPropertyValue( regexp ) ).build() ).build();
+            configBuilder.property( InputTypeProperty.create( "regexp", PropertyValue.stringValue( regexp ) ).build() ).build();
         }
     }
 }

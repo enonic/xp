@@ -16,14 +16,11 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.inputtype.BooleanPropertyValue;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.ListPropertyValue;
-import com.enonic.xp.inputtype.ObjectPropertyValue;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -157,7 +154,7 @@ public class ContentTypeHandlerTest
             .helpText( "Some help text" )
             .required( true )
             .inputTypeConfig( InputTypeConfig.create()
-                                  .property( InputTypeProperty.create( "regexp", new StringPropertyValue( "\\b\\d{3}-\\d{2}-\\d{4}\\b" ) )
+                                  .property( InputTypeProperty.create( "regexp", PropertyValue.stringValue( "\\b\\d{3}-\\d{2}-\\d{4}\\b" ) )
                                                  .build() )
                                   .build() )
             .build();
@@ -168,7 +165,7 @@ public class ContentTypeHandlerTest
             .label( "My checkbox input" )
             .required( false )
             .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", new StringPropertyValue( "checked" ) ).build() )
+                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "checked" ) ).build() )
                                .build() )
             .build();
 
@@ -176,25 +173,25 @@ public class ContentTypeHandlerTest
             .name( "myRadioButton" )
             .inputType( InputTypeName.RADIO_BUTTON )
             .label( "Radio button" )
-            .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+            .inputTypeProperty( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
             {{
-                put( "value", new StringPropertyValue( "one" ) );
-                put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                put( "value", PropertyValue.stringValue( "one" ) );
+                put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
                 {{
-                    put( "text", new StringPropertyValue( "Value One" ) );
+                    put( "text", PropertyValue.stringValue( "Value One" ) );
                 }} ) );
             }} ) ).build() )
-            .inputTypeProperty( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+            .inputTypeProperty( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
             {{
-                put( "value", new StringPropertyValue( "two" ) );
-                put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+                put( "value", PropertyValue.stringValue( "two" ) );
+                put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
                 {{
-                    put( "text", new StringPropertyValue( "Value Two" ) );
+                    put( "text", PropertyValue.stringValue( "Value Two" ) );
                 }} ) );
             }} ) ).build() )
-            .inputTypeProperty( InputTypeProperty.create( "theme", new ListPropertyValue(
-                List.of( new StringPropertyValue( "dark" ), new StringPropertyValue( "light" ) ) ) ).build() )
-            .inputTypeProperty( InputTypeProperty.create( "disabled", new BooleanPropertyValue( false ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "theme", PropertyValue.listValue(
+                List.of( PropertyValue.stringValue( "dark" ), PropertyValue.stringValue( "light" ) ) ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "disabled", PropertyValue.booleanValue( false ) ).build() )
             .build();
 
         FieldSet myFieldSet = FieldSet.create()
@@ -272,7 +269,7 @@ public class ContentTypeHandlerTest
             .required( true )
             .inputTypeConfig( InputTypeConfig.create()
                                   .property(
-                                      InputTypeProperty.create( "regexp", new StringPropertyValue( "^[^@]+@[^@]+\\.[^@]+$" ) ).build() )
+                                      InputTypeProperty.create( "regexp", PropertyValue.stringValue( "^[^@]+@[^@]+\\.[^@]+$" ) ).build() )
                                   .build() )
             .build();
 
@@ -282,8 +279,8 @@ public class ContentTypeHandlerTest
         Input nationality = Input.create()
             .name( "nationality" )
             .inputType( InputTypeName.CONTENT_SELECTOR )
-            .inputTypeProperty( InputTypeProperty.create( "allowContentType", new ListPropertyValue(
-                List.of( new StringPropertyValue( "com.enonic.myapp:country" ) ) ) ).build() )
+            .inputTypeProperty( InputTypeProperty.create( "allowContentType", PropertyValue.listValue(
+                List.of( PropertyValue.stringValue( "com.enonic.myapp:country" ) ) ) ).build() )
             .label( "Nationality" )
             .build();
 

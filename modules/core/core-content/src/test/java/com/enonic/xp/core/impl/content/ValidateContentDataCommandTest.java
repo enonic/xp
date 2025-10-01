@@ -21,7 +21,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -200,7 +200,7 @@ public class ValidateContentDataCommandTest
                                                            .inputType( InputTypeName.TEXT_LINE )
                                                            .label( "some-label" )
                                                            .name( "textInput-1" )
-                                                           .inputTypeProperty( InputTypeProperty.create( "regexp", new StringPropertyValue(
+                                                           .inputTypeProperty( InputTypeProperty.create( "regexp", PropertyValue.stringValue(
                                                                                                          "\\d+") ).build() )
                                                            .build() ).build();
         return SiteDescriptor.create().form( config ).build();

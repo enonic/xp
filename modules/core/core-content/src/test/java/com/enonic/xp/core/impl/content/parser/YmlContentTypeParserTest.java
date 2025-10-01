@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -44,9 +44,8 @@ public class YmlContentTypeParserTest
         assertEquals( "${expression}", contentType.getSchemaConfig()
             .getProperty( "displayNameExpression" )
             .map( InputTypeProperty::getValue )
-            .filter( StringPropertyValue.class::isInstance )
-            .map( StringPropertyValue.class::cast )
-            .map( StringPropertyValue::value )
+            .filter( pv -> pv.getType() == PropertyValue.Type.STRING )
+            .map( PropertyValue::asString )
             .orElse( null ) );
     }
 

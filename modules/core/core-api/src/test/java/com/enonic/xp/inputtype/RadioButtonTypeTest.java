@@ -79,19 +79,19 @@ public class RadioButtonTypeTest
 
     private InputTypeConfig newValidConfig()
     {
-        return InputTypeConfig.create().property( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+        return InputTypeConfig.create().property( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
         {{
-            put( "value", new StringPropertyValue( "one" ) );
-            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+            put( "value", PropertyValue.stringValue( "one" ) );
+            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
             {{
-                put( "text", new StringPropertyValue( "Value One" ) );
+                put( "text", PropertyValue.stringValue( "Value One" ) );
             }} ) );
-        }} ) ).build() ).property( InputTypeProperty.create( "option", new ObjectPropertyValue( new LinkedHashMap<>()
+        }} ) ).build() ).property( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
         {{
-            put( "value", new StringPropertyValue( "two" ) );
-            put( "label", new ObjectPropertyValue( new LinkedHashMap<>()
+            put( "value", PropertyValue.stringValue( "two" ) );
+            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
             {{
-                put( "text", new StringPropertyValue( "Value Two" ) );
+                put( "text", PropertyValue.stringValue( "Value Two" ) );
             }} ) );
         }} ) ).build() ).build();
     }

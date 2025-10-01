@@ -30,17 +30,12 @@ import com.enonic.xp.core.impl.schema.mapper.TimeYml;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.BooleanPropertyValue;
-import com.enonic.xp.inputtype.DoublePropertyValue;
 import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
-import com.enonic.xp.inputtype.IntegerPropertyValue;
-import com.enonic.xp.inputtype.ListPropertyValue;
-import com.enonic.xp.inputtype.ObjectPropertyValue;
-import com.enonic.xp.inputtype.StringPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,15 +69,9 @@ public class YmlTypeParserTest
 
         assertEquals( 2, inputTypeConfig.getProperties( "option" ).size() );
 
-        assertTrue( inputTypeConfig.getProperty( "option" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ObjectPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "option" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "theme" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( StringPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "theme" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -107,16 +96,12 @@ public class YmlTypeParserTest
 
         assertEquals( 11, inputTypeConfig.getProperty( "maxLength" )
             .map( InputTypeProperty::getValue )
-            .filter( IntegerPropertyValue.class::isInstance )
-            .map( IntegerPropertyValue.class::cast )
-            .map( IntegerPropertyValue::value )
+            .map( PropertyValue::asInteger )
             .orElse( null ) );
 
         assertEquals( "\\\\b\\\\d{3}-\\\\d{2}-\\\\d{4}\\\\b", inputTypeConfig.getProperty( "regexp" )
             .map( InputTypeProperty::getValue )
-            .filter( StringPropertyValue.class::isInstance )
-            .map( StringPropertyValue.class::cast )
-            .map( StringPropertyValue::value )
+            .map( PropertyValue::asString )
             .orElse( null ) );
     }
 
@@ -143,24 +128,16 @@ public class YmlTypeParserTest
 
         assertEquals( 0, inputTypeConfig.getProperty( "min" )
             .map( InputTypeProperty::getValue )
-            .filter( DoublePropertyValue.class::isInstance )
-            .map( DoublePropertyValue.class::cast )
-            .map( DoublePropertyValue::value )
+            .map( PropertyValue::asDouble )
             .orElse( null ) );
 
         assertEquals( 255, inputTypeConfig.getProperty( "max" )
             .map( InputTypeProperty::getValue )
-            .filter( DoublePropertyValue.class::isInstance )
-            .map( DoublePropertyValue.class::cast )
-            .map( DoublePropertyValue::value )
+            .map( PropertyValue::asDouble )
             .orElse( null ) );
 
-        assertTrue( inputTypeConfig.getProperty( "required" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .map( BooleanPropertyValue.class::cast )
-                        .map( BooleanPropertyValue::value )
-                        .orElse( false ) );
+        assertTrue(
+            inputTypeConfig.getProperty( "required" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false ) );
     }
 
     @Test
@@ -182,29 +159,17 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "allowContentType" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ListPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "allowContentType" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "allowPath" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ListPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "allowPath" ).map( InputTypeProperty::getValue ).isPresent() );
 
         assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" )
                         .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .map( BooleanPropertyValue.class::cast )
-                        .map( BooleanPropertyValue::value )
+                        .map( PropertyValue::asBoolean )
                         .orElse( false ) );
 
-        assertTrue( inputTypeConfig.getProperty( "treeMode" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .map( BooleanPropertyValue.class::cast )
-                        .map( BooleanPropertyValue::value )
-                        .orElse( false ) );
+        assertTrue(
+            inputTypeConfig.getProperty( "treeMode" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false ) );
     }
 
     @Test
@@ -226,15 +191,9 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "service" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( StringPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "service" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "params" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ObjectPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "params" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -257,20 +216,11 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "exclude" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( StringPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "exclude" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "include" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( StringPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "include" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "allowHeadings" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( StringPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "allowHeadings" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -295,16 +245,12 @@ public class YmlTypeParserTest
 
         assertEquals( 11, inputTypeConfig.getProperty( "maxLength" )
             .map( InputTypeProperty::getValue )
-            .filter( IntegerPropertyValue.class::isInstance )
-            .map( IntegerPropertyValue.class::cast )
-            .map( IntegerPropertyValue::value )
+            .map( PropertyValue::asInteger )
             .orElse( null ) );
 
         assertTrue( inputTypeConfig.getProperty( "showCounter" )
                         .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .map( BooleanPropertyValue.class::cast )
-                        .map( BooleanPropertyValue::value )
+                        .map( PropertyValue::asBoolean )
                         .orElse( false ) );
     }
 
@@ -330,12 +276,8 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "required" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .map( BooleanPropertyValue.class::cast )
-                        .map( BooleanPropertyValue::value )
-                        .orElse( false ) );
+        assertTrue(
+            inputTypeConfig.getProperty( "required" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false ) );
     }
 
     @Test
@@ -404,9 +346,7 @@ public class YmlTypeParserTest
 
         assertEquals( "right", inputTypeConfig.getProperty( "alignment" )
             .map( InputTypeProperty::getValue )
-            .filter( StringPropertyValue.class::isInstance )
-            .map( StringPropertyValue.class::cast )
-            .map( StringPropertyValue::value )
+            .map( PropertyValue::asString )
             .orElse( null ) );
     }
 
@@ -434,15 +374,9 @@ public class YmlTypeParserTest
 
         assertEquals( 2, inputTypeConfig.getProperties( "option" ).size() );
 
-        assertTrue( inputTypeConfig.getProperty( "option" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ObjectPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "option" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "required" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "required" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
 
@@ -462,10 +396,7 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "disabled" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -487,20 +418,11 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "allowPath" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ListPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "allowPath" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "treeMode" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "treeMode" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -522,25 +444,13 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "allowContentType" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ListPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "allowContentType" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "allowPath" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( ListPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "allowPath" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "treeMode" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "treeMode" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -562,10 +472,7 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "context" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "context" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
 
@@ -588,10 +495,7 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "disabled" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -616,10 +520,7 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "disabled" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -646,10 +547,7 @@ public class YmlTypeParserTest
         assertEquals( -0.1, geoPoint.getLongitude() );
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperty( "disabled" )
-                        .map( InputTypeProperty::getValue )
-                        .filter( BooleanPropertyValue.class::isInstance )
-                        .isPresent() );
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
 
     }
 

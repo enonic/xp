@@ -72,7 +72,7 @@ public class TextAreaTypeTest
     public void testValidate_invalidMaxLength()
     {
         final InputTypeConfig config =
-            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", new IntegerPropertyValue( 5 ) ).build() ).build();
+            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( 5 ) ).build() ).build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ) );
     }
 }

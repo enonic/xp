@@ -13,7 +13,6 @@ import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.PropertyValue;
-import com.enonic.xp.inputtype.StringPropertyValue;
 import com.enonic.xp.schema.LocalizedText;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -64,7 +63,7 @@ public abstract class InputYml
         {
             // TODO maybe default should be moved to an implementation
             builder.defaultValue( InputTypeDefault.create()
-                                      .property( InputTypeProperty.create( "default", new StringPropertyValue( defaultValue.toString() ) )
+                                      .property( InputTypeProperty.create( "default", PropertyValue.stringValue( defaultValue.toString() ) )
                                                      .build() )
                                       .build() );
         }

@@ -18,12 +18,8 @@ abstract class TextInputTypeBase
 
     private void validateMaxLength( final Property property, final InputTypeConfig config )
     {
-        final Integer maxLength = config.getProperty( "maxLength" )
-            .map( InputTypeProperty::getValue )
-            .filter( IntegerPropertyValue.class::isInstance )
-            .map( IntegerPropertyValue.class::cast )
-            .map( IntegerPropertyValue::value )
-            .orElse( null );
+        final Integer maxLength =
+            config.getProperty( "maxLength" ).map( InputTypeProperty::getValue ).map( PropertyValue::asInteger ).orElse( null );
 
         final String propertyValue = property.getString();
 

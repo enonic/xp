@@ -88,11 +88,6 @@ final class DoubleType
 
     private Double getDoubleValueFromConfig( final InputTypeConfig config, final String key )
     {
-        return config.getProperty( key )
-            .map( InputTypeProperty::getValue )
-            .filter( DoublePropertyValue.class::isInstance )
-            .map( DoublePropertyValue.class::cast )
-            .map( DoublePropertyValue::value )
-            .orElse( null );
+        return config.getProperty( key ).map( InputTypeProperty::getValue ).map( PropertyValue::asDouble ).orElse( null );
     }
 }

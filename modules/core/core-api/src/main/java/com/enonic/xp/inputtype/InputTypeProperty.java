@@ -65,7 +65,7 @@ public final class InputTypeProperty
         private Builder( final String name, final PropertyValue value )
         {
             this.name = name;
-            this.value = value != null ? value : new StringPropertyValue( "" );
+            this.value = value != null ? value : PropertyValue.stringValue( "" );
         }
 
         public InputTypeProperty build()

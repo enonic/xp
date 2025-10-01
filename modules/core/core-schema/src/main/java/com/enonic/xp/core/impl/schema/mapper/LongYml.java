@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.mapper;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.LongPropertyValue;
+import com.enonic.xp.inputtype.PropertyValue;
 
 public class LongYml
     extends InputYml
@@ -25,11 +25,11 @@ public class LongYml
     {
         if ( min != null )
         {
-            configBuilder.property( InputTypeProperty.create( "min", new LongPropertyValue( min ) ).build() );
+            configBuilder.property( InputTypeProperty.create( "min", PropertyValue.longValue( min ) ).build() );
         }
         if ( max != null )
         {
-            configBuilder.property( InputTypeProperty.create( "max", new LongPropertyValue( max ) ).build() );
+            configBuilder.property( InputTypeProperty.create( "max", PropertyValue.longValue( max ) ).build() );
         }
     }
 }
