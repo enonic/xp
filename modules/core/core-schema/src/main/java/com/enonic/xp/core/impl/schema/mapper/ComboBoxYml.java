@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -17,8 +16,6 @@ public class ComboBoxYml
     public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.COMBO_BOX;
 
     public List<OptionYml> options;
-
-    public Map<String, PropertyValue> config;
 
     public ComboBoxYml()
     {
