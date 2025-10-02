@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.app;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
+import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -23,7 +24,6 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlMixinParser;
-import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 import com.enonic.xp.xml.parser.XmlSiteParser;
 import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
 import com.enonic.xp.xml.parser.XmlXDataParser;
@@ -73,21 +73,7 @@ final class DynamicResourceParser
 
     private PageDescriptor parsePageDescriptor( final DescriptorKey key, final String resource )
     {
-        final PageDescriptor.Builder builder = PageDescriptor.create().key( key );
-        try
-        {
-            final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            builder.key( key );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic page descriptor [" + key + "]" );
-        }
-        return builder.build();
+        return YmlPageDescriptorParser.parse( resource, key.getApplicationKey() ).key( key ).build();
     }
 
     private PartDescriptor parsePartDescriptor( final DescriptorKey key, final String resource )

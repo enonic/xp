@@ -1,5 +1,6 @@
 package com.enonic.xp.core.dynamic;
 
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -740,7 +741,7 @@ public class DynamicSchemaServiceImplTest
     public void createLayoutComponent()
         throws Exception
     {
-        final String resource = readResource( "_layout.xml" );
+        final String resource = readResource( "_layout.yml" );
 
         CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
@@ -772,10 +773,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/layouts/mylayout/mylayout.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/layouts/mylayout/mylayout.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/layouts/mylayout/mylayout.xml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/layouts/mylayout/mylayout.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -784,15 +785,20 @@ public class DynamicSchemaServiceImplTest
     public void updateLayoutComponent()
         throws Exception
     {
-        final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
-            .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
-            .resource( "<layout></layout>" )
-            .type( DynamicComponentType.LAYOUT )
-            .build();
+        final CreateDynamicComponentParams params =
+            CreateDynamicComponentParams.create()
+                .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
+                .resource( """
+                               displayName: MyLayout
+                               regions: [ ]
+                               
+                               """ )
+                .type( DynamicComponentType.LAYOUT )
+                .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( params ) );
 
-        final String resource = readResource( "_layout.xml" );
+        final String resource = readResource( "_layout.yml" );
 
         final UpdateDynamicComponentParams updateParams = UpdateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mylayout" ) )
@@ -824,10 +830,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/layouts/mylayout/mylayout.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/layouts/mylayout/mylayout.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/layouts/mylayout/mylayout.xml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/layouts/mylayout/mylayout.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -836,7 +842,7 @@ public class DynamicSchemaServiceImplTest
     public void createPageComponent()
         throws Exception
     {
-        final String resource = readResource( "_page.xml" );
+        final String resource = readResource( "_page.yml" );
 
         CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
@@ -868,10 +874,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/pages/mypage/mypage.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/pages/mypage/mypage.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/pages/mypage/mypage.xml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/pages/mypage/mypage.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -880,15 +886,20 @@ public class DynamicSchemaServiceImplTest
     public void updatePageComponent()
         throws Exception
     {
-        final CreateDynamicComponentParams createParams = CreateDynamicComponentParams.create()
-            .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
-            .resource( "<page></page>" )
-            .type( DynamicComponentType.PAGE )
-            .build();
+        final CreateDynamicComponentParams createParams =
+            CreateDynamicComponentParams.create()
+                .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
+                .resource( """
+                               displayName: "MyPage"
+                               regions:
+                                 - "main"
+                               """ )
+                .type( DynamicComponentType.PAGE )
+                .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createComponent( createParams ) );
 
-        final String resource = readResource( "_page.xml" );
+        final String resource = readResource( "_page.yml" );
 
         final UpdateDynamicComponentParams updateParams = UpdateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypage" ) )
@@ -920,10 +931,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/pages/mypage/mypage.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/pages/mypage/mypage.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/pages/mypage/mypage.xml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/pages/mypage/mypage.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1577,10 +1588,8 @@ public class DynamicSchemaServiceImplTest
             .type( DynamicComponentType.PART )
             .build();
 
-        final XmlException exception =
-            assertThrows( XmlException.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) ) );
-
-        assertEquals( "Could not parse dynamic part descriptor [myapp:mytype]", exception.getMessage() );
+        assertThrows( UncheckedIOException.class,
+                      () -> createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) ) );
     }
 
     @Test
@@ -1595,10 +1604,8 @@ public class DynamicSchemaServiceImplTest
             .type( DynamicComponentType.LAYOUT )
             .build();
 
-        final XmlException exception =
-            assertThrows( XmlException.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) ) );
-
-        assertEquals( "Could not parse dynamic layout descriptor [myapp:mytype]", exception.getMessage() );
+        assertThrows( UncheckedIOException.class,
+                      () -> createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) ) );
     }
 
     @Test
@@ -1613,10 +1620,8 @@ public class DynamicSchemaServiceImplTest
             .type( DynamicComponentType.PAGE )
             .build();
 
-        final XmlException exception =
-            assertThrows( XmlException.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) ) );
-
-        assertEquals( "Could not parse dynamic page descriptor [myapp:mytype]", exception.getMessage() );
+        assertThrows( UncheckedIOException.class,
+                      () -> createAdminContext().callWith( () -> dynamicSchemaService.createComponent( params ) ) );
     }
 
     @Test
