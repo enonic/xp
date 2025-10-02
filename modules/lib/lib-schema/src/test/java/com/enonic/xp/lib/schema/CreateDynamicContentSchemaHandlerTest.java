@@ -6,6 +6,7 @@ import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
@@ -17,7 +18,6 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.xml.parser.XmlContentTypeParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlXDataParser;
 
@@ -34,21 +34,14 @@ public class CreateDynamicContentSchemaHandlerTest
         when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
 
-            final XmlContentTypeParser parser = new XmlContentTypeParser();
-
-            final ContentType.Builder builder = ContentType.create();
+            final ContentType.Builder builder =
+                YmlContentTypeParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
 
             final Instant modifiedTime = Instant.parse( "2021-09-25T10:00:00.00Z" );
             builder.modifiedTime( modifiedTime );
             builder.createdTime( modifiedTime );
 
             builder.name( ContentTypeName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
-
-            parser.builder( builder );
-            parser.source( schemaParams.getResource() );
-            parser.currentApplication( schemaParams.getName().getApplicationKey() );
-
-            parser.parse();
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );

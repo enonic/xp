@@ -44,7 +44,7 @@ public class GetDynamicContentSchemaHandler
                 schemaName = MixinName.from( name );
                 break;
             case CONTENT_TYPE:
-                schemaName = ContentTypeName.from( name, "yml" );
+                schemaName = ContentTypeName.from( name );
                 break;
             case XDATA:
                 schemaName = XDataName.from( name );

@@ -7,19 +7,18 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlPartDescriptorParser;
 
 @Component(immediate = true)
 public class PartDescriptorLoader
@@ -57,16 +56,15 @@ public class PartDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     @Override
     public PartDescriptor load( final DescriptorKey key, final Resource resource )
         throws Exception
     {
-        final PartDescriptor.Builder builder = PartDescriptor.create();
-        parseXml( resource, builder );
-        return builder.key( key ).icon( loadIcon( key ) ).build();
+        final PartDescriptor.Builder builder = YmlPartDescriptorParser.parse( resource.readString(), key.getApplicationKey() );
+        return builder.key( key ).icon( loadIcon( key ) ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build();
     }
 
     @Override
@@ -79,26 +77,6 @@ public class PartDescriptorLoader
     public PartDescriptor postProcess( final PartDescriptor descriptor )
     {
         return PartDescriptor.copyOf( descriptor ).config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).build();
-    }
-
-    private void parseXml( final Resource resource, final PartDescriptor.Builder builder )
-    {
-        try
-        {
-            final XmlPartDescriptorParser parser = new XmlPartDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( resource.getKey().getApplicationKey() );
-            parser.source( resource.readString() );
-
-            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
-            builder.modifiedTime( modifiedTime );
-
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load part descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
     }
 
     protected final Icon loadIcon( final DescriptorKey name )

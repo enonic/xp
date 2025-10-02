@@ -4,3 +4,6 @@ label: "My Tag"
 occurrences:
   minimum: 0
   maximum: 0
+config:
+  disabled: false
+

@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
@@ -24,8 +23,6 @@ import com.enonic.xp.schema.mixin.MixinService;
 public final class ContentTypeServiceImpl
     implements ContentTypeService
 {
-    private static final YmlContentTypeParser PARSER = new YmlContentTypeParser();
-
     private final ContentTypeRegistry registry;
 
     private final MixinService mixinService;
@@ -34,7 +31,7 @@ public final class ContentTypeServiceImpl
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
                                    final @Reference MixinService mixinService )
     {
-        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService, this ), applicationService );
+        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
         this.mixinService = mixinService;
     }
 
@@ -46,13 +43,7 @@ public final class ContentTypeServiceImpl
         ContentType contentType = this.registry.get( contentTypeName );
         if ( contentType == null )
         {
-            ContentTypeName ymlContentType =
-                ContentTypeName.from( contentTypeName.getApplicationKey(), contentTypeName.getLocalName(), "yml" );
-            contentType = this.registry.get( ymlContentType );
-            if ( contentType == null )
-            {
-                return null;
-            }
+            return null;
         }
 
         return transformInlineMixins( contentType );
@@ -83,12 +74,6 @@ public final class ContentTypeServiceImpl
 
         validator.validate( type.getName(), type.getSuperType() );
         return validator.getResult();
-    }
-
-    @Override
-    public ContentType.Builder createContentTypeFromYml( final String contentTypeYml, final ApplicationKey applicationKey )
-    {
-        return PARSER.parse( contentTypeYml, applicationKey );
     }
 
     private ContentType transformInlineMixins( final ContentType contentType )

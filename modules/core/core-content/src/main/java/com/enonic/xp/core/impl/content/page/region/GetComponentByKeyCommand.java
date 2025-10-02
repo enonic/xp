@@ -55,7 +55,7 @@ class GetComponentByKeyCommand
 
     private boolean componentExists( final ResourceKey componentPath )
     {
-        return resourceService.getResource( componentPath.resolve( componentPath.getName() + ".xml" ) ).exists();
+        return resourceService.getResource( componentPath.resolve( componentPath.getName() + ".yml" ) ).exists();
     }
 
     private PartDescriptor getPartDescriptor()

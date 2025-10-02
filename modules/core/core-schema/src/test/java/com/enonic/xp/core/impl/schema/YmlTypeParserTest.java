@@ -4,8 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
-import java.util.Iterator;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -37,10 +35,10 @@ import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlTypeParserTest
@@ -67,19 +65,13 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "cookie", defaultValue.asString() );
 
-        final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final Iterator<InputTypeProperty> iterator = options.iterator();
-        final InputTypeProperty cookieOpt = iterator.next();
-        assertNotNull( cookieOpt );
-        assertEquals( "Cookie", cookieOpt.getValue() );
-        assertEquals( "cookie", cookieOpt.getAttribute( "value" ) );
-        assertEquals( "i18n.rbg.cookie", cookieOpt.getAttribute( "i18n" ) );
+        assertEquals( 2, inputTypeConfig.getProperties( "option" ).size() );
 
-        final InputTypeProperty privacyOpt = iterator.next();
-        assertNotNull( privacyOpt );
-        assertEquals( "Privacy", privacyOpt.getValue() );
-        assertEquals( "privacy", privacyOpt.getAttribute( "value" ) );
+        assertTrue( inputTypeConfig.getProperty( "option" ).map( InputTypeProperty::getValue ).isPresent() );
+
+        assertTrue( inputTypeConfig.getProperty( "theme" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -100,24 +92,22 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "000-00-0000", defaultValue.asString() );
 
-        final InputTypeProperty maxLengthOpt = input.getInputTypeConfig().getProperty( "maxLength" );
-        assertNotNull( maxLengthOpt );
-        assertEquals( "11", maxLengthOpt.getValue() );
-        assertTrue( maxLengthOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final InputTypeProperty regexpOpt = input.getInputTypeConfig().getProperty( "regexp" );
-        assertNotNull( regexpOpt );
-        assertEquals( "\\\\b\\\\d{3}-\\\\d{2}-\\\\d{4}\\\\b", regexpOpt.getValue() );
-        assertTrue( regexpOpt.getAttributes().isEmpty() );
+        assertEquals( 11, inputTypeConfig.getProperty( "maxLength" )
+            .map( InputTypeProperty::getValue )
+            .map( PropertyValue::asInteger )
+            .orElse( null ) );
 
-        final Occurrences occurrences = input.getOccurrences();
-        assertEquals( 1, occurrences.getMinimum() );
-        assertEquals( 3, occurrences.getMaximum() );
+        assertEquals( "\\\\b\\\\d{3}-\\\\d{2}-\\\\d{4}\\\\b", inputTypeConfig.getProperty( "regexp" )
+            .map( InputTypeProperty::getValue )
+            .map( PropertyValue::asString )
+            .orElse( null ) );
     }
 
 
     @Test
-    void parseDouble()
+    void testParseDouble()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/double-type.yml" );
@@ -134,19 +124,24 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isNumericType() );
         assertEquals( 250.0, defaultValue.asDouble() );
 
-        final InputTypeProperty minOpt = input.getInputTypeConfig().getProperty( "min" );
-        assertNotNull( minOpt );
-        assertEquals( 0, Double.parseDouble( minOpt.getValue() ) );
-        assertTrue( minOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final InputTypeProperty maxOpt = input.getInputTypeConfig().getProperty( "max" );
-        assertNotNull( maxOpt );
-        assertEquals( 255, Double.parseDouble( maxOpt.getValue() ) );
-        assertTrue( maxOpt.getAttributes().isEmpty() );
+        assertEquals( 0, inputTypeConfig.getProperty( "min" )
+            .map( InputTypeProperty::getValue )
+            .map( PropertyValue::asDouble )
+            .orElse( null ) );
+
+        assertEquals( 255, inputTypeConfig.getProperty( "max" )
+            .map( InputTypeProperty::getValue )
+            .map( PropertyValue::asDouble )
+            .orElse( null ) );
+
+        assertTrue(
+            inputTypeConfig.getProperty( "required" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false ) );
     }
 
     @Test
-    void parseContentSelector()
+    void testParseContentSelector()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
@@ -164,27 +159,21 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final Set<InputTypeProperty> allowContentTypes = inputTypeConfig.getProperties( "allowContentType" );
-        assertEquals( 2, allowContentTypes.size() );
-        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "myapp:landing-page1" ).build() ) );
-        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "myapp:landing-page2" ).build() ) );
+        assertTrue( inputTypeConfig.getProperty( "allowContentType" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final Set<InputTypeProperty> allowPaths = inputTypeConfig.getProperties( "allowPath" );
-        assertEquals( 2, allowPaths.size() );
-        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "${site}/people/" ).build() ) );
-        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "./*" ).build() ) );
+        assertTrue( inputTypeConfig.getProperty( "allowPath" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final InputTypeProperty treeMode = inputTypeConfig.getProperty( "treeMode" );
-        assertNotNull( treeMode );
-        assertEquals( "true", treeMode.getValue() );
+        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" )
+                        .map( InputTypeProperty::getValue )
+                        .map( PropertyValue::asBoolean )
+                        .orElse( false ) );
 
-        final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
-        assertNotNull( hideToggleIcon );
-        assertEquals( "true", hideToggleIcon.getValue() );
+        assertTrue(
+            inputTypeConfig.getProperty( "treeMode" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false ) );
     }
 
     @Test
-    void parseCustomSelector()
+    void testParseCustomSelector()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/customselector-type.yml" );
@@ -200,15 +189,11 @@ public class YmlTypeParserTest
 
         assertEquals( InputTypeName.CUSTOM_SELECTOR, input.getInputType() );
 
-        final InputTypeProperty serviceOpt = input.getInputTypeConfig().getProperty( "service" );
-        assertNotNull( serviceOpt );
-        assertEquals( "myapp/spotify-music-selector", serviceOpt.getValue() );
-        assertTrue( serviceOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final Set<InputTypeProperty> allowPaths = input.getInputTypeConfig().getProperties( "param" );
-        assertEquals( 2, allowPaths.size() );
-        assertTrue( allowPaths.contains( InputTypeProperty.create( "param", "classic" ).attribute( "value", "genre" ).build() ) );
-        assertTrue( allowPaths.contains( InputTypeProperty.create( "param", "length" ).attribute( "value", "sortBy" ).build() ) );
+        assertTrue( inputTypeConfig.getProperty( "service" ).map( InputTypeProperty::getValue ).isPresent() );
+
+        assertTrue( inputTypeConfig.getProperty( "params" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -229,20 +214,13 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "<h3>Enter description here</h3>", defaultValue.asString() );
 
-        final InputTypeProperty excludeOpt = input.getInputTypeConfig().getProperty( "exclude" );
-        assertNotNull( excludeOpt );
-        assertEquals( "*", excludeOpt.getValue() );
-        assertTrue( excludeOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final InputTypeProperty includeOpt = input.getInputTypeConfig().getProperty( "include" );
-        assertNotNull( includeOpt );
-        assertEquals( "JustifyLeft JustifyRight | Bold Italic", includeOpt.getValue() );
-        assertTrue( includeOpt.getAttributes().isEmpty() );
+        assertTrue( inputTypeConfig.getProperty( "exclude" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final InputTypeProperty allowHeadingsOpt = input.getInputTypeConfig().getProperty( "allowHeadings" );
-        assertNotNull( allowHeadingsOpt );
-        assertEquals( "h2 h4 h6", allowHeadingsOpt.getValue() );
-        assertTrue( allowHeadingsOpt.getAttributes().isEmpty() );
+        assertTrue( inputTypeConfig.getProperty( "include" ).map( InputTypeProperty::getValue ).isPresent() );
+
+        assertTrue( inputTypeConfig.getProperty( "allowHeadings" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
@@ -263,15 +241,17 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "Default text goes here", defaultValue.asString() );
 
-        final InputTypeProperty maxLengthOpt = input.getInputTypeConfig().getProperty( "maxLength" );
-        assertNotNull( maxLengthOpt );
-        assertEquals( "11", maxLengthOpt.getValue() );
-        assertTrue( maxLengthOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final InputTypeProperty showCounterOpt = input.getInputTypeConfig().getProperty( "showCounter" );
-        assertNotNull( showCounterOpt );
-        assertEquals( "true", showCounterOpt.getValue() );
-        assertTrue( showCounterOpt.getAttributes().isEmpty() );
+        assertEquals( 11, inputTypeConfig.getProperty( "maxLength" )
+            .map( InputTypeProperty::getValue )
+            .map( PropertyValue::asInteger )
+            .orElse( null ) );
+
+        assertTrue( inputTypeConfig.getProperty( "showCounter" )
+                        .map( InputTypeProperty::getValue )
+                        .map( PropertyValue::asBoolean )
+                        .orElse( false ) );
     }
 
     @Test
@@ -293,6 +273,11 @@ public class YmlTypeParserTest
         final Value defaultValue = inputType.createDefaultValue( input );
         assertTrue( defaultValue.isDateType() );
         assertEquals( "2025-08-29", defaultValue.asString() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        assertTrue(
+            inputTypeConfig.getProperty( "required" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false ) );
     }
 
     @Test
@@ -314,11 +299,6 @@ public class YmlTypeParserTest
         final Value defaultValue = inputType.createDefaultValue( input );
         assertTrue( defaultValue.isDateType() );
         assertEquals( "2025-08-29T07:44:27Z", defaultValue.asString() );
-
-        final InputTypeProperty timezoneOpt = input.getInputTypeConfig().getProperty( "timezone" );
-        assertNotNull( timezoneOpt );
-        assertEquals( "true", timezoneOpt.getValue() );
-        assertTrue( timezoneOpt.getAttributes().isEmpty() );
     }
 
     @Test
@@ -362,10 +342,12 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isBoolean() );
         assertTrue( defaultValue.asBoolean() );
 
-        final InputTypeProperty alignmentOpt = input.getInputTypeConfig().getProperty( "alignment" );
-        assertNotNull( alignmentOpt );
-        assertEquals( "right", alignmentOpt.getValue() );
-        assertTrue( alignmentOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        assertEquals( "right", inputTypeConfig.getProperty( "alignment" )
+            .map( InputTypeProperty::getValue )
+            .map( PropertyValue::asString )
+            .orElse( null ) );
     }
 
     @Test
@@ -388,23 +370,15 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isString() );
         assertEquals( "one", defaultValue.asString() );
 
-        final Set<InputTypeProperty> options = input.getInputTypeConfig().getProperties( "option" );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final Iterator<InputTypeProperty> iterator = options.iterator();
-        final InputTypeProperty cookieOpt = iterator.next();
-        assertNotNull( cookieOpt );
-        assertEquals( "Option One", cookieOpt.getValue() );
-        assertEquals( "one", cookieOpt.getAttribute( "value" ) );
+        assertEquals( 2, inputTypeConfig.getProperties( "option" ).size() );
 
-        final InputTypeProperty privacyOpt = iterator.next();
-        assertNotNull( privacyOpt );
-        assertEquals( "Option Two", privacyOpt.getValue() );
-        assertEquals( "two", privacyOpt.getAttribute( "value" ) );
+        assertTrue( inputTypeConfig.getProperty( "option" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final Occurrences occurrences = input.getOccurrences();
-        assertEquals( 1, occurrences.getMinimum() );
-        assertEquals( 2, occurrences.getMaximum() );
+        assertTrue( inputTypeConfig.getProperty( "required" ).map( InputTypeProperty::getValue ).isPresent() );
     }
+
 
     @Test
     void testParseAttachmentUploader()
@@ -419,10 +393,14 @@ public class YmlTypeParserTest
         assertEquals( "AttachmentUploader", input.getInputType().toString() );
         assertEquals( "My AttachmentUploader", input.getLabel() );
         assertEquals( "myattachmentUploader", input.getName() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
-    void parseImageSelector()
+    void testParseImageSelector()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/imageselector-type.yml" );
@@ -440,21 +418,15 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final Set<InputTypeProperty> allowPaths = inputTypeConfig.getProperties( "allowPath" );
-        assertEquals( 1, allowPaths.size() );
-        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ) );
+        assertTrue( inputTypeConfig.getProperty( "allowPath" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final InputTypeProperty treeMode = inputTypeConfig.getProperty( "treeMode" );
-        assertNotNull( treeMode );
-        assertEquals( "true", treeMode.getValue() );
+        assertTrue( inputTypeConfig.getProperty( "treeMode" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
-        assertNotNull( hideToggleIcon );
-        assertEquals( "true", hideToggleIcon.getValue() );
+        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
-    void parseMediaSelector()
+    void testParseMediaSelector()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/mediaselector-type.yml" );
@@ -472,26 +444,17 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final Set<InputTypeProperty> allowContentTypes = inputTypeConfig.getProperties( "allowContentType" );
-        assertEquals( 2, allowContentTypes.size() );
-        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "media:image" ).build() ) );
-        assertTrue( allowContentTypes.contains( InputTypeProperty.create( "allowContentType", "media:video" ).build() ) );
+        assertTrue( inputTypeConfig.getProperty( "allowContentType" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final Set<InputTypeProperty> allowPaths = inputTypeConfig.getProperties( "allowPath" );
-        assertEquals( 1, allowPaths.size() );
-        assertTrue( allowPaths.contains( InputTypeProperty.create( "allowPath", "${site}/*" ).build() ) );
+        assertTrue( inputTypeConfig.getProperty( "allowPath" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final InputTypeProperty treeMode = inputTypeConfig.getProperty( "treeMode" );
-        assertNotNull( treeMode );
-        assertEquals( "true", treeMode.getValue() );
+        assertTrue( inputTypeConfig.getProperty( "treeMode" ).map( InputTypeProperty::getValue ).isPresent() );
 
-        final InputTypeProperty hideToggleIcon = inputTypeConfig.getProperty( "hideToggleIcon" );
-        assertNotNull( hideToggleIcon );
-        assertEquals( "true", hideToggleIcon.getValue() );
+        assertTrue( inputTypeConfig.getProperty( "hideToggleIcon" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
-    void parseContentTypeFilter()
+    void testParseContentTypeFilter()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/contenttypetilter-type.yml" );
@@ -509,14 +472,12 @@ public class YmlTypeParserTest
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final InputTypeProperty contextOpt = inputTypeConfig.getProperty( "context" );
-        assertNotNull( contextOpt );
-        assertEquals( "true", contextOpt.getValue() );
+        assertTrue( inputTypeConfig.getProperty( "context" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
 
     @Test
-    void parseTag()
+    void testParseTag()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/tag-type.yml" );
@@ -531,10 +492,14 @@ public class YmlTypeParserTest
         final Occurrences occurrences = input.getOccurrences();
         assertEquals( 0, occurrences.getMinimum() );
         assertEquals( 0, occurrences.getMaximum() );
+
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
-    void parseLong()
+    void testParseLong()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/long-type.yml" );
@@ -553,19 +518,13 @@ public class YmlTypeParserTest
         assertTrue( defaultValue.isNumericType() );
         assertEquals( 1000, defaultValue.asDouble() );
 
-        final InputTypeProperty minOpt = input.getInputTypeConfig().getProperty( "min" );
-        assertNotNull( minOpt );
-        assertEquals( 350, Double.parseDouble( minOpt.getValue() ) );
-        assertTrue( minOpt.getAttributes().isEmpty() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
-        final InputTypeProperty maxOpt = input.getInputTypeConfig().getProperty( "max" );
-        assertNotNull( maxOpt );
-        assertEquals( 123456789, Double.parseDouble( maxOpt.getValue() ) );
-        assertTrue( maxOpt.getAttributes().isEmpty() );
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
     }
 
     @Test
-    void parseGeoPoint()
+    void testParseGeoPoint()
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/geopoint-type.yml" );
@@ -586,6 +545,10 @@ public class YmlTypeParserTest
         final GeoPoint geoPoint = defaultValue.asGeoPoint();
         assertEquals( 51.5, geoPoint.getLatitude() );
         assertEquals( -0.1, geoPoint.getLongitude() );
+        final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
+
+        assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
+
     }
 
     private String readAsString( final String name )

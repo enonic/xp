@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.content.mapper;
 
-import java.util.Map;
-
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
@@ -14,9 +12,9 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.script.serializer.InputTypeConfigSerializer;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -164,28 +162,7 @@ public final class ContentTypeMapper
 
     private void serializeConfig( final MapGenerator gen, final InputTypeConfig config )
     {
-        gen.map( "config" );
-        for ( String name : config.getNames() )
-        {
-            gen.array( name );
-            for ( final InputTypeProperty property : config.getProperties( name ) )
-            {
-                serializeConfigProperty( gen, property );
-            }
-            gen.end();
-        }
-        gen.end();
-    }
-
-    private void serializeConfigProperty( final MapGenerator gen, final InputTypeProperty property )
-    {
-        gen.map();
-        gen.value( "value", property.getValue() );
-        for ( final Map.Entry<String, String> attribute : property.getAttributes().entrySet() )
-        {
-            gen.value( "@" + attribute.getKey(), attribute.getValue() );
-        }
-        gen.end();
+        InputTypeConfigSerializer.serializeConfig( gen, config );
     }
 
     private void serializeDefaultValue( final MapGenerator gen, final Input input )
@@ -194,8 +171,7 @@ public final class ContentTypeMapper
         {
             try
             {
-                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).
-                    createDefaultValue( input );
+                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
                 if ( defaultValue != null )
                 {
                     gen.map( "default" );

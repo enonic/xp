@@ -38,7 +38,7 @@ public abstract class ComponentDescriptor
         this.description = builder.description;
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.modifiedTime = builder.modifiedTime;
-        this.config = Objects.requireNonNull( builder.config, "config cannot be null" );
+        this.config = Objects.requireNonNullElse( builder.config, Form.empty() );
         this.schemaConfig = builder.schemaConfig.build();
     }
 

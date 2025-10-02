@@ -1,16 +1,21 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
+import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.LocalizedText;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class InputYml
 {
     private final InputTypeName inputTypeName;
@@ -27,6 +32,8 @@ public abstract class InputYml
 
     @JsonProperty("default")
     public Object defaultValue;
+
+    public Map<String, PropertyValue> config;
 
     protected InputYml( final InputTypeName inputTypeName )
     {
@@ -54,16 +61,28 @@ public abstract class InputYml
 
         if ( defaultValue != null )
         {
-            builder.defaultValue(
-                InputTypeDefault.create().property( InputTypeProperty.create( "default", defaultValue.toString() ).build() ).build() );
+            // TODO maybe default should be moved to an implementation
+            builder.defaultValue( InputTypeDefault.create()
+                                      .property( InputTypeProperty.create( "default", PropertyValue.stringValue( defaultValue.toString() ) )
+                                                     .build() )
+                                      .build() );
         }
 
-        customizeInputType( builder );
+        final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
+
+        if ( config != null )
+        {
+            config.forEach( ( name, value ) -> configBuilder.property( InputTypeProperty.create( name, value ).build() ) );
+        }
+
+        customizeInputType( configBuilder );
+
+        builder.inputTypeConfig( configBuilder.build() );
 
         return builder.build();
     }
 
-    public void customizeInputType( Input.Builder builder )
+    public void customizeInputType( final InputTypeConfig.Builder configBuilder )
     {
     }
 }

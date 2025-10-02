@@ -65,13 +65,14 @@ public class TextAreaTypeTest
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
     @Test
     public void testValidate_invalidMaxLength()
     {
-        final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", "5" ).build() ).build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ));
+        final InputTypeConfig config =
+            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( 5 ) ).build() ).build();
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ) );
     }
 }

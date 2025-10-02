@@ -6,7 +6,7 @@ import com.enonic.xp.xml.DomElement;
 
 @PublicApi
 public final class XmlMacroDescriptorParser
-    extends XmlModelParser<XmlContentTypeParser>
+    extends XmlModelParser<XmlMacroDescriptorParser>
 {
     private MacroDescriptor.Builder builder;
 

@@ -3,8 +3,11 @@ name: "type"
 label: "Policy type"
 options:
   - value: "cookie"
-    text: "Cookie"
-    i18n: "i18n.rbg.cookie"
+    label:
+      text: "Cookie"
+      i18n: "i18n.rbg.cookie"
   - value: "privacy"
-    text: "Privacy"
+    label: "Privacy"
 default: "cookie"
+config:
+  theme: "Dark"
