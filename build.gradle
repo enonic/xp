@@ -2,7 +2,6 @@ plugins {
     id 'java-base'
     id 'jacoco'
     id 'com.github.jk1.dependency-license-report'
-    id "com.github.ben-manes.versions"
     id 'biz.aQute.bnd.builder' apply false
     id 'maven-publish'
 }
@@ -120,16 +119,6 @@ task jacocoMergedReport( type: JacocoReport ) {
         html.required = true
         xml.required = true
         csv.required = false
-    }
-}
-
-def isNonStable = { String version ->
-    return ['alpha', 'beta', '-rc', '-m', '-b'].any { it -> version.toLowerCase().contains(it) }
-}
-
-dependencyUpdates {
-    rejectVersionIf {
-        isNonStable(it.candidate.version)
     }
 }
 

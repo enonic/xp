@@ -64,7 +64,3 @@ jar {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
-task allDependencies(type: DependencyReportTask) {}
-
-task allDependencyInsight(type: DependencyInsightReportTask) {}
