@@ -21,140 +21,142 @@ exports.updateInvalidContentSchemaType = function () {
     }));
 };
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-        <content-type xmlns='urn:enonic:xp:model:1.0'>
-            <display-name>My Tag</display-name>
-            <description>My description</description>
-            <super-type>base:structured</super-type>
-            <is-abstract>false</is-abstract>
-            <is-final>true</is-final>
-            <allow-child-content>true</allow-child-content>
-            
-            <x-data name='myapp:address'/>
-            
-            <form>
-            <option-set name='radioOptionSet'>
-              <label>Single selection</label>
-              <expanded>false</expanded>
-              <occurrences minimum='0' maximum='1'/>
-              <options minimum='1' maximum='1'>
-                <option name='option_1'>
-                  <label>Option 1</label>
-                  <default>false</default>
-                  <items>
-                    <input name='text-input' type='TextLine'>
-                      <label>Name</label>
-                      <help-text>Text input</help-text>
-                      <default>something</default>
-                      <occurrences minimum='1' maximum='1'/>
-                    </input>
-                    <item-set name='minimum3'>
-                      <label>Minimum 3</label>
-                      <occurrences minimum='3' maximum='0'/>
-                      <items>
-                        <input name='label' type='TextLine'>
-                          <label>Label</label>
-                          <occurrences minimum='0' maximum='1'/>
-                        </input>
-                        <input name='value' type='TextLine'>
-                          <label>Value</label>
-                          <occurrences minimum='0' maximum='1'/>
-                        </input>
-                      </items>
-                    </item-set>
-                  </items>
-                </option>
-                <option name='option_2'>
-                  <label>Option 2</label>
-                  <default>false</default>
-                  <items>
-                  </items>
-                </option>
-              </options>
-            </option-set>
-            <option-set name='checkOptionSet'>
-              <label>Multi selection</label>
-              <expanded>true</expanded>
-              <occurrences minimum='0' maximum='1'/>
-              <options minimum='0' maximum='3'>
-                <option name='option_1'>
-                  <label>Option 1</label>
-                  <default>true</default>
-                  <items>
-                  </items>
-                </option>
-                <option name='option_2'>
-                  <label>Option 2</label>
-                  <default>true</default>
-                  <items>
-                    <option-set name='nestedOptionSet'>
-                      <label>Multi selection</label>
-                      <expanded>false</expanded>
-                      <occurrences minimum='1' maximum='1'/>
-                      <options minimum='2' maximum='2'>
-                        <option name='option2_1'>
-                          <label>Option 1_1</label>
-                          <default>false</default>
-                          <items>
-                            <input name='name' type='TextLine'>
-                              <label>Name</label>
-                              <help-text>Text input</help-text>
-                              <occurrences minimum='1' maximum='1'/>
-                            </input>
-                          </items>
-                        </option>
-                        <option name='option2_2'>
-                          <label>Option 2_2</label>
-                          <default>true</default>
-                          <items>
-                            <input name='myCheckbox' type='Checkbox'>
-                              <label>my-checkbox</label>
-                              <immutable>false</immutable>
-                              <indexed>false</indexed>
-                              <occurrences minimum='0' maximum='1'/>
-                            </input>
-                          </items>
-                        </option>
-                      </options>
-                    </option-set>
-                  </items>
-                </option>
-                <option name='option_3'>
-                  <label>Option 3</label>
-                  <default>false</default>
-                  <items>
-                    <input name='imageselector' type='ImageSelector'>
-                      <label>Image selector</label>
-                      <indexed>true</indexed>
-                      <occurrences minimum='1' maximum='1'/>
-                      <config>
-                        <allowType>mytype</allowType>
-                        <allowType>mytype2</allowType>
-                        <allowPath>path1</allowPath>
-                        <allowPath>path2</allowPath>
-                      </config>
-                    </input>
-                  </items>
-                </option>
-                <option name='option_4'>
-                  <label>Option 4</label>
-                  <default>false</default>
-                  <items>
-                    <input name='double' type='Double'>
-                      <label>Double</label>
-                      <indexed>true</indexed>
-                      <occurrences minimum='1' maximum='1'/>
-                    </input>
-                    <input name='long' type='Long'>
-                      <label>Long</label>
-                      <indexed>true</indexed>
-                    </input>
-                  </items>
-                </option>
-              </options>
-            </option-set>
-          </form>
-        </content-type>`;
+let resource = `superType: "base:structured"
+abstract: false
+final: true
+allowChildContent: true
+displayName: "My Tag"
+description: "My description"
+form:
+- type: "OptionSet"
+  name: "radioOptionSet"
+  expanded: false
+  label: "Single selection"
+  occurrences:
+    minimum: 0
+    maximum: 1
+  options:
+  - name: "option_1"
+    label: "Option 1"
+    defaultOption: false
+    items:
+    - type: "TextLine"
+      name: "text-input"
+      label: "Name"
+      helpText: "Text input"
+      occurrences:
+        minimum: 1
+        maximum: 1
+      default: "something"
+    - type: "ItemSet"
+      name: "minimum3"
+      label: "Minimum 3"
+      occurrences:
+        minimum: 3
+        maximum: 0
+      items:
+      - type: "TextLine"
+        name: "label"
+        label: "Label"
+        occurrences:
+          minimum: 0
+          maximum: 1
+      - type: "TextLine"
+        name: "value"
+        label: "Value"
+        occurrences:
+          minimum: 0
+          maximum: 1
+  - name: "option_2"
+    label: "Option 2"
+    defaultOption: false
+  selected:
+    minimum: 1
+    maximum: 1
+- type: "OptionSet"
+  name: "checkOptionSet"
+  expanded: true
+  label: "Multi selection"
+  occurrences:
+    minimum: 0
+    maximum: 1
+  options:
+  - name: "option_1"
+    label: "Option 1"
+    defaultOption: true
+  - name: "option_2"
+    label: "Option 2"
+    defaultOption: true
+    items:
+    - type: "OptionSet"
+      name: "nestedOptionSet"
+      expanded: false
+      label: "Multi selection"
+      occurrences:
+        minimum: 1
+        maximum: 1
+      options:
+      - name: "option2_1"
+        label: "Option 1_1"
+        defaultOption: false
+        items:
+        - type: "TextLine"
+          name: "name"
+          label: "Name"
+          helpText: "Text input"
+          occurrences:
+            minimum: 1
+            maximum: 1
+      - name: "option2_2"
+        label: "Option 2_2"
+        defaultOption: true
+        items:
+        - type: "Checkbox"
+          name: "myCheckbox"
+          label: "my-checkbox"
+          occurrences:
+            minimum: 0
+            maximum: 1
+      selected:
+        minimum: 2
+        maximum: 2
+  - name: "option_3"
+    label: "Option 3"
+    defaultOption: false
+    items:
+    - type: "ImageSelector"
+      name: "imageselector"
+      label: "Image selector"
+      occurrences:
+        minimum: 1
+        maximum: 1
+      config:
+        allowPath:
+        - "path1"
+        - "path2"
+        allowContentType:
+        - "mytype2"
+        - "mytype"
+  - name: "option_4"
+    label: "Option 4"
+    defaultOption: false
+    items:
+    - type: "Double"
+      name: "double"
+      label: "Double"
+      occurrences:
+        minimum: 1
+        maximum: 1
+    - type: "Long"
+      name: "long"
+      label: "Long"
+      occurrences:
+        minimum: 0
+        maximum: 1
+  selected:
+    minimum: 0
+    maximum: 3
+`;
 
 exports.updateWithForm = function () {
     let result = schemaLib.updateSchema({
@@ -166,12 +168,10 @@ exports.updateWithForm = function () {
     assert.assertJsonEquals({
         'name': 'myapp:mydata',
         'displayName': 'My Tag',
-        'displayNameI18nKey': '',
         'description': 'My description',
-        'descriptionI18nKey': '',
         'createdTime': '2021-09-25T10:00:00Z',
         'modifiedTime': '2021-09-25T10:00:00Z',
-        'resource': '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n        <content-type xmlns=\'urn:enonic:xp:model:1.0\'>\n            <display-name>My Tag</display-name>\n            <description>My description</description>\n            <super-type>base:structured</super-type>\n            <is-abstract>false</is-abstract>\n            <is-final>true</is-final>\n            <allow-child-content>true</allow-child-content>\n            \n            <x-data name=\'myapp:address\'/>\n            \n            <form>\n            <option-set name=\'radioOptionSet\'>\n              <label>Single selection</label>\n              <expanded>false</expanded>\n              <occurrences minimum=\'0\' maximum=\'1\'/>\n              <options minimum=\'1\' maximum=\'1\'>\n                <option name=\'option_1\'>\n                  <label>Option 1</label>\n                  <default>false</default>\n                  <items>\n                    <input name=\'text-input\' type=\'TextLine\'>\n                      <label>Name</label>\n                      <help-text>Text input</help-text>\n                      <default>something</default>\n                      <occurrences minimum=\'1\' maximum=\'1\'/>\n                    </input>\n                    <item-set name=\'minimum3\'>\n                      <label>Minimum 3</label>\n                      <occurrences minimum=\'3\' maximum=\'0\'/>\n                      <items>\n                        <input name=\'label\' type=\'TextLine\'>\n                          <label>Label</label>\n                          <occurrences minimum=\'0\' maximum=\'1\'/>\n                        </input>\n                        <input name=\'value\' type=\'TextLine\'>\n                          <label>Value</label>\n                          <occurrences minimum=\'0\' maximum=\'1\'/>\n                        </input>\n                      </items>\n                    </item-set>\n                  </items>\n                </option>\n                <option name=\'option_2\'>\n                  <label>Option 2</label>\n                  <default>false</default>\n                  <items>\n                  </items>\n                </option>\n              </options>\n            </option-set>\n            <option-set name=\'checkOptionSet\'>\n              <label>Multi selection</label>\n              <expanded>true</expanded>\n              <occurrences minimum=\'0\' maximum=\'1\'/>\n              <options minimum=\'0\' maximum=\'3\'>\n                <option name=\'option_1\'>\n                  <label>Option 1</label>\n                  <default>true</default>\n                  <items>\n                  </items>\n                </option>\n                <option name=\'option_2\'>\n                  <label>Option 2</label>\n                  <default>true</default>\n                  <items>\n                    <option-set name=\'nestedOptionSet\'>\n                      <label>Multi selection</label>\n                      <expanded>false</expanded>\n                      <occurrences minimum=\'1\' maximum=\'1\'/>\n                      <options minimum=\'2\' maximum=\'2\'>\n                        <option name=\'option2_1\'>\n                          <label>Option 1_1</label>\n                          <default>false</default>\n                          <items>\n                            <input name=\'name\' type=\'TextLine\'>\n                              <label>Name</label>\n                              <help-text>Text input</help-text>\n                              <occurrences minimum=\'1\' maximum=\'1\'/>\n                            </input>\n                          </items>\n                        </option>\n                        <option name=\'option2_2\'>\n                          <label>Option 2_2</label>\n                          <default>true</default>\n                          <items>\n                            <input name=\'myCheckbox\' type=\'Checkbox\'>\n                              <label>my-checkbox</label>\n                              <immutable>false</immutable>\n                              <indexed>false</indexed>\n                              <occurrences minimum=\'0\' maximum=\'1\'/>\n                            </input>\n                          </items>\n                        </option>\n                      </options>\n                    </option-set>\n                  </items>\n                </option>\n                <option name=\'option_3\'>\n                  <label>Option 3</label>\n                  <default>false</default>\n                  <items>\n                    <input name=\'imageselector\' type=\'ImageSelector\'>\n                      <label>Image selector</label>\n                      <indexed>true</indexed>\n                      <occurrences minimum=\'1\' maximum=\'1\'/>\n                      <config>\n                        <allowType>mytype</allowType>\n                        <allowType>mytype2</allowType>\n                        <allowPath>path1</allowPath>\n                        <allowPath>path2</allowPath>\n                      </config>\n                    </input>\n                  </items>\n                </option>\n                <option name=\'option_4\'>\n                  <label>Option 4</label>\n                  <default>false</default>\n                  <items>\n                    <input name=\'double\' type=\'Double\'>\n                      <label>Double</label>\n                      <indexed>true</indexed>\n                      <occurrences minimum=\'1\' maximum=\'1\'/>\n                    </input>\n                    <input name=\'long\' type=\'Long\'>\n                      <label>Long</label>\n                      <indexed>true</indexed>\n                    </input>\n                  </items>\n                </option>\n              </options>\n            </option-set>\n          </form>\n        </content-type>',
+        'resource': 'superType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"OptionSet\"\n  name: \"radioOptionSet\"\n  expanded: false\n  label: \"Single selection\"\n  occurrences:\n    minimum: 0\n    maximum: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    defaultOption: false\n    items:\n    - type: \"TextLine\"\n      name: \"text-input\"\n      label: \"Name\"\n      helpText: \"Text input\"\n      occurrences:\n        minimum: 1\n        maximum: 1\n      default: \"something\"\n    - type: \"ItemSet\"\n      name: \"minimum3\"\n      label: \"Minimum 3\"\n      occurrences:\n        minimum: 3\n        maximum: 0\n      items:\n      - type: \"TextLine\"\n        name: \"label\"\n        label: \"Label\"\n        occurrences:\n          minimum: 0\n          maximum: 1\n      - type: \"TextLine\"\n        name: \"value\"\n        label: \"Value\"\n        occurrences:\n          minimum: 0\n          maximum: 1\n  - name: \"option_2\"\n    label: \"Option 2\"\n    defaultOption: false\n  selected:\n    minimum: 1\n    maximum: 1\n- type: \"OptionSet\"\n  name: \"checkOptionSet\"\n  expanded: true\n  label: \"Multi selection\"\n  occurrences:\n    minimum: 0\n    maximum: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    defaultOption: true\n  - name: \"option_2\"\n    label: \"Option 2\"\n    defaultOption: true\n    items:\n    - type: \"OptionSet\"\n      name: \"nestedOptionSet\"\n      expanded: false\n      label: \"Multi selection\"\n      occurrences:\n        minimum: 1\n        maximum: 1\n      options:\n      - name: \"option2_1\"\n        label: \"Option 1_1\"\n        defaultOption: false\n        items:\n        - type: \"TextLine\"\n          name: \"name\"\n          label: \"Name\"\n          helpText: \"Text input\"\n          occurrences:\n            minimum: 1\n            maximum: 1\n      - name: \"option2_2\"\n        label: \"Option 2_2\"\n        defaultOption: true\n        items:\n        - type: \"Checkbox\"\n          name: \"myCheckbox\"\n          label: \"my-checkbox\"\n          occurrences:\n            minimum: 0\n            maximum: 1\n      selected:\n        minimum: 2\n        maximum: 2\n  - name: \"option_3\"\n    label: \"Option 3\"\n    defaultOption: false\n    items:\n    - type: \"ImageSelector\"\n      name: \"imageselector\"\n      label: \"Image selector\"\n      occurrences:\n        minimum: 1\n        maximum: 1\n      config:\n        allowPath:\n        - \"path1\"\n        - \"path2\"\n        allowContentType:\n        - \"mytype2\"\n        - \"mytype\"\n  - name: \"option_4\"\n    label: \"Option 4\"\n    defaultOption: false\n    items:\n    - type: \"Double\"\n      name: \"double\"\n      label: \"Double\"\n      occurrences:\n        minimum: 1\n        maximum: 1\n    - type: \"Long\"\n      name: \"long\"\n      label: \"Long\"\n      occurrences:\n        minimum: 0\n        maximum: 1\n  selected:\n    minimum: 0\n    maximum: 3\n',
         'type': 'CONTENT_TYPE',
         'form': [
             {
@@ -319,7 +319,7 @@ exports.updateWithForm = function () {
                                                 'formItemType': 'Input',
                                                 'name': 'myCheckbox',
                                                 'label': 'my-checkbox',
-                                                'inputType': 'Checkbox',
+                                                'inputType': 'CheckBox',
                                                 'occurrences': {
                                                     'maximum': 1,
                                                     'minimum': 0
@@ -347,21 +347,13 @@ exports.updateWithForm = function () {
                                     'minimum': 1
                                 },
                                 'config': {
-                                    'allowContentType': [
-                                        {
-                                            'value': 'mytype'
-                                        },
-                                        {
-                                            'value': 'mytype2'
-                                        }
-                                    ],
                                     'allowPath': [
-                                        {
-                                            'value': 'path1'
-                                        },
-                                        {
-                                            'value': 'path2'
-                                        }
+                                        'path1',
+                                        'path2'
+                                    ],
+                                    'allowContentType': [
+                                        'mytype2',
+                                        'mytype'
                                     ]
                                 }
                             }

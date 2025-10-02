@@ -3,26 +3,35 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-                <part xmlns='urn:enonic:xp:model:1.0'>
-                  <display-name i18n='key.display-name'>Virtual Part</display-name>
-                  <description i18n='key.description'>My Part Description</description>
-                  <form>
-                    <input type='Double' name='width'>
-                      <label i18n='key.label'>Column width</label>
-                      <immutable>false</immutable>
-                      <indexed>false</indexed>
-                      <help-text i18n='key.help-text'/>
-                      <occurrences minimum='0' maximum='1'/>
-                    </input>
-                
-                    <mixin name='myapplication:link-urls'/>
-                
-                  </form>
-                  <config>
-                    <input type='Double' name='width'><label i18n='key.label'>Column width</label><immutable>false</immutable><indexed>false</indexed><help-text i18n='key.help-text'/><occurrences minimum='0' maximum='1'/></input>
-                  </config>
-                </part>
+let resource = `displayName:
+  text: "Virtual Part"
+  i18n: "key.display-name"
+description:
+  text: "My Part Description"
+  i18n: "key.description"
+form:
+- type: "Double"
+  name: "width"
+  label:
+    text: "Column width"
+    i18n: "key.label"
+  helpText:
+    text: "key.help-text"
+    i18n: "key.help-text"
+  occurrences:
+    minimum: 0
+    maximum: 1
+- type: "FormFragment"
+  name: "myapplication:link-urls"
+config:
+  input:
+    type: "Double"
+    name: "width"
+    label:
+      text: "Column width"
+      i18n: "key.label"
+    helpText:
+      i18n: "key.help-text"
                 `;
 
 // BEGIN
@@ -47,7 +56,7 @@ assert.assertJsonEquals({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/site/parts/mypart',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n                <part xmlns=\'urn:enonic:xp:model:1.0\'>\n                  <display-name i18n=\'key.display-name\'>Virtual Part</display-name>\n                  <description i18n=\'key.description\'>My Part Description</description>\n                  <form>\n                    <input type=\'Double\' name=\'width\'>\n                      <label i18n=\'key.label\'>Column width</label>\n                      <immutable>false</immutable>\n                      <indexed>false</indexed>\n                      <help-text i18n=\'key.help-text\'/>\n                      <occurrences minimum=\'0\' maximum=\'1\'/>\n                    </input>\n                \n                    <mixin name=\'myapplication:link-urls\'/>\n                \n                  </form>\n                  <config>\n                    <input type=\'Double\' name=\'width\'><label i18n=\'key.label\'>Column width</label><immutable>false</immutable><indexed>false</indexed><help-text i18n=\'key.help-text\'/><occurrences minimum=\'0\' maximum=\'1\'/></input>\n                  </config>\n                </part>\n                ',
+    resource: 'displayName:\n  text: \"Virtual Part\"\n  i18n: \"key.display-name\"\ndescription:\n  text: \"My Part Description\"\n  i18n: \"key.description\"\nform:\n- type: \"Double\"\n  name: \"width\"\n  label:\n    text: \"Column width\"\n    i18n: \"key.label\"\n  helpText:\n    text: \"key.help-text\"\n    i18n: \"key.help-text\"\n  occurrences:\n    minimum: 0\n    maximum: 1\n- type: \"FormFragment\"\n  name: \"myapplication:link-urls\"\nconfig:\n  input:\n    type: \"Double\"\n    name: \"width\"\n    label:\n      text: \"Column width\"\n      i18n: \"key.label\"\n    helpText:\n      i18n: \"key.help-text\"\n                ',
     type: 'PART',
     form: [
         {
@@ -63,15 +72,23 @@ assert.assertJsonEquals({
             'config': {}
         },
         {
-            'formItemType': 'InlineMixin',
+            'formItemType': 'FormFragment',
             'name': 'myapplication:link-urls'
         }
     ],
 
     config: {
-        'input': [{
-            'value': '', '@name': 'width', '@type': 'Double'
-        }]
+        'input': {
+            'type': 'Double',
+            'name': 'width',
+            'label': {
+                'text': 'Column width',
+                'i18n': 'key.label'
+            },
+            'helpText': {
+                'i18n': 'key.help-text'
+            }
+        }
     }
 }, result);
 

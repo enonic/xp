@@ -63,7 +63,7 @@ assert.assertJsonEquals({
             },
             'config': {}
         }, {
-            formItemType: 'InlineMixin',
+            formItemType: 'FormFragment',
             name: 'myapplication:inline'
         }
     ],

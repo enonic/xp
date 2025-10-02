@@ -53,7 +53,7 @@ final class DoubleType
     {
         try
         {
-            final Double min = config.getValue( "min", Double.class );
+            final Double min = getDoubleValueFromConfig( config, "min" );
             final Double value = property.getDouble();
 
             if ( min != null && value != null )
@@ -64,7 +64,7 @@ final class DoubleType
         }
         catch ( ConvertException e )
         {
-            LOG.warn("Cannot convert 'min' config to Double", e );
+            LOG.warn( "Cannot convert 'min' config to Double", e );
         }
     }
 
@@ -72,7 +72,7 @@ final class DoubleType
     {
         try
         {
-            final Double max = config.getValue( "max", Double.class );
+            final Double max = getDoubleValueFromConfig( config, "max" );
             final Double value = property.getDouble();
 
             if ( max != null && value != null )
@@ -82,7 +82,12 @@ final class DoubleType
         }
         catch ( ConvertException e )
         {
-            LOG.warn("Cannot convert 'max' config to Double", e );
+            LOG.warn( "Cannot convert 'max' config to Double", e );
         }
+    }
+
+    private Double getDoubleValueFromConfig( final InputTypeConfig config, final String key )
+    {
+        return config.getProperty( key ).map( InputTypeProperty::getValue ).map( PropertyValue::asDouble ).orElse( null );
     }
 }

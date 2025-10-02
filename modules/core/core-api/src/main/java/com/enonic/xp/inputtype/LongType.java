@@ -53,7 +53,7 @@ final class LongType
     {
         try
         {
-            final Long min = config.getValue( "min", Long.class );
+            final Long min = getLongValueFromConfig( config, "min" );
             final Long value = property.getLong();
 
             if ( min != null && value != null )
@@ -73,7 +73,7 @@ final class LongType
     {
         try
         {
-            final Long max = config.getValue( "max", Long.class );
+            final Long max = getLongValueFromConfig( config, "max" );
             final Long value = property.getLong();
 
             if ( max != null && value != null )
@@ -85,5 +85,10 @@ final class LongType
         {
             LOG.warn( "Cannot convert 'max' config to Long", e );
         }
+    }
+
+    private Long getLongValueFromConfig( final InputTypeConfig config, final String key )
+    {
+        return config.getProperty( key ).map( InputTypeProperty::getValue ).map( PropertyValue::asLong ).orElse( null );
     }
 }

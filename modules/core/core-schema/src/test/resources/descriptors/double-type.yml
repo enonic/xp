@@ -4,3 +4,6 @@ label: "Green"
 min: 0
 max: 255
 default: 250.0
+config: {
+  required: true
+}

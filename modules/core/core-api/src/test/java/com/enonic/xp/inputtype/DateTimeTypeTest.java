@@ -55,12 +55,10 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T05:03:45" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "false" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T05:03:45" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( false ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -73,12 +71,10 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format1()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45Z" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "true" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45Z" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -91,12 +87,10 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format2_plus()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45+03:00" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "true" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45+03:00" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -109,12 +103,10 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format2_minus()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45-03:00" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "true" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45-03:00" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -126,12 +118,10 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_withTimezone_format2_day_change()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T22:03:45-03:00" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "true" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T22:03:45-03:00" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -144,14 +134,12 @@ public class DateTimeTypeTest
     @Test
     public void testCreateDefaultValue_invalid()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-18-16T05:03:45" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "true" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-18-16T05:03:45" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+                .build() ).build();
 
-        assertThrows(IllegalArgumentException.class, () ->  this.type.createDefaultValue( input ));
+        assertThrows( IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test
@@ -169,12 +157,10 @@ public class DateTimeTypeTest
     @Test
     public void testRelativeDefaultValue_only_relative_time_exists()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1hour -5minutes -36s" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "false" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1hour -5minutes -36s" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( false ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -185,12 +171,10 @@ public class DateTimeTypeTest
     @Test
     public void testRelativeDefaultValue_date_time()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).
-            inputTypeConfig( InputTypeConfig.create().
-                property( InputTypeProperty.create( "timezone", "true" ).
-                    build() ).
-                build() ).
-            build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).inputTypeConfig(
+            InputTypeConfig.create()
+                .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+                .build() ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
@@ -203,7 +187,7 @@ public class DateTimeTypeTest
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1haaur" ).build();
 
-        assertThrows(IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
+        assertThrows( IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test
@@ -224,7 +208,7 @@ public class DateTimeTypeTest
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
     private InputTypeConfig newEmptyConfig()
@@ -234,8 +218,8 @@ public class DateTimeTypeTest
 
     private InputTypeConfig newFullConfig()
     {
-        return InputTypeConfig.create().
-            property( InputTypeProperty.create( "timezone", "true" ).build() ).
-            build();
+        return InputTypeConfig.create()
+            .property( InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
+            .build();
     }
 }
