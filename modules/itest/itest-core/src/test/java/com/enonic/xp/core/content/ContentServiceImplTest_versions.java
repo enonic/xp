@@ -194,11 +194,12 @@ public class ContentServiceImplTest_versions
 
         this.contentService.restore( RestoreContentParams.create().contentId( content.getId() ).build() );
 
+        refresh();
         final FindContentVersionsResult result =
             this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
 
-        assertEquals( 5, result.getHits() );
-        assertEquals( 5, result.getTotalHits() );
+        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getTotalHits() );
 
         assertThat( result.getContentVersions() ).elements( 0, 2 )
             .extracting( v -> v.getPublishInfo().getType() )

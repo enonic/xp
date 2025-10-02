@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -77,11 +76,11 @@ public class BranchServiceImpl
         final boolean checkAlreadyExists = !context.isSkipConstraints();
         final NodeId nodeId = nodeBranchEntry.getNodeId();
 
-        final AtomicBoolean exists = new AtomicBoolean();
+        final boolean[] exists = new boolean[] {false};
         cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
             if ( checkAlreadyExists && inCache != null && !inCache.equals( nodeId ) )
             {
-                exists.set( true );
+                exists[0] = true;
                 return inCache;
             }
 
@@ -89,7 +88,7 @@ public class BranchServiceImpl
             return nodeId;
 
         } );
-        if ( exists.get() )
+        if ( exists[0] )
         {
             throw new NodeAlreadyExistAtPathException( cacheKey.getPath(), cacheKey.getRepositoryId(), cacheKey.getBranch() );
         }

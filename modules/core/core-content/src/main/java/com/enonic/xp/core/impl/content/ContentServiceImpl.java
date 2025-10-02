@@ -657,7 +657,6 @@ public class ContentServiceImpl
             .translator( translator )
             .eventPublisher( eventPublisher )
             .contentTypeService( contentTypeService )
-            .restoreListener( params.getRestoreContentListener() )
             .build()
             .execute();
 

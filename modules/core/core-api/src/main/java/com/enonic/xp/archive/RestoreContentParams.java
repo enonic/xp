@@ -21,9 +21,8 @@ public final class RestoreContentParams
     {
         this.contentId = builder.contentId;
         this.parentPath = builder.parentPath;
-        this.restoreContentListener = builder.restoreContentListener;
+        this.restoreContentListener = Objects.requireNonNullElse( builder.restoreContentListener, NoopRestoreContentListener.INSTANCE );
         this.stopInherit = builder.stopInherit;
-
     }
 
     public static RestoreContentParams.Builder create()
@@ -98,6 +97,21 @@ public final class RestoreContentParams
         {
             validate();
             return new RestoreContentParams( this );
+        }
+    }
+
+    private enum NoopRestoreContentListener
+        implements RestoreContentListener {
+        INSTANCE;
+
+        @Override
+        public void setTotal( final int count )
+        {
+        }
+
+        @Override
+        public void contentRestored( final int count )
+        {
         }
     }
 }

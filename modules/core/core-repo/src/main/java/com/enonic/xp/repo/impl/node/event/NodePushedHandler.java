@@ -22,7 +22,7 @@ public class NodePushedHandler
         {
             final NodePath currentTargetPath =
                 map.containsKey( CURRENT_TARGET_PATH ) ? new NodePath( map.get( CURRENT_TARGET_PATH ).toString() ) : null;
-            storageService.handleNodePushed( getId( map ), getPath( map ), currentTargetPath, context );
+            storageService.handleNodePushed( getPath( map ), currentTargetPath, context );
         }
     }
 }

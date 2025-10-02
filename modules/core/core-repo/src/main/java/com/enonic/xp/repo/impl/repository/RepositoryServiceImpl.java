@@ -124,7 +124,7 @@ public class RepositoryServiceImpl
         RepositoryEntry repository = repositoryMap.compute( params.getRepositoryId(),
                                                        ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
 
-        invalidatePathCache();
+        this.nodeStorageService.invalidate();
 
         return repository.asRepository();
     }
@@ -247,14 +247,9 @@ public class RepositoryServiceImpl
             return null;
         } );
 
-        invalidatePathCache();
+        nodeStorageService.invalidate();
 
         return repositoryId;
-    }
-
-    private void invalidatePathCache()
-    {
-        this.nodeStorageService.invalidate();
     }
 
     @Override
@@ -269,7 +264,7 @@ public class RepositoryServiceImpl
         repositoryMap.compute( repositoryId,
                                ( repo, previousRepository ) -> doDeleteBranch( params, repo, previousRepository ) );
 
-        invalidatePathCache();
+        nodeStorageService.invalidate();
 
         return params.getBranch();
     }
@@ -317,12 +312,14 @@ public class RepositoryServiceImpl
     public void invalidateAll()
     {
         repositoryMap.clear();
+        nodeStorageService.invalidate();
     }
 
     @Override
     public void invalidate( final RepositoryId repositoryId )
     {
         repositoryMap.remove( repositoryId );
+        nodeStorageService.invalidate();
     }
 
     @Override

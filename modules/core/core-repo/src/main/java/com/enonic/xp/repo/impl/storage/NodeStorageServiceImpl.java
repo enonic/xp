@@ -121,10 +121,8 @@ public class NodeStorageServiceImpl
         for ( final NodeBranchEntry entry : entries )
         {
             this.branchService.store( entry, targetContext );
-
             pushListener.nodesPushed( 1 );
         }
-        this.branchService.evictAllPaths();
 
         final Collection<NodeId> nodeIds =
             entries.stream().map( NodeBranchEntry::getNodeId ).collect( Collectors.toList() );
@@ -333,13 +331,13 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void handleNodeMoved( final NodeMovedParams params, final InternalContext context )
+    public void handleNodeMoved( final NodePath previousPath, final InternalContext context )
     {
-        this.branchService.evictPath( params.getExistingPath(), context );
+        this.branchService.evictPath( previousPath, context );
     }
 
     @Override
-    public void handleNodePushed( final NodeId nodeId, final NodePath nodePath, final NodePath currentTargetPath,
+    public void handleNodePushed(  NodePath nodePath, final NodePath currentTargetPath,
                                   final InternalContext context )
     {
         if ( currentTargetPath != null && !nodePath.equals( currentTargetPath ) )

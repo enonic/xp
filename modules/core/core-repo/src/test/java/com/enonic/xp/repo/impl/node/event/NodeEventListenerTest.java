@@ -24,7 +24,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeEvents;
-import com.enonic.xp.repo.impl.storage.NodeMovedParams;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -140,13 +139,10 @@ class NodeEventListenerTest
 
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
-        ArgumentCaptor<NodeMovedParams> captor = ArgumentCaptor.forClass( NodeMovedParams.class );
+        ArgumentCaptor<NodePath> captor = ArgumentCaptor.forClass( NodePath.class );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
-        assertEquals( sourceNode.path(), captor.getValue().getExistingPath() );
-        assertEquals( movedNode.path(), captor.getValue().getNewPath() );
-        assertEquals( sourceNode.id(), captor.getValue().getNodeId() );
-
+        assertEquals( sourceNode.path(), captor.getValue() );
     }
 
     @Test
@@ -163,11 +159,9 @@ class NodeEventListenerTest
         final Event localEvent = NodeEvents.renamed( sourceNode.path(), movedNode, createInternalContext() );
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
-        ArgumentCaptor<NodeMovedParams> captor = ArgumentCaptor.forClass( NodeMovedParams.class );
+        ArgumentCaptor<NodePath> captor = ArgumentCaptor.forClass( NodePath.class );
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
-        assertEquals( sourceNode.path(), captor.getValue().getExistingPath() );
-        assertEquals( movedNode.path(), captor.getValue().getNewPath() );
-        assertEquals( sourceNode.id(), captor.getValue().getNodeId() );
+        assertEquals( sourceNode.path(), captor.getValue() );
     }
 
     @Test
@@ -202,7 +196,7 @@ class NodeEventListenerTest
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
-            .handleNodePushed( Mockito.eq( nodeId ), Mockito.eq( nodePath ), Mockito.eq( previousNodePath ),
+            .handleNodePushed( Mockito.eq( nodePath ), Mockito.eq( previousNodePath ),
                                Mockito.isA( InternalContext.class ) );
     }
 

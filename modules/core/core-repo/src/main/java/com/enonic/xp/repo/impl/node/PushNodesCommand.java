@@ -154,7 +154,11 @@ public class PushNodesCommand
         final PushNodesResult result = builder.build();
 
         this.nodeStorageService.push( successfulPush.build().getSet(), target, pushListener, internalContext );
-
+        for ( PushNodeResult pushNodeResult : result.getSuccessful() )
+        {
+            this.nodeStorageService.handleNodePushed( pushNodeResult.getNodePath(),
+                                                      pushNodeResult.getTargetPath(), internalContext );
+        }
         refresh( RefreshMode.ALL );
 
         return result;

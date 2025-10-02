@@ -212,12 +212,12 @@ class RepositoryServiceImplTest
 
         Branch branch = Branch.from( "myBranch" );
 
-        final var mockCurrentContext =
+        final var context =
             ContextBuilder.create().branch( "myBranch" ).repositoryId( "fisk" ).authInfo( REPO_TEST_DEFAULT_USER_AUTHINFO ).build();
 
-        mockCurrentContext.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
+        context.callWith( () -> repositoryService.createBranch( CreateBranchParams.from( branch ) ) );
 
-        assertDoesNotThrow( () -> mockCurrentContext.callWith( () -> nodeService.create(
+        assertDoesNotThrow( () -> context.callWith( () -> nodeService.create(
             CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() ) ) );
     }
 

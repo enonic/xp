@@ -69,7 +69,7 @@ public interface NodeStorageService
 
     void handleNodeDeleted( NodeId nodeId, NodePath nodePath, InternalContext context );
 
-    void handleNodeMoved( NodeMovedParams params, InternalContext context );
+    void handleNodeMoved( final NodePath previousPath, InternalContext nodeContext);
 
-    void handleNodePushed( NodeId nodeId, NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
+    void handleNodePushed( NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
 }
