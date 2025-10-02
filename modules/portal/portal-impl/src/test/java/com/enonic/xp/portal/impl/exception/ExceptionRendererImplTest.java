@@ -37,7 +37,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -354,9 +354,12 @@ class ExceptionRendererImplTest
         final SiteConfig siteConfig =
             SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
 
+        final PropertyTree siteData = new PropertyTree();
+        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
-        site.siteConfigs( SiteConfigs.from( siteConfig ) );
+        site.data( siteData );
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         return site.build();

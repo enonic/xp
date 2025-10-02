@@ -18,6 +18,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.ChildOrder;
@@ -38,6 +39,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -555,6 +557,39 @@ public class CreateContentCommandTest
                          ContentType.create().name( ContentTypeName.folder() ).setBuiltIn().build() );
 
         assertThrows( IllegalArgumentException.class, command::execute );
+    }
+
+    @Test
+    public void createContentWithSiteConfigs()
+    {
+        mockContentRootNode( "en" );
+
+        final PropertyTree contentData = new PropertyTree();
+        final PropertySet siteConfig = contentData.addSet( ContentPropertyNames.SITECONFIG );
+        siteConfig.addString( "applicationKey", "value1" );
+        final PropertySet appConfig = siteConfig.addSet( "config" );
+        appConfig.addString( "key", "value2" );
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.site() )
+            .name( "site" )
+            .parent( ContentPath.from( "/" ) )
+            .contentData( contentData )
+            .displayName( "displayName" )
+            .build();
+
+        CreateContentCommand command = createContentCommand( params );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
+
+        // exercise
+        final Site createdContent = (Site) command.execute();
+        assertNotNull( createdContent );
+        assertNotNull( createdContent.getSiteConfigs() );
+        assertEquals( 1, createdContent.getSiteConfigs().getSize() );
+        assertEquals( "value1", createdContent.getSiteConfigs().get( 0 ).getApplicationKey().toString() );
+        assertEquals( "value2", createdContent.getSiteConfigs().get( 0 ).getConfig().getString( "key" ) );
     }
 
     private CreateContentParams.Builder createContentParams()

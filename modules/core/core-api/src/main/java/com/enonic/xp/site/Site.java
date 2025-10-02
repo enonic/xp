@@ -21,7 +21,7 @@ public final class Site
 
     public SiteConfigs getSiteConfigs()
     {
-        return new SiteConfigsDataSerializer().fromProperties( this.getData().getRoot() ).build();
+        return new SiteConfigsDataSerializer().getConfigs( this.getData().getRoot() );
     }
 
     @Override
@@ -52,8 +52,6 @@ public final class Site
     public static final class Builder
         extends Content.Builder<Builder>
     {
-        private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
-
         public Builder( final Site source )
         {
             super( source );
@@ -73,27 +71,6 @@ public final class Site
                 data = new PropertyTree();
             }
             data.setString( "description", description );
-            return this;
-        }
-
-        public Builder addSiteConfig( final SiteConfig siteConfig )
-        {
-            if ( data == null )
-            {
-                data = new PropertyTree();
-            }
-            SITE_CONFIGS_DATA_SERIALIZER.toProperties( siteConfig, data.getRoot() );
-
-            return this;
-        }
-
-        public Builder siteConfigs( final SiteConfigs siteConfigs )
-        {
-            if ( data == null )
-            {
-                data = new PropertyTree();
-            }
-            SITE_CONFIGS_DATA_SERIALIZER.toProperties( siteConfigs, data.getRoot() );
             return this;
         }
 

@@ -25,6 +25,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -96,7 +97,10 @@ class ImageServiceMappingHandlerTest
 
     private void setupContentInsideSite( final SiteConfigs siteConfigs )
     {
-        final Site site = Site.create().name( "my-site" ).parentPath( ContentPath.ROOT ).siteConfigs( siteConfigs ).build();
+        final PropertyTree siteData = new PropertyTree();
+        new SiteConfigsDataSerializer().toProperties( siteConfigs, siteData.getRoot() );
+
+        final Site site = Site.create().name( "my-site" ).parentPath( ContentPath.ROOT ).data( siteData ).build();
         final Content content = Content.create().name( "my-content" ).parentPath( site.getPath() ).build();
 
         this.request.setContent( content );

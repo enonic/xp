@@ -153,6 +153,12 @@ final class CreateContentCommand
         {
             final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
 
+//            if ( contentType.getName().isSite() )
+//            {
+//                SiteConfigsValidator
+//                new SiteConfigsDataSerializer().getConfigs( params.getData().getRoot() ); //validate site configs
+//            }
+
             try
             {
                 InputValidator.create()

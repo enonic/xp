@@ -32,7 +32,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -191,9 +191,12 @@ public final class ContentFixtures
             config( siteConfigConfig ).
             build();
 
+        final PropertyTree siteData = new PropertyTree();
+        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
-        site.siteConfigs( SiteConfigs.from( siteConfig ) );
+        site.data( siteData );
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         return site.build();

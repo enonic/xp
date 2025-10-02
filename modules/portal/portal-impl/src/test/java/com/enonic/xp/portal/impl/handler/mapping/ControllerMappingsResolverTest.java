@@ -20,6 +20,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -318,9 +319,12 @@ public class ControllerMappingsResolverTest
 
         final SiteConfig siteConfig2 = SiteConfig.create().application( getAppKey2() ).config( new PropertyTree() ).build();
 
+        final PropertyTree siteData = new PropertyTree();
+        new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig, siteConfig2 ), siteData.getRoot() );
+
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
-        site.siteConfigs( SiteConfigs.from( siteConfig, siteConfig2 ) );
+        site.data( siteData );
         site.name( "mysite" );
         site.parentPath( ContentPath.ROOT );
         return site.build();

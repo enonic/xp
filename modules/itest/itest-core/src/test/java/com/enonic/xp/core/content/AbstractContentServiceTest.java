@@ -157,6 +157,10 @@ public abstract class AbstractContentServiceTest
 
     protected IndexServiceImpl indexService;
 
+    protected SiteServiceImpl siteService;
+
+    protected ResourceService resourceService;
+
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
     protected PageDescriptorService pageDescriptorService;
@@ -281,8 +285,9 @@ public abstract class AbstractContentServiceTest
 
         MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl( extractor );
 
-        final ResourceService resourceService = mock( ResourceService.class );
-        final SiteServiceImpl siteService = new SiteServiceImpl();
+        resourceService = mock( ResourceService.class );
+
+        siteService = new SiteServiceImpl();
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 

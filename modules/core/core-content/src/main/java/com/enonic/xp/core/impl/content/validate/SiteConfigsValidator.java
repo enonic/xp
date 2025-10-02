@@ -39,7 +39,7 @@ public class SiteConfigsValidator
     @Override
     public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
     {
-        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties( params.getData().getRoot() ).build();
+        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().getConfigs( params.getData().getRoot() );
 
         for ( final SiteConfig siteConfig : siteConfigs )
         {

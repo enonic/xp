@@ -10,7 +10,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
@@ -45,12 +45,13 @@ public class ProcessorChainResolverTest
         ApplicationKey ak3 = ApplicationKey.from( "ak3" );
         SiteConfig sc3 = SiteConfig.create().application( ak3 ).config( new PropertyTree() ).build();
 
-        portalRequest.setSite( Site.create().
-            siteConfigs( SiteConfigs.from( sc1, sc2, sc3 ) ).
-            name( "Site" ).
-            path( "/site" ).
-            parentPath( ContentPath.ROOT ).
-            build() );
+        final PropertyTree siteData = new PropertyTree();
+
+        new SiteConfigsDataSerializer().toProperties( sc1, siteData.getRoot() );
+        new SiteConfigsDataSerializer().toProperties( sc2, siteData.getRoot() );
+        new SiteConfigsDataSerializer().toProperties( sc3, siteData.getRoot() );
+
+        portalRequest.setSite( Site.create().data( siteData ).name( "Site" ).path( "/site" ).parentPath( ContentPath.ROOT ).build() );
 
         ResponseProcessorDescriptor fd12 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-2" ).order( 2 ).build();
         ResponseProcessorDescriptor fd13 = ResponseProcessorDescriptor.create().application( ak1 ).name( "ak1-3" ).order( 3 ).build();

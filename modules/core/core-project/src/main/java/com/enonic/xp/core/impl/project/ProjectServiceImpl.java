@@ -676,8 +676,7 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
     {
-        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) )
-            .map( contentData -> SITE_CONFIGS_DATA_SERIALIZER.fromProperties( contentData ).build() )
+        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) ).map( SITE_CONFIGS_DATA_SERIALIZER::getConfigs )
             .orElse( SiteConfigs.empty() );
     }
 

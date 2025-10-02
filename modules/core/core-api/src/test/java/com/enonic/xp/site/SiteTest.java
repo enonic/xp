@@ -47,17 +47,18 @@ public class SiteTest
     @Test
     public void builder()
     {
-        SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapplication" ) ).
-            config( new PropertyTree() ).
-            build();
-        Site site = Site.create().
+        final PropertyTree siteData = new PropertyTree();
+
+        new SiteConfigsDataSerializer().toProperties(
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build(),
+            siteData.getRoot() );
+
+        final Site site = Site.create().
             name( "my-content" ).
             parentPath( ContentPath.ROOT ).
-            addSiteConfig( siteConfig ).
             build();
 
-        Site site1 = Site.create( site ).build();
+        final Site site1 = Site.create( site ).build();
 
         assertEquals( site, site1 );
     }
@@ -65,17 +66,18 @@ public class SiteTest
     @Test
     public void siteConfigs()
     {
-        SiteConfig siteConfig = SiteConfig.create().
-            application( ApplicationKey.from( "myapplication" ) ).
-            config( new PropertyTree() ).
-            build();
-        Site site = Site.create().
-            siteConfigs( SiteConfigs.from( siteConfig ) ).
-            name( "my-content" ).
+        final PropertyTree siteData = new PropertyTree();
+
+        final SiteConfig siteConfig =
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build();
+
+        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+
+        final Site site = Site.create().name( "my-content" ).data( siteData ).
             parentPath( ContentPath.ROOT ).
             build();
 
-        SiteConfigs siteConfigs = site.getSiteConfigs();
+        final SiteConfigs siteConfigs = site.getSiteConfigs();
         assertNotNull( siteConfigs );
         assertEquals( 1, siteConfigs.getSize() );
         assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfigs().get( ApplicationKey.from( "myapplication" ) ).getConfig() );

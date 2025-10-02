@@ -49,7 +49,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
@@ -434,8 +434,11 @@ public class MappingHandlerTest
         Page page = Page.create().template( PageTemplateKey.from( "my-page" ) ).config( rootDataSet ).build();
 
         final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( appKey ) ).config( new PropertyTree() ).build();
-        return Site.create()
-            .siteConfigs( SiteConfigs.from( siteConfig ) )
+
+        final PropertyTree siteData = new PropertyTree();
+        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+
+        return Site.create().data( siteData )
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )
