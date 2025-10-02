@@ -18,7 +18,7 @@ public final class YmlMixinParser
         PARSER.addMixIn( Mixin.Builder.class, MixinBuilderMixIn.class );
     }
 
-    static Mixin.Builder parse( final String resource, final ApplicationKey currentApplication )
+    public static Mixin.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
         return PARSER.parse( resource, Mixin.Builder.class, currentApplication );
     }

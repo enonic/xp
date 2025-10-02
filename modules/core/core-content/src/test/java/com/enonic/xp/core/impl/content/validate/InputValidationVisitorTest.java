@@ -17,6 +17,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.inputtype.PropertyValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -183,8 +184,8 @@ public class InputValidationVisitorTest
                               .label( "URL" )
                               .occurrences( 0, 0 )
                               .inputTypeConfig( InputTypeConfig.create()
-                                                    .property( InputTypeProperty.create( "regexp",
-                                                                                         "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
+                                                    .property( InputTypeProperty.create( "regexp", PropertyValue.stringValue(
+                                                            "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" ) )
                                                                    .build() )
                                                     .build() )
                               .build() )
@@ -224,7 +225,8 @@ public class InputValidationVisitorTest
                                                                          .inputTypeConfig( InputTypeConfig.create()
                                                                                                .property(
                                                                                                    InputTypeProperty.create( "regexp",
-                                                                                                                             "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
+                                                                                                                             PropertyValue.stringValue(
+                                                                                                                                 "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" ) )
                                                                                                        .build() )
                                                                                                .build() )
                                                                          .build() )

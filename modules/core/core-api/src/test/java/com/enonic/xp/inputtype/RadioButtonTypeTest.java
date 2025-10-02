@@ -1,5 +1,7 @@
 package com.enonic.xp.inputtype;
 
+import java.util.LinkedHashMap;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.Value;
@@ -65,21 +67,32 @@ public class RadioButtonTypeTest
     public void testValidate_invalid()
     {
         final InputTypeConfig config = newValidConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "unknown" ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "unknown" ), config ) );
     }
 
     @Test
     public void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
     private InputTypeConfig newValidConfig()
     {
-        return InputTypeConfig.create().
-            property( InputTypeProperty.create( "option", "Value One" ).attribute( "value", "one" ).build() ).
-            property( InputTypeProperty.create( "option", "Value Two" ).attribute( "value", "two" ).build() ).
-            build();
+        return InputTypeConfig.create().property( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
+        {{
+            put( "value", PropertyValue.stringValue( "one" ) );
+            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
+            {{
+                put( "text", PropertyValue.stringValue( "Value One" ) );
+            }} ) );
+        }} ) ).build() ).property( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
+        {{
+            put( "value", PropertyValue.stringValue( "two" ) );
+            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
+            {{
+                put( "text", PropertyValue.stringValue( "Value Two" ) );
+            }} ) );
+        }} ) ).build() ).build();
     }
 }

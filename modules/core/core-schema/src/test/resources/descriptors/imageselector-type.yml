@@ -4,7 +4,8 @@ label: "My ImageSelector"
 occurrences:
   minimum: 0
   maximum: 1
-allowPath:
-  - "${site}/*"
-treeMode: true
-hideToggleIcon: true
+config:
+  allowPath:
+    - "${site}/*"
+  treeMode: true
+  hideToggleIcon: true

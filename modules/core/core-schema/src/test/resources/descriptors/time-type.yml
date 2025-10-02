@@ -2,3 +2,4 @@ type: "Time"
 name: "mytime"
 label: "My Time"
 default: "13:22"
+config: {}

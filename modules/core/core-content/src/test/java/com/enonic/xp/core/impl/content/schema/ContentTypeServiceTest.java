@@ -16,6 +16,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ContentTypeServiceTest
     extends ApplicationTestSupport
@@ -44,7 +45,7 @@ public class ContentTypeServiceTest
         assertEquals( 0, types2.getSize() );
 
         final ContentType contentType = service.getByName( new GetContentTypeParams().contentTypeName( "other:mytype" ) );
-        assertEquals( null, contentType );
+        assertNull( contentType );
     }
 
     @Test
@@ -82,15 +83,15 @@ public class ContentTypeServiceTest
 
         contentTypes = service.getByApplication( ApplicationKey.BASE );
         assertNotNull( contentTypes );
-        assertEquals( contentTypes.getSize(), 5 );
+        assertEquals( 5, contentTypes.getSize() );
 
         contentTypes = service.getByApplication( ApplicationKey.PORTAL );
         assertNotNull( contentTypes );
-        assertEquals( contentTypes.getSize(), 4 );
+        assertEquals( 4, contentTypes.getSize() );
 
         contentTypes = service.getByApplication( ApplicationKey.MEDIA_MOD );
         assertNotNull( contentTypes );
-        assertEquals( contentTypes.getSize(), 13 );
+        assertEquals( 13, contentTypes.getSize() );
 
         contentType = service.getByName( new GetContentTypeParams().contentTypeName( ContentTypeName.site() ) );
         assertNotNull( contentType );
@@ -100,41 +101,41 @@ public class ContentTypeServiceTest
     public void getMimeTypes()
     {
         final Collection<String> audioMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.audioMedia() ) );
-        assertEquals( audioMimeTypes.size(), 12 );
+        assertEquals( 12, audioMimeTypes.size() );
 
         final Collection<String> imageMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.imageMedia() ) );
-        assertEquals( imageMimeTypes.size(), 11 );
+        assertEquals( 11, imageMimeTypes.size() );
 
         final Collection<String> videoMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.videoMedia() ) );
-        assertEquals( videoMimeTypes.size(), 15 );
+        assertEquals( 15, videoMimeTypes.size() );
 
         final Collection<String> archiveMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.archiveMedia() ) );
-        assertEquals( archiveMimeTypes.size(), 5 );
+        assertEquals( 5, archiveMimeTypes.size() );
 
         final Collection<String> textMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.textMedia() ) );
-        assertEquals( textMimeTypes.size(), 3 );
+        assertEquals( 3, textMimeTypes.size() );
 
         final Collection<String> codeMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.codeMedia() ) );
-        assertEquals( codeMimeTypes.size(), 11 );
+        assertEquals( 11, codeMimeTypes.size() );
 
         final Collection<String> dataMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.dataMedia() ) );
-        assertEquals( dataMimeTypes.size(), 0 );
+        assertEquals( 0, dataMimeTypes.size() );
 
         final Collection<String> documentMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.documentMedia() ) );
-        assertEquals( documentMimeTypes.size(), 5 );
+        assertEquals( 5, documentMimeTypes.size() );
 
         final Collection<String> execMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.executableMedia() ) );
-        assertEquals( execMimeTypes.size(), 14 );
+        assertEquals( 14, execMimeTypes.size() );
 
         final Collection<String> presentationMimeTypes =
             this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.presentationMedia() ) );
-        assertEquals( presentationMimeTypes.size(), 4 );
+        assertEquals( 4, presentationMimeTypes.size() );
 
         final Collection<String> spreadsheetMimeTypes =
             this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.spreadsheetMedia() ) );
-        assertEquals( spreadsheetMimeTypes.size(), 2 );
+        assertEquals( 2, spreadsheetMimeTypes.size() );
 
         final Collection<String> vectorMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.vectorMedia() ) );
-        assertEquals( vectorMimeTypes.size(), 1 );
+        assertEquals( 1, vectorMimeTypes.size() );
     }
 }

@@ -19,19 +19,7 @@ public final class DescriptorKeyLocator
     {
         return this.service.findFiles( key, this.pattern )
             .stream()
-            .map( resource -> {
-                String nameWithoutExtension = getNameWithoutExtension( resource.getName() );
-                String extension = resource.getName().length() - nameWithoutExtension.length() > 1 ? resource.getName()
-                    .substring( nameWithoutExtension.length() + 1 ) : "";
-                if ( "yml".equals( extension ) )
-                {
-                    return DescriptorKey.from( key, nameWithoutExtension, extension );
-                }
-                else
-                {
-                    return DescriptorKey.from( key, nameWithoutExtension );
-                }
-            } )
+            .map( resource -> DescriptorKey.from( key, getNameWithoutExtension( resource.getName() ) ) )
             .collect( DescriptorKeys.collector() );
     }
 

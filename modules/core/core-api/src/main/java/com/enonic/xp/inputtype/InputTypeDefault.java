@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableSetMultimap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.convert.Converters;
 
 @PublicApi
 public final class InputTypeDefault
@@ -51,34 +50,19 @@ public final class InputTypeDefault
     public String getValue( final String name )
     {
         final InputTypeProperty property = getProperty( name );
-        return property != null ? property.getValue() : null;
-    }
 
-    public <T> T getValue( final String name, final Class<T> type )
-    {
-        return getValue( name, type, null );
-    }
-
-    public <T> T getValue( final String name, final Class<T> type, final T defValue )
-    {
-        final String value = getValue( name );
-        if ( value == null )
+        if ( property == null )
         {
-            return defValue;
+            return null;
         }
 
-        final T converted = Converters.convert( value, type );
-        return converted != null ? converted : defValue;
-    }
+        final PropertyValue propertyValue = property.getValue();
+        if ( propertyValue.getType() == PropertyValue.Type.STRING )
+        {
+            return propertyValue.asString();
+        }
 
-    public boolean hasPropertyValue( final String name, final String value )
-    {
-        return findProperties( name, property -> Objects.equals( value, property.getValue() ) ).count() > 0;
-    }
-
-    public boolean hasAttributeValue( final String name, final String attr, final String attrValue )
-    {
-        return findProperties( name, property -> Objects.equals( attrValue, property.getAttribute( attr ) ) ).count() > 0;
+        throw new IllegalArgumentException( "Invalid value for property: " + name );
     }
 
     public int getSize()

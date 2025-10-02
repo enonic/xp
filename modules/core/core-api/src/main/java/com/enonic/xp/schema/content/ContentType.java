@@ -278,11 +278,10 @@ public final class ContentType
             return this;
         }
 
-        public Builder setDisplayName( final ContentDisplayName source )
+        public Builder setDisplayName( final LocalizedText source )
         {
             this.displayName( source.text() );
             this.displayNameI18nKey( source.i18n() );
-            this.displayNameExpression( source.expression() );
             return this;
         }
 

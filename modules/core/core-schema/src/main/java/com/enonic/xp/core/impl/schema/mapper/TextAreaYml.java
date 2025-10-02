@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
-import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.PropertyValue;
 
 public class TextAreaYml
     extends InputYml
@@ -20,20 +20,11 @@ public class TextAreaYml
     }
 
     @Override
-    public void customizeInputType( final Input.Builder builder )
+    public void customizeInputType( final InputTypeConfig.Builder configBuilder )
     {
-        final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
-
         if ( maxLength != null )
         {
-            configBuilder.property( InputTypeProperty.create( "maxLength", maxLength.toString() ).build() );
+            configBuilder.property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( maxLength ) ).build() );
         }
-
-        if ( showCounter != null )
-        {
-            configBuilder.property( InputTypeProperty.create( "showCounter", showCounter.toString() ).build() ).build();
-        }
-
-        builder.inputTypeConfig( configBuilder.build() );
     }
 }

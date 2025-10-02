@@ -26,7 +26,7 @@ final class DateTimeType
 
     private boolean useTimeZone( final InputTypeConfig config )
     {
-        return config.getValue( "timezone", boolean.class, false );
+        return config.getProperty( "timezone" ).map( InputTypeProperty::getValue ).map( PropertyValue::asBoolean ).orElse( false );
     }
 
     @Override
@@ -63,15 +63,15 @@ final class DateTimeType
                 final Instant instant = Instant.now().plus( result.getTime() );
                 final Period period = result.getDate();
 
-                final ZonedDateTime zonedDateTime = instant.atZone( ZoneId.systemDefault() ).
-                    plusYears( period.getYears() ).
-                    plusMonths( period.getMonths() ).
-                    plusDays( period.getDays() ).
-                    withNano( 0 );
+                final ZonedDateTime zonedDateTime = instant.atZone( ZoneId.systemDefault() )
+                    .plusYears( period.getYears() )
+                    .plusMonths( period.getMonths() )
+                    .plusDays( period.getDays() )
+                    .withNano( 0 );
 
-                return withTimezone ?
-                    ValueFactory.newDateTime( zonedDateTime.toInstant() ) :
-                    ValueFactory.newLocalDateTime( zonedDateTime.toLocalDateTime() );
+                return withTimezone
+                    ? ValueFactory.newDateTime( zonedDateTime.toInstant() )
+                    : ValueFactory.newLocalDateTime( zonedDateTime.toLocalDateTime() );
             }
             else
             {

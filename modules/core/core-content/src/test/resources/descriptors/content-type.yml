@@ -9,7 +9,6 @@ description:
 displayName:
   text: "Article"
   i18n: "i18n.article.displayName"
-  expression: "${expression}"
 allowChildContentType:
   - "myapp:type1"
   - "myapp:type2"
@@ -36,8 +35,8 @@ form:
         label:
           text: "Description"
 
-  - type: "InlineMixin"
-    mixin: "myapp:mymixin"
+  - type: "FormFragment"
+    name: "myapp:mymixin"
 
   - type: "ItemSet"
     name: "Panel"
@@ -59,7 +58,7 @@ form:
     occurrences:
       minimum: 1
       maximum: 0
-    multiselection:
+    selected:
       minimum: 1
       maximum: 1
     options:
@@ -117,3 +116,5 @@ form:
         label:
           text: "Option 2"
         defaultOption: true
+config:
+  displayNameExpression: "${expression}"

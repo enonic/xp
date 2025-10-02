@@ -6,6 +6,7 @@ import com.google.common.base.CaseFormat;
 
 import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeProperty;
+import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.xml.DomElement;
 
 final class XmlInputTypeDefaultMapper
@@ -24,8 +25,8 @@ final class XmlInputTypeDefaultMapper
 
     private void build( final InputTypeDefault.Builder builder, final DomElement root )
     {
-        builder.property(
-            InputTypeProperty.create( root.getTagName(), root.getChildren().isEmpty() ? root.getValue() : root.serializeBody() ).build() );
+        builder.property( InputTypeProperty.create( root.getTagName(), PropertyValue.stringValue(
+            root.getChildren().isEmpty() ? root.getValue() : root.serializeBody() ) ).build() );
 
         for ( final DomElement child : root.getChildren() )
         {
@@ -37,7 +38,7 @@ final class XmlInputTypeDefaultMapper
     {
         final String name = XmlInputTypeDefaultMapper.resolveName( root.getTagName() );
 
-        final InputTypeProperty.Builder builder = InputTypeProperty.create( name, root.getValue() );
+        final InputTypeProperty.Builder builder = InputTypeProperty.create( name, PropertyValue.stringValue( root.getValue() ) );
         for ( final Attr attr : root.getAttributes() )
         {
             addPropertyAttribute( builder, attr );
@@ -49,7 +50,7 @@ final class XmlInputTypeDefaultMapper
     private void addPropertyAttribute( final InputTypeProperty.Builder builder, final Attr attr )
     {
         final String name = XmlInputTypeDefaultMapper.resolveName( attr.getName() );
-        builder.attribute( name, attr.getValue() );
+//        builder.attribute( name, attr.getValue() );
     }
 
     public static String resolveName( final String name )
