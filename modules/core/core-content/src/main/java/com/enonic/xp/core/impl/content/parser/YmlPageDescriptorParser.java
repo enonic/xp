@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.parser;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -28,12 +27,6 @@ public final class YmlPageDescriptorParser
 
     private abstract static class PageDescriptorBuilderMixIn
     {
-        @JsonCreator
-        static PageDescriptor.Builder create()
-        {
-            return PageDescriptor.create();
-        }
-
         @JsonProperty("displayName")
         abstract PageDescriptor.Builder displayName( LocalizedText text );
 

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,10 @@ public class PropertyValueDeserializer
         }
         else if ( node.isObject() )
         {
-            return PropertyValue.objectValue(
-                node.propertyStream().collect( Collectors.toMap( Map.Entry::getKey, e -> fromYml( e.getValue() ) ) ) );
+            return PropertyValue.objectValue( node.propertyStream()
+                                                  .collect(
+                                                      Collectors.toMap( Map.Entry::getKey, e -> fromYml( e.getValue() ), ( a, b ) -> a,
+                                                                        LinkedHashMap::new ) ) );
         }
         else
         {

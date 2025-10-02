@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
+import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -21,7 +22,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlLayoutDescriptorParser;
 import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 import com.enonic.xp.xml.parser.XmlSiteParser;
@@ -99,21 +99,7 @@ final class DynamicResourceParser
 
     private LayoutDescriptor parseLayoutDescriptor( final DescriptorKey key, final String resource )
     {
-        final LayoutDescriptor.Builder builder = LayoutDescriptor.create();
-        builder.key( key );
-        try
-        {
-            final XmlLayoutDescriptorParser parser = new XmlLayoutDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic layout descriptor [" + key + "]" );
-        }
-        return builder.build();
+        return YmlLayoutDescriptorParser.parse( resource, key.getApplicationKey() ).key( key ).build();
     }
 
     private ContentType parseContentTypeDescriptor( final ContentTypeName name, final String resource )

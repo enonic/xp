@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content.parser;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -12,7 +11,7 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.LocalizedText;
 
-final class YmlLayoutDescriptorParser
+public final class YmlLayoutDescriptorParser
 {
     private static final YmlParserBase PARSER = new YmlParserBase();
 
@@ -21,19 +20,13 @@ final class YmlLayoutDescriptorParser
         PARSER.addMixIn( LayoutDescriptor.Builder.class, LayoutDescriptorBuilderMixIn.class );
     }
 
-    static LayoutDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
+    public static LayoutDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
         return PARSER.parse( resource, LayoutDescriptor.Builder.class, currentApplication );
     }
 
     private abstract static class LayoutDescriptorBuilderMixIn
     {
-        @JsonCreator
-        static LayoutDescriptor.Builder create()
-        {
-            return LayoutDescriptor.create();
-        }
-
         @JsonProperty("displayName")
         abstract LayoutDescriptor.Builder displayName( LocalizedText text );
 
