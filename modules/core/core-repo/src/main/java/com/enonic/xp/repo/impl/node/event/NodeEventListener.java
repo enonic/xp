@@ -30,8 +30,6 @@ public class NodeEventListener
 
     private static final Logger LOG = LoggerFactory.getLogger( NodeEventListener.class );
 
-    private final NodeCreatedHandler nodeCreatedHandler = new NodeCreatedHandler();
-
     private final NodeDeletedHandler nodeDeletedHandler = new NodeDeletedHandler();
 
     private final NodeMovedHandler nodeMovedHandler = new NodeMovedHandler();
@@ -65,20 +63,12 @@ public class NodeEventListener
 
         switch ( type )
         {
-            case NodeEvents.NODE_CREATED_EVENT:
-                handleEventType( event, nodeCreatedHandler );
-                break;
             case NodeEvents.NODE_DELETED_EVENT:
                 handleEventType( event, nodeDeletedHandler );
                 break;
             case NodeEvents.NODE_MOVED_EVENT:
+                case NodeEvents.NODE_RENAMED_EVENT:
                 handleEventType( event, nodeMovedHandler );
-                break;
-            case NodeEvents.NODE_RENAMED_EVENT:
-                handleEventType( event, nodeMovedHandler );
-                break;
-            case NodeEvents.NODE_DUPLICATED_EVENT:
-                handleEventType( event, nodeCreatedHandler );
                 break;
             case NodeEvents.NODE_PUSHED_EVENT:
                 handleEventType( event, nodePushedHandler );

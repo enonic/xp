@@ -4,7 +4,6 @@ import com.enonic.xp.issue.DeleteIssueCommentParams;
 import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 
 public class DeleteIssueCommentCommand
@@ -30,7 +29,7 @@ public class DeleteIssueCommentCommand
         final DeleteNodeResult deleteNodeResult =
             nodeService.delete( DeleteNodeParams.create().nodeId( params.getComment() ).refresh( RefreshMode.ALL ).build() );
 
-        return new DeleteIssueCommentResult( NodeIds.from( deleteNodeResult.getNodeBranchEntries().getKeys() ) );
+        return new DeleteIssueCommentResult( deleteNodeResult.getNodeIds() );
     }
 
     private void validateBlockingChecks()

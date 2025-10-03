@@ -17,12 +17,6 @@ public final class AuditLogId
         super( object );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
     public static AuditLogId from( final String string )
     {
         return new AuditLogId( string );

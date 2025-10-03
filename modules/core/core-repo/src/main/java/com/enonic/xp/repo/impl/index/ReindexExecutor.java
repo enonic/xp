@@ -9,14 +9,14 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.index.ReindexListener;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
@@ -106,7 +106,7 @@ public class ReindexExecutor
 
             if ( listener != null )
             {
-                listener.branchEntry( nodeBranchEntry );
+                listener.branchEntry();
             }
         }
     }

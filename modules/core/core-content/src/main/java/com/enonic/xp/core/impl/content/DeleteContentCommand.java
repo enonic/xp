@@ -88,7 +88,7 @@ final class DeleteContentCommand
         final DeleteNodeResult deletedNodes = this.nodeService.delete(
             DeleteNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH ).deleteNodeListener( this ).build() );
 
-        result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes.getNodeBranchEntries().getKeys() ) );
+        result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes.getNodeIds() ) );
 
         return result.build();
     }

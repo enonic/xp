@@ -1,10 +1,10 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
@@ -16,11 +16,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -153,11 +152,16 @@ public class PublishContentCommand
 
         commitPushedNodes( pushNodesResult.getSuccessful() );
 
-        this.resultBuilder.setFailed( ContentNodeHelper.toContentIds( pushNodesResult.getFailedEntries()
-                                                                          .stream()
-                                                                          .map( failed -> failed.getNodeBranchEntry().getNodeId() )
-                                                                          .collect( Collectors.toList() ) ) );
-        this.resultBuilder.setPushed( ContentNodeHelper.toContentIds( pushNodesResult.getSuccessful().getKeys() ) );
+        this.resultBuilder.setFailed( pushNodesResult.getFailed()
+                                          .stream()
+                                          .map( PushNodeResult::getNodeId )
+                                          .map( ContentId::from )
+                                          .collect( ContentIds.collector() ) );
+        this.resultBuilder.setPushed( pushNodesResult.getSuccessful()
+                                          .stream()
+                                          .map( PushNodeResult::getNodeId )
+                                          .map( ContentId::from )
+                                          .collect( ContentIds.collector() ) );
     }
 
     private void setPublishInfo( final NodeIds nodesToPush )
@@ -221,7 +225,7 @@ public class PublishContentCommand
         }
     }
 
-    private void commitPushedNodes( final NodeBranchEntries branchEntries )
+    private void commitPushedNodes( final Iterable<PushNodeResult> branchEntries )
     {
         final String commitEntryMessage = message == null
             ? ContentConstants.PUBLISH_COMMIT_PREFIX
@@ -229,10 +233,10 @@ public class PublishContentCommand
 
         final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( commitEntryMessage ).build();
         final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
-        for ( NodeBranchEntry branchEntry : branchEntries )
+        for ( PushNodeResult branchEntry : branchEntries )
         {
             final RoutableNodeVersionId routableNodeVersionId =
-                RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() );
+                RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getNodeVersionId() );
             routableNodeVersionIds.add( routableNodeVersionId );
         }
         nodeService.commit( commitEntry, routableNodeVersionIds.build() );

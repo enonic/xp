@@ -5,24 +5,30 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.node.NodeComparison;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
-public class DiffBranchesHandlerTest
+class DiffBranchesHandlerTest
     extends BaseNodeHandlerTest
 {
-
     @Test
-    public void testExample1()
+    void testExample1()
     {
         Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                add( new NodeComparison( createEntry( "a" ), createEntry( "a" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "b" ), createEntry( "b" ), CompareStatus.MOVED ) ).
-                add( new NodeComparison( createEntry( "c" ), createEntry( "c" ), CompareStatus.OLDER ) ).
+                add( createNodeComparison( "a", "a", CompareStatus.NEW ) ).
+                add( createNodeComparison( "b" , "b", CompareStatus.MOVED ) ).
+                add( createNodeComparison( "c" , "c", CompareStatus.OLDER ) ).
                 build() );
 
         runScript( "/lib/xp/examples/node/diff-1.js" );
     }
 
+    private NodeComparison createNodeComparison( String a, String b, CompareStatus status )
+    {
+        return new NodeComparison( NodeId.from( a ), new NodePath( "/" + a ), NodeId.from( b ), new NodePath( "/" + b ),
+                                   status );
+    }
 }

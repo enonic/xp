@@ -5,22 +5,22 @@ import com.enonic.xp.node.NodePath;
 
 public class NodeMovedParams
 {
-    private final NodePath existingPath;
+    private final NodePath previousPath;
 
     private final NodePath newPath;
 
     private final NodeId nodeId;
 
-    public NodeMovedParams( final NodePath existingPath, final NodePath newPath, final NodeId nodeId )
+    public NodeMovedParams( final NodePath previousPath, final NodePath newPath, final NodeId nodeId )
     {
-        this.existingPath = existingPath;
+        this.previousPath = previousPath;
         this.newPath = newPath;
         this.nodeId = nodeId;
     }
 
-    public NodePath getExistingPath()
+    public NodePath getPreviousPath()
     {
-        return existingPath;
+        return previousPath;
     }
 
     public NodePath getNewPath()

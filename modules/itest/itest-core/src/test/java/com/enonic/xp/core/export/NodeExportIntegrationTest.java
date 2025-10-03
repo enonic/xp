@@ -21,10 +21,10 @@ import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
@@ -97,15 +97,15 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void single_node_changed_name()
-        throws Exception
+    void single_node_changed_name()
     {
         final Node originalNode = createNode( NodePath.ROOT, "initial-name" );
 
-        final Node renamedNode = this.nodeService.rename( RenameNodeParams.create().
-            nodeId( originalNode.id() ).
-            nodeName( NodeName.from( "new-node-name" ) ).
-            build() );
+        final Node renamedNode =
+            this.nodeService.move( MoveNodeParams.create().nodeId( originalNode.id() ).newName( NodeName.from( "new-node-name" ) ).build() )
+                .getMovedNodes()
+                .getFirst()
+                .getNode();
 
         final NodeExportResult result = doExportRoot( true );
 

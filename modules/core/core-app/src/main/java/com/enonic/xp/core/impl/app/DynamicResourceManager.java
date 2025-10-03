@@ -118,7 +118,7 @@ final class DynamicResourceManager
                                                                     : new NodePath( folderPath, NodeName.from( name + ".xml" ) ) )
                                                      .refresh( RefreshMode.ALL )
                                                      .build() ) )
-            .getNodeBranchEntries()
+            .getNodeIds()
             .isNotEmpty();
     }
 

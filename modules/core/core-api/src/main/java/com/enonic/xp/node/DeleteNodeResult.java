@@ -2,13 +2,16 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class DeleteNodeResult
 {
-    private final NodeBranchEntries nodeBranchEntries;
+    private final NodeIds nodeIds;
 
     private DeleteNodeResult( final Builder builder )
     {
-        this.nodeBranchEntries = Objects.requireNonNullElse( builder.nodeBranchEntries, NodeBranchEntries.empty() );
+        this.nodeIds = Objects.requireNonNullElse( builder.nodeIds, NodeIds.empty() );
     }
 
     public static Builder create()
@@ -16,23 +19,23 @@ public final class DeleteNodeResult
         return new DeleteNodeResult.Builder();
     }
 
-    public NodeBranchEntries getNodeBranchEntries()
+    public NodeIds getNodeIds()
     {
-        return nodeBranchEntries;
+        return nodeIds;
     }
 
     public static final class Builder
     {
 
-        private NodeBranchEntries nodeBranchEntries;
+        private NodeIds nodeIds;
 
         private Builder()
         {
         }
 
-        public Builder nodeBranchEntries( final NodeBranchEntries nodeBranchEntries )
+        public Builder nodeIds( final NodeIds nodeIds )
         {
-            this.nodeBranchEntries = nodeBranchEntries;
+            this.nodeIds = nodeIds;
             return this;
         }
 

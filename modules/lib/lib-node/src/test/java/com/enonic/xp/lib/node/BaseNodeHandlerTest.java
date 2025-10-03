@@ -6,14 +6,13 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -48,28 +47,12 @@ public class BaseNodeHandlerTest
         addService( SecurityService.class, this.securityService );
     }
 
-    protected NodeBranchEntry createEntry( final String id )
-    {
-        return createEntry( id, id );
-    }
-
-    protected NodeBranchEntry createEntry( final String id, final String path )
-    {
-        return NodeBranchEntry.create()
-            .nodeId( NodeId.from( id ) )
-            .nodePath( new NodePath( "/" + path ) )
-            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
-            .nodeVersionId( new NodeVersionId() )
-            .timestamp( Instant.EPOCH )
-            .build();
-    }
-
     protected Node createNode()
     {
-        return createNode( NodePath.ROOT, "my-name" );
+        return createNode( NodePath.ROOT, NodeName.from( "my-name" ) );
     }
 
-    protected Node createNode( final NodePath parentPath, final String name )
+    protected Node createNode( final NodePath parentPath, final NodeName name )
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "displayName", "This is brand new node" );

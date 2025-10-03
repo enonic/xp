@@ -8,11 +8,11 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
@@ -28,7 +28,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BranchServiceImplTest
+class BranchServiceImplTest
 {
     private BranchServiceImpl branchService;
 
@@ -45,7 +45,6 @@ public class BranchServiceImplTest
 
         this.branchService = new BranchServiceImpl( storageDao, searchDao );
     }
-
 
     @Test
     public void path_fetched_from_cache_after_stored()
@@ -68,7 +67,7 @@ public class BranchServiceImplTest
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
             nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
             timestamp( Instant.now() ).
-            build(), null, context );
+            build(), context );
 
         Mockito.when( this.storageDao.getById( Mockito.isA( GetByIdRequest.class ) ) ).
             thenReturn( GetResult.create().

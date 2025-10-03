@@ -99,7 +99,7 @@ public class VirtualAppService
         return nodeService.delete( DeleteNodeParams.create()
                                        .nodePath( new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) ) )
                                        .refresh( RefreshMode.ALL )
-                                       .build() ).getNodeBranchEntries().isNotEmpty();
+                                       .build() ).getNodeIds().isNotEmpty();
     }
 
     private NodeIds initSiteNodes( final NodePath parent )

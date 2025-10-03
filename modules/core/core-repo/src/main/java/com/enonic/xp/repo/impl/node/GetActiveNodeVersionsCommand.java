@@ -6,9 +6,9 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 
 public class GetActiveNodeVersionsCommand
     extends AbstractNodeCommand

@@ -21,6 +21,8 @@ import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.node.MoveNodeParams;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
@@ -28,7 +30,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -94,7 +95,12 @@ class RenameContentCommandTest
 
         mockNode = Node.create().id( NodeId.from( "testId" ) ).build();
 
-        when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenReturn( mockNode );
+        when( nodeService.move( any() ) ).thenReturn( MoveNodeResult.create()
+                                                            .addMovedNode( MoveNodeResult.MovedNode.create()
+                                                                               .previousPath( new NodePath( "/path" ) )
+                                                                               .node( mockNode )
+                                                                               .build() )
+                                                            .build() );
         final PatchNodeResult patchNodeResult = mock( PatchNodeResult.class );
         when( patchNodeResult.getNodeId() ).thenReturn( mockNode.id() );
         when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( patchNodeResult );
@@ -116,7 +122,7 @@ class RenameContentCommandTest
 
         createCommand( params ).execute();
 
-        verify( nodeService, times( 1 ) ).rename( isA( RenameNodeParams.class ) );
+        verify( nodeService, times( 1 ) ).move( isA( MoveNodeParams.class ) );
     }
 
     @Test
@@ -125,7 +131,7 @@ class RenameContentCommandTest
         Node mockNode = Node.create().id( NodeId.from( "testId" ) ).build();
         final RepositoryId repositoryId = RepositoryId.from( "some.repo" );
         final Branch branch = Branch.from( "somebranch" );
-        when( nodeService.rename( isA( RenameNodeParams.class ) ) ).thenThrow(
+        when( nodeService.move( isA( MoveNodeParams.class ) ) ).thenThrow(
             new NodeAlreadyExistAtPathException( new NodePath( "/content/mycontent2" ), repositoryId, branch ) );
         when( nodeService.getById( mockNode.id() ) ).thenReturn( mockNode );
 

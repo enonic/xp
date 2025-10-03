@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.repo.impl.RepositoryEvents;
-import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 @Component(immediate = true)
@@ -18,22 +18,12 @@ public class RepositoryEventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepositoryEventListener.class );
 
-    private final RepositoryRestoredHandler repositoryRestoredHandler;
-
-    private final RepositoryInvalidateByIdHandler repositoryInvalidateByIdHandler;
-
-    private final RepositoryRestoreInitializedHandler repositoryRestoreInitializedHandler;
+    private final InternalRepositoryService repositoryService;
 
     @Activate
-    public RepositoryEventListener( @Reference final InternalRepositoryService repositoryService,
-                                    @Reference final NodeStorageService storageService )
+    public RepositoryEventListener( @Reference final InternalRepositoryService repositoryService )
     {
-        this.repositoryRestoredHandler = RepositoryRestoredHandler.create().
-            repositoryService( repositoryService ).
-            nodeStorageService( storageService ).
-            build();
-        this.repositoryInvalidateByIdHandler = new RepositoryInvalidateByIdHandler( repositoryService, storageService );
-        this.repositoryRestoreInitializedHandler = new RepositoryRestoreInitializedHandler( repositoryService, storageService );
+        this.repositoryService = repositoryService;
     }
 
     @Override
@@ -45,42 +35,33 @@ public class RepositoryEventListener
     @Override
     public void onEvent( final Event event )
     {
-        doHandleEvent( event );
+        try
+        {
+            doHandleEvent( event );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Not able to handle repository-event", e );
+        }
     }
 
     private void doHandleEvent( final Event event )
     {
-        final String type = event.getType();
-
-        switch ( type )
+        switch ( event.getType() )
         {
             case RepositoryEvents.RESTORED_EVENT_TYPE:
-                handleEventType( event, repositoryRestoredHandler );
-                break;
             case RepositoryEvents.RESTORE_INITIALIZED_EVENT_TYPE:
-                handleEventType( event, repositoryRestoreInitializedHandler );
+                repositoryService.invalidateAll();
                 break;
             case RepositoryEvents.UPDATED_EVENT_TYPE:
             case RepositoryEvents.DELETED_EVENT_TYPE:
                 if ( !event.isLocalOrigin() )
                 {
-                    handleEventType( event, repositoryInvalidateByIdHandler );
+                    event.getValueAs( String.class, RepositoryEvents.REPOSITORY_ID_KEY ).map( RepositoryId::from ).ifPresent( this.repositoryService::invalidate );
                 }
                 break;
             default:
                 break;
-        }
-    }
-
-    private void handleEventType( final Event event, final RepositoryEventHandler repositoryEventHandler )
-    {
-        try
-        {
-            repositoryEventHandler.handleEvent( event );
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Not able to handle repository-event", e );
         }
     }
 }

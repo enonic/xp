@@ -75,7 +75,7 @@ public class CleanUpAuditLogCommand
             for ( NodeHit nodeHit : nodesToDelete.getNodeHits() )
             {
                 result.deleted( nodeService.delete( DeleteNodeParams.create().nodeId( nodeHit.getNodeId() ).build() )
-                                    .getNodeBranchEntries()
+                                    .getNodeIds()
                                     .getSize() );
 
                 listener.processed();

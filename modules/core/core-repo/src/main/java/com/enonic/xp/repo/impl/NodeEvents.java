@@ -1,8 +1,8 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -10,11 +10,9 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntry;
+import com.enonic.xp.node.PushNodeResult;
 
 import static com.enonic.xp.event.EventConstants.NODES_FIELD;
 
@@ -43,9 +41,9 @@ public final class NodeEvents
         return event( NODE_CREATED_EVENT, createdNode, internalContext );
     }
 
-    public static Event pushed( final Collection<PushNodeEntry> pushNodeEntries, final InternalContext internalContext )
+    public static Event pushed( final Collection<PushNodeResult> pushNodeEntries, final InternalContext internalContext )
     {
-        return event( NODE_PUSHED_EVENT, pushNodeEntries, internalContext );
+        return buildEvent( NODE_PUSHED_EVENT, pushNodeEntries, internalContext, ( n, ctx ) -> nodesToList( (Collection<PushNodeResult>) n, ctx ) );
     }
 
     public static Event pushed( final Node node, final InternalContext internalContext )
@@ -55,7 +53,7 @@ public final class NodeEvents
 
     public static Event deleted( final NodeBranchEntries deletedNodes, final InternalContext internalContext )
     {
-        return event( NODE_DELETED_EVENT, deletedNodes, internalContext );
+        return buildEvent( NODE_DELETED_EVENT, deletedNodes, internalContext, ( n, ctx ) -> nodesToList( (NodeBranchEntries) n, ctx ) );
     }
 
     public static Event duplicated( final Node duplicatedNode, final InternalContext internalContext )
@@ -78,12 +76,12 @@ public final class NodeEvents
         return event( NODE_PERMISSIONS_UPDATED, updatedNode, internalContext );
     }
 
-    public static Event moved( final MoveNodeResult result, final InternalContext internalContext )
+    public static Event moved( final List<MoveNodeResult.MovedNode> movedNodes, final InternalContext internalContext )
     {
-        return Event.create( NODE_MOVED_EVENT ).distributed( true ).value( NODES_FIELD, result.getMovedNodes()
+        return Event.create( NODE_MOVED_EVENT ).distributed( true ).value( NODES_FIELD, movedNodes
                 .stream()
                 .map( movedNode -> createMoved( movedNode.getPreviousPath(), movedNode.getNode(), internalContext ) )
-                .collect( Collectors.toList() ) )
+                .collect( ImmutableList.toImmutableList() ) )
             .build();
     }
 
@@ -104,24 +102,10 @@ public final class NodeEvents
     {
         if ( node != null )
         {
-            return event( type, Nodes.from( node ), internalContext );
+            Nodes nodes = Nodes.from( node );
+            return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (Nodes) n, ctx ) );
         }
         return null;
-    }
-
-    private static Event event( String type, Nodes nodes, InternalContext internalContext )
-    {
-        return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (Nodes) n, ctx ) );
-    }
-
-    private static Event event( String type, NodeBranchEntries nodes, InternalContext internalContext )
-    {
-        return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (NodeBranchEntries) n, ctx ) );
-    }
-
-    private static Event event( String type, Collection<PushNodeEntry> nodes, InternalContext internalContext )
-    {
-        return buildEvent( type, nodes, internalContext, ( n, ctx ) -> nodesToList( (Collection<PushNodeEntry>) n, ctx ) );
     }
 
     private static Event buildEvent( String type, Object nodes, InternalContext internalContext,
@@ -148,7 +132,7 @@ public final class NodeEvents
         return nodes.stream().map( node -> NodeEvents.nodeToMap( node, internalContext ) ).collect( ImmutableList.toImmutableList() );
     }
 
-    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Collection<PushNodeEntry> pushNodeEntries,
+    private static ImmutableList<ImmutableMap<String, String>> nodesToList( final Collection<PushNodeResult> pushNodeEntries,
                                                                             final InternalContext internalContext )
     {
         return pushNodeEntries.stream().map( node -> NodeEvents.nodeToMap( node, internalContext ) )
@@ -175,16 +159,16 @@ public final class NodeEvents
             .build();
     }
 
-    private static ImmutableMap<String, String> nodeToMap( final PushNodeEntry node, final InternalContext internalContext )
+    private static ImmutableMap<String, String> nodeToMap( final PushNodeResult node, final InternalContext internalContext )
     {
         final ImmutableMap.Builder<String, String> nodeAsMap = ImmutableMap.<String, String>builder()
-            .put( "id", node.getNodeBranchEntry().getNodeId().toString() )
-            .put( "path", node.getNodeBranchEntry().getNodePath().toString() )
+            .put( "id", node.getNodeId().toString() )
+            .put( "path", node.getNodePath().toString() )
             .put( "branch", internalContext.getBranch().getValue() )
             .put( "repo", internalContext.getRepositoryId().toString() );
-        if ( node.getCurrentTargetPath() != null )
+        if ( node.getTargetPath() != null )
         {
-            nodeAsMap.put( "currentTargetPath", node.getCurrentTargetPath().toString() );
+            nodeAsMap.put( "currentTargetPath", node.getTargetPath().toString() );
         }
         return nodeAsMap.build();
     }
