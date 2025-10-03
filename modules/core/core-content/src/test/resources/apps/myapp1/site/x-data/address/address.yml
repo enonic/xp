@@ -1,0 +1,27 @@
+displayName: "X-Data Address"
+form:
+- type: "ItemSet"
+  name: "address"
+  label: "Address"
+  occurrences:
+    minimum: 0
+    maximum: 0
+  items:
+  - type: "TextLine"
+    name: "street"
+    label: "Street"
+    occurrences:
+      minimum: 0
+      maximum: 2
+  - type: "TextLine"
+    name: "postalCode"
+    label: "Postal code"
+    occurrences:
+      minimum: 1
+      maximum: 1
+  - type: "TextLine"
+    name: "postalPlace"
+    label: "Postal place"
+    occurrences:
+      minimum: 0
+      maximum: 1

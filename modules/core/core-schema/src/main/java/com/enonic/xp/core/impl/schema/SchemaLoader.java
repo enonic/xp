@@ -14,7 +14,6 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
-import com.enonic.xp.schema.content.ContentTypeName;
 
 public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {
@@ -41,25 +40,18 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
 
     private ResourceProcessor<N, V> newProcessor( final N key )
     {
-        final ResourceProcessor.Builder<N, V> processor = new ResourceProcessor.Builder<N, V>().key( key )
+        return new ResourceProcessor.Builder<N, V>().key( key )
             .segment( key.getClass().getSimpleName() )
-            .processor( resource -> load( key, resource ) );
-
-        if ( key instanceof ContentTypeName )
-        {
-            processor.keyTranslator( contentTypeName -> toResourceKey( contentTypeName, "yml" ) );
-        }
-        else
-        {
-            processor.keyTranslator( this::toXmlResourceKey );
-        }
-
-        return processor.build();
+            .keyTranslator( this::toYmlResourceKey )
+            .processor( resource -> load( key, resource ) )
+            .build();
     }
 
-    protected final ResourceKey toXmlResourceKey( final N name )
+    protected final ResourceKey toYmlResourceKey( final N name )
     {
-        return toResourceKey( name, "xml" );
+        final ApplicationKey appKey = name.getApplicationKey();
+        final String localName = name.getLocalName();
+        return ResourceKey.from( appKey, this.path + "/" + localName + "/" + localName + ".yml" );
     }
 
     protected final ResourceKey toResourceKey( final N name, final String ext )

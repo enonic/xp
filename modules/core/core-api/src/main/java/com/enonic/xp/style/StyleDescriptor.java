@@ -52,7 +52,7 @@ public final class StyleDescriptor
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "site/styles.xml" );
+        return ResourceKey.from( key, "site/styles/image.yml" );
     }
 
     @Override

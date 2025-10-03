@@ -1,0 +1,10 @@
+displayName: "display name"
+description: "description"
+form:
+- type: "TextLine"
+  name: "input1"
+  label: "Input"
+  helpText: "myHelpText"
+  occurrences:
+    minimum: 0
+    maximum: 1

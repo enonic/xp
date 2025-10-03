@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
+import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
 import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
@@ -16,7 +17,6 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.xml.parser.XmlContentTypeParser;
-import com.enonic.xp.xml.parser.XmlXDataParser;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -85,21 +85,13 @@ public class UpdateDynamicContentSchemaHandlerTest
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
 
-            final XmlXDataParser parser = new XmlXDataParser();
-
-            XData.Builder builder = XData.create();
+            final XData.Builder builder = YmlXDataParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
 
             final Instant modifiedTime = Instant.parse( "2021-09-25T10:00:00.00Z" );
             builder.modifiedTime( modifiedTime );
             builder.createdTime( modifiedTime );
 
             builder.name( XDataName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
-
-            parser.builder( builder );
-            parser.source( schemaParams.getResource() );
-            parser.currentApplication( schemaParams.getName().getApplicationKey() );
-
-            parser.parse();
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );

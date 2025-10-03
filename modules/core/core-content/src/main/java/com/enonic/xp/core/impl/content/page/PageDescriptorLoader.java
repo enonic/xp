@@ -7,19 +7,18 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 
 @Component(immediate = true)
 public class PageDescriptorLoader
@@ -53,16 +52,16 @@ public class PageDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     @Override
     public PageDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        final PageDescriptor.Builder builder = PageDescriptor.create();
-        parseXml( resource, builder );
-        builder.key( key );
-        return builder.build();
+        return YmlPageDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+            .key( key )
+            .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
+            .build();
     }
 
     @Override
@@ -73,6 +72,7 @@ public class PageDescriptorLoader
             .displayName( key.getName() )
             .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
+            .modifiedTime( Instant.now() )
             .build();
     }
 
@@ -80,25 +80,5 @@ public class PageDescriptorLoader
     public PageDescriptor postProcess( final PageDescriptor descriptor )
     {
         return PageDescriptor.copyOf( descriptor ).config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).build();
-    }
-
-    private void parseXml( final Resource resource, final PageDescriptor.Builder builder )
-    {
-        try
-        {
-            final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( resource.getKey().getApplicationKey() );
-            parser.source( resource.readString() );
-
-            final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
-            builder.modifiedTime( modifiedTime );
-
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load page descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
     }
 }

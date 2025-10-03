@@ -1,0 +1,21 @@
+displayName: "X-Data Full Name"
+form:
+- type: "ItemSet"
+  name: "name"
+  label: "Full Name"
+  occurrences:
+    minimum: 0
+    maximum: 0
+  items:
+  - type: "TextLine"
+    name: "first"
+    label: "First Name"
+    occurrences:
+      minimum: 1
+      maximum: 1
+  - type: "TextLine"
+    name: "last"
+    label: "Last Name"
+    occurrences:
+      minimum: 1
+      maximum: 1

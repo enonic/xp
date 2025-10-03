@@ -1,0 +1,9 @@
+displayName: "Virtual X-data"
+description: "X-data description"
+form:
+  - type: "TextLine"
+    name: "label"
+    label: "Label"
+    occurrences:
+      minimum: 0
+      maximum: 2

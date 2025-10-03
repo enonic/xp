@@ -3,7 +3,11 @@ package com.enonic.xp.core.impl.app;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
+import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
+import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
+import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -22,11 +26,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlMixinParser;
-import com.enonic.xp.xml.parser.XmlPageDescriptorParser;
 import com.enonic.xp.xml.parser.XmlSiteParser;
-import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
-import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class DynamicResourceParser
 {
@@ -73,21 +73,7 @@ final class DynamicResourceParser
 
     private PageDescriptor parsePageDescriptor( final DescriptorKey key, final String resource )
     {
-        final PageDescriptor.Builder builder = PageDescriptor.create().key( key );
-        try
-        {
-            final XmlPageDescriptorParser parser = new XmlPageDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( key.getApplicationKey() );
-            parser.source( resource );
-            builder.key( key );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic page descriptor [" + key + "]" );
-        }
-        return builder.build();
+        return YmlPageDescriptorParser.parse( resource, key.getApplicationKey() ).key( key ).build();
     }
 
     private PartDescriptor parsePartDescriptor( final DescriptorKey key, final String resource )
@@ -118,44 +104,12 @@ final class DynamicResourceParser
 
     private Mixin parseMixinDescriptor( final MixinName name, final String resource )
     {
-        final Mixin.Builder builder = Mixin.create();
-        try
-        {
-            final XmlMixinParser parser = new XmlMixinParser();
-            parser.currentApplication( name.getApplicationKey() );
-            parser.source( resource );
-            parser.builder( builder );
-            parser.parse();
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic mixin [" + name + "]" );
-        }
-
-        builder.name( name );
-
-        return builder.build();
+        return YmlMixinParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
     private XData parseXDataDescriptor( final XDataName name, final String resource )
     {
-        final XData.Builder builder = XData.create();
-        try
-        {
-            final XmlXDataParser parser = new XmlXDataParser();
-            parser.currentApplication( name.getApplicationKey() );
-            parser.source( resource );
-            parser.builder( builder );
-            parser.parse();
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic xdata [" + name + "]" );
-        }
-
-        builder.name( name );
-
-        return builder.build();
+        return YmlXDataParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
     private SiteDescriptor parseSiteDescriptor( final ApplicationKey applicationKey, final String resource )
@@ -180,20 +134,6 @@ final class DynamicResourceParser
 
     private StyleDescriptor parseStylesDescriptor( final ApplicationKey applicationKey, final String resource )
     {
-        final StyleDescriptor.Builder builder = StyleDescriptor.create();
-        builder.application( applicationKey );
-        try
-        {
-            final XmlStyleDescriptorParser parser = new XmlStyleDescriptorParser();
-            parser.currentApplication( applicationKey );
-            parser.source( resource );
-            parser.styleDescriptorBuilder( builder );
-            parser.parse();
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic style descriptor, application key: [" + applicationKey + "]" );
-        }
-        return builder.build();
+        return YmlStyleDescriptorParser.parse( resource, applicationKey ).build();
     }
 }
