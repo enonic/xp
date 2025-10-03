@@ -36,6 +36,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -76,6 +77,8 @@ final class CreateContentCommand
 
     private Content doExecute()
     {
+        checkAccess();
+
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
         validateContentType( contentType );
 
@@ -153,12 +156,6 @@ final class CreateContentCommand
         {
             final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
 
-//            if ( contentType.getName().isSite() )
-//            {
-//                SiteConfigsValidator
-//                new SiteConfigsDataSerializer().getConfigs( params.getData().getRoot() ); //validate site configs
-//            }
-
             try
             {
                 InputValidator.create()
@@ -171,6 +168,14 @@ final class CreateContentCommand
             {
                 throw new IllegalArgumentException( "Incorrect content property", e );
             }
+        }
+    }
+
+    private void checkAccess()
+    {
+        if ( params.getType().isSite() && SiteConfigsDataSerializer.fromData( params.getData().getRoot() ).getSize() > 0 )
+        {
+            checkAdminAccess();
         }
     }
 
