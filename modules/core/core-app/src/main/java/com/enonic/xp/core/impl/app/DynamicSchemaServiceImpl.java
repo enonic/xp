@@ -165,7 +165,7 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        final NodePath resourceFolderPath = NodePath.create( createSiteFolderPath( params.getKey() ) ).addElement( "styles" ).build();
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
 
@@ -180,7 +180,7 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath = createSiteFolderPath( params.getKey() );
+        final NodePath resourceFolderPath = NodePath.create( createSiteFolderPath( params.getKey() ) ).addElement( "styles" ).build();
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, params.getResource() );
 
@@ -263,7 +263,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = NodePath.create( createSiteFolderPath( key ) ).addElement( "styles" ).build();
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
@@ -324,7 +324,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createSiteFolderPath( key );
+        final NodePath resourceFolderPath = NodePath.create( createSiteFolderPath( key ) ).addElement( "styles" ).build();
         return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLES_NAME, false );
     }
 

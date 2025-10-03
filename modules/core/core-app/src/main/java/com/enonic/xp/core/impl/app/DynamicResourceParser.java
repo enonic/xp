@@ -5,6 +5,7 @@ import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
 import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -26,7 +27,6 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlSiteParser;
-import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
 
 final class DynamicResourceParser
 {
@@ -134,20 +134,6 @@ final class DynamicResourceParser
 
     private StyleDescriptor parseStylesDescriptor( final ApplicationKey applicationKey, final String resource )
     {
-        final StyleDescriptor.Builder builder = StyleDescriptor.create();
-        builder.application( applicationKey );
-        try
-        {
-            final XmlStyleDescriptorParser parser = new XmlStyleDescriptorParser();
-            parser.currentApplication( applicationKey );
-            parser.source( resource );
-            parser.styleDescriptorBuilder( builder );
-            parser.parse();
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic style descriptor, application key: [" + applicationKey + "]" );
-        }
-        return builder.build();
+        return YmlStyleDescriptorParser.parse( resource, applicationKey ).build();
     }
 }

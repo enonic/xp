@@ -28,6 +28,8 @@ public final class VirtualAppConstants
 
     public static final String X_DATA_ROOT_NAME = "x-data";
 
+    public static final String STYLES_ROOT_NAME = "styles";
+
     public static final String SITE_ROOT_NAME = "site";
 
     public static final String CONTENT_TYPE_ROOT_NAME = "content-types";
@@ -38,7 +40,7 @@ public final class VirtualAppConstants
 
     public static final String LAYOUT_ROOT_NAME = "layouts";
 
-    public static final String STYLES_NAME = "styles";
+    public static final String STYLES_NAME = "image";
 
     public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;
 
