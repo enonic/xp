@@ -41,7 +41,6 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
@@ -351,9 +350,15 @@ public final class TestDataFixtures
         final SiteConfig siteConfig =
             SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
 
+        final PropertyTree siteData = new PropertyTree();
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
+
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );
-        site.siteConfigs( SiteConfigs.from( siteConfig ) );
+        site.data( siteData );
         site.name( "my-content" );
         site.parentPath( ContentPath.ROOT );
         site.permissions(

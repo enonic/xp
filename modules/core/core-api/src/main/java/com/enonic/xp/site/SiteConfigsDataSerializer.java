@@ -2,35 +2,39 @@ package com.enonic.xp.site;
 
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 
 @PublicApi
 public final class SiteConfigsDataSerializer
 {
-    private final SiteConfigDataSerializer siteConfigSerializer = new SiteConfigDataSerializer();
+    private SiteConfigsDataSerializer()
+    {
+    }
 
-    public void toProperties( final SiteConfigs siteConfigs, final PropertySet parentSet )
+    public static void toData( final SiteConfigs siteConfigs, final PropertySet parentSet )
     {
         for ( final SiteConfig siteConfig : siteConfigs )
         {
-            siteConfigSerializer.toData( siteConfig, parentSet );
+            final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+            siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+            siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
         }
     }
 
-    void toProperties( final SiteConfig siteConfig, final PropertySet parentSet )
-    {
-        siteConfigSerializer.toData( siteConfig, parentSet );
-    }
-
-    public SiteConfigs.Builder fromProperties( final PropertySet data )
+    public static SiteConfigs fromData( final PropertySet data )
     {
         final SiteConfigs.Builder builder = SiteConfigs.create();
         for ( final Property siteConfigAsProperty : data.getProperties( "siteConfig" ) )
         {
-            final SiteConfig siteConfig = siteConfigSerializer.fromData( siteConfigAsProperty.getSet() );
-            builder.add( siteConfig );
+            final PropertySet siteConfigSet = siteConfigAsProperty.getSet();
+
+            builder.add( SiteConfig.create()
+                             .application( ApplicationKey.from( siteConfigAsProperty.getSet().getString( "applicationKey" ) ) )
+                             .config( siteConfigSet.getSet( "config" ).toTree() )
+                             .build() );
         }
-        return builder;
+        return builder.build();
     }
 }

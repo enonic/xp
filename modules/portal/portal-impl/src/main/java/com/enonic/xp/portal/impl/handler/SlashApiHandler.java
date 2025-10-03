@@ -33,6 +33,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Trace;
@@ -242,8 +243,8 @@ public class SlashApiHandler
             return true;
         }
 
-        final SiteConfigs siteConfigs = portalRequest.getSite() != null
-            ? portalRequest.getSite().getSiteConfigs()
+        final SiteConfigs siteConfigs = portalRequest.getSite() != null ? SiteConfigsDataSerializer.fromData(
+            portalRequest.getSite().getData().getRoot() )
             : portalRequest.getProject() != null ? portalRequest.getProject().getSiteConfigs() : SiteConfigs.empty();
 
         if ( siteConfigs.isEmpty() )

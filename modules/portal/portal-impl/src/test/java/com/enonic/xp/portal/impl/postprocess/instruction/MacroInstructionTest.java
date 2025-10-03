@@ -212,7 +212,7 @@ public class MacroInstructionTest
         SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapp" ) ).
             config( new PropertyTree() ).build();
-        new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
         return Site.create().
             id( ContentId.from( id ) ).

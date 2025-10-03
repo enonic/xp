@@ -48,7 +48,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -213,15 +212,18 @@ public class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
+        final PropertyTree siteData = new PropertyTree();
+
+        final SiteConfig siteConfig = SiteConfig.create().config( data ).application( ApplicationKey.SYSTEM ).build();
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
+
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Site.create()
                                 .name( "myContentName" )
-                                .type( ContentTypeName.site() )
-                                .parentPath( ContentPath.ROOT )
-                                .data( new PropertyTree() )
-                                .siteConfigs( SiteConfigs.create()
-                                                  .add( SiteConfig.create().config( data ).application( ApplicationKey.SYSTEM ).build() )
-                                                  .build() )
+                                .type( ContentTypeName.site() ).parentPath( ContentPath.ROOT ).data( siteData )
                                 .build() )
             .build();
 

@@ -27,6 +27,7 @@ import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 @Component(immediate = true)
 public final class MacroInstruction
@@ -75,7 +76,8 @@ public final class MacroInstruction
             throw new RenderException( "Macro controller script could not be resolved, context site could not be found." );
         }
 
-        final MacroDescriptor macroDescriptor = resolveMacroDescriptor( site.getSiteConfigs(), macroName );
+        final MacroDescriptor macroDescriptor =
+            resolveMacroDescriptor( SiteConfigsDataSerializer.fromData( site.getData().getRoot() ), macroName );
         if ( macroDescriptor == null )
         {
             final String editModeMacro = toMacroInstruction( macroInstruction );

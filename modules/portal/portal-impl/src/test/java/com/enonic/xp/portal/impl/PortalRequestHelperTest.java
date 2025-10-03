@@ -18,7 +18,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfigs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -106,7 +105,7 @@ public class PortalRequestHelperTest
 
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "site0c10-0002-4b68-b407-87412f3e45c9" ) );
-        site.siteConfigs( SiteConfigs.empty() );
+        site.data( new PropertyTree() );
         site.name( "mysite" );
         site.parentPath( ContentPath.ROOT );
         site.permissions( AccessControlList.create()

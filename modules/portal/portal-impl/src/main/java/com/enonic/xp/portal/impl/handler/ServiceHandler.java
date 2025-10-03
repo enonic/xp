@@ -25,6 +25,7 @@ import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -124,8 +125,9 @@ public class ServiceHandler
             final Site site = portalRequest.getSite();
             final Project project = portalRequest.getProject();
 
-            final SiteConfigs siteConfigs =
-                site != null ? site.getSiteConfigs() : project != null ? project.getSiteConfigs() : SiteConfigs.empty();
+            final SiteConfigs siteConfigs = site != null
+                ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
+                : project != null ? project.getSiteConfigs() : SiteConfigs.empty();
 
             //Checks if the application is set on the current site or project
             if ( siteConfigs.get( descriptorKey.getApplicationKey() ) == null )

@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -286,8 +287,13 @@ public class ServiceHandlerTest
 
         final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "demo" ) ).config( new PropertyTree() ).build();
 
-        return Site.create()
-            .addSiteConfig( siteConfig )
+        final PropertyTree siteData = new PropertyTree();
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
+
+        return Site.create().data( siteData )
             .id( ContentId.from( id ) )
             .path( ContentPath.from( path ) )
             .owner( PrincipalKey.from( "user:myStore:me" ) )

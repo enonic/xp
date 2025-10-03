@@ -44,9 +44,9 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -110,6 +110,10 @@ public class HtmlAreaContentProcessor
         processContentData( createContentParams.getData(), contentType, processedIds );
         processExtraData( createContentParams.getExtraDatas(), processedIds );
         processPageData( createContentParams.getPage(), processedIds );
+        if ( createContentParams.getType().isSite() )
+        {
+            processSiteConfigData( SiteConfigsDataSerializer.fromData( createContentParams.getData().getRoot() ), processedIds );
+        }
 
         return new ProcessCreateResult( createContentParams, processedIds.build() );
     }
@@ -123,12 +127,12 @@ public class HtmlAreaContentProcessor
 
         processContentData( inputContent.getData(), contentType, processedIds );
         processExtraData( inputContent.getAllExtraData(), processedIds );
-
-        if ( inputContent instanceof Site site )
-        {
-            processSiteConfigData( site.getSiteConfigs(), processedIds );
-        }
         final Page page = processPageData( inputContent.getPage(), processedIds );
+
+        if ( inputContent.isSite() )
+        {
+            processSiteConfigData( SiteConfigsDataSerializer.fromData( inputContent.getData().getRoot() ), processedIds );
+        }
 
         return new ProcessUpdateResult( Content.create( inputContent ).page( page ).processedReferences( processedIds.build() ).build()  );
     }

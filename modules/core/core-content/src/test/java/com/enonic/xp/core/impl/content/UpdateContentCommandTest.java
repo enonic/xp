@@ -31,6 +31,7 @@ import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -60,7 +61,6 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -157,24 +157,26 @@ public class UpdateContentCommandTest
     }
 
     @Test
-    void site_config_modified_no_project_owner_role_throws_exception() {
+    void site_config_modified_no_project_owner_role_throws_exception()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final SiteConfig siteConfig = SiteConfig.create().config( new PropertyTree() ).application( ApplicationKey.SYSTEM ).build();
+        PropertySet parentSet = data.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
+
         final Content existingContent = Site.create()
             .id( ContentId.from( "mycontent" ) )
             .name( "myContentName" )
-            .type( ContentTypeName.site() )
-            .parentPath( ContentPath.ROOT )
-            .data( new PropertyTree() )
-            .siteConfigs( SiteConfigs.create()
-                              .add( SiteConfig.create().config( new PropertyTree() ).application( ApplicationKey.SYSTEM ).build() )
-                              .build() )
+            .type( ContentTypeName.site() ).parentPath( ContentPath.ROOT ).data( data )
             .build();
 
         final UpdateContentParams params =
             new UpdateContentParams().editor( c -> c.data.removeProperties( "siteConfig" ) ).contentId( existingContent.getId() );
 
-        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
-            .params( params )
-            .build();
+        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) ).params( params ).build();
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
@@ -201,7 +203,7 @@ public class UpdateContentCommandTest
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
 
         assertThrows( ForbiddenAccessException.class, () -> ContextBuilder.from( ContextAccessor.current() )
-            .repositoryId(  "com.enonic.cms.context-repo" )
+            .repositoryId( "com.enonic.cms.context-repo" )
             .branch( ContentConstants.BRANCH_DRAFT )
             .build()
             .runWith( command::execute ) );
@@ -214,9 +216,8 @@ public class UpdateContentCommandTest
 
         final UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() );
 
-        final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
-            .params( params )
-            .contentProcessors( List.of( new ContentProcessor()
+        final UpdateContentCommand command =
+            UpdateContentCommand.create( createCommand( params ) ).params( params ).contentProcessors( List.of( new ContentProcessor()
             {
                 @Override
                 public boolean supports( final ContentTypeName contentType )
@@ -234,10 +235,9 @@ public class UpdateContentCommandTest
                 public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
                 {
                     // without content modification node API will not be called
-                    return new ProcessUpdateResult( Content.create(params.getContent()).name( "newName" ).build() );
+                    return new ProcessUpdateResult( Content.create( params.getContent() ).name( "newName" ).build() );
                 }
-            } ) )
-            .build();
+            } ) ).build();
 
         Node mockNode = Node.create().build();
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
@@ -252,7 +252,7 @@ public class UpdateContentCommandTest
         ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
 
         final ArgumentCaptor<PatchNodeParams> captor = ArgumentCaptor.forClass( PatchNodeParams.class );
-        verify( nodeService, times(1) ).patch( captor.capture() );
+        verify( nodeService, times( 1 ) ).patch( captor.capture() );
     }
 
     @Test
@@ -327,7 +327,8 @@ public class UpdateContentCommandTest
             .name( "mycontent" )
             .createdTime( CREATED_TIME )
             .displayName( "MyContent" )
-            .owner( PrincipalKey.from( "user:system:admin" ) ).creator( PrincipalKey.from( "user:system:admin" ) )
+            .owner( PrincipalKey.from( "user:system:admin" ) )
+            .creator( PrincipalKey.from( "user:system:admin" ) )
             .data( contentData )
             .build();
     }

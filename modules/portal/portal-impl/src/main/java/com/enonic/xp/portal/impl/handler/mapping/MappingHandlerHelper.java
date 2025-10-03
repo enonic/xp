@@ -23,6 +23,7 @@ import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
@@ -92,8 +93,7 @@ class MappingHandlerHelper
 
         final Site site = request.getSite();
 
-        final SiteConfigs siteConfigs = site != null
-            ? site.getSiteConfigs()
+        final SiteConfigs siteConfigs = site != null ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
             : request.getProject() != null ? request.getProject().getSiteConfigs() : SiteConfigs.empty();
 
         if ( siteConfigs.isEmpty() )

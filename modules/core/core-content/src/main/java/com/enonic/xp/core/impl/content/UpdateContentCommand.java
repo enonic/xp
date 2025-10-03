@@ -23,13 +23,11 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.content.PatchableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
@@ -38,13 +36,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
 
 final class UpdateContentCommand
@@ -101,8 +97,7 @@ final class UpdateContentCommand
             return contentBeforeChange;
         }
 
-        validateProjectAccess( contentBeforeChange, editedContent );
-
+        checkAccess( contentBeforeChange, editedContent );
         validate( editedContent );
 
         if ( isStoppingInheritContent( contentBeforeChange.getInherit() ) )
@@ -269,22 +264,6 @@ final class UpdateContentCommand
         return Content.create( editableContent.build() ).build();
     }
 
-    private void validateProjectAccess( final Content originalContent, final Content editedContent )
-    {
-        if ( originalContent instanceof Site originalSite && editedContent instanceof Site editedSite &&
-            !Objects.equals( originalSite.getSiteConfigs(), editedSite.getSiteConfigs() ) )
-        {
-            final Context context = ContextAccessor.current();
-            final AuthenticationInfo authInfo = context.getAuthInfo();
-            final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
-
-            if ( !ProjectAccessHelper.hasAccess( authInfo, projectName, ProjectRole.OWNER ) )
-            {
-                throw new ForbiddenAccessException( authInfo.getUser() );
-            }
-        }
-    }
-
     private void validate( final Content editedContent )
     {
         if ( params.isRequireValid() )
@@ -336,6 +315,16 @@ final class UpdateContentCommand
         catch ( final Exception e )
         {
             throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
+        }
+    }
+
+    private void checkAccess( final Content contentBeforeChange, final Content editedContent )
+    {
+        if ( contentBeforeChange instanceof Site originalSite && editedContent instanceof Site editedSite &&
+            !Objects.equals( SiteConfigsDataSerializer.fromData( originalSite.getData().getRoot() ),
+                             SiteConfigsDataSerializer.fromData( editedSite.getData().getRoot() ) ) )
+        {
+            checkAdminAccess();
         }
     }
 

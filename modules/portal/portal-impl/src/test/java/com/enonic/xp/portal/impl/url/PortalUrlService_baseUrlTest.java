@@ -23,6 +23,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -98,6 +99,14 @@ public class PortalUrlService_baseUrlTest
         assertThat( url ).startsWith( "/_/error/404?message=Not+Found" );
     }
 
+    private static void mockDataWithSiteConfig( final SiteConfigs siteConfigs, final Site site )
+    {
+        final PropertyTree data = new PropertyTree();
+        when( site.getData() ).thenReturn( data );
+
+        SiteConfigsDataSerializer.toData( siteConfigs, site.getData().getRoot() );
+    }
+
     @Test
     void testNoRequestWithAbsoluteUrlTypeWithBaseUrl()
     {
@@ -117,7 +126,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        mockDataWithSiteConfig( siteConfigs, site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -148,7 +158,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        mockDataWithSiteConfig( siteConfigs, site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -174,7 +185,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+
+        mockDataWithSiteConfig( SiteConfigs.empty(), site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -200,7 +212,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+
+        mockDataWithSiteConfig( SiteConfigs.empty(), site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -233,7 +246,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+
+        mockDataWithSiteConfig( SiteConfigs.empty(), site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
         when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
@@ -254,46 +268,6 @@ public class PortalUrlService_baseUrlTest
             } );
 
         assertEquals( "/site/explicit-project/explicit-branch", url );
-    }
-
-    @Test
-    void testNoRequestWithExplicitProjectWithExplicitBranchWithBaseUrl()
-    {
-        PortalRequestAccessor.set( null );
-
-        final Content content = ContentFixtures.newContent();
-
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", "https://cdn.company.com" );
-
-        final SiteConfigs siteConfigs =
-            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
-
-        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
-        when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
-
-        final String url = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
-            .branch( Branch.from( "context-branch" ) )
-            .build()
-            .callWith( () -> {
-                final BaseUrlParams params = BaseUrlParams.create()
-                    .setUrlType( UrlTypeConstants.ABSOLUTE )
-                    .setPath( "/mycontent" )
-                    .setProjectName( "explicit-project" )
-                    .setBranch( "explicit-branch" )
-                    .build();
-
-                return this.service.baseUrl( params );
-            } );
-
-        assertEquals( "https://cdn.company.com", url );
     }
 
     @Test
@@ -425,6 +399,47 @@ public class PortalUrlService_baseUrlTest
     }
 
     @Test
+    void testNoRequestWithExplicitProjectWithExplicitBranchWithBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        final Content content = ContentFixtures.newContent();
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", "https://cdn.company.com" );
+
+        final SiteConfigs siteConfigs =
+            SiteConfigs.create().add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ).build();
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        mockDataWithSiteConfig( siteConfigs, site );
+
+        when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+        when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> {
+                final BaseUrlParams params = BaseUrlParams.create()
+                    .setUrlType( UrlTypeConstants.ABSOLUTE )
+                    .setPath( "/mycontent" )
+                    .setProjectName( "explicit-project" )
+                    .setBranch( "explicit-branch" )
+                    .build();
+
+                return this.service.baseUrl( params );
+            } );
+
+        assertEquals( "https://cdn.company.com", url );
+    }
+
+    @Test
     void testWithNonSiteRequestInContextWithBaseUrl()
     {
         portalRequest.setBaseUri( "/api" );
@@ -445,7 +460,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        mockDataWithSiteConfig( siteConfigs, site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
 
@@ -480,7 +496,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( siteConfigs );
+
+        mockDataWithSiteConfig( siteConfigs, site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
 
@@ -513,7 +530,8 @@ public class PortalUrlService_baseUrlTest
         when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
+
+        mockDataWithSiteConfig( SiteConfigs.empty(), site );
 
         when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
 

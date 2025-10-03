@@ -23,11 +23,15 @@ import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteService;
 
 class AbstractCreatingOrUpdatingContentCommand
@@ -214,11 +218,25 @@ class AbstractCreatingOrUpdatingContentCommand
         return EXECUTABLE_CONTENT_TYPES.stream().anyMatch( mediaType::is ) && isExecutableFileName( fileName.toString() );
     }
 
+    void checkAdminAccess()
+        throws ForbiddenAccessException
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authInfo = context.getAuthInfo();
+        final ProjectName projectName = ProjectName.from( context.getRepositoryId() );
+
+        if ( !ProjectAccessHelper.hasAccess( authInfo, projectName, ProjectRole.OWNER ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
     private boolean isExecutableFileName( final String fileName )
     {
         return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
             fileName.endsWith( ".sh" );
     }
+
 }
 
 

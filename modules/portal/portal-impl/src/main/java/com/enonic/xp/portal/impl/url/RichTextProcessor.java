@@ -34,6 +34,7 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -309,7 +310,8 @@ public class RichTextProcessor
         appKeys.add( SYSTEM_APPLICATION_KEY );
         if ( portalRequest != null && portalRequest.getSite() != null )
         {
-            portalRequest.getSite().getSiteConfigs().forEach( siteConfig -> appKeys.add( siteConfig.getApplicationKey() ) );
+            SiteConfigsDataSerializer.fromData( portalRequest.getSite().getData().getRoot() )
+                .forEach( siteConfig -> appKeys.add( siteConfig.getApplicationKey() ) );
         }
         return styleDescriptorService.getByApplications( ApplicationKeys.from( appKeys ) );
     }
