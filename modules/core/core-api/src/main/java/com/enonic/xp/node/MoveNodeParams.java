@@ -2,11 +2,18 @@ package com.enonic.xp.node;
 
 import java.util.Objects;
 
+import com.google.common.base.Preconditions;
+
+import com.enonic.xp.annotation.PublicApi;
+
+@PublicApi
 public final class MoveNodeParams
 {
     private final NodeId nodeId;
 
-    private final NodePath parentNodePath;
+    private final NodeName newName;
+
+    private final NodePath newParentPath;
 
     private final MoveNodeListener moveListener;
 
@@ -14,11 +21,13 @@ public final class MoveNodeParams
 
     private final RefreshMode refresh;
 
-    private MoveNodeParams( Builder builder )
+    private MoveNodeParams( final Builder builder )
     {
-        this.nodeId = builder.nodeId;
-        this.parentNodePath = builder.parentNodePath;
-        this.moveListener = builder.moveListener;
+        this.nodeId = Objects.requireNonNull( builder.nodeId, "nodeId is required" );
+        this.newName = builder.newName;
+        this.newParentPath = builder.newParentPath;
+        this.moveListener = Objects.requireNonNullElse( builder.moveListener, count -> {
+        } );
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n);
         this.refresh = builder.refresh;
     }
@@ -33,9 +42,14 @@ public final class MoveNodeParams
         return nodeId;
     }
 
-    public NodePath getParentNodePath()
+    public NodeName getNewNodeName()
     {
-        return parentNodePath;
+        return newName;
+    }
+
+    public NodePath getNewParentPath()
+    {
+        return newParentPath;
     }
 
     public MoveNodeListener getMoveListener()
@@ -57,7 +71,9 @@ public final class MoveNodeParams
     {
         private NodeId nodeId;
 
-        private NodePath parentNodePath;
+        private NodeName newName;
+
+        private NodePath newParentPath;
 
         private MoveNodeListener moveListener;
 
@@ -69,25 +85,31 @@ public final class MoveNodeParams
         {
         }
 
-        public Builder nodeId( NodeId nodeId )
+        public Builder nodeId( final NodeId nodeId )
         {
             this.nodeId = nodeId;
             return this;
         }
 
-        public Builder parentNodePath( NodePath parentNodePath )
+        public Builder newName( final NodeName nodeName )
         {
-            this.parentNodePath = parentNodePath;
+            this.newName = nodeName;
             return this;
         }
 
-        public Builder moveListener( MoveNodeListener moveListener )
+        public Builder newParentPath( final NodePath parentPath )
+        {
+            this.newParentPath = parentPath;
+            return this;
+        }
+
+        public Builder moveListener( final MoveNodeListener moveListener )
         {
             this.moveListener = moveListener;
             return this;
         }
 
-        public Builder processor( NodeDataProcessor processor )
+        public Builder processor( final NodeDataProcessor processor )
         {
             this.processor = processor;
             return this;
@@ -101,6 +123,7 @@ public final class MoveNodeParams
 
         public MoveNodeParams build()
         {
+            Preconditions.checkArgument( this.newName != null || this.newParentPath != null , "nodeName or parentPath is required" );
             return new MoveNodeParams( this );
         }
     }

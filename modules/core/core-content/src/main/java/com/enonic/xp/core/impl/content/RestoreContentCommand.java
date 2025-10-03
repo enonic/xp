@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -24,7 +25,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 
@@ -115,19 +115,21 @@ final class RestoreContentCommand
 
         final NodeName newNodeName = buildName( parentPathToRestore, originalSourceName );
 
-        final RenameNodeParams.Builder renameParams =
-            RenameNodeParams.create().moveListener( params.getRestoreContentListener()::contentRestored ).parentPath( parentPathToRestore )
-                .nodeId( nodeToRestore.id() )
-                .nodeName( newNodeName );
+        final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
+            .nodeId( nodeToRestore.id() )
+            .newParentPath( parentPathToRestore )
+            .newName( newNodeName )
+            .moveListener( params.getRestoreContentListener()::contentRestored )
+            .refresh( RefreshMode.ALL );
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties() );
         if ( this.params.stopInherit() )
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
-        renameParams.processor( processors.build() );
+        moveParams.processor( processors.build() );
 
-        return nodeService.rename( renameParams.build() );
+        return nodeService.move( moveParams.build() );
     }
 
     private NodeDataProcessor updateProperties()

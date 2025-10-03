@@ -13,13 +13,13 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.serializer.ValidationErrorsSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -94,12 +94,14 @@ final class RenameContentCommand
 
     private Content doExecute()
     {
-        final RenameNodeParams builder =
-            RenameNodeParams.create().nodeId(
-                NodeId.from( params.getContentId() ) ).refresh( RefreshMode.ALL ).nodeName(
-                NodeName.from( params.getNewName() ) ).processor( initProcessors() ).build();
+        final MoveNodeParams moveParams = MoveNodeParams.create()
+            .nodeId( NodeId.from( params.getContentId() ) )
+            .newName( NodeName.from( params.getNewName() ) )
+            .processor( initProcessors() )
+            .refresh( RefreshMode.ALL )
+            .build();
 
-        final Node node = nodeService.rename( builder ).getMovedNodes().getFirst().getNode();
+        final Node node = nodeService.move( moveParams ).getMovedNodes().getFirst().getNode();
 
         return translator.fromNode( node );
     }

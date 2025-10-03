@@ -620,7 +620,6 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .moveListener( params.getMoveContentListener() )
             .build()
             .execute();
 

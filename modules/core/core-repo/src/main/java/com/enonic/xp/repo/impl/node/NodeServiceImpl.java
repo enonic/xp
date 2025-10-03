@@ -67,7 +67,6 @@ import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -444,7 +443,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public MoveNodeResult rename( final RenameNodeParams params )
+    public MoveNodeResult move( final MoveNodeParams params )
     {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
@@ -461,32 +460,22 @@ public class NodeServiceImpl
             .execute();
 
         final List<MoveNodeResult.MovedNode> movedNodes = moveNodeResult.getMovedNodes();
-        final MoveNodeResult.MovedNode movedNode = movedNodes.getFirst();
-        this.eventPublisher.publish(
-            NodeEvents.renamed( movedNode.getPreviousPath(), movedNode.getNode(), InternalContext.from( ContextAccessor.current() ) ) );
+        if ( params.getNewParentPath() == null )
+        {
+            final MoveNodeResult.MovedNode movedNode = movedNodes.getFirst();
+            this.eventPublisher.publish(
+                NodeEvents.renamed( movedNode.getPreviousPath(), movedNode.getNode(), InternalContext.from( ContextAccessor.current() ) ) );
+            if ( movedNodes.size() > 1 )
+            {
+                this.eventPublisher.publish(
+                    NodeEvents.moved( movedNodes.subList( 1, movedNodes.size() ), InternalContext.from( ContextAccessor.current() ) ) );
+            }
+        }
+        else
+        {
+            this.eventPublisher.publish( NodeEvents.moved( movedNodes, InternalContext.from( ContextAccessor.current() ) ) );
+        }
 
-        this.eventPublisher.publish(
-            NodeEvents.moved( movedNodes.subList( 1, movedNodes.size() ), InternalContext.from( ContextAccessor.current() ) ) );
-        return moveNodeResult;
-    }
-
-    @Override
-    public MoveNodeResult move( final MoveNodeParams params )
-    {
-        verifyContext();
-        final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
-            .id( params.getNodeId() )
-            .newParent( params.getParentNodePath() )
-            .refresh( params.getRefresh() )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .moveListener( params.getMoveListener() )
-            .processor( params.getProcessor() )
-            .build()
-            .execute();
-
-        this.eventPublisher.publish( NodeEvents.moved( moveNodeResult.getMovedNodes(), InternalContext.from( ContextAccessor.current() ) ) );
         return moveNodeResult;
     }
 

@@ -100,11 +100,6 @@ public class NodeStorageServiceImpl
                                       .nodePath( node.path() )
                                       .timestamp( timestamp )
                                       .build(), context );
-        if ( params.movedFrom() != null )
-        {
-            this.branchService.evictPath( params.movedFrom(), context );
-        }
-
         final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
 
         this.indexDataService.store( newNode, context );
@@ -320,30 +315,9 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void handleNodeCreated( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
-    {
-    }
-
-    @Override
-    public void handleNodeDeleted( final NodeId nodeId, final NodePath nodePath, final InternalContext context )
+    public void invalidatePath( NodePath nodePath, InternalContext context )
     {
         this.branchService.evictPath( nodePath, context );
-    }
-
-    @Override
-    public void handleNodeMoved( final NodePath previousPath, final InternalContext context )
-    {
-        this.branchService.evictPath( previousPath, context );
-    }
-
-    @Override
-    public void handleNodePushed(  NodePath nodePath, final NodePath currentTargetPath,
-                                  final InternalContext context )
-    {
-        if ( currentTargetPath != null && !nodePath.equals( currentTargetPath ) )
-        {
-            this.branchService.evictPath( currentTargetPath, context );
-        }
     }
 
     private BlobKeys getBinaryBlobKeys( final AttachedBinaries attachedBinaries )

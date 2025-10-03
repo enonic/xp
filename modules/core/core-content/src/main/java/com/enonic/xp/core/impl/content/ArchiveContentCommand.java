@@ -19,6 +19,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -30,7 +31,6 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.security.User;
@@ -154,14 +154,16 @@ final class ArchiveContentCommand
         final ContentPath originalPath = ContentNodeHelper.translateNodePathToContentPath( node.path() );
 
         final NodePath newPath = pathResolver.buildArchivedPath( node.path() );
-        final RenameNodeParams.Builder renameParams = RenameNodeParams.create()
-            .parentPath( ArchiveConstants.ARCHIVE_ROOT_PATH )
-            .moveListener( count -> this.params.getArchiveContentListener().contentArchived( count ) )
-            .nodeId( node.id() );
+
+        final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
+            .nodeId( node.id() )
+            .newParentPath( ArchiveConstants.ARCHIVE_ROOT_PATH )
+            .moveListener( this.params.getArchiveContentListener()::contentArchived )
+            .refresh( RefreshMode.ALL );
 
         if ( !newPath.getName().equals( node.name() ) )
         {
-            renameParams.nodeName( newPath.getName() );
+            moveParams.newName( newPath.getName() );
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties( originalPath ) );
@@ -169,9 +171,9 @@ final class ArchiveContentCommand
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
-        renameParams.processor( processors.build() );
+        moveParams.processor( processors.build() );
 
-        return nodeService.rename( renameParams.build() );
+        return nodeService.move( moveParams.build() );
     }
 
     private void validateLocation( final Node node )

@@ -9,7 +9,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RenameNodeParams;
 
 public final class MoveNodeHandler
     extends AbstractNodeHandler
@@ -82,7 +81,7 @@ public final class MoveNodeHandler
 
     private Node move( final NodeId sourceId, final NodePath newPath )
     {
-        return nodeService.move( MoveNodeParams.create().nodeId( sourceId ).parentNodePath( newPath ).build() )
+        return nodeService.move( MoveNodeParams.create().nodeId( sourceId ).newParentPath( newPath ).build() )
             .getMovedNodes()
             .getFirst()
             .getNode();
@@ -90,11 +89,10 @@ public final class MoveNodeHandler
 
     private Node rename( final NodeId sourceId, final NodeName newName )
     {
-        final RenameNodeParams renameParams = RenameNodeParams.create().
-            nodeId( sourceId ).
-            nodeName( newName ).
-            build();
-        return nodeService.rename( renameParams ).getMovedNodes().getFirst().getNode();
+        return nodeService.move( MoveNodeParams.create().nodeId( sourceId ).newName( newName ).build() )
+            .getMovedNodes()
+            .getFirst()
+            .getNode();
     }
 
     private NodeName uniqueName()

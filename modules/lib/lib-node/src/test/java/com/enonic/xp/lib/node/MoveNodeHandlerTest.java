@@ -11,7 +11,6 @@ import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -34,16 +33,16 @@ public class MoveNodeHandlerTest
         Mockito.when( this.nodeService.getById( NodeId.from( "nodeId" ) ) ).thenReturn( createNode() );
         Mockito.when( this.nodeService.getByPath( new NodePath( "/my-name" ) ) ).thenReturn( createNode() );
 
-        Mockito.when( this.nodeService.rename( Mockito.any() ) ).thenAnswer( invocation -> {
-            final RenameNodeParams renameNodeParams = invocation.getArgument( 0 );
-            name = renameNodeParams.getNewNodeName().toString();
+        Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
+            final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
+            name = moveNodeParams.getNewNodeName().toString();
             return MoveNodeResult.create()
                 .addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
                 .build();
         } );
         Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
             final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
-            parentPath = moveNodeParams.getParentNodePath();
+            parentPath = moveNodeParams.getNewParentPath();
             return MoveNodeResult.create()
                 .addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
                 .build();

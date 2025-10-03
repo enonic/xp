@@ -17,12 +17,6 @@ public final class NodeCommitId
         super( object );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
     public static NodeCommitId from( final String string )
     {
         return new NodeCommitId( string );

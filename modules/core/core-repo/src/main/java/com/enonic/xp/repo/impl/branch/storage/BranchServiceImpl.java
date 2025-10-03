@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,7 @@ public class BranchServiceImpl
                            BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
                            BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
 
-    private final Cache<BranchPath, NodeId> cache =
+    private final Cache<BranchPath, NodeBranchEntry> cache =
         CacheBuilder.newBuilder().maximumSize( 100000 ).expireAfterWrite( Duration.ofMinutes( 10 ) ).build();
 
     private final StorageDao storageDao;
@@ -69,29 +68,16 @@ public class BranchServiceImpl
     {
         final RepositoryId repositoryId = context.getRepositoryId();
         final Branch branch = context.getBranch();
-        final NodePath nodePath = nodeBranchEntry.getNodePath();
 
-        final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
-
-        final boolean checkAlreadyExists = !context.isSkipConstraints();
-        final NodeId nodeId = nodeBranchEntry.getNodeId();
-
-        final boolean[] exists = new boolean[] {false};
-        cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
-            if ( checkAlreadyExists && inCache != null && !inCache.equals( nodeId ) )
+        cache.asMap().compute( new BranchPath( repositoryId, branch, nodeBranchEntry.getNodePath() ), ( cK, inCache ) -> {
+            if ( inCache != null && !context.isSkipConstraints() && !inCache.getNodeId().equals( nodeBranchEntry.getNodeId() ) )
             {
-                exists[0] = true;
-                return inCache;
+                throw new NodeAlreadyExistAtPathException( cK.getPath(), cK.getRepositoryId(), cK.getBranch() );
             }
 
             this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, cK.getRepositoryId(), cK.getBranch() ) );
-            return nodeId;
-
+            return nodeBranchEntry;
         } );
-        if ( exists[0] )
-        {
-            throw new NodeAlreadyExistAtPathException( cacheKey.getPath(), cacheKey.getRepositoryId(), cacheKey.getBranch() );
-        }
     }
 
     @Override
@@ -179,20 +165,13 @@ public class BranchServiceImpl
         final Branch branch = context.getBranch();
         final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
 
-        final AtomicReference<NodeBranchEntry> found = new AtomicReference<>();
-        cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
+        return cache.asMap().compute( cacheKey, ( cK, inCache ) -> {
             if ( inCache != null )
             {
-                final NodeBranchEntry nodeBranchEntry = doGetById( inCache, context );
-
-                if ( nodeBranchEntry == null )
+                final NodeBranchEntry nodeBranchEntry = doGetById( inCache.getNodeId(), context );
+                if ( nodeBranchEntry != null && nodeBranchEntry.getNodePath().equals( nodePath ) )
                 {
-                    return null;
-                }
-                else
-                {
-                    found.set( nodeBranchEntry );
-                    return nodeBranchEntry.getNodeId();
+                    return nodeBranchEntry;
                 }
             }
 
@@ -221,12 +200,8 @@ public class BranchServiceImpl
             {
                 return null;
             }
-            final NodeBranchEntry nodeBranchEntry = NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
-            found.set( nodeBranchEntry );
-            return nodeBranchEntry.getNodeId();
+            return NodeBranchVersionFactory.create( result.getHits().getFirst().getReturnValues() );
         } );
-
-        return found.get();
     }
 
     @Override

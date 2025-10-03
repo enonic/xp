@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -47,59 +46,6 @@ class NodeEventListenerTest
     }
 
     @Test
-    public void invalid_event_no_list()
-        throws Exception
-    {
-        nodeEventListener.onEvent( Event.create( NodeEvents.NODE_CREATED_EVENT ).value( "fisk", "ost" ).localOrigin( false ).build() );
-
-        Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
-    }
-
-    @Test
-    public void invalid_event_nodes_not_list()
-        throws Exception
-    {
-        nodeEventListener.onEvent(
-            Event.create( NodeEvents.NODE_CREATED_EVENT ).value( EventConstants.NODES_FIELD, "ost" ).localOrigin( false ).build() );
-
-        Mockito.verify( nodeStorageService, Mockito.never() ).handleNodeCreated( Mockito.any(), Mockito.any(), Mockito.any() );
-    }
-
-    @Test
-    public void local_event_ignored()
-        throws Exception
-    {
-        final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = new NodePath( "/nodeName" );
-
-        final Event localEvent =
-            NodeEvents.created( Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getName() ).build(),
-                                createInternalContext() );
-
-        nodeEventListener.onEvent( localEvent );
-
-        Mockito.verify( nodeStorageService, Mockito.never() )
-            .handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ), Mockito.isA( InternalContext.class ) );
-    }
-
-    @Test
-    public void node_create_event()
-        throws Exception
-    {
-        final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = new NodePath( "/nodeName" );
-
-        final Event localEvent =
-            NodeEvents.created( Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getName() ).build(),
-                                createInternalContext() );
-
-        nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
-
-        Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
-            .handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ), Mockito.isA( InternalContext.class ) );
-    }
-
-    @Test
     public void node_delete_event()
         throws Exception
     {
@@ -118,7 +64,7 @@ class NodeEventListenerTest
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
-            .handleNodeDeleted( Mockito.eq( nodeId ), Mockito.eq( nodePath ), Mockito.isA( InternalContext.class ) );
+            .invalidatePath( Mockito.eq( nodePath ), Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -141,7 +87,7 @@ class NodeEventListenerTest
 
         ArgumentCaptor<NodePath> captor = ArgumentCaptor.forClass( NodePath.class );
 
-        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).invalidatePath( captor.capture(), Mockito.isA( InternalContext.class ) );
         assertEquals( sourceNode.path(), captor.getValue() );
     }
 
@@ -160,24 +106,8 @@ class NodeEventListenerTest
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
         ArgumentCaptor<NodePath> captor = ArgumentCaptor.forClass( NodePath.class );
-        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).handleNodeMoved( captor.capture(), Mockito.isA( InternalContext.class ) );
+        Mockito.verify( nodeStorageService, Mockito.times( 1 ) ).invalidatePath( captor.capture(), Mockito.isA( InternalContext.class ) );
         assertEquals( sourceNode.path(), captor.getValue() );
-    }
-
-    @Test
-    public void node_duplicated_event()
-        throws Exception
-    {
-        final NodeId nodeId = NodeId.from( "node1" );
-        final NodePath nodePath = new NodePath( "/nodeName" );
-
-        final Node sourceNode = Node.create().id( nodeId ).parentPath( nodePath.getParentPath() ).name( nodePath.getName() ).build();
-
-        final Event localEvent = NodeEvents.duplicated( sourceNode, createInternalContext() );
-        nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
-
-        Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
-            .handleNodeCreated( Mockito.eq( nodeId ), Mockito.eq( nodePath ), Mockito.isA( InternalContext.class ) );
     }
 
     @Test
@@ -196,8 +126,7 @@ class NodeEventListenerTest
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 
         Mockito.verify( nodeStorageService, Mockito.times( 1 ) )
-            .handleNodePushed( Mockito.eq( nodePath ), Mockito.eq( previousNodePath ),
-                               Mockito.isA( InternalContext.class ) );
+            .invalidatePath( Mockito.eq( previousNodePath ), Mockito.isA( InternalContext.class ) );
     }
 
     private InternalContext createInternalContext()

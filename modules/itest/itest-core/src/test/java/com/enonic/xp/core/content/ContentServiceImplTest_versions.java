@@ -194,7 +194,6 @@ public class ContentServiceImplTest_versions
 
         this.contentService.restore( RestoreContentParams.create().contentId( content.getId() ).build() );
 
-        refresh();
         final FindContentVersionsResult result =
             this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
 

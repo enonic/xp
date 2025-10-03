@@ -166,8 +166,8 @@ class PushNodesCommandTest
 
         result = pushNodes( WS_OTHER, node.id() );
         assertEquals( 1, result.getSuccessful().size() );
-        assertNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
         assertNotNull( getNodeByPathInOther( new NodePath( "/my-node-renamed" ) ) );
+        assertNull( getNodeByPathInOther( new NodePath( "/my-node" ) ) );
     }
 
     @Test

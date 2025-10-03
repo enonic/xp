@@ -50,7 +50,6 @@ import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -147,12 +146,11 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void rename()
-        throws Exception
+    void move()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        nodeService.rename( RenameNodeParams.create().nodeName( NodeName.from( "my-node-edited" ) ).nodeId( createdNode.id() ).build() );
+        nodeService.move( MoveNodeParams.create().newName( NodeName.from( "my-node-edited" ) ).nodeId( createdNode.id() ).build() );
 
         final Node renamedNode = nodeService.getById( createdNode.id() );
 
@@ -161,11 +159,11 @@ class NodeServiceImplTest
 
     @Test
     void move_to_the_same_parent()
-
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        assertThrows( NodeAlreadyExistAtPathException.class, () -> nodeService.move( MoveNodeParams.create().nodeId( createdNode.id() ).parentNodePath( createdNode.parentPath() ).build() ) );
+        assertThrows( NodeAlreadyExistAtPathException.class, () -> nodeService.move(
+            MoveNodeParams.create().nodeId( createdNode.id() ).newParentPath( createdNode.parentPath() ).build() ) );
     }
 
     @Test

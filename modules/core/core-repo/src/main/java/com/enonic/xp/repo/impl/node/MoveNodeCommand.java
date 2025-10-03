@@ -106,7 +106,6 @@ public class MoveNodeCommand
 
         verifyNoExistingAtNewPath( newParentPath, newNodeName );
 
-
         final Context adminContext = ContextBuilder.from( context )
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
@@ -188,8 +187,9 @@ public class MoveNodeCommand
         }
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final Node movedNode = this.nodeStorageService.store(
-            StoreNodeParams.create().node( nodeToMoveBuilder.build() ).movedFrom( persistedNode.path() ).build(), internalContext ).node();
+        final Node movedNode =
+            this.nodeStorageService.store( StoreNodeParams.create().node( nodeToMoveBuilder.build() ).build(), internalContext ).node();
+        this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 

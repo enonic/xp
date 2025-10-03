@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -159,7 +159,7 @@ public abstract class AbstractContentSynchronizerTest
         setUpProjectService();
         setUpContentService();
         eventCaptor = ArgumentCaptor.forClass( Event.class );
-        handledEvents = new HashSet<>();
+        handledEvents = new LinkedHashSet<>();
     }
 
     private void setUpProjectService()
@@ -394,8 +394,9 @@ public abstract class AbstractContentSynchronizerTest
     protected void handleEvents()
     {
         verify( eventPublisher, atLeastOnce() ).publish( eventCaptor.capture() );
-        eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).forEach( listener::onEvent );
-        handledEvents.addAll( eventCaptor.getAllValues() );
+        final List<Event> newEvents = eventCaptor.getAllValues().stream().filter( event -> !handledEvents.contains( event ) ).toList();
+        newEvents.forEach( listener::onEvent );
+        handledEvents.addAll( newEvents );
         refresh();
     }
 }

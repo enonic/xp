@@ -76,12 +76,14 @@ public final class ProjectContentEventListener
             .map( map -> map.get( "path" ) )
             .allMatch( path -> path.startsWith( "/content/" ) || path.startsWith( "/archive/" ) );
 
-        final boolean isSkipSync = Boolean.parseBoolean( (String) event.getData().getOrDefault( CONTENT_SKIP_SYNC, "false" ) );
-
-        if ( isContentEvent && !isSkipSync )
+        if ( isContentEvent )
         {
-            Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-            this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event ) ) );
+            final boolean isSkipSync = Boolean.parseBoolean( (String) event.getData().getOrDefault( CONTENT_SKIP_SYNC, "false" ) );
+            if ( !isSkipSync )
+            {
+                Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+                this.executor.execute( () -> context.runWith( () -> doHandleContentEvent( nodes, event.getType() ) ) );
+            }
         }
     }
 
@@ -92,7 +94,7 @@ public final class ProjectContentEventListener
             "node.deleted".equals( type ) || "node.sorted".equals( type );
     }
 
-    private void doHandleContentEvent( final List<Map<String, String>> nodes, final Event event )
+    private void doHandleContentEvent( final List<Map<String, String>> nodes, final String eventType )
     {
         createAdminContext().runWith( () -> {
 
@@ -135,7 +137,7 @@ public final class ProjectContentEventListener
                     final ContentEventsSyncParams.Builder paramsBuilder = ContentEventsSyncParams.create()
                         .addContentIds( contentIds ).sourceProject( sourceProject.getName() ).targetProject( targetProject.getName() );
 
-                    switch ( event.getType() )
+                    switch ( eventType )
                     {
                         case "node.created":
                         case "node.duplicated":
@@ -158,7 +160,7 @@ public final class ProjectContentEventListener
                             paramsBuilder.syncEventType( ContentSyncEventType.DELETED );
                             break;
                         default:
-                            LOG.debug( "Ignoring node type: {}", event.getType() );
+                            LOG.debug( "Ignoring node type: {}", eventType );
                             break;
                     }
                     final ContentEventsSyncParams params = paramsBuilder.build();
@@ -168,7 +170,7 @@ public final class ProjectContentEventListener
                     }
                 } );
 
-            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( event.getType() ) )
+            if ( !sourceProject.getParents().isEmpty() && "node.deleted".equals( eventType ) )
             {
                 sourceProject.getParents()
                     .stream()

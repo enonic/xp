@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +94,7 @@ public class PushNodesCommand
         final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( allIds, internalContext );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
-        final NodeBranchEntries.Builder successfulPush = NodeBranchEntries.create();
+        final List<NodeBranchEntry> successfulPush = new ArrayList<>();
 
         final List<NodeBranchEntry> list =
             nodeBranchEntries.stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) ).collect( Collectors.toList() );
@@ -153,11 +154,15 @@ public class PushNodesCommand
 
         final PushNodesResult result = builder.build();
 
-        this.nodeStorageService.push( successfulPush.build().getSet(), target, pushListener, internalContext );
+        this.nodeStorageService.push( successfulPush, target, pushListener, internalContext );
+        final InternalContext targetContext = InternalContext.create( internalContext ).branch( target ).build();
         for ( PushNodeResult pushNodeResult : result.getSuccessful() )
         {
-            this.nodeStorageService.handleNodePushed( pushNodeResult.getNodePath(),
-                                                      pushNodeResult.getTargetPath(), internalContext );
+            final NodePath targetPath = pushNodeResult.getTargetPath();
+            if ( targetPath != null && !targetPath.equals( pushNodeResult.getNodePath() ) )
+            {
+                this.nodeStorageService.invalidatePath( targetPath, targetContext );
+            }
         }
         refresh( RefreshMode.ALL );
 

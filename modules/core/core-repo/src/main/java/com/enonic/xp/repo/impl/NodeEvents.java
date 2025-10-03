@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -82,7 +81,7 @@ public final class NodeEvents
         return Event.create( NODE_MOVED_EVENT ).distributed( true ).value( NODES_FIELD, movedNodes
                 .stream()
                 .map( movedNode -> createMoved( movedNode.getPreviousPath(), movedNode.getNode(), internalContext ) )
-                .collect( Collectors.toList() ) )
+                .collect( ImmutableList.toImmutableList() ) )
             .build();
     }
 

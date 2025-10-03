@@ -123,9 +123,6 @@ public class RepositoryServiceImpl
 
         RepositoryEntry repository = repositoryMap.compute( params.getRepositoryId(),
                                                        ( key, previousRepository ) -> doUpdateRepository( params, previousRepository ) );
-
-        this.nodeStorageService.invalidate();
-
         return repository.asRepository();
     }
 
@@ -194,8 +191,7 @@ public class RepositoryServiceImpl
                 throw new NodeNotFoundException( "Cannot find root-node in repository [" + previousRepository.getId() + "]" );
             }
 
-            this.nodeStorageService.push( List.of( rootNode ), newBranch,
-                                          c -> {
+            this.nodeStorageService.push( List.of( rootNode ), newBranch, c -> {
             }, internalContext );
 
             doRefresh();
@@ -263,8 +259,6 @@ public class RepositoryServiceImpl
 
         repositoryMap.compute( repositoryId,
                                ( repo, previousRepository ) -> doDeleteBranch( params, repo, previousRepository ) );
-
-        nodeStorageService.invalidate();
 
         return params.getBranch();
     }

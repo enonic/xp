@@ -17,12 +17,6 @@ public final class NodeId
         super( value );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
     public static NodeId from( final String string )
     {
         return new NodeId( string );

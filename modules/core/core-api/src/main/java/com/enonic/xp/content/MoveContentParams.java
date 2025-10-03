@@ -19,7 +19,7 @@ public final class MoveContentParams
     {
         this.contentId = builder.contentId;
         this.parentContentPath = builder.parentContentPath;
-        this.moveContentListener = builder.moveContentListener;
+        this.moveContentListener = Objects.requireNonNullElse( builder.moveContentListener, NoopMoveContentListener.INSTANCE );
         this.stopInherit = builder.stopInherit;
     }
 
@@ -90,6 +90,19 @@ public final class MoveContentParams
         {
             Objects.requireNonNull( this.contentId, "contentId is required" );
             return new MoveContentParams( this );
+        }
+    }
+
+    private enum NoopMoveContentListener implements MoveContentListener
+    {
+        INSTANCE;
+
+        @Override
+        public void setTotal( int count ) {
+        }
+
+        @Override
+        public void contentMoved( int count ) {
         }
     }
 }

@@ -65,11 +65,5 @@ public interface NodeStorageService
 
     void invalidate();
 
-    void handleNodeCreated( NodeId nodeId, NodePath nodePath, InternalContext context );
-
-    void handleNodeDeleted( NodeId nodeId, NodePath nodePath, InternalContext context );
-
-    void handleNodeMoved( final NodePath previousPath, InternalContext nodeContext);
-
-    void handleNodePushed( NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
+    void invalidatePath( NodePath nodePath, InternalContext context );
 }
