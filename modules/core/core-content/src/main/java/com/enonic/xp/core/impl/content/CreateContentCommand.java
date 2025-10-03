@@ -173,7 +173,7 @@ final class CreateContentCommand
 
     private void checkAccess()
     {
-        if ( params.getType().isSite() && SiteConfigsDataSerializer.fromData( params.getData().getRoot() ).getSize() > 0 )
+        if ( params.getType().isSite() && SiteConfigsDataSerializer.fromData( params.getData().getRoot() ).isNotEmpty() )
         {
             checkAdminAccess();
         }
