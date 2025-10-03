@@ -111,6 +111,10 @@ public class HtmlAreaContentProcessor
         processContentData( createContentParams.getData(), contentType, processedIds );
         processExtraData( createContentParams.getExtraDatas(), processedIds );
         processPageData( createContentParams.getPage(), processedIds );
+        if ( createContentParams.getType().isSite() )
+        {
+            processSiteConfigData( SiteConfigsDataSerializer.fromData( createContentParams.getData().getRoot() ), processedIds );
+        }
 
         return new ProcessCreateResult( createContentParams, processedIds.build() );
     }
@@ -124,12 +128,12 @@ public class HtmlAreaContentProcessor
 
         processContentData( inputContent.getData(), contentType, processedIds );
         processExtraData( inputContent.getAllExtraData(), processedIds );
+        final Page page = processPageData( inputContent.getPage(), processedIds );
 
         if ( inputContent instanceof Site site )
         {
             processSiteConfigData( SiteConfigsDataSerializer.fromData( site.getData().getRoot() ), processedIds );
         }
-        final Page page = processPageData( inputContent.getPage(), processedIds );
 
         return new ProcessUpdateResult( Content.create( inputContent ).page( page ).processedReferences( processedIds.build() ).build()  );
     }
