@@ -12,6 +12,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -48,10 +49,10 @@ public class BaseNodeHandlerTest
 
     protected Node createNode()
     {
-        return createNode( NodePath.ROOT, "my-name" );
+        return createNode( NodePath.ROOT, NodeName.from( "my-name" ) );
     }
 
-    protected Node createNode( final NodePath parentPath, final String name )
+    protected Node createNode( final NodePath parentPath, final NodeName name )
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "displayName", "This is brand new node" );

@@ -10,6 +10,7 @@ import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -19,13 +20,13 @@ public class MoveNodeHandlerTest
 {
     private NodePath parentPath;
 
-    private String name;
+    private NodeName name;
 
     @BeforeEach
     public void setUp()
     {
         parentPath = NodePath.ROOT;
-        name = "my-name";
+        name = NodeName.from( "my-name" );
     }
 
     private void mockGetNode()
@@ -35,16 +36,17 @@ public class MoveNodeHandlerTest
 
         Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
             final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
-            name = moveNodeParams.getNewNodeName().toString();
+            if ( moveNodeParams.getNewParentPath() != null )
+            {
+                parentPath = moveNodeParams.getNewParentPath();
+            }
+            else
+            {
+                name = moveNodeParams.getNewNodeName();
+            }
             return MoveNodeResult.create()
-                .addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
-                .build();
-        } );
-        Mockito.when( this.nodeService.move( Mockito.any() ) ).thenAnswer( invocation -> {
-            final MoveNodeParams moveNodeParams = invocation.getArgument( 0 );
-            parentPath = moveNodeParams.getNewParentPath();
-            return MoveNodeResult.create()
-                .addMovedNode( MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
+                .addMovedNode(
+                    MoveNodeResult.MovedNode.create().previousPath( new NodePath( "/my-name" ) ).node( createNode() ).build() )
                 .build();
         } );
     }
