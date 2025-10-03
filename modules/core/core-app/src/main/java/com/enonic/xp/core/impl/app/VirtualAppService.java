@@ -99,7 +99,8 @@ public class VirtualAppService
     private boolean deleteVirtualAppNode( final ApplicationKey applicationKey )
     {
         return nodeService.delete( DeleteNodeParams.create()
-                                       .nodePath( new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) ) )
+                                       .nodePath( new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
+                                                                NodeName.from( applicationKey.toString() ) ) )
                                        .refresh( RefreshMode.ALL )
                                        .build() ).getNodeBranchEntries().isNotEmpty();
     }
@@ -118,8 +119,9 @@ public class VirtualAppService
         final NodeId layoutNodeId = initLayoutNode( siteRoot.path() );
         final NodeId pageNodeId = initPageNode( siteRoot.path() );
         final NodeId xDataNodeId = initXDataNode( siteRoot.path() );
+        final NodeId stylesNodeId = initStylesNode( siteRoot.path() );
 
-        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, xDataNodeId );
+        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, xDataNodeId, stylesNodeId );
     }
 
     private NodeId initContentTypeNode( final NodePath parent )
@@ -177,6 +179,16 @@ public class VirtualAppService
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
                                        .name( VirtualAppConstants.X_DATA_ROOT_NAME )
+                                       .parent( parent )
+                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .build() ).id();
+    }
+
+    private NodeId initStylesNode( final NodePath parent )
+    {
+        return nodeService.create( CreateNodeParams.create()
+                                       .data( new PropertyTree() )
+                                       .name( VirtualAppConstants.STYLES_ROOT_NAME )
                                        .parent( parent )
                                        .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
