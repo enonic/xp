@@ -1,0 +1,6 @@
+css: "assets/styles2.css"
+image:
+  - name: "editor-align-justify"
+    displayName:
+      text: "Justify"
+      i18n: "style.editor.align.justify"
