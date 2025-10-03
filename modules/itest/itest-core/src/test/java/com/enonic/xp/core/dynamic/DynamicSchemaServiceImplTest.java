@@ -562,7 +562,7 @@ public class DynamicSchemaServiceImplTest
     public void createXDataSchema()
         throws Exception
     {
-        final String resource = readResource( "_xdata.xml" );
+        final String resource = readResource( "_xdata.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( XDataName.from( "myapp:myxdata" ) )
@@ -590,10 +590,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/x-data/myxdata/myxdata.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/x-data/myxdata/myxdata.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/x-data/myxdata/myxdata.xml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/x-data/myxdata/myxdata.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -604,13 +604,16 @@ public class DynamicSchemaServiceImplTest
     {
         final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
             .name( XDataName.from( "myapp:myxdata" ) )
-            .resource( "<x-data></x-data>" )
+            .resource( """
+                          displayName: "Virtual X-data"
+                          form: [ ]
+                          """ )
             .type( DynamicContentSchemaType.XDATA )
             .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_xdata.xml" );
+        final String resource = readResource( "_xdata.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( XDataName.from( "myapp:myxdata" ) )
@@ -638,10 +641,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/x-data/myxdata/myxdata.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/x-data/myxdata/myxdata.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/x-data/myxdata/myxdata.xml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/x-data/myxdata/myxdata.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -699,7 +702,10 @@ public class DynamicSchemaServiceImplTest
 
         final CreateDynamicComponentParams createParams = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
-            .resource( "" )
+            .resource( """
+                           displayName: "MyPart"
+                           form: [ ]
+                           """ )
             .type( DynamicComponentType.PART )
             .build();
 
@@ -1397,19 +1403,19 @@ public class DynamicSchemaServiceImplTest
         DynamicSchemaResult<XData> xdata1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( XDataName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_xdata.xml" ) )
+                .resource( readResource( "_xdata.yml" ) )
                 .type( DynamicContentSchemaType.XDATA )
                 .build() ) );
         DynamicSchemaResult<XData> xdata2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( XDataName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_xdata.xml" ) )
+                .resource( readResource( "_xdata.yml" ) )
                 .type( DynamicContentSchemaType.XDATA )
                 .build() ) );
         DynamicSchemaResult<XData> xdata3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( XDataName.from( "my-other-app:mytype" ) )
-                .resource( readResource( "_xdata.xml" ) )
+                .resource( readResource( "_xdata.yml" ) )
                 .type( DynamicContentSchemaType.XDATA )
                 .build() ) );
 
@@ -1576,10 +1582,8 @@ public class DynamicSchemaServiceImplTest
             .type( DynamicContentSchemaType.XDATA )
             .build();
 
-        final XmlException exception = assertThrows( XmlException.class, () -> createAdminContext().callWith(
+        assertThrows( UncheckedIOException.class, () -> createAdminContext().callWith(
             () -> dynamicSchemaService.createContentSchema( params ) ) );
-
-        assertEquals( "Could not parse dynamic xdata [myapp:mytype]", exception.getMessage() );
     }
 
     @Test
