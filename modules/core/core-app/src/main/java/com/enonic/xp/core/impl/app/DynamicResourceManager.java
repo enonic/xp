@@ -49,7 +49,7 @@ final class DynamicResourceManager
 
             if ( resource != null )
             {
-                resourceData.setXml( SchemaNodePropertyNames.RESOURCE, resource );
+                resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
             }
 
             final Node schemaNode = nodeService.create( CreateNodeParams.create()

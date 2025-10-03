@@ -14,7 +14,7 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
-import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchema>
 {
@@ -45,7 +45,7 @@ public abstract class SchemaLoader<N extends BaseSchemaName, V extends BaseSchem
             .segment( key.getClass().getSimpleName() )
             .processor( resource -> load( key, resource ) );
 
-        if ( key instanceof ContentTypeName )
+        if ( !( key instanceof XDataName ) )
         {
             processor.keyTranslator( contentTypeName -> toResourceKey( contentTypeName, "yml" ) );
         }

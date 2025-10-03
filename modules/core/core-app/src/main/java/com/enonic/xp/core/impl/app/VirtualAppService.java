@@ -87,6 +87,8 @@ public class VirtualAppService
                                                             .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
                                                             .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                             .build() );
+
+        initMixinNode( virtualAppNode.path() );
         initSiteNodes( virtualAppNode.path() );
 
         nodeService.refresh( RefreshMode.ALL );
@@ -115,10 +117,9 @@ public class VirtualAppService
         final NodeId partNodeId = initPartNode( siteRoot.path() );
         final NodeId layoutNodeId = initLayoutNode( siteRoot.path() );
         final NodeId pageNodeId = initPageNode( siteRoot.path() );
-        final NodeId mixinNodeId = initMixinNode( siteRoot.path() );
         final NodeId xDataNodeId = initXDataNode( siteRoot.path() );
 
-        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, mixinNodeId, xDataNodeId );
+        return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, xDataNodeId );
     }
 
     private NodeId initContentTypeNode( final NodePath parent )
