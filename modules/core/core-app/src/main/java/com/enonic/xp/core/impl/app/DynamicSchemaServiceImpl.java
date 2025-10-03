@@ -373,11 +373,14 @@ public class DynamicSchemaServiceImpl
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType )
     {
         final String resourceRootName = getSchemaRootName( dynamicType );
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-            .addElement( key.toString() )
-            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
-            .addElement( resourceRootName )
-            .build();
+        final NodePath.Builder builder = NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT ).addElement( key.toString() );
+
+        if ( dynamicType != DynamicContentSchemaType.MIXIN )
+        {
+            builder.addElement( VirtualAppConstants.SITE_ROOT_NAME );
+        }
+
+        return builder.addElement( resourceRootName ).build();
     }
 
     private NodePath createSiteFolderPath( final ApplicationKey key )

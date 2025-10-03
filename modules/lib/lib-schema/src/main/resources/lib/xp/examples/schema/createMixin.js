@@ -3,18 +3,17 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-       <mixin xmlns='urn:enonic:xp:model:1.0'>
-          <display-name>Virtual Mixin</display-name>
-          <description>Mixin description</description>
-          <form>
-            <input type='TextLine' name='text2'>
-              <label>Text 2</label>
-            </input>
-        
-            <mixin name='myapplication:inline'/>
-          </form>
-        </mixin>`;
+let resource = `displayName: "Virtual Mixin"
+description: "Mixin description"
+form:
+- type: "TextLine"
+  name: "text2"
+  label: "Text 2"
+  occurrences:
+    minimum: 0
+    maximum: 1
+- type: "FormFragment"
+  name: "myapp:inline"`;
 
 // BEGIN
 // Create virtual mixin.
@@ -33,23 +32,20 @@ log.info('Created mixin: ' + result.name);
 assert.assertJsonEquals({
     name: 'myapp:mytype',
     displayName: 'Virtual Mixin',
-    displayNameI18nKey: '',
     description: 'Mixin description',
-    descriptionI18nKey: '',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +
-              '       <mixin xmlns=\'urn:enonic:xp:model:1.0\'>\n ' +
-              '         <display-name>Virtual Mixin</display-name>\n' +
-              '          <description>Mixin description</description>\n' +
-              '          <form>\n' +
-              '            <input type=\'TextLine\' name=\'text2\'>\n' +
-              '              <label>Text 2</label>\n' +
-              '            </input>\n' +
-              '        \n' +
-              '            <mixin name=\'myapplication:inline\'/>\n' +
-              '          </form>\n' +
-              '        </mixin>',
+    resource: 'displayName: "Virtual Mixin"\n' +
+              'description: "Mixin description"\n' +
+              'form:\n' +
+              '- type: "TextLine"\n' +
+              '  name: "text2"\n' +
+              '  label: "Text 2"\n' +
+              '  occurrences:\n' +
+              '    minimum: 0\n' +
+              '    maximum: 1\n' +
+              '- type: "FormFragment"\n' +
+              '  name: "myapp:inline"',
     type: 'MIXIN',
     form: [
         {
@@ -64,7 +60,7 @@ assert.assertJsonEquals({
             'config': {}
         }, {
             formItemType: 'FormFragment',
-            name: 'myapplication:inline'
+            name: 'myapp:inline'
         }
     ],
 

@@ -5,6 +5,7 @@ import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -23,7 +24,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlMixinParser;
 import com.enonic.xp.xml.parser.XmlSiteParser;
 import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
 import com.enonic.xp.xml.parser.XmlXDataParser;
@@ -104,23 +104,7 @@ final class DynamicResourceParser
 
     private Mixin parseMixinDescriptor( final MixinName name, final String resource )
     {
-        final Mixin.Builder builder = Mixin.create();
-        try
-        {
-            final XmlMixinParser parser = new XmlMixinParser();
-            parser.currentApplication( name.getApplicationKey() );
-            parser.source( resource );
-            parser.builder( builder );
-            parser.parse();
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic mixin [" + name + "]" );
-        }
-
-        builder.name( name );
-
-        return builder.build();
+        return YmlMixinParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
     private XData parseXDataDescriptor( final XDataName name, final String resource )
