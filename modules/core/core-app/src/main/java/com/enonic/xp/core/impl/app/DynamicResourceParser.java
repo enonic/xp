@@ -5,6 +5,7 @@ import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
 import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -26,7 +27,6 @@ import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.xml.XmlException;
 import com.enonic.xp.xml.parser.XmlSiteParser;
 import com.enonic.xp.xml.parser.XmlStyleDescriptorParser;
-import com.enonic.xp.xml.parser.XmlXDataParser;
 
 final class DynamicResourceParser
 {
@@ -109,23 +109,7 @@ final class DynamicResourceParser
 
     private XData parseXDataDescriptor( final XDataName name, final String resource )
     {
-        final XData.Builder builder = XData.create();
-        try
-        {
-            final XmlXDataParser parser = new XmlXDataParser();
-            parser.currentApplication( name.getApplicationKey() );
-            parser.source( resource );
-            parser.builder( builder );
-            parser.parse();
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic xdata [" + name + "]" );
-        }
-
-        builder.name( name );
-
-        return builder.build();
+        return YmlXDataParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
     private SiteDescriptor parseSiteDescriptor( final ApplicationKey applicationKey, final String resource )
