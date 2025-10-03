@@ -45,6 +45,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.BinaryReference;
 
 final class UpdateContentCommand
@@ -272,7 +273,8 @@ final class UpdateContentCommand
     private void validateProjectAccess( final Content originalContent, final Content editedContent )
     {
         if ( originalContent instanceof Site originalSite && editedContent instanceof Site editedSite &&
-            !Objects.equals( originalSite.getSiteConfigs(), editedSite.getSiteConfigs() ) )
+            !Objects.equals( SiteConfigsDataSerializer.fromData( originalSite.getData().getRoot() ),
+                             SiteConfigsDataSerializer.fromData( editedSite.getData().getRoot() ) ) )
         {
             final Context context = ContextAccessor.current();
             final AuthenticationInfo authInfo = context.getAuthInfo();

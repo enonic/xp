@@ -17,6 +17,8 @@ import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -292,6 +294,16 @@ public class SlashApiHandlerTest
         assertEquals( "Method CONNECT not allowed", ex.getMessage() );
     }
 
+    private static void mockDataWithSiteConfig( final ApplicationKey applicationKey, final Site site )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet appConfig = data.addSet( ContentPropertyNames.SITECONFIG );
+        appConfig.addString( "applicationKey", applicationKey.toString() );
+        appConfig.addSet( "config" );
+
+        when( site.getData() ).thenReturn( data );
+    }
+
     @Test
     void testSiteMountApplicationDoesNotInstalledToSiteAndProject()
     {
@@ -313,9 +325,11 @@ public class SlashApiHandlerTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        mockDataWithSiteConfig( applicationKey, site );
+
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn( SiteConfigs.empty() );
 
         request.setSite( site );
 
@@ -353,10 +367,11 @@ public class SlashApiHandlerTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        mockDataWithSiteConfig( applicationKey, site );
+
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
         request.setSite( site );
 
@@ -387,10 +402,11 @@ public class SlashApiHandlerTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        mockDataWithSiteConfig( applicationKey, site );
+
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
         request.setSite( site );
 
@@ -426,10 +442,11 @@ public class SlashApiHandlerTest
 
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        mockDataWithSiteConfig( applicationKey, site );
+
         when( site.getPermissions() ).thenReturn(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
 
         request.setSite( site );
 
@@ -445,45 +462,6 @@ public class SlashApiHandlerTest
         assertEquals( site, request.getSite() );
         assertNull( request.getContent() );
         assertEquals( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1", request.getContextPath() );
-    }
-
-    @Test
-    void testSiteMountApiDefinedIdApis()
-        throws Exception
-    {
-        request.setBaseUri( "/site" );
-        request.setContentPath( ContentPath.from( "/mysite" ) );
-        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key-1" );
-        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1" );
-        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
-        request.setBranch( Branch.from( "master" ) );
-
-        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
-
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key-1" );
-
-        final ApiDescriptor apiDescriptor =
-            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
-
-        when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-        when( site.getPermissions() ).thenReturn(
-            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-        when( site.getSiteConfigs() ).thenReturn(
-            SiteConfigs.create().add( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() ).build() );
-
-        request.setSite( site );
-
-        final DescriptorKeys siteApiMountDescriptors =
-            DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
-
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
-        when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
-
-        WebResponse response = this.handler.handle( request );
-        assertEquals( HttpStatus.OK, response.getStatus() );
     }
 
     @Test
@@ -802,6 +780,47 @@ public class SlashApiHandlerTest
         assertNull( request.getSite() );
         assertNull( request.getContent() );
     }
+
+    @Test
+    void testSiteMountApiDefinedIdApis()
+        throws Exception
+    {
+        request.setBaseUri( "/site" );
+        request.setContentPath( ContentPath.from( "/mysite" ) );
+        request.setEndpointPath( "/_/com.enonic.app.myapp:api-key-1" );
+        request.setRawPath( "/site/project/master/mysite/_/com.enonic.app.myapp:api-key-1" );
+        request.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
+        request.setBranch( Branch.from( "master" ) );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+
+        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, "api-key-1" );
+
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( descriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+
+        when( apiDescriptorService.getByKey( eq( descriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+
+        mockDataWithSiteConfig( applicationKey, site );
+
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+        request.setSite( site );
+
+        final DescriptorKeys siteApiMountDescriptors =
+            DescriptorKeys.from( DescriptorKey.from( applicationKey, "api-key-1" ), DescriptorKey.from( applicationKey, "api-key-2" ) );
+
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().apiMounts( siteApiMountDescriptors ).build();
+        when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( siteDescriptor );
+
+        WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
 
     private static final class MyUniversalApiHandler
         implements UniversalApiHandler

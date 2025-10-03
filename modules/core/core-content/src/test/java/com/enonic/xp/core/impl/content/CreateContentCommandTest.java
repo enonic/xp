@@ -40,6 +40,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -586,10 +587,12 @@ public class CreateContentCommandTest
         // exercise
         final Site createdContent = (Site) command.execute();
         assertNotNull( createdContent );
-        assertNotNull( createdContent.getSiteConfigs() );
-        assertEquals( 1, createdContent.getSiteConfigs().getSize() );
-        assertEquals( "value1", createdContent.getSiteConfigs().get( 0 ).getApplicationKey().toString() );
-        assertEquals( "value2", createdContent.getSiteConfigs().get( 0 ).getConfig().getString( "key" ) );
+        assertNotNull( SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ) );
+        assertEquals( 1, SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ).getSize() );
+        assertEquals( "value1",
+                      SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ).get( 0 ).getApplicationKey().toString() );
+        assertEquals( "value2",
+                      SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ).get( 0 ).getConfig().getString( "key" ) );
     }
 
     private CreateContentParams.Builder createContentParams()

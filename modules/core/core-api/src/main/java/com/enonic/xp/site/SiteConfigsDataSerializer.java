@@ -9,37 +9,32 @@ import com.enonic.xp.data.PropertySet;
 @PublicApi
 public final class SiteConfigsDataSerializer
 {
-    public void toProperties( final SiteConfigs siteConfigs, final PropertySet parentSet )
+    private SiteConfigsDataSerializer()
+    {
+    }
+
+    public static void toData( final SiteConfigs siteConfigs, final PropertySet parentSet )
     {
         for ( final SiteConfig siteConfig : siteConfigs )
         {
-            toProperties( siteConfig, parentSet );
+            final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+            siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+            siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
         }
     }
 
-    public void toProperties( final SiteConfig siteConfig, PropertySet parentSet )
-    {
-        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
-        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
-        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
-    }
-
-    public SiteConfigs getConfigs( final PropertySet data )
+    public static SiteConfigs fromData( final PropertySet data )
     {
         final SiteConfigs.Builder builder = SiteConfigs.create();
         for ( final Property siteConfigAsProperty : data.getProperties( "siteConfig" ) )
         {
-            final SiteConfig siteConfig = getConfig( siteConfigAsProperty.getSet() );
-            builder.add( siteConfig );
+            final PropertySet siteConfigSet = siteConfigAsProperty.getSet();
+
+            builder.add( SiteConfig.create()
+                             .application( ApplicationKey.from( siteConfigAsProperty.getSet().getString( "applicationKey" ) ) )
+                             .config( siteConfigSet.getSet( "config" ).toTree() )
+                             .build() );
         }
         return builder.build();
-    }
-
-    public SiteConfig getConfig( final PropertySet siteConfigAsSet )
-    {
-        return SiteConfig.create()
-            .application( ApplicationKey.from( siteConfigAsSet.getString( "applicationKey" ) ) )
-            .config( siteConfigAsSet.getSet( "config" ).toTree() )
-            .build();
     }
 }

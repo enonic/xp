@@ -82,8 +82,6 @@ public class ProjectServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( ProjectServiceImpl.class );
 
-    private static final SiteConfigsDataSerializer SITE_CONFIGS_DATA_SERIALIZER = new SiteConfigsDataSerializer();
-
     private final RepositoryService repositoryService;
 
     private final IndexService indexService;
@@ -652,7 +650,7 @@ public class ProjectServiceImpl
 
         if ( !params.getSiteConfigs().isEmpty() )
         {
-            SITE_CONFIGS_DATA_SERIALIZER.toProperties( params.getSiteConfigs(), contentRootData );
+            SiteConfigsDataSerializer.toData( params.getSiteConfigs(), contentRootData );
         }
 
         return data;
@@ -676,7 +674,7 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
     {
-        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) ).map( SITE_CONFIGS_DATA_SERIALIZER::getConfigs )
+        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) ).map( SiteConfigsDataSerializer::fromData )
             .orElse( SiteConfigs.empty() );
     }
 
@@ -689,7 +687,7 @@ public class ProjectServiceImpl
                 throw new IllegalStateException( "Cannot update project config" );
             }
             data.removeProperties( ContentPropertyNames.SITECONFIG );
-            SITE_CONFIGS_DATA_SERIALIZER.toProperties( siteConfigs, data );
+            SiteConfigsDataSerializer.toData( siteConfigs, data );
         };
         final UpdateNodeParams build = UpdateNodeParams.create().path( ContentConstants.CONTENT_ROOT_PATH ).editor( editor ).build();
         return contentRootDataContext( projectName ).callWith( () -> nodeService.update( build ) );

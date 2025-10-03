@@ -6,11 +6,11 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
@@ -47,9 +47,18 @@ public class ProcessorChainResolverTest
 
         final PropertyTree siteData = new PropertyTree();
 
-        new SiteConfigsDataSerializer().toProperties( sc1, siteData.getRoot() );
-        new SiteConfigsDataSerializer().toProperties( sc2, siteData.getRoot() );
-        new SiteConfigsDataSerializer().toProperties( sc3, siteData.getRoot() );
+        PropertySet parentSet2 = siteData.getRoot();
+        final PropertySet siteConfigAsSet2 = parentSet2.addSet( "siteConfig" );
+        siteConfigAsSet2.addString( "applicationKey", sc1.getApplicationKey().toString() );
+        siteConfigAsSet2.addSet( "config", sc1.getConfig().getRoot().copy( parentSet2.getTree() ) );
+        PropertySet parentSet1 = siteData.getRoot();
+        final PropertySet siteConfigAsSet1 = parentSet1.addSet( "siteConfig" );
+        siteConfigAsSet1.addString( "applicationKey", sc2.getApplicationKey().toString() );
+        siteConfigAsSet1.addSet( "config", sc2.getConfig().getRoot().copy( parentSet1.getTree() ) );
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", sc3.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", sc3.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         portalRequest.setSite( Site.create().data( siteData ).name( "Site" ).path( "/site" ).parentPath( ContentPath.ROOT ).build() );
 

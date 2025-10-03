@@ -15,6 +15,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 public final class GetSiteConfigHandler
     extends BaseContextHandler
@@ -37,7 +38,8 @@ public final class GetSiteConfigHandler
             siteSupplier = () -> contentService.getNearestSite( ContentId.from( key ) );
         }
         return Optional.ofNullable( callAsContentAdmin( siteSupplier::get ) )
-            .flatMap( site -> Optional.ofNullable( site.getSiteConfigs().get( ApplicationKey.from( applicationKey ) ) ) )
+            .flatMap( site -> Optional.ofNullable(
+                SiteConfigsDataSerializer.fromData( site.getData().getRoot() ).get( ApplicationKey.from( applicationKey ) ) ) )
             .map( SiteConfig::getConfig )
             .map( PropertyTreeMapper::new )
             .orElse( null );

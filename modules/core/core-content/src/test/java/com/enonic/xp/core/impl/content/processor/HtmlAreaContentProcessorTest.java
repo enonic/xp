@@ -48,7 +48,6 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -215,8 +214,11 @@ public class HtmlAreaContentProcessorTest
 
         final PropertyTree siteData = new PropertyTree();
 
-        new SiteConfigsDataSerializer().toProperties( SiteConfig.create().config( data ).application( ApplicationKey.SYSTEM ).build(),
-                                                      siteData.getRoot() );
+        final SiteConfig siteConfig = SiteConfig.create().config( data ).application( ApplicationKey.SYSTEM ).build();
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Site.create()

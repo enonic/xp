@@ -68,7 +68,7 @@ public class CreateNodeParamsFactory
         final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
 
         final SiteConfigs siteConfigs =
-            new SiteConfigsDataSerializer().getConfigs( contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) );
+            SiteConfigsDataSerializer.fromData( contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) );
 
         final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 

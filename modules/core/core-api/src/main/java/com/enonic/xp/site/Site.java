@@ -19,11 +19,6 @@ public final class Site
         return this.getData().getString( "description" );
     }
 
-    public SiteConfigs getSiteConfigs()
-    {
-        return new SiteConfigsDataSerializer().getConfigs( this.getData().getRoot() );
-    }
-
     @Override
     public boolean equals( final Object o )
     {

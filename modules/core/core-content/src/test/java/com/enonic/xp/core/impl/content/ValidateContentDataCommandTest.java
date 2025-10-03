@@ -124,7 +124,7 @@ public class ValidateContentDataCommandTest
         siteConfigDataSet.setString( "textInput-1", "test" );
 
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
-        new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
         Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
 
@@ -219,7 +219,7 @@ public class ValidateContentDataCommandTest
         siteConfigDataSet.setString( "textInput-1", "1234" );
 
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
-        new SiteConfigsDataSerializer().toProperties( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
         Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
 

@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.Page;
@@ -36,7 +37,6 @@ import com.enonic.xp.service.ServiceDescriptor;
 import com.enonic.xp.service.ServiceDescriptorService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -288,7 +288,10 @@ public class ServiceHandlerTest
         final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "demo" ) ).config( new PropertyTree() ).build();
 
         final PropertyTree siteData = new PropertyTree();
-        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         return Site.create().data( siteData )
             .id( ContentId.from( id ) )

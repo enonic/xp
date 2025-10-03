@@ -32,6 +32,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -162,8 +163,7 @@ public final class ExceptionRendererImpl
 
         if ( PortalRequestHelper.isSiteBase( req ) )
         {
-            final SiteConfigs siteConfigs = req.getSite() != null
-                ? req.getSite().getSiteConfigs()
+            final SiteConfigs siteConfigs = req.getSite() != null ? SiteConfigsDataSerializer.fromData( req.getSite().getData().getRoot() )
                 : req.getProject() != null ? req.getProject().getSiteConfigs() : SiteConfigs.empty();
 
             for ( SiteConfig siteConfig : siteConfigs )

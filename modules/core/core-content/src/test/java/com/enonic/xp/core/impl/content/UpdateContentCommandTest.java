@@ -31,6 +31,7 @@ import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -60,7 +61,6 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -161,8 +161,11 @@ public class UpdateContentCommandTest
     {
         final PropertyTree data = new PropertyTree();
 
-        new SiteConfigsDataSerializer().toProperties(
-            SiteConfig.create().config( new PropertyTree() ).application( ApplicationKey.SYSTEM ).build(), data.getRoot() );
+        final SiteConfig siteConfig = SiteConfig.create().config( new PropertyTree() ).application( ApplicationKey.SYSTEM ).build();
+        PropertySet parentSet = data.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         final Content existingContent = Site.create()
             .id( ContentId.from( "mycontent" ) )

@@ -98,7 +98,7 @@ class ImageServiceMappingHandlerTest
     private void setupContentInsideSite( final SiteConfigs siteConfigs )
     {
         final PropertyTree siteData = new PropertyTree();
-        new SiteConfigsDataSerializer().toProperties( siteConfigs, siteData.getRoot() );
+        SiteConfigsDataSerializer.toData( siteConfigs, siteData.getRoot() );
 
         final Site site = Site.create().name( "my-site" ).parentPath( ContentPath.ROOT ).data( siteData ).build();
         final Content content = Content.create().name( "my-content" ).parentPath( site.getPath() ).build();

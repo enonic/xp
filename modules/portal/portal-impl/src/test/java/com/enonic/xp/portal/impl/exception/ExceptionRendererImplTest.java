@@ -18,6 +18,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -37,7 +38,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -355,7 +355,10 @@ class ExceptionRendererImplTest
             SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( siteConfigConfig ).build();
 
         final PropertyTree siteData = new PropertyTree();
-        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         final Site.Builder site = Site.create();
         site.id( ContentId.from( "100123" ) );

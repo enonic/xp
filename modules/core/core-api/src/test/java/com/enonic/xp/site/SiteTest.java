@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,9 +50,12 @@ public class SiteTest
     {
         final PropertyTree siteData = new PropertyTree();
 
-        new SiteConfigsDataSerializer().toProperties(
-            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build(),
-            siteData.getRoot() );
+        final SiteConfig siteConfig =
+            SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build();
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         final Site site = Site.create().
             name( "my-content" ).
@@ -71,16 +75,21 @@ public class SiteTest
         final SiteConfig siteConfig =
             SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build();
 
-        new SiteConfigsDataSerializer().toProperties( siteConfig, siteData.getRoot() );
+        PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
 
         final Site site = Site.create().name( "my-content" ).data( siteData ).
             parentPath( ContentPath.ROOT ).
             build();
 
-        final SiteConfigs siteConfigs = site.getSiteConfigs();
+        final SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         assertNotNull( siteConfigs );
         assertEquals( 1, siteConfigs.getSize() );
-        assertEquals( siteConfigs.get( 0 ).getConfig(), site.getSiteConfigs().get( ApplicationKey.from( "myapplication" ) ).getConfig() );
+        assertEquals( siteConfigs.get( 0 ).getConfig(), SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
+            .get( ApplicationKey.from( "myapplication" ) )
+            .getConfig() );
         assertNotNull( siteConfigs.get( ApplicationKey.from( "myapplication" ) ) );
         assertTrue( SiteConfigs.empty().isEmpty() );
         assertEquals( 1, SiteConfigs.from( siteConfig ).getSize() );

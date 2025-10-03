@@ -110,6 +110,7 @@ final class PageDataSerializer
         }
     }
 
+    @Override
     public Page fromData( final PropertySet asSet )
     {
         final List<PropertySet> componentsAsData = asSet.getProperties( COMPONENTS )

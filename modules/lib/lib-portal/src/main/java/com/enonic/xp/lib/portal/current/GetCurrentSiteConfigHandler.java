@@ -7,6 +7,7 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 public final class GetCurrentSiteConfigHandler
     implements ScriptBean
@@ -18,8 +19,8 @@ public final class GetCurrentSiteConfigHandler
         final ApplicationKey applicationKey = this.request.getApplicationKey();
         if ( applicationKey != null )
         {
-            final SiteConfigs siteConfigs = request.getSite() != null
-                ? request.getSite().getSiteConfigs()
+            final SiteConfigs siteConfigs = request.getSite() != null ? SiteConfigsDataSerializer.fromData(
+                request.getSite().getData().getRoot() )
                 : request.getProject() != null ? request.getProject().getSiteConfigs() : SiteConfigs.empty();
 
             final SiteConfig config = siteConfigs.get( applicationKey );

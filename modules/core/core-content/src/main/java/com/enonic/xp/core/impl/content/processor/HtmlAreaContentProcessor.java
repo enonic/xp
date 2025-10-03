@@ -47,6 +47,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
@@ -126,7 +127,7 @@ public class HtmlAreaContentProcessor
 
         if ( inputContent instanceof Site site )
         {
-            processSiteConfigData( site.getSiteConfigs(), processedIds );
+            processSiteConfigData( SiteConfigsDataSerializer.fromData( site.getData().getRoot() ), processedIds );
         }
         final Page page = processPageData( inputContent.getPage(), processedIds );
 

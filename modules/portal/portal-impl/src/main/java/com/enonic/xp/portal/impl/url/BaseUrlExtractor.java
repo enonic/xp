@@ -22,6 +22,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 record BaseUrlExtractor(ContentService contentService, ProjectService projectService)
 {
@@ -82,8 +83,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
                 site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
             }
 
-            final SiteConfigs siteConfigs = site != null
-                ? site.getSiteConfigs()
+            final SiteConfigs siteConfigs = site != null ? SiteConfigsDataSerializer.fromData( site.getData().getRoot() )
                 : Optional.ofNullable( projectService.get( projectName ) ).map( Project::getSiteConfigs ).orElse( SiteConfigs.empty() );
 
             if ( site != null )
