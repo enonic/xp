@@ -17,6 +17,8 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -31,14 +33,20 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
@@ -561,7 +569,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentWithSiteConfigs()
+    public void createContentWithSiteConfigs_success()
     {
         mockContentRootNode( "en" );
 
@@ -584,8 +592,22 @@ public class CreateContentCommandTest
         Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
             .thenReturn( ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
 
-        // exercise
-        final Site createdContent = (Site) command.execute();
+        final User repoOwner =
+            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "custom-user" ) ).login( "custom-user" ).build();
+
+        final ProjectName projectName = ProjectName.from( "test-project" );
+
+        final Site createdContent = ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( projectName.getRepoId() )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.AUTHENTICATED )
+                           .principals( RoleKeys.CONTENT_MANAGER_APP )
+                           .principals( ProjectAccessHelper.createRoleKey( projectName, ProjectRole.OWNER ) ) // важно!
+                           .user( repoOwner )
+                           .build() )
+            .build()
+            .callWith( () -> (Site) command.execute() );
+
         assertNotNull( createdContent );
         assertNotNull( SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ) );
         assertEquals( 1, SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ).getSize() );
@@ -593,6 +615,46 @@ public class CreateContentCommandTest
                       SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ).get( 0 ).getApplicationKey().toString() );
         assertEquals( "value2",
                       SiteConfigsDataSerializer.fromData( createdContent.getData().getRoot() ).get( 0 ).getConfig().getString( "key" ) );
+    }
+
+    @Test
+    public void createContentWithSiteConfigs_shouldFailWithoutOwnerRole()
+    {
+        mockContentRootNode( "en" );
+
+        final PropertyTree contentData = new PropertyTree();
+        final PropertySet siteConfig = contentData.addSet( ContentPropertyNames.SITECONFIG );
+        siteConfig.addString( "applicationKey", "value1" );
+        final PropertySet appConfig = siteConfig.addSet( "config" );
+        appConfig.addString( "key", "value2" );
+
+        final CreateContentParams params = CreateContentParams.create()
+            .type( ContentTypeName.site() )
+            .name( "site" )
+            .parent( ContentPath.from( "/" ) )
+            .contentData( contentData )
+            .displayName( "displayName" )
+            .build();
+
+        CreateContentCommand command = createContentCommand( params );
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) )
+            .thenReturn( ContentType.create().superType( ContentTypeName.documentMedia() ).name( ContentTypeName.dataMedia() ).build() );
+
+        final User repoOwner =
+            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "custom-user" ) ).login( "custom-user" ).build();
+
+        final ProjectName projectName = ProjectName.from( "test-project" );
+
+        assertThrows( Exception.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( projectName.getRepoId() )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.AUTHENTICATED )
+                           .principals( RoleKeys.CONTENT_MANAGER_APP )
+                           .user( repoOwner )
+                           .build() )
+            .build()
+            .callWith( () -> (Site) command.execute() ) );
     }
 
     private CreateContentParams.Builder createContentParams()
