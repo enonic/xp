@@ -6,13 +6,13 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 
 @PublicApi
-public final class UpdateDynamicSiteParams
+public final class UpdateDynamicCmsParams
 {
     private final ApplicationKey key;
 
     private final String resource;
 
-    private UpdateDynamicSiteParams( final Builder builder )
+    private UpdateDynamicCmsParams( final Builder builder )
     {
         this.key = builder.key;
         this.resource = builder.resource;
@@ -61,10 +61,10 @@ public final class UpdateDynamicSiteParams
             Objects.requireNonNull( resource, "resource is required" );
         }
 
-        public UpdateDynamicSiteParams build()
+        public UpdateDynamicCmsParams build()
         {
             validate();
-            return new UpdateDynamicSiteParams( this );
+            return new UpdateDynamicCmsParams( this );
         }
     }
 }

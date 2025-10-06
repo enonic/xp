@@ -357,7 +357,8 @@ public class MappingHandlerTest
         when( pageDescriptorService.getByKey( pageTemplate.getController() ) ).thenReturn( createPageDescriptor() );
 
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping );
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).mappingDescriptors( mappings ).build();
         when( this.siteService.getDescriptor( any( ApplicationKey.class ) ) ).thenReturn( siteDescriptor );
     }
 
@@ -386,14 +387,18 @@ public class MappingHandlerTest
             this.request.setSite( site );
 
             final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
-            final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
+            final SiteDescriptor siteDescriptor =
+                SiteDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).mappingDescriptors( siteMappings ).build();
             when( this.siteService.getDescriptor( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( siteDescriptor );
         }
 
         if ( projectMapping != null )
         {
             final ControllerMappingDescriptors projectMappings = ControllerMappingDescriptors.from( projectMapping );
-            final SiteDescriptor projectDescriptor = SiteDescriptor.create().mappingDescriptors( projectMappings ).build();
+            final SiteDescriptor projectDescriptor = SiteDescriptor.create()
+                .applicationKey( ApplicationKey.from( "project-app1" ) )
+                .mappingDescriptors( projectMappings )
+                .build();
             when( this.siteService.getDescriptor( eq( ApplicationKey.from( "project-app1" ) ) ) ).thenReturn( projectDescriptor );
         }
     }

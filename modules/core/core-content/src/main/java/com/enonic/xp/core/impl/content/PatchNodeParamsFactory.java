@@ -21,8 +21,8 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteService;
 
 public class PatchNodeParamsFactory
 {
@@ -40,7 +40,7 @@ public class PatchNodeParamsFactory
 
     private final LayoutDescriptorService layoutDescriptorService;
 
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     private final ContentDataSerializer contentDataSerializer;
 
@@ -56,7 +56,7 @@ public class PatchNodeParamsFactory
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.contentDataSerializer = builder.contentDataSerializer;
-        this.siteService = builder.siteService;
+        this.cmsService = builder.cmsService;
         branches = Branches.from( builder.branches.build() );
     }
 
@@ -91,7 +91,7 @@ public class PatchNodeParamsFactory
             .pageDescriptorService( pageDescriptorService )
             .partDescriptorService( partDescriptorService )
             .layoutDescriptorService( layoutDescriptorService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .contentTypeName( editedContent.getType() )
             .page( editedContent.getPage() )
@@ -127,7 +127,7 @@ public class PatchNodeParamsFactory
 
         private ContentDataSerializer contentDataSerializer;
 
-        private SiteService siteService;
+        private CmsService cmsService;
 
         Builder editedContent( final Content editedContent )
         {
@@ -177,9 +177,9 @@ public class PatchNodeParamsFactory
             return this;
         }
 
-        Builder siteService( final SiteService value )
+        Builder cmsService( final CmsService value )
         {
-            this.siteService = value;
+            this.cmsService = value;
             return this;
         }
 

@@ -3,18 +3,18 @@ package com.enonic.xp.lib.schema.mapper;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
 
-public class SiteDescriptorMapper
+public class CmsDescriptorMapper
     implements MapSerializable
 {
-    private final SiteDescriptor descriptor;
+    private final CmsDescriptor descriptor;
 
     private final Resource resource;
 
-    public SiteDescriptorMapper( final SiteDescriptor descriptor, final Resource resource )
+    public CmsDescriptorMapper( final CmsDescriptor descriptor, final Resource resource )
     {
         this.descriptor = descriptor;
         this.resource = resource;
@@ -29,7 +29,6 @@ public class SiteDescriptorMapper
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
         serializeXDataMappings( gen, descriptor.getXDataMappings() );
-
     }
 
     private void serializeXDataMappings( final MapGenerator gen, final XDataMappings xDataMappings )

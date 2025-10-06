@@ -53,11 +53,11 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,7 +76,7 @@ public class HtmlAreaContentProcessorTest
 
     private XDataService xDataService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -93,7 +93,7 @@ public class HtmlAreaContentProcessorTest
         throws Exception
     {
 
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
@@ -118,7 +118,7 @@ public class HtmlAreaContentProcessorTest
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
-        htmlAreaContentProcessor.setSiteService( siteService );
+        htmlAreaContentProcessor.setCmsService( cmsService );
         htmlAreaContentProcessor.setXDataService( xDataService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
@@ -215,40 +215,41 @@ public class HtmlAreaContentProcessorTest
 
         Assertions.assertThat( editableContent.processedReferences.build() )
             .containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
-                       ContentId.from( "image-id4" ) );
+                              ContentId.from( "image-id4" ) );
     }
 
     @Test
     public void site_config_data()
         throws IOException
     {
-        when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
-            .thenReturn( SiteDescriptor.create()
-                             .form( Form.create()
-                                        .addFormItem( Input.create()
-                                                          .name( "htmlData" )
-                                                          .label( "htmlData" )
-                                                          .inputType( InputTypeName.HTML_AREA )
-                                                          .build() )
-                                        .build() )
-                             .build() );
+        when( cmsService.getDescriptor( ApplicationKey.SYSTEM ) ).thenReturn( CmsDescriptor.create()
+                                                                                  .applicationKey( ApplicationKey.SYSTEM )
+                                                                                  .form( Form.create()
+                                                                                             .addFormItem( Input.create()
+                                                                                                               .name( "htmlData" )
+                                                                                                               .label( "htmlData" )
+                                                                                                               .inputType(
+                                                                                                                   InputTypeName.HTML_AREA )
+                                                                                                               .build() )
+                                                                                             .build() )
+                                                                                  .build() );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
         final EditableContent editableSite = new EditableContent( Site.create()
-                                                                .name( "myContentName" )
-                                                                .type( ContentTypeName.site() )
-                                                                .parentPath( ContentPath.ROOT )
-                                                                .data( new PropertyTree() )
-                                                                .siteConfigs( SiteConfigs.create()
-                                                                                  .add( SiteConfig.create()
-                                                                                            .config( data )
-                                                                                            .application( ApplicationKey.SYSTEM )
-                                                                                            .build() )
-                                                                                  .build() )
-                                                                .build() );
+                                                                      .name( "myContentName" )
+                                                                      .type( ContentTypeName.site() )
+                                                                      .parentPath( ContentPath.ROOT )
+                                                                      .data( new PropertyTree() )
+                                                                      .siteConfigs( SiteConfigs.create()
+                                                                                        .add( SiteConfig.create()
+                                                                                                  .config( data )
+                                                                                                  .application( ApplicationKey.SYSTEM )
+                                                                                                  .build() )
+                                                                                        .build() )
+                                                                      .build() );
 
         result.getEditor().edit( editableSite );
 
@@ -274,15 +275,15 @@ public class HtmlAreaContentProcessorTest
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
 
         final EditableContent editableSite = new EditableContent( Site.create()
-                                                                .name( "myContentName" )
-                                                                .type( ContentTypeName.site() )
-                                                                .parentPath( ContentPath.ROOT )
-                                                                .data( new PropertyTree() )
-                                                                .extraDatas( ExtraDatas.create()
-                                                                                 .add(
-                                                                                     new ExtraData( XDataName.from( "xDataName" ), data ) )
-                                                                                 .build() )
-                                                                .build() );
+                                                                      .name( "myContentName" )
+                                                                      .type( ContentTypeName.site() )
+                                                                      .parentPath( ContentPath.ROOT )
+                                                                      .data( new PropertyTree() )
+                                                                      .extraDatas( ExtraDatas.create()
+                                                                                       .add( new ExtraData( XDataName.from( "xDataName" ),
+                                                                                                            data ) )
+                                                                                       .build() )
+                                                                      .build() );
 
         result.getEditor().edit( editableSite );
 
@@ -561,7 +562,7 @@ public class HtmlAreaContentProcessorTest
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
-        htmlAreaContentProcessor.setSiteService( siteService );
+        htmlAreaContentProcessor.setCmsService( cmsService );
         htmlAreaContentProcessor.setXDataService( xDataService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );

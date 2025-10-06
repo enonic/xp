@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.parser.YmlCmsDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
@@ -23,10 +24,8 @@ import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlSiteParser;
 
 final class DynamicResourceParser
 {
@@ -60,9 +59,9 @@ final class DynamicResourceParser
         }
     }
 
-    SiteDescriptor parseSite( final ApplicationKey applicationKey, final String resource )
+    CmsDescriptor parseCms( final ApplicationKey applicationKey, final String resource )
     {
-        return parseSiteDescriptor( applicationKey, resource );
+        return parseCmsDescriptor( applicationKey, resource );
     }
 
     StyleDescriptor parseStyles( final ApplicationKey applicationKey, final String resource )
@@ -112,24 +111,9 @@ final class DynamicResourceParser
         return YmlXDataParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
-    private SiteDescriptor parseSiteDescriptor( final ApplicationKey applicationKey, final String resource )
+    private CmsDescriptor parseCmsDescriptor( final ApplicationKey applicationKey, final String resource )
     {
-        final SiteDescriptor.Builder builder = SiteDescriptor.create();
-        try
-        {
-            final XmlSiteParser parser = new XmlSiteParser();
-            parser.currentApplication( applicationKey );
-            parser.source( resource );
-            parser.siteDescriptorBuilder( builder );
-            parser.parse();
-
-            builder.applicationKey( applicationKey );
-        }
-        catch ( Exception e )
-        {
-            throw new XmlException( e, "Could not parse dynamic site descriptor, application key: [" + applicationKey + "]" );
-        }
-        return builder.build();
+        return YmlCmsDescriptorParser.parse( resource, applicationKey ).build();
     }
 
     private StyleDescriptor parseStylesDescriptor( final ApplicationKey applicationKey, final String resource )

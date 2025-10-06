@@ -21,9 +21,9 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteService;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -43,7 +43,7 @@ public class CreateNodeParamsFactory
 
     private final LayoutDescriptorService layoutDescriptorService;
 
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     private final ContentDataSerializer contentDataSerializer;
 
@@ -52,7 +52,7 @@ public class CreateNodeParamsFactory
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
         this.xDataService = builder.xDataService;
-        this.siteService = builder.siteService;
+        this.cmsService = builder.cmsService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
@@ -67,27 +67,27 @@ public class CreateNodeParamsFactory
 
         final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
 
-        final SiteConfigs siteConfigs = new SiteConfigsDataSerializer().fromProperties(
-            contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) ).build();
+        final SiteConfigs siteConfigs =
+            new SiteConfigsDataSerializer().fromProperties( contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) )
+                .build();
 
         final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
         final ExtraDatas extraData = extraDataSet != null ? contentDataSerializer.fromExtraData( extraDataSet ) : null;
 
-        final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create().
-            contentTypeName( params.getType() ).
-            siteConfigs( siteConfigs ).
-            siteService( siteService ).
-            xDataService( xDataService ).
-            contentTypeService( contentTypeService );
+        final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create()
+            .contentTypeName( params.getType() )
+            .siteConfigs( siteConfigs )
+            .cmsService( cmsService )
+            .xDataService( xDataService )
+            .contentTypeService( contentTypeService );
 
         if ( page != null )
         {
-            indexConfigFactoryBuilder.
-                page( page ).
-                pageDescriptorService( pageDescriptorService ).
-                partDescriptorService( partDescriptorService ).
-                layoutDescriptorService( layoutDescriptorService );
+            indexConfigFactoryBuilder.page( page )
+                .pageDescriptorService( pageDescriptorService )
+                .partDescriptorService( partDescriptorService )
+                .layoutDescriptorService( layoutDescriptorService );
         }
 
         if ( extraData != null )
@@ -102,15 +102,15 @@ public class CreateNodeParamsFactory
 
         final IndexConfigDocument indexConfigDocument = indexConfigFactoryBuilder.build().produce();
 
-        final CreateNodeParams.Builder builder = CreateNodeParams.create().
-            name( resolveNodeName( params.getName() ) ).
-            parent( ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) ).
-            data( contentAsData ).
-            indexConfigDocument( indexConfigDocument ).
-            permissions( params.getPermissions() ).
-            inheritPermissions( params.isInheritPermissions() ).
-            childOrder( params.getChildOrder() ).
-            nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
+        final CreateNodeParams.Builder builder = CreateNodeParams.create()
+            .name( resolveNodeName( params.getName() ) )
+            .parent( ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) )
+            .data( contentAsData )
+            .indexConfigDocument( indexConfigDocument )
+            .permissions( params.getPermissions() )
+            .inheritPermissions( params.isInheritPermissions() )
+            .childOrder( params.getChildOrder() )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION );
 
         for ( final CreateAttachment attachment : params.getCreateAttachments() )
         {
@@ -151,7 +151,7 @@ public class CreateNodeParamsFactory
 
         private ContentDataSerializer contentDataSerializer;
 
-        private SiteService siteService;
+        private CmsService cmsService;
 
         Builder( final CreateContentTranslatorParams params )
         {
@@ -176,9 +176,9 @@ public class CreateNodeParamsFactory
             return this;
         }
 
-        Builder siteService( final SiteService value )
+        Builder cmsService( final CmsService value )
         {
-            this.siteService = value;
+            this.cmsService = value;
             return this;
         }
 
@@ -205,7 +205,7 @@ public class CreateNodeParamsFactory
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( contentTypeService );
             Objects.requireNonNull( pageDescriptorService );
-            Objects.requireNonNull( siteService );
+            Objects.requireNonNull( cmsService );
             Objects.requireNonNull( xDataService );
             Objects.requireNonNull( contentDataSerializer );
         }

@@ -23,7 +23,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,7 +35,7 @@ public class UpdateContentCommandTest
 
     private final XDataService xDataService = Mockito.mock( XDataService.class );
 
-    private final SiteService siteService = Mockito.mock( SiteService.class );
+    private final CmsService cmsService = Mockito.mock( CmsService.class );
 
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
@@ -65,13 +65,13 @@ public class UpdateContentCommandTest
             .eventPublisher( this.eventPublisher )
             .mediaInfo( this.mediaInfo )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build();
 
         Mockito.when( nodeService.getById( Mockito.isA( NodeId.class ) ) ).thenThrow( new NodeNotFoundException( "Node not found" ) );
 
         // exercise
-        assertThrows( ContentNotFoundException.class, () -> command.execute() );
+        assertThrows( ContentNotFoundException.class, command::execute );
     }
 
 
@@ -95,7 +95,7 @@ public class UpdateContentCommandTest
             .eventPublisher( this.eventPublisher )
             .mediaInfo( this.mediaInfo )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build();
 
         final Node mockNode = Node.create().build();

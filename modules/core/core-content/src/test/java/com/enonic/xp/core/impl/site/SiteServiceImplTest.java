@@ -3,43 +3,26 @@ package com.enonic.xp.core.impl.site;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.XDataMappings;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SiteServiceImplTest
     extends ApplicationTestSupport
 {
-    protected MixinService mixinService;
-
     protected SiteServiceImpl service;
 
     @Override
     protected void initialize()
     {
-        this.mixinService = mock( MixinService.class );
-        when( this.mixinService.inlineFormItems( Mockito.any() ) ).
-            thenAnswer( ( invocation ) -> invocation.getArguments()[0] );
         addApplication( "myapp", "/apps/myapp" );
 
-        this.service = new SiteServiceImpl();
-        this.service.setResourceService( this.resourceService );
-        this.service.setMixinService( this.mixinService );
+        this.service = new SiteServiceImpl( resourceService );
     }
 
     @Test
@@ -47,8 +30,6 @@ public class SiteServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
-        assertEquals( 1, siteDescriptor.getForm().size() );
-        assertEquals( 2, siteDescriptor.getXDataMappings().getSize() );
         assertEquals( 2, siteDescriptor.getResponseProcessors().getSize() );
         assertEquals( "filter1", siteDescriptor.getResponseProcessors().get( 0 ).getName() );
         assertEquals( 20, siteDescriptor.getResponseProcessors().get( 1 ).getOrder() );
@@ -61,17 +42,7 @@ public class SiteServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.PORTAL;
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
 
-        final Form formItems = siteDescriptor.getForm();
-        assertEquals( 1, formItems.size() );
-        final Input baseUrl = formItems.getInput( "baseUrl" );
-        assertThat( baseUrl ).extracting( Input::getInputType, Input::getLabel, Input::getLabelI18nKey )
-            .containsExactly( InputTypeName.TEXT_LINE, "Base URL", "portal.baseUrl.label" );
-
-        // XDataMappings checks
-        final XDataMappings xdataMappings = siteDescriptor.getXDataMappings();
-
-        assertThat( xdataMappings.getNames() ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
-                                                                MediaInfo.GPS_INFO_METADATA_NAME );
+        assertNull( siteDescriptor );
     }
 
     @Test

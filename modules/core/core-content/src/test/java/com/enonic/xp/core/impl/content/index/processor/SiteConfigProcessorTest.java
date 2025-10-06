@@ -15,17 +15,17 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SiteConfigProcessorTest
 {
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private ApplicationKey applicationKey1;
 
@@ -35,7 +35,7 @@ public class SiteConfigProcessorTest
     public void setUp()
         throws Exception
     {
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.applicationKey1 = ApplicationKey.from( "applicationKey1" );
         this.applicationKey2 = ApplicationKey.from( "applicationKey2" );
     }
@@ -52,64 +52,69 @@ public class SiteConfigProcessorTest
     public void test_site_config_with_html_area()
         throws Exception
     {
-        final Form form = Form.create().
-            addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).
-            build();
+        final Form form = Form.create()
+            .addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
 
-        final SiteConfigs siteConfigs = SiteConfigs.create().
-            add( SiteConfig.create().application( applicationKey1 ).config( new PropertyTree() ).build() ).
-            build();
+        final SiteConfigs siteConfigs =
+            SiteConfigs.create().add( SiteConfig.create().application( applicationKey1 ).config( new PropertyTree() ).build() ).build();
 
         final PatternIndexConfigDocument result = processConfigs( siteConfigs, form );
         assertEquals( 1, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper", result.getConfigForPath(
-            IndexPath.from( String.join( ".",  ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+                IndexPath.from( String.join( ".", ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
     }
 
     @Test
     public void test_multiple_site_configs_with_html_areas()
         throws Exception
     {
-        final Form form1 = Form.create().
-            addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).
-            build();
-        final Form form2 = Form.create().
-            addFormItem( Input.create().name( "text2" ).label( "text2" ).inputType( InputTypeName.HTML_AREA ).build() ).
-            build();
+        final Form form1 = Form.create()
+            .addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
+        final Form form2 = Form.create()
+            .addFormItem( Input.create().name( "text2" ).label( "text2" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
 
-        final SiteConfigs siteConfigs = SiteConfigs.create().
-            add( SiteConfig.create().application( applicationKey1 ).config( new PropertyTree() ).build() ).
-            add( SiteConfig.create().application( applicationKey2 ).config( new PropertyTree() ).build() ).
-            build();
+        final SiteConfigs siteConfigs = SiteConfigs.create()
+            .add( SiteConfig.create().application( applicationKey1 ).config( new PropertyTree() ).build() )
+            .add( SiteConfig.create().application( applicationKey2 ).config( new PropertyTree() ).build() )
+            .build();
 
         final PatternIndexConfigDocument result = processConfigs( siteConfigs, form1, form2 );
         assertEquals( 2, result.getPathIndexConfigs().size() );
 
         assertEquals( "htmlStripper", result.getConfigForPath(
-            IndexPath.from( String.join( ".",  ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+                IndexPath.from( String.join( ".", ContentPropertyNames.DATA, SITECONFIG, "config", "text1" ) ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
 
         assertEquals( "htmlStripper", result.getConfigForPath(
-            IndexPath.from( String.join( ".", ContentPropertyNames.DATA, SITECONFIG, "config", "text2" ) ) ).getIndexValueProcessors().get(
-            0 ).getName() );
+                IndexPath.from( String.join( ".", ContentPropertyNames.DATA, SITECONFIG, "config", "text2" ) ) )
+            .getIndexValueProcessors()
+            .get( 0 )
+            .getName() );
     }
 
     @Test
     public void test_multiple_site_configs_with_same_path()
         throws Exception
     {
-        final Form form1 = Form.create().
-            addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).
-            build();
-        final Form form2 = Form.create().
-            addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).
-            build();
+        final Form form1 = Form.create()
+            .addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
+        final Form form2 = Form.create()
+            .addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() )
+            .build();
 
-        final SiteConfigs siteConfigs = SiteConfigs.create().
-            add( SiteConfig.create().application( applicationKey1 ).config( new PropertyTree() ).build() ).
-            add( SiteConfig.create().application( applicationKey2 ).config( new PropertyTree() ).build() ).
-            build();
+        final SiteConfigs siteConfigs = SiteConfigs.create()
+            .add( SiteConfig.create().application( applicationKey1 ).config( new PropertyTree() ).build() )
+            .add( SiteConfig.create().application( applicationKey2 ).config( new PropertyTree() ).build() )
+            .build();
 
         final PatternIndexConfigDocument result = processConfigs( siteConfigs, form1, form2 );
         assertEquals( 1, result.getPathIndexConfigs().size() );
@@ -122,21 +127,23 @@ public class SiteConfigProcessorTest
 
     }
 
-    private Collection<Form> getConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )
+    private Collection<Form> getConfigForms( final CmsService cmsService, final SiteConfigs siteConfigs )
     {
-        return siteConfigs.stream().map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ).getForm() ).collect(
-            Collectors.toList() );
+        return siteConfigs.stream()
+            .map( siteConfig -> cmsService.getDescriptor( siteConfig.getApplicationKey() ).getForm() )
+            .collect( Collectors.toList() );
     }
 
     private PatternIndexConfigDocument processConfigs( final SiteConfigs siteConfigs, final Form... forms )
     {
-        for(int i = 0; i < siteConfigs.getSize(); i++) {
+        for ( int i = 0; i < siteConfigs.getSize(); i++ )
+        {
             final SiteConfig siteConfig = siteConfigs.get( i );
-            final SiteDescriptor descriptor = SiteDescriptor.create().form( forms[i] ).build();
-            Mockito.when( siteService.getDescriptor( siteConfig.getApplicationKey() ) ).thenReturn( descriptor );
+            final CmsDescriptor descriptor = CmsDescriptor.create().applicationKey( siteConfig.getApplicationKey() ).form( forms[i] ).build();
+            Mockito.when( cmsService.getDescriptor( siteConfig.getApplicationKey() ) ).thenReturn( descriptor );
         }
 
-        final SiteConfigProcessor configProcessor = new SiteConfigProcessor( getConfigForms( siteService, siteConfigs ) );
+        final CmsConfigProcessor configProcessor = new CmsConfigProcessor( getConfigForms( cmsService, siteConfigs ) );
 
         return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
     }

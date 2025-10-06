@@ -32,6 +32,8 @@ public final class VirtualAppConstants
 
     public static final String SITE_ROOT_NAME = "site";
 
+    public static final String CMS_ROOT_NAME = "cms";
+
     public static final String CONTENT_TYPE_ROOT_NAME = "content-types";
 
     public static final String PART_ROOT_NAME = "parts";
@@ -46,9 +48,15 @@ public final class VirtualAppConstants
 
     public static final Branch VIRTUAL_APP_BRANCH = Branch.from( "master" );
 
-    public static final String SITE_RESOURCE_PATH = "/" + SITE_ROOT_NAME + "/" + SITE_ROOT_NAME + ".xml";
+    public static final String SITE_RESOURCE_PATH = "/" + SITE_ROOT_NAME + "/" + CMS_ROOT_NAME + ".yml";
 
-    public static final ByteSource DEFAULT_SITE_RESOURCE_VALUE = ByteSource.wrap( "<site></site>".getBytes( StandardCharsets.UTF_8 ) );
+    public static final String CMS_DESCRIPTOR_DEFAULT_VALUE = """
+        x: [ ]
+        form: [ ]
+        """;
+
+    public static final ByteSource DEFAULT_SITE_RESOURCE_VALUE =
+        ByteSource.wrap( CMS_DESCRIPTOR_DEFAULT_VALUE.getBytes( StandardCharsets.UTF_8 ) );
 
     private VirtualAppConstants()
     {

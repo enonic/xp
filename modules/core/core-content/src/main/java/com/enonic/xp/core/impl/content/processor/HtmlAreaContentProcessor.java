@@ -49,11 +49,11 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -83,7 +83,7 @@ public class HtmlAreaContentProcessor
 
     private XDataService xDataService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -146,14 +146,14 @@ public class HtmlAreaContentProcessor
     {
         siteConfigs.forEach( siteConfig -> {
 
-            final SiteDescriptor siteDescriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+            final CmsDescriptor cmsDescriptor = cmsService.getDescriptor( siteConfig.getApplicationKey() );
 
-            if ( siteDescriptor == null )
+            if ( cmsDescriptor == null )
             {
                 return;
             }
 
-            final Collection<Property> properties = getProperties( siteConfig.getConfig(), siteDescriptor.getForm() );
+            final Collection<Property> properties = getProperties( siteConfig.getConfig(), cmsDescriptor.getForm() );
             processDataTree( properties, processedIds );
         } );
     }
@@ -311,7 +311,7 @@ public class HtmlAreaContentProcessor
             return null;
         }
 
-        final String processedValue = sanitizingEnabled ? InternalHtmlSanitizer.richText().sanitize(value ) : value;
+        final String processedValue = sanitizingEnabled ? InternalHtmlSanitizer.richText().sanitize( value ) : value;
 
         final Matcher contentMatcher = CONTENT_PATTERN.matcher( processedValue );
 
@@ -348,9 +348,9 @@ public class HtmlAreaContentProcessor
     }
 
     @Reference
-    public void setSiteService( final SiteService siteService )
+    public void setCmsService( final CmsService cmsService )
     {
-        this.siteService = siteService;
+        this.cmsService = cmsService;
     }
 
     @Reference

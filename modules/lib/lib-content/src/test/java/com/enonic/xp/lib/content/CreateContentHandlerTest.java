@@ -27,7 +27,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -87,19 +87,21 @@ public class CreateContentHandlerTest
             .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
             .build();
 
-        final SiteDescriptor siteDescriptor1 = SiteDescriptor.create()
+        final CmsDescriptor siteDescriptor1 = CmsDescriptor.create()
+            .applicationKey( ApplicationKey.from( "appKey1" ) )
             .form( Form.create()
                        .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.TEXT_LINE ).build() )
                        .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
                        .build() )
             .build();
 
-        final SiteDescriptor siteDescriptor2 = SiteDescriptor.create()
+        final CmsDescriptor siteDescriptor2 = CmsDescriptor.create()
+            .applicationKey( ApplicationKey.from( "appKey2" ) )
             .form( Form.create().addFormItem( Input.create().label( "c" ).name( "c" ).inputType( InputTypeName.LONG ).build() ).build() )
             .build();
 
-        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
-        when( this.siteService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
+        when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
+        when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
 
         when( this.xDataService.getByName( Mockito.eq( XDataName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( xData );
         when( this.mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );

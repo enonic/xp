@@ -10,12 +10,12 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
 
-public class SiteConfigProcessor
+public class CmsConfigProcessor
     implements ContentIndexConfigProcessor
 {
     private final Collection<Form> sizeConfigForms;
 
-    public SiteConfigProcessor( final Collection<Form> sizeConfigForm )
+    public CmsConfigProcessor( final Collection<Form> sizeConfigForm )
     {
         this.sizeConfigForms = sizeConfigForm;
     }

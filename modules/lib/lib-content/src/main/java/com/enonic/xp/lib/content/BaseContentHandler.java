@@ -22,8 +22,8 @@ import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 
 public abstract class BaseContentHandler
     extends BaseContextHandler
@@ -32,14 +32,14 @@ public abstract class BaseContentHandler
 
     private XDataService xDataService;
 
-    protected SiteService siteService;
+    protected CmsService cmsService;
 
     private Supplier<PropertyTreeMarshallerService> propertyTreeMarshallerService;
 
     private PropertyTree translateToPropertyTree( final Map<String, ?> json, final ApplicationKey applicationKey,
                                                   final ContentTypeName contentTypeName )
     {
-        final SiteDescriptor siteDescriptor = this.siteService.getDescriptor( applicationKey );
+        final CmsDescriptor siteDescriptor = this.cmsService.getDescriptor( applicationKey );
 
         if ( siteDescriptor == null )
         {
@@ -159,8 +159,7 @@ public abstract class BaseContentHandler
 
         if ( siteConfig instanceof List )
         {
-            ( (List<Map<String, Object>>) siteConfig ).stream().
-                forEach( sc -> addSiteConfig( sc, contentTypeName, into ) );
+            ( (List<Map<String, Object>>) siteConfig ).stream().forEach( sc -> addSiteConfig( sc, contentTypeName, into ) );
         }
     }
 
@@ -209,10 +208,7 @@ public abstract class BaseContentHandler
             ( (Map<String, String>) checks ).forEach( ( key, value ) -> checkMapBuilder.put( key, WorkflowCheckState.valueOf( value ) ) );
         }
 
-        return WorkflowInfo.create().
-            state( state instanceof String ? (String) state : null ).
-            checks( checkMapBuilder ).
-            build();
+        return WorkflowInfo.create().state( state instanceof String ? (String) state : null ).checks( checkMapBuilder ).build();
     }
 
     @Override
@@ -221,7 +217,7 @@ public abstract class BaseContentHandler
         super.initialize( context );
         this.contentTypeService = context.getService( ContentTypeService.class ).get();
         this.xDataService = context.getService( XDataService.class ).get();
-        this.siteService = context.getService( SiteService.class ).get();
+        this.cmsService = context.getService( CmsService.class ).get();
         this.propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class );
     }
 }

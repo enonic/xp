@@ -4,13 +4,13 @@ import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 
-public final class CreateDynamicSiteParams
+public final class CreateDynamicCmsParams
 {
     private final ApplicationKey key;
 
     private final String resource;
 
-    private CreateDynamicSiteParams( final Builder builder )
+    private CreateDynamicCmsParams( final Builder builder )
     {
         this.key = builder.key;
         this.resource = builder.resource;
@@ -55,10 +55,10 @@ public final class CreateDynamicSiteParams
             Objects.requireNonNull( resource, "resource is required" );
         }
 
-        public CreateDynamicSiteParams build()
+        public CreateDynamicCmsParams build()
         {
             validate();
-            return new CreateDynamicSiteParams( this );
+            return new CreateDynamicCmsParams( this );
         }
     }
 }

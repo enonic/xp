@@ -42,8 +42,9 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.CreateDynamicSiteParams;
+import com.enonic.xp.core.impl.app.CreateDynamicCmsParams;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
+import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.app.VirtualAppService;
@@ -95,9 +96,9 @@ import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
+import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
-import com.enonic.xp.resource.UpdateDynamicSiteParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
@@ -109,9 +110,8 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
-import com.enonic.xp.xml.XmlException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -960,29 +960,29 @@ public class DynamicSchemaServiceImplTest
     public void createSite()
         throws Exception
     {
-        final String resource = readResource( "_site.xml" );
+        final String resource = readResource( "_cms.yml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) ) ).isNotNull();
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
 
-        final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
-            () -> dynamicSchemaService.createSite( CreateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
+        final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
+            () -> dynamicSchemaService.createCms( CreateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
 
-        final SiteDescriptor siteDescriptor = result.getSchema();
+        final CmsDescriptor cmsDescriptor = result.getSchema();
 
-        createAdminContext().runWith( () -> assertThat( siteDescriptor ).usingRecursiveComparison(
+        createAdminContext().runWith( () -> assertThat( cmsDescriptor ).usingRecursiveComparison(
                 RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
-            .isEqualTo( dynamicSchemaService.getSite( applicationKey ).getSchema() ) );
+            .isEqualTo( dynamicSchemaService.getCmsDescriptor( applicationKey ).getSchema() ) );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
-        assertNotNull( siteDescriptor.getModifiedTime() );
+        assertEquals( "myapp:/site/cms.yml", result.getResource().getKey().toString() );
+        assertNotNull( cmsDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/cms.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -993,36 +993,36 @@ public class DynamicSchemaServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "non-app" );
 
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) ) ).isNull();
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
     }
 
     @Test
     public void updateSite()
         throws Exception
     {
-        final String resource = readResource( "_site.xml" );
+        final String resource = readResource( "_cms.yml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        createAdminContext().runWith( () -> dynamicSchemaService.createSite(
-            CreateDynamicSiteParams.create().key( applicationKey ).resource( "<site></site>" ).build() ) );
+        createAdminContext().runWith( () -> dynamicSchemaService.createCms(
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( VirtualAppConstants.CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
 
-        final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
-            () -> dynamicSchemaService.updateSite( UpdateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
+        final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
+            () -> dynamicSchemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
 
-        final SiteDescriptor siteDescriptor = result.getSchema();
+        final CmsDescriptor cmsDescriptor = result.getSchema();
 
-        createAdminContext().runWith( () -> assertThat( siteDescriptor ).usingRecursiveComparison(
+        createAdminContext().runWith( () -> assertThat( cmsDescriptor ).usingRecursiveComparison(
                 RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
-            .isEqualTo( dynamicSchemaService.getSite( applicationKey ).getSchema() ) );
+            .isEqualTo( dynamicSchemaService.getCmsDescriptor( applicationKey ).getSchema() ) );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/cms.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/cms.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1031,58 +1031,55 @@ public class DynamicSchemaServiceImplTest
     public void updateNotCreatedSite()
         throws Exception
     {
-        final String resource = readResource( "_site.xml" );
+        final String resource = readResource( "_cms.yml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        final DynamicSchemaResult<SiteDescriptor> result = createAdminContext().callWith(
-            () -> dynamicSchemaService.updateSite( UpdateDynamicSiteParams.create().key( applicationKey ).resource( resource ).build() ) );
+        final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
+            () -> dynamicSchemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
 
-        final SiteDescriptor siteDescriptor = result.getSchema();
+        final CmsDescriptor cmsDescriptor = result.getSchema();
 
-        createAdminContext().runWith( () -> assertThat( siteDescriptor ).usingRecursiveComparison(
+        createAdminContext().runWith( () -> assertThat( cmsDescriptor ).usingRecursiveComparison(
                 RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
-            .isEqualTo( dynamicSchemaService.getSite( applicationKey ).getSchema() ) );
+            .isEqualTo( dynamicSchemaService.getCmsDescriptor( applicationKey ).getSchema() ) );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/site/site.xml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/site/cms.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/site.xml" ) ) );
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/site/cms.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
 
     @Test
-    public void deleteSite()
+    public void deleteCms()
         throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) );
+        createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) );
 
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) ) ).isNotNull();
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
 
-        createAdminContext().callWith( () -> dynamicSchemaService.createSite(
-            CreateDynamicSiteParams.create().key( applicationKey ).resource( readResource( "_site.xml" ) ).build() ) );
+        createAdminContext().callWith( () -> dynamicSchemaService.createCms(
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( readResource( "_cms.yml" ) ).build() ) );
 
-        DynamicSchemaResult<SiteDescriptor> site = createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) );
+        DynamicSchemaResult<CmsDescriptor> cmsDescriptorResult =
+            createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) );
 
-        assertThat( site.getSchema().getForm() ).isNotEmpty();
-        assertThat( site.getSchema().getXDataMappings() ).isNotEmpty();
-        assertThat( site.getSchema().getMappingDescriptors() ).isNotEmpty();
-        assertThat( site.getSchema().getResponseProcessors() ).isNotEmpty();
+        assertThat( cmsDescriptorResult.getSchema().getForm() ).isNotEmpty();
+        assertThat( cmsDescriptorResult.getSchema().getXDataMappings() ).isNotEmpty();
 
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteSite( applicationKey ) ) ).isTrue();
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteCms( applicationKey ) ) ).isTrue();
 
-        site = createAdminContext().callWith( () -> dynamicSchemaService.getSite( applicationKey ) );
+        cmsDescriptorResult = createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) );
 
-        assertThat( site.getSchema().getForm() ).isEmpty();
-        assertThat( site.getSchema().getXDataMappings() ).isEmpty();
-        assertThat( site.getSchema().getMappingDescriptors() ).isEmpty();
-        assertThat( site.getSchema().getResponseProcessors() ).isEmpty();
+        assertThat( cmsDescriptorResult.getSchema().getForm() ).isEmpty();
+        assertThat( cmsDescriptorResult.getSchema().getXDataMappings() ).isEmpty();
     }
 
     @Test
@@ -1543,7 +1540,7 @@ public class DynamicSchemaServiceImplTest
     public void createContentTypeSchemaInvalid()
         throws Exception
     {
-        final String resource = "<content-type xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></content-type>";
+        final String resource = "unsupportedField: [ ]";
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( ContentTypeName.from( "myapp:mytype" ) )
@@ -1560,7 +1557,7 @@ public class DynamicSchemaServiceImplTest
     @Test
     public void createMixinSchemaInvalid()
     {
-        final String resource = "<mixin xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></mixin>";
+        final String resource = "unsupportedField: [ ]";
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( MixinName.from( "myapp:mytype" ) )
@@ -1576,7 +1573,7 @@ public class DynamicSchemaServiceImplTest
     public void createXDataSchemaInvalid()
         throws Exception
     {
-        final String resource = "<x-data xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></x-data>";
+        final String resource = "unsupportedField: [ ]";
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( XDataName.from( "myapp:mytype" ) )
@@ -1592,7 +1589,7 @@ public class DynamicSchemaServiceImplTest
     public void createPartInvalid()
         throws Exception
     {
-        final String resource = "<part xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></part>";
+        final String resource = "unsupportedField: [ ]";
 
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mytype" ) )
@@ -1608,7 +1605,7 @@ public class DynamicSchemaServiceImplTest
     public void createLayoutInvalid()
         throws Exception
     {
-        final String resource = "<layout xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></layout>";
+        final String resource = "unsupportedField: [ ]";
 
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mytype" ) )
@@ -1624,7 +1621,7 @@ public class DynamicSchemaServiceImplTest
     public void createPageInvalid()
         throws Exception
     {
-        final String resource = "<page xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></page>";
+        final String resource = "unsupportedField: [ ]";
 
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mytype" ) )
@@ -1640,7 +1637,7 @@ public class DynamicSchemaServiceImplTest
     public void createStylesInvalid()
         throws Exception
     {
-        final String resource = "<styles xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></styles>";
+        final String resource = "unsupportedField: [ ]";
 
         final CreateDynamicStylesParams params =
             CreateDynamicStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
@@ -1650,17 +1647,13 @@ public class DynamicSchemaServiceImplTest
 
     @Test
     public void createSiteInvalid()
-        throws Exception
     {
-        final String resource = "<site xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></site>";
+        final String resource = "unsupportedField: [ ]";
 
-        final CreateDynamicSiteParams params =
-            CreateDynamicSiteParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
+        final CreateDynamicCmsParams params =
+            CreateDynamicCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
 
-        final XmlException exception =
-            assertThrows( XmlException.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createSite( params ) ) );
-
-        assertEquals( "Could not parse dynamic site descriptor, application key: [myapp]", exception.getMessage() );
+        assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createCms( params ) ) );
     }
 
 
