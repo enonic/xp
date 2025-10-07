@@ -3,28 +3,20 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-        <content-type xmlns='urn:enonic:xp:model:1.0'>
-            <display-name>My Tag</display-name>
-            <description>My description</description>
-            <super-type>base:structured</super-type>
-            <is-abstract>false</is-abstract>
-            <is-final>true</is-final>
-            <allow-child-content>true</allow-child-content>
-            
-            <x-data name='myapp:address'/>
-            
-            <form>
-                <input name='tag_unlimited' type='Tag'>
-                    <label>Tag, unlimited occurrences</label>
-                    <immutable>false</immutable>
-                    <indexed>true</indexed>
-                    <custom-text>Custom text</custom-text>
-                    <occurrences minimum='0' maximum='0'/>
-                    <help-text>Some help text</help-text>
-                </input>
-            </form>
-        </content-type>`;
+let resource = `superType: "base:structured"
+abstract: false
+final: true
+allowChildContent: true
+displayName: "My Tag"
+description: "My description"
+form:
+- type: "Tag"
+  name: "tag_unlimited"
+  label: "Tag, unlimited occurrences"
+  helpText: "Some help text"
+  occurrences:
+    minimum: 0
+    maximum: 0`;
 
 // BEGIN
 // Update virtual content type.
@@ -43,33 +35,23 @@ log.info('Updated content type: ' + result.name);
 assert.assertJsonEquals({
     name: 'myapp:mytype',
     displayName: 'My Tag',
-    displayNameI18nKey: '',
     description: 'My description',
-    descriptionI18nKey: '',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +
-              '        <content-type xmlns=\'urn:enonic:xp:model:1.0\'>\n' +
-              '            <display-name>My Tag</display-name>\n' +
-              '            <description>My description</description>\n' +
-              '            <super-type>base:structured</super-type>\n' +
-              '            <is-abstract>false</is-abstract>\n' +
-              '            <is-final>true</is-final>\n' +
-              '            <allow-child-content>true</allow-child-content>\n' +
-              '            \n' +
-              '            <x-data name=\'myapp:address\'/>\n' +
-              '            \n' +
-              '            <form>\n' +
-              '                <input name=\'tag_unlimited\' type=\'Tag\'>\n' +
-              '                    <label>Tag, unlimited occurrences</label>\n' +
-              '                    <immutable>false</immutable>\n' +
-              '                    <indexed>true</indexed>\n' +
-              '                    <custom-text>Custom text</custom-text>\n' +
-              '                    <occurrences minimum=\'0\' maximum=\'0\'/>\n' +
-              '                    <help-text>Some help text</help-text>\n' +
-              '                </input>\n' +
-              '            </form>\n' +
-              '        </content-type>',
+    resource: 'superType: "base:structured"\n' +
+              'abstract: false\n' +
+              'final: true\n' +
+              'allowChildContent: true\n' +
+              'displayName: "My Tag"\n' +
+              'description: "My description"\n' +
+              'form:\n' +
+              '- type: "Tag"\n' +
+              '  name: "tag_unlimited"\n' +
+              '  label: "Tag, unlimited occurrences"\n' +
+              '  helpText: "Some help text"\n' +
+              '  occurrences:\n' +
+              '    minimum: 0\n' +
+              '    maximum: 0',
     type: 'CONTENT_TYPE',
     form: [
         {
