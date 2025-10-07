@@ -1,7 +1,6 @@
 package com.enonic.xp.index;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.repository.RepositoryId;
 
 public interface ReindexListener
@@ -10,5 +9,5 @@ public interface ReindexListener
 
     void branch( RepositoryId repoId, Branch branch, long total );
 
-    void branchEntry( NodeBranchEntry entry );
+    void branchEntry();
 }

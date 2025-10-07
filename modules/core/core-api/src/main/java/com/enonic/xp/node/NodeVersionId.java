@@ -17,12 +17,6 @@ public final class NodeVersionId
         super( object );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return super.equals( o );
-    }
-
     public static NodeVersionId from( final String string )
     {
         return new NodeVersionId( string );

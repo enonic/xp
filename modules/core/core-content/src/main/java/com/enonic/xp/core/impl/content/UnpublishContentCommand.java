@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
 import java.util.Objects;
-import java.util.Set;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -19,6 +18,7 @@ import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
@@ -52,11 +52,6 @@ public class UnpublishContentCommand
         this.nodeService.refresh( RefreshMode.SEARCH );
 
         final UnpublishContentsResult.Builder resultBuilder = UnpublishContentsResult.create().addUnpublished( contentIds );
-        if ( contentIds.getSize() == 1 )
-        {
-            resultBuilder.setContentPath( this.getContent( contentIds.first() ).getPath() );
-        }
-
 
         return resultBuilder.build();
     }
@@ -67,16 +62,15 @@ public class UnpublishContentCommand
 
         for ( final ContentId contentId : this.params.getContentIds() )
         {
-            final Set<NodeId> nodeIds = this.nodeService.delete(
+            final NodeIds nodeIds = this.nodeService.delete(
                     DeleteNodeParams.create().nodeId( NodeId.from( contentId ) ).refresh( RefreshMode.SEARCH ).build() )
-                .getNodeBranchEntries()
-                .getKeys();
+                .getNodeIds();
 
             if ( !nodeIds.isEmpty() )
             {
                 if ( params.getPublishContentListener() != null )
                 {
-                    params.getPublishContentListener().contentPushed( nodeIds.size() );
+                    params.getPublishContentListener().contentPushed( nodeIds.getSize() );
                 }
                 contentBuilder.addAll( ContentNodeHelper.toContentIds( nodeIds ) );
             }

@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.branch.search;
 
-import com.enonic.xp.node.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.branch.storage.NodeBranchVersionFactory;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;

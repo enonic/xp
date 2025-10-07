@@ -62,7 +62,7 @@ public class ContentServiceImplTest_restore
             RestoreContentParams.create().contentId( parent.getId() ).restoreContentListener( listener ).build() );
 
         assertEquals( 1, result.getRestoredContents().getSize() );
-        assertEquals( 4, listener.getRestored() );
+        assertEquals( 4, listener.restored );
 
         assertTrue( this.contentService.contentExists( child1.getId() ) );
         assertTrue( this.contentService.contentExists( child1.getPath() ) );
@@ -95,7 +95,7 @@ public class ContentServiceImplTest_restore
         RestoreContentsResult result = this.contentService.restore(
             RestoreContentParams.create().contentId( child1.getId() ).restoreContentListener( listener ).build() );
 
-        assertEquals( 3, listener.getRestored() );
+        assertEquals( 3, listener.restored );
         assertEquals( "/archive", result.getParentPath().toString() );
     }
 
@@ -114,7 +114,7 @@ public class ContentServiceImplTest_restore
         RestoreContentsResult result = this.contentService.restore(
             RestoreContentParams.create().contentId( parent.getId() ).restoreContentListener( listener ).path( target.getPath() ).build() );
 
-        assertEquals( 4, listener.getRestored() );
+        assertEquals( 4, listener.restored );
         assertEquals( "/target", result.getParentPath().toString() );
     }
 
@@ -132,7 +132,7 @@ public class ContentServiceImplTest_restore
         RestoreContentsResult result = this.contentService.restore(
             RestoreContentParams.create().contentId( child1.getId() ).restoreContentListener( listener ).path( ContentPath.ROOT ).build() );
 
-        assertEquals( 3, listener.getRestored() );
+        assertEquals( 3, listener.restored );
         assertEquals( "/", result.getParentPath().toString() );
     }
 
@@ -169,7 +169,7 @@ public class ContentServiceImplTest_restore
         final RestoreContentsResult result = this.contentService.restore(
             RestoreContentParams.create().contentId( child1.getId() ).restoreContentListener( listener ).build() );
 
-        assertEquals( 3, listener.getRestored() );
+        assertEquals( 3, listener.restored );
         assertEquals( ContentPath.ROOT, result.getParentPath() );
     }
 
@@ -290,32 +290,12 @@ public class ContentServiceImplTest_restore
     private static final class TestListener
         implements RestoreContentListener
     {
-
-        private int total = 0;
-
-        private int restored = 0;
+        int restored = 0;
 
         @Override
         public void contentRestored( final int count )
         {
             restored++;
         }
-
-        public int getTotal()
-        {
-            return total;
-        }
-
-        @Override
-        public void setTotal( final int count )
-        {
-            total++;
-        }
-
-        public int getRestored()
-        {
-            return restored;
-        }
-
     }
 }

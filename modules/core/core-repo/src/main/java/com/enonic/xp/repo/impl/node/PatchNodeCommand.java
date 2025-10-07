@@ -18,14 +18,13 @@ import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
@@ -165,15 +164,13 @@ public final class PatchNodeCommand
 
         if ( patchedVersionMetadata != null )
         {
-            this.nodeStorageService.push( List.of( PushNodeEntry.create()
-                                                       .nodeBranchEntry( NodeBranchEntry.create()
+            this.nodeStorageService.push( List.of( NodeBranchEntry.create()
                                                                              .nodeVersionId( patchedVersionMetadata.getNodeVersionId() )
                                                                              .nodePath( patchedVersionMetadata.getNodePath() )
                                                                              .nodeVersionKey( patchedVersionMetadata.getNodeVersionKey() )
                                                                              .nodeId( patchedVersionMetadata.getNodeId() )
                                                                              .timestamp( patchedVersionMetadata.getTimestamp() )
-                                                                             .build() )
-                                                       .build() ), branch, l -> {
+                                                                             .build() ), branch, l -> {
             }, internalContext );
 
             return new NodeVersionData( nodeStorageService.get( persistedNode.id(), internalContext ), patchedVersionMetadata );

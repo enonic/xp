@@ -12,7 +12,6 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByParentParams;
@@ -26,7 +25,6 @@ import com.enonic.xp.node.RefreshMode;
 
 final class DeleteContentCommand
     extends AbstractContentCommand
-    implements DeleteNodeListener
 {
     private final DeleteContentParams params;
 
@@ -85,30 +83,20 @@ final class DeleteContentCommand
         final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
-        final DeleteNodeResult deletedNodes = this.nodeService.delete(
-            DeleteNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH ).deleteNodeListener( this ).build() );
+        final DeleteNodeParams.Builder builder = DeleteNodeParams.create()
+            .nodeId( nodeId )
+            .refresh( RefreshMode.SEARCH );
 
-        result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes.getNodeBranchEntries().getKeys() ) );
+        if ( params.getDeleteContentListener() != null )
+        {
+            builder.deleteNodeListener( params.getDeleteContentListener()::contentDeleted );
+        }
+
+        final DeleteNodeResult deletedNodes = this.nodeService.delete( builder.build() );
+
+        result.addDeleted( ContentNodeHelper.toContentIds( deletedNodes.getNodeIds() ) );
 
         return result.build();
-    }
-
-    @Override
-    public void nodesDeleted( final int count )
-    {
-        if ( params.getDeleteContentListener() != null )
-        {
-            params.getDeleteContentListener().contentDeleted( count );
-        }
-    }
-
-    @Override
-    public void totalToDelete( final int count )
-    {
-        if ( params.getDeleteContentListener() != null )
-        {
-            params.getDeleteContentListener().setTotal( count );
-        }
     }
 
     private ContentIds unpublish( final ContentId contentId, final ContentIds descendants )
@@ -153,5 +141,4 @@ final class DeleteContentCommand
             return new DeleteContentCommand( this );
         }
     }
-
 }

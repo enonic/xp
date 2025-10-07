@@ -4,10 +4,11 @@ import java.util.Objects;
 
 import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NodeBranchEntry;
+import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 
 class CompareStatusResolver
@@ -30,7 +31,7 @@ class CompareStatusResolver
         return new Builder();
     }
 
-    public CompareStatus resolve()
+    public NodeComparison resolve()
     {
         if ( source == null && target == null )
         {
@@ -39,24 +40,27 @@ class CompareStatusResolver
 
         if ( source == null )
         {
-            return CompareStatus.NEW_TARGET;
+            return new NodeComparison( null, null, target.getNodeId(), target.getNodePath(), CompareStatus.NEW_TARGET );
         }
         else if ( target == null )
         {
-            return CompareStatus.NEW;
+            return new NodeComparison( source.getNodeId(), source.getNodePath(), null, null, CompareStatus.NEW );
         }
 
         if ( source.equals( target ) )
         {
-            return CompareStatus.EQUAL;
+            return new NodeComparison( source.getNodeId(), source.getNodePath(), target.getNodeId(), target.getNodePath(),
+                                       CompareStatus.EQUAL );
         }
 
         if ( !source.getNodePath().equals( target.getNodePath() ) )
         {
-            return CompareStatus.MOVED;
+            return new NodeComparison( source.getNodeId(), source.getNodePath(), target.getNodeId(), target.getNodePath(),
+                                       CompareStatus.MOVED );
         }
 
-        return resolveFromVersion();
+        return new NodeComparison( source.getNodeId(), source.getNodePath(), target.getNodeId(), target.getNodePath(),
+                                   resolveFromVersion() );
     }
 
     private CompareStatus resolveFromVersion()
@@ -76,7 +80,6 @@ class CompareStatusResolver
 
         return CompareStatus.EQUAL;
     }
-
 
     private NodeVersionMetadata getVersion( final NodeBranchEntry nodeBranchEntry )
     {

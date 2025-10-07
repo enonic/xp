@@ -9,57 +9,67 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
 
-public class PushNodeHandlerTest
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
+class PushNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExample1()
+    void testExample1()
     {
-        Mockito.when( nodeService.push( Mockito.eq( NodeIds.from( "a" ) ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
-            thenReturn( PushNodesResult.create().addSuccess( createEntry( "a" ), new NodePath( "/a" ) ).build() );
+        when( nodeService.push( eq( NodeIds.from( "a" ) ), eq( Branch.from( "otherBranch" ) ) ) )
+            .thenReturn( PushNodesResult.create().add( createPushNodeResult( "a", "/a") ).build() );
 
         runScript( "/lib/xp/examples/node/push-1.js" );
     }
 
-    @Test
-    public void testExample2()
+    private static PushNodeResult createPushNodeResult( String a, String targetPath )
     {
-        Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
+        return PushNodeResult.success( NodeId.from( a ), new NodeVersionId(), new NodePath( "/" + a ), new NodePath( targetPath ) );
+    }
+
+    @Test
+    void testExample2()
+    {
+        when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                add( new NodeComparison( createEntry( "a" ), createEntry( "a" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "b" ), createEntry( "b" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "c" ), createEntry( "c" ), CompareStatus.NEW ) ).
+                add( createNodeComparison("a", "a") ).
+                add( createNodeComparison("b", "b") ).
+                add( createNodeComparison("c", "c") ).
                 build() );
 
-        Mockito.when( nodeService.push( Mockito.isA( NodeIds.class ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
+        when( nodeService.push( Mockito.isA( NodeIds.class ), eq( Branch.from( "otherBranch" ) ) ) ).
             thenReturn( PushNodesResult.create()
-                            .addSuccess( createEntry( "a" ), new NodePath( "/b" ) )
-                            .addSuccess( createEntry( "b" ), new NodePath( "/b" ) )
-                            .addSuccess( createEntry( "c" ), new NodePath( "/c" ) )
-                            .addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED ).
+                            .add( createPushNodeResult( "a", "/b") )
+                            .add( createPushNodeResult( "b", "/b")  )
+                            .add( createPushNodeResult( "c", "/c") )
+                            .add( createNodePushResultFailed( "d", PushNodeResult.Reason.ACCESS_DENIED ) ).
                 build() );
 
         runScript( "/lib/xp/examples/node/push-2.js" );
     }
 
     @Test
-    public void testExample3()
+    void testExample3()
     {
-        Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
+        when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                add( new NodeComparison( createEntry( "a" ), createEntry( "a" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "b" ), createEntry( "b" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "c" ), createEntry( "c" ), CompareStatus.NEW ) ).
+                add( createNodeComparison("a" ,"a") ).
+                add( createNodeComparison("b" ,"b") ).
+                add( createNodeComparison("c" ,"c") ).
                 build() );
 
-        Mockito.when( nodeService.push( Mockito.isA( NodeIds.class ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
+        when( nodeService.push( Mockito.isA( NodeIds.class ), eq( Branch.from( "otherBranch" ) ) ) ).
             thenReturn( PushNodesResult.create()
-                            .addSuccess( createEntry( "a" ), new NodePath( "/a" ) )
-                            .addSuccess( createEntry( "d" ), new NodePath( "/d" ) )
+                            .add( createPushNodeResult( "a", "/a") )
+                            .add( createPushNodeResult( "d", "/d") )
                             .build() );
 
         runScript( "/lib/xp/examples/node/push-3.js" );
@@ -68,26 +78,36 @@ public class PushNodeHandlerTest
     @Test
     public void testExampleWithChildren()
     {
-        Mockito.when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
+        when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().
-                add( new NodeComparison( createEntry( "a" ), createEntry( "a" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "b", "a/b" ), createEntry( "b", "a/b" ), CompareStatus.NEW ) ).
-                add( new NodeComparison( createEntry( "c", "a/b/c" ), createEntry( "c", "a/b/c" ), CompareStatus.NEW ) ).
-                build() );
+            add( createNodeComparison("a", "a") ).
+            add( createNodeComparison("b", "b") ).
+            add( createNodeComparison("c", "c") ).
+            build() );
 
-        Mockito.when( nodeService.push( Mockito.eq( NodeIds.create().
+        when( nodeService.push( eq( NodeIds.create().
             add( NodeId.from( "a" ) ).
             add( NodeId.from( "b" ) ).
             add( NodeId.from( "c" ) ).
-            build() ), Mockito.eq( Branch.from( "otherBranch" ) ) ) ).
+            build() ), eq( Branch.from( "otherBranch" ) ) ) ).
             thenReturn( PushNodesResult.create()
-                            .addSuccess( createEntry( "a" ), new NodePath( "/a" ) )
-                            .addSuccess( createEntry( "b" ), new NodePath( "/b" ) )
-                            .addFailed( createEntry( "c" ), PushNodesResult.Reason.ACCESS_DENIED ).
+                            .add( createPushNodeResult( "a", "/a") )
+                            .add( createPushNodeResult( "b", "/b") )
+                            .add( createNodePushResultFailed( "c", PushNodeResult.Reason.ACCESS_DENIED ) ).
                 build() );
 
         runScript( "/lib/xp/examples/node/push-4.js" );
     }
 
+    private NodeComparison createNodeComparison( String a, String b )
+    {
+        return new NodeComparison( NodeId.from( a ), new NodePath( "/" + a ), NodeId.from( b ), new NodePath( "/" + b ),
+                                   CompareStatus.NEW );
+    }
+
+    private static PushNodeResult createNodePushResultFailed( String a, PushNodeResult.Reason reason )
+    {
+        return PushNodeResult.failure( NodeId.from( a ), new NodePath( "/" + a ), reason );
+    }
 }
 

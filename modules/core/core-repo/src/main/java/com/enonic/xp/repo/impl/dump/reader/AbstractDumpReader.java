@@ -13,7 +13,6 @@ import java.util.zip.GZIPInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
@@ -32,7 +31,6 @@ import com.enonic.xp.dump.SystemLoadListener;
 import com.enonic.xp.dump.VersionsLoadResult;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.dump.FilePaths;
-import com.enonic.xp.repo.impl.dump.NullSystemLoadListener;
 import com.enonic.xp.repo.impl.dump.PathRef;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
@@ -57,7 +55,7 @@ public abstract class AbstractDumpReader
     protected AbstractDumpReader( final SystemLoadListener listener, FilePaths filePaths,
                                   Function<BlobReference, ByteSource> blobByteSourceProvider )
     {
-        this.listener = Objects.requireNonNullElseGet( listener, NullSystemLoadListener::new );
+        this.listener = Objects.requireNonNullElse( listener, NoopSystemLoadListener.INSTANCE );
         this.blobByteSourceProvider = blobByteSourceProvider;
         this.filePaths = filePaths;
     }
@@ -285,5 +283,37 @@ public abstract class AbstractDumpReader
             }
         }
         return null;
+    }
+
+    private enum NoopSystemLoadListener
+        implements SystemLoadListener
+    {
+        INSTANCE;
+
+        @Override
+        public void totalBranches( final long total )
+        {
+        }
+
+        @Override
+        public void loadingBranch( final RepositoryId repositoryId, final Branch branch, final Long total )
+        {
+        }
+
+        @Override
+        public void loadingVersions( final RepositoryId repositoryId )
+        {
+
+        }
+
+        @Override
+        public void loadingCommits( final RepositoryId repositoryId )
+        {
+        }
+
+        @Override
+        public void entryLoaded()
+        {
+        }
     }
 }

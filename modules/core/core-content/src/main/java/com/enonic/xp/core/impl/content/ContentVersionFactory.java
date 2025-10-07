@@ -1,13 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersionPublishInfo;
-import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.serializer.PublishInfoSerializer;
 import com.enonic.xp.core.impl.content.serializer.WorkflowInfoSerializer;
@@ -15,11 +13,9 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.security.PrincipalKey;
 
 class ContentVersionFactory
@@ -33,19 +29,6 @@ class ContentVersionFactory
     ContentVersionFactory( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-    }
-
-    public ContentVersions create( final NodeId nodeId, final NodeVersionsMetadata nodeVersionsMetadata )
-    {
-        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create().contentId( ContentId.from( nodeId ) );
-
-        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
-        {
-            final ContentVersion contentVersion = create( nodeVersionMetadata );
-            contentVersionsBuilder.add( contentVersion );
-        }
-
-        return contentVersionsBuilder.build();
     }
 
     public ContentVersion create( final NodeVersionMetadata nodeVersionMetadata )

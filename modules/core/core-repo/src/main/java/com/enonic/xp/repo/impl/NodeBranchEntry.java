@@ -1,9 +1,12 @@
-package com.enonic.xp.node;
+package com.enonic.xp.repo.impl;
 
 import java.time.Instant;
 import java.util.Objects;
 
 import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 
 public final class NodeBranchEntry
 {

@@ -61,7 +61,7 @@ public final class DeleteNodeHandler
         {
             params.nodePath( key.getAsPath() );
         }
-        return NodeIds.from( this.nodeService.delete( params.build() ).getNodeBranchEntries().getKeys() );
+        return this.nodeService.delete( params.build() ).getNodeIds();
     }
 
     public void setKeys( final String[] keys )

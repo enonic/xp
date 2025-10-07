@@ -6,8 +6,6 @@ import java.util.Collection;
 import com.enonic.xp.blob.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
@@ -18,10 +16,11 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodeEntry;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 public interface NodeStorageService
@@ -36,7 +35,7 @@ public interface NodeStorageService
 
     void deleteFromIndex( NodeId nodeId, InternalContext internalContext );
 
-    void push( Collection<PushNodeEntry> entries, Branch target, PushNodesListener pushListener, InternalContext context );
+    void push( Collection<NodeBranchEntry> entries, Branch target, PushNodesListener pushListener, InternalContext context );
 
     NodeCommitEntry commit( NodeCommitEntry entry, RoutableNodeVersionIds routableNodeVersionIds, InternalContext context );
 
@@ -66,11 +65,5 @@ public interface NodeStorageService
 
     void invalidate();
 
-    void handleNodeCreated( NodeId nodeId, NodePath nodePath, InternalContext context );
-
-    void handleNodeDeleted( NodeId nodeId, NodePath nodePath, InternalContext context );
-
-    void handleNodeMoved( NodeMovedParams params, InternalContext context );
-
-    void handleNodePushed( NodeId nodeId, NodePath nodePath, NodePath currentTargetPath, InternalContext nodeContext );
+    void invalidatePath( NodePath nodePath, InternalContext context );
 }

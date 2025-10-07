@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
-import com.enonic.xp.archive.RestoreContentListener;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.ContentAccessException;
@@ -14,22 +13,20 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.MoveNodeException;
-import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
+import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
+import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RenameNodeParams;
 import com.enonic.xp.node.RoutableNodeVersionId;
 import com.enonic.xp.node.RoutableNodeVersionIds;
-import com.enonic.xp.node.UpdateNodeParams;
 
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
@@ -39,20 +36,13 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 final class RestoreContentCommand
     extends AbstractContentCommand
-    implements MoveNodeListener
 {
     private final RestoreContentParams params;
-
-    private final RestoreContentListener restoreContentListener;
-
-    private final NameResolver nameResolver;
 
     private RestoreContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.restoreContentListener = builder.restoreContentListener;
-        this.nameResolver = new NameResolver();
     }
 
     public static Builder create( final RestoreContentParams params )
@@ -82,26 +72,17 @@ final class RestoreContentCommand
 
         validateLocation( nodeToRestore );
 
-        final boolean isRootContent = ArchiveConstants.ARCHIVE_ROOT_PATH.equals( nodeToRestore.parentPath() );
-        final NodePath parentPathToRestore = getParentPathToRestore( nodeToRestore, isRootContent );
-        final String originalSourceName = getOriginalSourceName( nodeToRestore, isRootContent );
+        final NodePath parentPathToRestore = getParentPathToRestore( nodeToRestore );
 
         final RestoreContentsResult.Builder result = RestoreContentsResult.create();
 
-        rename( nodeToRestore, parentPathToRestore, originalSourceName );
+        final MoveNodeResult moveNodeResult = rename( nodeToRestore, parentPathToRestore );
 
-        final MoveNodeParams.Builder builder =
-            MoveNodeParams.create().nodeId( nodeToRestore.id() ).parentNodePath( parentPathToRestore ).moveListener( this );
-
-        stopInherit( builder );
-
-        final Node movedNode = move( builder.build(), originalSourceName );
-
-        updatePropertiesAndCommit( movedNode, isRootContent );
+        commit( moveNodeResult.getMovedNodes().stream().map( MoveNodeResult.MovedNode::getNode ).collect( Nodes.collector() ) );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
-        result.addRestored( ContentId.from( movedNode.id() ) )
+        result.addRestored( ContentId.from( nodeToRestore.id() ) )
             .parentPath( ContentNodeHelper.translateNodePathToContentPath( parentPathToRestore ) );
 
         return result.build();
@@ -113,7 +94,7 @@ final class RestoreContentCommand
         {
             if ( ContentConstants.CONTENT_NODE_COLLECTION.equals( node.getNodeType() ) )
             {
-                throw new RestoreContentException( String.format( "Content [%s] is not archived", node.id().toString() ),
+                throw new RestoreContentException( String.format( "Content [%s] is not archived", node.id() ),
                                                    ContentNodeHelper.translateNodePathToContentPath( node.path() ) );
             }
             else
@@ -128,70 +109,57 @@ final class RestoreContentCommand
         }
     }
 
-    private void rename( final Node nodeToRestore, final NodePath parentPathToRestore, final String originalSourceName )
+    private MoveNodeResult rename( final Node nodeToRestore, final NodePath parentPathToRestore )
     {
-        final NodeName newNodeName = nameResolver.buildName( parentPathToRestore, originalSourceName, nodeToRestore );
+        final NodeName originalSourceName = getOriginalSourceName( nodeToRestore );
 
-        if ( !newNodeName.equals( nodeToRestore.name() ) )
+        final NodeName newNodeName = buildName( parentPathToRestore, originalSourceName );
+
+        final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
+            .nodeId( nodeToRestore.id() )
+            .newParentPath( parentPathToRestore )
+            .newName( newNodeName )
+            .refresh( RefreshMode.ALL );
+
+        if ( params.getRestoreContentListener() != null )
         {
-            nodeService.rename( RenameNodeParams.create().nodeId( nodeToRestore.id() ).nodeName( newNodeName ).build() );
-        }
-    }
-
-    private void stopInherit( final MoveNodeParams.Builder builder )
-    {
-        if ( params.stopInherit() )
-        {
-            builder.processor( InheritedContentDataProcessor.ALL );
-        }
-    }
-
-    private Node move( final MoveNodeParams params, final String originalSourceName )
-    {
-        final Node movedNode = nodeService.move( params );
-
-        if ( originalSourceName != null && !originalSourceName.equals( movedNode.name().toString() ) )
-        {
-            return nodeService.rename( RenameNodeParams.create()
-                                           .nodeId( movedNode.id() )
-                                           .nodeName( nameResolver.buildName( movedNode.parentPath(), originalSourceName, movedNode ) )
-                                           .build() );
-        }
-        return movedNode;
-    }
-
-    private void updatePropertiesAndCommit( final Node node, final boolean isRootContent )
-    {
-        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
-        final FindNodesByParentResult childrenToRestore =
-            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( node.id() ).build() );
-
-        childrenToRestore.getNodeIds().forEach( id -> {
-            final Node updated = nodeService.update( UpdateNodeParams.create().id( id ).editor( toBeEdited -> {
-                toBeEdited.data.removeProperties( ARCHIVED_TIME );
-                toBeEdited.data.removeProperties( ARCHIVED_BY );
-            } ).build() );
-            routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
-        } );
-
-        if ( isRootContent )
-        {
-            final Node updated = nodeService.update( UpdateNodeParams.create().id( node.id() ).editor( toBeEdited -> {
-                toBeEdited.data.removeProperties( ORIGINAL_PARENT_PATH );
-                toBeEdited.data.removeProperties( ORIGINAL_NAME );
-                toBeEdited.data.removeProperties( ARCHIVED_TIME );
-                toBeEdited.data.removeProperties( ARCHIVED_BY );
-            } ).build() );
-            routableNodeVersionIds.add( RoutableNodeVersionId.from( updated.id(), updated.getNodeVersionId() ) );
+            moveParams.moveListener( this.params.getRestoreContentListener()::contentRestored );
         }
 
-        nodeService.commit( NodeCommitEntry.create().message( ContentConstants.RESTORE_COMMIT_PREFIX ).build(),
-                            routableNodeVersionIds.build() );
+        final var processors = CompositeNodeDataProcessor.create().add( updateProperties() );
+        if ( this.params.stopInherit() )
+        {
+            processors.add( InheritedContentDataProcessor.ALL );
+        }
+        moveParams.processor( processors.build() );
+
+        return nodeService.move( moveParams.build() );
     }
 
-    private NodePath getParentPathToRestore( final Node node, final boolean isRootContent )
+    private NodeDataProcessor updateProperties()
     {
-        if ( isRootContent )
+        return ( data, nodePath ) -> {
+            var toBeEdited = data.copy();
+            toBeEdited.removeProperties( ORIGINAL_PARENT_PATH );
+            toBeEdited.removeProperties( ORIGINAL_NAME );
+            toBeEdited.removeProperties( ARCHIVED_TIME );
+            toBeEdited.removeProperties( ARCHIVED_BY );
+            return toBeEdited;
+        };
+    }
+
+    private void commit( final Nodes nodes )
+    {
+        final RoutableNodeVersionIds routableNodeVersionIds = nodes.stream()
+            .map( n -> RoutableNodeVersionId.from( n.id(), n.getNodeVersionId() ) )
+            .collect( RoutableNodeVersionIds.collector() );
+
+        nodeService.commit( NodeCommitEntry.create().message( ContentConstants.RESTORE_COMMIT_PREFIX ).build(), routableNodeVersionIds );
+    }
+
+    private NodePath getParentPathToRestore( final Node node )
+    {
+        if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals( node.parentPath() ) )
         {
             final Property originalParentPathProperty = node.data().getProperty( ORIGINAL_PARENT_PATH );
 
@@ -222,27 +190,29 @@ final class RestoreContentCommand
         return ContentConstants.CONTENT_ROOT_PATH;
     }
 
-    private String getOriginalSourceName( final Node node, final boolean isRootContent )
+    private NodeName getOriginalSourceName( final Node node )
     {
-        if ( isRootContent )
+        if ( ArchiveConstants.ARCHIVE_ROOT_PATH.equals( node.parentPath() ) )
         {
             final Property originalNameProperty = node.data().getProperty( ORIGINAL_NAME );
             if ( originalNameProperty != null )
             {
-                return originalNameProperty.getString();
+                return NodeName.from( originalNameProperty.getString() );
             }
         }
-        return node.name().toString();
+        return node.name();
     }
 
-
-    @Override
-    public void nodesMoved( final int count )
+    private NodeName buildName( final NodePath newParentPath, final NodeName name )
     {
-        if ( restoreContentListener != null )
+        NodeName newName = name;
+
+        while ( nodeService.nodeExists( new NodePath( newParentPath, newName ) ) )
         {
-            restoreContentListener.contentRestored( count );
+            newName = NodeName.from( NameValueResolver.name( newName.toString() ) );
         }
+
+        return newName;
     }
 
     public static class Builder
@@ -250,17 +220,9 @@ final class RestoreContentCommand
     {
         private final RestoreContentParams params;
 
-        private RestoreContentListener restoreContentListener;
-
         private Builder( final RestoreContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder restoreListener( final RestoreContentListener restoreContentListener )
-        {
-            this.restoreContentListener = restoreContentListener;
-            return this;
         }
 
         @Override
@@ -269,41 +231,10 @@ final class RestoreContentCommand
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
         }
-
         public RestoreContentCommand build()
         {
             validate();
             return new RestoreContentCommand( this );
         }
-    }
-
-    private final class NameResolver
-    {
-        private NodeName buildName( final NodePath newParentPath, final String name, final Node node )
-        {
-            String newName = null;
-
-            boolean nameAlreadyExist;
-
-            do
-            {
-                newName = newName != null ? NameValueResolver.name( newName ) : name;
-
-                final NodePath targetPath = new NodePath( newParentPath, NodeName.from( newName ) );
-
-                nameAlreadyExist = nodeService.nodeExists( targetPath ) && !nodeService.getByPath( targetPath ).id().equals( node.id() );
-                if ( !newParentPath.equals( node.parentPath() ) )
-                {
-                    nameAlreadyExist = nameAlreadyExist || !node.name().toString().equals( newName ) &&
-                        nodeService.nodeExists( new NodePath( node.parentPath(), NodeName.from( newName ) ) );
-                }
-
-            }
-            while ( nameAlreadyExist );
-
-            return NodeName.from( newName );
-        }
-
-
     }
 }

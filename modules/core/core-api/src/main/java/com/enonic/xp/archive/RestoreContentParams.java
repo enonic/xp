@@ -23,7 +23,6 @@ public final class RestoreContentParams
         this.parentPath = builder.parentPath;
         this.restoreContentListener = builder.restoreContentListener;
         this.stopInherit = builder.stopInherit;
-
     }
 
     public static RestoreContentParams.Builder create()

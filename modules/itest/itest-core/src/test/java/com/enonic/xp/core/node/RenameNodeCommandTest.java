@@ -52,25 +52,20 @@ public class RenameNodeCommandTest
     @Test
     public void rename_to_same()
     {
-        // it wasn't specified anywhere, but RenameNodeCommand was initially written to
-        // allow node to be renamed to self.
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
             parent( NodePath.ROOT ).
             build() );
 
-        MoveNodeCommand.create()
+        final MoveNodeCommand command = MoveNodeCommand.create()
             .id( createdNode.id() )
             .newNodeName( NodeName.from( "my-node" ) )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
-            .build()
-            .execute();
+            .build();
 
-        final Node renamedNode = getNodeById( createdNode.id() );
-
-        assertEquals( "my-node", renamedNode.name().toString() );
+        assertThrows( NodeAlreadyExistAtPathException.class, command::execute );
     }
 
     @Test

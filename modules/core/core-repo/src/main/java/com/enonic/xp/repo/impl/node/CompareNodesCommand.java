@@ -4,16 +4,15 @@ import java.util.Objects;
 
 import com.google.common.collect.Sets;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.node.NodeBranchEntries;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 
 public class CompareNodesCommand
     extends AbstractCompareNodeCommand
@@ -48,14 +47,14 @@ public class CompareNodesCommand
         {
             final NodeBranchEntry sourceVersion = sourceVersions.get( id );
             final NodeBranchEntry targetVersion = targetVersions.get( id );
-            final CompareStatus compareStatus = CompareStatusResolver.create()
+            final NodeComparison compareStatus = CompareStatusResolver.create()
                 .source( sourceVersion )
                 .target( targetVersion )
                 .storageService( this.nodeStorageService )
                 .build()
                 .resolve();
 
-            builder.add( new NodeComparison( sourceVersion, targetVersion, compareStatus ) );
+            builder.add( compareStatus );
         }
 
         return builder.build();

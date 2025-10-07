@@ -6,9 +6,11 @@ import java.util.Objects;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
+import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -37,8 +39,12 @@ final class ApplyContentPermissionsCommand
             .addPermissions( params.getAddPermissions() )
             .removePermissions( params.getRemovePermissions() )
             .scope( params.getScope() )
-            .applyPermissionsListener( params.getListener() )
             .addBranches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) );
+
+        if ( params.getListener() != null )
+        {
+            applyNodePermissionsBuilder.applyPermissionsListener( new ListenerDelegate( params.getListener() ) );
+        }
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
@@ -107,4 +113,32 @@ final class ApplyContentPermissionsCommand
         }
     }
 
+    private static final class ListenerDelegate
+        implements ApplyNodePermissionsListener
+    {
+        ApplyPermissionsListener delegate;
+
+        ListenerDelegate( ApplyPermissionsListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void setTotal( final int count )
+        {
+            delegate.setTotal( count );
+        }
+
+        @Override
+        public void permissionsApplied( final int count )
+        {
+            delegate.permissionsApplied( count );
+        }
+
+        @Override
+        public void notEnoughRights( final int count )
+        {
+            delegate.notEnoughRights( count );
+        }
+    }
 }

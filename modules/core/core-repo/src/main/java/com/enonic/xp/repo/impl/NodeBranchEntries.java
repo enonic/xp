@@ -1,4 +1,4 @@
-package com.enonic.xp.node;
+package com.enonic.xp.repo.impl;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableMap;
+
+import com.enonic.xp.node.NodeId;
 
 public final class NodeBranchEntries
     implements Iterable<NodeBranchEntry>

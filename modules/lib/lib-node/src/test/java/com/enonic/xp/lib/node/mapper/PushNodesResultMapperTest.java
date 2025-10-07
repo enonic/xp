@@ -1,63 +1,56 @@
 package com.enonic.xp.lib.node.mapper;
 
-import java.time.Instant;
-
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.blob.NodeVersionKey;
-import com.enonic.xp.node.NodeBranchEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.testing.helper.JsonAssert;
 
-public class PushNodesResultMapperTest
+class PushNodesResultMapperTest
 {
     @Test
-    public void single_successful()
-        throws Exception
+    void single_successful()
     {
-        final PushNodesResult result = PushNodesResult.create().addSuccess( createEntry( "a" ), new NodePath( "/a" ) ).build();
+        final PushNodesResult result = PushNodesResult.create().add( createPushNodeResult( "a", "/a" ) ).build();
 
         JsonAssert.assertMapper( getClass(), "nodeResult/single_successful.json", new PushNodesResultMapper( result ) );
     }
 
     @Test
-    public void single_failed()
-        throws Exception
+    void single_failed()
     {
         final PushNodesResult result = PushNodesResult.create().
-            addFailed( createEntry( "a" ), PushNodesResult.Reason.ACCESS_DENIED ).
+            add( createNodePushResultFailed( "a", PushNodeResult.Reason.ACCESS_DENIED ) ).
             build();
 
         JsonAssert.assertMapper( getClass(), "nodeResult/single_failed.json", new PushNodesResultMapper( result ) );
     }
 
     @Test
-    public void complex()
-        throws Exception
+    void complex()
     {
         final PushNodesResult result = PushNodesResult.create()
-            .addSuccess( createEntry( "a" ), new NodePath( "/a" ) )
-            .addSuccess( createEntry( "b" ), new NodePath( "/b" ) )
-            .addSuccess( createEntry( "c" ), new NodePath( "/c" ) )
-            .addFailed( createEntry( "d" ), PushNodesResult.Reason.ACCESS_DENIED )
-            .addFailed( createEntry( "e" ), PushNodesResult.Reason.PARENT_NOT_FOUND )
-            .addFailed( createEntry( "f" ), PushNodesResult.Reason.PARENT_NOT_FOUND )
+            .add( createPushNodeResult( "a", "/a") )
+            .add( createPushNodeResult( "b", "/b" ) )
+            .add( createPushNodeResult( "c", "/c" ) )
+            .add( createNodePushResultFailed( "d", PushNodeResult.Reason.ACCESS_DENIED ) )
+            .add( createNodePushResultFailed( "e", PushNodeResult.Reason.PARENT_NOT_FOUND ) )
+            .add( createNodePushResultFailed( "f", PushNodeResult.Reason.PARENT_NOT_FOUND ) )
             .build();
 
         JsonAssert.assertMapper( getClass(), "nodeResult/full.json", new PushNodesResultMapper( result ) );
     }
 
-    static NodeBranchEntry createEntry( final String a )
+    private static PushNodeResult createPushNodeResult( String a, String targetPath)
     {
-        return NodeBranchEntry.create()
-            .nodeId( NodeId.from( a ) )
-            .nodePath( new NodePath( "/" + a ) )
-            .nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) )
-            .nodeVersionId( new NodeVersionId() )
-            .timestamp( Instant.EPOCH )
-            .build();
+        return PushNodeResult.success( NodeId.from( a ), new NodeVersionId(), new NodePath( "/" + a ), new NodePath( targetPath ) );
+    }
+
+    private static PushNodeResult createNodePushResultFailed( String a, PushNodeResult.Reason reason )
+    {
+        return PushNodeResult.failure( NodeId.from( a ), new NodePath( "/" + a ), reason );
     }
 }

@@ -19,17 +19,13 @@ import com.enonic.xp.node.RefreshMode;
 
 final class DuplicateContentCommand
     extends AbstractContentCommand
-    implements DuplicateNodeListener
 {
     private final DuplicateContentParams params;
-
-    private final DuplicateContentListener duplicateContentListener;
 
     private DuplicateContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.duplicateContentListener = builder.duplicateContentListener;
     }
 
     public static Builder create( final DuplicateContentParams params )
@@ -74,10 +70,14 @@ final class DuplicateContentCommand
         final NodeId sourceNodeId = ( !isVariant && params.isVariant() ) ? sourceNode.id() : null;
 
         final DuplicateNodeParams.Builder builder = DuplicateNodeParams.create()
-            .duplicateListener( this )
             .nodeId( sourceNode.id() )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
             .refresh( RefreshMode.SEARCH );
+
+        if ( params.getDuplicateContentListener() != null )
+        {
+            builder.duplicateListener( new ListenerDelegate( params.getDuplicateContentListener() ) );
+        }
 
         builder.name( params.getName() );
         if ( params.getParent() != null )
@@ -87,24 +87,6 @@ final class DuplicateContentCommand
         builder.includeChildren( params.getIncludeChildren() );
 
         return builder.build();
-    }
-
-    @Override
-    public void nodesDuplicated( final int count )
-    {
-        if ( duplicateContentListener != null )
-        {
-            duplicateContentListener.contentDuplicated( count );
-        }
-    }
-
-    @Override
-    public void nodesReferencesUpdated( final int count )
-    {
-        if ( duplicateContentListener != null )
-        {
-            duplicateContentListener.contentReferencesUpdated( count );
-        }
     }
 
     private ContentIds getAllChildren( final Content duplicatedContent )
@@ -120,17 +102,9 @@ final class DuplicateContentCommand
     {
         private final DuplicateContentParams params;
 
-        private DuplicateContentListener duplicateContentListener;
-
         Builder( final DuplicateContentParams params )
         {
             this.params = params;
-        }
-
-        public Builder duplicateListener( final DuplicateContentListener duplicateListener )
-        {
-            this.duplicateContentListener = duplicateListener;
-            return this;
         }
 
         @Override
@@ -147,4 +121,26 @@ final class DuplicateContentCommand
         }
     }
 
+    private static final class ListenerDelegate
+        implements DuplicateNodeListener
+    {
+        DuplicateContentListener delegate;
+
+        ListenerDelegate( DuplicateContentListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void nodesDuplicated( final int count )
+        {
+            delegate.contentDuplicated( count );
+        }
+
+        @Override
+        public void nodesReferencesUpdated( final int count )
+        {
+            delegate.contentReferencesUpdated( count );
+        }
+    }
 }

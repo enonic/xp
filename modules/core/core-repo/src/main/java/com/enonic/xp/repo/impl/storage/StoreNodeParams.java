@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitId;
-import com.enonic.xp.node.NodePath;
 
 public class StoreNodeParams
 {
@@ -12,14 +11,11 @@ public class StoreNodeParams
 
     private final boolean newVersion;
 
-    private final NodePath movedFrom;
-
-    private StoreNodeParams( final Node node, final NodeCommitId nodeCommitId, final boolean newVersion, final NodePath movedFrom )
+    private StoreNodeParams( final Node node, final NodeCommitId nodeCommitId, final boolean newVersion )
     {
         this.node = node;
         this.nodeCommitId = nodeCommitId;
         this.newVersion = newVersion;
-        this.movedFrom = movedFrom;
     }
 
     public Node getNode()
@@ -37,11 +33,6 @@ public class StoreNodeParams
         return newVersion;
     }
 
-    public NodePath movedFrom()
-    {
-        return movedFrom;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -49,7 +40,7 @@ public class StoreNodeParams
 
     public static StoreNodeParams newVersion( final Node node )
     {
-        return new StoreNodeParams( node, null, true, null );
+        return new StoreNodeParams( node, null, true );
     }
 
     public static final class Builder
@@ -59,8 +50,6 @@ public class StoreNodeParams
         private NodeCommitId nodeCommitId;
 
         private boolean newVersion = true;
-
-        private NodePath movedFrom;
 
         private Builder()
         {
@@ -84,15 +73,9 @@ public class StoreNodeParams
             return this;
         }
 
-        public Builder movedFrom( final NodePath movedFrom)
-        {
-            this.movedFrom = movedFrom;
-            return this;
-        }
-
         public StoreNodeParams build()
         {
-            return new StoreNodeParams( node, nodeCommitId, newVersion, movedFrom );
+            return new StoreNodeParams( node, nodeCommitId, newVersion );
         }
     }
 }

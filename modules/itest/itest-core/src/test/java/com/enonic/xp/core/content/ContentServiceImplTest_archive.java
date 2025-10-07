@@ -66,7 +66,7 @@ public class ContentServiceImplTest_archive
         final ArchiveContentsResult result = this.contentService.archive( params );
 
         assertEquals( 4, result.getArchivedContents().getSize() );
-        assertEquals( 4, listener.getArchived() );
+        assertEquals( 4, listener.archived );
 
         assertFalse( this.contentService.contentExists( child1.getId() ) );
         assertFalse( this.contentService.contentExists( child1.getPath() ) );
@@ -142,8 +142,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_dont_stop_inherited()
-        throws Exception
+    void archive_dont_stop_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -158,7 +157,7 @@ public class ContentServiceImplTest_archive
 
         archiveContext().runWith( () -> {
             final Content archived = this.contentService.getById( content.getId() );
-            assertEquals( 4, archived.getInherit().size() );
+            assertThat( archived.getInherit() ).containsExactly( ContentInheritType.values() );
         } );
     }
 
@@ -257,8 +256,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_check_properties()
-        throws Exception
+    void archive_check_properties()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child = createContent( parent.getPath(), "content" );
@@ -312,32 +310,12 @@ public class ContentServiceImplTest_archive
     private static final class TestListener
         implements ArchiveContentListener
     {
-
-        private int total = 0;
-
-        private int archived = 0;
+        int archived;
 
         @Override
         public void contentArchived( final int count )
         {
             archived++;
         }
-
-        public int getTotal()
-        {
-            return total;
-        }
-
-        @Override
-        public void setTotal( final int count )
-        {
-            total++;
-        }
-
-        public int getArchived()
-        {
-            return archived;
-        }
-
     }
 }
