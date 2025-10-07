@@ -11,11 +11,10 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.xml.parser.XmlApplicationParser;
 
 final class ApplicationDescriptorBuilder
 {
-    private static final String APP_DESCRIPTOR_FILENAME = "application.xml";
+    private static final String APP_DESCRIPTOR_FILENAME = "application.yml";
 
     private static final String APP_ICON_FILENAME = "application.svg";
 
@@ -30,14 +29,9 @@ final class ApplicationDescriptorBuilder
     public ApplicationDescriptor build()
     {
         final URL url = bundle.getResource( APP_DESCRIPTOR_FILENAME );
-        final String xml = parseAppXml( url );
+        final String xml = readAppYml( url );
 
-        ApplicationDescriptor.Builder appDescriptorBuilder = ApplicationDescriptor.create();
-        final XmlApplicationParser parser = new XmlApplicationParser().
-            currentApplication( ApplicationKey.from( bundle ) ).
-            appDescriptorBuilder( appDescriptorBuilder ).
-            source( xml );
-        parser.parse();
+        final ApplicationDescriptor.Builder appDescriptorBuilder = YmlApplicationDescriptorParser.parse( xml, ApplicationKey.from( bundle ) );
 
         if ( hasAppIcon( bundle ) )
         {
@@ -57,9 +51,9 @@ final class ApplicationDescriptorBuilder
         return appDescriptorBuilder.build();
     }
 
-    private String parseAppXml( final URL siteXmlURL )
+    private String readAppYml( final URL siteYmlURL )
     {
-        try (InputStream stream = siteXmlURL.openStream())
+        try (InputStream stream = siteYmlURL.openStream())
         {
             return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
         }
