@@ -79,7 +79,7 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/layouts/mylayout',
+    componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'displayName:\n' +
               '  text: "Virtual Layout"\n' +

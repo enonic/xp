@@ -109,7 +109,7 @@ public class VirtualAppService
     {
         final Node siteRoot = nodeService.create( CreateNodeParams.create()
                                                       .data( new PropertyTree() )
-                                                      .name( VirtualAppConstants.SITE_ROOT_NAME )
+                                                      .name( VirtualAppConstants.CMS_ROOT_NAME )
                                                       .parent( parent )
                                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                                       .build() );

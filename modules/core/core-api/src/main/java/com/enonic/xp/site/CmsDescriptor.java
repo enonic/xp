@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNullElse;
 
 public final class CmsDescriptor
 {
-    private static final String CMS_DESCRIPTOR_PATH = "site/cms.yml";
+    private static final String CMS_DESCRIPTOR_PATH = "cms/cms.yml";
 
     private final ApplicationKey applicationKey;
 

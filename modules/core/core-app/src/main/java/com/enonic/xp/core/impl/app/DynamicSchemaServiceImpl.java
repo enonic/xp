@@ -359,7 +359,7 @@ public class DynamicSchemaServiceImpl
         final String resourceRootName = getComponentRootName( dynamicType );
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
             .addElement( resourceRootName )
             .build();
     }
@@ -377,7 +377,7 @@ public class DynamicSchemaServiceImpl
 
         if ( dynamicType != DynamicContentSchemaType.MIXIN )
         {
-            builder.addElement( VirtualAppConstants.SITE_ROOT_NAME );
+            builder.addElement( VirtualAppConstants.CMS_ROOT_NAME );
         }
 
         return builder.addElement( resourceRootName ).build();
@@ -387,7 +387,7 @@ public class DynamicSchemaServiceImpl
     {
         return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.SITE_ROOT_NAME )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
             .build();
     }
 

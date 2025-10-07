@@ -25,7 +25,7 @@ public final class PageDescriptor
     public ResourceKey getComponentPath()
     {
         final DescriptorKey key = this.getKey();
-        return ResourceKey.from( key.getApplicationKey(), "site/pages/" + key.getName() );
+        return ResourceKey.from( key.getApplicationKey(), "cms/pages/" + key.getName() );
     }
 
     public RegionDescriptors getRegions()
@@ -35,7 +35,7 @@ public final class PageDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "site/pages/" + key.getName() + "/" + key.getName() + ".yml" );
+        return ResourceKey.from( key.getApplicationKey(), "cms/pages/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     public static PageDescriptor.Builder create()

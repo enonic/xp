@@ -41,7 +41,7 @@ public final class NodeResourceApplicationUrlResolver
     public Set<String> findFiles()
     {
         final CompareExpr underSitePath = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
-            "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" ) );
+            "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) );
         final CompareExpr underFormFragmentsPath = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
             "/" + applicationKey + "/" + VirtualAppConstants.MIXIN_ROOT_NAME + "/*/*" ) );
 
@@ -61,7 +61,7 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Resource findResource( final String path )
     {
-        if ( !( path.startsWith( "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" ) ||
+        if ( !( path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) ||
             path.startsWith( "/" + VirtualAppConstants.MIXIN_ROOT_NAME + "/" ) ) )
         {
             return null;

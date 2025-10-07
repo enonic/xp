@@ -16,7 +16,7 @@ import com.enonic.xp.resource.ResourceKey;
 public class FakeSiteXmlUrlResolver
     implements ApplicationUrlResolver
 {
-    private static final Set<String> SINGLE_FILE_SET = Set.of( VirtualAppConstants.SITE_RESOURCE_PATH );
+    private static final Set<String> SINGLE_FILE_SET = Set.of( VirtualAppConstants.CMS_RESOURCE_PATH );
 
     private final ApplicationKey applicationKey;
 
@@ -37,7 +37,7 @@ public class FakeSiteXmlUrlResolver
     @Override
     public Resource findResource( final String path )
     {
-        if ( VirtualAppConstants.SITE_RESOURCE_PATH.equals( path ) )
+        if ( VirtualAppConstants.CMS_RESOURCE_PATH.equals( path ) )
         {
             final NodePath appPath =
                 new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );

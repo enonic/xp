@@ -46,7 +46,7 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'key.display-name',
     description: 'My Page Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/pages/mypage',
+    componentPath: 'myapp:/cms/pages/mypage',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'displayName:\n' +
               '  text: "Virtual Page"\n' +

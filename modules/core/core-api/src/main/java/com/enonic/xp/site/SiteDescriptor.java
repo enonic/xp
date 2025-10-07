@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNullElse;
 @PublicApi
 public final class SiteDescriptor
 {
-    private static final String SITE_DESCRIPTOR_PATH = "site/site.yml";
+    private static final String SITE_DESCRIPTOR_PATH = "cms/site.yml";
 
     private final ApplicationKey applicationKey;
 

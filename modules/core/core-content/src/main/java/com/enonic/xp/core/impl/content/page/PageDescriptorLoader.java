@@ -24,7 +24,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 public class PageDescriptorLoader
     implements DescriptorLoader<PageDescriptor>
 {
-    private static final String PATH = "/site/pages";
+    private static final String PATH = "/cms/pages";
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 

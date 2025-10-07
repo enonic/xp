@@ -15,7 +15,7 @@ final class XDataLoader
 {
     XDataLoader( final ResourceService resourceService )
     {
-        super( resourceService, "/site/x-data" );
+        super( resourceService, "/cms/x-data" );
     }
 
     @Override
