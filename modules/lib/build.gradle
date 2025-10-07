@@ -140,24 +140,23 @@ task publishCoreToNpm( type: NpmTask, dependsOn: [prepareCoreToPublish, npmInsta
 
 task publishToNpm( dependsOn: [publishGlobalToNpm, publishCoreToNpm] ) {}
 
-task packageJsdoc( type: Jar, dependsOn: jsdoc ) {
-    from layout.buildDirectory.dir("resources/main/jsdoc")
-    archiveClassifier = 'jsdoc'
-}
-
 task publish {
     dependsOn publishToNpm
 }
 
-artifacts {
-    archives packageJsdoc
+tasks.register('packageJsdoc', Jar) {
+    dependsOn tasks.named('jsdoc')
+    from layout.buildDirectory.dir("resources/main/jsdoc")
+    archiveClassifier.set('jsdoc')
+}
+
+tasks.named('assemble') {
+    dependsOn tasks.named('packageJsdoc')
 }
 
 publishing.publications {
     mavenDocs( MavenPublication ) {
-        artifact( packageJsdoc ) {
-            artifactId = 'docs'
-        }
+        artifact tasks.named('packageJsdoc')
     }
 }
 

@@ -122,23 +122,27 @@ task jacocoMergedReport( type: JacocoReport ) {
     }
 }
 
-task javadoc( type: Javadoc, group: 'documentation' ) {
+tasks.register('javadoc', Javadoc) { t ->
+    group = 'documentation'
     title = "Enonic XP API ${version}"
 
-    options {
-        links 'https://docs.oracle.com/en/java/javase/11/docs/api/'
-        links 'https://www.javadoc.io/doc/com.google.guava/guava/26.0-jre'
+    options.with {
+        links 'https://docs.oracle.com/en/java/javase/21/docs/api/'
+        links 'https://www.javadoc.io/doc/com.google.guava/guava/33.4.8-jre/'
         quiet()
-        encoding( 'UTF-8' )
+        encoding('UTF-8')
     }
 
-    apiProjects.each { project ->
-        project.tasks.withType( Javadoc ).each { javadocTask ->
-            source += javadocTask.source
-            classpath += javadocTask.classpath
-            excludes += javadocTask.excludes
-            includes += javadocTask.includes
+    apiProjects.each  { p ->
+        def javaExt = p.providers.provider {
+            p.extensions.getByType(org.gradle.api.plugins.JavaPluginExtension)
         }
+        def mainSs = javaExt.map { it.sourceSets.getByName('main') }
+
+        t.source(mainSs.map { it.allJava })
+        t.classpath.from(mainSs.map { it.compileClasspath })
+
+        t.dependsOn(p.tasks.named('classes'))
     }
 }
 

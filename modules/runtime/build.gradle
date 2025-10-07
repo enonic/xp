@@ -284,7 +284,7 @@ distributions {
             into( '/' ) {
                 from( 'src' ) {
                     filesMatching( '**/*.sh' ) {
-                        mode = 0755
+                        permissions { unix '0755' }
                     }
                 }
                 from( rootDir ) {
