@@ -12,9 +12,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -56,7 +56,7 @@ class FindNodeVersionsCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getHits() );
+        assertEquals( 1, result.getNodeVersionMetadatas().getSize() );
     }
 
     @Test
@@ -89,12 +89,12 @@ class FindNodeVersionsCommandTest
             build().
             execute();
 
-        assertEquals( updateCount + 1, result.getHits() );
+        assertEquals( updateCount + 1, result.getNodeVersionMetadatas().getSize() );
 
-        final NodeVersionsMetadata nodeVersionsMetadata = result.getNodeVersionsMetadata();
+        final NodeVersionMetadatas nodeVersionMetadatas = result.getNodeVersionMetadatas();
         Instant previousTimestamp = null;
 
-        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionsMetadata )
+        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionMetadatas )
         {
             final Instant currentNodeTimestamp = nodeVersionMetadata.getTimestamp();
             if ( previousTimestamp != null )

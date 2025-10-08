@@ -142,11 +142,11 @@ public class FindNodeIdsByParentCommandTest
         final Node node_1_1_1_1 = createNode( node1_1_1.path(), "node1_1_1_1" );
         nodeService.refresh( RefreshMode.ALL );
 
-        assertEquals( 6, getByParentRecursive( Node.ROOT_UUID ).getHits() );
-        assertEquals( 5, getByParentRecursive( node.id() ).getHits() );
-        assertEquals( 2, getByParentRecursive( node1_1.id() ).getHits() );
-        assertEquals( 1, getByParentRecursive( node1_1_1.id() ).getHits() );
-        assertEquals( 0, getByParentRecursive( node_1_1_1_1.id() ).getHits() );
+        assertEquals( 6, getByParentRecursive( Node.ROOT_UUID ).getTotalHits() );
+        assertEquals( 5, getByParentRecursive( node.id() ).getTotalHits() );
+        assertEquals( 2, getByParentRecursive( node1_1.id() ).getTotalHits() );
+        assertEquals( 1, getByParentRecursive( node1_1_1.id() ).getTotalHits() );
+        assertEquals( 0, getByParentRecursive( node_1_1_1_1.id() ).getTotalHits() );
     }
 
     @Test
@@ -177,7 +177,7 @@ public class FindNodeIdsByParentCommandTest
             parentPath( createdNode.path() ).
             build() );
 
-        assertEquals( 2, children.getHits() );
+        assertEquals( 2, children.getTotalHits() );
         assertEquals( 2, children.getNodeIds().getSize() );
     }
 
@@ -202,14 +202,14 @@ public class FindNodeIdsByParentCommandTest
             size( 9 ).
             build() );
 
-        assertEquals( 9, children.getHits() );
+        assertEquals( 9, children.getNodeIds().getSize() );
 
         children = findByParent( FindNodesByParentParams.create().
             parentPath( createdNode.path() ).
             size( 100 ).
             build() );
 
-        assertEquals( 20, children.getHits() );
+        assertEquals( 20, children.getNodeIds().getSize() );
     }
 
     @Test
@@ -235,7 +235,7 @@ public class FindNodeIdsByParentCommandTest
             from( 0 ).
             build() );
 
-        assertEquals( 10, children.getHits() );
+        assertEquals( 10, children.getNodeIds().getSize() );
 
         assertEquals( "my-child-0", getNode( children.getNodeIds().first() ).name().toString() );
 
@@ -245,7 +245,7 @@ public class FindNodeIdsByParentCommandTest
             from( 10 ).
             build() );
 
-        assertEquals( 10, children.getHits() );
+        assertEquals( 10, children.getNodeIds().getSize() );
         assertEquals( "my-child-10", getNode( children.getNodeIds().first() ).name().toString() );
     }
 

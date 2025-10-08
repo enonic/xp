@@ -617,7 +617,7 @@ public abstract class AbstractContentServiceTest
             contentId( contentId ).
             build() );
 
-        assertEquals( expected, versions.getHits() );
+        assertEquals( expected, versions.getContentVersions().getSize() );
 
         final Iterator<ContentVersion> iterator = versions.getContentVersions().iterator();
 

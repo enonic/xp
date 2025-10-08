@@ -87,7 +87,7 @@ public class ContentServiceImplTest_duplicate
         final Content duplicatedContent = this.contentService.getById( result.getDuplicatedContents().first() );
 
         assertEquals( 0, this.contentService.findIdsByParent(
-            FindContentByParentParams.create().parentId( duplicatedContent.getId() ).build() ).getHits() );
+            FindContentByParentParams.create().parentId( duplicatedContent.getId() ).build() ).getContentIds().getSize() );
     }
 
     @Test

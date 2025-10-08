@@ -43,7 +43,7 @@ public class FindChildrenNodeHandler
             from( start ).
             build() );
 
-        return new FindNodesByParentResultMapper( this.count, result );
+        return new FindNodesByParentResultMapper( result );
     }
 
     public static Builder create()

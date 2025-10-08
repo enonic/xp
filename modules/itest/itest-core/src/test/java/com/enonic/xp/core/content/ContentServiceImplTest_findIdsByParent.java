@@ -124,7 +124,6 @@ public class ContentServiceImplTest_findIdsByParent
         final FindContentIdsByParentResult result = contentService.findIdsByParent( params );
 
         assertNotNull( result );
-        assertEquals( 0, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertTrue( result.getContentIds().isEmpty() );
 
@@ -148,7 +147,6 @@ public class ContentServiceImplTest_findIdsByParent
         final FindContentIdsByParentResult result = contentService.findIdsByParent( params );
 
         assertNotNull( result );
-        assertEquals( 1, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertEquals( 1, result.getContentIds().getSize() );
 
@@ -167,7 +165,6 @@ public class ContentServiceImplTest_findIdsByParent
             contentService.findIdsByParent( FindContentByParentParams.create().from( 10 ).parentPath( parentContent.getPath() ).build() );
 
         assertNotNull( result );
-        assertEquals( 0, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertTrue( result.getContentIds().isEmpty() );
     }
@@ -190,7 +187,6 @@ public class ContentServiceImplTest_findIdsByParent
         final FindContentIdsByParentResult result = contentService.findIdsByParent( params );
 
         assertNotNull( result );
-        assertEquals( 2, result.getHits() );
         assertEquals( 4, result.getTotalHits() );
         assertEquals( 2, result.getContentIds().getSize() );
     }

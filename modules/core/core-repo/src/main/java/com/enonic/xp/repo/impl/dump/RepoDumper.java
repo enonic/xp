@@ -171,7 +171,7 @@ public class RepoDumper
                     final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
                     final NodeVersionQueryResult versions = getVersions( nodeId );
-                    for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
+                    for ( final NodeVersionMetadata metaData : versions.getNodeVersionMetadatas() )
                     {
                         doStoreVersion( builder, metaData, this.dumpResult );
                         this.dumpResult.addedVersion();

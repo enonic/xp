@@ -22,9 +22,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.RangeFilter;
@@ -122,7 +122,7 @@ public class VersionTableVacuumCommand
 
         NodeVersionQuery query = createQuery( lastVersionId, ageThreshold );
         NodeVersionQueryResult versionsResult = nodeService.findVersions( query );
-        long hits = versionsResult.getHits();
+        int hits = versionsResult.getNodeVersionMetadatas().getSize();
 
         final long totalHits = versionsResult.getTotalHits();
 
@@ -138,7 +138,7 @@ public class VersionTableVacuumCommand
             final Set<BlobKey> nodeBlobToCheckSet = new HashSet<>();
             final Set<BlobKey> binaryBlobToCheckSet = new HashSet<>();
 
-            final NodeVersionsMetadata versions = versionsResult.getNodeVersionsMetadata();
+            final NodeVersionMetadatas versions = versionsResult.getNodeVersionMetadatas();
 
             for ( NodeVersionMetadata version : versions )
             {
@@ -173,7 +173,7 @@ public class VersionTableVacuumCommand
 
             query = createQuery( lastVersionId, ageThreshold );
             versionsResult = nodeService.findVersions( query );
-            hits = versionsResult.getHits();
+            hits = versionsResult.getNodeVersionMetadatas().getSize();
         }
 
         if ( listener != null )

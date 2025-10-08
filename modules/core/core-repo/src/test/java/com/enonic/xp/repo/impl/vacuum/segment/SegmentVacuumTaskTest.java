@@ -60,7 +60,7 @@ public class SegmentVacuumTaskTest
 
 
         this.nodeService = Mockito.mock( NodeService.class );
-        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).thenReturn( NodeVersionQueryResult.empty(0) );
+        Mockito.when( nodeService.findVersions( Mockito.any( NodeVersionQuery.class ) ) ).thenReturn( NodeVersionQueryResult.create().build() );
     }
 
     @Test

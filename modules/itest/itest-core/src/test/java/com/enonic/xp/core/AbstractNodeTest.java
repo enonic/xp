@@ -521,7 +521,7 @@ public abstract class AbstractNodeTest
 
     protected void assertOrder( final FindNodesByQueryResult result, NodeId... ids )
     {
-        assertEquals( ids.length, result.getHits() );
+        assertEquals( ids.length, result.getNodeHits().getSize() );
 
         final Iterator<Node> iterator = getNodes( result.getNodeIds() ).iterator();
 

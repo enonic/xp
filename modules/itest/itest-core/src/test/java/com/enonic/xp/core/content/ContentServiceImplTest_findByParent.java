@@ -143,7 +143,6 @@ public class ContentServiceImplTest_findByParent
         final FindContentByParentResult result = contentService.findByParent( params );
 
         assertNotNull( result );
-        assertEquals( 0, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertTrue( result.getContents().isEmpty() );
 
@@ -170,7 +169,6 @@ public class ContentServiceImplTest_findByParent
         final FindContentByParentResult result = contentService.findByParent( params );
 
         assertNotNull( result );
-        assertEquals( 1, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertEquals( 1, result.getContents().getSize() );
 
@@ -191,7 +189,6 @@ public class ContentServiceImplTest_findByParent
             build() );
 
         assertNotNull( result );
-        assertEquals( 0, result.getHits() );
         assertEquals( 3, result.getTotalHits() );
         assertTrue( result.getContents().isEmpty() );
     }
@@ -217,7 +214,6 @@ public class ContentServiceImplTest_findByParent
         final FindContentByParentResult result = contentService.findByParent( params );
 
         assertNotNull( result );
-        assertEquals( 2, result.getHits() );
         assertEquals( 4, result.getTotalHits() );
         assertEquals( 2, result.getContents().getSize() );
     }

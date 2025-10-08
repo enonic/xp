@@ -22,7 +22,7 @@ public class GetChildContentHandlerTest
         final Contents contents = TestDataFixtures.newContents( 2 );
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().totalHits( 20 ).contents( contents ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         runScript( "/lib/xp/examples/content/getChildren.js" );
@@ -34,7 +34,7 @@ public class GetChildContentHandlerTest
         final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().totalHits( 20 ).contents( contents ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         runFunction( "/test/GetChildContentHandlerTest.js", "getChildrenById" );
@@ -46,7 +46,7 @@ public class GetChildContentHandlerTest
         final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().totalHits( 20 ).contents( contents ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         runFunction( "/test/GetChildContentHandlerTest.js", "getChildrenByPath" );
@@ -56,7 +56,7 @@ public class GetChildContentHandlerTest
     public void getChildrenById_notFound()
     {
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( 0 ).totalHits( 0 ).contents( Contents.empty() ).build();
+            FindContentByParentResult.create().contents( Contents.empty() ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         runFunction( "/test/GetChildContentHandlerTest.js", "getChildrenById_notFound" );
@@ -66,7 +66,7 @@ public class GetChildContentHandlerTest
     public void getChildrenByPath_notFound()
     {
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( 0 ).totalHits( 0 ).contents( Contents.empty() ).build();
+            FindContentByParentResult.create().contents( Contents.empty() ).build();
         Mockito.when( this.contentService.findByParent( Mockito.isA( FindContentByParentParams.class ) ) ).thenReturn( findResult );
 
         runFunction( "/test/GetChildContentHandlerTest.js", "getChildrenByPath_notFound" );
@@ -78,7 +78,7 @@ public class GetChildContentHandlerTest
         final Contents contents = TestDataFixtures.newContents( 3 );
 
         final FindContentByParentResult findResult =
-            FindContentByParentResult.create().hits( contents.getSize() ).totalHits( 20 ).contents( contents ).build();
+            FindContentByParentResult.create().totalHits( 20 ).contents( contents ).build();
 
         Mockito.when( this.contentService.findByParent( any() ) ).thenReturn( findResult );
 

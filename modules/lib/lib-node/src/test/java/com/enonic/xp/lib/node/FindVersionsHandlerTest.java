@@ -13,8 +13,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersionsMetadata;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,16 +42,13 @@ public class FindVersionsHandlerTest
             timestamp( Instant.ofEpochSecond( 500 ) ).
             build();
 
-        final NodeVersionsMetadata nodeVersionsMetadata = NodeVersionsMetadata.create( NodeId.from( "nodeId1" ) ).
+        final NodeVersionMetadatas nodeVersionMetadatas = NodeVersionMetadatas.create().
             add( newNodeVersionMeta ).
             add( oldNodeVersionMeta ).
             build();
 
         final NodeVersionQueryResult result = NodeVersionQueryResult.create().
-            entityVersions( nodeVersionsMetadata ).
-            from( 0 ).
-            to( 2 ).
-            hits( 2 ).
+            entityVersions( nodeVersionMetadatas ).
             totalHits( 40 ).
             build();
 

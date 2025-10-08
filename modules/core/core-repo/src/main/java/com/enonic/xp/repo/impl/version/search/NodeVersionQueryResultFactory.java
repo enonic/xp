@@ -11,9 +11,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
-import com.enonic.xp.node.NodeVersionQuery;
+import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersionsMetadata;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
@@ -23,37 +22,15 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class NodeVersionQueryResultFactory
 {
-    public static NodeVersionQueryResult create( final NodeVersionQuery query, final SearchResult searchResult )
+    public static NodeVersionQueryResult create( final SearchResult searchResult )
     {
-        if ( searchResult.isEmpty() )
-        {
-            return NodeVersionQueryResult.empty( searchResult.getTotalHits() );
-        }
-
-        final NodeVersionQueryResult.Builder findNodeVersionsResult = NodeVersionQueryResult.create();
-
-        findNodeVersionsResult.hits( searchResult.getHits().size() );
-        findNodeVersionsResult.totalHits( searchResult.getTotalHits() );
-        findNodeVersionsResult.from( query.getFrom() );
-        findNodeVersionsResult.to( query.getSize() );
-
-        final NodeVersionsMetadata nodeVersionsMetadata = buildEntityVersions( query, searchResult );
-
-        findNodeVersionsResult.entityVersions( nodeVersionsMetadata );
-
-        return findNodeVersionsResult.build();
-    }
-
-    private static NodeVersionsMetadata buildEntityVersions( final NodeVersionQuery query, final SearchResult searchResult )
-    {
-        final NodeVersionsMetadata.Builder entityVersionsBuilder = NodeVersionsMetadata.create( query.getNodeId() );
-
-        for ( final SearchHit searchHit : searchResult.getHits() )
-        {
-            entityVersionsBuilder.add( createVersionEntry( searchHit ) );
-        }
-
-        return entityVersionsBuilder.build();
+        return NodeVersionQueryResult.create()
+            .totalHits( searchResult.getTotalHits() )
+            .entityVersions( searchResult.getHits()
+                                 .stream()
+                                 .map( NodeVersionQueryResultFactory::createVersionEntry )
+                                 .collect( NodeVersionMetadatas.collector() ) )
+            .build();
     }
 
     private static NodeVersionMetadata createVersionEntry( final SearchHit hit )

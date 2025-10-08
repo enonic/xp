@@ -21,7 +21,7 @@ class DeleteNodeHandlerTest
 {
     private void mockGetNode()
     {
-        when( this.nodeService.delete( any() ) ).thenReturn( DeleteNodeResult.create().build() );
+        when( this.nodeService.delete( any() ) ).thenReturn( DeleteNodeResult.create().nodeIds( NodeIds.empty() ).build() );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
             .nodeIds( NodeIds.from(NodeId.from( "nodeId" ), NodeId.from( "aSubNodeId" ) ) )

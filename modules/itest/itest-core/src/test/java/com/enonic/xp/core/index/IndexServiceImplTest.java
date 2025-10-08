@@ -166,7 +166,7 @@ public class IndexServiceImplTest
                                                        .parent( NodePath.ROOT )
                                                        .build() ) );
 
-        assertEquals( 2, cmsRepoContext.callWith( this::findAllNodes ).getHits() );
+        assertEquals( 2, cmsRepoContext.callWith( this::findAllNodes ).getNodeHits().getSize() );
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( cmsRepoContext.getBranch() ).
@@ -177,7 +177,7 @@ public class IndexServiceImplTest
         refresh();
 
         assertEquals( 2, cmsRepoContext.
-            callWith( this::findAllNodes ).getHits() );
+            callWith( this::findAllNodes ).getNodeHits().getSize() );
     }
 
 
@@ -200,7 +200,7 @@ public class IndexServiceImplTest
                                                           .refresh( RefreshMode.ALL )
                                                           .build() ) );
 
-        final long nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getHits();
+        final int nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getNodeHits().getSize();
 
         this.indexService.reindex( ReindexParams.create().
             addBranch( systemRepoContext.getBranch() ).
@@ -210,7 +210,7 @@ public class IndexServiceImplTest
 
         refresh();
 
-        assertEquals( nodesInSystemRepoCount, systemRepoContext.callWith( this::findAllNodes ).getHits() );
+        assertEquals( nodesInSystemRepoCount, systemRepoContext.callWith( this::findAllNodes ).getNodeHits().getSize() );
     }
 
     private FindNodesByQueryResult findAllNodes()

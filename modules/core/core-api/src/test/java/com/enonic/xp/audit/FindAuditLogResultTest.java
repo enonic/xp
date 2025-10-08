@@ -24,7 +24,6 @@ public class FindAuditLogResultTest
             hits( AuditLogs.empty() ).
             total( 0L ).
             build();
-        assertEquals( 0, result.getCount() );
         assertEquals( AuditLogs.empty(), result.getHits() );
     }
 
@@ -35,7 +34,7 @@ public class FindAuditLogResultTest
             hits( AuditLogs.from( getBuilder().id( AuditLogId.from( 1 ) ).build(), getBuilder().id( AuditLogId.from( 2 ) ).build() ) ).
             total( 2L ).
             build();
-        assertEquals( 2, result.getCount() );
+        assertEquals( 2, result.getHits().getSize() );
     }
 
 }

@@ -19,12 +19,6 @@ public final class CleanUpAuditLogResult
         return new Builder();
     }
 
-    public static CleanUpAuditLogResult empty()
-    {
-        return CleanUpAuditLogResult.create().
-            build();
-    }
-
     public static final class Builder
     {
         private long deleted = 0;

@@ -48,7 +48,7 @@ public class IssueServiceImplTest_findComments
         final FindIssueCommentsResult result = this.issueService.findComments( query );
 
         assertNotNull( result );
-        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getIssueComments().size() );
     }
 
     @Test
@@ -63,7 +63,7 @@ public class IssueServiceImplTest_findComments
         final FindIssueCommentsResult result = this.issueService.findComments( query );
 
         assertNotNull( result );
-        assertEquals( 2, result.getHits() );
+        assertEquals( 2, result.getIssueComments().size() );
         assertTrue( result.getIssueComments().stream().allMatch( c -> c.getCreator().equals( User.ANONYMOUS.getKey() ) ) );
     }
 

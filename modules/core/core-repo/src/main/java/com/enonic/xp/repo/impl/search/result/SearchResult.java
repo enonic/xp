@@ -43,11 +43,6 @@ public class SearchResult
         return totalHits;
     }
 
-    public long getNumberOfHits()
-    {
-        return hits.size();
-    }
-
     public Collection<String> getIds()
     {
         return this.hits.stream().map( SearchHit::getId ).collect( Collectors.toList() );

@@ -242,7 +242,7 @@ class ApplicationServiceImplTest
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
         when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
-            FindNodesByParentResult.create().totalHits( 1L ).hits( 1L ).nodeIds( ids ).build() );
+            FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
 
         when( nodeService.getByIds( ids ) ).thenReturn(
             Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );
@@ -961,8 +961,7 @@ class ApplicationServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer(
-            searchParams -> FindNodesByQueryResult.create().totalHits( 0 ).hits( 0 ).build() );
+        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create().build() );
 
         assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 

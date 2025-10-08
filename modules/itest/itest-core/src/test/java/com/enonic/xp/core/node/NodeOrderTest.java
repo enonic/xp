@@ -93,7 +93,7 @@ public class NodeOrderTest
 
         final SearchResult result = searchService.query( fulltextQuery, SingleRepoSearchSource.from( ContextAccessor.current() ) );
 
-        assertEquals( 4, result.getNumberOfHits() );
+        assertEquals( 4, result.getHits().size() );
 
         final Iterator<String> iterator = result.getIds().iterator();
         assertEquals( node4.id(), NodeId.from( iterator.next() ) );

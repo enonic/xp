@@ -11,11 +11,8 @@ public class FindNodesByParentResultMapper
 {
     private final FindNodesByParentResult result;
 
-    private final int count;
-
-    public FindNodesByParentResultMapper( final int count, final FindNodesByParentResult result )
+    public FindNodesByParentResultMapper( final FindNodesByParentResult result )
     {
-        this.count = count;
         this.result = result;
     }
 
@@ -23,8 +20,7 @@ public class FindNodesByParentResultMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "total", result.getTotalHits() );
-        gen.value( "count", count );
-        gen.value( "hits", result.getHits() );
+        gen.value( "count", result.getNodeIds().getSize() );
         serialize( gen, result.getNodeIds() );
     }
 

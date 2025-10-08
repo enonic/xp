@@ -552,8 +552,8 @@ public class ApplyNodePermissionsCommandTest
         final NodeVersionQueryResult versions =
             FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).build().execute();
 
-        assertEquals( 2, versions.getHits() );
-        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionsMetadata().iterator();
+        assertEquals( 2, versions.getNodeVersionMetadatas().getSize() );
+        final Iterator<NodeVersionMetadata> iterator = versions.getNodeVersionMetadatas().iterator();
         assertTrue( iterator.next().getTimestamp().isAfter( iterator.next().getTimestamp() ) );
     }
 

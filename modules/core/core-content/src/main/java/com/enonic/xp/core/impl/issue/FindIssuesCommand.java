@@ -30,7 +30,7 @@ public class FindIssuesCommand
 
         final List<Issue> issues = IssueNodeTranslator.fromNodes( foundNodes );
 
-        return FindIssuesResult.create().issues( issues ).hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
+        return FindIssuesResult.create().issues( issues ).totalHits( result.getTotalHits() ).build();
     }
 
     public static Builder create()

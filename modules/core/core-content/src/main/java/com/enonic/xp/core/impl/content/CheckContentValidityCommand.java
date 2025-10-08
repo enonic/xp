@@ -31,7 +31,10 @@ public class CheckContentValidityCommand
     {
         if ( this.contentIds.isEmpty() )
         {
-            return ContentValidityResult.empty();
+            return ContentValidityResult.create().
+            notValidContentIds( ContentIds.empty() ).
+            notReadyContentIds( ContentIds.empty() ).
+            build();
         }
 
         // valid == false

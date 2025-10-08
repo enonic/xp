@@ -24,7 +24,7 @@ public class FindNodeCommitsCommand
     public NodeCommitQueryResult execute()
     {
         final SearchResult result = this.nodeSearchService.query( query, ContextAccessor.current().getRepositoryId() );
-        return NodeCommitQueryResultFactory.create( query, result );
+        return NodeCommitQueryResultFactory.create( result );
     }
 
     public static Builder create()

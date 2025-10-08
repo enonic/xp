@@ -9,13 +9,10 @@ public final class FindContentByParentResult
 
     private final long totalHits;
 
-    private final long hits;
-
     private FindContentByParentResult( Builder builder )
     {
         contents = builder.contents;
         totalHits = builder.totalHits;
-        hits = builder.hits;
     }
 
     public static Builder create()
@@ -33,18 +30,11 @@ public final class FindContentByParentResult
         return totalHits;
     }
 
-    public long getHits()
-    {
-        return hits;
-    }
-
     public static final class Builder
     {
         private Contents contents;
 
         private long totalHits;
-
-        private long hits;
 
         private Builder()
         {
@@ -59,12 +49,6 @@ public final class FindContentByParentResult
         public Builder totalHits( long totalHits )
         {
             this.totalHits = totalHits;
-            return this;
-        }
-
-        public Builder hits( long hits )
-        {
-            this.hits = hits;
             return this;
         }
 

@@ -1,21 +1,19 @@
 package com.enonic.xp.issue;
 
 
-import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 public final class FindIssuesResult
 {
-    private final List<Issue> issues;
+    private final ImmutableList<Issue> issues;
 
     private final long totalHits;
 
-    private final long hits;
-
     private FindIssuesResult( Builder builder )
     {
-        this.issues = builder.issues;
-        this.hits = builder.hits;
+        this.issues = ImmutableList.copyOf( builder.issues );
         this.totalHits = builder.totalHits;
     }
 
@@ -29,11 +27,6 @@ public final class FindIssuesResult
         return totalHits;
     }
 
-    public long getHits()
-    {
-        return hits;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -41,11 +34,9 @@ public final class FindIssuesResult
 
     public static final class Builder
     {
-        private List<Issue> issues = Collections.emptyList();
+        private List<Issue> issues = ImmutableList.of();
 
         private long totalHits;
-
-        private long hits;
 
         private Builder()
         {
@@ -54,12 +45,6 @@ public final class FindIssuesResult
         public Builder issues( final List<Issue> issues )
         {
             this.issues = issues;
-            return this;
-        }
-
-        public Builder hits( final long hits )
-        {
-            this.hits = hits;
             return this;
         }
 

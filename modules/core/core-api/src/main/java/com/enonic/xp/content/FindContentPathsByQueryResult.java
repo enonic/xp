@@ -9,13 +9,10 @@ public final class FindContentPathsByQueryResult
 
     private final long totalHits;
 
-    private final long hits;
-
     private FindContentPathsByQueryResult( final Builder builder )
     {
         this.contentPaths = builder.contentPaths;
         this.totalHits = builder.totalHits;
-        this.hits = builder.hits;
     }
 
     public static Builder create()
@@ -33,18 +30,11 @@ public final class FindContentPathsByQueryResult
         return totalHits;
     }
 
-    public long getHits()
-    {
-        return hits;
-    }
-
     public static final class Builder
     {
         private ContentPaths contentPaths = ContentPaths.empty();
 
         private long totalHits = 0;
-
-        private long hits = 0;
 
         private Builder()
         {
@@ -59,12 +49,6 @@ public final class FindContentPathsByQueryResult
         public Builder totalHits( long totalHits )
         {
             this.totalHits = totalHits;
-            return this;
-        }
-
-        public Builder hits( long hits )
-        {
-            this.hits = hits;
             return this;
         }
 

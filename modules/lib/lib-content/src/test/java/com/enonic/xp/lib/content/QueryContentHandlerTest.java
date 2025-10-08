@@ -128,7 +128,8 @@ public class QueryContentHandlerTest
     public void dslQueryEmpty()
         throws Exception
     {
-        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.empty() );
+        Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
+            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.empty() ).build() );
         runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "queryEmpty" );
     }
 
@@ -215,7 +216,6 @@ public class QueryContentHandlerTest
             build() );
 
         final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
-            hits( contents.getSize() ).
             totalHits( 20 ).
             contents( contents.getIds() ).
             aggregations( aggs ? aggregations : null ).
@@ -230,7 +230,6 @@ public class QueryContentHandlerTest
         throws Exception
     {
         final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
-            hits( 0 ).
             totalHits( 0 ).
             contents( ContentIds.empty() ).
             aggregations( Aggregations.empty() ).
@@ -309,7 +308,6 @@ public class QueryContentHandlerTest
         final Contents contents = Contents.from( toAddContents );
 
         final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
-            hits( contents.getSize() ).
             totalHits( 5 ).
             contents( contents.getIds() ).
             aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "products" ).buckets( bucket ).build() ) ).

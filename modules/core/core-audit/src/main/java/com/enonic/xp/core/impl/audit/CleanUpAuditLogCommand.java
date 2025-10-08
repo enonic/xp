@@ -45,7 +45,7 @@ public class CleanUpAuditLogCommand
         if ( Instant.EPOCH.equals( until ) )
         {
             LOG.debug( "ageThreshold hasn't been set, no need to clean up logs" );
-            return CleanUpAuditLogResult.empty();
+            return CleanUpAuditLogResult.create().build();
 
         }
         return AuditLogContext.createContext().callWith( this::doCleanUp );
@@ -60,30 +60,28 @@ public class CleanUpAuditLogCommand
         nodeService.refresh( RefreshMode.SEARCH );
         FindNodesByQueryResult nodesToDelete = nodeService.findByQuery( query );
 
-        long hits = nodesToDelete.getHits();
-        final long totalHits = nodesToDelete.getTotalHits();
+        boolean empty = nodesToDelete.getNodeHits().isEmpty();
 
-        if ( totalHits == 0 )
+        if ( empty )
         {
-            return CleanUpAuditLogResult.empty();
+            return CleanUpAuditLogResult.create().build();
         }
 
         listener.start( BATCH_SIZE );
 
-        while ( hits > 0 )
+        while ( !empty )
         {
             for ( NodeHit nodeHit : nodesToDelete.getNodeHits() )
             {
-                result.deleted( nodeService.delete( DeleteNodeParams.create().nodeId( nodeHit.getNodeId() ).build() )
-                                    .getNodeIds()
-                                    .getSize() );
+                result.deleted(
+                    nodeService.delete( DeleteNodeParams.create().nodeId( nodeHit.getNodeId() ).build() ).getNodeIds().getSize() );
 
                 listener.processed();
             }
             nodeService.refresh( RefreshMode.SEARCH );
             nodesToDelete = nodeService.findByQuery( query );
 
-            hits = nodesToDelete.getHits();
+            empty = nodesToDelete.getNodeHits().isEmpty();
         }
 
         listener.finished();

@@ -2,11 +2,6 @@ package com.enonic.xp.content;
 
 public final class ContentValidityResult
 {
-    private static final ContentValidityResult EMPTY = create().
-        notValidContentIds( ContentIds.empty() ).
-        notReadyContentIds( ContentIds.empty() ).
-        build();
-
     private final ContentIds allProblematicContentIds;
 
     private final ContentIds notValidContentIds;
@@ -41,11 +36,6 @@ public final class ContentValidityResult
     public boolean allValid()
     {
         return allProblematicContentIds.isEmpty();
-    }
-
-    public static ContentValidityResult empty()
-    {
-        return EMPTY;
     }
 
     public static ContentValidityResult.Builder create()

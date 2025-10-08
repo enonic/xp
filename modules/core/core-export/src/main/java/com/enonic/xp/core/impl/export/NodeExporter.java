@@ -135,7 +135,7 @@ public class NodeExporter
             nodeId( node.id() ).
             build() );
 
-        for ( final NodeVersionMetadata version : versions.getNodeVersionsMetadata() )
+        for ( final NodeVersionMetadata version : versions.getNodeVersionMetadatas() )
         {
             if ( version.getNodeVersionId().equals( node.getNodeVersionId() ) )
             {
