@@ -18,9 +18,6 @@ def bundleSymbolicName = "${project.group}.${project.name.replace('-', '.')}"
 def implementationVersion = project.version
 
 jar {
-    manifest {
-        attributes(['Implementation-Version': implementationVersion])
-    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     bundle {
