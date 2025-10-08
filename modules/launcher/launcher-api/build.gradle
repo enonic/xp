@@ -1,14 +1,12 @@
 import com.enonic.gradle.BuildInfoHelper
 
-dependencies {
+def buildInfoProvider = providers.provider {
+    BuildInfoHelper.extract( project.rootDir )
 }
 
-ext {
-    buildInfo = BuildInfoHelper.extract( project.rootDir )
-}
-
-processResources {
+tasks.named( 'processResources' ) {
+    inputs.property( "buildInfo", buildInfoProvider )
     filesMatching( '**/build.properties' ) {
-        expand( [info: buildInfo] )
+        expand( [info: buildInfoProvider.get()] )
     }
 }

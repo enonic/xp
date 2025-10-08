@@ -52,15 +52,15 @@ jacocoTestReport {
     executionData.from = fileTree(layout.buildDirectory).include("/jacoco/*.exec")
 }
 
+def bundleSymbolicName = "${project.group}.${project.name.replace('-', '.')}"
+def implementationVersion = project.version
+
 jar {
-    manifest {
-        attributes( ['Implementation-Version': project.version] )
-    }
     bundle {
-        bnd( 'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
+        bnd( 'Bundle-SymbolicName': bundleSymbolicName,
              '-nouses': 'true',
              '-dsannotations': '*',
-             'Implementation-Version': project.version )
+             'Implementation-Version': implementationVersion )
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

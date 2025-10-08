@@ -9,6 +9,7 @@ tika = "3.2.3"
 micrometer = "1.15.3"
 prometheus = "1.3.10"
 graalvm = "23.1.8"
+guava = "33.4.8-jre"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -65,7 +66,7 @@ jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
 findbugs-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 
-guava-guava = { module = "com.google.guava:guava", version = "33.4.8-jre" }
+guava-guava = { module = "com.google.guava:guava", version.ref = "guava"  }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
 jsoup = { module = "org.jsoup:jsoup", version = "1.21.2" }

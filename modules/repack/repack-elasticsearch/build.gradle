@@ -14,18 +14,18 @@ dependencies {
     implementation libs.jackson.dataformat.yaml
 }
 
+def bundleSymbolicName = "${project.group}.${project.name.replace('-', '.')}"
+def implementationVersion = project.version
+
 jar {
-    manifest {
-        attributes( ['Implementation-Version': project.version] )
-    }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     bundle {
         bnd(
-        'Bundle-SymbolicName': project.group + '.' + project.name.replace( '-', '.' ),
-         '-nouses': 'true',
-         '-dsannotations': '*',
-         'Implementation-Version': project.version,
+        'Bundle-SymbolicName': bundleSymbolicName,
+        '-nouses': 'true',
+        '-dsannotations': '*',
+        'Implementation-Version': implementationVersion,
          'Bundle-Name': 'Elasticsearch Library',
          'Export-Package':
              'org.elasticsearch.*;-split-package:=merge-first' + ',' +

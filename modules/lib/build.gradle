@@ -4,94 +4,82 @@ plugins {
 }
 
 node {
+    version = '22.19.0'
     download = true
-    version = '18.16.0'
 }
 
-def coreDir = "$projectDir/core/"
+def coreDir = layout.projectDirectory.dir( 'core' )
 
 /* Clean */
 clean {
-    delete "$coreDir/build"
+    delete coreDir.dir( 'build' )
 }
 
 /* Test */
-
-task lint( type: NpmTask, dependsOn: npmInstall ) {
+tasks.register( 'lint', NpmTask ) {
+    dependsOn tasks.named( 'npmInstall' )
     description = 'Lint TS, JS, and JSON'
     args = ['run', 'lint']
 
     outputs.upToDateWhen { false }
 }
 
-check.dependsOn lint
+check.dependsOn tasks.named( 'lint' )
 
 /* Configure & Build */
-
-task typescript( type: NpmTask ) {
-    dependsOn 'npmInstall', 'prepareToPublish'
-
+tasks.register( 'typescript', NpmTask ) {
+    dependsOn tasks.named( 'npmInstall' )
+    dependsOn tasks.named( 'prepareToPublish' )
     description = 'Create JS and DTS files from TS'
     args = ['run', 'build']
 
     inputs.file "global.d.ts"
-    inputs.files( fileTree( coreDir ).matching {
-        include "**/*.ts"
-    } )
-
+    inputs.files( fileTree( coreDir ) { include "**/*.ts" } )
     inputs.file "tsconfig.build.json"
     inputs.file "tsconfig.json"
-
-    outputs.files( subprojects.buildDir.collect {
-        fileTree( "$it/typescript/lib/xp/" ).matching {
-            include "**/*.js"
+    outputs.files( subprojects.collect {
+        it.layout.buildDirectory.dir('typescript/lib/xp').map { d ->
+            d.asFileTree.matching { include '**/*.js' }
         }
     } )
 }
 
-task prepareToJsdoc( type: Copy, dependsOn: typescript ) {
-    into layout.buildDirectory.dir("js")
+tasks.register( 'prepareToJsdoc', Copy ) {
+    dependsOn tasks.named( 'typescript' )
+    into layout.buildDirectory.dir( "js" )
     into( "" ) {
-        from projectDir
+        from layout.projectDirectory
         include "lib-*/build/typescript/lib/xp/*.js"
-        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 3 ) )
-        }
-
+        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 3 ) ) }
     }
     into( "examples" ) {
-        from projectDir
+        from layout.projectDirectory
         include "lib-*/src/main/resources/lib/xp/examples/**/*.js"
-        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 5 ) )
-        }
+        eachFile { fcd -> fcd.relativePath = new RelativePath( true, fcd.relativePath.segments.drop( 5 ) ) }
     }
     includeEmptyDirs = false
 }
 
-task jsdoc( type: NpmTask, dependsOn: prepareToJsdoc ) {
+tasks.register( 'jsdoc', NpmTask ) {
+    dependsOn tasks.named( 'prepareToJsdoc' )
     description = 'Build JSDoc for libraries.'
     args = ['run', 'jsdoc']
     doFirst {
         copy {
             from 'jsdoc/template/jsdoc-main.css'
-            into layout.buildDirectory.dir("resources/main/jsdoc/styles")
+            into layout.buildDirectory.dir( "resources/main/jsdoc/styles" )
         }
     }
 }
 
 /* Publish */
-
-task prepareGlobalToPublish( type: Copy ) {
-    into layout.buildDirectory.dir("npm")
-
+tasks.register( 'prepareGlobalToPublish', Copy ) {
+    into layout.buildDirectory.dir( "npm" )
     from 'README.md'
     from 'global.d.ts'
-
-    def dependencyLines = [
-        '    "dependencies": {',
-        '        "@enonic-types/core": "' + version + '"',
-        '    }'
-    ]
-
+    def dependencyLines = ['    "dependencies": {',
+                           '        "@enonic-types/core": "' + version + '"',
+                           '    }']
     from( 'package.template.json' ) {
         filter { line ->
             line
@@ -105,12 +93,10 @@ task prepareGlobalToPublish( type: Copy ) {
     }
 }
 
-task prepareCoreToPublish( type: Copy ) {
+tasks.register( 'prepareCoreToPublish', Copy ) {
     into "$coreDir/build/npm"
-
     from "$coreDir/README.md"
     from "$coreDir/index.d.ts"
-
     from( 'package.template.json' ) {
         filter { line ->
             line
@@ -124,86 +110,92 @@ task prepareCoreToPublish( type: Copy ) {
     }
 }
 
-task prepareToPublish( dependsOn: [prepareGlobalToPublish, prepareCoreToPublish] ) {}
+tasks.register( 'prepareToPublish' ) {
+    dependsOn tasks.named( 'prepareGlobalToPublish' )
+    dependsOn tasks.named( 'prepareCoreToPublish' )
+}
 
-task publishGlobalToNpm( type: NpmTask, dependsOn: [prepareGlobalToPublish, npmInstall] ) {
+tasks.register( 'publishGlobalToNpm', NpmTask ) {
+    dependsOn tasks.named( 'prepareGlobalToPublish' )
+    dependsOn tasks.named( 'npmInstall' )
     onlyIf { !version.endsWith( '-SNAPSHOT' ) }
     args = ['publish']
-    workingDir = prepareGlobalToPublish.destinationDir
+    workingDir = tasks.named( 'prepareGlobalToPublish' ).get().destinationDir
 }
 
-task publishCoreToNpm( type: NpmTask, dependsOn: [prepareCoreToPublish, npmInstall] ) {
+tasks.register( 'publishCoreToNpm', NpmTask ) {
+    dependsOn tasks.named( 'prepareCoreToPublish' )
+    dependsOn tasks.named( 'npmInstall' )
     onlyIf { !version.endsWith( '-SNAPSHOT' ) }
     args = ['publish']
-    workingDir = prepareCoreToPublish.destinationDir
+    workingDir = tasks.named( 'prepareCoreToPublish' ).get().destinationDir
 }
 
-task publishToNpm( dependsOn: [publishGlobalToNpm, publishCoreToNpm] ) {}
-
-task packageJsdoc( type: Jar, dependsOn: jsdoc ) {
-    from layout.buildDirectory.dir("resources/main/jsdoc")
-    archiveClassifier = 'jsdoc'
+tasks.register( 'publish' ) {
+    dependsOn tasks.named( 'publishGlobalToNpm' )
+    dependsOn tasks.named( 'publishCoreToNpm' )
 }
 
-task publish {
-    dependsOn publishToNpm
+tasks.register( 'packageJsdoc', Jar ) {
+    dependsOn tasks.named( 'jsdoc' )
+    from layout.buildDirectory.dir( "resources/main/jsdoc" )
+    archiveClassifier.set( 'jsdoc' )
 }
 
-artifacts {
-    archives packageJsdoc
-}
+assemble.dependsOn tasks.named( 'packageJsdoc' )
 
-publishing.publications {
-    mavenDocs( MavenPublication ) {
-        artifact( packageJsdoc ) {
-            artifactId = 'docs'
+publishing {
+    publications {
+        mavenDocs( MavenPublication ) {
+            artifact tasks.named( 'packageJsdoc' )
         }
     }
 }
 
-subprojects {
+subprojects {p ->
     apply plugin: 'com.github.node-gradle.node'
 
-    task prepareToTypescript( type: Copy ) {
+    tasks.register( 'prepareToTypescript', Copy ) {
         from( "src/main/resources" ) {
             include '**/*.ts'
             includeEmptyDirs = false
         }
-        into layout.buildDirectory.dir("typescript")
+        into layout.buildDirectory.dir( "typescript" )
     }
 
-    parent.typescript.dependsOn prepareToTypescript
+    parent.tasks.named( 'typescript' ).configure {
+        dependsOn tasks.named( 'prepareToTypescript' )
+    }
 
-    processResources {
-        from( layout.buildDirectory.dir("typescript") ) {
+    tasks.named( 'processResources' ) {
+        from( layout.buildDirectory.dir( "typescript" ) ) {
             include '**/*.js'
         }
-        dependsOn parent.typescript
+        dependsOn parent.tasks.named( 'typescript' )
     }
 
-    task prepareToPublish( type: Copy, dependsOn: processResources ) {
-        def fullName = project.name
-        def shortName = project.name.substring( 4 )
+    tasks.register( 'prepareToPublish', Copy ) {
+        dependsOn tasks.named( 'processResources' )
 
-        def hasCoreDependency = new File( "$projectDir/src/main/resources/lib/xp/${shortName}.ts" ).text.contains( '@enonic-types/core' )
-        def dependencies = hasCoreDependency ? ['@enonic-types/core'] : []
-        def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
-
-        into layout.buildDirectory.dir("npm")
-
+        def fullName = p.name
+        def shortName = p.name.substring( 4 )
+        def ts = p.file("src/main/resources/lib/xp/${shortName}.ts")
+        def hasCore = ts.exists() && ts.getText('UTF-8').contains('@enonic-types/core')
+        def dependencies = hasCore ? ['@enonic-types/core'] : []
+        def depString = dependencies.collect { "        \"$it\": \"$p.version\"" }.join( ',\n' )
+        into layout.buildDirectory.dir( "npm" )
         from( 'README.md' )
-        from( layout.buildDirectory.dir("typescript/lib/xp") ) {
+        from( layout.buildDirectory.dir( "typescript/lib/xp" ) ) {
             include '*.d.ts'
         }
-
-        from( '../package.template.json' ) {
+        from( project(':lib').file('package.template.json') ) {
             filter { line ->
                 def newLine = line
-                    .replaceAll( '%VERSION%', version )
+                    .replaceAll( '%VERSION%', p.version )
                     .replaceAll( '%FULL_NAME%', fullName )
                     .replaceAll( '%SHORT_NAME%|%FILE_NAME%', shortName )
                     .replaceAll( '%DESCRIPTION%', "Type definitions for ${fullName}." )
-                if ( dependencies.size > 0 )
+                if ( dependencies.size() > 0 )
                 {
                     newLine = newLine.replaceAll( '"dependencies"\\: \\{\\}', "\"dependencies\": {\n$depString\n    }" )
                 }
@@ -213,15 +205,16 @@ subprojects {
         }
     }
 
-    task publishToNpm( type: NpmTask, dependsOn: prepareToPublish ) {
+    tasks.register( 'publishToNpm', NpmTask ) {
+        dependsOn tasks.named( 'prepareToPublish' )
         onlyIf { !version.endsWith( '-SNAPSHOT' ) }
         args = ['publish']
-        workingDir = prepareToPublish.destinationDir
+        workingDir = tasks.named( 'prepareToPublish' ).get().destinationDir
     }
 
-    publish.dependsOn publishToNpm
+    publish.dependsOn tasks.named( 'publishToNpm' )
 
-    check.dependsOn parent.lint
+    check.dependsOn parent.tasks.named( 'lint' )
 
     jar {
         exclude '**/*.ts'
