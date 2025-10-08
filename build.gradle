@@ -31,6 +31,7 @@ allprojects {
                 options {
                     quiet()
                     encoding( 'UTF-8' )
+                    addStringOption('Xdoclint:all,-missing', '-quiet')
                 }
             }
 
@@ -38,6 +39,7 @@ allprojects {
                 publications {
                     mavenJava( MavenPublication ) {
                         from components.java
+                        suppressAllPomMetadataWarnings()
                         if ( subProject.name.startsWith( 'lib-' ) || subProject.name.endsWith( '-api' ) )
                         {
                             java {
@@ -98,12 +100,12 @@ configure( javaProjects ) {
     apply from: "$rootDir/gradle/java.gradle"
 }
 
-task ci {
+tasks.register('ci') {
     description = 'Builds and generates coverage report.'
     dependsOn = ['build', 'jacocoMergedReport']
 }
 
-task jacocoMergedReport( type: JacocoReport ) {
+tasks.register('jacocoMergedReport', JacocoReport) {
     group = 'verification'
     description = 'Generates a merged report all sub-projects.'
 
@@ -130,12 +132,13 @@ tasks.register('javadoc', Javadoc) { t ->
         links 'https://docs.oracle.com/en/java/javase/21/docs/api/'
         links 'https://www.javadoc.io/doc/com.google.guava/guava/33.4.8-jre/'
         quiet()
+        addStringOption('Xdoclint:all,-missing', '-quiet')
         encoding('UTF-8')
     }
 
     apiProjects.each  { p ->
         def javaExt = p.providers.provider {
-            p.extensions.getByType(org.gradle.api.plugins.JavaPluginExtension)
+            p.extensions.getByType(JavaPluginExtension)
         }
         def mainSs = javaExt.map { it.sourceSets.getByName('main') }
 
@@ -146,7 +149,7 @@ tasks.register('javadoc', Javadoc) { t ->
     }
 }
 
-task javadocZip( type: Zip ) {
+tasks.register('javadocZip', Zip ) {
     from javadoc
     archiveFileName = "${project.name}-${project.version}-javadoc.zip"
     destinationDirectory = base.distsDirectory
@@ -154,10 +157,12 @@ task javadocZip( type: Zip ) {
 }
 
 
-publishing.publications {
-    mavenDocs( MavenPublication ) {
-        artifact( javadocZip ) {
-            artifactId = 'docs'
+publishing {
+    publications {
+        mavenDocs( MavenPublication ) {
+            artifact( tasks.named("javadocZip") ) {
+                artifactId = 'docs'
+            }
         }
     }
 }

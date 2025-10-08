@@ -42,7 +42,7 @@ def integration = gradle.sharedServices.registerIfAbsent("integration", BuildSer
     maxParallelUsages = 1
 }
 
-task integrationTest(type: Test) {
+tasks.register('integrationTest', Test) {
     usesService(integration)
     description = 'Runs integration tests.'
     group = 'verification'
@@ -51,15 +51,18 @@ task integrationTest(type: Test) {
         includeTags 'elasticsearch'
     }
 
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
     systemProperty 'java.awt.headless', 'true'
     maxHeapSize = '2G'
 
     shouldRunAfter test
 }
 
-check.dependsOn integrationTest
+check.dependsOn(tasks.named('integrationTest'))
 
-jacocoTestReport {
-    dependsOn integrationTest
+tasks.named('jacocoTestReport') {
+    dependsOn(tasks.named('integrationTest'))
     executionData.from = fileTree(layout.buildDirectory).include("/jacoco/*.exec")
 }
