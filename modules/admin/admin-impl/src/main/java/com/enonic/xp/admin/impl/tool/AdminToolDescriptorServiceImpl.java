@@ -87,24 +87,6 @@ public final class AdminToolDescriptorServiceImpl
 
     private AdminToolDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        final AdminToolDescriptor.Builder builder = AdminToolDescriptor.create().key( key );
-        parseXml( resource, builder );
-        return builder.build();
-    }
-
-    private void parseXml( final Resource resource, final AdminToolDescriptor.Builder builder )
-    {
-        try
-        {
-            final XmlAdminToolDescriptorParser parser = new XmlAdminToolDescriptorParser();
-            parser.currentApplication( resource.getKey().getApplicationKey() );
-            parser.builder( builder );
-            parser.source( resource.readString() );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load admin app descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
+        return YmlAdminToolDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
     }
 }
