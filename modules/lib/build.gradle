@@ -174,7 +174,6 @@ subprojects {p ->
         dependsOn parent.tasks.named( 'typescript' )
     }
 
-
     tasks.register( 'prepareToPublish', Copy ) {
         dependsOn tasks.named( 'processResources' )
 
