@@ -47,18 +47,13 @@ public final class TaskDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     @Override
     public TaskDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        final TaskDescriptor.Builder builder = TaskDescriptor.create();
-        builder.key( key );
-
-        final String descriptorXml = resource.readString();
-        parseXml( key.getApplicationKey(), builder, descriptorXml );
-        return builder.build();
+        return YmlTaskDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
     }
 
     @Override
@@ -75,14 +70,5 @@ public final class TaskDescriptorLoader
             .description( descriptor.getDescription() )
             .config( this.mixinService.inlineFormItems( descriptor.getConfig() ) )
             .build();
-    }
-
-    private void parseXml( final ApplicationKey applicationKey, final TaskDescriptor.Builder builder, final String xml )
-    {
-        final XmlTaskDescriptorParser parser = new XmlTaskDescriptorParser();
-        parser.builder( builder );
-        parser.currentApplication( applicationKey );
-        parser.source( xml );
-        parser.parse();
     }
 }
