@@ -73,7 +73,7 @@ public class WidgetDescriptorLoaderTest
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget1" );
 
         final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
-        assertEquals( "myapp1:/admin/widgets/widget1/widget1.xml", resourceKey.toString() );
+        assertEquals( "myapp1:/admin/widgets/widget1/widget1.yml", resourceKey.toString() );
 
         final Resource resource = this.resourceService.getResource( resourceKey );
         final WidgetDescriptor descriptor = this.loader.load( descriptorKey, resource );
