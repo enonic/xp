@@ -30,7 +30,7 @@ dependencies {
     testFixturesImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
-    testFixturesApi ( libs.elasticsearch ) {
+    testFixturesApi( libs.elasticsearch ) {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-cbor'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-yaml'
         exclude group: 'org.yaml', module: 'snakeyaml'
@@ -38,12 +38,12 @@ dependencies {
     }
 }
 
-def integration = gradle.sharedServices.registerIfAbsent("integration", BuildService) {
+def integration = gradle.sharedServices.registerIfAbsent( "integration", BuildService ) {
     maxParallelUsages = 1
 }
 
-tasks.register('integrationTest', Test) {
-    usesService(integration)
+tasks.register( 'integrationTest', Test ) {
+    usesService( integration )
     description = 'Runs integration tests.'
     group = 'verification'
 
@@ -60,9 +60,9 @@ tasks.register('integrationTest', Test) {
     shouldRunAfter test
 }
 
-check.dependsOn(tasks.named('integrationTest'))
+check.dependsOn( tasks.named( 'integrationTest' ) )
 
-tasks.named('jacocoTestReport') {
-    dependsOn(tasks.named('integrationTest'))
-    executionData.from = fileTree(layout.buildDirectory).include("/jacoco/*.exec")
+tasks.named( 'jacocoTestReport' ) {
+    dependsOn( tasks.named( 'integrationTest' ) )
+    executionData.from = fileTree( layout.buildDirectory ).include( "/jacoco/*.exec" )
 }
