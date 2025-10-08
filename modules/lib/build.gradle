@@ -179,9 +179,9 @@ subprojects {p ->
 
         def fullName = p.name
         def shortName = p.name.substring( 4 )
-        def tsFile = p.layout.projectDirectory.file( '/src/main/resources/lib/xp/${shortName}.ts' ).asFile
-        def hasCoreDependency = tsFile.exists() && tsFile.text.contains( '@enonic-types/core' )
-        def dependencies = hasCoreDependency ? ['@enonic-types/core'] : []
+        def ts = p.file("src/main/resources/lib/xp/${shortName}.ts")
+        def hasCore = ts.exists() && ts.getText('UTF-8').contains('@enonic-types/core')
+        def dependencies = hasCore ? ['@enonic-types/core'] : []
         def depString = dependencies.collect { "        \"$it\": \"$p.version\"" }.join( ',\n' )
         into layout.buildDirectory.dir( "npm" )
         from( 'README.md' )
