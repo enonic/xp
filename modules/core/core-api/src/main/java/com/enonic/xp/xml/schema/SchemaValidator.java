@@ -21,7 +21,6 @@ public final class SchemaValidator
     {
         this.list = new ArrayList<>();
         register( EXPORT_NS, "/META-INF/xsd/export.xsd" );
-        register( MODEL_NS, "/META-INF/xsd/model.xsd" );
     }
 
     private void register( final String ns, final String location )
