@@ -152,7 +152,7 @@ publishing {
     }
 }
 
-subprojects {
+subprojects {p ->
     apply plugin: 'com.github.node-gradle.node'
 
     tasks.register( 'prepareToTypescript', Copy ) {
@@ -174,14 +174,16 @@ subprojects {
         dependsOn parent.tasks.named( 'typescript' )
     }
 
+
     tasks.register( 'prepareToPublish', Copy ) {
         dependsOn tasks.named( 'processResources' )
-        def fullName = project.name
-        def shortName = project.name.substring( 4 )
-        def tsFile = file( "$projectDir/src/main/resources/lib/xp/${shortName}.ts" )
+
+        def fullName = p.name
+        def shortName = p.name.substring( 4 )
+        def tsFile = p.layout.projectDirectory.file( '/src/main/resources/lib/xp/${shortName}.ts' ).asFile
         def hasCoreDependency = tsFile.exists() && tsFile.text.contains( '@enonic-types/core' )
         def dependencies = hasCoreDependency ? ['@enonic-types/core'] : []
-        def depString = dependencies.collect { "        \"$it\": \"$version\"" }.join( ',\n' )
+        def depString = dependencies.collect { "        \"$it\": \"$p.version\"" }.join( ',\n' )
         into layout.buildDirectory.dir( "npm" )
         from( 'README.md' )
         from( layout.buildDirectory.dir( "typescript/lib/xp" ) ) {
@@ -190,7 +192,7 @@ subprojects {
         from( project(':lib').file('package.template.json') ) {
             filter { line ->
                 def newLine = line
-                    .replaceAll( '%VERSION%', version )
+                    .replaceAll( '%VERSION%', p.version )
                     .replaceAll( '%FULL_NAME%', fullName )
                     .replaceAll( '%SHORT_NAME%|%FILE_NAME%', shortName )
                     .replaceAll( '%DESCRIPTION%', "Type definitions for ${fullName}." )
