@@ -108,7 +108,6 @@ public class ContentTypeHandlerTest
             .displayName( "Person" )
             .description( "Person content type" )
             .superType( ContentTypeName.structured() )
-            .displayNameExpression( "${name}" )
             .icon( schemaIcon )
             .form( getExampleForm() )
             .modifiedTime( Instant.parse( "2022-05-25T10:00:00.00Z" ) )
@@ -126,7 +125,6 @@ public class ContentTypeHandlerTest
             .displayName( "Article" )
             .description( "Article content type" )
             .superType( ContentTypeName.structured() )
-            .displayNameExpression( "${title} ${author}" )
             .icon( schemaIcon )
             .form( getForm() )
             .build();

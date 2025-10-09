@@ -12,7 +12,6 @@ exports.testGet = function () {
         'abstract': false,
         'final': true,
         'allowChildContent': true,
-        'displayNameExpression': '${title} ${author}',
         'icon': {
             'data': {},
             'mimeType': 'image/png',
@@ -203,7 +202,6 @@ exports.testList = function () {
             'abstract': false,
             'final': true,
             'allowChildContent': true,
-            'displayNameExpression': '${title} ${author}',
             'icon': {
                 'data': {},
                 'mimeType': 'image/png',

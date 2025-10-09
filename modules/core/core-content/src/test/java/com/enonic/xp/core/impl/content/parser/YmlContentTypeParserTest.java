@@ -8,14 +8,13 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlContentTypeParserTest
 {
@@ -37,16 +36,15 @@ public class YmlContentTypeParserTest
         assertEquals( ContentTypeName.from( "myapp:article" ), contentType.getName() );
         assertEquals( "Article", contentType.getDisplayName() );
         assertEquals( "i18n.article.displayName", contentType.getDisplayNameI18nKey() );
-        assertNull( contentType.getDisplayNameExpression() );
         assertNotNull( contentType.getForm() );
         assertEquals( now, contentType.getCreatedTime() );
-        assertNotNull( contentType.getSchemaConfig() );
-        assertEquals( "${expression}", contentType.getSchemaConfig()
-            .getProperty( "displayNameExpression" )
-            .map( InputTypeProperty::getValue )
-            .filter( pv -> pv.getType() == PropertyValue.Type.STRING )
-            .map( PropertyValue::asString )
-            .orElse( null ) );
+
+        final InputTypeConfig schemaConfig = contentType.getSchemaConfig();
+
+        assertNotNull( schemaConfig );
+        assertTrue( schemaConfig.getProperty( "displayNamePlaceholder" ).isPresent() );
+        assertTrue( schemaConfig.getProperty( "displayNameExpression" ).isPresent() );
+        assertTrue( schemaConfig.getProperty( "listTitleExpression" ).isPresent() );
     }
 
     private String readAsString( final String name )
