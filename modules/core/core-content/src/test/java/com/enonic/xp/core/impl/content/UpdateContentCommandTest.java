@@ -82,7 +82,7 @@ public class UpdateContentCommandTest
 
     private final XDataService xDataService = mock( XDataService.class );
 
-    private final CmsService cmsService = Mockito.mock( CmsService.class );
+    private final CmsService cmsService = mock( CmsService.class );
 
     private final NodeService nodeService = mock( NodeService.class );
 
@@ -269,7 +269,7 @@ public class UpdateContentCommandTest
 
         final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
             .params( params )
-            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator(),
+            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( cmsService ), new OccurrenceValidator(),
                                          new ExtraDataValidator( xDataService ) ) )
             .build();
 
@@ -313,7 +313,7 @@ public class UpdateContentCommandTest
             .eventPublisher( eventPublisher )
             .mediaInfo( mediaInfo )
             .xDataService( xDataService )
-            .siteService( siteService )
+            .cmsService( cmsService )
             .pageDescriptorService( pageDescriptorService )
             .partDescriptorService( partDescriptorService )
             .layoutDescriptorService( layoutDescriptorService )

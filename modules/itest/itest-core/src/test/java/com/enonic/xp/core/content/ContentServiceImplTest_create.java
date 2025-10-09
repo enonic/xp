@@ -36,7 +36,7 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -274,7 +274,7 @@ public class ContentServiceImplTest_create
         final ApplicationKey appKey = ApplicationKey.from( "abc:abc" );
 
         Mockito.when( resourceService.processResource( isA( ResourceProcessor.class ) ) )
-            .thenReturn( SiteDescriptor.create().applicationKey( appKey ).form( siteForm ).build() );
+            .thenReturn( CmsDescriptor.create().applicationKey( appKey ).form( siteForm ).build() );
 
         final PropertyTree contentData = new PropertyTree();
         contentData.addString( "title", "This is my page" );

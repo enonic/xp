@@ -23,7 +23,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.core.impl.schema.xdata.BuiltinXDataTypesAccessor;
+import com.enonic.xp.core.impl.content.schema.BuiltinXDataTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;
