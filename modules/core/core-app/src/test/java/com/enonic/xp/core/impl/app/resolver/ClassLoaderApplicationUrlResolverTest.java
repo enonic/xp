@@ -34,16 +34,16 @@ public class ClassLoaderApplicationUrlResolverTest
     {
         final Set<String> files = this.resolver.findFiles();
         assertFalse( files.isEmpty() );
-        assertTrue( files.contains( "myapp/site/site.xml" ) );
+        assertTrue( files.contains( "myapp/site/site.yml" ) );
     }
 
     @Test
     public void testFindUrl()
     {
-        final Resource resource1 = this.resolver.findResource( "/myapp/site/site.xml" );
+        final Resource resource1 = this.resolver.findResource( "/myapp/site/site.yml" );
         assertNotNull( resource1 );
 
-        final Resource resource2 = this.resolver.findResource( "myapp/site/site.xml" );
+        final Resource resource2 = this.resolver.findResource( "myapp/site/site.yml" );
         assertNotNull( resource2 );
 
         final Resource resource3 = this.resolver.findResource( "myapp/not-found.txt" );

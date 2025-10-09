@@ -1,0 +1,3 @@
+displayName: "My admin tool2"
+allow:
+  - "role:system.admin"

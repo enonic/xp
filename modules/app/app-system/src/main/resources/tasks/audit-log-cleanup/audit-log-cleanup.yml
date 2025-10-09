@@ -1,0 +1,8 @@
+description: "AuditLog clean up task"
+form:
+  - type: "TextLine"
+    name: "ageThreshold"
+    label: "Age threshold"
+    occurrences:
+      minimum: 0
+      maximum: 1

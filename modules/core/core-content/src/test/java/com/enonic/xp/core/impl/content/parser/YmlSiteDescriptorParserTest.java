@@ -10,13 +10,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
@@ -24,7 +19,6 @@ import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,25 +39,6 @@ public class YmlSiteDescriptorParserTest
         final SiteDescriptor siteDescriptor = builder.build();
 
         assertEquals( currentApplication, siteDescriptor.getApplicationKey() );
-
-        // verify form
-        final Form form = siteDescriptor.getForm();
-        assertNotNull( form );
-        assertNotNull( form.getFormItem( FormItemPath.from( "backgroundColor" ) ) );
-
-        // verify xData
-        final XDataMappings xDataMappings = siteDescriptor.getXDataMappings();
-        final Iterator<XDataMapping> xDataMappingIterator = xDataMappings.iterator();
-
-        final XDataMapping xDataMapping_1 = xDataMappingIterator.next();
-        assertEquals( XDataName.from( currentApplication, "all-except-folders" ), xDataMapping_1.getXDataName() );
-        assertEquals( "^(?!base:folder$).*", xDataMapping_1.getAllowContentTypes() );
-        assertTrue( xDataMapping_1.getOptional() );
-
-        final XDataMapping xDataMapping_2 = xDataMappingIterator.next();
-        assertEquals( XDataName.from( currentApplication, "folders-only" ), xDataMapping_2.getXDataName() );
-        assertEquals( "base:folder", xDataMapping_2.getAllowContentTypes() );
-        assertFalse( xDataMapping_2.getOptional() );
 
         // verify response processors
         final ResponseProcessorDescriptors responseProcessors = siteDescriptor.getResponseProcessors();

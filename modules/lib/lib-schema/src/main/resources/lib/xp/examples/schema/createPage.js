@@ -3,26 +3,28 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `<?xml version='1.0' encoding='UTF-8'?>
-                <page xmlns='urn:enonic:xp:model:1.0'>
-                  <display-name i18n='key.display-name'>Virtual Page</display-name>
-                  <description i18n='key.description'>My Page Description</description>
-                  <form>
-                    <input type='Double' name='pause'>
-                      <label i18n='key1.label'>Pause parameter</label>
-                      <immutable>false</immutable>
-                      <indexed>false</indexed>
-                      <occurrences minimum='0' maximum='1'/>
-                      <help-text i18n='key1.help-text'/>
-                    </input>
-                  </form>
-                  <regions>
-                    <region name='header'/>
-                    <region name='main'/>
-                    <region name='footer'/>
-                  </regions>
-                </page>
-                `;
+let resource = `displayName:
+  text: "Virtual Page"
+  i18n: "key.display-name"
+description:
+  text: "My Page Description"
+  i18n: "key.description"
+form:
+- type: "Double"
+  name: "pause"
+  label:
+    text: "Pause parameter"
+    i18n: "key1.label"
+  helpText:
+    text: "key1.help-text"
+    i18n: "key1.help-text"
+  occurrences:
+    minimum: 0
+    maximum: 1
+regions:
+- "header"
+- "main"
+- "footer"`;
 
 // BEGIN
 // Create virtual page.
@@ -44,27 +46,30 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'key.display-name',
     description: 'My Page Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/pages/mypage',
+    componentPath: 'myapp:/cms/pages/mypage',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: '<?xml version=\'1.0\' encoding=\'UTF-8\'?>\n' +
-              '                <page xmlns=\'urn:enonic:xp:model:1.0\'>\n' +
-              '                  <display-name i18n=\'key.display-name\'>Virtual Page</display-name>\n' +
-              '                  <description i18n=\'key.description\'>My Page Description</description>\n' +
-              '                  <form>\n                    <input type=\'Double\' name=\'pause\'>\n' +
-              '                      <label i18n=\'key1.label\'>Pause parameter</label>\n' +
-              '                      <immutable>false</immutable>\n' +
-              '                      <indexed>false</indexed>\n' +
-              '                      <occurrences minimum=\'0\' maximum=\'1\'/>\n' +
-              '                      <help-text i18n=\'key1.help-text\'/>\n' +
-              '                    </input>\n' +
-              '                  </form>\n' +
-              '                  <regions>\n' +
-              '                    <region name=\'header\'/>\n' +
-              '                    <region name=\'main\'/>\n' +
-              '                    <region name=\'footer\'/>\n' +
-              '                  </regions>\n' +
-              '                </page>\n' +
-              '                ',
+    resource: 'displayName:\n' +
+              '  text: "Virtual Page"\n' +
+              '  i18n: "key.display-name"\n' +
+              'description:\n' +
+              '  text: "My Page Description"\n' +
+              '  i18n: "key.description"\n' +
+              'form:\n' +
+              '- type: "Double"\n' +
+              '  name: "pause"\n' +
+              '  label:\n' +
+              '    text: "Pause parameter"\n' +
+              '    i18n: "key1.label"\n' +
+              '  helpText:\n' +
+              '    text: "key1.help-text"\n' +
+              '    i18n: "key1.help-text"\n' +
+              '  occurrences:\n' +
+              '    minimum: 0\n' +
+              '    maximum: 1\n' +
+              'regions:\n' +
+              '- "header"\n' +
+              '- "main"\n' +
+              '- "footer"',
     type: 'PAGE',
     form: [
         {

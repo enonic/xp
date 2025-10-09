@@ -1,24 +1,3 @@
-# TODO should be cms/cms.yml
-x:
-  - name: "all-except-folders"
-    allowContentTypes: "^(?!base:folder$).*"
-    optional: true
-  - name: "folders-only"
-    allowContentTypes: "base:folder"
-    optional: false
-
-form:
-  - type: "RadioButton"
-    name: "backgroundColor"
-    label: "Page background"
-    options:
-      - value: "white"
-        text: "White"
-      - value: "grey"
-        text: "Grey"
-    default: "white"
-
-# TODO should be site/site.yml
 processors:
   - name: "background-color-filter"
     order: 10

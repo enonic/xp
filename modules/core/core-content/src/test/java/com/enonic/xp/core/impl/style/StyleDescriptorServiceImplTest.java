@@ -12,7 +12,7 @@ import com.enonic.xp.style.StyleDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StyleDescriptorServiceImplTest
@@ -55,7 +55,6 @@ public class StyleDescriptorServiceImplTest
     @Test
     public void getAll()
     {
-        final ApplicationKey appKey = ApplicationKey.from( "myapp1" );
         final StyleDescriptors descriptors = this.service.getAll();
         assertNotNull( descriptors );
         assertEquals( 2, descriptors.getSize() );
@@ -67,7 +66,6 @@ public class StyleDescriptorServiceImplTest
         addApplication( "myapp3", "/apps/myapp3" );
 
         final ApplicationKey appKey = ApplicationKey.from( "myapp3" );
-        final StyleDescriptor descriptor = this.service.getByApplication( appKey );
-        assertNull( descriptor );
+        assertThrows( Exception.class, () -> this.service.getByApplication( appKey ) );
     }
 }

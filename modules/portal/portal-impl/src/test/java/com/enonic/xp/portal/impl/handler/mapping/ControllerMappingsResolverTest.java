@@ -144,7 +144,7 @@ public class ControllerMappingsResolverTest
         final Content content = newContent();
         final Site site = newSite();
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( getAppKey2() ).mappingDescriptors( mappings ).build();
 
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
 
@@ -184,7 +184,7 @@ public class ControllerMappingsResolverTest
 
         final Site site = newSite();
 
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        final SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( getAppKey2() ).mappingDescriptors( mappings ).build();
 
         Mockito.when( this.siteService.getDescriptor( getAppKey2() ) ).thenReturn( siteDescriptor );
 
@@ -218,7 +218,7 @@ public class ControllerMappingsResolverTest
             .order( 15 )
             .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2, mapping3 );
-        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        return SiteDescriptor.create().applicationKey( getAppKey() ).mappingDescriptors( mappings ).build();
     }
 
     private SiteDescriptor newSiteDescriptor2()
@@ -236,7 +236,7 @@ public class ControllerMappingsResolverTest
             .order( 5 )
             .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2 );
-        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        return SiteDescriptor.create().applicationKey( getAppKey2() ).mappingDescriptors( mappings ).build();
     }
 
     private SiteDescriptor newSiteDescriptor3()
@@ -247,7 +247,7 @@ public class ControllerMappingsResolverTest
             .order( 10 )
             .build();
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1 );
-        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        return SiteDescriptor.create().applicationKey( getAppKey2() ).mappingDescriptors( mappings ).build();
     }
 
     private SiteDescriptor newDescriptorForFragments()
@@ -277,7 +277,7 @@ public class ControllerMappingsResolverTest
             .build();
 
         final ControllerMappingDescriptors mappings = ControllerMappingDescriptors.from( mapping1, mapping2 );
-        return SiteDescriptor.create().mappingDescriptors( mappings ).build();
+        return SiteDescriptor.create().applicationKey( getAppKey2() ).mappingDescriptors( mappings ).build();
     }
 
     private Content newContent()

@@ -1,0 +1,8 @@
+mode: "MIXED"
+form:
+  - type: "TextLine"
+    name: "title"
+    label: "Title"
+    occurrences:
+      minimum: 0
+      maximum: 1

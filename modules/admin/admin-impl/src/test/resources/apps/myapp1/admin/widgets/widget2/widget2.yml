@@ -1,0 +1,4 @@
+displayName: "MyWidget2"
+description: "MyWidget2 description"
+interfaces:
+  - "com.enonic.xp.my-interface"

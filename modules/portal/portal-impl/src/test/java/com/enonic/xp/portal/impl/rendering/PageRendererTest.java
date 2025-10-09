@@ -90,7 +90,7 @@ public class PageRendererTest
                                                   .regions( RegionDescriptors.create().build() )
                                                   .build() );
 
-        when( portalScriptService.hasScript( ResourceKey.from( "myapplication:/site/pages/page/page.js" ) ) ).thenReturn( false );
+        when( portalScriptService.hasScript( ResourceKey.from( "myapplication:/cms/pages/page/page.js" ) ) ).thenReturn( false );
         // exercise
         PortalResponse portalResponse = renderer.render( content, portalRequest );
 
@@ -114,7 +114,7 @@ public class PageRendererTest
 
         this.portalRequest.setPageDescriptor( descriptor );
 
-        final ResourceKey expectedResourceKey = ResourceKey.from( "myapplication:/site/pages/page/page.js" );
+        final ResourceKey expectedResourceKey = ResourceKey.from( "myapplication:/cms/pages/page/page.js" );
         when( portalScriptService.hasScript( expectedResourceKey ) ).thenReturn( true );
         final ControllerScript controllerScript = mock( ControllerScript.class );
         when( controllerScriptFactory.fromScript( expectedResourceKey ) ).thenReturn( controllerScript );

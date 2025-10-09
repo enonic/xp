@@ -158,18 +158,18 @@ class ResourceServiceImplTest
         data.addXml( "resource", "<xml><my-xml hello='world'/></xml>" );
 
         final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree() );
-        final Node partSchemaNode = createNode( "a.xml", new NodePath( "/schemas/site/parts/a" ), timestamp, data );
+        final Node partSchemaNode = createNode( "a.xml", new NodePath( "/schemas/cms/parts/a" ), timestamp, data );
 
         final NodeService nodeService = mock( NodeService.class );
 
         when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
-        when( nodeService.getByPath( new NodePath( "/myapp/site/parts/a/a.xml" ) ) ).thenReturn( partSchemaNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/cms/parts/a/a.xml" ) ) ).thenReturn( partSchemaNode );
 
         ContextBuilder.copyOf( ContextAccessor.current() )
             .attribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE, "node" )
             .build()
             .runWith( () -> {
-                assertNull( processResource( "segment1", "/site/parts/a/a.xml", "1" ) );
+                assertNull( processResource( "segment1", "/cms/parts/a/a.xml", "1" ) );
 
                 final ApplicationUrlResolver applicationUrlResolver =
                     new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );
@@ -177,8 +177,8 @@ class ResourceServiceImplTest
                 doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
                     .findResolver( ApplicationKey.from( "myapp" ), "node" );
 
-                final String value1 = processResource( "segment1", "/site/parts/a/a.xml", "1" );
-                assertEquals( "myapp:/site/parts/a/a.xml->1", value1 );
+                final String value1 = processResource( "segment1", "/cms/parts/a/a.xml", "1" );
+                assertEquals( "myapp:/cms/parts/a/a.xml->1", value1 );
             } );
     }
 
@@ -194,7 +194,7 @@ class ResourceServiceImplTest
 
         final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree() );
 
-        final Node partSchemaNode = createNode( "my-part.xml", new NodePath( "/schemas/site/parts/my-part" ), timestamp, data );
+        final Node partSchemaNode = createNode( "my-part.xml", new NodePath( "/schemas/cms/parts/my-part" ), timestamp, data );
 
         final Dictionary<String, String> headers = mock( Dictionary.class );
         when( bundle.getHeaders() ).thenReturn( headers );
@@ -212,7 +212,7 @@ class ResourceServiceImplTest
         } );
 
         when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
-        when( nodeService.getByPath( new NodePath( "/myapp/site/parts/my-part/my-part.xml" ) ) ).thenReturn(
+        when( nodeService.getByPath( new NodePath( "/myapp/cms/parts/my-part/my-part.xml" ) ) ).thenReturn(
             partSchemaNode );
 
         final ApplicationUrlResolver applicationUrlResolver =
@@ -222,7 +222,7 @@ class ResourceServiceImplTest
             .findResolver( ApplicationKey.from( "myapp" ), null );
 
         final Resource resource =
-            resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "/site/parts/my-part/my-part.xml" ) );
+            resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "/cms/parts/my-part/my-part.xml" ) );
 
         assertEquals( "node", resource.getResolverName() );
 
@@ -232,8 +232,8 @@ class ResourceServiceImplTest
         assertEquals( data.getString( "resource" ), bytes );
         assertEquals( 34, resource.getSize() );
 
-        final String value = processResource( "segment1", "site/parts/my-part/my-part.xml", "1" );
-        assertEquals( "myapp:/site/parts/my-part/my-part.xml->1", value );
+        final String value = processResource( "segment1", "cms/parts/my-part/my-part.xml", "1" );
+        assertEquals( "myapp:/cms/parts/my-part/my-part.xml->1", value );
     }
 
     @Test

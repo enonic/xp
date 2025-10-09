@@ -52,7 +52,7 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'key.display-name',
     description: 'My Part Description',
     descriptionI18nKey: 'key.description',
-    componentPath: 'myapp:/site/parts/mypart',
+    componentPath: 'myapp:/cms/parts/mypart',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'displayName:\n  text: \"Virtual Part\"\n  i18n: \"key.display-name\"\ndescription:\n  text: \"My Part Description\"\n  i18n: \"key.description\"\nform:\n- type: \"Double\"\n  name: \"width\"\n  label:\n    text: \"Column width\"\n    i18n: \"key.label\"\n  helpText:\n    text: \"key.help-text\"\n    i18n: \"key.help-text\"\n  occurrences:\n    minimum: 0\n    maximum: 1\n- type: \"FormFragment\"\n  name: \"myapplication:link-urls\"\nconfig:\n  input:\n    type: \"Double\"\n    name: \"width\"\n    label:\n      text: \"Column width\"\n      i18n: \"key.label\"\n    helpText:\n      i18n: \"key.help-text\"\n                ',
     type: 'PART',

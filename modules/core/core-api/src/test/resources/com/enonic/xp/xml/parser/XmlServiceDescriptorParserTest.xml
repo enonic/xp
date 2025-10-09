@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<service xmlns="urn:enonic:xp:model:1.0">
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
-</service>

@@ -1,0 +1,9 @@
+description: "MyTask"
+form:
+  - type: "TextLine"
+    name: "param1"
+    label: "Task parameter"
+    occurrences:
+      minimum: 1
+      maximum: 1
+    default: "something"

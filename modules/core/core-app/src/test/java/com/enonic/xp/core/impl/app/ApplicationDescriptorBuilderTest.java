@@ -16,7 +16,7 @@ public class ApplicationDescriptorBuilderTest
 {
     private ResourceTestHelper resourceTestHelper;
 
-    private static final String APP_DESCRIPTOR_FILENAME = "application.xml";
+    private static final String APP_DESCRIPTOR_FILENAME = "application.yml";
 
     private static final String APP_ICON_FILENAME = "application.svg";
 

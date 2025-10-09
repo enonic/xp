@@ -1,0 +1,10 @@
+displayName: "Inline Mixin 1"
+form:
+- type: "TextLine"
+  name: "text1"
+  label: "Text 1"
+  occurrences:
+    minimum: 0
+    maximum: 1
+- type: "FormFragment"
+  name: "myapp2:inline2"

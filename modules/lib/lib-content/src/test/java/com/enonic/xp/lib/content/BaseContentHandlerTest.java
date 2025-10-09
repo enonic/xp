@@ -8,7 +8,7 @@ import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 public abstract class BaseContentHandlerTest
@@ -22,7 +22,7 @@ public abstract class BaseContentHandlerTest
 
     protected XDataService xDataService;
 
-    protected SiteService siteService;
+    protected CmsService cmsService;
 
     protected PropertyTreeMarshallerService propertyTreeMarshallerService;
 
@@ -36,13 +36,13 @@ public abstract class BaseContentHandlerTest
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.mixinService = Mockito.mock( MixinService.class );
         this.xDataService = Mockito.mock( XDataService.class );
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance();
         addService( ContentService.class, this.contentService );
         addService( MixinService.class, this.mixinService );
         addService( ContentTypeService.class, this.contentTypeService );
         addService( XDataService.class, this.xDataService );
-        addService( SiteService.class, this.siteService );
+        addService( CmsService.class, this.cmsService );
         addService( PropertyTreeMarshallerService.class, this.propertyTreeMarshallerService );
     }
 }

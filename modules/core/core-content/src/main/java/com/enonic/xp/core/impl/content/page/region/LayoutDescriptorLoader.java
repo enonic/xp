@@ -24,7 +24,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 public class LayoutDescriptorLoader
     implements DescriptorLoader<LayoutDescriptor>
 {
-    private static final String PATH = "/site/layouts";
+    private static final String PATH = "/cms/layouts";
 
     private final MixinService mixinService;
 

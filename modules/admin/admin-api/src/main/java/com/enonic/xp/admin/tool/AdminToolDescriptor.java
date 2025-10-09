@@ -108,7 +108,7 @@ public final class AdminToolDescriptor
 
     public static ResourceKey toResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), "admin/tools/" + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     public static ResourceKey toIconResourceKey( final DescriptorKey key )

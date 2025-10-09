@@ -97,7 +97,7 @@ final class UpdateMediaCommand
             .params( updateParams )
             .mediaInfo( mediaInfo )
             .contentTypeService( this.contentTypeService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )

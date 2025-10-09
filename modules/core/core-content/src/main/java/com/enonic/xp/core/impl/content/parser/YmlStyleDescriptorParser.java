@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content.parser;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -19,7 +20,7 @@ import com.enonic.xp.style.ElementStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
-final class YmlStyleDescriptorParser
+public final class YmlStyleDescriptorParser
 {
     private static final YmlParserBase PARSER = new YmlParserBase();
 
@@ -31,7 +32,7 @@ final class YmlStyleDescriptorParser
         PARSER.addMixIn( ImageStyle.Builder.class, ImageStyleMixIn.Builder.class );
     }
 
-    static StyleDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
+    public static StyleDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
     {
         return PARSER.parse( resource, StyleDescriptor.Builder.class, currentApplication );
     }
@@ -43,6 +44,9 @@ final class YmlStyleDescriptorParser
         {
             return StyleDescriptor.create();
         }
+
+        @JacksonInject("currentApplication")
+        abstract StyleDescriptor.Builder application( ApplicationKey applicationKey );
 
         @JsonProperty("css")
         abstract StyleDescriptor.Builder cssPath( String cssPath );

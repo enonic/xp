@@ -69,7 +69,7 @@ import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
-import com.enonic.xp.core.impl.site.SiteServiceImpl;
+import com.enonic.xp.core.impl.site.CmsServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.extractor.BinaryExtractor;
@@ -117,6 +117,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -273,9 +274,7 @@ public abstract class AbstractContentServiceTest
         MediaInfoServiceImpl mediaInfoService = new MediaInfoServiceImpl( extractor );
 
         final ResourceService resourceService = mock( ResourceService.class );
-        final SiteServiceImpl siteService = new SiteServiceImpl();
-        siteService.setResourceService( resourceService );
-        siteService.setMixinService( mixinService );
+        final CmsService cmsService = new CmsServiceImpl( resourceService, mixinService );
 
         ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
@@ -321,7 +320,7 @@ public abstract class AbstractContentServiceTest
             new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
-        contentService.setSiteService( siteService );
+        contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
         contentService.setFormDefaultValuesProcessor( ( form, data ) -> {
@@ -329,7 +328,7 @@ public abstract class AbstractContentServiceTest
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );
-        contentService.addContentValidator( new SiteConfigsValidator( siteService ) );
+        contentService.addContentValidator( new SiteConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
         contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
     }

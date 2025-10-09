@@ -24,7 +24,7 @@ import com.enonic.xp.schema.mixin.MixinService;
 public class PartDescriptorLoader
     implements DescriptorLoader<PartDescriptor>
 {
-    private static final String PATH = "/site/parts";
+    private static final String PATH = "/cms/parts";
 
     private final ResourceService resourceService;
 

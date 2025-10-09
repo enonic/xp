@@ -40,7 +40,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,7 +54,7 @@ public class CreateContentCommandTest
 
     private XDataService xDataService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private NodeService nodeService;
 
@@ -72,7 +72,7 @@ public class CreateContentCommandTest
     public void setUp()
         throws Exception
     {
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.nodeService = Mockito.mock( NodeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -588,7 +588,7 @@ public class CreateContentCommandTest
             .eventPublisher( this.eventPublisher )
             .mediaInfo( mediaInfo )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .pageDescriptorService( this.pageDescriptorService )
             .formDefaultValuesProcessor( ( form, data ) -> {
             } )

@@ -18,6 +18,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.LogicalExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.resource.Resource;
@@ -39,8 +40,12 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        final QueryExpr query = QueryExpr.from( CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
-            "/" + applicationKey + "/" + VirtualAppConstants.SITE_ROOT_NAME + "/*/*/*" ) ) );
+        final CompareExpr underSitePath = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
+            "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) );
+        final CompareExpr underFormFragmentsPath = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
+            "/" + applicationKey + "/" + VirtualAppConstants.MIXIN_ROOT_NAME + "/*/*" ) );
+
+        final QueryExpr query = QueryExpr.from( LogicalExpr.or( underSitePath, underFormFragmentsPath ) );
 
         return VirtualAppContext.createContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery( NodeQuery.create().query( query ).withPath( true ).build() );
@@ -56,7 +61,8 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Resource findResource( final String path )
     {
-        if ( !path.startsWith( "/" + VirtualAppConstants.SITE_ROOT_NAME + "/" ) )
+        if ( !( path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) ||
+            path.startsWith( "/" + VirtualAppConstants.MIXIN_ROOT_NAME + "/" ) ) )
         {
             return null;
         }

@@ -1,0 +1,9 @@
+displayName: "Macro 1"
+description: "Macro 1 description"
+invalid-form:
+  - type: "TextLine"
+    name: "some-line"
+    label: "Textline"
+    occurrences:
+      minimum: 0
+      maximum: 1
