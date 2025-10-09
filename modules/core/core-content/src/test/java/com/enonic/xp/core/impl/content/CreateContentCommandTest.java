@@ -17,9 +17,9 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.core.impl.content.schema.BuiltinContentTypesAccessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.content.schema.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -47,11 +47,11 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.site.XDataOptions;
 
@@ -69,7 +69,7 @@ public class CreateContentCommandTest
 
     private XDataService xDataService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private NodeService nodeService;
 
@@ -87,7 +87,7 @@ public class CreateContentCommandTest
     public void setUp()
         throws Exception
     {
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.nodeService = Mockito.mock( NodeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
@@ -688,7 +688,7 @@ public class CreateContentCommandTest
             .eventPublisher( this.eventPublisher )
             .mediaInfo( mediaInfo )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .pageDescriptorService( this.pageDescriptorService )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )

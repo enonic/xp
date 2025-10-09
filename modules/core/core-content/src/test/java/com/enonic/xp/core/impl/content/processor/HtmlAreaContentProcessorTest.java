@@ -46,10 +46,13 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,7 +70,7 @@ public class HtmlAreaContentProcessorTest
 
     private XDataService xDataService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private PageDescriptorService pageDescriptorService;
 
@@ -81,7 +84,7 @@ public class HtmlAreaContentProcessorTest
     public void setUp()
     {
 
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
@@ -104,7 +107,7 @@ public class HtmlAreaContentProcessorTest
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
-        htmlAreaContentProcessor.setSiteService( siteService );
+        htmlAreaContentProcessor.setCmsService( cmsService );
         htmlAreaContentProcessor.setXDataService( xDataService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
@@ -191,22 +194,23 @@ public class HtmlAreaContentProcessorTest
 
         assertThat( result.getContent().getProcessedReferences() )
             .containsExactly( ContentId.from( "image-id1" ), ContentId.from( "image-id2" ), ContentId.from( "image-id3" ),
-                       ContentId.from( "image-id4" ) );
+                              ContentId.from( "image-id4" ) );
     }
 
     @Test
     public void site_config_data()
     {
-        when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
-            .thenReturn( SiteDescriptor.create()
-                             .form( Form.create()
-                                        .addFormItem( Input.create()
-                                                          .name( "htmlData" )
-                                                          .label( "htmlData" )
-                                                          .inputType( InputTypeName.HTML_AREA )
-                                                          .build() )
-                                        .build() )
-                             .build() );
+        when( cmsService.getDescriptor( ApplicationKey.SYSTEM ) ).thenReturn( CmsDescriptor.create()
+                                                                                  .applicationKey( ApplicationKey.SYSTEM )
+                                                                                  .form( Form.create()
+                                                                                             .addFormItem( Input.create()
+                                                                                                               .name( "htmlData" )
+                                                                                                               .label( "htmlData" )
+                                                                                                               .inputType(
+                                                                                                                   InputTypeName.HTML_AREA )
+                                                                                                               .build() )
+                                                                                             .build() )
+                                                                                  .build() );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -539,7 +543,7 @@ public class HtmlAreaContentProcessorTest
 
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
-        htmlAreaContentProcessor.setSiteService( siteService );
+        htmlAreaContentProcessor.setCmsService( cmsService );
         htmlAreaContentProcessor.setXDataService( xDataService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );

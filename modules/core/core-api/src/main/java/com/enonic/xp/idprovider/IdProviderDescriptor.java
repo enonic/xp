@@ -41,7 +41,7 @@ public final class IdProviderDescriptor
 
     public static ResourceKey toResourceKey( final ApplicationKey key )
     {
-        return ResourceKey.from( key, "idprovider/idprovider.xml" );
+        return ResourceKey.from( key, "idprovider/idprovider.yml" );
     }
 
     public static Builder create()

@@ -15,7 +15,7 @@ final class ContentTypeLoader
 {
     ContentTypeLoader( final ResourceService resourceService )
     {
-        super( resourceService, "/site/content-types" );
+        super( resourceService, "/cms/content-types" );
     }
 
     @Override

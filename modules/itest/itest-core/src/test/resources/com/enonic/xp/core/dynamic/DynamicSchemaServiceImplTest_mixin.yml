@@ -1,0 +1,11 @@
+displayName: "Virtual Mixin"
+description: "Mixin description"
+form:
+  - type: "TextLine"
+    name: "text2"
+    label: "Text 2"
+    occurrences:
+      minimum: 0
+      maximum: 1
+  - type: "FormFragment"
+    name: "myapplication:inline"

@@ -5,7 +5,7 @@ import java.util.List;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.schema.BaseSchema;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
 public interface DynamicSchemaService
@@ -30,9 +30,9 @@ public interface DynamicSchemaService
 
     boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
 
-    DynamicSchemaResult<SiteDescriptor> updateSite( UpdateDynamicSiteParams params );
+    DynamicSchemaResult<CmsDescriptor> updateCms( UpdateDynamicCmsParams params );
 
-    DynamicSchemaResult<SiteDescriptor> getSite( ApplicationKey key );
+    DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( ApplicationKey key );
 
     DynamicSchemaResult<StyleDescriptor> createStyles( CreateDynamicStylesParams params );
 

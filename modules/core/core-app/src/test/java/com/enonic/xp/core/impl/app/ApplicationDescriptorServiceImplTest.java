@@ -13,8 +13,8 @@ import org.osgi.service.component.ComponentContext;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.ResourceTestHelper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ApplicationDescriptorServiceImplTest
 {
@@ -25,7 +25,7 @@ public class ApplicationDescriptorServiceImplTest
 
     private static final String BUNDLE_SYMBOLIC_NAME = "bundle";
 
-    private static final String APP_DESCRIPTOR_FILENAME = "application.xml";
+    private static final String APP_DESCRIPTOR_FILENAME = "application.yml";
 
     private ResourceTestHelper resourceTestHelper;
 
@@ -45,8 +45,6 @@ public class ApplicationDescriptorServiceImplTest
         Mockito.when( existingAppBundle.getResource( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( existingAppBundle.getEntry( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( existingAppBundle.getState() ).thenReturn( Bundle.ACTIVE );
-
-        Bundle bundle = Mockito.mock( Bundle.class );
 
         Bundle existingNonAppBundle = Mockito.mock( Bundle.class );
         Mockito.when( existingNonAppBundle.getSymbolicName() ).thenReturn( EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME );
@@ -68,7 +66,7 @@ public class ApplicationDescriptorServiceImplTest
         appDescriptorService.start( componentContext );
 
         assertNotNull( appDescriptorService.get( ApplicationKey.from( EXISTING_APP_BUNDLE_SYMBOLIC_NAME ) ) );
-        assertEquals( null, appDescriptorService.get( ApplicationKey.from( EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME ) ) );
+        assertNull( appDescriptorService.get( ApplicationKey.from( EXISTING_NON_APP_BUNDLE_SYMBOLIC_NAME ) ) );
     }
 
     @Test
@@ -83,13 +81,13 @@ public class ApplicationDescriptorServiceImplTest
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
 
         appDescriptorService.start( componentContext );
-        assertEquals( null, appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+        assertNull( appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
 
         appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.INSTALLED, bundle ) );
         assertNotNull( appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
 
         appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.UNINSTALLED, bundle ) );
-        assertEquals( null, appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
+        assertNull( appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );
 
         appDescriptorService.bundleChanged( new BundleEvent( BundleEvent.UPDATED, bundle ) );
         assertNotNull( appDescriptorService.get( ApplicationKey.from( BUNDLE_SYMBOLIC_NAME ) ) );

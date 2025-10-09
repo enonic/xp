@@ -1,0 +1,12 @@
+x:
+  - name: "myapp1:menu-item"
+    optional: false
+  - name: "myapp2:my-meta-mixin"
+    optional: false
+form:
+  - type: "TextLine"
+    name: "some-name"
+    label: "Textline"
+    occurrences:
+      minimum: 0
+      maximum: 1

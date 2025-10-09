@@ -116,7 +116,7 @@ final class UpdateContentCommand
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .contentDataSerializer( this.translator.getContentDataSerializer() )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce();
 

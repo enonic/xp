@@ -67,6 +67,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.site.XDataOptions;
+import com.enonic.xp.site.CmsService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -86,7 +87,7 @@ public class UpdateContentCommandTest
 
     private final XDataService xDataService = mock( XDataService.class );
 
-    private final SiteService siteService = mock( SiteService.class );
+    private final CmsService cmsService = mock( CmsService.class );
 
     private final NodeService nodeService = mock( NodeService.class );
 

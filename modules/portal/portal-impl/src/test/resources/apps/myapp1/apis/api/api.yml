@@ -1,0 +1,3 @@
+allow:
+  - "role:cms.admin"
+mount: false

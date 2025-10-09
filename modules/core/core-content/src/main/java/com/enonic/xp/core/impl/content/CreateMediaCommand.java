@@ -109,7 +109,7 @@ final class CreateMediaCommand
             .mediaInfo( mediaInfo )
             .translator( this.translator )
             .params( createContentParams )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )

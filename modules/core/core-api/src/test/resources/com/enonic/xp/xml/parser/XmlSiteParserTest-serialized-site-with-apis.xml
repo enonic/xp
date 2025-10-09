@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<site xmlns="urn:enonic:xp:model:1.0">
-  <apis>
-    <api>myapi1</api>
-    <api>myapi2</api>
-    <api>myapi3</api>
-    <api>com.enonic.app.external:myapi</api>
-  </apis>
-</site>

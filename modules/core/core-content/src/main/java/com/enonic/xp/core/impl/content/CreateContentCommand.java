@@ -107,7 +107,7 @@ final class CreateContentCommand
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .contentDataSerializer( this.translator.getContentDataSerializer() )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce()
             .refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE )
