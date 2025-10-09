@@ -17,7 +17,7 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -179,9 +179,9 @@ public abstract class AbstractDumpReader
     }
 
     @Override
-    public ByteSource getBinary( final RepositoryId repositoryId, final String blobKey )
+    public ByteSource getBinary( final RepositoryId repositoryId, final BlobKey blobKey )
     {
-        return getBlobByteSource( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL, BlobKey.from( blobKey ));
+        return getBlobByteSource( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL, blobKey );
     }
 
     private ByteSource getBlobByteSource( RepositoryId repositoryId, SegmentLevel segmentLevel, BlobKey blobKey )

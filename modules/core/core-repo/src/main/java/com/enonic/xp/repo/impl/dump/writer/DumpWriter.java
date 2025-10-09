@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.dump.writer;
 import java.io.Closeable;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.CommitDumpEntry;

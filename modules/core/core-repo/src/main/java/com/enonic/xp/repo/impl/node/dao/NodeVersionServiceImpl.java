@@ -17,7 +17,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.data.PropertyTree;
@@ -73,7 +73,11 @@ public class NodeVersionServiceImpl
         final BlobKey nodeBlobKey = serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.NODE_SEGMENT_LEVEL,
                                                                NodeVersionJsonSerializer::toNodeVersionBytes );
 
-        return NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
+        return NodeVersionKey.create()
+            .nodeBlobKey( nodeBlobKey )
+            .indexConfigBlobKey( indexConfigBlobKey )
+            .accessControlBlobKey( accessControlBlobKey )
+            .build();
     }
 
     private BlobKey serializeAndAddBlobRecord( final NodeVersion nodeVersion, final RepositoryId repositoryId, final SegmentLevel segmentLevel,

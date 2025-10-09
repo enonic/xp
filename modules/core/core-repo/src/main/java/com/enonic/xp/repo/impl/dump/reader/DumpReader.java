@@ -5,7 +5,8 @@ import java.io.Closeable;
 import com.google.common.io.ByteSource;
 import com.google.common.io.LineProcessor;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.dump.BranchLoadResult;
@@ -31,7 +32,7 @@ public interface DumpReader
 
     NodeVersion get( RepositoryId repositoryId, NodeVersionKey nodeVersionKey );
 
-    ByteSource getBinary( RepositoryId repositoryId, String blobKey );
+    ByteSource getBinary( RepositoryId repositoryId, BlobKey blobKey );
 
     DumpMeta getDumpMeta();
 }

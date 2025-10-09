@@ -6,7 +6,8 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
@@ -55,15 +56,17 @@ public class VersionDumpEntryJson
 
     public static VersionMeta fromJson( final VersionDumpEntryJson json )
     {
-        final NodeVersionKey nodeVersionKey =
-            NodeVersionKey.from( json.getNodeBlobKey(), json.getIndexConfigBlobKey(), json.getAccessControlBlobKey() );
-        return VersionMeta.create().
-            nodePath( new NodePath( json.nodePath ) ).
-            timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null ).
-            version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null ).
-            nodeVersionKey( nodeVersionKey ).
-            nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) ).
-            build();
+        return VersionMeta.create()
+            .nodePath( new NodePath( json.nodePath ) )
+            .timestamp( json.getTimestamp() != null ? Instant.parse( json.getTimestamp() ) : null )
+            .version( json.getVersion() != null ? NodeVersionId.from( json.getVersion() ) : null )
+            .nodeVersionKey( NodeVersionKey.create()
+                                 .nodeBlobKey( BlobKey.from( json.getNodeBlobKey() ) )
+                                 .indexConfigBlobKey( BlobKey.from( json.getIndexConfigBlobKey() ) )
+                                 .accessControlBlobKey( BlobKey.from( json.getAccessControlBlobKey() ) )
+                                 .build() )
+            .nodeCommitId( json.getCommitId() == null ? null : NodeCommitId.from( json.getCommitId() ) )
+            .build();
     }
 
     public static VersionDumpEntryJson from( final VersionMeta meta )

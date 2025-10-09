@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;

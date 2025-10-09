@@ -24,7 +24,7 @@ public final class AttachedBinaryJson
 
         attachedBinaryJson.binaryReference = attachedBinary.getBinaryReference().toString();
 
-        attachedBinaryJson.blobKey = attachedBinary.getBlobKey();
+        attachedBinaryJson.blobKey = attachedBinary.getBlobKey().toString();
 
         return attachedBinaryJson;
     }

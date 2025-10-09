@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
@@ -53,18 +53,21 @@ public class NodeVersionQueryResultFactory
 
         final String commitId = getStringValue( hit, VersionIndexPath.COMMIT_ID, false );
 
-        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
         final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeyReturnValue );
 
-        return NodeVersionMetadata.create().
-            nodeVersionId( NodeVersionId.from( versionId ) ).
-            nodeVersionKey( nodeVersionKey ).
-            binaryBlobKeys( binaryBlobKeys ).
-            timestamp( isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) ).
-            nodePath( new NodePath( nodePath ) ).
-            nodeId( NodeId.from( nodeId ) ).
-            nodeCommitId( isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) ).
-            build();
+        return NodeVersionMetadata.create()
+            .nodeVersionId( NodeVersionId.from( versionId ) )
+            .nodeVersionKey( NodeVersionKey.create()
+                                 .nodeBlobKey( BlobKey.from( nodeBlobKey ) )
+                                 .indexConfigBlobKey( BlobKey.from( indexConfigBlobKey ) )
+                                 .accessControlBlobKey( BlobKey.from( accessControlBlobKey ) )
+                                 .build() )
+            .binaryBlobKeys( binaryBlobKeys )
+            .timestamp( isNullOrEmpty( timestamp ) ? null : Instant.parse( timestamp ) )
+            .nodePath( new NodePath( nodePath ) )
+            .nodeId( NodeId.from( nodeId ) )
+            .nodeCommitId( isNullOrEmpty( commitId ) ? null : NodeCommitId.from( commitId ) )
+            .build();
     }
 
     private static BlobKeys toBlobKeys( final ReturnValue returnValue )

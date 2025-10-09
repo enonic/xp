@@ -3,7 +3,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.node.AttachedBinary;
@@ -47,7 +48,7 @@ class AbstractEntryProcessor
         nodeVersion.getAttachedBinaries().forEach( binary -> {
             try
             {
-                final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, binary.getBlobKey() );
+                final ByteSource dumpBinary = this.dumpReader.getBinary( repositoryId, BlobKey.from( binary.getBlobKey() ) );
                 this.blobStore.addRecord( segment, dumpBinary );
             }
             catch ( RepoLoadException e )

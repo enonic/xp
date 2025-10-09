@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.node.dao;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.security.acl.AccessControlList;
