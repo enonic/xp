@@ -2,7 +2,6 @@ superType: "base:structured"
 abstract: false
 final: true
 allowChildContent: true
-label: "Article heading"
 description:
   text: "Brief description"
   i18n: "article.description"
@@ -117,4 +116,8 @@ form:
           text: "Option 2"
         defaultOption: true
 config:
+  displayNamePlaceholder:
+    text: "Article heading"
+    i18n: "article.title"
   displayNameExpression: "${expression}"
+  listTitleExpression: "${displayName}-${description}"

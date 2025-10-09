@@ -38,7 +38,6 @@ public class ContentTypesTest
                 setFinal().
                 allowChildContent( true ).
                 setBuiltIn().
-                displayNameExpression( "displayNameExpression" ).
                 displayName( "displayName" ).
                 description( "description" ).
                 modifiedTime( Instant.now() ).

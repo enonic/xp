@@ -22,7 +22,6 @@ var expected = [
         'abstract': false,
         'final': true,
         'allowChildContent': true,
-        'displayNameExpression': '${title} ${author}',
         'icon': {
             'data': {},
             'mimeType': 'image/png',

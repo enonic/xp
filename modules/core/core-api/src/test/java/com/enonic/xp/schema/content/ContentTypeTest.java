@@ -124,10 +124,7 @@ public class ContentTypeTest
                 setFinal().
                 allowChildContent( true ).
                 setBuiltIn().
-                displayNameExpression( "displayNameExpression" ).
                 displayName( "displayName" ).
-                displayNameLabel( "displayNameLabel" ).
-                displayNameLabelI18nKey( "displayNameLabelI18nKey" ).
                 description( "description" ).
                 modifiedTime( Instant.now() ).
                 createdTime( Instant.now() ).
@@ -141,10 +138,7 @@ public class ContentTypeTest
         assertEquals( contentType1.isFinal(), contentType2.isFinal() );
         assertEquals( contentType1.allowChildContent(), contentType2.allowChildContent() );
         assertEquals( contentType1.isBuiltIn(), contentType2.isBuiltIn() );
-        assertEquals( contentType1.getDisplayNameExpression(), contentType2.getDisplayNameExpression() );
         assertEquals( contentType1.getDisplayName(), contentType2.getDisplayName() );
-        assertEquals( contentType1.getDisplayNameLabel(), contentType2.getDisplayNameLabel() );
-        assertEquals( contentType1.getDisplayNameLabelI18nKey(), contentType2.getDisplayNameLabelI18nKey() );
         assertEquals( contentType1.getDescription(), contentType2.getDescription() );
         assertEquals( contentType1.getModifiedTime(), contentType2.getModifiedTime() );
         assertEquals( contentType1.getCreatedTime(), contentType2.getCreatedTime() );

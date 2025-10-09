@@ -193,7 +193,6 @@ public class ApplicationInfoServiceImplTest
                 setFinal().
                 allowChildContent( true ).
                 setBuiltIn().
-                displayNameExpression( "displayNameExpression" ).
                 displayName( "displayName" ).
                 description( "description" ).
                 modifiedTime( Instant.ofEpochSecond( 1000 ) ).
