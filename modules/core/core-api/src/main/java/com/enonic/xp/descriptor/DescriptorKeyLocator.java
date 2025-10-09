@@ -12,7 +12,7 @@ public final class DescriptorKeyLocator
     public DescriptorKeyLocator( final ResourceService service, final String path, final boolean optional )
     {
         this.service = service;
-        this.pattern = "^" + path + "/(?<name>[^/]+)/\\k<name>\\.(?:xml|yml" + ( optional ? "|js" : "" ) + ")$";
+        this.pattern = "^" + path + "/(?<name>[^/]+)/\\k<name>\\.(?:yml" + ( optional ? "|js" : "" ) + ")$";
     }
 
     public DescriptorKeys findKeys( final ApplicationKey key )

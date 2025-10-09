@@ -1,0 +1,55 @@
+displayName:
+  text: "Virtual Layout"
+  i18n: "key.display-name"
+description:
+  text: "My Layout Description"
+  i18n: "key.description"
+form:
+  - type: "Double"
+    name: "pause"
+    label:
+      text: "Pause parameter"
+      i18n: "key1.label"
+    helpText:
+      text: "key1.help-text"
+      i18n: "key1.help-text"
+    occurrences:
+      minimum: 0
+      maximum: 1
+  - type: "ItemSet"
+    name: "myFormItemSet"
+    label: "My form item set"
+    occurrences:
+      minimum: 0
+      maximum: 1
+    items:
+      - type: "TextLine"
+        name: "myTextLine"
+        label: "My text line"
+        occurrences:
+          minimum: 1
+          maximum: 1
+      - type: "TextLine"
+        name: "myCustomInput"
+        label: "My custom input"
+        occurrences:
+          minimum: 0
+          maximum: 1
+      - type: "FieldSet"
+        label: "My field set"
+        items:
+          - type: "TextLine"
+            name: "fieldSetItem"
+            label:
+              text: "Field set Item"
+              i18n: "key2.label"
+            helpText:
+              text: "key2.help-text"
+              i18n: "key2.help-text"
+            occurrences:
+              minimum: 0
+              maximum: 1
+regions:
+  - "header"
+  - "main"
+  - "footer"

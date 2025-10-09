@@ -32,7 +32,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsService;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
@@ -46,7 +46,7 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final XDataService xDataService;
 
-    final SiteService siteService;
+    final CmsService cmsService;
 
     final List<ContentProcessor> contentProcessors;
 
@@ -64,7 +64,7 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         super( builder );
         this.xDataService = builder.xDataService;
-        this.siteService = builder.siteService;
+        this.cmsService = builder.cmsService;
         this.contentProcessors = List.copyOf( builder.contentProcessors );
         this.contentValidators = List.copyOf( builder.contentValidators );
         this.allowUnsafeAttachmentNames = builder.allowUnsafeAttachmentNames;
@@ -78,7 +78,7 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         private XDataService xDataService;
 
-        private SiteService siteService;
+        private CmsService cmsService;
 
         private List<ContentProcessor> contentProcessors = List.of();
 
@@ -100,7 +100,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             super( source );
             this.xDataService = source.xDataService;
-            this.siteService = source.siteService;
+            this.cmsService = source.cmsService;
             this.contentProcessors = source.contentProcessors;
             this.contentValidators = source.contentValidators;
             this.pageDescriptorService = source.pageDescriptorService;
@@ -116,9 +116,9 @@ class AbstractCreatingOrUpdatingContentCommand
         }
 
         @SuppressWarnings("unchecked")
-        B siteService( final SiteService siteService )
+        B cmsService( final CmsService siteService )
         {
-            this.siteService = siteService;
+            this.cmsService = siteService;
             return (B) this;
         }
 

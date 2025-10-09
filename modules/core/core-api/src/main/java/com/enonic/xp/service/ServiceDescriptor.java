@@ -37,7 +37,7 @@ public final class ServiceDescriptor
 
     public static ResourceKey toRootResourceKey( final DescriptorKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), ROOT_SERVICE_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), ROOT_SERVICE_PREFIX + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     public static Builder create()

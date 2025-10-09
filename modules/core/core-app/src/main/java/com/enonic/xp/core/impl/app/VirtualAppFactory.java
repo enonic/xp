@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.net.URL;
 import java.time.Instant;
 import java.util.Set;
 
@@ -11,7 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeSiteXmlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeCmsYmlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
@@ -27,7 +26,7 @@ public class VirtualAppFactory
             public ApplicationUrlResolver getUrlResolver()
             {
                 return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
-                                                        new FakeSiteXmlUrlResolver(applicationKey, nodeService) );
+                                                        new FakeCmsYmlUrlResolver( applicationKey, nodeService) );
             }
 
             @Override

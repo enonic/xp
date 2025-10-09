@@ -1,9 +1,0 @@
-<task>
-  <description>AuditLog clean up task</description>
-  <form>
-    <input name="ageThreshold" type="TextLine">
-      <label>Age threshold</label>
-      <occurrences minimum="0" maximum="1"/>
-    </input>
-  </form>
-</task>

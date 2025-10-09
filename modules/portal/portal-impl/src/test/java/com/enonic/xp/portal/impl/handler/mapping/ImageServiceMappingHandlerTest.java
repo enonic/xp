@@ -159,8 +159,9 @@ class ImageServiceMappingHandlerTest
             ControllerMappingDescriptor.create().controller( controller1 ).service( "image" ).build();
 
         final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
         final ApplicationKey myapplication = ApplicationKey.from( "myapplication" );
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( myapplication ).mappingDescriptors( siteMappings ).build();
         when( this.siteService.getDescriptor( eq( myapplication ) ) ).thenReturn( siteDescriptor );
 
         final String body = "Project body";
@@ -188,8 +189,9 @@ class ImageServiceMappingHandlerTest
             ControllerMappingDescriptor.create().controller( controller1 ).service( "not-image" ).build();
 
         final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
         final ApplicationKey myapplication = ApplicationKey.from( "myapplication" );
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( myapplication ).mappingDescriptors( siteMappings ).build();
 
         when( this.siteService.getDescriptor( eq( myapplication ) ) ).thenReturn( siteDescriptor );
 
@@ -212,8 +214,9 @@ class ImageServiceMappingHandlerTest
             ControllerMappingDescriptor.create().controller( controller1 ).contentConstraint( "_id:'some-id'" ).build();
 
         final ControllerMappingDescriptors siteMappings = ControllerMappingDescriptors.from( siteMapping );
-        final SiteDescriptor siteDescriptor = SiteDescriptor.create().mappingDescriptors( siteMappings ).build();
         final ApplicationKey myapplication = ApplicationKey.from( "myapplication" );
+        final SiteDescriptor siteDescriptor =
+            SiteDescriptor.create().applicationKey( myapplication ).mappingDescriptors( siteMappings ).build();
 
         when( this.siteService.getDescriptor( eq( myapplication ) ) ).thenReturn( siteDescriptor );
 

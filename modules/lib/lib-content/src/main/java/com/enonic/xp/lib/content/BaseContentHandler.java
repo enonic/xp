@@ -24,8 +24,9 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReferences;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 
 public abstract class BaseContentHandler
     extends BaseContextHandler
@@ -39,11 +40,11 @@ public abstract class BaseContentHandler
 
         final ContentTypeService contentTypeService = context.getService( ContentTypeService.class ).get();
         final XDataService xDataService = context.getService( XDataService.class ).get();
-        final SiteService siteService = context.getService( SiteService.class ).get();
+        final CmsService cmsService = context.getService( CmsService.class ).get();
         final PropertyTreeMarshallerService propertyTreeMarshallerService = context.getService( PropertyTreeMarshallerService.class ).get();
 
         final PropertyTreeTranslator translator =
-            new PropertyTreeTranslator( contentTypeService, xDataService, siteService, propertyTreeMarshallerService,
+            new PropertyTreeTranslator( contentTypeService, xDataService, cmsService, propertyTreeMarshallerService,
                                         this::strictContentValidation );
 
         this.contentDataDeserializer =

@@ -14,7 +14,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
 
@@ -28,7 +28,7 @@ public class GetDynamicSiteHandlerTest
     @Test
     public void testSite()
     {
-        when( dynamicSchemaService.getSite( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.getCmsDescriptor( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
 
             final FormItem formItem = Input.create().name( "input" ).label( "Input" ).inputType( InputTypeName.DOUBLE ).build();
@@ -39,7 +39,7 @@ public class GetDynamicSiteHandlerTest
             xDataMappingList.add( XDataMapping.create().xDataName( XDataName.from( "myapplication:my" ) ).build() );
             XDataMappings xDataMappings = XDataMappings.from( xDataMappingList );
 
-            SiteDescriptor siteDescriptor = SiteDescriptor.create()
+            CmsDescriptor cmsDescriptor = CmsDescriptor.create()
                 .applicationKey( applicationKey )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .form( form )
@@ -49,7 +49,7 @@ public class GetDynamicSiteHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( "<site><some-data></some-data></site>" );
 
-            return new DynamicSchemaResult<SiteDescriptor>( siteDescriptor, resource );
+            return new DynamicSchemaResult<>( cmsDescriptor, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getSite.js" );

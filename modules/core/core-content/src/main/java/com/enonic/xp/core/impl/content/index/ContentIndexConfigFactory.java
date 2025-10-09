@@ -12,7 +12,7 @@ import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.LanguageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor;
-import com.enonic.xp.core.impl.content.index.processor.SiteConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.CmsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.XDataConfigProcessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -26,9 +26,9 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 public class ContentIndexConfigFactory
 {
@@ -47,7 +47,7 @@ public class ContentIndexConfigFactory
         indexConfigProcessors.add(
             new PageConfigProcessor( builder.page, getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
 
-        indexConfigProcessors.add( new SiteConfigProcessor( getSiteConfigForms( builder.siteService, builder.siteConfigs ) ) );
+        indexConfigProcessors.add( new CmsConfigProcessor( getSiteConfigForms( builder.cmsService, builder.siteConfigs ) ) );
 
         indexConfigProcessors.add(
             new PageRegionsConfigProcessor( builder.page, builder.partDescriptorService, builder.layoutDescriptorService ) );
@@ -61,9 +61,7 @@ public class ContentIndexConfigFactory
         {
             return null;
         }
-        return contentTypeService.getByName( new GetContentTypeParams().
-            contentTypeName( contentTypeName ) ).
-            getForm();
+        return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
     }
 
     private XDatas getXDatas( final XDataService xDataService, final ExtraDatas extraDatas )
@@ -84,17 +82,17 @@ public class ContentIndexConfigFactory
         return pageDescriptorService.getByKey( page.getDescriptor() ).getConfig();
     }
 
-    private Collection<Form> getSiteConfigForms( final SiteService siteService, final SiteConfigs siteConfigs )
+    private Collection<Form> getSiteConfigForms( final CmsService siteService, final SiteConfigs siteConfigs )
     {
         if ( siteService == null || siteConfigs == null )
         {
             return null;
         }
-        return siteConfigs.stream().
-            map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ) ).
-            filter( siteDescriptor -> siteDescriptor != null && siteDescriptor.getForm() != null ).
-            map( SiteDescriptor::getForm ).
-            collect( Collectors.toList() );
+        return siteConfigs.stream()
+            .map( siteConfig -> siteService.getDescriptor( siteConfig.getApplicationKey() ) )
+            .filter( cmsDescriptor -> cmsDescriptor != null && cmsDescriptor.getForm() != null )
+            .map( CmsDescriptor::getForm )
+            .collect( Collectors.toList() );
     }
 
     public IndexConfigDocument produce()
@@ -124,7 +122,7 @@ public class ContentIndexConfigFactory
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private SiteService siteService;
+        private CmsService cmsService;
 
         private ContentTypeName contentTypeName;
 
@@ -166,9 +164,9 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder siteService( final SiteService value )
+        public Builder cmsService( final CmsService value )
         {
-            this.siteService = value;
+            this.cmsService = value;
             return this;
         }
 

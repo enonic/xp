@@ -96,8 +96,7 @@ final class CreateMediaCommand
         final CreateContentCommand createCommand = CreateContentCommand.create( this ).
             mediaInfo( mediaInfo ).
             translator( this.translator ).
-            params( createContentParams ).
-            siteService( this.siteService ).
+            params( createContentParams ).cmsService( this.cmsService ).
             xDataService( this.xDataService ).
             formDefaultValuesProcessor( this.formDefaultValuesProcessor ).pageFormDefaultValuesProcessor(
             this.pageFormDefaultValuesProcessor ).

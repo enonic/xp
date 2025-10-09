@@ -32,15 +32,17 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
-import com.enonic.xp.core.impl.site.SiteServiceImpl;
+import com.enonic.xp.core.impl.site.CmsServiceImpl;
+import com.enonic.xp.core.internal.concurrent.RecurringJob;
+import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -298,9 +300,7 @@ public abstract class AbstractContentSynchronizerTest
         contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
         final ResourceService resourceService = mock( ResourceService.class );
-        final SiteServiceImpl siteService = new SiteServiceImpl();
-        siteService.setResourceService( resourceService );
-        siteService.setMixinService( mixinService );
+        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, mixinService );
 
         final ContentAuditLogFilterService contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
 
@@ -317,7 +317,7 @@ public abstract class AbstractContentSynchronizerTest
             }, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
-        contentService.setSiteService( siteService );
+        contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );

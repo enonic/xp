@@ -1,0 +1,6 @@
+displayName: "MyWidget"
+description: "MyWidget description"
+allow:
+  - "role:system.user.admin"
+interfaces:
+  - "com.enonic.xp.my-interface"

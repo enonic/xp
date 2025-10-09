@@ -12,22 +12,22 @@ import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 @Component
 public class SiteConfigsValidator
     implements ContentValidator
 {
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     @Activate
-    public SiteConfigsValidator( @Reference final SiteService siteService )
+    public SiteConfigsValidator( @Reference final CmsService cmsService )
     {
-        this.siteService = siteService;
+        this.cmsService = cmsService;
     }
 
     @Override
@@ -45,16 +45,16 @@ public class SiteConfigsValidator
         {
             final ApplicationKey applicationKey = siteConfig.getApplicationKey();
 
-            final SiteDescriptor siteDescriptor = siteService.getDescriptor( applicationKey );
+            final CmsDescriptor descriptor = cmsService.getDescriptor( applicationKey );
 
-            if ( siteDescriptor != null )
+            if ( descriptor != null )
             {
-                OccurrenceValidator.validate( siteDescriptor.getForm(), siteConfig.getConfig().getRoot(), validationErrorsBuilder );
+                OccurrenceValidator.validate( descriptor.getForm(), siteConfig.getConfig().getRoot(), validationErrorsBuilder );
 
                 try
                 {
                     InputValidator.create()
-                        .form( siteDescriptor.getForm() )
+                        .form( descriptor.getForm() )
                         .inputTypeResolver( InputTypes.BUILTIN )
                         .build()
                         .validate( siteConfig.getConfig() );

@@ -107,9 +107,9 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -131,7 +131,7 @@ public class ContentServiceImpl
 
     private XDataService xDataService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private final ContentNodeTranslator translator;
 
@@ -181,7 +181,7 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
@@ -227,7 +227,7 @@ public class ContentServiceImpl
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .mediaInfoService( this.mediaInfoService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
@@ -255,7 +255,7 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
@@ -285,7 +285,7 @@ public class ContentServiceImpl
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
@@ -671,7 +671,7 @@ public class ContentServiceImpl
         final Content content = RenameContentCommand.create( params )
             .nodeService( this.nodeService )
             .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
@@ -1025,7 +1025,7 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
@@ -1066,9 +1066,9 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setSiteService( final SiteService siteService )
+    public void setCmsService( final CmsService cmsService )
     {
-        this.siteService = siteService;
+        this.cmsService = cmsService;
     }
 
     @SuppressWarnings("unused")

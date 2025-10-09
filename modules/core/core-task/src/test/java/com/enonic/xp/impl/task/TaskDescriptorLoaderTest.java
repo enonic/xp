@@ -73,7 +73,7 @@ public class TaskDescriptorLoaderTest
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:task1" );
 
         final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
-        assertEquals( "myapp1:/tasks/task1/task1.xml", resourceKey.toString() );
+        assertEquals( "myapp1:/tasks/task1/task1.yml", resourceKey.toString() );
 
         final Resource resource = this.resourceService.getResource( resourceKey );
         final TaskDescriptor descriptor = this.loader.load( descriptorKey, resource );
@@ -81,6 +81,6 @@ public class TaskDescriptorLoaderTest
         assertEquals( "MyTask", descriptor.getDescription() );
 
         Input formItem = descriptor.getConfig().getInput( "param1" );
-        assertEquals( " something ", formItem.getDefaultValue().getRootValue() );
+        assertEquals( "something", formItem.getDefaultValue().getRootValue() );
     }
 }
