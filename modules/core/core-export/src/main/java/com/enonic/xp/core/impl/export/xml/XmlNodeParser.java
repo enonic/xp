@@ -24,8 +24,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
-import com.enonic.xp.xml.DomElement;
-import com.enonic.xp.xml.parser.XmlObjectParser;
+import com.enonic.xp.core.impl.export.xml.parser.XmlObjectParser;
 
 import static com.google.common.base.Strings.nullToEmpty;
 

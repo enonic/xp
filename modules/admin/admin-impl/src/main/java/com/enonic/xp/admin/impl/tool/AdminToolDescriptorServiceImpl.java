@@ -15,7 +15,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
-import com.enonic.xp.xml.XmlException;
 
 @Component(immediate = true)
 public final class AdminToolDescriptorServiceImpl

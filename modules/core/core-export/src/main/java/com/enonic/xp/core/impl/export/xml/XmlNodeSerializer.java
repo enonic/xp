@@ -17,9 +17,7 @@ import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.xml.DomBuilder;
-import com.enonic.xp.xml.DomHelper;
-import com.enonic.xp.xml.schema.SchemaNamespaces;
+import com.enonic.xp.core.impl.export.xml.schema.SchemaNamespaces;
 
 public final class XmlNodeSerializer
     implements SchemaNamespaces

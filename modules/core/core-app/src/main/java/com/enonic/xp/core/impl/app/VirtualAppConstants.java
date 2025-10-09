@@ -53,7 +53,7 @@ public final class VirtualAppConstants
         form: [ ]
         """;
 
-    public static final ByteSource DEFAULT_SITE_RESOURCE_VALUE =
+    public static final ByteSource DEFAULT_CMS_RESOURCE_VALUE =
         ByteSource.wrap( CMS_DESCRIPTOR_DEFAULT_VALUE.getBytes( StandardCharsets.UTF_8 ) );
 
     private VirtualAppConstants()

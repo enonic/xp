@@ -6,8 +6,6 @@ import java.util.Objects;
 
 import org.w3c.dom.Document;
 
-import com.enonic.xp.xml.DomHelper;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseXmlSerializerTest

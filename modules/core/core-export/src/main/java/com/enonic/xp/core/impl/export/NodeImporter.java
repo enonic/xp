@@ -35,7 +35,7 @@ import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
 import com.enonic.xp.vfs.VirtualFilePaths;
-import com.enonic.xp.xml.XmlException;
+import com.enonic.xp.core.impl.export.xml.XmlException;
 
 import static com.enonic.xp.core.impl.export.ExportConstants.BINARY_FOLDER;
 import static com.enonic.xp.core.impl.export.ExportConstants.NODE_XML_EXPORT_NAME;
