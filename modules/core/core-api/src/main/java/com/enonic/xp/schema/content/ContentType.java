@@ -28,12 +28,6 @@ public final class ContentType
 
     private final Form form;
 
-    private final String displayNameExpression;
-
-    private final String displayNameLabel;
-
-    private final String displayNameLabelI18nKey;
-
     private final InputTypeConfig schemaConfig;
 
     private final List<String> allowChildContentType;
@@ -55,9 +49,6 @@ public final class ContentType
         this.allowChildContent = builder.allowChildContent;
         this.isBuiltIn = builder.isBuiltIn;
         this.form = builder.formBuilder.build();
-        this.displayNameExpression = builder.displayNameExpression;
-        this.displayNameLabel = builder.displayNameLabel;
-        this.displayNameLabelI18nKey = builder.displayNameLabelI18nKey;
         this.schemaConfig = builder.schemaConfig.build();
         this.allowChildContentType = builder.allowChildContentType;
     }
@@ -107,21 +98,6 @@ public final class ContentType
         return this.form;
     }
 
-    public String getDisplayNameExpression()
-    {
-        return displayNameExpression;
-    }
-
-    public String getDisplayNameLabel()
-    {
-        return displayNameLabel;
-    }
-
-    public String getDisplayNameLabelI18nKey()
-    {
-        return displayNameLabelI18nKey;
-    }
-
     public InputTypeConfig getSchemaConfig()
     {
         return schemaConfig;
@@ -138,7 +114,6 @@ public final class ContentType
         final MoreObjects.ToStringHelper s = MoreObjects.toStringHelper( this );
         s.add( "name", getName() );
         s.add( "displayName", getDisplayName() );
-        s.add( "displayNameLabel", getDisplayNameLabel() );
         s.add( "description", getDescription() );
         s.add( "superType", superType );
         s.add( "isAbstract", isAbstract );
@@ -166,12 +141,6 @@ public final class ContentType
 
         private ContentTypeName superType;
 
-        private String displayNameExpression;
-
-        private String displayNameLabel;
-
-        private String displayNameLabelI18nKey;
-
         private List<String> allowChildContentType;
 
         private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
@@ -196,9 +165,6 @@ public final class ContentType
             this.isBuiltIn = source.isBuiltIn();
             this.superType = source.getSuperType();
             this.formBuilder = Form.create( source.getForm() );
-            this.displayNameExpression = source.getDisplayNameExpression();
-            this.displayNameLabel = source.displayNameLabel;
-            this.displayNameLabelI18nKey = source.displayNameLabelI18nKey;
             if ( source.schemaConfig != null )
             {
                 this.schemaConfig.config( source.schemaConfig );
@@ -289,31 +255,6 @@ public final class ContentType
         {
             this.description( source.text() );
             this.descriptionI18nKey( source.i18n() );
-            return this;
-        }
-
-        public Builder setLabel( final LocalizedText source )
-        {
-            this.displayNameLabel( source.text() );
-            this.displayNameLabelI18nKey( source.i18n() );
-            return this;
-        }
-
-        public Builder displayNameExpression( final String displayNameExpression )
-        {
-            this.displayNameExpression = displayNameExpression;
-            return this;
-        }
-
-        public Builder displayNameLabel( final String displayNameLabel )
-        {
-            this.displayNameLabel = displayNameLabel;
-            return this;
-        }
-
-        public Builder displayNameLabelI18nKey( final String displayNameLabelI18nKey )
-        {
-            this.displayNameLabelI18nKey = displayNameLabelI18nKey;
             return this;
         }
 
