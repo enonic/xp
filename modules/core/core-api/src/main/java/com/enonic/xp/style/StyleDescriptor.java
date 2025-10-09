@@ -154,7 +154,7 @@ public final class StyleDescriptor
             return this;
         }
 
-        public Builder addStyleElements( final Iterable<ElementStyle> elements )
+        public Builder addStyleElements( final Iterable<ImageStyle> elements )
         {
             elements.forEach( this::addStyleElement );
             return this;

@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.style.ElementStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -35,11 +34,11 @@ public class YmlStyleDescriptorParserTest
         assertEquals( currentApplication, descriptor.getApplicationKey() );
         assertEquals( "assets/styles.css", descriptor.getCssPath() );
 
-        final List<ElementStyle> elements = descriptor.getElements();
+        final List<ImageStyle> elements = descriptor.getElements();
         assertNotNull( elements );
         assertEquals( 2, elements.size() );
 
-        final ElementStyle imageStyle_1 = elements.getFirst();
+        final ImageStyle imageStyle_1 = elements.getFirst();
         assertInstanceOf( ImageStyle.class, imageStyle_1 );
 
         assertEquals( "editor-width-auto", imageStyle_1.getName() );

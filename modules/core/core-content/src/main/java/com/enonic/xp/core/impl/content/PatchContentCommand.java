@@ -70,7 +70,7 @@ public class PatchContentCommand
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .contentDataSerializer( this.translator.getContentDataSerializer() )
-            .siteService( this.siteService )
+            .cmsService( this.cmsService )
             .build()
             .produce();
 

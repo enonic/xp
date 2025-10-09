@@ -38,6 +38,7 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.SiteConfig;
@@ -285,7 +286,7 @@ public class ContentServiceImplTest_create
         final ApplicationKey appKey = ApplicationKey.from( "abc:abc" );
 
         Mockito.when( resourceService.processResource( isA( ResourceProcessor.class ) ) )
-            .thenReturn( SiteDescriptor.create().applicationKey( appKey ).form( siteForm ).build() );
+            .thenReturn( CmsDescriptor.create().applicationKey( appKey ).form( siteForm ).build() );
 
         final PropertyTree contentData = new PropertyTree();
         contentData.addString( "title", "This is my page" );

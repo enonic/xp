@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
-import com.enonic.xp.style.ElementStyle;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -53,7 +52,7 @@ public final class YmlStyleDescriptorParser
 
         @JsonProperty("image")
         @JsonDeserialize(using = ImageStyleDeserializer.class)
-        abstract StyleDescriptor.Builder addStyleElements( Iterable<ElementStyle> elements );
+        abstract StyleDescriptor.Builder addStyleElements( Iterable<ImageStyle> elements );
     }
 
     @JsonDeserialize(builder = ImageStyle.Builder.class)
