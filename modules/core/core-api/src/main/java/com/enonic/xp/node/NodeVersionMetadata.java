@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.blob.NodeVersionKey;
 
 @PublicApi
 public final class NodeVersionMetadata

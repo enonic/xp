@@ -14,7 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;

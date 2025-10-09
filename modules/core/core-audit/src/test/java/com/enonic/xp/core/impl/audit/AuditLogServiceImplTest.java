@@ -85,7 +85,6 @@ class AuditLogServiceImplTest
                     nodeId( node.id() ).
                     build() ).
                 totalHits( 1 ).
-                hits( 1 ).
                 build() );
         IndexService indexService = mock( IndexService.class );
         when( indexService.isMaster() ).thenReturn( true );
@@ -130,7 +129,7 @@ class AuditLogServiceImplTest
     public void find_no_filter()
     {
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().build() );
-        assertEquals( 1, result.getCount() );
+        assertEquals( 1, result.getHits().getSize() );
         assertEquals( 1, result.getTotal() );
         assertLog( result.getHits().first() );
     }
@@ -141,7 +140,7 @@ class AuditLogServiceImplTest
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().
             type( auditLogParams.getType() ).
             build() );
-        assertEquals( 1, result.getCount() );
+        assertEquals( 1, result.getHits().getSize() );
         assertEquals( 1, result.getTotal() );
         assertLog( result.getHits().first() );
     }
@@ -173,7 +172,7 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        final FindNodesByQueryResult.Builder queryResult = FindNodesByQueryResult.create().totalHits( 3 ).hits( 3 );
+        final FindNodesByQueryResult.Builder queryResult = FindNodesByQueryResult.create().totalHits( 3 );
 
         createHits( 3 ).forEach( queryResult::addNodeHit );
 
@@ -200,11 +199,10 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        final FindNodesByQueryResult.Builder queryResult1 = FindNodesByQueryResult.create().totalHits( 10500 ).hits( 10000 );
+        final FindNodesByQueryResult.Builder queryResult1 = FindNodesByQueryResult.create().totalHits( 10500 );
         createHits( 10000 ).forEach( queryResult1::addNodeHit );
 
-        final FindNodesByQueryResult.Builder queryResult2 = FindNodesByQueryResult.create().totalHits( 10500 ).
-            hits( 500 );
+        final FindNodesByQueryResult.Builder queryResult2 = FindNodesByQueryResult.create().totalHits( 10500 );
         createHits( 500 ).forEach( queryResult2::addNodeHit );
 
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).

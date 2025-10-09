@@ -60,7 +60,6 @@ public class FindContentIdsByQueryCommandTest
                         build() ).
                     build() ).
                 build() ).
-            hits( 1 ).
             build();
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn( nodesByQueryResult );

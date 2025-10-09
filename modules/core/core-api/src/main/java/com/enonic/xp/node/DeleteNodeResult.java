@@ -11,7 +11,7 @@ public final class DeleteNodeResult
 
     private DeleteNodeResult( final Builder builder )
     {
-        this.nodeIds = Objects.requireNonNullElse( builder.nodeIds, NodeIds.empty() );
+        this.nodeIds = Objects.requireNonNull( builder.nodeIds );
     }
 
     public static Builder create()
@@ -26,7 +26,6 @@ public final class DeleteNodeResult
 
     public static final class Builder
     {
-
         private NodeIds nodeIds;
 
         private Builder()

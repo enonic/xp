@@ -79,7 +79,7 @@ public class ProjectResourceTest
         when( projectService.list() ).thenReturn( projects );
 
         when( contentService.find( isA( ContentQuery.class ) ) ).thenReturn(
-            FindContentIdsByQueryResult.create().contents( ContentIds.from( site.getId() ) ).hits( 1L ).totalHits( 1L ).build() );
+            FindContentIdsByQueryResult.create().contents( ContentIds.from( site.getId() ) ).totalHits( 1L ).build() );
 
         when( contentService.getByIds( isA( GetContentByIdsParams.class ) ) ).thenReturn( Contents.from( site ) );
 

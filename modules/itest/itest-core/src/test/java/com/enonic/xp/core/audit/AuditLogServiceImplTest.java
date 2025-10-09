@@ -71,7 +71,7 @@ class AuditLogServiceImplTest
             context.runWith( () -> {
                 FindAuditLogResult result =
                     auditLogService.find( FindAuditLogParams.create().ids( AuditLogIds.from( log.getId() ) ).build() );
-                assertEquals( 0L, result.getCount() );
+                assertEquals( 0L, result.getHits().getSize() );
             } );
         } );
     }
@@ -95,7 +95,7 @@ class AuditLogServiceImplTest
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             ids( AuditLogIds.from( log.getId() ) ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log, result.getHits().first() );
     }
 
@@ -106,7 +106,7 @@ class AuditLogServiceImplTest
         logAsAdmin( params );
         refresh();
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
     }
 
     @Test
@@ -121,12 +121,12 @@ class AuditLogServiceImplTest
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             from( Instant.now() ).
             build() );
-        assertEquals( 0L, result.getCount() );
+        assertEquals( 0L, result.getHits().getSize() );
 
         result = findAsAdmin( FindAuditLogParams.create().
             from( Instant.now().minus( 31, ChronoUnit.DAYS ) ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log, result.getHits().first() );
     }
 
@@ -142,12 +142,12 @@ class AuditLogServiceImplTest
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             to( Instant.now().minus( 30, ChronoUnit.DAYS ) ).
             build() );
-        assertEquals( 0L, result.getCount() );
+        assertEquals( 0L, result.getHits().getSize() );
 
         result = findAsAdmin( FindAuditLogParams.create().
             to( Instant.now() ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log, result.getHits().first() );
     }
 
@@ -167,13 +167,13 @@ class AuditLogServiceImplTest
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             type( "type1" ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log1, result.getHits().first() );
 
         result = findAsAdmin( FindAuditLogParams.create().
             type( "type2" ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log2, result.getHits().first() );
     }
 
@@ -194,13 +194,13 @@ class AuditLogServiceImplTest
         FindAuditLogResult result = findAsAdmin( FindAuditLogParams.create().
             source( "source1" ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log1, result.getHits().first() );
 
         result = findAsAdmin( FindAuditLogParams.create().
             source( "source2" ).
             build() );
-        assertEquals( 1L, result.getCount() );
+        assertEquals( 1L, result.getHits().getSize() );
         assertEquals( log2, result.getHits().first() );
     }
 

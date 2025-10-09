@@ -36,13 +36,12 @@ final class FindContentPathsByQueryCommand
 
         return FindContentPathsByQueryResult.create()
             .contentPaths( result.getNodeHits()
-                                                  .stream()
-                                                  .map( NodeHit::getNodePath )
-                                                  .map( ContentNodeHelper::translateNodePathToContentPath )
-                                                  .collect( ContentPaths.collector() ) )
-            .hits( result.getHits() ).
-            totalHits( result.getTotalHits() ).
-            build();
+                               .stream()
+                               .map( NodeHit::getNodePath )
+                               .map( ContentNodeHelper::translateNodePathToContentPath )
+                               .collect( ContentPaths.collector() ) )
+            .totalHits( result.getTotalHits() )
+            .build();
     }
 
     public static final class Builder

@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node;
 
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQueryResult;
 
 public class FindVersionsHandler
@@ -30,7 +31,7 @@ public class FindVersionsHandler
         NodeId nodeId = getNodeId( key );
         if ( nodeId == null )
         {
-            result = NodeVersionQueryResult.empty( 0 );
+            result = NodeVersionQueryResult.create().entityVersions( NodeVersionMetadatas.empty() ).build();
         }
         else
         {

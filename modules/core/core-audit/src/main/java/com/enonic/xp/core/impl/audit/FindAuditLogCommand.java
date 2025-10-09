@@ -37,23 +37,16 @@ public class FindAuditLogCommand
     {
         final NodeQuery query = createQuery();
 
-        if ( query == null )
-        {
-            return FindAuditLogResult.empty();
-        }
-
         FindNodesByQueryResult result = nodeService.findByQuery( query );
 
-        AuditLogs logs = result.getNodeIds().
-            stream().
-            map( nodeService::getById ).
-            map( AuditLogSerializer::fromNode ).
-            collect( AuditLogs.collector() );
-
-        return FindAuditLogResult.create().
-            total( result.getTotalHits() ).
-            hits( logs ).
-            build();
+        return FindAuditLogResult.create()
+            .total( result.getTotalHits() )
+            .hits( result.getNodeIds()
+                       .stream()
+                       .map( nodeService::getById )
+                       .map( AuditLogSerializer::fromNode )
+                       .collect( AuditLogs.collector() ) )
+            .build();
     }
 
     private NodeQuery createQuery()

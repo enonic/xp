@@ -6,15 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionMetadata;
+import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQueryResult;
-import com.enonic.xp.node.NodeVersionsMetadata;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,7 +27,11 @@ public class FindVersionsHandlerTest
     {
         final NodeVersionMetadata newNodeVersionMeta = NodeVersionMetadata.create().
             nodeId( NodeId.from( "nodeId1" ) ).
-            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
+            nodeVersionKey( NodeVersionKey.create()
+                                .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
+                                .indexConfigBlobKey( BlobKey.from( "indexConfigBlobKey" ) )
+                                .accessControlBlobKey( BlobKey.from( "accessControlBlobKey" ) )
+                                .build() ).
             nodeVersionId( NodeVersionId.from( "nodeVersionNew" ) ).
             binaryBlobKeys( BlobKeys.empty() ).
             nodePath( NodePath.ROOT ).
@@ -35,23 +40,24 @@ public class FindVersionsHandlerTest
 
         final NodeVersionMetadata oldNodeVersionMeta = NodeVersionMetadata.create().
             nodeId( NodeId.from( "nodeId1" ) ).
-            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
+            nodeVersionKey( NodeVersionKey.create()
+                                .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
+                                .indexConfigBlobKey( BlobKey.from( "indexConfigBlobKey" ) )
+                                .accessControlBlobKey( BlobKey.from( "accessControlBlobKey" ) )
+                                .build() ).
             nodeVersionId( NodeVersionId.from( "nodeVersionOld" ) ).
             binaryBlobKeys( BlobKeys.empty() ).
             nodePath( NodePath.ROOT ).
             timestamp( Instant.ofEpochSecond( 500 ) ).
             build();
 
-        final NodeVersionsMetadata nodeVersionsMetadata = NodeVersionsMetadata.create( NodeId.from( "nodeId1" ) ).
+        final NodeVersionMetadatas nodeVersionMetadatas = NodeVersionMetadatas.create().
             add( newNodeVersionMeta ).
             add( oldNodeVersionMeta ).
             build();
 
         final NodeVersionQueryResult result = NodeVersionQueryResult.create().
-            entityVersions( nodeVersionsMetadata ).
-            from( 0 ).
-            to( 2 ).
-            hits( 2 ).
+            entityVersions( nodeVersionMetadatas ).
             totalHits( 40 ).
             build();
 

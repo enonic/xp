@@ -19,11 +19,6 @@ public class ReturnValues
         return new Builder();
     }
 
-    public static ReturnValues empty()
-    {
-        return ReturnValues.create().build();
-    }
-
     public Object getSingleValue( final String key )
     {
         final ReturnValue returnValue = returnValues.get( key );

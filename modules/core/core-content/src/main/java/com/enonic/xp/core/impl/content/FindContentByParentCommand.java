@@ -36,7 +36,7 @@ final class FindContentByParentCommand
 
         final Contents contents = this.translator.fromNodes( nodes );
 
-        return FindContentByParentResult.create().contents( contents ).totalHits( result.getTotalHits() ).hits( result.getHits() ).build();
+        return FindContentByParentResult.create().contents( contents ).totalHits( result.getTotalHits() ).build();
     }
 
     private FindNodesByParentParams createFindNodesByParentParams()

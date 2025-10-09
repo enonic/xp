@@ -225,7 +225,7 @@ public class FindNodesByQueryHandlerTest
     public void dslQueryEmpty()
         throws Exception
     {
-        Mockito.doReturn( FindNodesByQueryResult.create().totalHits( 0 ).build() )
+        Mockito.doReturn( FindNodesByQueryResult.create().build() )
             .when( this.nodeService )
             .findByQuery( Mockito.isA( NodeQuery.class ) );
         runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryEmpty" );
@@ -235,7 +235,7 @@ public class FindNodesByQueryHandlerTest
     public void dslQueryNull()
         throws Exception
     {
-        Mockito.doReturn( FindNodesByQueryResult.create().totalHits( 0 ).build() )
+        Mockito.doReturn( FindNodesByQueryResult.create().build() )
             .when( this.nodeService )
             .findByQuery( Mockito.isA( NodeQuery.class ) );
         runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryNull" );

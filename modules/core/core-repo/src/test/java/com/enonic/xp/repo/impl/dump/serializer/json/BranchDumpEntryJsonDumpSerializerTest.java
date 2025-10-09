@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -29,7 +30,11 @@ public class BranchDumpEntryJsonDumpSerializerTest
                 nodePath( new NodePath( "/fisk/ost" ) ).
                 timestamp( Instant.now() ).
                 version( NodeVersionId.from( "fisk" ) ).
-                nodeVersionKey( NodeVersionKey.from( "fiskKey", "fiskKey2", "fiskKey3" ) ).
+                nodeVersionKey( NodeVersionKey.create()
+                                    .nodeBlobKey( BlobKey.from( "fiskKey" ) )
+                                    .indexConfigBlobKey( BlobKey.from( "fiskKey2" ) )
+                                    .accessControlBlobKey( BlobKey.from( "fiskKey3" ) )
+                                    .build() ).
                 nodeCommitId( NodeCommitId.from( "commitId" ) ).
                 build() ).
             setBinaryReferences( List.of( "1" ) ).

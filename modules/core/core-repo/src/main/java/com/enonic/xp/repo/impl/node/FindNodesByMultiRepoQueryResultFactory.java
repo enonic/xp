@@ -14,7 +14,6 @@ class FindNodesByMultiRepoQueryResultFactory
     static FindNodesByMultiRepoQueryResult create( final SearchResult result )
     {
         final FindNodesByMultiRepoQueryResult.Builder resultBuilder = FindNodesByMultiRepoQueryResult.create().
-            hits( result.getNumberOfHits() ).
             totalHits( result.getTotalHits() ).
             aggregations( result.getAggregations() ).
             suggestions( result.getSuggestions() );

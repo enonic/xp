@@ -64,7 +64,7 @@ public class ContentServiceImplTest_versions
             contentId( content.getId() ).
             build() );
 
-        assertEquals( 2, result.getHits() );
+        assertEquals( 2, result.getContentVersions().getSize() );
         assertEquals( 2, result.getTotalHits() );
     }
 
@@ -169,7 +169,7 @@ public class ContentServiceImplTest_versions
             contentId( content.getId() ).
             build() );
 
-        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getContentVersions().getSize() );
         assertEquals( 3, result.getTotalHits() );
 
         final Iterator<ContentVersion> versions = result.getContentVersions().iterator();
@@ -197,7 +197,7 @@ public class ContentServiceImplTest_versions
         final FindContentVersionsResult result =
             this.contentService.getVersions( FindContentVersionsParams.create().contentId( content.getId() ).build() );
 
-        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getContentVersions().getSize() );
         assertEquals( 3, result.getTotalHits() );
 
         assertThat( result.getContentVersions() ).elements( 0, 1 )

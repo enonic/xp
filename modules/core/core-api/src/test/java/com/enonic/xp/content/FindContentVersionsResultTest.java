@@ -21,20 +21,14 @@ public class FindContentVersionsResultTest
 
         final ContentVersions contentVersions = ContentVersions.create().
             add( version ).
-            contentId( ContentId.from( "a" ) ).
             build();
 
         final FindContentVersionsResult result = FindContentVersionsResult.create().
-            contentVersions( contentVersions ).from( 0 ).hits( 2 ).size( 2 ).totalHits( 2 ).
+            contentVersions( contentVersions ).totalHits( 2 ).
             build();
 
-        assertEquals( result.getContentVersions(), contentVersions );
-        assertEquals( result.getFrom(), 0 );
-        assertEquals( result.getSize(), 2 );
-        assertEquals( result.getHits(), 2 );
-        assertEquals( result.getTotalHits(), 2 );
-
-
+        assertEquals( contentVersions, result.getContentVersions() );
+        assertEquals( 1, result.getContentVersions().getSize() );
+        assertEquals( 2, result.getTotalHits() );
     }
-
 }

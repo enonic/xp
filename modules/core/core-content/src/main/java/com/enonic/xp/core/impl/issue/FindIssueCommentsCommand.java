@@ -36,7 +36,7 @@ public class FindIssueCommentsCommand
 
         final List<IssueComment> issues = IssueCommentNodeTranslator.fromNodes( foundNodes );
 
-        return FindIssueCommentsResult.create().comments( issues ).hits( result.getHits() ).totalHits( result.getTotalHits() ).build();
+        return FindIssueCommentsResult.create().comments( issues ).totalHits( result.getTotalHits() ).build();
     }
 
     private void validateBlockingChecks()

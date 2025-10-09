@@ -275,7 +275,7 @@ public class CreateNodeCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getHits() );
+        assertEquals( 1, result.getNodeHits().getSize() );
     }
 
     @Test

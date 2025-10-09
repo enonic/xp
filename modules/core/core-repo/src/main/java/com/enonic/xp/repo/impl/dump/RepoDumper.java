@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -171,7 +171,7 @@ public class RepoDumper
                     final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
 
                     final NodeVersionQueryResult versions = getVersions( nodeId );
-                    for ( final NodeVersionMetadata metaData : versions.getNodeVersionsMetadata() )
+                    for ( final NodeVersionMetadata metaData : versions.getNodeVersionMetadatas() )
                     {
                         doStoreVersion( builder, metaData, this.dumpResult );
                         this.dumpResult.addedVersion();

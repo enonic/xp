@@ -63,7 +63,6 @@ final class FindContentIdsByQueryCommand
             aggregations( result.getAggregations() ).
             highlight( highlight ).
             sort( sortValues ).
-            hits( result.getHits() ).
             score( scoreValues ).
             totalHits( result.getTotalHits() ).
             build();

@@ -50,7 +50,7 @@ public class FindNodesByQueryCommandTest_references
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getNodeHits().getSize() );
 
         assertTrue( result.getNodeIds().contains( NodeId.from( "node2" ) ) );
         assertTrue( result.getNodeIds().contains( NodeId.from( "node3" ) ) );

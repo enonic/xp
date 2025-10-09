@@ -435,7 +435,7 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versionsAfterLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        versionsAfterLoad.getNodeVersionsMetadata()
+        versionsAfterLoad.getNodeVersionMetadatas()
             .forEach( ( e ) -> System.out.println( e.getNodeVersionId() + " - " + e.getTimestamp() ) );
 
         assertEquals( 1, versionsAfterLoad.getTotalHits() );
@@ -511,7 +511,7 @@ public class DumpServiceImplTest
 
         activeVersionsMap.values()
             .forEach(
-                key -> assertTrue( versionsAfterLoad.getNodeVersionsMetadata().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
+                key -> assertTrue( versionsAfterLoad.getNodeVersionMetadatas().getAllVersionIds().contains( key.getNodeVersionId() ) ) );
     }
 
     @Test
@@ -535,8 +535,8 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versionsAfterLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
 
-        final NodeVersionIds versionIdsBeforeLoad = versionsBeforeLoad.getNodeVersionsMetadata().getAllVersionIds();
-        final NodeVersionIds versionIdsAfterLoad = versionsAfterLoad.getNodeVersionsMetadata().getAllVersionIds();
+        final NodeVersionIds versionIdsBeforeLoad = versionsBeforeLoad.getNodeVersionMetadatas().getAllVersionIds();
+        final NodeVersionIds versionIdsAfterLoad = versionsAfterLoad.getNodeVersionMetadatas().getAllVersionIds();
 
         assertEquals( versionIdsBeforeLoad, versionIdsAfterLoad );
     }
@@ -544,7 +544,7 @@ public class DumpServiceImplTest
     private TreeSet<Instant> getOrderedTimestamps( final NodeVersionQueryResult result )
     {
         TreeSet<Instant> timestamps = new TreeSet<>();
-        result.getNodeVersionsMetadata().forEach( version -> timestamps.add( version.getTimestamp() ) );
+        result.getNodeVersionMetadatas().forEach( version -> timestamps.add( version.getTimestamp() ) );
         return timestamps;
     }
 
@@ -586,7 +586,7 @@ public class DumpServiceImplTest
         final NodeVersionQueryResult versionsAfterLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).size( -1 ).build() );
 
-        assertEquals( 6, versionsAfterLoad.getHits() );
+        assertEquals( 6, versionsAfterLoad.getNodeVersionMetadatas().getSize() );
     }
 
     @Test
@@ -654,7 +654,7 @@ public class DumpServiceImplTest
         NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad() );
 
         final NodeVersionQueryResult versions = this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
-        assertEquals( 2, versions.getHits() );
+        assertEquals( 2, versions.getNodeVersionMetadatas().getSize() );
 
         verifyBinaries( node, updatedNode, versions );
     }
@@ -975,7 +975,7 @@ public class DumpServiceImplTest
 
     private void verifyBinaries( final Node node, final Node updatedNode, final NodeVersionQueryResult versions )
     {
-        versions.getNodeVersionsMetadata().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );
+        versions.getNodeVersionMetadatas().forEach( ( version ) -> verifyVersionBinaries( node, updatedNode, version ) );
     }
 
     private void verifyVersionBinaries( final Node node, final Node updatedNode, final NodeVersionMetadata version )

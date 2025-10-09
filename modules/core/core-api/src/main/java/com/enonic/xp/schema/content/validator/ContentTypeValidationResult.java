@@ -44,11 +44,6 @@ public final class ContentTypeValidationResult
         return new ContentTypeValidationResult( ImmutableList.copyOf( errors ) );
     }
 
-    public static ContentTypeValidationResult empty()
-    {
-        return new ContentTypeValidationResult( ImmutableList.of() );
-    }
-
     public static Builder create()
     {
         return new Builder();

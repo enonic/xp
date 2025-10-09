@@ -15,13 +15,10 @@ public final class FindNodesByQueryResult
 
     private final long totalHits;
 
-    private final long hits;
-
     private FindNodesByQueryResult( final Builder builder )
     {
         this.nodeHits = builder.nodeHits.build();
         this.totalHits = builder.totalHits;
-        this.hits = builder.hits;
         this.aggregations = builder.aggregations;
         this.suggestions = builder.suggestions;
     }
@@ -56,18 +53,11 @@ public final class FindNodesByQueryResult
         return totalHits;
     }
 
-    public long getHits()
-    {
-        return hits;
-    }
-
     public static final class Builder
     {
         private final NodeHits.Builder nodeHits = NodeHits.create();
 
         private long totalHits;
-
-        private long hits;
 
         private Aggregations aggregations;
 
@@ -99,12 +89,6 @@ public final class FindNodesByQueryResult
         public Builder totalHits( long totalHits )
         {
             this.totalHits = totalHits;
-            return this;
-        }
-
-        public Builder hits( long hits )
-        {
-            this.hits = hits;
             return this;
         }
 

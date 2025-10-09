@@ -2,7 +2,8 @@ package com.enonic.xp.repo.impl.branch.storage;
 
 import java.time.Instant;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
@@ -21,15 +22,16 @@ public class NodeBranchVersionFactory
         final Object timestamp = returnValues.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() );
         final Object nodeId = returnValues.getSingleValue( BranchIndexPath.NODE_ID.getPath() );
 
-        final NodeVersionKey nodeVersionKey =
-            NodeVersionKey.from( nodeBlobKey.toString(), indexConfigBlobKey.toString(), accessControlBlobKey.toString() );
-
-        return NodeBranchEntry.create().
-            nodePath( path != null ? new NodePath( path.toString() ) : NodePath.ROOT ).
-            nodeVersionId( NodeVersionId.from( versionId ) ).
-            nodeVersionKey( nodeVersionKey ).
-            timestamp( Instant.parse( timestamp.toString() ) ).
-            nodeId( NodeId.from( nodeId ) ).
-            build();
+        return NodeBranchEntry.create()
+            .nodePath( path != null ? new NodePath( path.toString() ) : NodePath.ROOT )
+            .nodeVersionId( NodeVersionId.from( versionId ) )
+            .nodeVersionKey( NodeVersionKey.create()
+                                 .nodeBlobKey( BlobKey.from( nodeBlobKey.toString() ) )
+                                 .indexConfigBlobKey( BlobKey.from( indexConfigBlobKey.toString() ) )
+                                 .accessControlBlobKey( BlobKey.from( accessControlBlobKey.toString() ) )
+                                 .build() )
+            .timestamp( Instant.parse( timestamp.toString() ) )
+            .nodeId( NodeId.from( nodeId ) )
+            .build();
     }
 }

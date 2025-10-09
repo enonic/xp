@@ -6,7 +6,6 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
-import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
@@ -16,23 +15,22 @@ import com.enonic.xp.security.PrincipalKey;
 
 public class NodeCommitQueryResultFactory
 {
-    public static NodeCommitQueryResult create( final NodeCommitQuery query, final SearchResult searchResult )
+    public static NodeCommitQueryResult create( final SearchResult searchResult )
     {
         if ( searchResult.isEmpty() )
         {
-            return NodeCommitQueryResult.empty( searchResult.getTotalHits() );
+            final long totalHits = searchResult.getTotalHits();
+            return NodeCommitQueryResult.create().
+                nodeCommitEntries( NodeCommitEntries.empty() ).
+                totalHits( totalHits ).
+                build();
         }
 
         final NodeCommitQueryResult.Builder nodeCommitQueryResult = NodeCommitQueryResult.create();
 
-        nodeCommitQueryResult.hits( searchResult.getHits().size() );
         nodeCommitQueryResult.totalHits( searchResult.getTotalHits() );
-        nodeCommitQueryResult.from( query.getFrom() );
-        nodeCommitQueryResult.to( query.getSize() );
 
-        final NodeCommitEntries nodeCommitEntries = buildNodeCommitEntries( searchResult );
-
-        nodeCommitQueryResult.nodeCommitEntries( nodeCommitEntries );
+        nodeCommitQueryResult.nodeCommitEntries( buildNodeCommitEntries( searchResult ) );
 
         return nodeCommitQueryResult.build();
     }

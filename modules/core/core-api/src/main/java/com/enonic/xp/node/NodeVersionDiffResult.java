@@ -25,11 +25,6 @@ public final class NodeVersionDiffResult
         return totalHits;
     }
 
-    public static NodeVersionDiffResult empty()
-    {
-        return new NodeVersionDiffResult( create() );
-    }
-
     public static Builder create()
     {
         return new Builder();

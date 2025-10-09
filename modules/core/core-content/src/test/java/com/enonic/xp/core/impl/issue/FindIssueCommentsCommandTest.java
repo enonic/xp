@@ -52,7 +52,7 @@ public class FindIssueCommentsCommandTest
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( issueNode );
 
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn(
-            FindNodesByQueryResult.create().hits( 20 ).totalHits( 40 ).build() );
+            FindNodesByQueryResult.create().totalHits( 40 ).build() );
 
         Mockito.when( nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn(
             Nodes.from( IssueCommentNodeTranslatorTest.createNode( Instant.now() ) ) );
@@ -62,7 +62,6 @@ public class FindIssueCommentsCommandTest
         Mockito.verify( nodeService, Mockito.times( 1 ) ).findByQuery( Mockito.any( NodeQuery.class ) );
         Mockito.verify( nodeService, Mockito.times( 1 ) ).getByIds( Mockito.any( NodeIds.class ) );
 
-        assertEquals( 20, result.getHits() );
         assertEquals( 40, result.getTotalHits() );
         assertEquals( 1, result.getIssueComments().size() );
     }

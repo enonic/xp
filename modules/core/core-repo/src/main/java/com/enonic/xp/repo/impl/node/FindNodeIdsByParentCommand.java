@@ -68,7 +68,7 @@ public class FindNodeIdsByParentCommand
 
         if ( parentPath == null )
         {
-            return FindNodesByParentResult.empty();
+            return FindNodesByParentResult.create().nodeIds( NodeIds.empty() ).build();
         }
 
         final SearchResult result =
@@ -77,7 +77,6 @@ public class FindNodeIdsByParentCommand
         return FindNodesByParentResult.create()
             .nodeIds( NodeIds.from( result.getIds() ) )
             .totalHits( result.getTotalHits() )
-            .hits( result.getNumberOfHits() )
             .build();
     }
 

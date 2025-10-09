@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repo.impl.dump.FilePaths;

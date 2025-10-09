@@ -1,6 +1,8 @@
-package com.enonic.xp.blob;
+package com.enonic.xp.node;
 
 import java.util.Objects;
+
+import com.enonic.xp.blob.BlobKey;
 
 public final class NodeVersionKey
 {
@@ -12,9 +14,9 @@ public final class NodeVersionKey
 
     private NodeVersionKey( final Builder builder )
     {
-        nodeBlobKey = Objects.requireNonNull(builder.nodeBlobKey);
-        indexConfigBlobKey = Objects.requireNonNull(builder.indexConfigBlobKey);
-        accessControlBlobKey = Objects.requireNonNull(builder.accessControlBlobKey);
+        nodeBlobKey = Objects.requireNonNull( builder.nodeBlobKey );
+        indexConfigBlobKey = Objects.requireNonNull( builder.indexConfigBlobKey );
+        accessControlBlobKey = Objects.requireNonNull( builder.accessControlBlobKey );
     }
 
     public BlobKey getNodeBlobKey()
@@ -52,19 +54,6 @@ public final class NodeVersionKey
     public int hashCode()
     {
         return Objects.hash( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
-    }
-
-    public static NodeVersionKey from( final BlobKey nodeBlobKey, final BlobKey indexConfigBlobKey, final BlobKey accessControlBlobKey )
-    {
-        return create().nodeBlobKey( nodeBlobKey )
-            .indexConfigBlobKey( indexConfigBlobKey )
-            .accessControlBlobKey( accessControlBlobKey )
-            .build();
-    }
-
-    public static NodeVersionKey from( final String nodeBlobKey, final String indexConfigBlobKey, final String accessControlBlobKey )
-    {
-        return from( BlobKey.from( nodeBlobKey ), BlobKey.from( indexConfigBlobKey ), BlobKey.from( accessControlBlobKey ) );
     }
 
     public static Builder create()

@@ -1,9 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 public final class ResolveSyncWorkResult
     implements Iterable<NodeComparison>
@@ -13,18 +11,6 @@ public final class ResolveSyncWorkResult
     private ResolveSyncWorkResult( final Builder builder )
     {
         nodeComparisons = builder.comparisonsBuilder.build();
-    }
-
-    private ResolveSyncWorkResult( final Set<NodeComparison> nodeComparisons )
-    {
-        this.nodeComparisons = NodeComparisons.create().
-            addAll( nodeComparisons ).
-            build();
-    }
-
-    public static ResolveSyncWorkResult empty()
-    {
-        return new ResolveSyncWorkResult( new HashSet<>() );
     }
 
     public static Builder create()

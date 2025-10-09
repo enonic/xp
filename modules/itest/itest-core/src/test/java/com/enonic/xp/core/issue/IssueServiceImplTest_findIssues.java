@@ -37,7 +37,7 @@ public class IssueServiceImplTest_findIssues
         final FindIssuesResult result = this.issueService.findIssues( query );
 
         assertNotNull( result );
-        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getIssues().size() );
     }
 
     @Test
@@ -53,7 +53,7 @@ public class IssueServiceImplTest_findIssues
         final FindIssuesResult result = this.issueService.findIssues( query );
 
         assertNotNull( result );
-        assertEquals( 2, result.getHits() );
+        assertEquals( 2, result.getIssues().size() );
         assertTrue( result.getIssues().stream().allMatch(
             issue -> issue.getPublishRequest().getItems().stream().anyMatch( item -> item.getId().equals( contentId ) ) ) );
     }
@@ -71,7 +71,7 @@ public class IssueServiceImplTest_findIssues
         final FindIssuesResult result = this.issueService.findIssues( query );
 
         assertNotNull( result );
-        assertEquals( 3, result.getHits() );
+        assertEquals( 3, result.getIssues().size() );
         assertTrue( result.getIssues().stream().allMatch(
             issue -> issue.getPublishRequest().getItems().stream().anyMatch( item -> item.getId().equals( contentId ) ) ) );
     }
@@ -89,7 +89,7 @@ public class IssueServiceImplTest_findIssues
         final FindIssuesResult result = this.issueService.findIssues( query );
 
         assertNotNull( result );
-        assertEquals( 1, result.getHits() );
+        assertEquals( 1, result.getIssues().size() );
         assertTrue( result.getIssues().stream().allMatch(
             issue -> issue.getPublishRequest().getItems().stream().anyMatch( item -> item.getId().equals( contentId ) ) ) );
     }

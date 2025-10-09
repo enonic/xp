@@ -220,10 +220,9 @@ public class MoveNodeCommandTest
             .get( 0 )
             .getNode();
 
-
-        assertEquals( 2, getVersions( child1 ).getHits() );
-        assertEquals( 2, getVersions( child1_1 ).getHits() );
-        assertEquals( 2, getVersions( child1_2 ).getHits() );
+        assertEquals( 2, getVersions( child1 ).getNodeVersionMetadatas().getSize() );
+        assertEquals( 2, getVersions( child1_1 ).getNodeVersionMetadatas().getSize() );
+        assertEquals( 2, getVersions( child1_2 ).getNodeVersionMetadatas().getSize() );
 
         final NodePath previousChild1Path = child1_1.path();
         assertNull( getNodeByPath( previousChild1Path ) );
@@ -286,9 +285,9 @@ public class MoveNodeCommandTest
             .get( 0 )
             .getNode();
 
-        assertEquals( 2, getVersions( child1 ).getHits() );
-        assertEquals( 2, getVersions( child1_1 ).getHits() );
-        assertEquals( 2, getVersions( child1_1_1 ).getHits() );
+        assertEquals( 2, getVersions( child1 ).getNodeVersionMetadatas().getSize() );
+        assertEquals( 2, getVersions( child1_1 ).getNodeVersionMetadatas().getSize() );
+        assertEquals( 2, getVersions( child1_1_1 ).getNodeVersionMetadatas().getSize() );
 
         final NodePath previousChild1Path = child1_1.path();
         assertNull( getNodeByPath( previousChild1Path ) );

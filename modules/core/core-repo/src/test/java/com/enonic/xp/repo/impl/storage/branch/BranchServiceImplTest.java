@@ -6,7 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -65,7 +66,11 @@ class BranchServiceImplTest
             nodeId( NodeId.from( "123" ) ).
             nodePath( path ).
             nodeVersionId( NodeVersionId.from( "nodeVersionId" ) ).
-            nodeVersionKey( NodeVersionKey.from( "nodeBlobKey", "indexConfigBlobKey", "accessControlBlobKey" ) ).
+            nodeVersionKey( NodeVersionKey.create()
+                                .nodeBlobKey( BlobKey.from( "nodeBlobKey" ) )
+                                .indexConfigBlobKey( BlobKey.from( "indexConfigBlobKey" ) )
+                                .accessControlBlobKey( BlobKey.from( "accessControlBlobKey" ) )
+                                .build() ).
             timestamp( Instant.now() ).
             build(), context );
 

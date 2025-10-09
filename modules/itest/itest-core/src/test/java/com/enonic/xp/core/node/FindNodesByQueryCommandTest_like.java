@@ -100,6 +100,6 @@ public class FindNodesByQueryCommandTest_like
 
         final FindNodesByQueryResult result = doFindByQuery( query );
 
-        assertEquals( expected, result.getHits() );
+        assertEquals( expected, result.getNodeHits().getSize() );
     }
 }

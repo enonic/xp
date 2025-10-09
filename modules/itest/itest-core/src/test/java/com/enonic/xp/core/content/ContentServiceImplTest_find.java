@@ -140,7 +140,7 @@ public class ContentServiceImplTest_find
                                                                            .build() );
 
         // Filters will be "must", and no entry matches both titles
-        assertEquals( 0, result.getHits() );
+        assertEquals( 0, result.getContentIds().getSize() );
     }
 
     @Test
@@ -162,7 +162,7 @@ public class ContentServiceImplTest_find
 
         assertThat( buckets ).extracting( "key", "docCount" ).containsExactly( tuple( "media:unknown", 2L ), tuple( "base:folder", 1L ) );
         assertEquals( result.getTotalHits(), 3 );
-        assertEquals( result.getHits(), 0 );
+        assertEquals( result.getContentIds().getSize(), 0 );
     }
 
     @Test
@@ -210,7 +210,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getContentIds().getSize() );
     }
 
     @Test
@@ -235,7 +235,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getContentIds().getSize() );
     }
 
     @Test
@@ -260,7 +260,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getContentIds().getSize() );
     }
 
     @Test
@@ -285,7 +285,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getContentIds().getSize() );
     }
 
     @Test
@@ -310,7 +310,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getContentIds().getSize() );
     }
 
     @Test
@@ -335,7 +335,7 @@ public class ContentServiceImplTest_find
 
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ) ) ).build();
 
-        assertEquals( 1, contentService.find( queryDsl ).getHits() );
+        assertEquals( 1, contentService.find( queryDsl ).getContentIds().getSize() );
     }
 
     @Test

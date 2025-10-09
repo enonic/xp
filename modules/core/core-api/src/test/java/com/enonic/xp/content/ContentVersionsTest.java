@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.PrincipalKey;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContentVersionsTest
@@ -40,10 +39,8 @@ public class ContentVersionsTest
         final ContentVersions versions = ContentVersions.create().
             add( version1 ).
             add( version2 ).
-            contentId( ContentId.from( "ab" ) ).
             build();
 
-        assertEquals( versions.getContentId(), ContentId.from( "ab" ) );
         assertTrue( versions.iterator().hasNext() );
     }
 }

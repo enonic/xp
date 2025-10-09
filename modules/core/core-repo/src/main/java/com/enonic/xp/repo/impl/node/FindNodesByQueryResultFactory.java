@@ -13,7 +13,6 @@ class FindNodesByQueryResultFactory
     static FindNodesByQueryResult create( final SearchResult result )
     {
         final FindNodesByQueryResult.Builder resultBuilder = FindNodesByQueryResult.create().
-            hits( result.getNumberOfHits() ).
             totalHits( result.getTotalHits() ).
             aggregations( result.getAggregations() ).
             suggestions( result.getSuggestions() );

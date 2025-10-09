@@ -36,7 +36,6 @@ final class FindContentIdsByParentCommand
         return FindContentIdsByParentResult.create().
             contentIds( contentIds ).
             totalHits( result.getTotalHits() ).
-            hits( result.getHits() ).
             build();
     }
 

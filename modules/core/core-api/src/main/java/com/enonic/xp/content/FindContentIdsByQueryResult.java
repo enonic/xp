@@ -1,6 +1,7 @@
 package com.enonic.xp.content;
 
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -24,13 +25,10 @@ public final class FindContentIdsByQueryResult
 
     private final long totalHits;
 
-    private final long hits;
-
     private FindContentIdsByQueryResult( final Builder builder )
     {
-        this.contentIds = builder.contentIds;
+        this.contentIds = Objects.requireNonNull( builder.contentIds );
         this.totalHits = builder.totalHits;
-        this.hits = builder.hits;
         this.aggregations = builder.aggregations;
         this.highlight = builder.highlight != null ? ImmutableMap.copyOf( builder.highlight ) : null;
         this.sort = builder.sort != null ? ImmutableMap.copyOf( builder.sort ) : null;
@@ -40,12 +38,6 @@ public final class FindContentIdsByQueryResult
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public static FindContentIdsByQueryResult empty()
-    {
-        return FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).hits( 0 ).totalHits( 0 ).aggregations(
-            Aggregations.empty() ).build();
     }
 
     public ContentIds getContentIds()
@@ -78,12 +70,6 @@ public final class FindContentIdsByQueryResult
         return totalHits;
     }
 
-    public long getHits()
-    {
-        return hits;
-    }
-
-
     public static final class Builder
     {
         private ContentIds contentIds;
@@ -97,8 +83,6 @@ public final class FindContentIdsByQueryResult
         private Map<ContentId, Float> score;
 
         private long totalHits;
-
-        private long hits;
 
         private Builder()
         {
@@ -119,12 +103,6 @@ public final class FindContentIdsByQueryResult
         public Builder totalHits( long totalHits )
         {
             this.totalHits = totalHits;
-            return this;
-        }
-
-        public Builder hits( long hits )
-        {
-            this.hits = hits;
             return this;
         }
 

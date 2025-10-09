@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -30,18 +30,21 @@ class NodeVersionFactory
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
         final Object commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() );
 
-        final NodeVersionKey nodeVersionKey = NodeVersionKey.from( nodeBlobKey, indexConfigBlobKey, accessControlBlobKey );
         final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeysReturnValue );
 
-        return NodeVersionMetadata.create().
-            nodeId( NodeId.from( id ) ).
-            nodePath( new NodePath( path ) ).
-            timestamp( timestamp ).
-            nodeVersionId( NodeVersionId.from( versionId ) ).
-            nodeVersionKey( nodeVersionKey ).
-            binaryBlobKeys( binaryBlobKeys ).
-            nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId ) ).
-            build();
+        return NodeVersionMetadata.create()
+            .nodeId( NodeId.from( id ) )
+            .nodePath( new NodePath( path ) )
+            .timestamp( timestamp )
+            .nodeVersionId( NodeVersionId.from( versionId ) )
+            .nodeVersionKey( NodeVersionKey.create()
+                                 .nodeBlobKey( BlobKey.from( nodeBlobKey ) )
+                                 .indexConfigBlobKey( BlobKey.from( indexConfigBlobKey ) )
+                                 .accessControlBlobKey( BlobKey.from( accessControlBlobKey ) )
+                                 .build() )
+            .binaryBlobKeys( binaryBlobKeys )
+            .nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId ) )
+            .build();
     }
 
     private static BlobKeys toBlobKeys( final ReturnValue returnValue )

@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.dump.model;
 
 import java.time.Instant;
 
-import com.enonic.xp.blob.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;

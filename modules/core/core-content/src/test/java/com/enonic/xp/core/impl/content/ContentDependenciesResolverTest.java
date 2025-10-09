@@ -78,7 +78,7 @@ public class ContentDependenciesResolverTest
         final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
 
         final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
+            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
                 buckets( Buckets.create().
                     add( Bucket.create().key( "portal:site" ).docCount( 2 ).build() ).
                     add( Bucket.create().key( "base:folder" ).docCount( 1 ).build() ).
@@ -126,7 +126,7 @@ public class ContentDependenciesResolverTest
         final Content content = createContent( "contentId", data, ContentTypeName.site() );
 
         final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
+            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
                 buckets( Buckets.create().
                     build() ).build() ) ).build();
 
@@ -161,7 +161,7 @@ public class ContentDependenciesResolverTest
         final Content content = createContent( "content", data, ContentTypeName.site() );
 
         final FindContentIdsByQueryResult findContentByQueryResult =
-            FindContentIdsByQueryResult.create().aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
+            FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.from( BucketAggregation.bucketAggregation( "type" ).
                 buckets( Buckets.create().
                     build() ).build() ) ).build();
 

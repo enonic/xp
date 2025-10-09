@@ -6,7 +6,7 @@ import java.util.List;
 
 abstract class AbstractLoadResult
 {
-    private final Long successful;
+    private final long successful;
 
     private final List<LoadError> errors;
 
@@ -17,7 +17,7 @@ abstract class AbstractLoadResult
         this.errors = builder.errors;
     }
 
-    public Long getSuccessful()
+    public long getSuccessful()
     {
         return successful;
     }
@@ -29,7 +29,7 @@ abstract class AbstractLoadResult
 
     public static class Builder<T, B extends Builder>
     {
-        private Long successful = 0L;
+        private long successful = 0L;
 
         private final List<LoadError> errors = new ArrayList<>();
 
@@ -38,7 +38,7 @@ abstract class AbstractLoadResult
         }
 
         @SuppressWarnings("unchecked")
-        public B successful( final Long val )
+        public B successful( final long val )
         {
             successful += val;
             return (B) this;
