@@ -3,7 +3,6 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,7 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.Attachments;
@@ -28,23 +28,36 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.mixin.Mixin;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.XDataMapping;
+import com.enonic.xp.site.XDataMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -289,53 +302,56 @@ public class ContentServiceImplTest_update
     public void update_with_metadata()
         throws Exception
     {
-        final PropertyTree data = new PropertyTree();
-        data.setString( "testString", "value" );
-        data.setString( "testString2", "value" );
+        final Project project = projectService.create( CreateProjectParams.create()
+                                                           .name( ProjectName.from( "project" ) )
+                                                           .displayName( "project" )
+                                                           .addSiteConfig( SiteConfig.create()
+                                                                               .application( ApplicationKey.from( "com.enonic.app.test" ) )
+                                                                               .config( new PropertyTree() )
+                                                                               .build() )
+                                                           .build() );
 
-        final Mixin mixin = Mixin.create().name( "myapplication:my_mixin" ).
-            addFormItem( Input.create().
-                name( "inputToBeMixedIn" ).
-                label( "Mixed in" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                build() ).
-            build();
+        ContextBuilder.from( ContextAccessor.current() ).repositoryId( project.getName().getRepoId() ).build().runWith( () -> {
+            final PropertyTree data = new PropertyTree();
+            data.setString( "testString", "value" );
+            data.setString( "testString2", "value" );
 
-        Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).
-            thenReturn( mixin );
+            final Mixin mixin = Mixin.create()
+                .name( "myapplication:my_mixin" )
+                .addFormItem( Input.create().name( "inputToBeMixedIn" ).label( "Mixed in" ).inputType( InputTypeName.TEXT_LINE ).build() )
+                .build();
 
-        final ExtraData extraData = new ExtraData( XDataName.from( "myapplication:my_mixin" ), new PropertyTree() );
+            Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
-        ExtraDatas extraDatas = ExtraDatas.from( List.of( extraData ) );
+            final ExtraDatas extraDatas = createExtraDatas();
 
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( data ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            permissions( AccessControlList.empty() ).
-            type( ContentTypeName.folder() ).
-            extraDatas( extraDatas ).
-            build();
+            final CreateContentParams createContentParams = CreateContentParams.create()
+                .contentData( data )
+                .displayName( "This is my content" )
+                .parent( ContentPath.ROOT )
+                .permissions( AccessControlList.empty() )
+                .type( ContentTypeName.folder() )
+                .extraDatas( extraDatas )
+                .build();
 
-        final Content content = this.contentService.create( createContentParams );
+            final Content content = this.contentService.create( createContentParams );
 
-        assertTrue( content.hasExtraData() );
+            assertTrue( content.hasExtraData() );
 
-        final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
+            final UpdateContentParams updateContentParams = new UpdateContentParams();
+            updateContentParams.contentId( content.getId() ).editor( edit -> {
                 final PropertyTree editData = edit.data;
                 editData.setString( "testString", "value-updated" );
             } );
 
-        this.contentService.update( updateContentParams );
+            this.contentService.update( updateContentParams );
 
-        final Content storedContent = this.contentService.getById( content.getId() );
+            final Content storedContent = this.contentService.getById( content.getId() );
 
-        assertEquals( "This is my content", storedContent.getDisplayName() );
-        assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
-        assertEquals( "value", storedContent.getData().getString( "testString2" ) );
+            assertEquals( "This is my content", storedContent.getDisplayName() );
+            assertEquals( "value-updated", storedContent.getData().getString( "testString" ) );
+            assertEquals( "value", storedContent.getData().getString( "testString2" ) );
+        } );
     }
 
     @Test
@@ -619,5 +635,27 @@ public class ContentServiceImplTest_update
         this.contentService.update( updateContentParams );
 
         Mockito.verifyNoMoreInteractions( auditLogService );
+    }
+
+    private ExtraDatas createExtraDatas()
+    {
+        final XDataName xDataName = XDataName.from( "com.enonic.app.test:mixin" );
+
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+                                                                                                  .applicationKey( ApplicationKey.from(
+                                                                                                      "com.enonic.app.test" ) )
+                                                                                                  .xDataMappings( XDataMappings.from(
+                                                                                                      XDataMapping.create()
+                                                                                                          .xDataName( xDataName )
+                                                                                                          .allowContentTypes(
+                                                                                                              "base:folder" )
+                                                                                                          .optional( false )
+                                                                                                          .build() ) )
+                                                                                                  .build() );
+
+        final XData xData = XData.create().name( xDataName ).form( Form.create().build() ).build();
+        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+
+        return ExtraDatas.create().add( new ExtraData( xDataName, new PropertyTree() ) ).build();
     }
 }
