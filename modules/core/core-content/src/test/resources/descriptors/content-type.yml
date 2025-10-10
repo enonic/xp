@@ -18,8 +18,8 @@ form:
       text: "Field 1"
       i18n: "i18n.label"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
     helpText:
       text: "helpText"
       i18n: "helpTextI18nKey"
@@ -55,11 +55,11 @@ form:
       text: "Help Text"
     expanded: false
     occurrences:
-      minimum: 1
-      maximum: 0
+      min: 1
+      max: 0
     selected:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1
     options:
       - name: "option_1"
         label:
@@ -74,8 +74,8 @@ form:
               text: "Text input"
             default: "something"
             occurrences:
-              minimum: 1
-              maximum: 1
+              min: 1
+              max: 1
 
           - type: "RadioButton"
             name: "type"
@@ -93,23 +93,23 @@ form:
             label:
               text: "Minimum 3"
             occurrences:
-              minimum: 3
-              maximum: 0
+              min: 3
+              max: 0
             items:
               - type: "TextLine"
                 name: "label"
                 label:
                   text: "Label"
                 occurrences:
-                  minimum: 0
-                  maximum: 1
+                  min: 0
+                  max: 1
 
               - type: "TextLine"
                 name: "value"
                 label: "Value"
                 occurrences:
-                  minimum: 0
-                  maximum: 1
+                  min: 0
+                  max: 1
 
       - name: "option_2"
         label:

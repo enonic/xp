@@ -8,5 +8,5 @@ form:
     name: "some-name"
     label: "Textline"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1

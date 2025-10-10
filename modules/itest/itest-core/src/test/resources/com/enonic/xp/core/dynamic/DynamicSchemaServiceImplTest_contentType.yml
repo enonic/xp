@@ -9,8 +9,8 @@ form:
     name: "myDate"
     label: "label"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
 config:
   displayNamePlaceholder: "Display Name Label"
   displayNameExpression: "${firstName} ${lastName}"

@@ -10,8 +10,8 @@ form:
   name: "text2"
   label: "Text 2"
   occurrences:
-    minimum: 0
-    maximum: 1
+    min: 0
+    max: 1
 - type: "FormFragment"
   name: "myapp:inline"`;
 
@@ -42,8 +42,8 @@ assert.assertJsonEquals({
               '  name: "text2"\n' +
               '  label: "Text 2"\n' +
               '  occurrences:\n' +
-              '    minimum: 0\n' +
-              '    maximum: 1\n' +
+              '    min: 0\n' +
+              '    max: 1\n' +
               '- type: "FormFragment"\n' +
               '  name: "myapp:inline"',
     type: 'MIXIN',

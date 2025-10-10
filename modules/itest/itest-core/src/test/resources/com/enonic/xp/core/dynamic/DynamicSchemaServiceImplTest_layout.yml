@@ -14,27 +14,27 @@ form:
       text: "key1.help-text"
       i18n: "key1.help-text"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
   - type: "ItemSet"
     name: "myFormItemSet"
     label: "My form item set"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
     items:
       - type: "TextLine"
         name: "myTextLine"
         label: "My text line"
         occurrences:
-          minimum: 1
-          maximum: 1
+          min: 1
+          max: 1
       - type: "TextLine"
         name: "myCustomInput"
         label: "My custom input"
         occurrences:
-          minimum: 0
-          maximum: 1
+          min: 0
+          max: 1
       - type: "FieldSet"
         label: "My field set"
         items:
@@ -47,8 +47,8 @@ form:
               text: "key2.help-text"
               i18n: "key2.help-text"
             occurrences:
-              minimum: 0
-              maximum: 1
+              min: 0
+              max: 1
 regions:
   - "header"
   - "main"

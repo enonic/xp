@@ -2,8 +2,8 @@ type: "ImageSelector"
 name: "myImageSelector"
 label: "My ImageSelector"
 occurrences:
-  minimum: 0
-  maximum: 1
+  min: 0
+  max: 1
 config:
   allowPath:
     - "${site}/*"

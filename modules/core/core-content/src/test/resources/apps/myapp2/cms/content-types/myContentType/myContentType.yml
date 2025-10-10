@@ -8,8 +8,8 @@ form:
   - type: "ItemSet"
     name: "mySet"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
     items:
       - type: "FieldSet"
         label: "My field set"
@@ -18,7 +18,7 @@ form:
             name: "myTextLine"
             label: "Textline"
             occurrences:
-              minimum: 0
-              maximum: 1
+              min: 0
+              max: 1
 config:
   displayNameExpression: "${firstName} ${lastName}"
