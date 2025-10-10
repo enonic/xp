@@ -19,8 +19,8 @@ form:
       text: "key1.help-text"
       i18n: "key1.help-text"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
 regions:
   - "header"
   - "main"
@@ -64,8 +64,8 @@ assert.assertJsonEquals({
               '      text: "key1.help-text"\n' +
               '      i18n: "key1.help-text"\n' +
               '    occurrences:\n' +
-              '      minimum: 0\n' +
-              '      maximum: 1\n' +
+              '      min: 0\n' +
+              '      max: 1\n' +
               'regions:\n' +
               '  - "header"\n' +
               '  - "main"\n' +

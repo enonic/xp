@@ -10,8 +10,8 @@ form:
   name: "label"
   label: "Label"
   occurrences:
-    minimum: 0
-    maximum: 2`;
+    min: 0
+    max: 2`;
 
 // BEGIN
 // Update virtual mixin.
@@ -40,8 +40,8 @@ assert.assertJsonEquals({
               '  name: "label"\n' +
               '  label: "Label"\n' +
               '  occurrences:\n' +
-              '    minimum: 0\n' +
-              '    maximum: 2',
+              '    min: 0\n' +
+              '    max: 2',
     type: 'XDATA',
     form: [
         {

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public abstract class OccurrencesMapper
 {
     @JsonCreator
-    public OccurrencesMapper( @JsonProperty("minimum") int minimum, @JsonProperty("maximum") int maximum )
+    public OccurrencesMapper( @JsonProperty("min") int minimum, @JsonProperty("max") int maximum )
     {
     }
 }

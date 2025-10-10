@@ -4,6 +4,6 @@ form:
     name: "param1"
     label: "Task parameter"
     occurrences:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1
     default: "something"

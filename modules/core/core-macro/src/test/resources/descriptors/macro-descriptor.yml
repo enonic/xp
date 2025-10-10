@@ -5,5 +5,5 @@ form:
     name: "url"
     label: "Url"
     occurrences:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1

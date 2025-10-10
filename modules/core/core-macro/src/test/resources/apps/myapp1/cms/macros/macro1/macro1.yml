@@ -5,5 +5,5 @@ form:
     name: "some-line"
     label: "Textline"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1

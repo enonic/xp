@@ -4,7 +4,7 @@ form:
   name: "text1"
   label: "Text 1"
   occurrences:
-    minimum: 0
-    maximum: 1
+    min: 0
+    max: 1
 - type: "FormFragment"
   name: "myapp2:inline2"

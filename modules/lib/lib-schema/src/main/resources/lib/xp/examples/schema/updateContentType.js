@@ -15,8 +15,8 @@ form:
   label: "Tag, unlimited occurrences"
   helpText: "Some help text"
   occurrences:
-    minimum: 0
-    maximum: 0`;
+    min: 0
+    max: 0`;
 
 // BEGIN
 // Update virtual content type.
@@ -50,8 +50,8 @@ assert.assertJsonEquals({
               '  label: "Tag, unlimited occurrences"\n' +
               '  helpText: "Some help text"\n' +
               '  occurrences:\n' +
-              '    minimum: 0\n' +
-              '    maximum: 0',
+              '    min: 0\n' +
+              '    max: 0',
     type: 'CONTENT_TYPE',
     form: [
         {

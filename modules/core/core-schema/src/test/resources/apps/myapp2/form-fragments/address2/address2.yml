@@ -4,8 +4,8 @@ form:
 - type: "ItemSet"
   name: "address"
   occurrences:
-    minimum: 0
-    maximum: 1
+    min: 0
+    max: 1
   items:
   - type: "FieldSet"
     label: "My Field Set"
@@ -14,29 +14,29 @@ form:
       name: "myFieldInLayout"
       label: "MyFieldInLayout"
       occurrences:
-        minimum: 1
-        maximum: 1
+        min: 1
+        max: 1
   - type: "TextLine"
     name: "label"
     label: "Label"
     occurrences:
-      minimum: 0
-      maximum: 2
+      min: 0
+      max: 2
   - type: "TextLine"
     name: "street"
     label: "Street"
     occurrences:
-      minimum: 0
-      maximum: 2
+      min: 0
+      max: 2
   - type: "TextLine"
     name: "postalNo"
     label: "Postal No"
     occurrences:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1
   - type: "TextLine"
     name: "country"
     label: "Country"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1

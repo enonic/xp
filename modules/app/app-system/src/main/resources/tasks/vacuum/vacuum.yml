@@ -4,11 +4,11 @@ form:
     name: "ageThreshold"
     label: "Age threshold"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
   - type: "TextLine"
     name: "tasks"
     label: "Tasks to be run"
     occurrences:
-      minimum: 0
-      maximum: 0
+      min: 0
+      max: 0

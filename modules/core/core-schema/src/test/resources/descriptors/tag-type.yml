@@ -2,8 +2,8 @@ type: "Tag"
 name: "myTag"
 label: "My Tag"
 occurrences:
-  minimum: 0
-  maximum: 0
+  min: 0
+  max: 0
 config:
   disabled: false
 
