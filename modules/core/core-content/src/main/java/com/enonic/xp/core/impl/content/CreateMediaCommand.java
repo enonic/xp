@@ -9,13 +9,15 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.PageDefaultValuesProcessor;
+import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.site.XDataMappingService;
 
 final class CreateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -28,6 +30,10 @@ final class CreateMediaCommand
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
+    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
+
+    private final XDataMappingService xDataMappingService;
+
     private CreateMediaCommand( final Builder builder )
     {
         super( builder );
@@ -35,6 +41,8 @@ final class CreateMediaCommand
         this.mediaInfoService = builder.mediaInfoService;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
+        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
+        this.xDataMappingService = builder.xDataMappingService;
     }
 
     Content execute()
@@ -97,10 +105,12 @@ final class CreateMediaCommand
             mediaInfo( mediaInfo ).
             translator( this.translator ).
             params( createContentParams ).
-            siteService( this.siteService ).
-            xDataService( this.xDataService ).
-            formDefaultValuesProcessor( this.formDefaultValuesProcessor ).pageFormDefaultValuesProcessor(
-            this.pageFormDefaultValuesProcessor ).
+            siteService( this.siteService ).xDataService( this.xDataService )
+            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
+            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
+            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
+            .xDataMappingService( this.xDataMappingService )
+            .
             pageDescriptorService( this.pageDescriptorService ).
             partDescriptorService( this.partDescriptorService ).
             layoutDescriptorService( this.layoutDescriptorService ).
@@ -133,6 +143,10 @@ final class CreateMediaCommand
 
         private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
+        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
+
+        private XDataMappingService xDataMappingService;
+
         public Builder params( final CreateMediaParams params )
         {
             this.params = params;
@@ -157,13 +171,26 @@ final class CreateMediaCommand
             return this;
         }
 
+        public Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
+        {
+            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
+            return this;
+        }
+
+        public Builder xDataMappingService( final XDataMappingService xDataMappingService )
+        {
+            this.xDataMappingService = xDataMappingService;
+            return this;
+        }
+
         @Override
         void validate()
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( formDefaultValuesProcessor );
-            Objects.requireNonNull( pageFormDefaultValuesProcessor );
+            Objects.requireNonNull( xDataDefaultValuesProcessor );
+            Objects.requireNonNull( xDataMappingService );
         }
 
         public CreateMediaCommand build()

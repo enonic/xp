@@ -50,6 +50,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMappingService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -70,6 +71,8 @@ public class CreateContentCommandTest
 
     private PageDescriptorService pageDescriptorService;
 
+    private XDataMappingService xDataMappingService;
+
     private ContentNodeTranslator translator;
 
     private EventPublisher eventPublisher;
@@ -84,6 +87,7 @@ public class CreateContentCommandTest
         this.eventPublisher = Mockito.mock( EventPublisher.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
+        this.xDataMappingService = Mockito.mock( XDataMappingService.class );
 
         this.translator = new ContentNodeTranslator();
 
@@ -682,8 +686,11 @@ public class CreateContentCommandTest
             .xDataService( this.xDataService )
             .siteService( this.siteService )
             .pageDescriptorService( this.pageDescriptorService )
+            .xDataMappingService( this.xDataMappingService )
             .formDefaultValuesProcessor( ( form, data ) -> {
             } ).pageFormDefaultValuesProcessor( ( page ) -> {
+            } )
+            .xDataDefaultValuesProcessor( extraDatas -> {
             } )
             .build();
     }

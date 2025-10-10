@@ -53,6 +53,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
@@ -149,9 +150,13 @@ public abstract class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
+    protected ContentTypeServiceImpl contentTypeService;
+
     protected MixinService mixinService;
 
     protected XDataService xDataService;
+
+    protected XDataMappingServiceImpl xDataMappingService;
 
     protected AuditLogService auditLogService;
 
@@ -291,7 +296,7 @@ public abstract class AbstractContentServiceTest
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
-        ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
@@ -327,10 +332,15 @@ public abstract class AbstractContentServiceTest
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
+        xDataMappingService =
+            new XDataMappingServiceImpl( nodeService, projectService, siteService, xDataService, contentTypeService, eventPublisher );
+
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, ( form, data ) -> {
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+                                    ( form, data ) -> {
             }, ( page ) -> {
+            }, ( extraDatas ) -> {
             }, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
