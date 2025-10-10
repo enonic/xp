@@ -20,6 +20,7 @@ import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.GeoPointYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
+import com.enonic.xp.core.impl.schema.mapper.LocalDateTimeYml;
 import com.enonic.xp.core.impl.schema.mapper.LongYml;
 import com.enonic.xp.core.impl.schema.mapper.MediaSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
@@ -292,13 +293,34 @@ public class YmlTypeParserTest
 
         assertEquals( "DateTime", input.getInputType().toString() );
         assertEquals( "My DateTime", input.getLabel() );
-        assertEquals( "mydatetime", input.getName() );
+        assertEquals( "myDateTime", input.getName() );
 
         final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
 
         final Value defaultValue = inputType.createDefaultValue( input );
         assertTrue( defaultValue.isDateType() );
         assertEquals( "2025-08-29T07:44:27Z", defaultValue.asString() );
+    }
+
+    @Test
+    void testParseLocalDateTime()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/localdatetime-type.yml" );
+
+        final LocalDateTimeYml inputYml = parser.parse( yaml, LocalDateTimeYml.class, CURRENT_APPLICATION );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "LocalDateTime", input.getInputType().toString() );
+        assertEquals( "My LocalDateTime", input.getLabel() );
+        assertEquals( "myLocalDateTime", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isDateType() );
+        assertEquals( "2025-08-29T07:44:27", defaultValue.asString() );
     }
 
     @Test
