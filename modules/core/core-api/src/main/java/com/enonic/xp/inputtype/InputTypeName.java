@@ -22,6 +22,8 @@ public final class InputTypeName
 
     public static final InputTypeName DATE_TIME = InputTypeName.from( "DateTime" );
 
+    public static final InputTypeName LOCAL_DATE_TIME = InputTypeName.from( "LocalDateTime" );
+
     public static final InputTypeName DOUBLE = InputTypeName.from( "Double" );
 
     public static final InputTypeName MEDIA_UPLOADER = InputTypeName.from( "MediaUploader" );
