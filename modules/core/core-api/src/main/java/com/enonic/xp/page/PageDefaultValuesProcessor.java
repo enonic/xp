@@ -1,6 +1,4 @@
-package com.enonic.xp.content;
-
-import com.enonic.xp.page.Page;
+package com.enonic.xp.page;
 
 public interface PageDefaultValuesProcessor
 {

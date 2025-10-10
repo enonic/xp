@@ -3,6 +3,8 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
@@ -15,14 +17,17 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.PageDefaultValuesProcessor;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -32,24 +37,33 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.XDataMappingService;
+import com.enonic.xp.site.XDataOption;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final CreateContentParams params;
+    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
 
     private final MediaInfo mediaInfo;
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
+
+    private final XDataMappingService xDataMappingService;
+
+    private CreateContentParams params;
 
     private CreateContentCommand( final Builder builder )
     {
@@ -58,6 +72,8 @@ final class CreateContentCommand
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
+        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
+        this.xDataMappingService = builder.xDataMappingService;
     }
 
     static Builder create()
@@ -75,6 +91,49 @@ final class CreateContentCommand
         return doExecute();
     }
 
+    private ExtraDatas mergeExtraData()
+    {
+        final ExtraDatas.Builder result = ExtraDatas.create();
+
+        final List<XDataOption> allowedXData = xDataMappingService.fetch( params.getParent(), params.getType() );
+        final Set<XDataName> allowedXDataName =
+            allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );
+
+        for ( ExtraData extraData : params.getExtraDatas() )
+        {
+            if ( !allowedXDataName.contains( extraData.getName() ) )
+            {
+                throw new IllegalArgumentException( "Not allowed extraData: " + extraData.getName() );
+            }
+        }
+
+        for ( XDataOption xDataOption : allowedXData )
+        {
+            final boolean isOptional = xDataOption.optional();
+            final XData xData = xDataOption.xdata();
+            final ExtraData extraData = params.getExtraDatas().getMetadata( xData.getName() );
+
+            if ( extraData == null )
+            {
+                if ( !isOptional )
+                {
+                    throw new IllegalArgumentException( "Missing xData: " + xData.getName() );
+                }
+                else
+                {
+                    result.add( new ExtraData( xData.getName(), new PropertyTree() ) );
+                }
+            }
+            else
+            {
+                result.add( extraData );
+            }
+        }
+
+        return result.build();
+    }
+
+
     private Content doExecute()
     {
         checkAccess();
@@ -84,7 +143,10 @@ final class CreateContentCommand
 
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         pageFormDefaultValuesProcessor.applyDefaultValues( params.getPage() );
-        // TODO apply default values to xData
+
+        final ExtraDatas mergedExtraData = mergeExtraData();
+        xDataDefaultValuesProcessor.applyDefaultValues( mergedExtraData );
+        params = CreateContentParams.create( this.params ).extraDatas( mergedExtraData ).build();
 
         ProcessCreateResult processedParams = runContentProcessors( params );
 
@@ -101,7 +163,9 @@ final class CreateContentCommand
             .contentDataSerializer( this.translator.getContentDataSerializer() )
             .siteService( this.siteService )
             .build()
-            .produce().refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE ).build();
+            .produce()
+            .refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE )
+            .build();
 
         final Node createdNode;
         try
@@ -111,8 +175,8 @@ final class CreateContentCommand
         catch ( NodeAlreadyExistAtPathException e )
         {
             throw new ContentAlreadyExistsException(
-                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName() ),
-                e.getRepositoryId(), e.getBranch() );
+                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName() ), e.getRepositoryId(),
+                e.getBranch() );
         }
         catch ( NodeAccessException e )
         {
@@ -204,7 +268,8 @@ final class CreateContentCommand
             if ( contentProcessor.supports( createContentParams.getType() ) )
             {
                 processedResult = contentProcessor.processCreate(
-                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo, processedResult.getProcessedReferences() ) );
+                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo,
+                                             processedResult.getProcessedReferences() ) );
             }
         }
         return processedResult;
@@ -223,7 +288,8 @@ final class CreateContentCommand
     {
         if ( createContentParams.getLanguage() == null )
         {
-            final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( createContentParams.getParent() ) );
+            final Node parent =
+                nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( createContentParams.getParent() ) );
 
             final List<Property> inheritProperties = parent.data().getProperties( ContentPropertyNames.INHERIT );
             final boolean inherited =
@@ -324,6 +390,10 @@ final class CreateContentCommand
 
         private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
+        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
+
+        private XDataMappingService xDataMappingService;
+
         private Builder()
         {
         }
@@ -357,6 +427,18 @@ final class CreateContentCommand
             return this;
         }
 
+        Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
+        {
+            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
+            return this;
+        }
+
+        Builder xDataMappingService( final XDataMappingService xDataMappingService )
+        {
+            this.xDataMappingService = xDataMappingService;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -364,6 +446,8 @@ final class CreateContentCommand
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( formDefaultValuesProcessor );
             Objects.requireNonNull( pageFormDefaultValuesProcessor );
+            Objects.requireNonNull( xDataDefaultValuesProcessor );
+            Objects.requireNonNull( xDataMappingService );
             ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 

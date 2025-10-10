@@ -65,7 +65,6 @@ import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.PageDefaultValuesProcessor;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
@@ -81,6 +80,7 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -98,6 +98,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
+import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -110,6 +111,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -131,6 +133,8 @@ public class ContentServiceImpl
 
     private XDataService xDataService;
 
+    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
+
     private SiteService siteService;
 
     private final ContentNodeTranslator translator;
@@ -142,6 +146,8 @@ public class ContentServiceImpl
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
+
+    private XDataMappingService xDataMappingService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -157,18 +163,22 @@ public class ContentServiceImpl
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
+                               @Reference final XDataMappingService xDataMappingService,
                                @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor,
-                               @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor, ContentConfig config )
+                               @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor,
+                               @Reference final XDataDefaultValuesProcessor xDataDefaultValuesProcessor, ContentConfig config )
     {
         this.config = config;
         this.nodeService = nodeService;
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
+        this.xDataMappingService = xDataMappingService;
         this.translator = new ContentNodeTranslator();
 
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
+        this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
     }
 
     @Override
@@ -187,6 +197,8 @@ public class ContentServiceImpl
             .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
+            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
+            .xDataMappingService( this.xDataMappingService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
@@ -229,10 +241,12 @@ public class ContentServiceImpl
             .mediaInfoService( this.mediaInfoService )
             .siteService( this.siteService )
             .xDataService( this.xDataService )
+            .xDataMappingService( this.xDataMappingService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
+            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )

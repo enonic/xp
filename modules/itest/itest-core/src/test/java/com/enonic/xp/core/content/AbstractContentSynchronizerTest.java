@@ -32,6 +32,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
@@ -98,6 +99,8 @@ public abstract class AbstractContentSynchronizerTest
     protected PartDescriptorService partDescriptorService;
 
     protected LayoutDescriptorService layoutDescriptorService;
+
+    protected XDataMappingServiceImpl xDataMappingService;
 
     protected ContentTypeServiceImpl contentTypeService;
 
@@ -310,10 +313,15 @@ public abstract class AbstractContentSynchronizerTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
+        xDataMappingService =
+            new XDataMappingServiceImpl( nodeService, projectService, siteService, xDataService, contentTypeService, eventPublisher );
+
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, ( form, data ) -> {
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+                                    ( form, data ) -> {
             }, ( page ) -> {
+            }, ( extraDatas ) -> {
             }, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
