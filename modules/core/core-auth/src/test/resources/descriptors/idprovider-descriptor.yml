@@ -4,5 +4,5 @@ form:
     name: "title"
     label: "Title"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1

@@ -3,8 +3,8 @@ name: "mycombobox"
 label: "My Combobox"
 default: "one"
 occurrences:
-  minimum: 1
-  maximum: 2
+  min: 1
+  max: 2
 options:
   - value: "one"
     label: "Option One"

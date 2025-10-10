@@ -9,19 +9,19 @@ form:
     label: "Tag, unlimited occurrences"
     helpText: "Some help text"
     occurrences:
-      minimum: 0
-      maximum: 0
+      min: 0
+      max: 0
   - type: "Tag"
     name: "tag_max5"
     label: "Tag, max 5 occurrences"
     helpText: "Some help text"
     occurrences:
-      minimum: 0
-      maximum: 5
+      min: 0
+      max: 5
   - type: "Tag"
     name: "tag_min_2_max5"
     label: "Tag, min 2 max 5 occurrences"
     helpText: "Some help text"
     occurrences:
-      minimum: 2
-      maximum: 5
+      min: 2
+      max: 5

@@ -4,18 +4,18 @@ form:
   name: "name"
   label: "Full Name"
   occurrences:
-    minimum: 0
-    maximum: 0
+    min: 0
+    max: 0
   items:
   - type: "TextLine"
     name: "first"
     label: "First Name"
     occurrences:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1
   - type: "TextLine"
     name: "last"
     label: "Last Name"
     occurrences:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1

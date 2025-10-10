@@ -19,27 +19,27 @@ form:
     text: "key1.help-text"
     i18n: "key1.help-text"
   occurrences:
-    minimum: 0
-    maximum: 1
+    min: 0
+    max: 1
 - type: "ItemSet"
   name: "myFormItemSet"
   label: "My form item set"
   occurrences:
-    minimum: 0
-    maximum: 1
+    min: 0
+    max: 1
   items:
   - type: "TextLine"
     name: "myTextLine"
     label: "My text line"
     occurrences:
-      minimum: 1
-      maximum: 1
+      min: 1
+      max: 1
   - type: "TextLine"
     name: "myCustomInput"
     label: "My custom input"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
   - type: "FieldSet"
     label: "My field set"
     items:
@@ -52,8 +52,8 @@ form:
         text: "key2.help-text"
         i18n: "key2.help-text"
       occurrences:
-        minimum: 0
-        maximum: 1
+        min: 0
+        max: 1
 regions:
 - "header"
 - "main"
@@ -97,27 +97,27 @@ assert.assertJsonEquals({
               '    text: "key1.help-text"\n' +
               '    i18n: "key1.help-text"\n' +
               '  occurrences:\n' +
-              '    minimum: 0\n' +
-              '    maximum: 1\n' +
+              '    min: 0\n' +
+              '    max: 1\n' +
               '- type: "ItemSet"\n' +
               '  name: "myFormItemSet"\n' +
               '  label: "My form item set"\n' +
               '  occurrences:\n' +
-              '    minimum: 0\n' +
-              '    maximum: 1\n' +
+              '    min: 0\n' +
+              '    max: 1\n' +
               '  items:\n' +
               '  - type: "TextLine"\n' +
               '    name: "myTextLine"\n' +
               '    label: "My text line"\n' +
               '    occurrences:\n' +
-              '      minimum: 1\n' +
-              '      maximum: 1\n' +
+              '      min: 1\n' +
+              '      max: 1\n' +
               '  - type: "TextLine"\n' +
               '    name: "myCustomInput"\n' +
               '    label: "My custom input"\n' +
               '    occurrences:\n' +
-              '      minimum: 0\n' +
-              '      maximum: 1\n' +
+              '      min: 0\n' +
+              '      max: 1\n' +
               '  - type: "FieldSet"\n' +
               '    label: "My field set"\n' +
               '    items:\n' +
@@ -130,8 +130,8 @@ assert.assertJsonEquals({
               '        text: "key2.help-text"\n' +
               '        i18n: "key2.help-text"\n' +
               '      occurrences:\n' +
-              '        minimum: 0\n' +
-              '        maximum: 1\n' +
+              '        min: 0\n' +
+              '        max: 1\n' +
               'regions:\n' +
               '- "header"\n' +
               '- "main"\n' +

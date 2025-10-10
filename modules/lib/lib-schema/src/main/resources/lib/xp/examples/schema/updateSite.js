@@ -14,8 +14,8 @@ form:
   name: "some-name"
   label: "Textline"
   occurrences:
-    minimum: 0
-    maximum: 1`;
+    min: 0
+    max: 1`;
 
 
 // BEGIN
@@ -44,8 +44,8 @@ form:
   name: "some-name"
   label: "Textline"
   occurrences:
-    minimum: 0
-    maximum: 1`,
+    min: 0
+    max: 1`,
     modifiedTime: '2021-09-25T10:00:00Z',
     form: [
         {

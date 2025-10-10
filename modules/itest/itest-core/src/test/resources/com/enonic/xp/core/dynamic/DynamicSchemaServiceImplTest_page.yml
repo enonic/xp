@@ -14,8 +14,8 @@ form:
       text: "key1.help-text"
       i18n: "key1.help-text"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1
 regions:
   - "header"
   - "main"

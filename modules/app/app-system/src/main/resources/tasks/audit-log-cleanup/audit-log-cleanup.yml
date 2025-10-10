@@ -4,5 +4,5 @@ form:
     name: "ageThreshold"
     label: "Age threshold"
     occurrences:
-      minimum: 0
-      maximum: 1
+      min: 0
+      max: 1

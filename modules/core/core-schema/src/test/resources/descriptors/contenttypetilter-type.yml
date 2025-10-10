@@ -2,7 +2,7 @@ type: "ContentTypeFilter"
 name: "myContentTypeFilter"
 label: "My ContentTypeFilter"
 occurrences:
-  minimum: 0
-  maximum: 1
+  min: 0
+  max: 1
 config:
   context: true
