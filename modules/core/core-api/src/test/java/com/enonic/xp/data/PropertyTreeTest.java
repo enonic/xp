@@ -467,8 +467,8 @@ class PropertyTreeTest
         PropertySet set2 = tree.addSet( "mySet2" );
         set1.addLongs( "longs", 1L, 2L );
 
-        assertEquals( set1, tree.getPropertySet( "mySet1" ) );
-        assertEquals( set2, tree.getPropertySet( PropertyPath.from( "mySet2" ) ) );
+        assertEquals( set1, tree.getSet( "mySet1" ) );
+        assertEquals( set2, tree.getSet( PropertyPath.from( "mySet2" ) ) );
     }
 
     @Test

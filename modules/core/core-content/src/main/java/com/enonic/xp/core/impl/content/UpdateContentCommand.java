@@ -14,7 +14,6 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
@@ -78,7 +77,7 @@ final class UpdateContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
     }
 
@@ -109,6 +108,7 @@ final class UpdateContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
+            .versionAttributes( ContentAttributesHelper.updateVersionHistoryAttr( contentBeforeChange, editedContent ) )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
@@ -130,7 +130,7 @@ final class UpdateContentCommand
         final PatchableContent patchableContent = new PatchableContent( content );
         patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
-        patchableContent.modifier.setValue( getCurrentUser().getKey() );
+        patchableContent.modifier.setValue( getCurrentUserKey() );
         patchableContent.modifiedTime.setValue( Instant.now() );
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );

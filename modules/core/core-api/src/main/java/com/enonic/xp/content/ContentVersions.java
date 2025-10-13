@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -12,9 +9,9 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 public final class ContentVersions
     extends AbstractImmutableEntityList<ContentVersion>
 {
-    private ContentVersions( Builder builder )
+    private ContentVersions( final ImmutableList list )
     {
-        super( ImmutableList.sortedCopyOf( ContentVersionDateComparator.INSTANCE, builder.contentVersions ) );
+        super( list );
     }
 
     public static Builder create()
@@ -24,7 +21,7 @@ public final class ContentVersions
 
     public static final class Builder
     {
-        private final List<ContentVersion> contentVersions = new ArrayList<>();
+        private final ImmutableList.Builder<ContentVersion> contentVersions = ImmutableList.builder();
 
         private Builder()
         {
@@ -38,7 +35,7 @@ public final class ContentVersions
 
         public ContentVersions build()
         {
-            return new ContentVersions( this );
+            return new ContentVersions( this.contentVersions.build() );
         }
     }
 }

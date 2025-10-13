@@ -3,10 +3,10 @@ package com.enonic.xp.repo.impl.branch.storage;
 import java.time.Instant;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnValues;
 
@@ -14,24 +14,25 @@ public class NodeBranchVersionFactory
 {
     public static NodeBranchEntry create( final ReturnValues returnValues )
     {
-        final Object path = returnValues.getSingleValue( BranchIndexPath.PATH.getPath() );
-        final Object versionId = returnValues.getSingleValue( BranchIndexPath.VERSION_ID.getPath() );
-        final Object nodeBlobKey = returnValues.getSingleValue( BranchIndexPath.NODE_BLOB_KEY.getPath() );
-        final Object indexConfigBlobKey = returnValues.getSingleValue( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath() );
-        final Object accessControlBlobKey = returnValues.getSingleValue( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath() );
-        final Object timestamp = returnValues.getSingleValue( BranchIndexPath.TIMESTAMP.getPath() );
-        final Object nodeId = returnValues.getSingleValue( BranchIndexPath.NODE_ID.getPath() );
+        final NodePath path =
+            returnValues.getOptional( BranchIndexPath.PATH ).map( Object::toString ).map( NodePath::new ).orElse( NodePath.ROOT );
+        final NodeVersionId versionId = NodeVersionId.from( returnValues.getStringValue( BranchIndexPath.VERSION_ID ) );
+        final BlobKey nodeBlobKey = BlobKey.from( returnValues.getStringValue( BranchIndexPath.NODE_BLOB_KEY ) );
+        final BlobKey indexConfigBlobKey = BlobKey.from( returnValues.getStringValue( BranchIndexPath.INDEX_CONFIG_BLOB_KEY ) );
+        final BlobKey accessControlBlobKey = BlobKey.from( returnValues.getStringValue( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY ) );
+        final Instant timestamp = Instant.parse( returnValues.getStringValue( BranchIndexPath.TIMESTAMP ) );
+        final NodeId nodeId = NodeId.from( returnValues.getStringValue( BranchIndexPath.NODE_ID ) );
 
         return NodeBranchEntry.create()
-            .nodePath( path != null ? new NodePath( path.toString() ) : NodePath.ROOT )
-            .nodeVersionId( NodeVersionId.from( versionId ) )
+            .nodePath( path )
+            .nodeVersionId( versionId )
             .nodeVersionKey( NodeVersionKey.create()
-                                 .nodeBlobKey( BlobKey.from( nodeBlobKey.toString() ) )
-                                 .indexConfigBlobKey( BlobKey.from( indexConfigBlobKey.toString() ) )
-                                 .accessControlBlobKey( BlobKey.from( accessControlBlobKey.toString() ) )
+                                 .nodeBlobKey( nodeBlobKey )
+                                 .indexConfigBlobKey( indexConfigBlobKey )
+                                 .accessControlBlobKey( accessControlBlobKey )
                                  .build() )
-            .timestamp( Instant.parse( timestamp.toString() ) )
-            .nodeId( NodeId.from( nodeId ) )
+            .timestamp( timestamp )
+            .nodeId( nodeId )
             .build();
     }
 }

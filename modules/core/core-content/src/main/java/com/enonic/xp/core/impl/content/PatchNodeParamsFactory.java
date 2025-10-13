@@ -23,12 +23,15 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.node.Attributes;
 
 public class PatchNodeParamsFactory
 {
     private final Content editedContent;
 
     private final CreateAttachments createAttachments;
+
+    private final Attributes versionAttributes;
 
     private final ContentTypeService contentTypeService;
 
@@ -57,6 +60,7 @@ public class PatchNodeParamsFactory
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.contentDataSerializer = builder.contentDataSerializer;
         this.siteService = builder.siteService;
+        this.versionAttributes  = builder.versionAttributes;
         branches = Branches.from( builder.branches.build() );
     }
 
@@ -73,6 +77,7 @@ public class PatchNodeParamsFactory
             .id( NodeId.from( editedContent.getId() ) )
             .editor( nodeEditor )
             .addBranches( branches )
+            .versionAttributes(  versionAttributes )
             .refresh( RefreshMode.ALL );
 
         for ( final CreateAttachment createAttachment : createAttachments )
@@ -116,6 +121,8 @@ public class PatchNodeParamsFactory
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
+        private Attributes versionAttributes;
+
         private ContentTypeService contentTypeService;
 
         private XDataService xDataService;
@@ -139,6 +146,12 @@ public class PatchNodeParamsFactory
         Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

@@ -7,6 +7,7 @@ import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionMetadata;
 
 public final class NodeBranchEntry
 {
@@ -102,6 +103,16 @@ public final class NodeBranchEntry
         result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
         result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
         return result;
+    }
+
+    public static NodeBranchEntry fromNodeVersionMetadata( final NodeVersionMetadata nodeVersionMetadata ) {
+        return NodeBranchEntry.create()
+            .nodeId( nodeVersionMetadata.getNodeId() )
+            .nodeVersionId( nodeVersionMetadata.getNodeVersionId() )
+            .nodePath( nodeVersionMetadata.getNodePath() )
+            .nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() )
+            .timestamp( nodeVersionMetadata.getTimestamp() )
+            .build();
     }
 
     public static final class Builder

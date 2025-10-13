@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -8,17 +9,20 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
@@ -30,28 +34,30 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.storage.NodeVersionData;
+import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
+
 public class PushNodesCommand
     extends AbstractNodeCommand
 {
-    private final Branch target;
-
-    private final NodeIds ids;
+    private final PushNodeParams params;
 
     private final PushNodesListener pushListener;
 
     private PushNodesCommand( final Builder builder )
     {
         super( builder );
-        this.target = builder.target;
-        this.ids = builder.ids;
-        this.pushListener = Objects.requireNonNullElse( builder.pushListener, c -> {
+        this.params = builder.params;
+        this.pushListener = Objects.requireNonNullElse( params.getPushListener(), c -> {
         } );
     }
 
@@ -64,16 +70,17 @@ public class PushNodesCommand
     {
         refresh( RefreshMode.ALL );
 
-        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+        final InternalContext internalContext =
+            InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
 
-        NodeIds.Builder allIdsBuilder = NodeIds.create().addAll( ids );
+        NodeIds.Builder allIdsBuilder = NodeIds.create().addAll( params.getIds() );
 
-        final NodeComparisons comparisons = getNodeComparisons( ids );
+        final NodeComparisons comparisons = getNodeComparisons( params.getIds() );
 
         final SingleRepoSearchSource targetSearchSource = SingleRepoSearchSource.from( targetContext() );
         for ( NodeComparison comparison : comparisons )
         {
-            if ( comparison.getCompareStatus() == CompareStatus.MOVED )
+            if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )
             {
                 final NodeIds childrenIds = NodeIds.from( this.nodeSearchService.query( NodeQuery.create()
                                                                                             .query( QueryExpr.from( CompareExpr.like(
@@ -82,8 +89,7 @@ public class PushNodesCommand
                                                                                                     comparison.getTargetPath() +
                                                                                                         "/*" ) ) ) )
                                                                                             .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                                            .build(), targetSearchSource )
-                                                              .getIds() );
+                                                                                            .build(), targetSearchSource ).getIds() );
                 allIdsBuilder.addAll( childrenIds );
             }
         }
@@ -94,7 +100,7 @@ public class PushNodesCommand
         final NodeBranchEntries nodeBranchEntries = this.nodeStorageService.getBranchNodeVersions( allIds, internalContext );
 
         final PushNodesResult.Builder builder = PushNodesResult.create();
-        final List<NodeBranchEntry> successfulPush = new ArrayList<>();
+        List<NodeBranchEntry> successfulPush = new ArrayList<>();
 
         final List<NodeBranchEntry> list =
             nodeBranchEntries.stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) ).collect( Collectors.toList() );
@@ -111,25 +117,28 @@ public class PushNodesCommand
                     this.nodeStorageService.getNodePermissions( branchEntry.getNodeVersionKey(), internalContext );
                 if ( !NodePermissionsResolver.userHasPermission( authInfo, Permission.PUBLISH, nodePermissions ) )
                 {
-                    builder.add( PushNodeResult.failure( branchEntry.getNodeId(), branchEntry.getNodePath(), PushNodeResult.Reason.ACCESS_DENIED) );
+                    builder.add(
+                        PushNodeResult.failure( branchEntry.getNodeId(), branchEntry.getNodePath(), PushNodeResult.Reason.ACCESS_DENIED ) );
                     pushListener.nodesPushed( 1 );
                     continue;
                 }
             }
 
-            final CompareStatus compareStatus = comparison.getCompareStatus();
+            final NodeCompareStatus compareStatus = comparison.getCompareStatus();
 
-            if ( compareStatus == CompareStatus.EQUAL )
+            if ( compareStatus == NodeCompareStatus.EQUAL )
             {
-                builder.add( PushNodeResult.success( branchEntry.getNodeId(), branchEntry.getVersionId(), branchEntry.getNodePath(),
-                                                     comparison.getTargetPath() ) );
+                final NodeBranchEntry processed = processBeforePush( branchEntry, internalContext );
+                successfulPush.add( processed );
                 alreadyAdded.add( branchEntry.getNodePath() );
-                successfulPush.add( branchEntry );
+                builder.add( PushNodeResult.success( processed.getNodeId(), processed.getVersionId(), processed.getNodePath(),
+                                                     comparison.getTargetPath() ) );
+
                 pushListener.nodesPushed( 1 );
                 continue;
             }
 
-            if ( ( CompareStatus.NEW == compareStatus || CompareStatus.MOVED == compareStatus ) &&
+            if ( ( NodeCompareStatus.NEW == compareStatus || NodeCompareStatus.MOVED == compareStatus ) &&
                 targetAlreadyExists( branchEntry.getNodePath(), comparisons ) )
             {
                 builder.add(
@@ -147,15 +156,17 @@ public class PushNodesCommand
                 continue;
             }
 
-            builder.add( PushNodeResult.success( branchEntry.getNodeId(), branchEntry.getVersionId(), branchEntry.getNodePath(), comparison.getTargetPath() ) );
-            successfulPush.add( branchEntry );
+            final NodeBranchEntry processed = processBeforePush( branchEntry, internalContext );
+            successfulPush.add( processed );
             alreadyAdded.add( branchEntry.getNodePath() );
+            builder.add( PushNodeResult.success( processed.getNodeId(), processed.getVersionId(), processed.getNodePath(),
+                                                 comparison.getTargetPath() ) );
         }
 
         final PushNodesResult result = builder.build();
+        this.nodeStorageService.push( successfulPush, params.getTarget(), pushListener, internalContext );
 
-        this.nodeStorageService.push( successfulPush, target, pushListener, internalContext );
-        final InternalContext targetContext = InternalContext.create( internalContext ).branch( target ).build();
+        final InternalContext targetContext = InternalContext.create( internalContext ).branch( params.getTarget() ).build();
         for ( PushNodeResult pushNodeResult : result.getSuccessful() )
         {
             final NodePath targetPath = pushNodeResult.getTargetPath();
@@ -174,16 +185,42 @@ public class PushNodesCommand
         return CompareNodesCommand.create()
             .nodeIds( nodeIds )
             .storageService( this.nodeStorageService )
-            .target( this.target )
+            .target( params.getTarget() )
             .build()
             .execute();
+    }
+
+    private NodeBranchEntry processBeforePush( NodeBranchEntry nbe, InternalContext internalContext )
+    {
+        if ( params.getProcessor() == null )
+        {
+            return nbe;
+        }
+        final NodeVersion version = this.nodeStorageService.getNodeVersion( nbe.getNodeVersionKey(), internalContext );
+
+        final PropertyTree processedData = params.getProcessor().process( version.getData(), nbe.getNodePath() );
+        if ( processedData.equals( version.getData() ) )
+        {
+            return nbe;
+        }
+
+        final Node changedNode = Node.create( version )
+            .name( nbe.getNodePath().getName() )
+            .parentPath( nbe.getNodePath().getParentPath() )
+            .data( processedData )
+            .timestamp( Instant.now( CLOCK ) )
+            .build();
+
+        final NodeVersionData stored = this.nodeStorageService.store( StoreNodeParams.newVersion( changedNode ), internalContext );
+
+        return NodeBranchEntry.fromNodeVersionMetadata( stored.nodeVersionMetadata() );
     }
 
     private boolean targetAlreadyExists( final NodePath nodePath, final NodeComparisons comparisons )
     {
         //Checks if a node exist
-        final NodeBranchEntry parentNodeBranchEntry =
-            targetContext().callWith( () -> this.nodeStorageService.getBranchNodeVersion( nodePath, InternalContext.from( ContextAccessor.current() ) ) );
+        final NodeBranchEntry parentNodeBranchEntry = targetContext().callWith(
+            () -> this.nodeStorageService.getBranchNodeVersion( nodePath, InternalContext.from( ContextAccessor.current() ) ) );
 
         //If the node does not exist, returns false
         if ( parentNodeBranchEntry == null )
@@ -193,7 +230,7 @@ public class PushNodesCommand
 
         //Else, if the existing node is being moved during the current push, returns false
         final NodeComparison nodeComparison = comparisons.get( parentNodeBranchEntry.getNodeId() );
-        return nodeComparison == null || CompareStatus.MOVED != nodeComparison.getCompareStatus();
+        return nodeComparison == null || NodeCompareStatus.MOVED != nodeComparison.getCompareStatus();
     }
 
     private boolean targetParentExists( final NodePath nodePath )
@@ -210,7 +247,7 @@ public class PushNodesCommand
     {
         final Context context = ContextAccessor.current();
         return ContextBuilder.from( context )
-            .branch( target )
+            .branch( params.getTarget() )
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
     }
@@ -218,32 +255,16 @@ public class PushNodesCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private Branch target;
-
-        private NodeIds ids;
-
-        private PushNodesListener pushListener;
+        private PushNodeParams params;
 
         Builder()
         {
             super();
         }
 
-        public Builder target( final Branch target )
+        public Builder params( final PushNodeParams params )
         {
-            this.target = target;
-            return this;
-        }
-
-        public Builder ids( final NodeIds nodeIds )
-        {
-            this.ids = nodeIds;
-            return this;
-        }
-
-        public Builder pushListener( final PushNodesListener pushListener )
-        {
-            this.pushListener = pushListener;
+            this.params = params;
             return this;
         }
 
@@ -257,8 +278,7 @@ public class PushNodesCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( target, "target is required" );
-            Objects.requireNonNull( ids, "ids is required" );
+            Objects.requireNonNull( params, "params cannon be null" );
         }
     }
 }

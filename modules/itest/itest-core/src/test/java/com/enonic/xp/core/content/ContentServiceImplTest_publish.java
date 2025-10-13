@@ -42,7 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
@@ -407,9 +406,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertEquals( "My message", version.getPublishInfo().getMessage() );
+        assertEquals( "My message", version.getComment() );
     }
 
     @Test
@@ -426,9 +423,8 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertNull( version.getPublishInfo().getMessage() );
+        assertEquals( "user:system:test-user", version.getPublishedBy().toString() );
+        assertEquals( "", version.getComment() );
     }
 
     @Test

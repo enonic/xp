@@ -17,6 +17,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.repository.BranchNotFoundException;
@@ -141,7 +142,8 @@ public final class ContentInitializer
 
             LOG.info( "Created content root-node: {}", contentRoot );
 
-            nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_MASTER );
+            final NodeIds ids = NodeIds.from( contentRoot.id() );
+            nodeService.push( PushNodeParams.create().ids( ids ).target( ContentConstants.BRANCH_MASTER ).build() );
         }
     }
 

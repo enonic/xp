@@ -3,7 +3,10 @@ package com.enonic.xp.repo.impl;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import com.enonic.xp.index.IndexPath;
 
 public class ReturnValues
 {
@@ -19,21 +22,21 @@ public class ReturnValues
         return new Builder();
     }
 
-    public Object getSingleValue( final String key )
+    public String getStringValue( final IndexPath key )
     {
-        final ReturnValue returnValue = returnValues.get( key );
+        final ReturnValue returnValue = returnValues.get( key.getPath() );
 
         if ( returnValue == null )
         {
-            return null;
+            throw new NoSuchElementException( key.getPath() );
         }
 
-        return returnValue.getSingleValue();
+        return returnValue.getSingleValue().toString();
     }
 
-    public Optional<Object> getOptional( final String key )
+    public Optional<Object> getOptional( final IndexPath key )
     {
-        final ReturnValue returnValue = returnValues.get( key );
+        final ReturnValue returnValue = returnValues.get( key.getPath() );
 
         return returnValue == null ? Optional.empty() : Optional.of( returnValue.getSingleValue() );
     }

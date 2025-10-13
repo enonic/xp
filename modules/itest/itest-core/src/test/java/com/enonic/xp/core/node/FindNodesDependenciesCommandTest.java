@@ -3,12 +3,12 @@ package com.enonic.xp.core.node;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -73,7 +73,7 @@ class FindNodesDependenciesCommandTest
                     build().
                     execute();
                 nodeIds.stream().
-                    filter( nodeId -> !CompareStatus.EQUAL.equals( currentLevelNodeComparisons.get( nodeId ).getCompareStatus() ) ).
+                    filter( nodeId -> !NodeCompareStatus.EQUAL.equals( currentLevelNodeComparisons.get( nodeId ).getCompareStatus() ) ).
                     forEach( filteredNodeIds::add );
                 return filteredNodeIds.build();
             } ).

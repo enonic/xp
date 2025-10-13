@@ -19,7 +19,6 @@ import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
-import com.enonic.xp.repo.impl.version.storage.VersionStorageDocFactory;
 import com.enonic.xp.repository.RepositoryId;
 
 @Component
@@ -59,11 +58,6 @@ public class VersionServiceImpl
     @Override
     public NodeVersionMetadata getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return doGetById( nodeVersionId, context );
-    }
-
-    private NodeVersionMetadata doGetById( final NodeVersionId nodeVersionId, final InternalContext context )
-    {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create()
             .id( nodeVersionId.toString() )
             .returnFields( VERSION_RETURN_FIELDS )
@@ -78,7 +72,7 @@ public class VersionServiceImpl
             return null;
         }
 
-        return NodeVersionFactory.create( getResult );
+        return NodeVersionFactory.create( getResult.getReturnValues() );
     }
 
     private StorageSource createStorageSettings( final RepositoryId repositoryId )

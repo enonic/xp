@@ -542,6 +542,7 @@ public final class PropertySet
         return valueBuilder.build();
     }
 
+    @Deprecated
     public PropertySet getPropertySet( final PropertyPath path )
     {
         final Property property = getProperty( path );
@@ -552,6 +553,7 @@ public final class PropertySet
         return property.getValue().asData();
     }
 
+    @Deprecated
     public PropertySet getPropertySet( final String path )
     {
         return getPropertySet( PropertyPath.from( path ) );

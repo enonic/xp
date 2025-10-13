@@ -205,6 +205,7 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionData != null )
             {
+                this.nodeStorageService.push( List.of( NodeBranchEntry.fromNodeVersionMetadata( updatedVersionMetadata ) ), branch, l -> {
                 this.nodeStorageService.push( List.of( NodeBranchEntry.create()
                                                            .nodeVersionId( updatedVersionData.node().getNodeVersionId() )
                                                            .nodePath( updatedVersionData.node().path() )
@@ -221,7 +222,7 @@ public class ApplyNodePermissionsCommand
             {
                 final Node editedNode = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions )
                     .build();
-                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
+                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), targetContext );
 
                 listener.permissionsApplied( 1 );
                 return result;

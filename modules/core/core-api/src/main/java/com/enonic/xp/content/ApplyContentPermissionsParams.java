@@ -3,7 +3,6 @@ package com.enonic.xp.content;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static java.util.Objects.requireNonNull;
@@ -20,14 +19,14 @@ public final class ApplyContentPermissionsParams
 
     private final AccessControlList removePermissions;
 
-    private final ApplyPermissionsScope applyPermissionsScope;
+    private final ApplyContentPermissionsScope applyPermissionsScope;
 
     private final ApplyPermissionsListener listener;
 
     private ApplyContentPermissionsParams( Builder builder )
     {
         contentId = requireNonNull( builder.contentId );
-        applyPermissionsScope = requireNonNullElse( builder.applyPermissionsScope, ApplyPermissionsScope.SINGLE );
+        applyPermissionsScope = requireNonNullElse( builder.applyPermissionsScope, ApplyContentPermissionsScope.SINGLE );
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
@@ -47,7 +46,7 @@ public final class ApplyContentPermissionsParams
         return contentId;
     }
 
-    public ApplyPermissionsScope getScope()
+    public ApplyContentPermissionsScope getScope()
     {
         return applyPermissionsScope;
     }
@@ -82,7 +81,7 @@ public final class ApplyContentPermissionsParams
 
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
-        private ApplyPermissionsScope applyPermissionsScope;
+        private ApplyContentPermissionsScope applyPermissionsScope;
 
         private ApplyPermissionsListener listener;
 
@@ -96,7 +95,7 @@ public final class ApplyContentPermissionsParams
             return this;
         }
 
-        public Builder applyPermissionsScope( final ApplyPermissionsScope applyPermissionsScope )
+        public Builder applyPermissionsScope( final ApplyContentPermissionsScope applyPermissionsScope )
         {
             this.applyPermissionsScope = applyPermissionsScope;
             return this;
@@ -140,5 +139,4 @@ public final class ApplyContentPermissionsParams
             return new ApplyContentPermissionsParams( this );
         }
     }
-
 }

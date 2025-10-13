@@ -1,66 +1,72 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
-import java.util.Objects;
+import java.util.List;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.node.Attributes;
 
 @PublicApi
 public final class ContentVersion
 {
     private final ContentVersionId id;
 
-    private final PrincipalKey modifier;
-
-    private final String displayName;
-
     private final ContentPath path;
-
-    private final Instant modified;
 
     private final Instant timestamp;
 
-    private final ChildOrder childOrder;
+    private final String change;
+
+    private final List<String> changeFields;
+
+    private final Instant changedTime;
+
+    private final PrincipalKey changedBy;
+
+    private final Instant publishedTime;
+
+    private final PrincipalKey publishedBy;
+
+    private final Instant publishedFrom;
+
+    private final Instant publishedTo;
+
+    private final Instant unpublishedTime;
+
+    private final PrincipalKey unpublishedBy;
 
     private final String comment;
 
-    private final ContentVersionPublishInfo publishInfo;
-
-    private final WorkflowInfo workflowInfo;
-
-    private final AccessControlList permissions;
+    private final Attributes attributes;
 
     private ContentVersion( Builder builder )
     {
-        this.modifier = builder.modifier;
-        this.displayName = builder.displayName;
-        this.path = builder.path;
-        this.modified = builder.modified;
-        this.comment = builder.comment;
-        this.timestamp = builder.timestamp;
-        this.childOrder = builder.childOrder;
         this.id = builder.id;
-        this.publishInfo = builder.publishInfo;
-        this.workflowInfo = builder.workflowInfo;
-        this.permissions = builder.permissions;
+        this.path = builder.path;
+        this.timestamp = builder.timestamp;
+        this.change = builder.change;
+        this.changeFields = builder.changeFields == null ? List.of() : List.copyOf( builder.changeFields );
+        this.changedBy = builder.modifiedBy;
+        this.changedTime = builder.modifiedTime;
+        this.comment = builder.comment;
+        this.publishedTime = builder.published;
+        this.publishedBy = builder.publishedBy;
+        this.publishedFrom = builder.publishedFrom;
+        this.publishedTo = builder.publishedTo;
+        this.unpublishedTime = builder.unpublished;
+        this.unpublishedBy = builder.unpublishedBy;
+        this.attributes = builder.attributes;
     }
 
-    public PrincipalKey getModifier()
+    public PrincipalKey getChangedBy()
     {
-        return modifier;
+        return changedBy;
     }
 
-    public String getDisplayName()
+    public Instant getChangedTime()
     {
-        return displayName;
-    }
-
-    public Instant getModified()
-    {
-        return modified;
+        return changedTime;
     }
 
     public String getComment()
@@ -73,24 +79,9 @@ public final class ContentVersion
         return timestamp;
     }
 
-    public ChildOrder getChildOrder()
-    {
-        return childOrder;
-    }
-
     public ContentVersionId getId()
     {
         return id;
-    }
-
-    public ContentVersionPublishInfo getPublishInfo()
-    {
-        return publishInfo;
-    }
-
-    public WorkflowInfo getWorkflowInfo()
-    {
-        return workflowInfo;
     }
 
     public ContentPath getPath()
@@ -98,9 +89,50 @@ public final class ContentVersion
         return path;
     }
 
-    public AccessControlList getPermissions()
+    public String getChange()
     {
-        return permissions;
+        return change;
+    }
+
+    public List<String> getChangeFields()
+    {
+        return changeFields;
+    }
+
+    public Instant getPublishedTime()
+    {
+        return publishedTime;
+    }
+
+    public PrincipalKey getPublishedBy()
+    {
+        return publishedBy;
+    }
+
+    public Instant getPublishedFrom()
+    {
+        return publishedFrom;
+    }
+
+    public Instant getPublishedTo()
+    {
+        return publishedTo;
+    }
+
+    public Instant getUnpublishedTime()
+    {
+        return unpublishedTime;
+    }
+
+    public PrincipalKey getUnpublishedBy()
+    {
+        return unpublishedBy;
+    }
+
+    @Deprecated
+    public Attributes getAttributes()
+    {
+        return attributes;
     }
 
     public static Builder create()
@@ -108,56 +140,37 @@ public final class ContentVersion
         return new Builder();
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof ContentVersion ) )
-        {
-            return false;
-        }
-        final ContentVersion that = (ContentVersion) o;
-        return Objects.equals( id, that.id ) && Objects.equals( modifier, that.modifier ) &&
-            Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
-            Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
-            Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
-            Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( permissions, that.permissions ) &&
-            Objects.equals( path, that.path );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path,
-                             permissions );
-    }
-
     public static final class Builder
     {
-        private PrincipalKey modifier;
-
-        private String displayName;
+        private PrincipalKey modifiedBy;
 
         private ContentPath path;
 
-        private Instant modified;
+        private String change;
+
+        private List<String> changeFields;
+
+        private Instant modifiedTime;
 
         private Instant timestamp;
-
-        private ChildOrder childOrder;
 
         private String comment;
 
         private ContentVersionId id;
 
-        private ContentVersionPublishInfo publishInfo;
+        private Instant published;
 
-        private WorkflowInfo workflowInfo;
+        private PrincipalKey publishedBy;
 
-        private AccessControlList permissions;
+        private Instant publishedFrom;
+
+        private Instant publishedTo;
+
+        private Instant unpublished;
+
+        private PrincipalKey unpublishedBy;
+
+        private Attributes attributes;
 
         private Builder()
         {
@@ -169,63 +182,86 @@ public final class ContentVersion
             return this;
         }
 
-        public Builder modifier( PrincipalKey modifier )
+        public Builder changedBy( final PrincipalKey modifier )
         {
-            this.modifier = modifier;
+            this.modifiedBy = modifier;
             return this;
         }
 
-        public Builder displayName( String displayName )
-        {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public Builder path( ContentPath path )
+        public Builder path( final ContentPath path )
         {
             this.path = path;
             return this;
         }
 
-        public Builder modified( Instant modified )
+        public Builder modified( final Instant modified )
         {
-            this.modified = modified;
+            this.modifiedTime = modified;
             return this;
         }
 
-        public Builder timestamp( Instant timestamp )
+        public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
             return this;
         }
 
-        public Builder childOrder( ChildOrder childOrder )
-        {
-            this.childOrder = childOrder;
-            return this;
-        }
-
-        public Builder comment( String comment )
+        public Builder comment( final String comment )
         {
             this.comment = comment;
             return this;
         }
 
-        public Builder publishInfo( ContentVersionPublishInfo publishInfo )
+        public Builder publishedFrom( final Instant publishedFrom )
         {
-            this.publishInfo = publishInfo;
+            this.publishedFrom = publishedFrom;
             return this;
         }
 
-        public Builder workflowInfo( WorkflowInfo workflowInfo )
+        public Builder publishedTo( final Instant publishedTo )
         {
-            this.workflowInfo = workflowInfo;
+            this.publishedTo = publishedTo;
             return this;
         }
 
-        public Builder permissions( AccessControlList permissions )
+        public Builder published( final Instant published )
         {
-            this.permissions = permissions;
+            this.published = published;
+            return this;
+        }
+
+        public Builder publishedBy( final PrincipalKey publishedBy )
+        {
+            this.publishedBy = publishedBy;
+            return this;
+        }
+
+        public Builder unpublished( final Instant unpublished )
+        {
+            this.unpublished = unpublished;
+            return this;
+        }
+
+        public Builder unpublishedBy( final PrincipalKey unpublishedBy )
+        {
+            this.unpublishedBy = unpublishedBy;
+            return this;
+        }
+
+        public Builder change( final String change) {
+            this.change = change;
+            return this;
+        }
+
+        public Builder changeFields( final List<String> changeFields) {
+            this.changeFields = changeFields;
+            return this;
+        }
+
+        @Deprecated
+        public Builder attributes( final Attributes attributes )
+        {
+            this.attributes = attributes;
             return this;
         }
 

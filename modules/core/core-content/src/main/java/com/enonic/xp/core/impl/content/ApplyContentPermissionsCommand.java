@@ -10,10 +10,12 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.ApplyNodePermissionsListener;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
+import com.enonic.xp.node.ApplyPermissionsScope;
+import com.enonic.xp.node.CommitNodeParams;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
+import com.enonic.xp.node.NodeVersionIds;
 
 
 final class ApplyContentPermissionsCommand
@@ -36,13 +38,16 @@ final class ApplyContentPermissionsCommand
             .permissions( params.getPermissions() )
             .addPermissions( params.getAddPermissions() )
             .removePermissions( params.getRemovePermissions() )
-            .scope( params.getScope() )
+            .scope( Enum.valueOf( ApplyPermissionsScope.class, params.getScope().name() ) )
             .addBranches( Branches.from( ContentConstants.BRANCH_MASTER, ContentConstants.BRANCH_DRAFT ) );
 
         if ( params.getListener() != null )
         {
             applyNodePermissionsBuilder.applyPermissionsListener( new ListenerDelegate( params.getListener() ) );
         }
+
+        applyNodePermissionsBuilder.versionAttributes(
+            ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PERMISSIONS_KEY ) );
 
         final ApplyNodePermissionsResult result = nodeService.applyPermissions( applyNodePermissionsBuilder.build() );
 
@@ -66,9 +71,15 @@ final class ApplyContentPermissionsCommand
 
     private void commitResult( final ApplyNodePermissionsResult result )
     {
-        final RoutableNodeVersionIds versionIdsToCommit = result.getResults()
+        final NodeVersionIds versionIdsToCommit = result.getResults()
             .entrySet()
             .stream()
+            .flatMap( Collection::stream )
+            .filter( branchResult -> ContentConstants.BRANCH_MASTER.equals( branchResult.branch() ) )
+            .map( ApplyNodePermissionsResult.BranchResult::node )
+            .filter( Objects::nonNull )
+            .map( Node::getNodeVersionId )
+            .collect( NodeVersionIds.collector() );
             .flatMap( entry -> entry.getValue()
                 .stream()
                 .filter( br -> ContentConstants.BRANCH_MASTER.equals( br.branch() ) )
@@ -78,8 +89,11 @@ final class ApplyContentPermissionsCommand
 
         if ( !versionIdsToCommit.isEmpty() )
         {
-            nodeService.commit( NodeCommitEntry.create().message( ContentConstants.APPLY_PERMISSIONS_COMMIT_PREFIX ).build(),
-                                versionIdsToCommit );
+            nodeService.commit( CommitNodeParams.create()
+                                    .nodeCommitEntry(
+                                        NodeCommitEntry.create().message( ContentConstants.APPLY_PERMISSIONS_COMMIT_PREFIX ).build() )
+                                    .nodeVersionIds( versionIdsToCommit )
+                                    .build() );
         }
     }
 
@@ -88,7 +102,7 @@ final class ApplyContentPermissionsCommand
         return new Builder( params );
     }
 
-    public static class Builder
+    static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private final ApplyContentPermissionsParams params;
@@ -104,7 +118,7 @@ final class ApplyContentPermissionsCommand
             super.validate();
         }
 
-        public ApplyContentPermissionsCommand build()
+        ApplyContentPermissionsCommand build()
         {
             validate();
             return new ApplyContentPermissionsCommand( this );

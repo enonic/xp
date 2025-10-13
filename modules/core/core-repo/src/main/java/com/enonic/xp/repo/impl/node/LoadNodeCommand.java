@@ -52,11 +52,7 @@ public class LoadNodeCommand
         verifyParentExists();
         deleteIfExistsAtPath();
 
-        final StoreNodeParams storeNodeParams = StoreNodeParams.create().
-            node( params.getNode() ).
-            nodeCommitId( params.getNodeCommitId() ).
-            overrideVersion().
-            build();
+        final StoreNodeParams storeNodeParams = StoreNodeParams.overrideVersion( params.getNode(), params.getNodeCommitId(), params.getAttributes() );
 
         final Node loadedNode = this.nodeStorageService.store( storeNodeParams, InternalContext.from( ContextAccessor.current() ) ).node();
 

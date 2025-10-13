@@ -19,9 +19,7 @@ class ContentVersionsTest
         final ContentVersion version1 = ContentVersion.create().
             id( ContentVersionId.from( "a" ) ).
             modified( now1 ).
-            timestamp( now1 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
+            timestamp( now1 ).changedBy( PrincipalKey.ofAnonymous() ).
             comment( "comment" ).
             build();
 
@@ -30,9 +28,7 @@ class ContentVersionsTest
         final ContentVersion version2 = ContentVersion.create().
             id( ContentVersionId.from( "b" ) ).
             modified( now2 ).
-            timestamp( now2 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
+            timestamp( now2 ).changedBy( PrincipalKey.ofAnonymous() ).
             comment( "comment" ).
             build();
 
