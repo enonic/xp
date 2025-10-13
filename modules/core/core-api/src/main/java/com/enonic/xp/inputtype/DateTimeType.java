@@ -1,7 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import java.time.ZonedDateTime;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
@@ -11,12 +9,12 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 @PublicApi
-final class DateTimeType
+public class DateTimeType
     extends InputTypeBase
 {
     public static final DateTimeType INSTANCE = new DateTimeType();
 
-    private DateTimeType()
+    protected DateTimeType()
     {
         super( InputTypeName.DATE_TIME );
     }
@@ -24,7 +22,7 @@ final class DateTimeType
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newDateTime( value.asInstant() );
+        return ValueFactory.newLocalDateTime( value.asLocalDateTime() );
     }
 
     @Override
@@ -34,15 +32,7 @@ final class DateTimeType
 
         if ( defaultValue != null )
         {
-            final Value value = parseDateTime( defaultValue );
-
-            if ( value != null )
-            {
-                return value;
-            }
-
-            final ZonedDateTime zonedDateTime = DateTimeHelper.resolveRelativeTime( defaultValue );
-            return ValueFactory.newDateTime( zonedDateTime.toInstant() );
+            return parseLocalDateTime( defaultValue );
         }
 
         return super.createDefaultValue( input );
@@ -51,18 +41,18 @@ final class DateTimeType
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
-        validateType( property, ValueTypes.DATE_TIME );
+        validateType( property, ValueTypes.LOCAL_DATE_TIME );
     }
 
-    private Value parseDateTime( final String value )
+    private Value parseLocalDateTime( final String value )
     {
         try
         {
-            return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
+            return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
         }
         catch ( ValueTypeException e )
         {
-            return null;
+            throw new IllegalArgumentException( String.format( "Invalid DateTime format: %s", value ) );
         }
     }
 }

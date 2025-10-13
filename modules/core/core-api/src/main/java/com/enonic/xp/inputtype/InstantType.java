@@ -1,7 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import java.time.ZonedDateTime;
-
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
@@ -11,20 +9,20 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 @PublicApi
-public class LocalDateTimeType
+final class InstantType
     extends InputTypeBase
 {
-    public static final LocalDateTimeType INSTANCE = new LocalDateTimeType();
+    public static final InstantType INSTANCE = new InstantType();
 
-    protected LocalDateTimeType()
+    private InstantType()
     {
-        super( InputTypeName.LOCAL_DATE_TIME );
+        super( InputTypeName.INSTANT );
     }
 
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newLocalDateTime( value.asLocalDateTime() );
+        return ValueFactory.newDateTime( value.asInstant() );
     }
 
     @Override
@@ -34,15 +32,7 @@ public class LocalDateTimeType
 
         if ( defaultValue != null )
         {
-            final Value value = parseLocalDateTime( defaultValue );
-
-            if ( value != null )
-            {
-                return value;
-            }
-
-            final ZonedDateTime zonedDateTime = DateTimeHelper.resolveRelativeTime( defaultValue );
-            return ValueFactory.newLocalDateTime( zonedDateTime.toLocalDateTime() );
+            return parseDateTime( defaultValue );
         }
 
         return super.createDefaultValue( input );
@@ -51,18 +41,18 @@ public class LocalDateTimeType
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
-        validateType( property, ValueTypes.LOCAL_DATE_TIME );
+        validateType( property, ValueTypes.DATE_TIME );
     }
 
-    private Value parseLocalDateTime( final String value )
+    private Value parseDateTime( final String value )
     {
         try
         {
-            return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+            return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
         }
         catch ( ValueTypeException e )
         {
-            return null;
+            throw new IllegalArgumentException( String.format( "Invalid Instant format: %s", value ) );
         }
     }
 }

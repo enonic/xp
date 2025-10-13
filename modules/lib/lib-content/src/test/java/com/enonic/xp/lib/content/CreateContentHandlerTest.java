@@ -48,11 +48,11 @@ public class CreateContentHandlerTest
             .name( "times" )
             .addFormItem( Input.create().label( "time" ).name( "time" ).inputType( InputTypeName.TIME ).build() )
             .addFormItem( Input.create().label( "date" ).name( "date" ).inputType( InputTypeName.DATE ).build() )
-            .addFormItem( Input.create().label( "dateTime" ).name( "dateTime" ).inputType( InputTypeName.LOCAL_DATE_TIME ).build() )
+            .addFormItem( Input.create().label( "dateTime" ).name( "dateTime" ).inputType( InputTypeName.DATE_TIME ).build() )
             .addFormItem( Input.create()
                               .label( "instant" )
                               .name( "instant" )
-                              .inputType( InputTypeName.DATE_TIME )
+                              .inputType( InputTypeName.INSTANT )
                               .build() )
             .build();
 

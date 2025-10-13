@@ -34,7 +34,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -364,7 +363,7 @@ public final class ImageContentProcessor
                 if ( formItem instanceof Input input )
                 {
                     final ExtraData extraData = getOrCreate( metadataMap, xData.getName() );
-                    if ( InputTypeName.DATE_TIME.equals( input.getInputType() ) )
+                    if ( InputTypeName.INSTANT.equals( input.getInputType() ) )
                     {
                         extraData.getData()
                             .addLocalDateTime( formItemName, ValueTypes.LOCAL_DATE_TIME.convert( mediaEntryValues.toArray()[0] ) );

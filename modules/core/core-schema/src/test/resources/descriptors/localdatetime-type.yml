@@ -1,5 +1,0 @@
-type: "LocalDateTime"
-name: "myLocalDateTime"
-label: "My LocalDateTime"
-default: "2025-08-29T07:44:27"
-config: { }

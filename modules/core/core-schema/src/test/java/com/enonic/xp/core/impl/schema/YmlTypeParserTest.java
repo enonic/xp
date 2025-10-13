@@ -20,7 +20,7 @@ import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
 import com.enonic.xp.core.impl.schema.mapper.GeoPointYml;
 import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
-import com.enonic.xp.core.impl.schema.mapper.LocalDateTimeYml;
+import com.enonic.xp.core.impl.schema.mapper.InstantYml;
 import com.enonic.xp.core.impl.schema.mapper.LongYml;
 import com.enonic.xp.core.impl.schema.mapper.MediaSelectorYml;
 import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
@@ -282,6 +282,27 @@ public class YmlTypeParserTest
     }
 
     @Test
+    void testParseInstant()
+        throws Exception
+    {
+        final String yaml = readAsString( "/descriptors/instant-type.yml" );
+
+        final InstantYml inputYml = parser.parse( yaml, InstantYml.class, CURRENT_APPLICATION );
+
+        final Input input = inputYml.convertToInput();
+
+        assertEquals( "Instant", input.getInputType().toString() );
+        assertEquals( "My Instant", input.getLabel() );
+        assertEquals( "myInstant", input.getName() );
+
+        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
+
+        final Value defaultValue = inputType.createDefaultValue( input );
+        assertTrue( defaultValue.isDateType() );
+        assertEquals( "2025-08-29T07:44:27Z", defaultValue.asString() );
+    }
+
+    @Test
     void testParseDateTime()
         throws Exception
     {
@@ -294,27 +315,6 @@ public class YmlTypeParserTest
         assertEquals( "DateTime", input.getInputType().toString() );
         assertEquals( "My DateTime", input.getLabel() );
         assertEquals( "myDateTime", input.getName() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isDateType() );
-        assertEquals( "2025-08-29T07:44:27Z", defaultValue.asString() );
-    }
-
-    @Test
-    void testParseLocalDateTime()
-        throws Exception
-    {
-        final String yaml = readAsString( "/descriptors/localdatetime-type.yml" );
-
-        final LocalDateTimeYml inputYml = parser.parse( yaml, LocalDateTimeYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
-
-        assertEquals( "LocalDateTime", input.getInputType().toString() );
-        assertEquals( "My LocalDateTime", input.getLabel() );
-        assertEquals( "myLocalDateTime", input.getName() );
 
         final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
 

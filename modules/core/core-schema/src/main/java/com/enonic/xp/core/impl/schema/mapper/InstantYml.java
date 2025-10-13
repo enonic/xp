@@ -2,14 +2,13 @@ package com.enonic.xp.core.impl.schema.mapper;
 
 import com.enonic.xp.inputtype.InputTypeName;
 
-public class LocalDateTimeYml
+public class InstantYml
     extends InputYml
 {
-    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.LOCAL_DATE_TIME;
+    public static final InputTypeName INPUT_TYPE_NAME = InputTypeName.INSTANT;
 
-    public LocalDateTimeYml()
+    public InstantYml()
     {
         super( INPUT_TYPE_NAME );
     }
 }
-

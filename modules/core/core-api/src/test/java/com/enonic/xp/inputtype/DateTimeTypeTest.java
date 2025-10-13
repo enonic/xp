@@ -36,78 +36,22 @@ public class DateTimeTypeTest
     public void testCreateProperty()
     {
         final InputTypeConfig config = newEmptyConfig();
-        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00Z" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00" ), config );
 
         assertNotNull( value );
-        assertSame( ValueTypes.DATE_TIME, value.getType() );
+        assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
     }
 
     @Test
-    public void testCreateDefaultValue_format1()
+    public void testCreateDefaultValue()
     {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45Z" ).build();
+        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T05:03:45" ).build();
 
         final Value value = this.type.createDefaultValue( input );
 
         assertNotNull( value );
-        assertSame( ValueTypes.DATE_TIME, value.getType() );
-        assertEquals( "2014-08-16T10:03:45Z", value.toString() );
-    }
-
-    @Test
-    public void testCreateDefaultValue_format2_plus()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45+03:00" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertSame( ValueTypes.DATE_TIME, value.getType() );
-        assertEquals( "2014-08-16T07:03:45Z", value.toString() );
-    }
-
-    @Test
-    public void testCreateDefaultValue_format2_minus()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45-03:00" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertSame( ValueTypes.DATE_TIME, value.getType() );
-        assertEquals( "2014-08-16T13:03:45Z", value.toString() );
-    }
-
-    @Test
-    public void testCreateDefaultValue_format2_day_change()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T22:03:45-03:00" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertSame( ValueTypes.DATE_TIME, value.getType() );
-        assertEquals( "2014-08-17T01:03:45Z", value.toString() );
-    }
-
-
-    @Test
-    public void testCreateDefaultValue_invalid()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-18-16T05:03:45" ).build();
-
-        assertThrows( IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
-    }
-
-    @Test
-    public void testRelativeDefaultValue_date_time()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertSame( ValueTypes.DATE_TIME, value.getType() );
+        assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
+        assertEquals( "2014-08-16T05:03:45", value.toString() );
     }
 
     @Test
@@ -122,7 +66,14 @@ public class DateTimeTypeTest
     public void testValidate_dateTime()
     {
         final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( dateTimeProperty(), config );
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( dateTimeProperty(), config ) );
+    }
+
+    @Test
+    public void testValidate_localDateTime()
+    {
+        final InputTypeConfig config = newEmptyConfig();
+        this.type.validate( localDateTimeProperty(), config );
     }
 
     @Test

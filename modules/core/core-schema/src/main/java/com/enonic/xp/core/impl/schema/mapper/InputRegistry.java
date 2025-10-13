@@ -19,8 +19,8 @@ public final class InputRegistry
         register( HtmlAreaYml.INPUT_TYPE_NAME, HtmlAreaYml.class );
         register( TextAreaYml.INPUT_TYPE_NAME, TextAreaYml.class );
         register( DateYml.INPUT_TYPE_NAME, DateYml.class );
+        register( InstantYml.INPUT_TYPE_NAME, InstantYml.class );
         register( DateTimeYml.INPUT_TYPE_NAME, DateTimeYml.class );
-        register( LocalDateTimeYml.INPUT_TYPE_NAME, LocalDateTimeYml.class );
         register( TimeYml.INPUT_TYPE_NAME, TimeYml.class );
         register( CheckBoxYml.INPUT_TYPE_NAME, CheckBoxYml.class );
         register( ComboBoxYml.INPUT_TYPE_NAME, ComboBoxYml.class );

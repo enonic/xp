@@ -1,5 +1,5 @@
 type: "DateTime"
 name: "myDateTime"
 label: "My DateTime"
-default: "2025-08-29T07:44:27Z"
+default: "2025-08-29T07:44:27"
 config: { }
