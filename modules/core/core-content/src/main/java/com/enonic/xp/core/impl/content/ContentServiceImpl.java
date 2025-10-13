@@ -484,32 +484,15 @@ public class ContentServiceImpl
 
     private Content doFindNearestByPath( final ContentPath contentPath, final Predicate<Content> predicate )
     {
-        final Content content = executeGetByPath( contentPath );
-        if ( content != null && predicate.test( content ) )
-        {
-            return content;
-        }
-
-        //Resolves the closest content, starting from the root.
-        Content foundContent = null;
-        ContentPath nextContentPath = ContentPath.ROOT;
-        for ( final ContentName contentName : contentPath )
-        {
-            final ContentPath currentContentPath = ContentPath.from( nextContentPath, contentName );
-
-            final Content childContent = executeGetByPath( currentContentPath );
-            if ( childContent == null )
-            {
-                break;
-            }
-            if ( predicate.test( childContent ) )
-            {
-                foundContent = childContent;
-            }
-            nextContentPath = currentContentPath;
-        }
-
-        return foundContent;
+        return FindNearestContentByPathCommand.create()
+            .contentPath( contentPath )
+            .predicate( predicate )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
     }
 
     @Override

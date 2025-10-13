@@ -14,11 +14,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationWildcardMatcher;
-import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -27,6 +26,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -75,25 +75,33 @@ public final class XDataMappingServiceImpl
     }
 
     @Override
-    public List<XDataOption> fetch( final ContentPath parentPath, final ContentTypeName type )
+    public List<XDataOption> fetch( final ContentPath path, final ContentTypeName type )
     {
-        final Node parent = this.nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( parentPath ) );
-        return parent != null ? getSiteXData( ContentId.from( parent.id() ), type ) : List.of();
+        return path != null ? getSiteXData( path, type ) : List.of();
     }
 
-    private List<XDataOption> getSiteXData( final ContentId contentId, final ContentTypeName type )
+    public List<XDataOption> fetch( final SiteConfigs siteConfigs, final ContentTypeName type )
     {
         final List<ApplicationKey> applicationKeys =
-            Stream.concat( getSiteOrProjectConfigs( contentId ).stream().map( SiteConfig::getApplicationKey ),
+            Stream.concat( siteConfigs.stream().map( SiteConfig::getApplicationKey ), Stream.of( ApplicationKey.PORTAL ) )
+                .distinct()
+                .collect( toList() );
+
+        return getXDataByApps( applicationKeys, type );
+    }
+
+    private List<XDataOption> getSiteXData( final ContentPath path, final ContentTypeName type )
+    {
+        final List<ApplicationKey> applicationKeys =
+            Stream.concat( getSiteOrProjectConfigs( path ).stream().map( SiteConfig::getApplicationKey ),
                            Stream.of( ApplicationKey.PORTAL ) ).distinct().collect( toList() );
 
         return getXDataByApps( applicationKeys, type );
     }
 
-    private SiteConfigs getSiteOrProjectConfigs( final ContentId contentId )
+    private SiteConfigs getSiteOrProjectConfigs( final ContentPath path )
     {
-        final Site nearestSite = GetNearestSiteCommand.create()
-            .contentId( contentId )
+        final Site nearestSite = (Site) FindNearestContentByPathCommand.create().contentPath( path ).predicate( Content::isSite )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
@@ -128,7 +136,7 @@ public final class XDataMappingServiceImpl
 
     private List<XDataOption> getXDatasByContentType( final XDataMappings xDataMappings, final ContentTypeName contentTypeName )
     {
-        final Map<XData, Boolean> result = new LinkedHashMap<>();
+        final Map<XDataName, XDataOption> result = new LinkedHashMap<>();
 
         xDataMappings.stream().filter( xDataMapping -> {
             final String pattern = xDataMapping.getAllowContentTypes();
@@ -141,20 +149,12 @@ public final class XDataMappingServiceImpl
             final XData xData = this.xDataService.getByName( xDataMapping.getXDataName() );
             if ( xData != null )
             {
-                result.compute( xData, ( k, v ) -> {
-                    if ( v == null || v )
-                    {
-                        return xDataMapping.getOptional();
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                } );
+                result.compute( xData.getName(), ( k, v ) -> v == null || v.optional()
+                    ? new XDataOption( xData, xDataMapping.getOptional() )
+                    : new XDataOption( xData, false ) );
             }
         } );
 
-        return result.entrySet().stream().map( e -> new XDataOption( e.getKey(), e.getValue() ) ).collect( toList() );
+        return result.values().stream().toList();
     }
 }

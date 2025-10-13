@@ -6,10 +6,10 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
@@ -39,7 +39,7 @@ public class ExtraDataValidator
             final XData xData = this.xDataService.getByName( name );
             if ( xData == null )
             {
-                LOG.warn( "Mixin not found: '" + name );
+                LOG.warn( "XData not found: '{}", name );
                 continue;
             }
 

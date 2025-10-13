@@ -95,7 +95,10 @@ final class CreateContentCommand
     {
         final ExtraDatas.Builder result = ExtraDatas.create();
 
-        final List<XDataOption> allowedXData = xDataMappingService.fetch( params.getParent(), params.getType() );
+        final List<XDataOption> allowedXData =
+            params.getType().isSite()
+                ? xDataMappingService.fetch( SiteConfigsDataSerializer.fromData( params.getData().getRoot() ), params.getType() )
+                : xDataMappingService.fetch( params.getParent(), params.getType() );
         final Set<XDataName> allowedXDataName =
             allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );
 
@@ -116,10 +119,6 @@ final class CreateContentCommand
             if ( extraData == null )
             {
                 if ( !isOptional )
-                {
-                    throw new IllegalArgumentException( "Missing xData: " + xData.getName() );
-                }
-                else
                 {
                     result.add( new ExtraData( xData.getName(), new PropertyTree() ) );
                 }

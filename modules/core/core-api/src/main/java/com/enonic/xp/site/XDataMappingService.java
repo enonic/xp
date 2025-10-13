@@ -8,4 +8,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 public interface XDataMappingService
 {
     List<XDataOption> fetch( final ContentPath path, final ContentTypeName type );
+
+    List<XDataOption> fetch( final SiteConfigs configs, final ContentTypeName type );
 }
