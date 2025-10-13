@@ -43,8 +43,8 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
@@ -334,8 +334,8 @@ public class DynamicSchemaServiceImpl
         {
             case CONTENT_TYPE:
                 return ContentTypeName.from( applicationKey, name );
-            case MIXIN:
-                return MixinName.from( applicationKey, name );
+            case FORM_FRAGMENT:
+                return FormFragmentName.from( applicationKey, name );
             case XDATA:
                 return XDataName.from( applicationKey, name );
             default:
@@ -375,7 +375,7 @@ public class DynamicSchemaServiceImpl
         final String resourceRootName = getSchemaRootName( dynamicType );
         final NodePath.Builder builder = NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT ).addElement( key.toString() );
 
-        if ( dynamicType != DynamicContentSchemaType.MIXIN )
+        if ( dynamicType != DynamicContentSchemaType.FORM_FRAGMENT )
         {
             builder.addElement( VirtualAppConstants.CMS_ROOT_NAME );
         }
@@ -397,7 +397,7 @@ public class DynamicSchemaServiceImpl
         {
             case CONTENT_TYPE:
                 return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
-            case MIXIN:
+            case FORM_FRAGMENT:
                 return VirtualAppConstants.MIXIN_ROOT_NAME;
             case XDATA:
                 return VirtualAppConstants.X_DATA_ROOT_NAME;
@@ -461,9 +461,9 @@ public class DynamicSchemaServiceImpl
         {
             return ContentType.create( (ContentType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
         }
-        if ( baseSchema instanceof Mixin )
+        if ( baseSchema instanceof FormFragmentDescriptor )
         {
-            return Mixin.create( (Mixin) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+            return FormFragmentDescriptor.create( (FormFragmentDescriptor) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
         }
         if ( baseSchema instanceof XData )
         {

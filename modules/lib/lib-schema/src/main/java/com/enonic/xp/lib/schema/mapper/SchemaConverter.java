@@ -3,7 +3,7 @@ package com.enonic.xp.lib.schema.mapper;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
 import com.enonic.xp.schema.xdata.XData;
 
 public class SchemaConverter
@@ -20,9 +20,9 @@ public class SchemaConverter
         {
             return new ContentTypeMapper( (DynamicSchemaResult<ContentType>) result );
         }
-        if ( dynamicSchema instanceof Mixin )
+        if ( dynamicSchema instanceof FormFragmentDescriptor )
         {
-            return new MixinMapper( (DynamicSchemaResult<Mixin>) result );
+            return new MixinMapper( (DynamicSchemaResult<FormFragmentDescriptor>) result );
         }
         if ( dynamicSchema instanceof XData )
         {

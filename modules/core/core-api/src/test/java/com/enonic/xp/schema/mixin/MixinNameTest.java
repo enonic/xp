@@ -9,6 +9,6 @@ public class MixinNameTest
     @Test
     public void equalsContract()
     {
-        EqualsVerifier.forClass( MixinName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
+        EqualsVerifier.forClass( FormFragmentName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
     }
 }

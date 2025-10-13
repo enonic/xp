@@ -40,7 +40,7 @@ public final class Form
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public InlineMixin getInlineMixin( final String path )
+    public FormFragment getInlineMixin( final String path )
     {
         return formItems.getInlineMixin( FormItemPath.from( path ) );
     }

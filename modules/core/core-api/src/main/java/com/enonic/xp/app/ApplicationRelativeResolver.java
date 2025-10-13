@@ -2,7 +2,7 @@ package com.enonic.xp.app;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.xdata.XDataName;
 
 @PublicApi
@@ -46,11 +46,11 @@ public final class ApplicationRelativeResolver
         return ContentTypeName.from( this.current, name );
     }
 
-    public MixinName toMixinName( final String name )
+    public FormFragmentName toMixinName( final String name )
     {
         if ( name.contains( ":" ) )
         {
-            return MixinName.from( name );
+            return FormFragmentName.from( name );
         }
 
         if ( this.current == null )
@@ -58,7 +58,7 @@ public final class ApplicationRelativeResolver
             throw new IllegalArgumentException( "Unable to resolve application for Mixin [" + name + "]" );
         }
 
-        return MixinName.from( this.current, name );
+        return FormFragmentName.from( this.current, name );
     }
 
     public XDataName toXDataName( final String name )

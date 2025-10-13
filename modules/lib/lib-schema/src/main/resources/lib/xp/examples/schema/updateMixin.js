@@ -19,8 +19,8 @@ form:
 // BEGIN
 // Update virtual mixin.
 var result = schemaLib.updateSchema({
-    name: 'myapp:mytype',
-    type: 'MIXIN',
+    name: 'mytype',
+    type: 'FORM_FRAGMENT',
     resource
 
 });
@@ -37,7 +37,7 @@ assert.assertJsonEquals({
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'displayName: \"Virtual Mixin\"\ndescription: \"Mixin description\"\nform:\n- type: \"TextLine\"\n  name: \"text2\"\n  label: \"Text 2\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"myapp:inline\"\n',
-    type: 'MIXIN',
+    type: 'FORM_FRAGMENT',
     form: [
         {
             'formItemType': 'Input',

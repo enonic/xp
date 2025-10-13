@@ -7,7 +7,7 @@ import com.enonic.xp.form.Form;
 @PublicApi
 public interface MixinService
 {
-    Mixin getByName( MixinName name );
+    FormFragmentDescriptor getByName( FormFragmentName name );
 
     Mixins getAll();
 

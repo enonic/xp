@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
-import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
+import com.enonic.xp.core.impl.form.mixin.YmlFormFragmentParser;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 
@@ -54,13 +54,13 @@ public class UpdateDynamicContentSchemaHandlerTest
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
 
-            final Mixin.Builder builder = YmlMixinParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
+            final FormFragmentDescriptor.Builder builder = YmlFormFragmentParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
 
             final Instant modifiedTime = Instant.parse( "2021-09-25T10:00:00.00Z" );
             builder.modifiedTime( modifiedTime );
             builder.createdTime( modifiedTime );
 
-            builder.name( MixinName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
+            builder.name( FormFragmentName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );

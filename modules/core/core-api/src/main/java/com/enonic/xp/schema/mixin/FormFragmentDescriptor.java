@@ -8,12 +8,12 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
 
 @PublicApi
-public final class Mixin
-    extends BaseSchema<MixinName>
+public final class FormFragmentDescriptor
+    extends BaseSchema<FormFragmentName>
 {
     private final Form form;
 
-    private Mixin( final Builder builder )
+    private FormFragmentDescriptor( final Builder builder )
     {
         super( builder );
         this.form = builder.formBuilder.build();
@@ -29,7 +29,7 @@ public final class Mixin
         return new Builder();
     }
 
-    public static Builder create( final Mixin mixin )
+    public static Builder create( final FormFragmentDescriptor mixin )
     {
         return new Builder( mixin );
     }
@@ -49,8 +49,8 @@ public final class Mixin
         {
             return false;
         }
-        final Mixin mixin = (Mixin) o;
-        return Objects.equals( form, mixin.form );
+        final FormFragmentDescriptor descriptor = (FormFragmentDescriptor) o;
+        return Objects.equals( form, descriptor.form );
     }
 
     @Override
@@ -61,7 +61,7 @@ public final class Mixin
     }
 
     public static final class Builder
-        extends BaseSchema.Builder<Builder, MixinName>
+        extends BaseSchema.Builder<Builder, FormFragmentName>
     {
         private Form.Builder formBuilder;
 
@@ -71,14 +71,14 @@ public final class Mixin
             this.formBuilder = Form.create();
         }
 
-        private Builder( final Mixin mixin )
+        private Builder( final FormFragmentDescriptor descriptor )
         {
-            super( mixin );
-            this.formBuilder = Form.create( mixin.getForm() );
+            super( descriptor );
+            this.formBuilder = Form.create( descriptor.getForm() );
         }
 
         @Override
-        public Builder name( final MixinName value )
+        public Builder name( final FormFragmentName value )
         {
             super.name( value );
             return this;
@@ -86,7 +86,7 @@ public final class Mixin
 
         public Builder name( final String value )
         {
-            super.name( MixinName.from( value ) );
+            super.name( FormFragmentName.from( value ) );
             return this;
         }
 
@@ -102,9 +102,9 @@ public final class Mixin
             return this;
         }
 
-        public Mixin build()
+        public FormFragmentDescriptor build()
         {
-            return new Mixin( this );
+            return new FormFragmentDescriptor( this );
         }
     }
 }

@@ -27,7 +27,7 @@ public enum FormItemType
         {
             return LAYOUT;
         }
-        else if ( InlineMixin.class.getSimpleName().equals( value ) )
+        else if ( FormFragment.class.getSimpleName().equals( value ) )
         {
             return MIXIN_REFERENCE;
         }

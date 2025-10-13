@@ -13,18 +13,18 @@ public class MixinNamesTest
     @Test
     public void test_immutable_MixinNames()
     {
-        List<MixinName> names = new ArrayList<>();
-        MixinName mixinName = MixinName.from( "myapplication:my" );
+        List<FormFragmentName> names = new ArrayList<>();
+        FormFragmentName mixinName = FormFragmentName.from( "myapplication:my" );
         MixinNames mixinNames = MixinNames.from( names );
         try
         {
-            mixinNames.getSet().add( MixinName.from( "myapplication:my1" ) );
+            mixinNames.getSet().add( FormFragmentName.from( "myapplication:my1" ) );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
-        mixinNames = MixinNames.from( MixinName.from( "myapplication:my1" ) );
+        mixinNames = MixinNames.from( FormFragmentName.from( "myapplication:my1" ) );
         try
         {
             mixinNames.getSet().add( mixinName );
@@ -47,11 +47,11 @@ public class MixinNamesTest
     @Test
     public void from()
     {
-        MixinNames mixinNames = MixinNames.from( MixinName.from( "myapplication:my1" ), MixinName.from( "myapplication:my2" ),
-                                                 MixinName.from( "myapplication:my3" ) );
+        MixinNames mixinNames = MixinNames.from( FormFragmentName.from( "myapplication:my1" ), FormFragmentName.from( "myapplication:my2" ),
+                                                 FormFragmentName.from( "myapplication:my3" ) );
 
-        List<MixinName> mixinNameList =
-            List.of( MixinName.from( "myapplication:my1" ), MixinName.from( "myapplication:my2" ), MixinName.from( "myapplication:my3" ) );
+        List<FormFragmentName> mixinNameList =
+            List.of( FormFragmentName.from( "myapplication:my1" ), FormFragmentName.from( "myapplication:my2" ), FormFragmentName.from( "myapplication:my3" ) );
 
         assertEquals( 3, mixinNames.getSize() );
         assertEquals( 3, MixinNames.from( mixinNames ).getSize() );

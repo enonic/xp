@@ -1,13 +1,13 @@
 package com.enonic.xp.lib.schema.mapper;
 
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.schema.mixin.Mixin;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
 import com.enonic.xp.script.serializer.MapGenerator;
 
 public final class MixinMapper
-    extends SchemaMapper<Mixin>
+    extends SchemaMapper<FormFragmentDescriptor>
 {
-    public MixinMapper( final DynamicSchemaResult<Mixin> schema )
+    public MixinMapper( final DynamicSchemaResult<FormFragmentDescriptor> schema )
     {
         super( schema );
     }

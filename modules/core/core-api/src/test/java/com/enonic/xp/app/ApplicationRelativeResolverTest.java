@@ -4,7 +4,7 @@ package com.enonic.xp.app;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,7 +33,7 @@ public class ApplicationRelativeResolverTest
     public void toMixinName()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
-        MixinName mixinName = resolver.toMixinName( "bbb" );
+        FormFragmentName mixinName = resolver.toMixinName( "bbb" );
         assertEquals( mixinName.getLocalName(), "bbb" );
 
         mixinName = resolver.toMixinName( "ccc:ddd" );

@@ -103,8 +103,8 @@ import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
@@ -379,27 +379,27 @@ public class DynamicSchemaServiceImplTest
         final String resource = readResource( "_mixin.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mymixin" ) )
+            .name( FormFragmentName.from( "myapp:mymixin" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
 
-        final Mixin mixin = (Mixin) result.getSchema();
+        final FormFragmentDescriptor mixin = (FormFragmentDescriptor) result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( mixin ).usingRecursiveComparison()
             .isEqualTo( dynamicSchemaService.getContentSchema( GetDynamicContentSchemaParams.create()
-                                                                   .name( MixinName.from( "myapp:mymixin" ) )
-                                                                   .type( DynamicContentSchemaType.MIXIN )
+                                                                   .name( FormFragmentName.from( "myapp:mymixin" ) )
+                                                                   .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixin.getName().toString() );
         assertEquals( "Virtual Mixin", mixin.getDisplayName() );
         assertEquals( "Mixin description", mixin.getDescription() );
         assertEquals( 2, mixin.getForm().size() );
-        assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getMixinName().toString() );
+        assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
@@ -420,9 +420,9 @@ public class DynamicSchemaServiceImplTest
         final String resource = readResource( "_mixin.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mymixin" ) )
+            .name( FormFragmentName.from( "myapp:mymixin" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         final DynamicSchemaResult<BaseSchema<?>> result =
@@ -438,9 +438,9 @@ public class DynamicSchemaServiceImplTest
         final String resource = readResource( "_mixin.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mymixin" ) )
+            .name( FormFragmentName.from( "myapp:mymixin" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         assertThrows( ForbiddenAccessException.class,
@@ -454,11 +454,11 @@ public class DynamicSchemaServiceImplTest
 
         final CreateDynamicContentSchemaParams createParams =
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mymixin" ) )
+                .name( FormFragmentName.from( "myapp:mymixin" ) )
                 .resource( """
                                displayName: "MyFormFragment"
                                """ )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
@@ -466,27 +466,27 @@ public class DynamicSchemaServiceImplTest
         final String resource = readResource( "_mixin.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mymixin" ) )
+            .name( FormFragmentName.from( "myapp:mymixin" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.updateContentSchema( updateParams ) );
 
-        final Mixin mixin = (Mixin) result.getSchema();
+        final FormFragmentDescriptor mixin = (FormFragmentDescriptor) result.getSchema();
 
         createAdminContext().runWith( () -> assertThat( mixin ).usingRecursiveComparison()
             .isEqualTo( dynamicSchemaService.getContentSchema( GetDynamicContentSchemaParams.create()
-                                                                   .name( MixinName.from( "myapp:mymixin" ) )
-                                                                   .type( DynamicContentSchemaType.MIXIN )
+                                                                   .name( FormFragmentName.from( "myapp:mymixin" ) )
+                                                                   .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixin.getName().toString() );
         assertEquals( "Virtual Mixin", mixin.getDisplayName() );
         assertEquals( "Mixin description", mixin.getDescription() );
         assertEquals( 2, mixin.getForm().size() );
-        assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getMixinName().toString() );
+        assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
@@ -507,11 +507,11 @@ public class DynamicSchemaServiceImplTest
 
         final CreateDynamicContentSchemaParams createParams =
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mymixin" ) )
+                .name( FormFragmentName.from( "myapp:mymixin" ) )
                 .resource( """
                                displayName: "Mixin"
                                """ )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
@@ -519,9 +519,9 @@ public class DynamicSchemaServiceImplTest
         final String resource = readResource( "_mixin.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mymixin" ) )
+            .name( FormFragmentName.from( "myapp:mymixin" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         final DynamicSchemaResult<BaseSchema<?>> result =
@@ -536,11 +536,11 @@ public class DynamicSchemaServiceImplTest
     {
         final CreateDynamicContentSchemaParams createParams =
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mymixin" ) )
+                .name( FormFragmentName.from( "myapp:mymixin" ) )
                 .resource( """
                                displayName: "Mixin"
                                """ )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build();
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
@@ -548,9 +548,9 @@ public class DynamicSchemaServiceImplTest
         final String resource = readResource( "_mixin.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mymixin" ) )
+            .name( FormFragmentName.from( "myapp:mymixin" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         assertThrows( ForbiddenAccessException.class,
@@ -1265,38 +1265,38 @@ public class DynamicSchemaServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         List<DynamicSchemaResult<BaseSchema<?>>> results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
+            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.FORM_FRAGMENT ).build() ) );
 
         assertTrue( results.isEmpty() );
 
-        DynamicSchemaResult<Mixin> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<FormFragmentDescriptor> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mytype1" ) )
+                .name( FormFragmentName.from( "myapp:mytype1" ) )
                 .resource( readResource( "_mixin.yml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
-        DynamicSchemaResult<Mixin> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<FormFragmentDescriptor> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mytype2" ) )
+                .name( FormFragmentName.from( "myapp:mytype2" ) )
                 .resource( readResource( "_mixin.yml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
-        DynamicSchemaResult<Mixin> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<FormFragmentDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "my-other-app:mytype" ) )
+                .name( FormFragmentName.from( "my-other-app:mytype" ) )
                 .resource( readResource( "_mixin.yml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
+            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.FORM_FRAGMENT ).build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin1, mixin2 ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
                                                                                                         "my-other-app" ) )
-                                                                                                    .type( DynamicContentSchemaType.MIXIN )
+                                                                                                    .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                                     .build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin3 ) );
@@ -1312,39 +1312,39 @@ public class DynamicSchemaServiceImplTest
         List<DynamicSchemaResult<BaseSchema<?>>> results = createSchemaAdminContext().callWith(
             () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                .applicationKey( applicationKey )
-                                                               .type( DynamicContentSchemaType.MIXIN )
+                                                               .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                .build() ) );
 
         assertTrue( results.isEmpty() );
 
-        DynamicSchemaResult<Mixin> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<FormFragmentDescriptor> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mytype1" ) )
+                .name( FormFragmentName.from( "myapp:mytype1" ) )
                 .resource( readResource( "_mixin.yml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
-        DynamicSchemaResult<Mixin> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<FormFragmentDescriptor> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:mytype2" ) )
+                .name( FormFragmentName.from( "myapp:mytype2" ) )
                 .resource( readResource( "_mixin.yml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
-        DynamicSchemaResult<Mixin> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<FormFragmentDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "my-other-app:mytype" ) )
+                .name( FormFragmentName.from( "my-other-app:mytype" ) )
                 .resource( readResource( "_mixin.yml" ) )
-                .type( DynamicContentSchemaType.MIXIN )
+                .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
-            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
+            ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.FORM_FRAGMENT ).build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin1, mixin2 ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
                                                                                                         "my-other-app" ) )
-                                                                                                    .type( DynamicContentSchemaType.MIXIN )
+                                                                                                    .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                                     .build() ) );
 
         assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin3 ) );
@@ -1360,31 +1360,31 @@ public class DynamicSchemaServiceImplTest
         List<DynamicSchemaResult<BaseSchema<?>>> results = createSchemaAdminContext().callWith(
             () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                .applicationKey( applicationKey )
-                                                               .type( DynamicContentSchemaType.MIXIN )
+                                                               .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                .build() ) );
 
         assertTrue( results.isEmpty() );
 
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
-                                                                                           .name( MixinName.from( "myapp:mytype1" ) )
+                                                                                           .name( FormFragmentName.from( "myapp:mytype1" ) )
                                                                                            .resource( readResource( "_mixin.yml" ) )
-                                                                                           .type( DynamicContentSchemaType.MIXIN )
+                                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
-                                                                                           .name( MixinName.from( "myapp:mytype2" ) )
+                                                                                           .name( FormFragmentName.from( "myapp:mytype2" ) )
                                                                                            .resource( readResource( "_mixin.yml" ) )
-                                                                                           .type( DynamicContentSchemaType.MIXIN )
+                                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
-                                                                                           .name( MixinName.from( "my-other-app:mytype" ) )
+                                                                                           .name( FormFragmentName.from( "my-other-app:mytype" ) )
                                                                                            .resource( readResource( "_mixin.yml" ) )
-                                                                                           .type( DynamicContentSchemaType.MIXIN )
+                                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
 
         assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
             .callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                           .applicationKey( applicationKey )
-                                                                          .type( DynamicContentSchemaType.MIXIN )
+                                                                          .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                           .build() ) ) );
     }
 
@@ -1560,9 +1560,9 @@ public class DynamicSchemaServiceImplTest
         final String resource = "unsupportedField: [ ]";
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:mytype" ) )
+            .name( FormFragmentName.from( "myapp:mytype" ) )
             .resource( resource )
-            .type( DynamicContentSchemaType.MIXIN )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
             .build();
 
         assertThrows( UncheckedIOException.class,

@@ -14,8 +14,8 @@ import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.security.User;
 
@@ -73,13 +73,13 @@ public class GetDynamicContentSchemaHandlerTest
         when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
-            if ( DynamicContentSchemaType.MIXIN != schemaParams.getType() )
+            if ( DynamicContentSchemaType.FORM_FRAGMENT != schemaParams.getType() )
             {
                 throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
             }
 
-            final Mixin mixin = Mixin.create()
-                .name( (MixinName) schemaParams.getName() )
+            final FormFragmentDescriptor mixin = FormFragmentDescriptor.create()
+                .name( (FormFragmentName) schemaParams.getName() )
                 .description( "My mixin description" )
                 .displayName( "My mixin display name" )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
@@ -91,7 +91,7 @@ public class GetDynamicContentSchemaHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( "<mixin><some-data></some-data></mixin>" );
 
-            return new DynamicSchemaResult<Mixin>( mixin, resource );
+            return new DynamicSchemaResult<FormFragmentDescriptor>( mixin, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getMixin.js" );

@@ -15,8 +15,8 @@ public class MixinsTest
     @Test
     public void test_immutable_mixins()
     {
-        MixinName mixinName = MixinName.from( "myapplication:my1" );
-        Mixin mixin = Mixin.create().name( mixinName ).build();
+        FormFragmentName mixinName = FormFragmentName.from( "myapplication:my1" );
+        FormFragmentDescriptor mixin = FormFragmentDescriptor.create().name( mixinName ).build();
         Mixins mixins = Mixins.from( mixin );
 
         assertTrue( mixins.getNames().getSize() == 1 );
@@ -48,8 +48,8 @@ public class MixinsTest
     @Test
     public void add_multiple()
     {
-        Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build();
-        Mixin mixin2 = Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build();
+        FormFragmentDescriptor mixin1 = FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build();
+        FormFragmentDescriptor mixin2 = FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build();
 
         Mixins mixinsFromList = Mixins.create().addAll( Arrays.asList( mixin1, mixin2 ) ).build();
         Mixins mixinsFromMixins = Mixins.create().addAll( Mixins.create().add( mixin1 ).add( mixin2 ).build() ).build();
@@ -61,11 +61,11 @@ public class MixinsTest
     @Test
     public void from()
     {
-        Mixins mixins = Mixins.from( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
-                                     Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
+        Mixins mixins = Mixins.from( FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build(),
+                                     FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build() );
 
-        List<Mixin> mixinList = List.of( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
-                                         Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );
+        List<FormFragmentDescriptor> mixinList = List.of( FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build(),
+                                                          FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build() );
 
         assertEquals( 2, mixins.getSize() );
         assertEquals( 2, Mixins.from( mixins ).getSize() );

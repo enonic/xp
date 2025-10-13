@@ -35,8 +35,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -293,7 +293,7 @@ public class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final Mixin mixin = Mixin.create().name( "myapplication:my_mixin" ).
+        final FormFragmentDescriptor mixin = FormFragmentDescriptor.create().name( "myapplication:my_mixin" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
@@ -301,7 +301,7 @@ public class ContentServiceImplTest_update
                 build() ).
             build();
 
-        Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).
+        Mockito.when( this.mixinService.getByName( Mockito.isA( FormFragmentName.class ) ) ).
             thenReturn( mixin );
 
         final ExtraData extraData = new ExtraData( XDataName.from( "myapplication:my_mixin" ), new PropertyTree() );

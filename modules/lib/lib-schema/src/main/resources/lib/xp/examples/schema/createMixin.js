@@ -18,8 +18,8 @@ form:
 // BEGIN
 // Create virtual mixin.
 var result = schemaLib.createSchema({
-    name: 'myapp:mytype',
-    type: 'MIXIN',
+    name: 'mytype',
+    type: 'FORM_FRAGMENT',
     resource
 
 });
@@ -46,7 +46,7 @@ assert.assertJsonEquals({
               '    max: 1\n' +
               '- type: "FormFragment"\n' +
               '  name: "myapp:inline"',
-    type: 'MIXIN',
+    type: 'FORM_FRAGMENT',
     form: [
         {
             'formItemType': 'Input',

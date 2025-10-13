@@ -13,7 +13,7 @@ import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeDefault;
@@ -444,7 +444,7 @@ public class FormDefaultValuesProcessorImplTest
     {
         FieldSet.Builder fieldSet = FieldSet.create()
             .label( "FieldSet" )
-            .addFormItem( InlineMixin.create().mixin( "testApp:testMixin" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "testApp:testMixin" ).build() )
             .addFormItem( Input.create()
                               .name( "testInput" )
                               .label( "testInput" )

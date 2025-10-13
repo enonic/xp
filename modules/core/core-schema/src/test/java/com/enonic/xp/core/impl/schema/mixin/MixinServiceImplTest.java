@@ -9,11 +9,11 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.mixin.Mixins;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +43,7 @@ public class MixinServiceImplTest
         assertNotNull( types2 );
         assertEquals( 0, types2.getSize() );
 
-        final Mixin mixin = service.getByName( MixinName.from( "other:mytype" ) );
+        final FormFragmentDescriptor mixin = service.getByName( FormFragmentName.from( "other:mytype" ) );
         assertNull( mixin );
     }
 
@@ -64,7 +64,7 @@ public class MixinServiceImplTest
         assertNotNull( types3 );
         assertEquals( 6, types3.getSize() );
 
-        final Mixin mixin = service.getByName( MixinName.from( "myapp2:mixin1" ) );
+        final FormFragmentDescriptor mixin = service.getByName( FormFragmentName.from( "myapp2:mixin1" ) );
         assertNotNull( mixin );
     }
 
@@ -75,7 +75,7 @@ public class MixinServiceImplTest
 
         final Form form = Form.create()
             .addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( InlineMixin.create().mixin( "myapp2:mixin2" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "myapp2:mixin2" ).build() )
             .build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -94,7 +94,7 @@ public class MixinServiceImplTest
 
         final Form form = Form.create()
             .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() )
             .build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -112,9 +112,9 @@ public class MixinServiceImplTest
 
         final Form form = Form.create()
             .addFormItem(
-                FormItemSet.create().name( "home" ).addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).build() )
+                FormItemSet.create().name( "home" ).addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() ).build() )
             .addFormItem(
-                FormItemSet.create().name( "cottage" ).addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() ).build() )
+                FormItemSet.create().name( "cottage" ).addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() ).build() )
             .build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -136,7 +136,7 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Form form = Form.create().addFormItem( InlineMixin.create().mixin( "myapp2:address2" ).build() ).build();
+        final Form form = Form.create().addFormItem( FormFragment.create().formFragment( "myapp2:address2" ).build() ).build();
 
         final Form transformedForm = service.inlineFormItems( form );
 
@@ -151,7 +151,7 @@ public class MixinServiceImplTest
 
         final Form form = Form.create()
             .addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( InlineMixin.create().mixin( "myapp2:inline1" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "myapp2:inline1" ).build() )
             .build();
 
         final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> service.inlineFormItems( form ) );
@@ -169,7 +169,7 @@ public class MixinServiceImplTest
             .addOptionSetOption( FormOptionSetOption.create()
                                      .name( "myOptionSetOption1" )
                                      .label( "option label1" )
-                                     .addFormItem( InlineMixin.create().mixin( "myapp2:address" ).build() )
+                                     .addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() )
                                      .build() )
             .addOptionSetOption( FormOptionSetOption.create()
                                      .name( "myOptionSetOption2" )

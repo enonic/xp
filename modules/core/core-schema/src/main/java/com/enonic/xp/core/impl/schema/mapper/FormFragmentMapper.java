@@ -6,22 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.FormFragment;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 
-@JsonDeserialize(builder = InlineMixin.Builder.class)
-public abstract class InlineMixinMapper
+@JsonDeserialize(builder = FormFragment.Builder.class)
+public abstract class FormFragmentMapper
 {
     @JsonIgnoreProperties({"type"})
     @JsonPOJOBuilder(withPrefix = "")
     public abstract static class Builder
     {
         @JsonCreator
-        public static InlineMixin.Builder create()
+        public static FormFragment.Builder create()
         {
-            return InlineMixin.create();
+            return FormFragment.create();
         }
 
         @JsonProperty("name")
-        abstract InlineMixin.Builder mixin( String mixin );
+        abstract FormFragment.Builder formFragment( FormFragmentName formFragmentName );
     }
 }

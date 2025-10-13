@@ -11,11 +11,11 @@ import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
 public final class Mixins
-    extends AbstractImmutableEntityList<Mixin>
+    extends AbstractImmutableEntityList<FormFragmentDescriptor>
 {
     private static final Mixins EMPTY = new Mixins( ImmutableList.of() );
 
-    private Mixins( final ImmutableList<Mixin> list )
+    private Mixins( final ImmutableList<FormFragmentDescriptor> list )
     {
         super( list );
     }
@@ -25,7 +25,7 @@ public final class Mixins
         return stream().map( BaseSchema::getName ).collect( MixinNames.collector() );
     }
 
-    public Mixin getMixin( final MixinName mixinName )
+    public FormFragmentDescriptor getMixin( final FormFragmentName mixinName )
     {
         return stream().filter( m -> mixinName.equals( m.getName() ) ).findFirst().orElse( null );
     }
@@ -35,22 +35,22 @@ public final class Mixins
         return EMPTY;
     }
 
-    public static Mixins from( final Mixin... mixins )
+    public static Mixins from( final FormFragmentDescriptor... mixins )
     {
         return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Mixins from( final Iterable<Mixin> mixins )
+    public static Mixins from( final Iterable<FormFragmentDescriptor> mixins )
     {
         return mixins instanceof Mixins m ? m : fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Collector <Mixin, ?, Mixins> collector()
+    public static Collector <FormFragmentDescriptor, ?, Mixins> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Mixins::fromInternal );
     }
 
-    private static Mixins fromInternal( final ImmutableList<Mixin> list )
+    private static Mixins fromInternal( final ImmutableList<FormFragmentDescriptor> list )
     {
         return list.isEmpty() ? EMPTY : new Mixins( list );
     }
@@ -62,19 +62,19 @@ public final class Mixins
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<Mixin> builder = ImmutableList.builder();
+        private final ImmutableList.Builder<FormFragmentDescriptor> builder = ImmutableList.builder();
 
         private Builder()
         {
         }
 
-        public Builder add( Mixin node )
+        public Builder add( FormFragmentDescriptor node )
         {
             builder.add( node );
             return this;
         }
 
-        public Builder addAll( Iterable<Mixin> nodes )
+        public Builder addAll( Iterable<FormFragmentDescriptor> nodes )
         {
             builder.addAll( nodes );
             return this;

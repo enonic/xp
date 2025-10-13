@@ -21,10 +21,10 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.schema.mixin.Mixins;
 
@@ -34,19 +34,19 @@ public final class MixinServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
 
-    private final MixinLoader mixinLoader;
+    private final FormFragmentLoader mixinLoader;
 
     private final ApplicationService applicationService;
 
     @Activate
     public MixinServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
-        this.mixinLoader = new MixinLoader( resourceService );
+        this.mixinLoader = new FormFragmentLoader( resourceService );
         this.applicationService = applicationService;
     }
 
     @Override
-    public Mixin getByName( final MixinName name )
+    public FormFragmentDescriptor getByName( final FormFragmentName name )
     {
         return mixinLoader.get( name );
     }
@@ -76,7 +76,7 @@ public final class MixinServiceImpl
         return doInlineFormItems( form, new HashSet<>() );
     }
 
-    private Form doInlineFormItems( final Form form, final Set<MixinName> inlineMixins )
+    private Form doInlineFormItems( final Form form, final Set<FormFragmentName> inlineMixins )
     {
         final Form.Builder transformedForm = Form.create();
         final List<FormItem> transformedFormItems = transformFormItems( form, inlineMixins );
@@ -84,16 +84,16 @@ public final class MixinServiceImpl
         return transformedForm.build();
     }
 
-    private List<FormItem> transformFormItems( final Iterable<FormItem> iterable, final Set<MixinName> inlineMixinStack )
+    private List<FormItem> transformFormItems( final Iterable<FormItem> iterable, final Set<FormFragmentName> inlineMixinStack )
     {
         final List<FormItem> formItems = new ArrayList<>();
         for ( final FormItem formItem : iterable )
         {
-            if ( formItem instanceof InlineMixin )
+            if ( formItem instanceof FormFragment )
             {
-                final InlineMixin inline = (InlineMixin) formItem;
-                final MixinName mixinName = inline.getMixinName();
-                final Mixin mixin = getByName( mixinName );
+                final FormFragment inline = (FormFragment) formItem;
+                final FormFragmentName mixinName = inline.getFormFragmentName();
+                final FormFragmentDescriptor mixin = getByName( mixinName );
                 if ( mixin != null )
                 {
                     if ( inlineMixinStack.contains( mixinName ) )

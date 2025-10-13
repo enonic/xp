@@ -12,11 +12,11 @@ import com.enonic.xp.support.AbstractImmutableEntitySet;
 
 @PublicApi
 public final class MixinNames
-    extends AbstractImmutableEntitySet<MixinName>
+    extends AbstractImmutableEntitySet<FormFragmentName>
 {
     private static final MixinNames EMPTY = new MixinNames( ImmutableSet.of() );
 
-    private MixinNames( final ImmutableSet<MixinName> list )
+    private MixinNames( final ImmutableSet<FormFragmentName> list )
     {
         super( list );
     }
@@ -33,25 +33,25 @@ public final class MixinNames
 
     public static MixinNames from( final Collection<String> mixinNames )
     {
-        return mixinNames.stream().map( MixinName::from ).collect( collector() );
+        return mixinNames.stream().map( FormFragmentName::from ).collect( collector() );
     }
 
-    public static MixinNames from( final MixinName... mixinNames )
+    public static MixinNames from( final FormFragmentName... mixinNames )
     {
         return fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
-    public static MixinNames from( final Iterable<MixinName> mixinNames )
+    public static MixinNames from( final Iterable<FormFragmentName> mixinNames )
     {
         return mixinNames instanceof MixinNames m ? m : fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
-    private static MixinNames fromInternal( final ImmutableSet<MixinName> mixinNames )
+    private static MixinNames fromInternal( final ImmutableSet<FormFragmentName> mixinNames )
     {
         return mixinNames.isEmpty() ? EMPTY : new MixinNames( mixinNames );
     }
 
-    public static Collector<MixinName, ?, MixinNames> collector()
+    public static Collector<FormFragmentName, ?, MixinNames> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), MixinNames::fromInternal );
     }

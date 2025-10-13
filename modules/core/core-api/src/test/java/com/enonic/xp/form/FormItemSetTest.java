@@ -39,7 +39,7 @@ public class FormItemSetTest
             .name( "mySet" )
             .label( "Label" )
             .multiple( true )
-            .addFormItem( InlineMixin.create().mixin( "myapplication:mymixin" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "myapplication:mymixin" ).build() )
             .build();
 
         // exercise

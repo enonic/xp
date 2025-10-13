@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
+import com.enonic.xp.schema.mixin.FormFragmentName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -26,11 +26,11 @@ public class YmlMixinParserTest
 
         final ApplicationKey currentApplication = ApplicationKey.from( "myapp" );
 
-        final Mixin.Builder builder = YmlMixinParser.parse( yaml, currentApplication );
+        final FormFragmentDescriptor.Builder builder = YmlFormFragmentParser.parse( yaml, currentApplication );
 
-        builder.name( MixinName.from( currentApplication, "my-mixin" ) );
+        builder.name( FormFragmentName.from( currentApplication, "my-mixin" ) );
 
-        final Mixin descriptor = builder.build();
+        final FormFragmentDescriptor descriptor = builder.build();
 
         assertEquals( currentApplication, descriptor.getName().getApplicationKey() );
         assertEquals( "my-mixin", descriptor.getName().getLocalName() );

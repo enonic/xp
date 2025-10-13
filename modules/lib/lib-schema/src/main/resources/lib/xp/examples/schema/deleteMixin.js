@@ -7,8 +7,8 @@ var assert = require('/lib/xp/testing');
 // Create virtual part.
 
 var params = {
-    name: 'myapp:mymixin',
-    type: 'MIXIN'
+    name: 'mymixin',
+    type: 'FORM_FRAGMENT'
 };
 
 var result = schemaLib.deleteSchema(params);

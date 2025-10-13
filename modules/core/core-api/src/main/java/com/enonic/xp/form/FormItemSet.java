@@ -186,7 +186,7 @@ public final class FormItemSet
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public InlineMixin getInlineMixin( final String name )
+    public FormFragment getInlineMixin( final String name )
     {
         return formItems.getInlineMixin( FormItemPath.from( name ) );
     }
