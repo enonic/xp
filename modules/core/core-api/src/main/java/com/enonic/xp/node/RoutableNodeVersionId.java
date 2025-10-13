@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+@Deprecated
 public final class RoutableNodeVersionId
 {
     private final NodeId nodeId;

@@ -3,10 +3,10 @@ package com.enonic.xp.core.impl.content;
 import java.util.Collection;
 import java.util.Objects;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodePath;
@@ -17,13 +17,11 @@ public class ResolveRequiredDependenciesCommand
 {
     private final ContentIds contentIds;
 
-    private final ContentIds.Builder resultBuilder;
 
     private ResolveRequiredDependenciesCommand( final Builder builder )
     {
         super( builder );
         this.contentIds = builder.contentIds;
-        this.resultBuilder = ContentIds.create();
     }
 
     public static Builder create()
@@ -33,42 +31,22 @@ public class ResolveRequiredDependenciesCommand
 
     ContentIds execute()
     {
-        resolveDependencies();
-
-        return resultBuilder.build();
-    }
-
-    private void resolveDependencies()
-    {
         final NodeComparisons nodeComparisons =
             nodeService.compare( ContentNodeHelper.toNodeIds( contentIds ), ContentConstants.BRANCH_MASTER );
 
         final NodePaths parentPaths = getParentPaths( nodeComparisons.getComparisons() );
         final NodePaths resultPaths = nodeComparisons.getSourcePaths();
 
-        parentPaths.stream().
-            filter( resultPaths::contains ).
-            map( parentPath -> {
-                final NodeComparison comparison = nodeComparisons.getBySourcePath( parentPath );
-
-                if ( !CompareStatus.NEWER.equals( comparison.getCompareStatus() ) )
-                {
-                    return ContentId.from( comparison.getNodeId() );
-                }
-                return null;
-            } ).
-            filter( Objects::nonNull ).
-            forEach( resultBuilder::add );
+        return parentPaths.stream()
+            .filter( resultPaths::contains )
+            .map( nodeComparisons::getBySourcePath )
+            .filter( comparison -> NodeCompareStatus.NEWER != comparison.getCompareStatus() )
+            .map( NodeComparison::getNodeId )
+            .map( ContentId::from )
+            .collect( ContentIds.collector() );
     }
 
     private NodePaths getParentPaths( final Collection<NodeComparison> comparisons )
-    {
-
-        return getPathsFromComparisons( comparisons );
-
-    }
-
-    private NodePaths getPathsFromComparisons( final Collection<NodeComparison> comparisons )
     {
         final NodePaths.Builder parentPathsBuilder = NodePaths.create();
 

@@ -38,7 +38,6 @@ import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
@@ -1028,8 +1027,8 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        projectContext.runWith( () -> contentService.rename(
-            RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "content-new" ) ).build() ) );
+        projectContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "content-new" ) ).build() ) );
 
         handleEvents();
 
@@ -1039,8 +1038,8 @@ class ProjectContentEventListenerTest
             assertEquals( "/content-new/child1/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
         } );
 
-        projectContext.runWith( () -> contentService.rename(
-            RenameContentParams.create().contentId( sourceChild1.getId() ).newName( ContentName.from( "child1-new" ) ).build() ) );
+        projectContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceChild1.getId() ).newName( ContentName.from( "child1-new" ) ).build() ) );
 
         handleEvents();
 
@@ -1050,8 +1049,8 @@ class ProjectContentEventListenerTest
             assertEquals( "/content-new/child1-new/child2", contentService.getById( sourceChild2.getId() ).getPath().toString() );
         } );
 
-        projectContext.runWith( () -> contentService.rename(
-            RenameContentParams.create().contentId( sourceChild2.getId() ).newName( ContentName.from( "child2-new" ) ).build() ) );
+        projectContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceChild2.getId() ).newName( ContentName.from( "child2-new" ) ).build() ) );
 
         handleEvents();
 
@@ -1074,8 +1073,8 @@ class ProjectContentEventListenerTest
         } );
 
         projectContext.runWith( () -> {
-            contentService.rename(
-                RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() );
+            contentService.move(
+                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() );
         } );
         handleEvents();
 
@@ -1131,13 +1130,13 @@ class ProjectContentEventListenerTest
         handleEvents();
 
         childLayerContext.runWith( () -> {
-            contentService.rename(
-                RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() );
+            contentService.move(
+                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() );
         } );
 
         secondChildLayerContext.runWith( () -> {
-            contentService.rename(
-                RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() );
+            contentService.move(
+                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() );
         } );
 
         mixedChildLayerContext.runWith( () -> {

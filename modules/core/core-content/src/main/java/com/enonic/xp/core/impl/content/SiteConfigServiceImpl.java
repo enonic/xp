@@ -33,8 +33,6 @@ public final class SiteConfigServiceImpl
 
     private final EventPublisher eventPublisher;
 
-    private final ContentNodeTranslator translator;
-
     @Activate
     public SiteConfigServiceImpl( @Reference NodeService nodeService, @Reference ProjectService projectService,
                                   @Reference ContentTypeService contentTypeService, @Reference EventPublisher eventPublisher )
@@ -44,7 +42,6 @@ public final class SiteConfigServiceImpl
 
         this.contentTypeService = contentTypeService;
         this.eventPublisher = eventPublisher;
-        this.translator = new ContentNodeTranslator();
     }
 
     @Override
@@ -55,7 +52,6 @@ public final class SiteConfigServiceImpl
             .predicate( Content::isSite )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .build()
             .execute();

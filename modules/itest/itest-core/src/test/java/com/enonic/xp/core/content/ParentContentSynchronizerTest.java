@@ -30,7 +30,6 @@ import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PatchContentParams;
-import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
@@ -559,46 +558,6 @@ class ParentContentSynchronizerTest
         assertNull( targetContentWithoutThumbnail.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
     }
 
-    @Test
-    void renameNotSynched()
-    {
-        layerContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
-
-        assertNull( syncRenamed( ContentId.from( "source" ) ) );
-    }
-
-    @Test
-    void renameNotExisted()
-    {
-        assertNull( syncRenamed( ContentId.from( "source" ) ) );
-    }
-
-    @Test
-    void renameNotChanged()
-    {
-        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
-
-        final Content targetContent1 = syncCreated( sourceContent.getId() );
-        final Content targetContent2 = syncRenamed( sourceContent.getId() );
-
-        assertEquals( targetContent1, targetContent2 );
-    }
-
-    @Test
-    void renameChanged()
-    {
-        final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
-        final Content targetContent = syncCreated( sourceContent.getId() );
-
-        projectContext.runWith( () -> contentService.rename(
-            RenameContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName" ) ).build() ) );
-
-        final Content targetContentRenamed = syncRenamed( sourceContent.getId() );
-
-        assertNotEquals( targetContent.getName(), targetContentRenamed.getName() );
-        assertEquals( "newName", targetContentRenamed.getName().toString() );
-    }
-
 
     @Test
     void sortNotExisted()
@@ -718,8 +677,8 @@ class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertEquals( targetContent, syncMoved( sourceContent.getId() ) );
-
+        final Content result = syncMoved( sourceContent.getId() );
+        assertEquals( targetContent, result );
     }
 
     @Test
@@ -967,17 +926,6 @@ class ParentContentSynchronizerTest
         synchronizer.sync(
             ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
                 .syncEventType( ContentSyncEventType.UPDATED )
-                .build() );
-
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
-    }
-
-    private Content syncRenamed( final ContentId contentId )
-    {
-        synchronizer.sync(
-            ContentEventsSyncParams.create().addContentId( contentId ).sourceProject( project.getName() ).targetProject( layer.getName() )
-                .syncEventType( ContentSyncEventType.RENAMED )
                 .build() );
 
         return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );

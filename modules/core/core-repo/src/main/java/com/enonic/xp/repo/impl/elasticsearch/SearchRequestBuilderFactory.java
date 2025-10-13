@@ -78,11 +78,6 @@ public class SearchRequestBuilderFactory
             .setFrom( query.getFrom() )
             .setPreference( Objects.requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
 
-        if ( query.getReturnFields() != null && query.getReturnFields().isNotEmpty() )
-        {
-            searchRequestBuilder.addFields( query.getReturnFields().getReturnFieldNames() );
-        }
-
         if ( query.getHighlight() != null )
         {
             setHighlightSettings( searchRequestBuilder, query.getHighlight() );

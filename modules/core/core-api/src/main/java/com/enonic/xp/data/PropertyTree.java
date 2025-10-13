@@ -218,14 +218,16 @@ public final class PropertyTree
         return root.getValues( name );
     }
 
+    @Deprecated
     public PropertySet getPropertySet( final PropertyPath path )
     {
-        return root.getPropertySet( path );
+        return root.getSet( path );
     }
 
+    @Deprecated
     public PropertySet getPropertySet( final String path )
     {
-        return root.getPropertySet( path );
+        return root.getSet( path );
     }
 
     public int getTotalSize()

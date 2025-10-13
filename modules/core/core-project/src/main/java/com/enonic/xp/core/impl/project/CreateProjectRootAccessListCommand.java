@@ -31,11 +31,6 @@ public final class CreateProjectRootAccessListCommand
 
     private AccessControlList createContentRootPermissions()
     {
-        if ( projectName == null )
-        {
-            return null;
-        }
-
         return AccessControlList.create( permissions ).
             add( AccessControlEntry.create().
                 allowAll().

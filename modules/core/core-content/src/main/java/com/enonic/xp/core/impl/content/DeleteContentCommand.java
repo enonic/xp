@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
 
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -47,7 +46,7 @@ final class DeleteContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
     }
 
@@ -104,7 +103,6 @@ final class DeleteContentCommand
         return UnpublishContentCommand.create()
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
-            .translator( translator )
             .eventPublisher( eventPublisher )
             .params( UnpublishContentParams.create()
                          .contentIds( ContentIds.create()
@@ -117,7 +115,7 @@ final class DeleteContentCommand
             .getUnpublishedContents();
     }
 
-    public static class Builder
+    static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private DeleteContentParams params;
@@ -135,7 +133,7 @@ final class DeleteContentCommand
             Objects.requireNonNull( params, "params cannot be null" );
         }
 
-        public DeleteContentCommand build()
+        DeleteContentCommand build()
         {
             validate();
             return new DeleteContentCommand( this );

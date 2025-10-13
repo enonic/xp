@@ -54,6 +54,9 @@ public class RepositoryServiceActivator
             setNodeStorageService( nodeStorageService ).
             build().
             initialize();
+
+        new Xp8IndexMigrator( repositoryService, indexServiceInternal).migrate();
+
         service = context.registerService( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()},
                                            repositoryService, null );
     }

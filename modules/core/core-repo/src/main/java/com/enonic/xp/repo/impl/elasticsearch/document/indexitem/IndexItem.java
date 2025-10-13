@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.repo.impl.index.IndexValueTypeInterface;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -22,7 +21,7 @@ public abstract class IndexItem<T extends IndexValue>
 
     private String getBasePath()
     {
-        return IndexFieldNameNormalizer.normalize( indexPath.getPath() );
+        return indexPath.getPath();
     }
 
     public abstract IndexValueTypeInterface valueType();

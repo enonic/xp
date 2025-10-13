@@ -23,8 +23,7 @@ import com.enonic.xp.repo.impl.storage.StoreStorageName;
 public class CommitServiceImpl
     implements CommitService
 {
-    private static final ReturnFields COMMIT_RETURN_FIELDS =
-        ReturnFields.from( CommitIndexPath.COMMIT_ID, CommitIndexPath.MESSAGE, CommitIndexPath.TIMESTAMP, CommitIndexPath.COMMITTER );
+    private static final ReturnFields COMMIT_RETURN_FIELDS = ReturnFields.from( CommitIndexPath.entryFields() );
 
     private final StorageDao storageDao;
 
@@ -37,7 +36,7 @@ public class CommitServiceImpl
     @Override
     public String store( final NodeCommitEntry nodeBranchEntry, final InternalContext context )
     {
-        final StoreRequest storeRequest = CommitStorageRequestFactory.create( nodeBranchEntry, context );
+        final StoreRequest storeRequest = CommitStorageRequestFactory.create( nodeBranchEntry, context.getRepositoryId() );
         return storageDao.store( storeRequest );
     }
 
@@ -68,9 +67,9 @@ public class CommitServiceImpl
 
     private StorageSource createStorageSettings( final InternalContext context )
     {
-        return StorageSource.create().
-            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
-            storageType( StaticStorageType.COMMIT ).
-            build();
+        return StorageSource.create()
+            .storageName( StoreStorageName.from( context.getRepositoryId() ) )
+            .storageType( StaticStorageType.COMMIT )
+            .build();
     }
 }

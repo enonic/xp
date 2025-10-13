@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.xcontent;
+package com.enonic.xp.repo.impl.elasticsearch.storage;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class StoreDocumentXContentBuilderFactoryTest
             indexItems( indexItems ).
             build();
 
-        final XContentBuilder xContentBuilder = StoreDocumentXContentBuilderFactory.create( indexDocument );
+        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
 
         System.out.println( xContentBuilder.string() );
 

@@ -26,11 +26,13 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
@@ -38,8 +40,10 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.query.parser.QueryParser;
@@ -370,14 +374,14 @@ public abstract class AbstractNodeTest
             build() );
     }
 
-    protected NodeCommitEntry commit( NodeIds nodeIds )
+    protected NodeCommitEntry commit( Node node )
     {
-        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
-            message( "commit" ).
-            build();
-        return nodeService.commit( nodeCommitEntry, nodeIds );
+        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().message( "commit" ).build();
+        return nodeService.commit( CommitNodeParams.create()
+                                       .nodeCommitEntry( nodeCommitEntry )
+                                       .nodeVersionIds( NodeVersionIds.from( node.getNodeVersionId() ) )
+                                       .build() );
     }
-
 
     protected Node createNodeSkipVerification( final CreateNodeParams createNodeParams )
     {
@@ -455,7 +459,7 @@ public abstract class AbstractNodeTest
 
     protected PushNodesResult pushNodes( final Branch target, final NodeId... nodeIds )
     {
-        return PushNodesCommand.create().ids( NodeIds.from( nodeIds ) ).target( target ).
+        return PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( nodeIds ) ).target( target ).build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -479,8 +483,7 @@ public abstract class AbstractNodeTest
     protected void renameNode( final NodeId nodeId, final String newName )
     {
         MoveNodeCommand.create()
-            .id( nodeId )
-            .newNodeName( NodeName.from( newName ) )
+            .params( MoveNodeParams.create().nodeId( nodeId ).newName( NodeName.from( newName ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -491,8 +494,7 @@ public abstract class AbstractNodeTest
     protected Node moveNode( final NodeId nodeId, final NodePath newParent )
     {
         return MoveNodeCommand.create()
-            .id( nodeId )
-            .newParent( newParent )
+            .params( MoveNodeParams.create().nodeId( nodeId ).newParentPath( newParent ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )

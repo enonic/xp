@@ -1,12 +1,20 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.List;
+
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.FindContentVersionsResult;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.util.GenericValue;
 
 public class FindContentVersionsCommand
     extends AbstractContentCommand
@@ -34,37 +42,71 @@ public class FindContentVersionsCommand
 
     public FindContentVersionsResult execute()
     {
-        return doGetContentVersions();
+        final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions(
+            GetNodeVersionsParams.create().nodeId( NodeId.from( this.contentId ) ).from( this.from ).size( this.size ).build() );
+
+        final FindContentVersionsResult.Builder findContentVersionsResultBuilder =
+            FindContentVersionsResult.create().totalHits( nodeVersionQueryResult.getTotalHits() );
+
+        return findContentVersionsResultBuilder.contentVersions(
+                nodeVersionQueryResult.getNodeVersionMetadatas().stream().map( this::createVersion ).collect( ContentVersions.collector() ) )
+            .build();
     }
 
-    private FindContentVersionsResult doGetContentVersions()
+    public ContentVersion createVersion( final NodeVersionMetadata nodeVersionMetadata )
     {
-        final NodeId nodeId = NodeId.from( this.contentId );
+        final Attributes attributes = nodeVersionMetadata.getAttributes();
 
-        final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions( GetNodeVersionsParams.create().
-            nodeId( nodeId ).
-            from( this.from ).
-            size( this.size ).
-            build() );
+        final ContentVersion.Builder builder = ContentVersion.create()
+            .contentId( ContentId.from( nodeVersionMetadata.getNodeId() ) )
+            .versionId( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
+            .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersionMetadata.getNodePath() ) )
+            .timestamp( nodeVersionMetadata.getTimestamp() );
 
-        final FindContentVersionsResult.Builder findContentVersionsResultBuilder = FindContentVersionsResult.create().
-            totalHits( nodeVersionQueryResult.getTotalHits() );
-
-        final ContentVersionFactory contentVersionFactory = new ContentVersionFactory( this.nodeService );
-
-        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create();
-
-        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionQueryResult.getNodeVersionMetadatas() )
+        if ( attributes != null )
         {
-            contentVersionsBuilder.add( contentVersionFactory.create( nodeVersionMetadata ) );
+            attributes.list()
+                .stream()
+                .filter( v -> v.getKey().startsWith( "content." ) )
+                .map( v -> new ContentVersion.Action( v.getKey(),
+                                                      v.getValue().optional( "fields" ).map( GenericValue::asStringList ).orElse( List.of() ),
+                                                      ContentAttributesHelper.getUser( v.getValue() ), ContentAttributesHelper.getOpTime( v.getValue() ) ) )
+                .forEach( builder::addAction );
         }
 
-        return findContentVersionsResultBuilder.contentVersions( contentVersionsBuilder.build() ).build();
+        if ( nodeVersionMetadata.getNodeCommitId() != null )
+        {
+            final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeVersionMetadata.getNodeCommitId() );
+            if ( nodeCommitEntry != null )
+            {
+                final String commitMessage = nodeCommitEntry.getMessage();
+                builder.comment( getCommentPart( commitMessage ) );
+            }
+        }
+
+        return builder.build();
+    }
+
+    private static String getCommentPart( final String message )
+    {
+        if ( message.startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return message.substring(
+                ContentConstants.PUBLISH_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+        else if ( message.startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return message.substring(
+                ContentConstants.ARCHIVE_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
-
     {
         private ContentId contentId;
 

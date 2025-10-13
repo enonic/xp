@@ -7,12 +7,12 @@ import java.util.stream.Stream;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.exception.DuplicateElementException;
 import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
 public final class ContentAlreadyExistsException
-    extends NotFoundException
+    extends DuplicateElementException
 {
     private final ContentPath path;
 

@@ -5,11 +5,11 @@ import java.util.Set;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.content.CompareContentResults;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -68,7 +68,7 @@ public class ResolveContentsToBePublishedCommand
                                                 .nodeId( NodeId.from( contentId ) )
                                                 .excludedNodeIds( ContentNodeHelper.toNodeIds( excludedContentIds ) )
                                                 .branch( ContentConstants.BRANCH_MASTER )
-                                                .statusesToStopDependenciesSearch( Set.of( CompareStatus.EQUAL ) )
+                                                .statusesToStopDependenciesSearch( Set.of( NodeCompareStatus.EQUAL ) )
                                                 .filter( ( ids ) -> nodeService.getByIds( ids )
                                                     .stream()
                                                     .filter( node -> !node.path()

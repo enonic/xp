@@ -78,7 +78,7 @@ public class SortNodeCommand
             final Node editedNode =
                 Node.create( node ).childOrder( params.getChildOrder() ).data( processedData ).timestamp( Instant.now( CLOCK ) ).build();
             Node updatedNode =
-                this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), InternalContext.from( ContextAccessor.current() ) )
+                this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), InternalContext.from( ContextAccessor.current() ) )
                     .node();
             result.node( updatedNode );
         }
@@ -245,11 +245,11 @@ public class SortNodeCommand
             return this;
         }
 
-
         @Override
         void validate()
         {
             super.validate();
+            Objects.requireNonNull( params, "params cannot be null" );
         }
 
         public SortNodeCommand build()

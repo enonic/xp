@@ -73,7 +73,7 @@ class ContentServiceImplTest_publish_update_publishedTime
         this.contentService.update( updateContentParams );
 
         doPublishContent( content );
-        assertVersions( content.getId(), 3 );
+        assertVersions( content.getId(), 4 );
 
         final ContentPublishInfo unUpdatedPublishInfo = this.contentService.getById( content.getId() ).getPublishInfo();
         assertEquals( publishInfo, unUpdatedPublishInfo );
@@ -117,8 +117,7 @@ class ContentServiceImplTest_publish_update_publishedTime
 
         this.contentService.publish( PushContentParams.create()
                                          .contentIds( ContentIds.from( content.getId() ) )
-                                         .contentPublishInfo(
-                                             ContentPublishInfo.create().to( Instant.now().plus( 1, ChronoUnit.DAYS ) ).build() )
+                                         .publishTo( Instant.now().plus( 1, ChronoUnit.DAYS ) )
                                          .build() );
 
         final ContentPublishInfo publishInfo = this.contentService.getById( content.getId() ).getPublishInfo();

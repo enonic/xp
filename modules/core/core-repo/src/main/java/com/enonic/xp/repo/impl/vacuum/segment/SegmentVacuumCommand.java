@@ -144,7 +144,7 @@ public class SegmentVacuumCommand
 
         private VacuumTaskParams params;
 
-        public Builder()
+        private Builder()
         {
         }
 

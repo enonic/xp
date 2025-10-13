@@ -25,6 +25,7 @@ import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -38,7 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repo.impl.index.IndexMapping;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -135,6 +135,21 @@ public class IndexServiceInternalImpl
     }
 
 
+    public void putIndexMapping( RepositoryId repositoryId, IndexType indexType, Map<String, Object> mapping ) {
+        final String indexName = IndexType.SEARCH == indexType
+            ? IndexNameResolver.resolveSearchIndexName( repositoryId )
+            : IndexNameResolver.resolveStorageIndexName( repositoryId );
+        LOG.info( "updating index mapping {}", indexName );
+        try
+        {
+            client.admin().indices().putMapping( Requests.putMappingRequest( indexName).type(indexType.getName()).source( mapping ) ).actionGet(UPDATE_INDEX_TIMEOUT);
+        }
+        catch ( Exception e )
+        {
+            throw new IndexException( "Failed to update index mapping: " + indexName, e );
+        }
+
+    }
     @Override
     public void updateIndex( final String indexName, final UpdateIndexSettings settings )
     {
@@ -177,13 +192,8 @@ public class IndexServiceInternalImpl
     }
 
     @Override
-    public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType )
+    public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final IndexType indexType )
     {
-        if ( repositoryId == null || indexType == null )
-        {
-            return null;
-        }
-
         final String indexName = IndexType.SEARCH == indexType
             ? IndexNameResolver.resolveSearchIndexName( repositoryId )
             : IndexNameResolver.resolveStorageIndexName( repositoryId );
@@ -196,7 +206,7 @@ public class IndexServiceInternalImpl
 
         final ImmutableOpenMap<String, MappingMetaData> indexTypeMappings = repoMappings.get( indexName );
 
-        final MappingMetaData mappingMetaData = indexTypeMappings.get( branch.getValue() );
+        final MappingMetaData mappingMetaData = indexTypeMappings.get( IndexType.SEARCH == indexType ? indexName : indexType.getName() );
 
         try
         {

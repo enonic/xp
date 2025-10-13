@@ -46,6 +46,7 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -180,7 +181,7 @@ class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .nodeIds( NodeIds.from( NodeId.from( "nodeId" ) ) )
+            .add( new DeleteNodeResult.Result(NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
@@ -193,7 +194,7 @@ class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .nodeIds( NodeIds.from( NodeId.from( "nodeId" ) ) )
+            .add( new DeleteNodeResult.Result(NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 

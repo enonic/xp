@@ -24,8 +24,6 @@ public interface ContentService
 
     DeleteContentsResult delete( DeleteContentParams params );
 
-    Content rename( RenameContentParams params );
-
     MoveContentsResult move( MoveContentParams params );
 
     PublishContentResult publish( PushContentParams params );
@@ -79,8 +77,6 @@ public interface ContentService
     GetPublishStatusesResult getPublishStatuses( GetPublishStatusesParams params );
 
     FindContentVersionsResult getVersions( FindContentVersionsParams params );
-
-    GetActiveContentVersionsResult getActiveVersions( GetActiveContentVersionsParams params );
 
     ByteSource getBinary( ContentId contentId, BinaryReference binaryReference );
 

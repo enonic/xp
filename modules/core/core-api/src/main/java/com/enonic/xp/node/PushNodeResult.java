@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.Objects;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
@@ -58,7 +60,7 @@ public final class PushNodeResult
 
     public static PushNodeResult failure( final NodeId nodeId, final NodePath nodePath, final Reason failureReason )
     {
-        return new PushNodeResult( nodeId, nodePath, null, null, failureReason );
+        return new PushNodeResult( nodeId, nodePath, null, null, Objects.requireNonNull( failureReason ) );
     }
 
     public enum Reason

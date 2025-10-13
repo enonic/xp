@@ -37,8 +37,9 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.init.ArchiveInitializer;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
-import com.enonic.xp.core.impl.project.init.DefaultProjectMigrator;
+import com.enonic.xp.core.impl.project.init.ContentRepoInitializer;
 import com.enonic.xp.core.impl.project.init.IssueInitializer;
+import com.enonic.xp.core.impl.project.init.Xp8DefaultProjectMigrator;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -118,16 +119,16 @@ public class ProjectServiceImpl
                 final PropertySet projectData = repository.getData().getSet( ProjectConstants.PROJECT_DATA_SET_NAME );
 
                 doInitRootNodes( CreateProjectParams.create()
-                                     .name( ProjectName.from( repository.getId() ) )
-                                     .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
-                                     .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
-                                     .build() );
+                                             .name( ProjectName.from( repository.getId() ) )
+                                             .displayName( projectData.getString( ProjectConstants.PROJECT_DISPLAY_NAME_PROPERTY ) )
+                                             .description( projectData.getString( ProjectConstants.PROJECT_DESCRIPTION_PROPERTY ) )
+                                             .build(), null );
             } );
 
             if ( repositories.stream()
-                .anyMatch( repository -> repository.getId().equals( DefaultProjectMigrator.DEFAULT_PROJECT_NAME.getRepoId() ) ) )
+                .anyMatch( repository -> repository.getId().equals( Xp8DefaultProjectMigrator.DEFAULT_PROJECT_NAME.getRepoId() ) ) )
             {
-                new DefaultProjectMigrator( nodeService, securityService, indexService ).migrate();
+                new Xp8DefaultProjectMigrator( nodeService, securityService, indexService ).migrate();
             }
         } );
     }
@@ -138,11 +139,6 @@ public class ProjectServiceImpl
         {
             project.addParent( ProjectName.from( s ) );
         }
-    }
-
-    private void doInitRootNodes( final CreateProjectParams params )
-    {
-        this.doInitRootNodes( params, null );
     }
 
     private List<Repository> getProjectRepositories( final Repositories repositories )
@@ -174,7 +170,7 @@ public class ProjectServiceImpl
 
     private static void buildIcon( final Project.Builder project, final PropertySet projectData )
     {
-        final PropertySet iconData = projectData.getPropertySet( ProjectConstants.PROJECT_ICON_PROPERTY );
+        final PropertySet iconData = projectData.getSet( ProjectConstants.PROJECT_ICON_PROPERTY );
 
         if ( iconData != null )
         {
@@ -190,12 +186,19 @@ public class ProjectServiceImpl
 
     private void doInitRootNodes( final CreateProjectParams params, final PropertyTree contentRootData )
     {
+        ContentRepoInitializer.create()
+            .setIndexService( indexService )
+            .repositoryService( repositoryService )
+            .repositoryId( params.getName().getRepoId() )
+            .repositoryData( createProjectData( params ) )
+            .forceInitialization( params.isForceInitialization() )
+            .build()
+            .initialize();
+
         ContentInitializer.create()
             .setIndexService( indexService )
             .setNodeService( nodeService )
-            .setRepositoryService( repositoryService )
             .repositoryId( params.getName().getRepoId() )
-            .setRepositoryData( createProjectData( params ) )
             .setContentData( contentRootData )
             .accessControlList( CreateProjectRootAccessListCommand.create()
                                     .projectName( params.getName() )
@@ -679,14 +682,14 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
     {
-        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) ).map( SiteConfigsDataSerializer::fromData )
+        return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) ).map( SiteConfigsDataSerializer::fromData )
             .orElse( SiteConfigs.empty() );
     }
 
     private Node updateProjectSiteConfigs( final ProjectName projectName, final SiteConfigs siteConfigs )
     {
         final NodeEditor editor = edit -> {
-            final PropertySet data = edit.data.getPropertySet( "data" );
+            final PropertySet data = edit.data.getSet( ContentPropertyNames.DATA );
             if ( data == null )
             {
                 throw new IllegalStateException( "Cannot update project config" );

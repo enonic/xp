@@ -12,12 +12,7 @@ import com.enonic.xp.repository.IndexResourceType;
 public class DefaultIndexResourceProvider
     implements IndexResourceProvider
 {
-    private final String resourceBaseFolder;
-
-    public DefaultIndexResourceProvider( final String resourceBaseFolder )
-    {
-        this.resourceBaseFolder = resourceBaseFolder;
-    }
+    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
 
     @Override
     public IndexMapping getMapping( final IndexType indexType )
@@ -28,14 +23,14 @@ public class DefaultIndexResourceProvider
     @Override
     public IndexSettings getSettings( final IndexType indexType )
     {
-
         return IndexSettings.from( JsonHelper.toMap( JsonHelper.from( getResource( indexType, IndexResourceType.SETTINGS ) ) ) );
     }
 
     private URL getResource( final IndexType indexType, final IndexResourceType type )
     {
-        String fileName =
-            resourceBaseFolder + "/" + type.getName() + "/" + "default" + "/" + indexType.getName() + "-" + type.getName() + ".json";
+        final String fileName =
+            DEFAULT_INDEX_RESOURCE_FOLDER + "/" + type.getName() + "/" + "default" + "/" + indexType.getName() + "-" + type.getName() +
+                ".json";
 
         try
         {

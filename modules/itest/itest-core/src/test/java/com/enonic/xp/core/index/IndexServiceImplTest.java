@@ -23,6 +23,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
@@ -117,9 +118,7 @@ class IndexServiceImplTest
             refresh( RefreshMode.ALL ).
             build() );
 
-        PushNodesCommand.create().
-            ids( NodeIds.from( node.id() ) ).
-            target( WS_OTHER ).
+        PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( node.id() ) ).target( WS_OTHER ).build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

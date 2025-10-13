@@ -2,7 +2,6 @@ package com.enonic.xp.repo.impl.index;
 
 import java.util.Map;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -24,7 +23,9 @@ public interface IndexServiceInternal
 
     Map<String, String> getIndexSettings( RepositoryId repositoryId, IndexType indexType );
 
-    Map<String, Object> getIndexMapping( RepositoryId repositoryId, Branch branch, IndexType indexType );
+    Map<String, Object> getIndexMapping( RepositoryId repositoryId, IndexType indexType );
+
+    void putIndexMapping( RepositoryId repositoryId, IndexType indexType, Map<String,Object> mapping );
 
     void refresh( String... indexNames );
 

@@ -56,7 +56,7 @@ public class FlattenedPageDataUpgrader
 
         if ( isFragmentPage( sourcePageSet ) )
         {
-            final PropertySet sourcePageFragmentSet = sourcePageSet.getPropertySet( SRC_FRAGMENT_KEY );
+            final PropertySet sourcePageFragmentSet = sourcePageSet.getSet( SRC_FRAGMENT_KEY );
             addComponent( sourcePageFragmentSet, "/", nodeData );
         }
         else

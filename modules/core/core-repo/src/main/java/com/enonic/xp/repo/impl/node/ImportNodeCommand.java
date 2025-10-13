@@ -18,6 +18,7 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.node.Attributes;
 
 public class ImportNodeCommand
     extends AbstractNodeCommand
@@ -34,6 +35,8 @@ public class ImportNodeCommand
 
     private final boolean importPermissionsOnCreate;
 
+    private final Attributes versionAttributes;
+
     private final RefreshMode refresh;
 
     private ImportNodeCommand( Builder builder )
@@ -46,7 +49,7 @@ public class ImportNodeCommand
         this.importPermissions = builder.importPermissions;
         this.importPermissionsOnCreate = builder.importPermissionsOnCreate;
         this.refresh = builder.refresh;
-
+        this.versionAttributes = builder.versionAttributes;
     }
 
     public static Builder create()
@@ -111,6 +114,7 @@ public class ImportNodeCommand
                 .name( this.importNode.name() )
                 .parent( this.importNode.parentPath() )
                 .permissions( permissions )
+                .versionAttributes( versionAttributes )
                 .build();
 
             node = CreateNodeCommand.create( this )
@@ -129,9 +133,8 @@ public class ImportNodeCommand
         final PatchNodeParams updateNodeParams = PatchNodeParams.create()
             .id( existingNode.id() )
             .setBinaryAttachments( this.binaryAttachments )
-            .editor( editableNode -> {
-                editableNode.data = this.importNode.data();
-            } )
+            .editor( editableNode -> editableNode.data = this.importNode.data() )
+            .versionAttributes( this.versionAttributes )
             .refresh( RefreshMode.ALL )
             .build();
 
@@ -196,6 +199,8 @@ public class ImportNodeCommand
 
         private boolean importPermissionsOnCreate = true;
 
+        private Attributes versionAttributes;
+
         private RefreshMode refresh;
 
         private Builder()
@@ -235,6 +240,12 @@ public class ImportNodeCommand
         public Builder importPermissionsOnCreate( boolean importPermissionsOnCreate )
         {
             this.importPermissionsOnCreate = importPermissionsOnCreate;
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes attributes )
+        {
+            this.versionAttributes = attributes;
             return this;
         }
 

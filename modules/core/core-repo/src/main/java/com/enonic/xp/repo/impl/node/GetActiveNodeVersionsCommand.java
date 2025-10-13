@@ -24,11 +24,6 @@ public class GetActiveNodeVersionsCommand
         this.nodeId = builder.nodeId;
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -58,12 +53,7 @@ public class GetActiveNodeVersionsCommand
 
         private NodeId nodeId;
 
-        public Builder( final AbstractNodeCommand source )
-        {
-            super( source );
-        }
-
-        public Builder()
+        private Builder()
         {
         }
 

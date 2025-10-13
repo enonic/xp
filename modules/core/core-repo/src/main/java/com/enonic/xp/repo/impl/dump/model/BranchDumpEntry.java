@@ -69,13 +69,7 @@ public final class BranchDumpEntry
 
         public Builder setBinaryReferences( final Collection<String> references )
         {
-            this.binaryReferences = ImmutableSet.<String>builder().addAll( Objects.requireNonNullElse( references, List.of() )  );
-            return this;
-        }
-
-        public Builder addBinaryReferences( final Collection<String> references )
-        {
-            this.binaryReferences.addAll( references );
+            this.binaryReferences = ImmutableSet.<String>builder().addAll( references  );
             return this;
         }
 

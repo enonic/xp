@@ -33,7 +33,7 @@ class AbstractEntryProcessor
 
     final RepositoryId repositoryId;
 
-    AbstractEntryProcessor( final Builder builder )
+    AbstractEntryProcessor( final Builder<?> builder )
     {
         blobStore = builder.blobStore;
         nodeService = builder.nodeService;
@@ -69,13 +69,13 @@ class AbstractEntryProcessor
     void reportVersionError( final EntryLoadResult.Builder result, final VersionMeta meta )
     {
         final String message =
-            String.format( "Failed to load version for node with path %s, blobKey %s", meta.getNodePath(), meta.getVersion() );
+            String.format( "Failed to load version for node with path %s, blobKey %s", meta.nodePath(), meta.version() );
         result.error( EntryLoadError.error( message ) );
         LOG.error( message );
     }
 
 
-    public static class Builder<B extends Builder>
+    public static class Builder<B extends Builder<?>>
     {
         private BlobStore blobStore;
 
