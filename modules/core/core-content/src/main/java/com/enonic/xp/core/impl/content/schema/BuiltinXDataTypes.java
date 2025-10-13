@@ -90,7 +90,7 @@ final class BuiltinXDataTypes
 
     private static Input.Builder createDate( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.INSTANT ).label( label ).name( name ).
+        return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).
             labelI18nKey( i18n + "." + name + ".label" );
     }
 
