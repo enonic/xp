@@ -9,12 +9,12 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 @PublicApi
-public class DateTimeType
+final class DateTimeType
     extends InputTypeBase
 {
     public static final DateTimeType INSTANCE = new DateTimeType();
 
-    protected DateTimeType()
+    private DateTimeType()
     {
         super( InputTypeName.DATE_TIME );
     }
