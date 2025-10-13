@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.util.Objects;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentId;
@@ -52,7 +51,7 @@ final class MoveContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
     }
 
@@ -77,6 +76,7 @@ final class MoveContentCommand
         final MoveNodeParams.Builder moveParams = MoveNodeParams.create()
             .nodeId( sourceNodeId )
             .newParentPath( newParentPath )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_KEY  ) )
             .refresh( RefreshMode.ALL );
 
         if ( params.getMoveContentListener() != null )
@@ -96,7 +96,7 @@ final class MoveContentCommand
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
     }
 
-    public static class Builder
+    static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private final MoveContentParams params;
@@ -113,11 +113,10 @@ final class MoveContentCommand
             Objects.requireNonNull( params, "params cannot be null" );
         }
 
-        public MoveContentCommand build()
+        MoveContentCommand build()
         {
             validate();
             return new MoveContentCommand( this );
         }
     }
-
 }

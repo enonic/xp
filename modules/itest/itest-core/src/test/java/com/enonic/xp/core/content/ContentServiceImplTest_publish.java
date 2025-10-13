@@ -407,9 +407,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertEquals( "My message", version.getPublishInfo().getMessage() );
+        assertEquals( "My message", version.getComment() );
     }
 
     @Test
@@ -426,9 +424,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertNull( version.getPublishInfo().getMessage() );
+        assertNull( version.getComment() );
     }
 
     @Test

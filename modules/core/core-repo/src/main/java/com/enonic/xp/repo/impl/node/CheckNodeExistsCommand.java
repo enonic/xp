@@ -31,7 +31,7 @@ public class CheckNodeExistsCommand
         return new Builder();
     }
 
-    public static Builder create( AbstractNodeCommand source )
+    static Builder create( AbstractNodeCommand source )
     {
         return new Builder( source );
     }

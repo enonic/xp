@@ -9,7 +9,6 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -63,12 +62,12 @@ public class CreateNodeParamsFactory
     {
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
-        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
+        final PropertySet extraDataSet = contentAsData.getSet(  ContentPropertyNames.EXTRA_DATA );
 
-        final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
+        final String language = contentAsData.getString( ContentPropertyNames.LANGUAGE );
 
         final SiteConfigs siteConfigs =
-            SiteConfigsDataSerializer.fromData( contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) );
+            SiteConfigsDataSerializer.fromData( contentAsData.getSet( ContentPropertyNames.DATA ) );
 
         final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 

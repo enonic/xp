@@ -3,17 +3,18 @@ package com.enonic.xp.repo.impl.elasticsearch.xcontent;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexValue;
+import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 import com.enonic.xp.repository.IndexException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class StoreDocumentXContentBuilderFactory
-    extends AbstractXContentBuilderFactory
 {
 
     private StoreDocumentXContentBuilderFactory()
@@ -24,10 +25,10 @@ public class StoreDocumentXContentBuilderFactory
     {
         try
         {
-            final XContentBuilder builder = startBuilder();
+            final XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
             addDocumentAnalyzer( builder, indexDocument );
             addIndexDocumentItems( builder, indexDocument );
-            endBuilder( builder );
+            builder.endObject();
             return builder;
         }
         catch ( Exception e )
@@ -59,6 +60,22 @@ public class StoreDocumentXContentBuilderFactory
                 map( IndexValue::getValue ).
                 collect( Collectors.toList() ) );
         }
+    }
+
+    static void addField( XContentBuilder result, String name, Object value )
+        throws Exception
+    {
+        if ( value == null )
+        {
+            return;
+        }
+
+        if ( value instanceof String )
+        {
+            value = IndexValueNormalizer.normalize( (String) value );
+        }
+
+        result.field( name, value );
     }
 
 }

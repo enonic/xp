@@ -59,7 +59,8 @@ class RepositoryServiceActivatorTest
         when( indexServiceInternal.indicesExists( any() ) ).thenReturn( true );
 
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
-        when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersionMetadata.class ) ) );
+        when( nodeStorageService.store( any(), any() ) ).thenReturn(
+            new NodeVersionData( mockNode, mock( NodeVersionMetadata.class ) ) );
     }
 
     @Test

@@ -23,6 +23,8 @@ public final class ApplyNodePermissionsParams
 
     private final ApplyPermissionsScope scope;
 
+    private final Attributes versionAttributes;
+
     private final ApplyNodePermissionsListener listener;
 
     private final Branches branches;
@@ -34,6 +36,7 @@ public final class ApplyNodePermissionsParams
         permissions = builder.permissions.build();
         addPermissions = builder.addPermissions.build();
         removePermissions = builder.removePermissions.build();
+        versionAttributes = builder.versionAttributes;
         listener = builder.listener;
         branches = Branches.from( builder.branches.build() );
 
@@ -71,6 +74,11 @@ public final class ApplyNodePermissionsParams
         return scope;
     }
 
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public ApplyNodePermissionsListener getListener()
     {
         return listener;
@@ -92,6 +100,8 @@ public final class ApplyNodePermissionsParams
         private final AccessControlList.Builder removePermissions = AccessControlList.create();
 
         private ApplyPermissionsScope scope;
+
+        private Attributes versionAttributes;
 
         private ApplyNodePermissionsListener listener;
 
@@ -149,6 +159,12 @@ public final class ApplyNodePermissionsParams
         public Builder addBranches( final Branches branches )
         {
             this.branches.addAll( branches );
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

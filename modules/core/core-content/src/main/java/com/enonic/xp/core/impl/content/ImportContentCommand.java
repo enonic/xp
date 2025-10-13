@@ -42,6 +42,7 @@ final class ImportContentCommand
             .insertManualStrategy( params.getInsertManualStrategy() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.IMPORT_KEY ) )
             .refresh( RefreshMode.ALL )
             .build();
 

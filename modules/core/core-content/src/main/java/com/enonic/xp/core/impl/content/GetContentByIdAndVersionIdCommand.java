@@ -62,7 +62,7 @@ public final class GetContentByIdAndVersionIdCommand
 
         private ContentVersionId versionId;
 
-        public Builder()
+        private Builder()
         {
             super();
         }

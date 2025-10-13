@@ -36,6 +36,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.security.PrincipalKey;
 
 abstract class AbstractContentCommand
 {
@@ -165,6 +166,13 @@ abstract class AbstractContentCommand
         return Filters.from();
     }
 
+    static PrincipalKey getCurrentUserKey()
+    {
+        final Context context = ContextAccessor.current();
+
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+    }
+
     protected <T> T runAsAdmin( final Callable<T> callable )
     {
         return ContextBuilder.from( ContextAccessor.current() )
@@ -284,5 +292,4 @@ abstract class AbstractContentCommand
             Objects.requireNonNull( translator );
         }
     }
-
 }

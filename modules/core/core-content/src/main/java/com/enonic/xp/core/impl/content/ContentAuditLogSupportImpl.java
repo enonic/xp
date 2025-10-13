@@ -280,14 +280,11 @@ public class ContentAuditLogSupportImpl
                               params.getExcludedContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         paramsSet.addStrings( "excludeDescendantsOf",
                               params.getExcludeDescendantsOf().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
-        if ( params.getContentPublishInfo() != null )
-        {
-            final ContentPublishInfo contentPublishInfo = params.getContentPublishInfo();
-            final PropertySet contentPublishInfoSet = paramsSet.addSet( "contentPublishInfo" );
-            contentPublishInfoSet.addInstant( "from", contentPublishInfo.getFrom() );
-            contentPublishInfoSet.addInstant( "to", contentPublishInfo.getTo() );
-            contentPublishInfoSet.addInstant( "first", contentPublishInfo.getFirst() );
-        }
+
+        final PropertySet contentPublishInfoSet = paramsSet.addSet( "contentPublishInfo" );
+        contentPublishInfoSet.addInstant( "from", params.getPublishFrom() );
+        contentPublishInfoSet.addInstant( "to", params.getPublishTo() );
+
         paramsSet.addString( "message", params.getMessage() );
         paramsSet.addBoolean( "includeDependencies", params.isIncludeDependencies() );
 

@@ -4,11 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.content.CompareStatus;
 
 @PublicApi
 public final class NodeComparisons
@@ -60,14 +57,6 @@ public final class NodeComparisons
     public NodePaths getSourcePaths()
     {
         return this.comparisonMap.values().stream().map( NodeComparison::getSourcePath ).collect( NodePaths.collector() );
-    }
-
-    public Set<NodeComparison> getWithStatus( final CompareStatus status )
-    {
-        return this.comparisonMap.values()
-            .stream()
-            .filter( nodeComparison -> nodeComparison.getCompareStatus() == status )
-            .collect( Collectors.toSet() );
     }
 
     public Collection<NodeComparison> getComparisons()

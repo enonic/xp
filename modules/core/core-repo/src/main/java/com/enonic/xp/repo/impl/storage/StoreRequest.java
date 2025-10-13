@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.google.common.collect.Multimap;
+import java.util.Collection;
+import java.util.Map;
 
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.StorageSource;
@@ -41,9 +42,9 @@ public class StoreRequest
         return new Builder();
     }
 
-    public Multimap<String, Object> getEntries()
+    public Map<String, Collection<Object>> getEntries()
     {
-        return this.data.getValues();
+        return this.data.getValues().asMap();
     }
 
     public StorageSource getSettings()
@@ -156,15 +157,7 @@ public class StoreRequest
     @Override
     public String toString()
     {
-        return "StoreRequest{" +
-            "data=" + data +
-            ", settings=" + settings +
-            ", forceRefresh=" + forceRefresh +
-            ", timeout=" + timeout +
-            ", id='" + id + '\'' +
-            ", path=" + path +
-            ", parent='" + parent + '\'' +
-            ", routing='" + routing + '\'' +
-            '}';
+        return "StoreRequest{" + "data=" + data + ", settings=" + settings + ", forceRefresh=" + forceRefresh + ", timeout=" + timeout +
+            ", id='" + id + '\'' + ", path=" + path + ", parent='" + parent + '\'' + ", routing='" + routing + '\'' + '}';
     }
 }

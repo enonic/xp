@@ -1,10 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteAction;
@@ -15,7 +14,6 @@ import org.elasticsearch.action.get.MultiGetAction;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.get.MultiGetRequestBuilder;
-import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
@@ -158,22 +156,12 @@ public class StorageDaoImpl
         final GetRequest getRequest = new GetRequest( storageSource.getStorageName().getName() ).
             type( storageSource.getStorageType().getName() ).
             preference( Objects.requireNonNullElse( request.getSearchPreference(), SearchPreference.LOCAL ).getName() ).
-            id( request.getId() );
+            id( request.getId() ).
+            routing( request.getRouting() );
 
-        if ( request.getReturnFields().isNotEmpty() )
-        {
-            getRequest.fields( request.getReturnFields().getReturnFieldNames() );
-        }
+        final GetResponse getResponse = client.get( getRequest ).actionGet( request.getTimeout(), TimeUnit.SECONDS );
 
-        if ( request.getRouting() != null )
-        {
-            getRequest.routing( request.getRouting() );
-        }
-
-        final GetResponse getResponse = client.get( getRequest ).
-            actionGet( request.getTimeout(), TimeUnit.SECONDS );
-
-        return GetResultFactory.create( getResponse );
+        return GetResultFactory.create( getResponse, request.getReturnFields() );
     }
 
     @Override
@@ -194,27 +182,20 @@ public class StorageDaoImpl
 
             final MultiGetRequest.Item item =
                 new MultiGetRequest.Item( storageSource.getStorageName().getName(), storageSource.getStorageType().getName(),
-                                          request.getId() );
-
-            if ( request.getReturnFields().isNotEmpty() )
-            {
-                item.fields( request.getReturnFields().getReturnFieldNames() );
-            }
-
-            if ( request.getRouting() != null )
-            {
-                item.routing( request.getRouting() );
-            }
+                                          request.getId() ).routing( request.getRouting() );
 
             multiGetRequestBuilder.add( item );
         }
 
-        final MultiGetResponse multiGetItemResponses = this.client.multiGet( multiGetRequestBuilder.request() ).actionGet();
+        final MultiGetItemResponse[] multiGetItemResponses = this.client.multiGet( multiGetRequestBuilder.request() ).actionGet().getResponses();
 
-        return Stream.of( multiGetItemResponses.getResponses() )
-            .map( MultiGetItemResponse::getResponse )
-            .map( GetResultFactory::create )
-            .collect( Collectors.toUnmodifiableList() );
+        final List<GetResult> result = new ArrayList<>();
+        for ( int i = 0; i < multiGetItemResponses.length; i++ )
+        {
+            MultiGetItemResponse multiGetItemResponse = multiGetItemResponses[i];
+            result.add( GetResultFactory.create( multiGetItemResponse.getResponse(), requests.getRequests().get( i ).getReturnFields() ) );
+        }
+        return result;
     }
 
     @Override
