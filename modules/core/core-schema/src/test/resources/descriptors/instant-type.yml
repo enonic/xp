@@ -1,0 +1,5 @@
+type: "Instant"
+name: "myInstant"
+label: "My Instant"
+default: "2025-08-29T07:44:27Z"
+config: { }

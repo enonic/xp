@@ -1,7 +1,5 @@
 type: "DateTime"
-name: "mydatetime"
+name: "myDateTime"
 label: "My DateTime"
-default: "2025-08-29T07:44:27Z"
-timezone: true # TODO WTF? That should be InstantInputType
-config: {}
-
+default: "2025-08-29T07:44:27"
+config: { }

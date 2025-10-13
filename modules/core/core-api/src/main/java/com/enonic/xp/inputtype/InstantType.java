@@ -9,20 +9,20 @@ import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.Input;
 
 @PublicApi
-final class DateTimeType
+final class InstantType
     extends InputTypeBase
 {
-    public static final DateTimeType INSTANCE = new DateTimeType();
+    public static final InstantType INSTANCE = new InstantType();
 
-    private DateTimeType()
+    private InstantType()
     {
-        super( InputTypeName.DATE_TIME );
+        super( InputTypeName.INSTANT );
     }
 
     @Override
     public Value createValue( final Value value, final InputTypeConfig config )
     {
-        return ValueFactory.newLocalDateTime( value.asLocalDateTime() );
+        return ValueFactory.newDateTime( value.asInstant() );
     }
 
     @Override
@@ -32,7 +32,7 @@ final class DateTimeType
 
         if ( defaultValue != null )
         {
-            return parseLocalDateTime( defaultValue );
+            return parseDateTime( defaultValue );
         }
 
         return super.createDefaultValue( input );
@@ -41,18 +41,18 @@ final class DateTimeType
     @Override
     public void validate( final Property property, final InputTypeConfig config )
     {
-        validateType( property, ValueTypes.LOCAL_DATE_TIME );
+        validateType( property, ValueTypes.DATE_TIME );
     }
 
-    private Value parseLocalDateTime( final String value )
+    private Value parseDateTime( final String value )
     {
         try
         {
-            return ValueFactory.newLocalDateTime( ValueTypes.LOCAL_DATE_TIME.convert( value ) );
+            return ValueFactory.newDateTime( ValueTypes.DATE_TIME.convert( value ) );
         }
         catch ( ValueTypeException e )
         {
-            throw new IllegalArgumentException( String.format( "Invalid DateTime format: %s", value ) );
+            throw new IllegalArgumentException( String.format( "Invalid Instant format: %s", value ) );
         }
     }
 }
