@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,29 +80,11 @@ class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    void test_pending_publish_draft()
-    {
-        final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-            build() );
-
-        final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
-        final Contents contents = this.contentService.getByPaths( paths );
-
-        assertEquals( contents.getSize(), 2 );
-        assertTrue( contents.contains( content1 ) );
-        assertTrue( contents.contains( content2 ) );
-    }
-
-    @Test
     void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
-            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                build() );
+            final Content content2 = createContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
             final Contents contents = this.contentService.getByPaths( paths );
@@ -114,31 +95,11 @@ class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    void test_publish_expired_draft()
-    {
-        final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
-            to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-            build() );
-
-        final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
-        final Contents contents = this.contentService.getByPaths( paths );
-
-        assertEquals( contents.getSize(), 2 );
-        assertTrue( contents.contains( content1 ) );
-        assertTrue( contents.contains( content2 ) );
-    }
-
-    @Test
     void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
-            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
-                to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                build() );
+            final Content content2 = createContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
 
             final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
             final Contents contents = this.contentService.getByPaths( paths );
@@ -152,10 +113,7 @@ class ContentServiceImplTest_getByPaths
     void test_published_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-            to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-            build() );
+        final Content content2 = createContent( ContentPath.ROOT,  Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
 
         final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
         final Contents contents = this.contentService.getByPaths( paths );
@@ -170,10 +128,7 @@ class ContentServiceImplTest_getByPaths
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
-            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                build() );
+            final Content content2 = createContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
             final Contents contents = this.contentService.getByPaths( paths );

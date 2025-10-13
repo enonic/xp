@@ -22,7 +22,7 @@ public final class SyncWorkResolverParams
 
     private final Function<NodeIds, NodeIds> filter;
 
-    private final Set<CompareStatus> statusesToStopDependenciesSearch;
+    private final Set<NodeCompareStatus> statusesToStopDependenciesSearch;
 
     private SyncWorkResolverParams( Builder builder )
     {
@@ -60,7 +60,7 @@ public final class SyncWorkResolverParams
         return includeDependencies;
     }
 
-    public Set<CompareStatus> getStatusesToStopDependenciesSearch()
+    public Set<NodeCompareStatus> getStatusesToStopDependenciesSearch()
     {
         return statusesToStopDependenciesSearch;
     }
@@ -87,7 +87,7 @@ public final class SyncWorkResolverParams
 
         private boolean includeDependencies = true;
 
-        private Set<CompareStatus> statusesToStopDependenciesSearch;
+        private Set<NodeCompareStatus> statusesToStopDependenciesSearch;
 
         private Function<NodeIds, NodeIds> filter;
 
@@ -125,7 +125,7 @@ public final class SyncWorkResolverParams
             return this;
         }
 
-        public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
+        public Builder statusesToStopDependenciesSearch( final Set<NodeCompareStatus> statusesToStopDependenciesSearch )
         {
             this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
             return this;

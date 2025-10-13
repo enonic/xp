@@ -36,6 +36,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.security.PrincipalKey;
 
 abstract class AbstractContentCommand
 {
@@ -47,14 +48,11 @@ abstract class AbstractContentCommand
 
     final EventPublisher eventPublisher;
 
-    final ContentNodeTranslator translator;
-
     AbstractContentCommand( final Builder builder )
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
         this.eventPublisher = builder.eventPublisher;
-        this.translator = builder.translator;
     }
 
     private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
@@ -165,6 +163,13 @@ abstract class AbstractContentCommand
         return Filters.from();
     }
 
+    static PrincipalKey getCurrentUserKey()
+    {
+        final Context context = ContextAccessor.current();
+
+        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+    }
+
     protected <T> T runAsAdmin( final Callable<T> callable )
     {
         return ContextBuilder.from( ContextAccessor.current() )
@@ -234,8 +239,6 @@ abstract class AbstractContentCommand
 
         private EventPublisher eventPublisher;
 
-        private ContentNodeTranslator translator;
-
         Builder()
         {
         }
@@ -245,20 +248,12 @@ abstract class AbstractContentCommand
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
             this.eventPublisher = source.eventPublisher;
-            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B translator( final ContentNodeTranslator translator )
-        {
-            this.translator = translator;
             return (B) this;
         }
 
@@ -281,8 +276,6 @@ abstract class AbstractContentCommand
             Objects.requireNonNull( nodeService );
             Objects.requireNonNull( contentTypeService );
             Objects.requireNonNull( eventPublisher );
-            Objects.requireNonNull( translator );
         }
     }
-
 }

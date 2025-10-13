@@ -355,7 +355,7 @@ class ContentDataSerializerTest
         final PropertySet workflowData = data.getSet( ContentPropertyNames.WORKFLOW_INFO );
         assertEquals( workflowInfo.getState().toString(), workflowData.getString( ContentPropertyNames.WORKFLOW_INFO_STATE ) );
 
-        final PropertySet workflowChecks = workflowData.getPropertySet( ContentPropertyNames.WORKFLOW_INFO_CHECKS );
+        final PropertySet workflowChecks = workflowData.getSet( ContentPropertyNames.WORKFLOW_INFO_CHECKS );
         assertEquals( check1State.toString(), workflowChecks.getString( check1Name ) );
         assertEquals( check2State.toString(), workflowChecks.getString( check2Name ) );
     }

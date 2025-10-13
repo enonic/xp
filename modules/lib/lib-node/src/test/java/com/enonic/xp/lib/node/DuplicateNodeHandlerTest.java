@@ -6,6 +6,7 @@ import org.mockito.ArgumentCaptor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -41,7 +42,7 @@ class DuplicateNodeHandlerTest
 
         final ArgumentCaptor<DuplicateNodeParams> captor = ArgumentCaptor.forClass( DuplicateNodeParams.class );
 
-        when( nodeService.duplicate( captor.capture() ) ).thenReturn( node );
+        when( nodeService.duplicate( captor.capture() ) ).thenReturn( DuplicateNodeResult.create().node( node ).build() );
 
         runScript( "/lib/xp/examples/node/duplicate.js" );
 

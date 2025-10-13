@@ -28,11 +28,10 @@ public class GetNodeByPathCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }
-
 
     public static final class Builder
         extends AbstractNodeCommand.Builder<Builder>

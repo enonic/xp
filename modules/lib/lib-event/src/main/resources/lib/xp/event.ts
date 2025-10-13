@@ -56,7 +56,7 @@ export interface EnonicEventDataNode {
     path: string;
     branch: string;
     repo: string;
-    newPath?: string; // event type <'node.moved' | 'node.renamed'>
+    newPath?: string; // event type <'node.moved'>
 }
 
 interface EventSenderHelper {

@@ -40,7 +40,6 @@ public final class EditableContent
         this.page = source.getPage() != null ? new EditablePage( source.getPage() ) : null;
         this.owner = source.getOwner();
         this.language = source.getLanguage();
-        this.publishInfo = source.getPublishInfo();
         this.workflowInfo = source.getWorkflowInfo();
         this.variantOf = source.getVariantOf();
     }
@@ -53,25 +52,8 @@ public final class EditableContent
             .extraDatas( extraDatas ).page( page != null ? page.build() : null )
             .owner( owner )
             .language( language )
-            .publishInfo( buildPublishInfo() )
             .workflowInfo( workflowInfo )
             .variantOf( variantOf )
             .build();
-    }
-
-    private ContentPublishInfo buildPublishInfo()
-    {
-        final ContentPublishInfo sourcePublishInfo = source.getPublishInfo();
-        if ( sourcePublishInfo == null )
-        {
-            return publishInfo != null ? ContentPublishInfo.create().from( publishInfo.getFrom() ).to( publishInfo.getTo() ).build() : null;
-        }
-        else
-        {
-            return publishInfo != null ? ContentPublishInfo.create().first( sourcePublishInfo.getFirst() )
-                .from( publishInfo.getFrom() )
-                .to( publishInfo.getTo() )
-                .build() : sourcePublishInfo;
-        }
     }
 }

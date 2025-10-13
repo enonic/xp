@@ -21,10 +21,13 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
+import com.enonic.xp.node.Attributes;
+import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -57,13 +60,14 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
-import com.enonic.xp.node.PushNodesListener;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
@@ -78,6 +82,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.binary.BinaryService;
@@ -380,7 +385,9 @@ public class NodeServiceImpl
     {
         verifyContext();
 
-        final PatchNodeResult result = PatchNodeCommand.create().params( convertUpdateParams( params ) ).binaryService( this.binaryService )
+        final PatchNodeResult result = PatchNodeCommand.create()
+            .params( convertUpdateParams( params ) )
+            .binaryService( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -446,12 +453,7 @@ public class NodeServiceImpl
     {
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
-            .id( params.getNodeId() )
-            .newNodeName( params.getNewNodeName() )
-            .newParent( params.getNewParentPath() )
-            .moveListener( params.getMoveListener() )
-            .processor( params.getProcessor() )
-            .refresh( params.getRefresh() )
+            .params( params )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -460,18 +462,7 @@ public class NodeServiceImpl
 
         final List<MoveNodeResult.MovedNode> movedNodes = moveNodeResult.getMovedNodes();
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        if ( params.getNewParentPath() == null )
-        {
-            this.eventPublisher.publish( NodeEvents.renamed( movedNodes.getFirst(), internalContext ) );
-            if ( movedNodes.size() > 1 )
-            {
-                this.eventPublisher.publish( NodeEvents.moved( movedNodes.subList( 1, movedNodes.size() ), internalContext ) );
-            }
-        }
-        else
-        {
-            this.eventPublisher.publish( NodeEvents.moved( movedNodes, internalContext ) );
-        }
+        this.eventPublisher.publish( NodeEvents.moved( movedNodes, internalContext ) );
 
         return moveNodeResult;
     }
@@ -496,28 +487,25 @@ public class NodeServiceImpl
             this.eventPublisher.publish( NodeEvents.deleted( deletedNodes, InternalContext.from( ContextAccessor.current() ) ) );
         }
 
-        return DeleteNodeResult.create().nodeIds( NodeIds.from( deletedNodes.getKeys() ) ).build();
+        final DeleteNodeResult.Builder builder = DeleteNodeResult.create();
+        for ( NodeBranchEntry deletedNode : deletedNodes )
+        {
+            builder.add( new DeleteNodeResult.Result( deletedNode.getNodeId(), deletedNode.getVersionId() ) );
+        }
+        return builder.build();
     }
 
     @Override
-    public PushNodesResult push( final NodeIds ids, final Branch target )
-    {
-        return push( ids, target, null );
-    }
-
-    @Override
-    public PushNodesResult push( final NodeIds ids, final Branch target, final PushNodesListener pushListener )
+    public PushNodesResult push( final PushNodeParams params )
     {
         verifyContext();
-        verifyBranchExists( target, ContextAccessor.current().getRepositoryId() );
+        verifyBranchExists( params.getTarget(), ContextAccessor.current().getRepositoryId() );
 
         final PushNodesResult pushNodesResult = PushNodesCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
-            .ids( ids )
-            .target( target )
-            .pushListener( pushListener )
+            .params( params )
             .build()
             .execute();
 
@@ -525,7 +513,7 @@ public class NodeServiceImpl
         {
             this.eventPublisher.publish( NodeEvents.pushed( pushNodesResult.getSuccessful(),
                                                             InternalContext.create( ContextAccessor.current() )
-                                                                .branch( target )
+                                                                .branch( params.getTarget() )
                                                                 .build() ) );
         }
 
@@ -533,7 +521,7 @@ public class NodeServiceImpl
     }
 
     @Override
-    public Node duplicate( final DuplicateNodeParams params )
+    public DuplicateNodeResult duplicate( final DuplicateNodeParams params )
     {
         verifyContext();
         final DuplicateNodeResult result = DuplicateNodeCommand.create()
@@ -550,7 +538,7 @@ public class NodeServiceImpl
         this.eventPublisher.publish( NodeEvents.duplicated( result.getNode(), internalContext ) );
         result.getChildren().forEach( child -> this.eventPublisher.publish( NodeEvents.created( child, internalContext ) ) );
 
-        return result.getNode();
+        return result;
     }
 
     @Override
@@ -797,6 +785,7 @@ public class NodeServiceImpl
             .refresh( params.getRefresh() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
+            .versionAttributes( params.getVersionAttributes() )
             .binaryBlobStore( this.binaryService )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
@@ -903,15 +892,19 @@ public class NodeServiceImpl
     }
 
     @Override
+    public NodeCommitEntry commit( final CommitNodeParams params )
+    {
+        verifyContext();
+        return doCommit( params.getNodeCommitEntry(), params.getNodeVersionIds() );
+    }
+
+    @Override
     public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
     {
         verifyContext();
-        final NodeCommitEntry commit =
-            nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, InternalContext.from( ContextAccessor.current() ) );
-
-        refresh( RefreshMode.STORAGE );
-
-        return commit;
+        return doCommit( nodeCommitEntry, routableNodeVersionIds.stream()
+            .map( RoutableNodeVersionId::getNodeVersionId )
+            .collect( NodeVersionIds.collector() ) );
     }
 
     @Override
@@ -922,16 +915,38 @@ public class NodeServiceImpl
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
 
-        final NodeBranchEntries branchNodeVersions = nodeStorageService.getBranchNodeVersions( nodeIds, context );
-        final RoutableNodeVersionIds routableNodeVersionIds = branchNodeVersions.stream()
-            .map( branchEntry -> RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getVersionId() ) )
-            .collect( RoutableNodeVersionIds.collector() );
+        final NodeVersionIds nodeVersionIds = nodeStorageService.getBranchNodeVersions( nodeIds, context )
+            .stream()
+            .map( NodeBranchEntry::getVersionId )
+            .collect( NodeVersionIds.collector() );
 
-        final NodeCommitEntry commitEntry = nodeStorageService.commit( nodeCommitEntry, routableNodeVersionIds, context );
+        return  doCommit( nodeCommitEntry , nodeVersionIds );
+    }
+
+    private NodeCommitEntry doCommit( NodeCommitEntry entry, NodeVersionIds versionIds )
+    {
+        verifyContext();
+
+        final InternalContext context =
+            InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
+
+        final NodeCommitEntry commit = nodeStorageService.commit( entry, versionIds, context );
 
         refresh( RefreshMode.STORAGE );
 
-        return commitEntry;
+        return commit;
+    }
+
+    @Override
+    public void addAttributes( final NodeVersionId nodeVersionId, final Attributes attributes )
+    {
+        verifyContext();
+
+        final InternalContext context =
+            InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
+        nodeStorageService.addAttributes( nodeVersionId, attributes, context );
+
+        refresh( RefreshMode.STORAGE );
     }
 
     @Override
@@ -984,6 +999,7 @@ public class NodeServiceImpl
             .path( params.getPath() )
             .editor( params.getEditor() )
             .setBinaryAttachments( params.getBinaryAttachments() )
+            .versionAttributes( params.getVersionAttributes() )
             .refresh( params.getRefresh() )
             .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
             .build();

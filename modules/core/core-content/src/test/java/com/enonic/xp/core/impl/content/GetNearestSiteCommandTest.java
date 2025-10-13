@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
@@ -23,8 +21,6 @@ class GetNearestSiteCommandTest
 {
     private NodeService nodeService;
 
-    private ContentNodeTranslator translator;
-
     private EventPublisher eventPublisher;
 
     private ContentTypeService contentTypeService;
@@ -34,113 +30,62 @@ class GetNearestSiteCommandTest
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.nodeService = Mockito.mock( NodeService.class );
-        this.translator = Mockito.mock( ContentNodeTranslator.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
     }
 
     @Test
     void get_nearest_site_content_is_site()
     {
-        final Node node = Node.create().
-            id( NodeId.from( "test" ) ).
-            name( "myContent" ).
-            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
-            build();
+        final Site site = ContentFixture.mockSite();
 
-        final ContentId contentId = ContentId.from( "aaa" );
+        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( ContentFixture.mockContentNode( site ) );
 
-        final Site site = Site.create().path( "/mycontent" ).id( contentId ).build();
-
-        Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node ) ).thenReturn( site );
-
-        assertEquals( site, createCommand( contentId ).execute() );
+        assertEquals( site.getPath(), createCommand( site.getId() ).execute().getPath() );
     }
 
     @Test
     void get_nearest_site_parent_is_site()
     {
-        final ContentId contentId = ContentId.from( "aaa" );
+        final Site parent = ContentFixture.mockSite();
+        final Content content = ContentFixture.mockContent( parent.getPath(), "my-content" );
 
-        final Node node = Node.create().
-            id( NodeId.from( "test" ) ).
-            name( "myContent" ).
-            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
-            build();
-
-        final Content content = Content.create().
-            id( contentId ).
-            name( "name" ).
-            parentPath( ContentPath.from( "/aaa" ) ).
-            build();
-
-        final Site parent = Site.create().
-            path( "/mycontent" ).
-            id( ContentId.from( "bbb" ) ).
-            build();
+        final Node node = ContentFixture.mockContentNode( content );
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node ) ).thenReturn( content, parent );
+        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) )
+            .thenReturn( node, ContentFixture.mockContentNode( parent ) );
 
-        assertEquals( parent, createCommand( contentId ).execute() );
+        assertEquals( parent.getPath(), createCommand( content.getId() ).execute().getPath() );
     }
 
     @Test
     void get_nearest_site_parent_of_parent_is_site()
     {
-        final Node node = Node.create().
-            id( NodeId.from( "test" ) ).
-            name( "myContent" ).
-            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
-            build();
+        final Site site = ContentFixture.mockSite();
+        final Content contentParent = ContentFixture.mockContent( site.getPath(), "my-content-parent" );
+        final Content content = ContentFixture.mockContent( contentParent.getPath(), "my-content" );
 
-        final ContentId contentId = ContentId.from( "aaa" );
-
-        final Content content = Content.create().
-            id( contentId ).
-            name( "name" ).
-            parentPath( ContentPath.from( "/aaa" ) ).
-            build();
-
-        final Content parent = Content.create().
-            id( ContentId.from( "bbb" ) ).
-            name( "renome" ).
-            parentPath( ContentPath.from( "/bbb" ) ).
-            build();
-
-        final Site parentOfParent = Site.create().
-            path( "/mycontent" ).
-            id( ContentId.from( "ccc" ) ).
-            build();
+        final Node node = ContentFixture.mockContentNode( content );
 
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node ) ).thenReturn( content, parent, parentOfParent );
+        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( ContentFixture.mockContentNode(content), ContentFixture.mockContentNode(contentParent), ContentFixture.mockContentNode(site) );
 
-        assertEquals( parentOfParent, createCommand( contentId ).execute() );
+        assertEquals( site.getPath(), createCommand( content.getId() ).execute().getPath() );
     }
 
     @Test
     void get_nearest_site_no_nearest_site()
     {
-        final Node node = Node.create().
-            id( NodeId.from( "test" ) ).
-            name( "myContent" ).
-            parentPath( ContentConstants.CONTENT_ROOT_PATH ).
-            build();
+        final Content parent = ContentFixture.mockContent();
 
-        final ContentId contentId = ContentId.from( "aaa" );
-        final Content content = Content.create().id( contentId ).name( "name" ).parentPath( ContentPath.from( "/aaa" ) ).build();
+        final Content content = ContentFixture.mockContent( parent.getPath(), "my-content" );
 
-        final ContentPath contentPath = ContentPath.from( "/mycontent" );
-        final Content parent = Content.create().path( contentPath ).id( ContentId.from( "bbb" ) ).build();
-
+        final Node node = ContentFixture.mockContentNode( content );
         Mockito.when( this.nodeService.getById( Mockito.any( NodeId.class ) ) ).thenReturn( node );
-        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) ).thenReturn( node );
-        Mockito.when( this.translator.fromNode( node ) ).thenReturn( content, parent );
+        Mockito.when( this.nodeService.getByPath( Mockito.isA( NodePath.class ) ) )
+            .thenReturn( node, ContentFixture.mockContentNode( parent ) );
 
-        assertNull( createCommand( contentId ).execute() );
+        assertNull( createCommand( content.getId() ).execute() );
     }
 
     private GetNearestSiteCommand createCommand( final ContentId contentId )
@@ -149,7 +94,6 @@ class GetNearestSiteCommandTest
             contentId( contentId ).
             contentTypeService( this.contentTypeService ).
             nodeService( this.nodeService ).
-            translator( this.translator ).
             eventPublisher( this.eventPublisher ).
             build();
     }

@@ -9,7 +9,6 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -45,7 +44,7 @@ public class CreateNodeParamsFactory
 
     private final SiteService siteService;
 
-    private final ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     public CreateNodeParamsFactory( final Builder builder )
     {
@@ -56,19 +55,18 @@ public class CreateNodeParamsFactory
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public CreateNodeParams.Builder produce()
     {
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
-        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
+        final PropertySet extraDataSet = contentAsData.getSet(  ContentPropertyNames.EXTRA_DATA );
 
-        final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
+        final String language = contentAsData.getString( ContentPropertyNames.LANGUAGE );
 
         final SiteConfigs siteConfigs =
-            SiteConfigsDataSerializer.fromData( contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.DATA ) ) );
+            SiteConfigsDataSerializer.fromData( contentAsData.getSet( ContentPropertyNames.DATA ) );
 
         final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
@@ -149,8 +147,6 @@ public class CreateNodeParamsFactory
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentDataSerializer contentDataSerializer;
-
         private SiteService siteService;
 
         Builder( final CreateContentTranslatorParams params )
@@ -194,12 +190,6 @@ public class CreateNodeParamsFactory
             return this;
         }
 
-        Builder contentDataSerializer( final ContentDataSerializer value )
-        {
-            this.contentDataSerializer = value;
-            return this;
-        }
-
         void validate()
         {
             Objects.requireNonNull( params, "params cannot be null" );
@@ -207,7 +197,6 @@ public class CreateNodeParamsFactory
             Objects.requireNonNull( pageDescriptorService );
             Objects.requireNonNull( siteService );
             Objects.requireNonNull( xDataService );
-            Objects.requireNonNull( contentDataSerializer );
         }
 
         public CreateNodeParamsFactory build()

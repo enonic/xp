@@ -3,6 +3,8 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Objects;
 
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
@@ -26,16 +28,33 @@ public abstract class AbstractContentEventSyncCommand
 
     protected abstract void doSync();
 
-    protected ContentPath buildNewPath( final ContentPath parentPath, final ContentName name )
+    protected ContentPath buildNewPath( final ContentPath parentPath, final ContentName name, final Content targetContent )
     {
-        String newName = name.toString();
-
-        while ( contentService.contentExists( ContentPath.from( parentPath, newName ) ) )
+        final ContentPath newParentPath;
+        if ( targetContent == null || targetContent.getInherit().contains( ContentInheritType.PARENT ) )
         {
-            newName = NameValueResolver.name( newName );
+            newParentPath = parentPath;
+        }
+        else
+        {
+            newParentPath = targetContent.getParentPath();
         }
 
-        return ContentPath.from( parentPath, newName );
+        String newName;
+        if ( targetContent == null || targetContent.getInherit().contains( ContentInheritType.NAME ) )
+        {
+            newName = name.toString();
+            while ( contentService.contentExists( ContentPath.from( newParentPath, newName ) ) )
+            {
+                newName = NameValueResolver.name( newName );
+            }
+        }
+        else
+        {
+            newName = targetContent.getName().toString();
+        }
+
+        return ContentPath.from( newParentPath, newName );
     }
 
     public abstract static class Builder<B extends Builder<B>>

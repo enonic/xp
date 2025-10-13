@@ -25,8 +25,6 @@ public class SyncContentServiceImpl
 
     private final EventPublisher eventPublisher;
 
-    private final ContentNodeTranslator translator;
-
     private final ProjectService projectService;
 
     private final ContentSynchronizer contentSynchronizer;
@@ -43,7 +41,6 @@ public class SyncContentServiceImpl
         this.projectService = projectService;
         this.contentService = contentService;
         this.contentSynchronizer = contentSynchronizer;
-        this.translator = new ContentNodeTranslator();
     }
 
     @Override
@@ -55,7 +52,6 @@ public class SyncContentServiceImpl
             nodeService( nodeService ).
             contentTypeService( contentTypeService ).
             eventPublisher( eventPublisher ).
-            translator( translator ).
             contentSynchronizer( contentSynchronizer ).
             build().
             execute();

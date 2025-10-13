@@ -90,8 +90,8 @@ public final class ProjectContentEventListener
     private boolean isAllowedContentEvent( final String type )
     {
         return "node.created".equals( type ) || "node.updated".equals( type ) || "node.pushed".equals( type ) ||
-            "node.duplicated".equals( type ) || "node.renamed".equals( type ) || "node.moved".equals( type ) ||
-            "node.deleted".equals( type ) || "node.sorted".equals( type );
+            "node.duplicated".equals( type ) || "node.moved".equals( type ) || "node.deleted".equals( type ) ||
+            "node.sorted".equals( type );
     }
 
     private void doHandleContentEvent( final List<Map<String, String>> nodes, final String eventType )
@@ -149,9 +149,6 @@ public final class ProjectContentEventListener
                             break;
                         case "node.sorted":
                             paramsBuilder.syncEventType( ContentSyncEventType.SORTED );
-                            break;
-                        case "node.renamed":
-                            paramsBuilder.syncEventType( ContentSyncEventType.RENAMED );
                             break;
                         case "node.moved":
                             paramsBuilder.syncEventType( ContentSyncEventType.MOVED );
