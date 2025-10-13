@@ -20,6 +20,8 @@ public final class InputTypeName
 
     public static final InputTypeName DATE = InputTypeName.from( "Date" );
 
+    public static final InputTypeName INSTANT = InputTypeName.from( "Instant" );
+
     public static final InputTypeName DATE_TIME = InputTypeName.from( "DateTime" );
 
     public static final InputTypeName DOUBLE = InputTypeName.from( "Double" );

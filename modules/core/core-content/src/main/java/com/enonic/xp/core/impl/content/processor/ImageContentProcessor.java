@@ -34,7 +34,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.form.FormItemType;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.inputtype.InputTypeName;

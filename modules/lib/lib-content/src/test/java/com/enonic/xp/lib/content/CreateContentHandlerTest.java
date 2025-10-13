@@ -17,10 +17,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -55,11 +52,7 @@ public class CreateContentHandlerTest
             .addFormItem( Input.create()
                               .label( "instant" )
                               .name( "instant" )
-                              .inputType( InputTypeName.DATE_TIME )
-                              .inputTypeConfig( InputTypeConfig.create()
-                                                    .property(
-                                                        InputTypeProperty.create( "timezone", PropertyValue.booleanValue( true ) ).build() )
-                                                    .build() )
+                              .inputType( InputTypeName.INSTANT )
                               .build() )
             .build();
 
