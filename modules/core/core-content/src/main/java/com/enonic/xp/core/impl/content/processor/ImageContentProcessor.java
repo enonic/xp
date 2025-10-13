@@ -363,7 +363,7 @@ public final class ImageContentProcessor
                 if ( formItem instanceof Input input )
                 {
                     final ExtraData extraData = getOrCreate( metadataMap, xData.getName() );
-                    if ( InputTypeName.INSTANT.equals( input.getInputType() ) )
+                    if ( InputTypeName.DATE_TIME.equals( input.getInputType() ) )
                     {
                         extraData.getData()
                             .addLocalDateTime( formItemName, ValueTypes.LOCAL_DATE_TIME.convert( mediaEntryValues.toArray()[0] ) );
