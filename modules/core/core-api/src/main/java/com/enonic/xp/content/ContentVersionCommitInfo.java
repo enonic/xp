@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.enonic.xp.security.PrincipalKey;
 
-public final class ContentVersionPublishInfo
+public final class ContentVersionCommitInfo
 {
     private final PrincipalKey publisher;
 
@@ -15,14 +15,11 @@ public final class ContentVersionPublishInfo
 
     private final CommitType type;
 
-    private final ContentPublishInfo contentPublishInfo;
-
-    private ContentVersionPublishInfo( Builder builder )
+    private ContentVersionCommitInfo( Builder builder )
     {
         publisher = builder.publisher;
         timestamp = builder.timestamp;
         message = builder.message;
-        contentPublishInfo = builder.contentPublishInfo;
         type = builder.type;
     }
 
@@ -46,11 +43,6 @@ public final class ContentVersionPublishInfo
         return message;
     }
 
-    public ContentPublishInfo getContentPublishInfo()
-    {
-        return contentPublishInfo;
-    }
-
     public CommitType getType()
     {
         return type;
@@ -63,20 +55,20 @@ public final class ContentVersionPublishInfo
         {
             return true;
         }
-        if ( !( o instanceof ContentVersionPublishInfo ) )
+        if ( !( o instanceof ContentVersionCommitInfo ) )
         {
             return false;
         }
-        final ContentVersionPublishInfo that = (ContentVersionPublishInfo) o;
+        final ContentVersionCommitInfo that = (ContentVersionCommitInfo) o;
         return Objects.equals( publisher, that.publisher ) && Objects.equals( timestamp, that.timestamp ) &&
-            Objects.equals( message, that.message ) && Objects.equals( contentPublishInfo, that.contentPublishInfo ) &&
+            Objects.equals( message, that.message ) &&
             Objects.equals( type, that.type );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( publisher, timestamp, message, contentPublishInfo );
+        return Objects.hash( publisher, timestamp, message );
     }
 
     public enum CommitType
@@ -91,8 +83,6 @@ public final class ContentVersionPublishInfo
         private Instant timestamp;
 
         private String message;
-
-        private ContentPublishInfo contentPublishInfo;
 
         private CommitType type;
 
@@ -118,21 +108,15 @@ public final class ContentVersionPublishInfo
             return this;
         }
 
-        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
-        {
-            this.contentPublishInfo = contentPublishInfo;
-            return this;
-        }
-
         public Builder type( final CommitType type )
         {
             this.type = type;
             return this;
         }
 
-        public ContentVersionPublishInfo build()
+        public ContentVersionCommitInfo build()
         {
-            return new ContentVersionPublishInfo( this );
+            return new ContentVersionCommitInfo( this );
         }
     }
 }

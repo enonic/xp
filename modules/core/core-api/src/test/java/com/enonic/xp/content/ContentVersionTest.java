@@ -23,31 +23,29 @@ public class ContentVersionTest
         final Instant now1 = Instant.now();
         final Instant now2 = Instant.now();
 
-        final ContentVersionPublishInfo publishInfo = ContentVersionPublishInfo.create()
+        final ContentVersionCommitInfo commitInfo = ContentVersionCommitInfo.create()
             .message( "My version 1" )
-            .type( ContentVersionPublishInfo.CommitType.ARCHIVED )
+            .type( ContentVersionCommitInfo.CommitType.ARCHIVED )
             .publisher( PrincipalKey.ofAnonymous() )
             .timestamp( Instant.ofEpochSecond( 1562056003L ) )
-            .contentPublishInfo( ContentPublishInfo.create()
-                                     .first( Instant.ofEpochSecond( 1562056004L ) )
-                                     .from( Instant.ofEpochSecond( 1562056005L ) )
-                                     .to( Instant.ofEpochSecond( 1562056006L ) )
-                                     .build() )
             .build();
 
-        assertEquals( ContentVersionPublishInfo.CommitType.ARCHIVED, publishInfo.getType() );
-        assertEquals( "My version 1", publishInfo.getMessage() );
-        assertEquals( PrincipalKey.ofAnonymous(), publishInfo.getPublisher() );
-        assertEquals( Instant.ofEpochSecond( 1562056003L ), publishInfo.getTimestamp() );
-        assertEquals( Instant.ofEpochSecond( 1562056004L ), publishInfo.getContentPublishInfo().getFirst() );
-        assertEquals( Instant.ofEpochSecond( 1562056005L ), publishInfo.getContentPublishInfo().getFrom() );
-        assertEquals( Instant.ofEpochSecond( 1562056006L ), publishInfo.getContentPublishInfo().getTo() );
+        assertEquals( ContentVersionCommitInfo.CommitType.ARCHIVED, commitInfo.getType() );
+        assertEquals( "My version 1", commitInfo.getMessage() );
+        assertEquals( PrincipalKey.ofAnonymous(), commitInfo.getPublisher() );
+        assertEquals( Instant.ofEpochSecond( 1562056003L ), commitInfo.getTimestamp() );
 
         final WorkflowInfo workflowInfo = WorkflowInfo.create().state( WorkflowState.READY ).build();
 
         final AccessControlList permissions = AccessControlList.create()
             .add(
                 AccessControlEntry.create().allow( Permission.CREATE, Permission.READ_PERMISSIONS ).principal( RoleKeys.EVERYONE ).build() )
+            .build();
+
+        final ContentPublishInfo publishInfo = ContentPublishInfo.create()
+            .first( Instant.ofEpochSecond( 1562056004L ) )
+            .from( Instant.ofEpochSecond( 1562056005L ) )
+            .to( Instant.ofEpochSecond( 1562056006L ) )
             .build();
 
         final ContentVersion version = ContentVersion.create()

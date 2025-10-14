@@ -1,6 +1,8 @@
 package com.enonic.xp.node;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
@@ -37,8 +39,7 @@ public final class NodeVersionMetadata
         nodePath = Objects.requireNonNull( builder.nodePath );
         nodeCommitId = builder.nodeCommitId;
         timestamp = Objects.requireNonNull( builder.timestamp );
-        attributes =
-            ImmutableList.of( ImmutableMap.of( "type", "content.update", "who", "system:su", "when", Instant.now().toString() ) );
+        attributes = ImmutableList.of( ImmutableMap.of( "type", "content.update", "who", "system:su", "when", Instant.now().toString() ) );
     }
 
     public static Builder create()
@@ -79,6 +80,11 @@ public final class NodeVersionMetadata
     public NodeCommitId getNodeCommitId()
     {
         return nodeCommitId;
+    }
+
+    public List<? extends Map<String, String>> getAttributes()
+    {
+        return attributes;
     }
 
     public Instant getTimestamp()

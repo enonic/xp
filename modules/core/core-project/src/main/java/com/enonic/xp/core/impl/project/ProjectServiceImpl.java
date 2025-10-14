@@ -173,7 +173,7 @@ public class ProjectServiceImpl
 
     private static void buildIcon( final Project.Builder project, final PropertySet projectData )
     {
-        final PropertySet iconData = projectData.getPropertySet( ProjectConstants.PROJECT_ICON_PROPERTY );
+        final PropertySet iconData = projectData.getSet( ProjectConstants.PROJECT_ICON_PROPERTY );
 
         if ( iconData != null )
         {
@@ -674,14 +674,14 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
     {
-        return Optional.ofNullable( contentRootData.getPropertySet( "data" ) ).map( SiteConfigsDataSerializer::fromData )
+        return Optional.ofNullable( contentRootData.getSet( ContentPropertyNames.DATA ) ).map( SiteConfigsDataSerializer::fromData )
             .orElse( SiteConfigs.empty() );
     }
 
     private Node updateProjectSiteConfigs( final ProjectName projectName, final SiteConfigs siteConfigs )
     {
         final NodeEditor editor = edit -> {
-            final PropertySet data = edit.data.getPropertySet( "data" );
+            final PropertySet data = edit.data.getSet( ContentPropertyNames.DATA );
             if ( data == null )
             {
                 throw new IllegalStateException( "Cannot update project config" );

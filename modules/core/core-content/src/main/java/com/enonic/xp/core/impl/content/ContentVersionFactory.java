@@ -3,8 +3,8 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionCommitInfo;
 import com.enonic.xp.content.ContentVersionId;
-import com.enonic.xp.content.ContentVersionPublishInfo;
 import com.enonic.xp.core.impl.content.serializer.PublishInfoSerializer;
 import com.enonic.xp.core.impl.content.serializer.WorkflowInfoSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -32,42 +32,35 @@ class ContentVersionFactory
         final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
         final PropertyTree data = nodeVersion.getData();
 
-        ContentVersionPublishInfo publishInfo = null;
+        final ContentVersion.Builder builder = ContentVersion.create()
+            .id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
+            .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersionMetadata.getNodePath() ) )
+            .timestamp( nodeVersionMetadata.getTimestamp() )
+            .childOrder( nodeVersion.getChildOrder() )
+            .permissions( nodeVersion.getPermissions() )
+            .displayName( data.getString( ContentPropertyNames.DISPLAY_NAME ) )
+            .publishInfo( publishInfoSerializer.serialize( data.getSet( ContentPropertyNames.PUBLISH_INFO ) ) )
+            .workflowInfo( workflowInfoSerializer.extract( data.getSet( ContentPropertyNames.WORKFLOW_INFO ) ) )
+            .modifier( PrincipalKey.from( data.getString( ContentPropertyNames.MODIFIER ) ) )
+            .modified( data.getInstant( ContentPropertyNames.MODIFIED_TIME ) )
+            .comment( "No comments" );
+
         if ( nodeVersionMetadata.getNodeCommitId() != null )
         {
             final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeVersionMetadata.getNodeCommitId() );
             if ( nodeCommitEntry != null )
             {
                 final String commitMessage = nodeCommitEntry.getMessage();
-                final ContentVersionPublishInfo.Builder builder = ContentVersionPublishInfo.create()
-                    .message( getCommentPart( commitMessage ) )
-                    .type( getType( nodeCommitEntry ) )
-                    .publisher( nodeCommitEntry.getCommitter() )
-                    .timestamp( nodeCommitEntry.getTimestamp() );
-
-                if ( commitMessage.startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) ||
-                    commitMessage.startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
-                {
-                    builder.contentPublishInfo( publishInfoSerializer.serialize( data.getRoot() ) );
-                }
-
-                publishInfo = builder.build();
+                builder.commitInfo( ContentVersionCommitInfo.create()
+                                        .message( getCommentPart( commitMessage ) )
+                                        .type( getType( commitMessage ) )
+                                        .publisher( nodeCommitEntry.getCommitter() )
+                                        .timestamp( nodeCommitEntry.getTimestamp() )
+                                        .build() );
             }
         }
 
-        return ContentVersion.create()
-            .displayName( data.getString( ContentPropertyNames.DISPLAY_NAME ) )
-            .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersionMetadata.getNodePath() ) )
-            .comment( "No comments" )
-            .modified( data.getInstant( ContentPropertyNames.MODIFIED_TIME ) )
-            .timestamp( nodeVersionMetadata.getTimestamp() )
-            .childOrder( nodeVersion.getChildOrder() )
-            .modifier( PrincipalKey.from( data.getString( ContentPropertyNames.MODIFIER ) ) )
-            .id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
-            .publishInfo( publishInfo )
-            .workflowInfo( workflowInfoSerializer.extract( data.getRoot().getPropertySet( ContentPropertyNames.WORKFLOW_INFO ) ) )
-            .permissions( nodeVersion.getPermissions() )
-            .build();
+        return builder.build();
     }
 
     private static String getCommentPart( final String message )
@@ -88,27 +81,27 @@ class ContentVersionFactory
         }
     }
 
-    private static ContentVersionPublishInfo.CommitType getType( final NodeCommitEntry nodeCommitEntry )
+    private static ContentVersionCommitInfo.CommitType getType( final String message )
     {
-        if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
+        if ( message.startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
         {
-            return ContentVersionPublishInfo.CommitType.PUBLISHED;
+            return ContentVersionCommitInfo.CommitType.PUBLISHED;
         }
-        else if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
+        else if ( message.startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
         {
-            return ContentVersionPublishInfo.CommitType.UNPUBLISHED;
+            return ContentVersionCommitInfo.CommitType.UNPUBLISHED;
         }
-        else if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX ) )
+        else if ( message.startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX ) )
         {
-            return ContentVersionPublishInfo.CommitType.ARCHIVED;
+            return ContentVersionCommitInfo.CommitType.ARCHIVED;
         }
-        else if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.RESTORE_COMMIT_PREFIX ) )
+        else if ( message.startsWith( ContentConstants.RESTORE_COMMIT_PREFIX ) )
         {
-            return ContentVersionPublishInfo.CommitType.RESTORED;
+            return ContentVersionCommitInfo.CommitType.RESTORED;
         }
         else
         {
-            return ContentVersionPublishInfo.CommitType.CUSTOM;
+            return ContentVersionCommitInfo.CommitType.CUSTOM;
         }
     }
 }

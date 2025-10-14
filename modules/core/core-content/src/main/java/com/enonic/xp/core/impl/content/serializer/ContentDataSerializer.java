@@ -240,7 +240,7 @@ public final class ContentDataSerializer
                 .toArray( Reference[]::new ) );
     }
 
-    private void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )
+    private static void addPublishInfo( final PropertySet contentAsData, final ContentPublishInfo data )
     {
         if ( data != null )
         {
@@ -283,12 +283,7 @@ public final class ContentDataSerializer
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
-        final ContentPublishInfo publishInfo = publishInfoSerializer.serialize( contentAsSet );
-
-        if ( publishInfo != null )
-        {
-            builder.publishInfo( publishInfo );
-        }
+        builder.publishInfo( publishInfoSerializer.serialize( contentAsSet.getSet( ContentPropertyNames.PUBLISH_INFO ) ) );
     }
 
     private void extractAttachments( final PropertySet contentAsSet, final Content.Builder<?> builder )

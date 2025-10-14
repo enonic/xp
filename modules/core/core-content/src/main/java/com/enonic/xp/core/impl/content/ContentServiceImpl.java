@@ -54,8 +54,6 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
-import com.enonic.xp.content.GetActiveContentVersionsParams;
-import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
@@ -776,20 +774,6 @@ public class ContentServiceImpl
             .contentId( params.getContentId() )
             .from( params.getFrom() )
             .size( params.getSize() )
-            .build()
-            .execute();
-    }
-
-    @Override
-    public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
-    {
-        return GetActiveContentVersionsCommand.create()
-            .nodeService( this.nodeService )
-            .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
-            .contentId( params.getContentId() )
-            .branches( params.getBranches() )
             .build()
             .execute();
     }

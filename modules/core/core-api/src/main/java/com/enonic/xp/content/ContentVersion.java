@@ -27,7 +27,9 @@ public final class ContentVersion
 
     private final String comment;
 
-    private final ContentVersionPublishInfo publishInfo;
+    private final ContentVersionCommitInfo commitInfo;
+
+    private final ContentPublishInfo publishInfo;
 
     private final WorkflowInfo workflowInfo;
 
@@ -44,6 +46,7 @@ public final class ContentVersion
         this.childOrder = builder.childOrder;
         this.id = builder.id;
         this.publishInfo = builder.publishInfo;
+        this.commitInfo = builder.commitInfo;
         this.workflowInfo = builder.workflowInfo;
         this.permissions = builder.permissions;
     }
@@ -83,9 +86,14 @@ public final class ContentVersion
         return id;
     }
 
-    public ContentVersionPublishInfo getPublishInfo()
+    public ContentPublishInfo getPublishInfo()
     {
         return publishInfo;
+    }
+
+    public ContentVersionCommitInfo getCommitInfo()
+    {
+        return commitInfo;
     }
 
     public WorkflowInfo getWorkflowInfo()
@@ -123,7 +131,7 @@ public final class ContentVersion
         return Objects.equals( id, that.id ) && Objects.equals( modifier, that.modifier ) &&
             Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
             Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
-            Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
+            Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) && Objects.equals( commitInfo, that.commitInfo ) &&
             Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( permissions, that.permissions ) &&
             Objects.equals( path, that.path );
     }
@@ -131,7 +139,7 @@ public final class ContentVersion
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path,
+        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, commitInfo, workflowInfo, path,
                              permissions );
     }
 
@@ -153,7 +161,9 @@ public final class ContentVersion
 
         private ContentVersionId id;
 
-        private ContentVersionPublishInfo publishInfo;
+        private ContentPublishInfo publishInfo;
+
+        private ContentVersionCommitInfo commitInfo;
 
         private WorkflowInfo workflowInfo;
 
@@ -211,9 +221,15 @@ public final class ContentVersion
             return this;
         }
 
-        public Builder publishInfo( ContentVersionPublishInfo publishInfo )
+        public Builder publishInfo( ContentPublishInfo publishInfo )
         {
             this.publishInfo = publishInfo;
+            return this;
+        }
+
+        public Builder commitInfo( ContentVersionCommitInfo commitInfo )
+        {
+            this.commitInfo = commitInfo;
             return this;
         }
 
