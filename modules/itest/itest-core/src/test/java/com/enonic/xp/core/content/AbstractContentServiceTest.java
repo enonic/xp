@@ -153,7 +153,7 @@ public abstract class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected CmsFormFragmentService mixinService;
+    protected CmsFormFragmentService formFragmentService;
 
     protected XDataService xDataService;
 
@@ -263,8 +263,8 @@ public abstract class AbstractContentServiceTest
         nodeService =
             new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
-        mixinService = mock( CmsFormFragmentService.class );
-        when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         xDataService = mock( XDataService.class );
 
@@ -280,9 +280,9 @@ public abstract class AbstractContentServiceTest
 
         resourceService = mock( ResourceService.class );
 
-        final CmsService cmsService = new CmsServiceImpl( resourceService, mixinService );
+        final CmsService cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
-        ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
+        ContentTypeServiceImpl contentTypeService = new ContentTypeServiceImpl( resourceService, null, formFragmentService );
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );

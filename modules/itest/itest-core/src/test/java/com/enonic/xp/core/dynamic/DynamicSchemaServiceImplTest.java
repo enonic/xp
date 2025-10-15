@@ -399,7 +399,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "Virtual Mixin", mixin.getDisplayName() );
         assertEquals( "Mixin description", mixin.getDescription() );
         assertEquals( 2, mixin.getForm().size() );
-        assertEquals( "myapp:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
+        assertEquals( "myapp:inline", mixin.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
@@ -486,7 +486,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "Virtual Mixin", mixin.getDisplayName() );
         assertEquals( "Mixin description", mixin.getDescription() );
         assertEquals( 2, mixin.getForm().size() );
-        assertEquals( "myapp:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
+        assertEquals( "myapp:inline", mixin.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );

@@ -40,9 +40,9 @@ public final class Form
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public FormFragment getInlineMixin( final String path )
+    public FormFragment getFormFragment( final String path )
     {
-        return formItems.getInlineMixin( FormItemPath.from( path ) );
+        return formItems.getFormFragment( FormItemPath.from( path ) );
     }
 
     public FormOptionSet getOptionSet( final String path )

@@ -78,7 +78,7 @@ public class GetDynamicContentSchemaHandlerTest
                 throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
             }
 
-            final FormFragmentDescriptor mixin = FormFragmentDescriptor.create()
+            final FormFragmentDescriptor fragmentDescriptor = FormFragmentDescriptor.create()
                 .name( (FormFragmentName) schemaParams.getName() )
                 .description( "My mixin description" )
                 .displayName( "My mixin display name" )
@@ -98,7 +98,7 @@ public class GetDynamicContentSchemaHandlerTest
                                                             label: "Text"
                                                           """ );
 
-            return new DynamicSchemaResult<>( mixin, resource );
+            return new DynamicSchemaResult<>( fragmentDescriptor, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getFormFragment.js" );

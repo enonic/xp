@@ -89,7 +89,7 @@ export type {
     FieldSortDsl,
     Filter,
     FormItem,
-    FormItemInlineMixin,
+    FormItemFormFragment,
     FormItemInput,
     FormItemLayout,
     FormItemOptionSet,

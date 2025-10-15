@@ -3,8 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `displayName: "Virtual Mixin"
-description: "Mixin description"
+let resource = `displayName: "Virtual FormFragment"
+description: "FormFragment description"
 form:
 - type: "TextLine"
   name: "text2"
@@ -16,7 +16,7 @@ form:
   name: "inline"`;
 
 // BEGIN
-// Create virtual mixin.
+// Create virtual form fragment.
 var result = schemaLib.createSchema({
     name: 'myapp:mytype',
     type: 'FORM_FRAGMENT',
@@ -24,19 +24,19 @@ var result = schemaLib.createSchema({
 
 });
 
-log.info('Created mixin: ' + result.name);
+log.info('Created form fragment: ' + result.name);
 
 // END
 
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    displayName: 'Virtual Mixin',
-    description: 'Mixin description',
+    displayName: 'Virtual FormFragment',
+    description: 'FormFragment description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'displayName: "Virtual Mixin"\n' +
-              'description: "Mixin description"\n' +
+    resource: 'displayName: "Virtual FormFragment"\n' +
+              'description: "FormFragment description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +
               '  name: "text2"\n' +

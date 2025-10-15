@@ -32,7 +32,7 @@ public class FormItemSetTest
     }
 
     @Test
-    public void getInlineMixin()
+    public void getFormFragment()
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create()
@@ -45,7 +45,7 @@ public class FormItemSetTest
         // exercise
 
         // verify
-        assertEquals( "mySet.mymixin", formItemSet.getInlineMixin( "mymixin" ).getPath().toString() );
+        assertEquals( "mySet.mymixin", formItemSet.getFormFragment( "mymixin" ).getPath().toString() );
     }
 
 

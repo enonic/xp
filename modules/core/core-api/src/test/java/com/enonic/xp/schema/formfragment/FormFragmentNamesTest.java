@@ -11,32 +11,32 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 public class FormFragmentNamesTest
 {
     @Test
-    public void test_immutable_MixinNames()
+    public void test_immutable_Names()
     {
         List<FormFragmentName> names = new ArrayList<>();
-        FormFragmentName mixinName = FormFragmentName.from( "myapplication:my" );
-        FormFragmentNames mixinNames = FormFragmentNames.from( names );
+        FormFragmentName formFragmentName = FormFragmentName.from( "myapplication:my" );
+        FormFragmentNames fragmentNames = FormFragmentNames.from( names );
         try
         {
-            mixinNames.getSet().add( FormFragmentName.from( "myapplication:my1" ) );
+            fragmentNames.getSet().add( FormFragmentName.from( "myapplication:my1" ) );
         }
         catch ( Exception e )
         {
             assertInstanceOf( UnsupportedOperationException.class, e );
         }
-        mixinNames = FormFragmentNames.from( FormFragmentName.from( "myapplication:my1" ) );
+        fragmentNames = FormFragmentNames.from( FormFragmentName.from( "myapplication:my1" ) );
         try
         {
-            mixinNames.getSet().add( mixinName );
+            fragmentNames.getSet().add( formFragmentName );
         }
         catch ( Exception e )
         {
             assertInstanceOf( UnsupportedOperationException.class, e );
         }
-        mixinNames = FormFragmentNames.from( "myapplication:my1" );
+        fragmentNames = FormFragmentNames.from( "myapplication:my1" );
         try
         {
-            mixinNames.getSet().add( mixinName );
+            fragmentNames.getSet().add( formFragmentName );
         }
         catch ( Exception e )
         {
@@ -48,14 +48,14 @@ public class FormFragmentNamesTest
     public void from()
     {
         FormFragmentNames
-            mixinNames = FormFragmentNames.from( FormFragmentName.from( "myapplication:my1" ), FormFragmentName.from( "myapplication:my2" ),
+            formFragmentNames = FormFragmentNames.from( FormFragmentName.from( "myapplication:my1" ), FormFragmentName.from( "myapplication:my2" ),
                                                  FormFragmentName.from( "myapplication:my3" ) );
 
-        List<FormFragmentName> mixinNameList =
+        List<FormFragmentName> fragmentNameList =
             List.of( FormFragmentName.from( "myapplication:my1" ), FormFragmentName.from( "myapplication:my2" ), FormFragmentName.from( "myapplication:my3" ) );
 
-        assertEquals( 3, mixinNames.getSize() );
-        assertEquals( 3, FormFragmentNames.from( mixinNames ).getSize() );
-        assertEquals( 3, FormFragmentNames.from( mixinNameList ).getSize() );
+        assertEquals( 3, formFragmentNames.getSize() );
+        assertEquals( 3, FormFragmentNames.from( formFragmentNames ).getSize() );
+        assertEquals( 3, FormFragmentNames.from( fragmentNameList ).getSize() );
     }
 }

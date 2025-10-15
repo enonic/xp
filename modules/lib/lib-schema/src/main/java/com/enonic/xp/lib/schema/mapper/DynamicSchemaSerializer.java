@@ -3,11 +3,11 @@ package com.enonic.xp.lib.schema.mapper;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
@@ -75,7 +75,7 @@ public class DynamicSchemaSerializer
         }
         else if ( item instanceof FormFragment )
         {
-            serializeFormFragmentMixin( gen, (FormFragment) item );
+            serializeFormFragment( gen, (FormFragment) item );
         }
         else if ( item instanceof FormOptionSet )
         {
@@ -152,11 +152,11 @@ public class DynamicSchemaSerializer
         gen.end();
     }
 
-    private static void serializeFormFragmentMixin( final MapGenerator gen, final FormFragment inlineMixin )
+    private static void serializeFormFragment( final MapGenerator gen, final FormFragment formFragment )
     {
         gen.map();
         gen.value( "formItemType", "FormFragment" );
-        gen.value( "name", inlineMixin.getFormFragmentName() );
+        gen.value( "name", formFragment.getFormFragmentName() );
         gen.end();
     }
 

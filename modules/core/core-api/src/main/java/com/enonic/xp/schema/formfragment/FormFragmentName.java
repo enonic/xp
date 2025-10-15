@@ -24,9 +24,9 @@ public final class FormFragmentName
         return new FormFragmentName( applicationKey, localName );
     }
 
-    public static FormFragmentName from( final String mixinName )
+    public static FormFragmentName from( final String formFragmentName )
     {
-        return new FormFragmentName( mixinName );
+        return new FormFragmentName( formFragmentName );
     }
 
     public String getApplicationPrefix()

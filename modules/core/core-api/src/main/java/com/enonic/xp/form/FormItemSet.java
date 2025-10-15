@@ -186,9 +186,9 @@ public final class FormItemSet
         return formItems.getInput( FormItemPath.from( path ) );
     }
 
-    public FormFragment getInlineMixin( final String name )
+    public FormFragment getFormFragment( final String name )
     {
-        return formItems.getInlineMixin( FormItemPath.from( name ) );
+        return formItems.getFormFragment( FormItemPath.from( name ) );
     }
 
     public static Builder create()

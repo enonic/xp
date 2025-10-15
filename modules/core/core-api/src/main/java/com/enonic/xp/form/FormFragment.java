@@ -17,14 +17,14 @@ public final class FormFragment
     {
         super();
 
-        Objects.requireNonNull( builder.formFragmentName, "mixinName is required" );
+        Objects.requireNonNull( builder.formFragmentName, "formFragmentName is required" );
         this.formFragmentName = builder.formFragmentName;
     }
 
     @Override
     public FormItemType getType()
     {
-        return FormItemType.MIXIN_REFERENCE;
+        return FormItemType.FORM_FRAGMENT;
     }
 
     public FormFragmentName getFormFragmentName()
@@ -71,9 +71,9 @@ public final class FormFragment
         return create( this ).build();
     }
 
-    public static Builder create( final FormFragmentDescriptor mixin )
+    public static Builder create( final FormFragmentDescriptor descriptor )
     {
-        return new Builder( mixin );
+        return new Builder( descriptor );
     }
 
     public static Builder create( final FormFragment inline )
@@ -111,9 +111,9 @@ public final class FormFragment
             return this;
         }
 
-        public Builder formFragment( final FormFragmentName mixinName )
+        public Builder formFragment( final FormFragmentName formFragmentName )
         {
-            this.formFragmentName = mixinName;
+            this.formFragmentName = formFragmentName;
             return this;
         }
 

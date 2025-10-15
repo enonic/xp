@@ -25,18 +25,18 @@ import static org.mockito.Mockito.when;
 public class CmsServiceImplTest
     extends ApplicationTestSupport
 {
-    protected CmsFormFragmentService mixinService;
+    protected CmsFormFragmentService formFragmentService;
 
     protected CmsServiceImpl service;
 
     @Override
     protected void initialize()
     {
-        this.mixinService = mock( CmsFormFragmentService.class );
-        when( this.mixinService.inlineFormItems( Mockito.any() ) ).thenAnswer( ( invocation ) -> invocation.getArguments()[0] );
+        this.formFragmentService = mock( CmsFormFragmentService.class );
+        when( this.formFragmentService.inlineFormItems( Mockito.any() ) ).thenAnswer( ( invocation ) -> invocation.getArguments()[0] );
         addApplication( "myapp", "/apps/myapp" );
 
-        this.service = new CmsServiceImpl( resourceService, mixinService );
+        this.service = new CmsServiceImpl( resourceService, formFragmentService );
     }
 
     @Test

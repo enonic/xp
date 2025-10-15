@@ -15,33 +15,33 @@ public class FormFragmentDescriptorsTest
     @Test
     public void test_immutable_mixins()
     {
-        FormFragmentName mixinName = FormFragmentName.from( "myapplication:my1" );
-        FormFragmentDescriptor mixin = FormFragmentDescriptor.create().name( mixinName ).build();
-        FormFragmentDescriptors mixins = FormFragmentDescriptors.from( mixin );
+        FormFragmentName fragmentName = FormFragmentName.from( "myapplication:my1" );
+        FormFragmentDescriptor fragmentDescriptor = FormFragmentDescriptor.create().name( fragmentName ).build();
+        FormFragmentDescriptors formFragmentDescriptors = FormFragmentDescriptors.from( fragmentDescriptor );
 
-        assertTrue( mixins.getNames().getSize() == 1 );
-        assertNotNull( mixins.getMixin( mixinName ) );
+        assertTrue( formFragmentDescriptors.getNames().getSize() == 1 );
+        assertNotNull( formFragmentDescriptors.getFormFragmentDescriptor( fragmentName ) );
 
         try
         {
-            mixins.getList().add( null );
+            formFragmentDescriptors.getList().add( null );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
-        mixins = FormFragmentDescriptors.from( Collections.singleton( mixin ) );
+        formFragmentDescriptors = FormFragmentDescriptors.from( Collections.singleton( fragmentDescriptor ) );
         try
         {
-            mixins.getList().add( null );
+            formFragmentDescriptors.getList().add( null );
         }
         catch ( Exception e )
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
 
-        mixins = FormFragmentDescriptors.create().add( mixin ).build();
-        assertEquals( 1, mixins.getNames().getSize() );
+        formFragmentDescriptors = FormFragmentDescriptors.create().add( fragmentDescriptor ).build();
+        assertEquals( 1, formFragmentDescriptors.getNames().getSize() );
         assertTrue( FormFragmentDescriptors.empty().isEmpty() );
     }
 

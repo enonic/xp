@@ -23,14 +23,14 @@ public class ContentTypeServiceTest
 {
     protected ContentTypeServiceImpl service;
 
-    protected CmsFormFragmentService mixinService;
+    protected CmsFormFragmentService formFragmentService;
 
     @Override
     protected void initialize()
         throws Exception
     {
-        this.mixinService = Mockito.mock( CmsFormFragmentService.class );
-        this.service = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.mixinService );
+        this.formFragmentService = Mockito.mock( CmsFormFragmentService.class );
+        this.service = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.formFragmentService );
     }
 
     @Test

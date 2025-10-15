@@ -25,9 +25,9 @@ public final class FormFragmentDescriptors
         return stream().map( BaseSchema::getName ).collect( FormFragmentNames.collector() );
     }
 
-    public FormFragmentDescriptor getMixin( final FormFragmentName mixinName )
+    public FormFragmentDescriptor getFormFragmentDescriptor( final FormFragmentName formFragmentName )
     {
-        return stream().filter( m -> mixinName.equals( m.getName() ) ).findFirst().orElse( null );
+        return stream().filter( m -> formFragmentName.equals( m.getName() ) ).findFirst().orElse( null );
     }
 
     public static FormFragmentDescriptors empty()
@@ -35,17 +35,17 @@ public final class FormFragmentDescriptors
         return EMPTY;
     }
 
-    public static FormFragmentDescriptors from( final FormFragmentDescriptor... mixins )
+    public static FormFragmentDescriptors from( final FormFragmentDescriptor... descriptors )
     {
-        return fromInternal( ImmutableList.copyOf( mixins ) );
+        return fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static FormFragmentDescriptors from( final Iterable<FormFragmentDescriptor> mixins )
+    public static FormFragmentDescriptors from( final Iterable<FormFragmentDescriptor> descriptors )
     {
-        return mixins instanceof FormFragmentDescriptors m ? m : fromInternal( ImmutableList.copyOf( mixins ) );
+        return descriptors instanceof FormFragmentDescriptors m ? m : fromInternal( ImmutableList.copyOf( descriptors ) );
     }
 
-    public static Collector <FormFragmentDescriptor, ?, FormFragmentDescriptors> collector()
+    public static Collector<FormFragmentDescriptor, ?, FormFragmentDescriptors> collector()
     {
         return Collectors.collectingAndThen( ImmutableList.toImmutableList(), FormFragmentDescriptors::fromInternal );
     }

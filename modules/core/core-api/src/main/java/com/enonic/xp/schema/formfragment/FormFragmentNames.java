@@ -26,29 +26,29 @@ public final class FormFragmentNames
         return EMPTY;
     }
 
-    public static FormFragmentNames from( final String... mixinNames )
+    public static FormFragmentNames from( final String... names )
     {
-        return from(  Arrays.asList( mixinNames ) );
+        return from( Arrays.asList( names ) );
     }
 
-    public static FormFragmentNames from( final Collection<String> mixinNames )
+    public static FormFragmentNames from( final Collection<String> names )
     {
-        return mixinNames.stream().map( FormFragmentName::from ).collect( collector() );
+        return names.stream().map( FormFragmentName::from ).collect( collector() );
     }
 
-    public static FormFragmentNames from( final FormFragmentName... mixinNames )
+    public static FormFragmentNames from( final FormFragmentName... names )
     {
-        return fromInternal( ImmutableSet.copyOf( mixinNames ) );
+        return fromInternal( ImmutableSet.copyOf( names ) );
     }
 
-    public static FormFragmentNames from( final Iterable<FormFragmentName> mixinNames )
+    public static FormFragmentNames from( final Iterable<FormFragmentName> names )
     {
-        return mixinNames instanceof FormFragmentNames m ? m : fromInternal( ImmutableSet.copyOf( mixinNames ) );
+        return names instanceof FormFragmentNames m ? m : fromInternal( ImmutableSet.copyOf( names ) );
     }
 
-    private static FormFragmentNames fromInternal( final ImmutableSet<FormFragmentName> mixinNames )
+    private static FormFragmentNames fromInternal( final ImmutableSet<FormFragmentName> names )
     {
-        return mixinNames.isEmpty() ? EMPTY : new FormFragmentNames( mixinNames );
+        return names.isEmpty() ? EMPTY : new FormFragmentNames( names );
     }
 
     public static Collector<FormFragmentName, ?, FormFragmentNames> collector()

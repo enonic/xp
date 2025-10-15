@@ -9,7 +9,7 @@ public enum FormItemType
     INPUT,
     FORM_ITEM_SET,
     LAYOUT,
-    MIXIN_REFERENCE,
+    FORM_FRAGMENT,
     FORM_OPTION_SET,
     FORM_OPTION_SET_OPTION;
 
@@ -29,7 +29,7 @@ public enum FormItemType
         }
         else if ( FormFragment.class.getSimpleName().equals( value ) )
         {
-            return MIXIN_REFERENCE;
+            return FORM_FRAGMENT;
         }
         else if ( FormOptionSetOption.class.getSimpleName().equals( value ) )
         {

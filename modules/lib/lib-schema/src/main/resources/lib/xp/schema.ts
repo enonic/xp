@@ -18,7 +18,7 @@ import type {ByteSource, FormItem, UserKey} from '@enonic-types/core';
 export type {
     ByteSource,
     FormItem,
-    FormItemInlineMixin,
+    FormItemFormFragment,
     FormItemInput,
     FormItemLayout,
     FormItemOptionSet,

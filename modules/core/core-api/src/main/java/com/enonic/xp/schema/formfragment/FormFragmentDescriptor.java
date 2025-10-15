@@ -29,9 +29,9 @@ public final class FormFragmentDescriptor
         return new Builder();
     }
 
-    public static Builder create( final FormFragmentDescriptor mixin )
+    public static Builder create( final FormFragmentDescriptor descriptor )
     {
-        return new Builder( mixin );
+        return new Builder( descriptor );
     }
 
     @Override

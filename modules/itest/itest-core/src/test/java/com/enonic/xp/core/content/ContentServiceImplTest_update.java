@@ -301,7 +301,7 @@ public class ContentServiceImplTest_update
                 build() ).
             build();
 
-        Mockito.when( this.mixinService.getByName( Mockito.isA( FormFragmentName.class ) ) ).
+        Mockito.when( this.formFragmentService.getByName( Mockito.isA( FormFragmentName.class ) ) ).
             thenReturn( mixin );
 
         final ExtraData extraData = new ExtraData( XDataName.from( "myapplication:my_mixin" ), new PropertyTree() );

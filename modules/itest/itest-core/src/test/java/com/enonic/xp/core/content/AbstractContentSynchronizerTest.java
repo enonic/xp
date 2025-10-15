@@ -288,17 +288,17 @@ public abstract class AbstractContentSynchronizerTest
 
         XDataService xDataService = mock( XDataService.class );
 
-        CmsFormFragmentService mixinService = mock( CmsFormFragmentService.class );
-        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
+        CmsFormFragmentService formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         pageDescriptorService = mock( PageDescriptorService.class );
         partDescriptorService = mock( PartDescriptorService.class );
         layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-        contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( null, null, formFragmentService );
 
         final ResourceService resourceService = mock( ResourceService.class );
-        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, mixinService );
+        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
         final ContentAuditLogFilterService contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
 

@@ -92,11 +92,11 @@ public final class CmsFormFragmentServiceImpl
             if ( formItem instanceof FormFragment )
             {
                 final FormFragment inline = (FormFragment) formItem;
-                final FormFragmentName mixinName = inline.getFormFragmentName();
-                final FormFragmentDescriptor mixin = getByName( mixinName );
+                final FormFragmentName formFragmentName = inline.getFormFragmentName();
+                final FormFragmentDescriptor mixin = getByName( formFragmentName );
                 if ( mixin != null )
                 {
-                    if ( inlineMixinStack.contains( mixinName ) )
+                    if ( inlineMixinStack.contains( formFragmentName ) )
                     {
                         final String error =
                             "Cycle detected in mixin [" + mixin.getName() + "]. It contains an inline mixin that references itself.";
@@ -104,9 +104,9 @@ public final class CmsFormFragmentServiceImpl
                         throw new IllegalArgumentException( error );
                     }
 
-                    inlineMixinStack.add( mixinName );
+                    inlineMixinStack.add( formFragmentName );
                     final Form mixinForm = doInlineFormItems( mixin.getForm(), inlineMixinStack );
-                    inlineMixinStack.remove( mixinName );
+                    inlineMixinStack.remove( formFragmentName );
 
                     for ( final FormItem mixinFormItem : mixinForm )
                     {
@@ -115,7 +115,7 @@ public final class CmsFormFragmentServiceImpl
                 }
                 else
                 {
-                    throw new IllegalArgumentException( "Inline mixin [" + mixinName + "] not found" );
+                    throw new IllegalArgumentException( "Inline mixin [" + formFragmentName + "] not found" );
                 }
             }
             else if ( formItem instanceof FormItemSet )

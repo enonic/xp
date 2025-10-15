@@ -18,7 +18,7 @@ public abstract class BaseContentHandlerTest
 
     protected ContentTypeService contentTypeService;
 
-    protected CmsFormFragmentService mixinService;
+    protected CmsFormFragmentService formFragmentService;
 
     protected XDataService xDataService;
 
@@ -34,12 +34,12 @@ public abstract class BaseContentHandlerTest
 
         this.contentService = Mockito.mock( ContentService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.mixinService = Mockito.mock( CmsFormFragmentService.class );
+        this.formFragmentService = Mockito.mock( CmsFormFragmentService.class );
         this.xDataService = Mockito.mock( XDataService.class );
         this.cmsService = Mockito.mock( CmsService.class );
         this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance();
         addService( ContentService.class, this.contentService );
-        addService( CmsFormFragmentService.class, this.mixinService );
+        addService( CmsFormFragmentService.class, this.formFragmentService );
         addService( ContentTypeService.class, this.contentTypeService );
         addService( XDataService.class, this.xDataService );
         addService( CmsService.class, this.cmsService );

@@ -57,12 +57,12 @@ public abstract class FormItem
         return (Input) this;
     }
 
-    public FormFragment toInlineMixin()
+    public FormFragment toFormFragment()
     {
         if ( !( this instanceof FormFragment ) )
         {
             throw new IllegalArgumentException(
-                "This FormItem [" + getName() + "] is not an InlineMixin: " + this.getClass().getSimpleName() );
+                "This FormItem [" + getName() + "] is not an FormFragment: " + this.getClass().getSimpleName() );
         }
         return (FormFragment) this;
     }

@@ -24,7 +24,7 @@ public class CmsDescriptorTest
 
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-        //Builds MixinNames
+        //Builds FragmentsNames
         XDataMappings xDataMappings =
             XDataMappings.from( XDataMapping.create().xDataName( XDataName.from( applicationKey, "my" ) ).build() );
 

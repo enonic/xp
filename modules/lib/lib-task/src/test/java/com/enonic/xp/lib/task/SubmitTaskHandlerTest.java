@@ -37,8 +37,8 @@ class SubmitTaskHandlerTest
         addService( TaskService.class, taskService );
         final TaskDescriptorService taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         addService( TaskDescriptorService.class, taskDescriptorService );
-        final CmsFormFragmentService mixinService = Mockito.mock( CmsFormFragmentService.class );
-        addService( CmsFormFragmentService.class, mixinService );
+        final CmsFormFragmentService formFragmentService = Mockito.mock( CmsFormFragmentService.class );
+        addService( CmsFormFragmentService.class, formFragmentService );
 
         final Form cfg1 = Form.create().
             addFormItem( Input.create().
@@ -62,7 +62,7 @@ class SubmitTaskHandlerTest
         final TaskDescriptor desc3 = TaskDescriptor.create().key( DescriptorKey.from( "other-app:some-task" ) ).build();
         when( taskDescriptorService.getTasks() ).thenReturn( Descriptors.from( desc1, desc2, desc3 ) );
 
-        when( mixinService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
+        when( formFragmentService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
 
         addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance() );
     }
