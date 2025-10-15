@@ -15,8 +15,9 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.PageDefaultValuesProcessor;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
@@ -32,6 +33,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -43,13 +45,15 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 final class CreateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
 {
-    private final CreateContentParams params;
+    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
 
     private final MediaInfo mediaInfo;
 
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
+
+    private CreateContentParams params;
 
     private CreateContentCommand( final Builder builder )
     {
@@ -58,6 +62,7 @@ final class CreateContentCommand
         this.mediaInfo = builder.mediaInfo;
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
+        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
     }
 
     static Builder create()
@@ -84,7 +89,10 @@ final class CreateContentCommand
 
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         pageFormDefaultValuesProcessor.applyDefaultValues( params.getPage() );
-        // TODO apply default values to xData
+
+        final ExtraDatas mergedExtraData = mergeExtraData( params.getType(), params.getData(), params.getParent(), params.getExtraDatas() );
+        xDataDefaultValuesProcessor.applyDefaultValues( mergedExtraData );
+        params = CreateContentParams.create( this.params ).extraDatas( mergedExtraData ).build();
 
         ProcessCreateResult processedParams = runContentProcessors( params );
 
@@ -101,7 +109,9 @@ final class CreateContentCommand
             .contentDataSerializer( this.translator.getContentDataSerializer() )
             .siteService( this.siteService )
             .build()
-            .produce().refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE ).build();
+            .produce()
+            .refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE )
+            .build();
 
         final Node createdNode;
         try
@@ -111,8 +121,8 @@ final class CreateContentCommand
         catch ( NodeAlreadyExistAtPathException e )
         {
             throw new ContentAlreadyExistsException(
-                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName() ),
-                e.getRepositoryId(), e.getBranch() );
+                ContentPath.from( createContentTranslatorParams.getParent(), createContentTranslatorParams.getName() ), e.getRepositoryId(),
+                e.getBranch() );
         }
         catch ( NodeAccessException e )
         {
@@ -204,7 +214,8 @@ final class CreateContentCommand
             if ( contentProcessor.supports( createContentParams.getType() ) )
             {
                 processedResult = contentProcessor.processCreate(
-                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo, processedResult.getProcessedReferences() ) );
+                    new ProcessCreateParams( processedResult.getCreateContentParams(), mediaInfo,
+                                             processedResult.getProcessedReferences() ) );
             }
         }
         return processedResult;
@@ -223,7 +234,8 @@ final class CreateContentCommand
     {
         if ( createContentParams.getLanguage() == null )
         {
-            final Node parent = nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( createContentParams.getParent() ) );
+            final Node parent =
+                nodeService.getByPath( ContentNodeHelper.translateContentPathToNodePath( createContentParams.getParent() ) );
 
             final List<Property> inheritProperties = parent.data().getProperties( ContentPropertyNames.INHERIT );
             final boolean inherited =
@@ -324,6 +336,8 @@ final class CreateContentCommand
 
         private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
+        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
+
         private Builder()
         {
         }
@@ -357,6 +371,12 @@ final class CreateContentCommand
             return this;
         }
 
+        Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
+        {
+            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -364,6 +384,7 @@ final class CreateContentCommand
             Objects.requireNonNull( params, "params cannot be null" );
             Objects.requireNonNull( formDefaultValuesProcessor );
             Objects.requireNonNull( pageFormDefaultValuesProcessor );
+            Objects.requireNonNull( xDataDefaultValuesProcessor );
             ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 

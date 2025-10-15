@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -15,14 +16,22 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.XDataMapping;
+import com.enonic.xp.site.XDataMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ContentServiceImplTest_move
     extends AbstractContentServiceTest
@@ -132,8 +141,24 @@ public class ContentServiceImplTest_move
 
     private ExtraDatas createExtraDatas()
     {
-        return ExtraDatas.create().
-            add( new ExtraData( XDataName.from( "com.enonic.app.test:mixin" ), new PropertyTree() ) ).
+        final XDataName xDataName = XDataName.from( "com.enonic.app.test:mixin" );
+
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+                                                                                                  .applicationKey( ApplicationKey.from(
+                                                                                                      "com.enonic.app.test" ) )
+                                                                                                  .xDataMappings( XDataMappings.from(
+                                                                                                      XDataMapping.create()
+                                                                                                          .xDataName( xDataName )
+                                                                                                          .allowContentTypes(
+                                                                                                              "base:folder" )
+                                                                                                          .optional( false )
+                                                                                                          .build() ) )
+                                                                                                  .build() );
+
+        final XData xData = XData.create().name( xDataName ).form( Form.create().build() ).build();
+        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+
+        return ExtraDatas.create().add( new ExtraData( xDataName, new PropertyTree() ) ).
             build();
     }
 

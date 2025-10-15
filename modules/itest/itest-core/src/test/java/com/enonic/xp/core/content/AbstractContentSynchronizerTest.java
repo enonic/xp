@@ -32,6 +32,8 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
+import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
@@ -99,7 +101,15 @@ public abstract class AbstractContentSynchronizerTest
 
     protected LayoutDescriptorService layoutDescriptorService;
 
+    protected XDataMappingServiceImpl xDataMappingService;
+
+    protected SiteConfigServiceImpl siteConfigService;
+
     protected ContentTypeServiceImpl contentTypeService;
+
+    protected ResourceService resourceService;
+
+    protected XDataService xDataService;
 
     protected Context projectContext;
 
@@ -185,7 +195,8 @@ public abstract class AbstractContentSynchronizerTest
                 .build()
                 .initialize();
 
-            projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+            projectService =
+                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
 
             project = projectService.create( CreateProjectParams.create()
                                                  .name( ProjectName.from( "source_project" ) )
@@ -286,7 +297,7 @@ public abstract class AbstractContentSynchronizerTest
 
         mediaInfoService = new MediaInfoServiceImpl( extractor );
 
-        XDataService xDataService = mock( XDataService.class );
+        xDataService = mock( XDataService.class );
 
         MixinService mixinService = mock( MixinService.class );
         when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
@@ -297,7 +308,7 @@ public abstract class AbstractContentSynchronizerTest
 
         contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
-        final ResourceService resourceService = mock( ResourceService.class );
+        resourceService = mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
@@ -310,10 +321,16 @@ public abstract class AbstractContentSynchronizerTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
+
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, ( form, data ) -> {
-            }, ( page ) -> {
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+                                    siteConfigService,
+                                    ( form, data ) -> {
+                                    }, ( page ) -> {
+            }, ( extraDatas ) -> {
             }, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );

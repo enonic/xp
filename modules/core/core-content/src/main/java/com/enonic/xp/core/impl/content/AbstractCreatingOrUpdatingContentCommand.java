@@ -6,33 +6,50 @@ import java.io.UncheckedIOException;
 import java.security.DigestInputStream;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentName;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentValidator;
+import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigService;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMappingService;
+import com.enonic.xp.site.XDataOption;
+import com.enonic.xp.site.XDataOptions;
 
 class AbstractCreatingOrUpdatingContentCommand
     extends AbstractContentCommand
@@ -58,6 +75,10 @@ class AbstractCreatingOrUpdatingContentCommand
 
     protected final LayoutDescriptorService layoutDescriptorService;
 
+    final XDataMappingService xDataMappingService;
+
+    final SiteConfigService siteConfigService;
+
     final boolean allowUnsafeAttachmentNames;
 
     AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
@@ -71,102 +92,62 @@ class AbstractCreatingOrUpdatingContentCommand
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
+        this.xDataMappingService = builder.xDataMappingService;
+        this.siteConfigService = builder.siteConfigService;
     }
 
-    public static class Builder<B extends Builder<B>>
-        extends AbstractContentCommand.Builder<B>
+    ExtraDatas mergeExtraData( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final ExtraDatas extraDatas )
     {
-        private XDataService xDataService;
+        final ExtraDatas.Builder result = ExtraDatas.create();
+        final ApplicationKeys.Builder applicationKeys = ApplicationKeys.create();
 
-        private SiteService siteService;
-
-        private List<ContentProcessor> contentProcessors = List.of();
-
-        private List<ContentValidator> contentValidators = List.of();
-
-        private boolean allowUnsafeAttachmentNames;
-
-        private PageDescriptorService pageDescriptorService;
-
-        private PartDescriptorService partDescriptorService;
-
-        private LayoutDescriptorService layoutDescriptorService;
-
-        Builder()
+        if ( type.isSite() )
         {
+            applicationKeys.add( ApplicationKey.PORTAL );
+
+            SiteConfigsDataSerializer.fromData( data.getRoot() )
+                .stream()
+                .map( SiteConfig::getApplicationKey )
+                .forEach( applicationKeys::add );
+        }
+        else
+        {
+            siteConfigService.getSiteConfigs( parent ).stream().map( SiteConfig::getApplicationKey ).forEach( applicationKeys::add );
         }
 
-        Builder( final AbstractCreatingOrUpdatingContentCommand source )
+        final XDataOptions allowedXData = xDataMappingService.getXDataMappingOptions( type, applicationKeys.build() );
+
+        final Set<XDataName> allowedXDataName =
+            allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );
+
+        for ( ExtraData extraData : extraDatas )
         {
-            super( source );
-            this.xDataService = source.xDataService;
-            this.siteService = source.siteService;
-            this.contentProcessors = source.contentProcessors;
-            this.contentValidators = source.contentValidators;
-            this.pageDescriptorService = source.pageDescriptorService;
-            this.partDescriptorService = source.partDescriptorService;
-            this.layoutDescriptorService = source.layoutDescriptorService;
+            if ( !allowedXDataName.contains( extraData.getName() ) )
+            {
+                throw new IllegalArgumentException( "Not allowed extraData: " + extraData.getName() );
+            }
         }
 
-        @SuppressWarnings("unchecked")
-        B xDataService( final XDataService xDataService )
+        for ( XDataOption xDataOption : allowedXData )
         {
-            this.xDataService = xDataService;
-            return (B) this;
+            final boolean isOptional = xDataOption.optional();
+            final XData xData = xDataOption.xdata();
+            final ExtraData extraData = extraDatas.getMetadata( xData.getName() );
+
+            if ( extraData == null )
+            {
+                if ( !isOptional )
+                {
+                    result.add( new ExtraData( xData.getName(), new PropertyTree() ) );
+                }
+            }
+            else
+            {
+                result.add( extraData );
+            }
         }
 
-        @SuppressWarnings("unchecked")
-        B siteService( final SiteService siteService )
-        {
-            this.siteService = siteService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        B contentProcessors( final List<ContentProcessor> contentProcessors )
-        {
-            this.contentProcessors = contentProcessors;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        B contentValidators( final List<ContentValidator> contentValidators )
-        {
-            this.contentValidators = contentValidators;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        B allowUnsafeAttachmentNames( final boolean allowUnsafeAttachmentNames )
-        {
-            this.allowUnsafeAttachmentNames = allowUnsafeAttachmentNames;
-            return (B) this;
-        }
-
-        B pageDescriptorService( final PageDescriptorService pageDescriptorService )
-        {
-            this.pageDescriptorService = pageDescriptorService;
-            return (B) this;
-        }
-
-        B partDescriptorService( final PartDescriptorService partDescriptorService )
-        {
-            this.partDescriptorService = partDescriptorService;
-            return (B) this;
-        }
-
-        B layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
-        {
-            this.layoutDescriptorService = layoutDescriptorService;
-            return (B) this;
-        }
-
-        @Override
-        void validate()
-        {
-            super.validate();
-            Objects.requireNonNull( xDataService );
-        }
+        return result.build();
     }
 
     static void populateByteSourceProperties( final ByteSource byteSource, Attachment.Builder builder )
@@ -235,6 +216,120 @@ class AbstractCreatingOrUpdatingContentCommand
     {
         return fileName.endsWith( ".exe" ) || fileName.endsWith( ".msi" ) || fileName.endsWith( ".dmg" ) || fileName.endsWith( ".bat" ) ||
             fileName.endsWith( ".sh" );
+    }
+
+    public static class Builder<B extends Builder<B>>
+        extends AbstractContentCommand.Builder<B>
+    {
+        private XDataService xDataService;
+
+        private SiteService siteService;
+
+        private List<ContentProcessor> contentProcessors = List.of();
+
+        private List<ContentValidator> contentValidators = List.of();
+
+        private boolean allowUnsafeAttachmentNames;
+
+        private PageDescriptorService pageDescriptorService;
+
+        private PartDescriptorService partDescriptorService;
+
+        private LayoutDescriptorService layoutDescriptorService;
+
+        private XDataMappingService xDataMappingService;
+
+        private SiteConfigService siteConfigService;
+
+        Builder()
+        {
+        }
+
+        Builder( final AbstractCreatingOrUpdatingContentCommand source )
+        {
+            super( source );
+            this.xDataService = source.xDataService;
+            this.siteService = source.siteService;
+            this.contentProcessors = source.contentProcessors;
+            this.contentValidators = source.contentValidators;
+            this.pageDescriptorService = source.pageDescriptorService;
+            this.partDescriptorService = source.partDescriptorService;
+            this.layoutDescriptorService = source.layoutDescriptorService;
+            this.xDataMappingService = source.xDataMappingService;
+            this.siteConfigService = source.siteConfigService;
+        }
+
+        @SuppressWarnings("unchecked")
+        B xDataService( final XDataService xDataService )
+        {
+            this.xDataService = xDataService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B siteService( final SiteService siteService )
+        {
+            this.siteService = siteService;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B contentProcessors( final List<ContentProcessor> contentProcessors )
+        {
+            this.contentProcessors = contentProcessors;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B contentValidators( final List<ContentValidator> contentValidators )
+        {
+            this.contentValidators = contentValidators;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        B allowUnsafeAttachmentNames( final boolean allowUnsafeAttachmentNames )
+        {
+            this.allowUnsafeAttachmentNames = allowUnsafeAttachmentNames;
+            return (B) this;
+        }
+
+        B pageDescriptorService( final PageDescriptorService pageDescriptorService )
+        {
+            this.pageDescriptorService = pageDescriptorService;
+            return (B) this;
+        }
+
+        B partDescriptorService( final PartDescriptorService partDescriptorService )
+        {
+            this.partDescriptorService = partDescriptorService;
+            return (B) this;
+        }
+
+        B layoutDescriptorService( final LayoutDescriptorService layoutDescriptorService )
+        {
+            this.layoutDescriptorService = layoutDescriptorService;
+            return (B) this;
+        }
+
+        B xDataMappingService( final XDataMappingService xDataMappingService )
+        {
+            this.xDataMappingService = xDataMappingService;
+            return (B) this;
+        }
+
+        B siteConfigService( final SiteConfigService siteConfigService )
+        {
+            this.siteConfigService = siteConfigService;
+            return (B) this;
+        }
+
+        @Override
+        void validate()
+        {
+            super.validate();
+            Objects.requireNonNull( xDataService );
+        }
     }
 
 }
