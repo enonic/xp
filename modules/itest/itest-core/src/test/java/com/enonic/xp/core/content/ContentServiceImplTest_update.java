@@ -321,7 +321,7 @@ public class ContentServiceImplTest_update
                 .addFormItem( Input.create().name( "inputToBeMixedIn" ).label( "Mixed in" ).inputType( InputTypeName.TEXT_LINE ).build() )
                 .build();
 
-            Mockito.when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
+            when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
 
             final ExtraDatas extraDatas = createExtraDatas();
 

@@ -5,5 +5,5 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 public interface XDataMappingService
 {
-    XDataOptions fetch( final ContentTypeName type, ApplicationKeys applicationKeys );
+    XDataOptions fetch( ContentTypeName type, ApplicationKeys applicationKeys );
 }
