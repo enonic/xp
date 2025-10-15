@@ -261,6 +261,10 @@ final class UpdateContentCommand
         {
             editor.edit( editableContent );
         }
+
+        editableContent.extraDatas =
+            mergeExtraData( original.getType(), editableContent.data, original.getParentPath(), editableContent.extraDatas );
+
         return Content.create( editableContent.build() ).build();
     }
 

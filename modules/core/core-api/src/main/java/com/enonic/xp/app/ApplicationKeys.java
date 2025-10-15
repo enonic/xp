@@ -50,4 +50,31 @@ public final class ApplicationKeys
     {
         return applicationKeys.isEmpty() ? EMPTY : new ApplicationKeys( applicationKeys );
     }
+
+    public static Builder create()
+    {
+        return new Builder();
+    }
+
+    public static final class Builder
+    {
+        private final ImmutableSet.Builder<ApplicationKey> builder = ImmutableSet.builder();
+
+        public Builder add( final ApplicationKey applicationKey )
+        {
+            builder.add( applicationKey );
+            return this;
+        }
+
+        public Builder addAll( final Iterable<ApplicationKey> applicationKeys )
+        {
+            builder.addAll( applicationKeys );
+            return this;
+        }
+
+        public ApplicationKeys build()
+        {
+            return ApplicationKeys.fromInternal( builder.build() );
+        }
+    }
 }

@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -61,7 +62,11 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigService;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.XDataMappingService;
+import com.enonic.xp.site.XDataOptions;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -91,11 +96,22 @@ public class UpdateContentCommandTest
 
     private final LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
 
+    private final XDataMappingService xDataMappingService = mock( XDataMappingService.class );
+
+    private final SiteConfigService siteConfigService = mock( SiteConfigService.class );
+
     private final ContentNodeTranslator translator = mock( ContentNodeTranslator.class );
 
     private final EventPublisher eventPublisher = mock( EventPublisher.class );
 
     private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpeg" ).build();
+
+    @BeforeEach
+    public void init()
+    {
+        when( siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
+        when( xDataMappingService.getXDataMappingOptions( any(), any() ) ).thenReturn( XDataOptions.empty() );
+    }
 
     @Test
     void given_content_not_found_when_handle_then_NOT_FOUND_is_returned()
@@ -316,6 +332,8 @@ public class UpdateContentCommandTest
             .pageDescriptorService( pageDescriptorService )
             .partDescriptorService( partDescriptorService )
             .layoutDescriptorService( layoutDescriptorService )
+            .xDataMappingService( xDataMappingService )
+            .siteConfigService( siteConfigService )
             .build();
     }
 

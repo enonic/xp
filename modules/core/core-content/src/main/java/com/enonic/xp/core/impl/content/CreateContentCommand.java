@@ -3,10 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -18,7 +15,6 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
@@ -28,7 +24,6 @@ import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
@@ -41,16 +36,9 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.XDataMappingService;
-import com.enonic.xp.site.XDataOption;
-import com.enonic.xp.site.XDataOptions;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -65,10 +53,6 @@ final class CreateContentCommand
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
-    private final XDataMappingService xDataMappingService;
-
-    private final SiteConfigService siteConfigService;
-
     private CreateContentParams params;
 
     private CreateContentCommand( final Builder builder )
@@ -79,8 +63,6 @@ final class CreateContentCommand
         this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
         this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
         this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
-        this.xDataMappingService = builder.xDataMappingService;
-        this.siteConfigService = builder.siteConfigService;
     }
 
     static Builder create()
@@ -98,62 +80,6 @@ final class CreateContentCommand
         return doExecute();
     }
 
-    private ExtraDatas mergeExtraData()
-    {
-        final ExtraDatas.Builder result = ExtraDatas.create();
-        ApplicationKeys applicationKeys;
-
-        if ( params.getType().isSite() )
-        {
-            applicationKeys = SiteConfigsDataSerializer.fromData( params.getData().getRoot() )
-                .stream()
-                .map( SiteConfig::getApplicationKey )
-                .collect( ApplicationKeys.collector() );
-        }
-        else
-        {
-            applicationKeys = siteConfigService.getSiteConfigs( params.getParent() )
-                .stream()
-                .map( SiteConfig::getApplicationKey )
-                .collect( ApplicationKeys.collector() );
-
-        }
-        final XDataOptions allowedXData = xDataMappingService.getXDataMappingOptions( params.getType(), applicationKeys );
-
-        final Set<XDataName> allowedXDataName =
-            allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );
-
-        for ( ExtraData extraData : params.getExtraDatas() )
-        {
-            if ( !allowedXDataName.contains( extraData.getName() ) )
-            {
-                throw new IllegalArgumentException( "Not allowed extraData: " + extraData.getName() );
-            }
-        }
-
-        for ( XDataOption xDataOption : allowedXData )
-        {
-            final boolean isOptional = xDataOption.optional();
-            final XData xData = xDataOption.xdata();
-            final ExtraData extraData = params.getExtraDatas().getMetadata( xData.getName() );
-
-            if ( extraData == null )
-            {
-                if ( !isOptional )
-                {
-                    result.add( new ExtraData( xData.getName(), new PropertyTree() ) );
-                }
-            }
-            else
-            {
-                result.add( extraData );
-            }
-        }
-
-        return result.build();
-    }
-
-
     private Content doExecute()
     {
         checkAccess();
@@ -164,7 +90,7 @@ final class CreateContentCommand
         formDefaultValuesProcessor.setDefaultValues( contentType.getForm(), params.getData() );
         pageFormDefaultValuesProcessor.applyDefaultValues( params.getPage() );
 
-        final ExtraDatas mergedExtraData = mergeExtraData();
+        final ExtraDatas mergedExtraData = mergeExtraData( params.getType(), params.getData(), params.getParent(), params.getExtraDatas() );
         xDataDefaultValuesProcessor.applyDefaultValues( mergedExtraData );
         params = CreateContentParams.create( this.params ).extraDatas( mergedExtraData ).build();
 
@@ -412,10 +338,6 @@ final class CreateContentCommand
 
         private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
 
-        private XDataMappingService xDataMappingService;
-
-        private SiteConfigService siteConfigService;
-
         private Builder()
         {
         }
@@ -455,18 +377,6 @@ final class CreateContentCommand
             return this;
         }
 
-        Builder xDataMappingService( final XDataMappingService xDataMappingService )
-        {
-            this.xDataMappingService = xDataMappingService;
-            return this;
-        }
-
-        Builder siteConfigService( final SiteConfigService siteConfigService )
-        {
-            this.siteConfigService = siteConfigService;
-            return this;
-        }
-
         @Override
         void validate()
         {
@@ -475,8 +385,6 @@ final class CreateContentCommand
             Objects.requireNonNull( formDefaultValuesProcessor );
             Objects.requireNonNull( pageFormDefaultValuesProcessor );
             Objects.requireNonNull( xDataDefaultValuesProcessor );
-            Objects.requireNonNull( xDataMappingService );
-            Objects.requireNonNull( siteConfigService );
             ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 
