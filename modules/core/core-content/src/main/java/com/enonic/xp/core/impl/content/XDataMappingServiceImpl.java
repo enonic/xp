@@ -47,7 +47,7 @@ public final class XDataMappingServiceImpl
             return XDataOptions.empty();
         }
 
-        return getXDataByApps( applicationKeys.stream().distinct().collect( ApplicationKeys.collector() ), type );
+        return getXDataByApps( applicationKeys, type );
     }
 
     public XDataOptions getXDataByApps( final ApplicationKeys applicationKeys, final ContentTypeName type )
