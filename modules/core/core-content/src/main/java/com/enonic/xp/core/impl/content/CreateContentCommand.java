@@ -118,7 +118,7 @@ final class CreateContentCommand
                 .collect( ApplicationKeys.collector() );
 
         }
-        final XDataOptions allowedXData = xDataMappingService.fetch( params.getType(), applicationKeys );
+        final XDataOptions allowedXData = xDataMappingService.getXDataMappingOptions( params.getType(), applicationKeys );
 
         final Set<XDataName> allowedXDataName =
             allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );

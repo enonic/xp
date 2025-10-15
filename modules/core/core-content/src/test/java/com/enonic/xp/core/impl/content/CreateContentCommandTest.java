@@ -98,7 +98,7 @@ public class CreateContentCommandTest
 
         this.translator = new ContentNodeTranslator();
 
-        when( this.xDataMappingService.fetch( any(), any() ) ).thenReturn( XDataOptions.empty() );
+        when( this.xDataMappingService.getXDataMappingOptions( any(), any() ) ).thenReturn( XDataOptions.empty() );
         when( this.siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
         when( this.nodeService.create( any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
     }

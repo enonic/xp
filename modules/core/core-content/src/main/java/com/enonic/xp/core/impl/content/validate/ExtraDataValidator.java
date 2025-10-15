@@ -39,7 +39,7 @@ public class ExtraDataValidator
             final XData xData = this.xDataService.getByName( name );
             if ( xData == null )
             {
-                LOG.warn( "XData not found: '{}", name );
+                LOG.warn( "XData not found: '{}'", name );
                 continue;
             }
 

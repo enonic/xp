@@ -40,7 +40,7 @@ public final class XDataMappingServiceImpl
     }
 
     @Override
-    public XDataOptions fetch( final ContentTypeName type, final ApplicationKeys applicationKeys )
+    public XDataOptions getXDataMappingOptions( final ContentTypeName type, final ApplicationKeys applicationKeys )
     {
         if ( applicationKeys.isEmpty() )
         {
