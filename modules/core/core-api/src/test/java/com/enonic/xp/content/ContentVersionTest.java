@@ -26,7 +26,7 @@ public class ContentVersionTest
         final ContentVersionCommitInfo commitInfo = ContentVersionCommitInfo.create()
             .message( "My version 1" )
             .type( ContentVersionCommitInfo.CommitType.ARCHIVED )
-            .publisher( PrincipalKey.ofAnonymous() )
+            .commiter( PrincipalKey.ofAnonymous() )
             .timestamp( Instant.ofEpochSecond( 1562056003L ) )
             .build();
 

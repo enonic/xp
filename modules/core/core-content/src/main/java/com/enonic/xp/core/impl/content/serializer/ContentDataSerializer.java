@@ -283,7 +283,7 @@ public final class ContentDataSerializer
 
     private void extractPublishInfo( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
-        builder.publishInfo( publishInfoSerializer.serialize( contentAsSet.getSet( ContentPropertyNames.PUBLISH_INFO ) ) );
+        builder.publishInfo( publishInfoSerializer.serialize( contentAsSet.getSet( PUBLISH_INFO ) ) );
     }
 
     private void extractAttachments( final PropertySet contentAsSet, final Content.Builder<?> builder )

@@ -90,7 +90,7 @@ public final class ContentVersionCommitInfo
         {
         }
 
-        public Builder publisher( final PrincipalKey publisher )
+        public Builder commiter( final PrincipalKey publisher )
         {
             this.publisher = publisher;
             return this;

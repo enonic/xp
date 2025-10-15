@@ -44,7 +44,7 @@ class ContentVersionFactory
             .workflowInfo( workflowInfoSerializer.extract( data.getSet( ContentPropertyNames.WORKFLOW_INFO ) ) )
             .modifier( PrincipalKey.from( data.getString( ContentPropertyNames.MODIFIER ) ) )
             .modified( data.getInstant( ContentPropertyNames.MODIFIED_TIME ) )
-            .comment( "No comments" );
+            .attributes( nodeVersionMetadata.getAttributes() );
 
         if ( nodeVersionMetadata.getNodeCommitId() != null )
         {
@@ -53,11 +53,12 @@ class ContentVersionFactory
             {
                 final String commitMessage = nodeCommitEntry.getMessage();
                 builder.commitInfo( ContentVersionCommitInfo.create()
-                                        .message( getCommentPart( commitMessage ) )
+                                        .message( commitMessage )
                                         .type( getType( commitMessage ) )
-                                        .publisher( nodeCommitEntry.getCommitter() )
+                                        .commiter( nodeCommitEntry.getCommitter() )
                                         .timestamp( nodeCommitEntry.getTimestamp() )
                                         .build() );
+                builder.comment( getCommentPart( commitMessage ) );
             }
         }
 
