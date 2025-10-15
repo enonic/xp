@@ -30,6 +30,7 @@ class ContentVersionFactory
     public ContentVersion create( final NodeVersionMetadata nodeVersionMetadata )
     {
         final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
+
         final PropertyTree data = nodeVersion.getData();
 
         final ContentVersion.Builder builder = ContentVersion.create()

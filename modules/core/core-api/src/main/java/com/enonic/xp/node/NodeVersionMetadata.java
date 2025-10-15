@@ -39,7 +39,7 @@ public final class NodeVersionMetadata
         nodePath = Objects.requireNonNull( builder.nodePath );
         nodeCommitId = builder.nodeCommitId;
         timestamp = Objects.requireNonNull( builder.timestamp );
-        attributes = ImmutableList.of( ImmutableMap.of( "type", "content.update", "who", "system:su", "when", Instant.now().toString() ) );
+        attributes = ImmutableList.of( ImmutableMap.of( "_key", "content.update", "user", "system:su", "ts", Instant.now().toString() ) );
     }
 
     public static Builder create()

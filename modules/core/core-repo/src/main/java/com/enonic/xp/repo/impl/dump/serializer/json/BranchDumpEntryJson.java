@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.dump.serializer.json;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -41,8 +43,8 @@ public class BranchDumpEntryJson
     {
         return BranchDumpEntry.create().
             nodeId( NodeId.from( json.getNodeId() ) ).
-            meta( VersionDumpEntryJson.fromJson( json.getMeta() ) ).
-            setBinaryReferences( json.getBinaries() ).
+            meta( VersionDumpEntryJson.fromJson( json.getMeta() ) ).setBinaryReferences(
+            Objects.requireNonNullElse( json.getBinaries(), Collections.emptyList() ) ).
             build();
     }
 

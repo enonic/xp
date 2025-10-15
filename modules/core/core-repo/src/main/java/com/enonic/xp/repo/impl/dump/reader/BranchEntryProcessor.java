@@ -11,6 +11,7 @@ import com.google.common.io.LineProcessor;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
@@ -54,18 +55,12 @@ public class BranchEntryProcessor
             return;
         }
 
-        final Node.Builder nodeBuilder = Node.create( nodeVersion ).nodeVersionId( meta.getVersion() ).timestamp( meta.getTimestamp().truncatedTo( ChronoUnit.MILLIS ) );
-        if ( !nodeVersion.getId().equals( Node.ROOT_UUID ) )
-        {
-            nodeBuilder.parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() );
-        }
-
         try
         {
-            this.nodeService.loadNode( LoadNodeParams.create().
-                node( nodeBuilder.build() ).
-                nodeCommitId( meta.getNodeCommitId() ).
-                build() );
+            final Node node = NodeFactory.create( nodeVersion, meta.getVersion(), meta.getNodePath(),
+                                                  meta.getTimestamp().truncatedTo( ChronoUnit.MILLIS ) );
+
+            this.nodeService.loadNode( LoadNodeParams.create().node( node ).nodeCommitId( meta.getNodeCommitId() ).build() );
 
             addBinary( nodeVersion, result );
 
