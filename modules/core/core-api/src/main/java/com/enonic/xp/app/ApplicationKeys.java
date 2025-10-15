@@ -60,6 +60,11 @@ public final class ApplicationKeys
     {
         private final ImmutableSet.Builder<ApplicationKey> builder = ImmutableSet.builder();
 
+        private Builder()
+        {
+
+        }
+
         public Builder add( final ApplicationKey applicationKey )
         {
             builder.add( applicationKey );
