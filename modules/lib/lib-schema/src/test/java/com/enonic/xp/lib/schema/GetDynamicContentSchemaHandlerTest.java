@@ -101,7 +101,7 @@ public class GetDynamicContentSchemaHandlerTest
             return new DynamicSchemaResult<>( mixin, resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/getMixin.js" );
+        runScript( "/lib/xp/examples/schema/getFormFragment.js" );
     }
 
     @Test

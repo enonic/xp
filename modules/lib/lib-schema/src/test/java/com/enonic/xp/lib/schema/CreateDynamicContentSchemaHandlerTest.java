@@ -79,7 +79,7 @@ public class CreateDynamicContentSchemaHandlerTest
             return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/createMixin.js" );
+        runScript( "/lib/xp/examples/schema/createFormFragment.js" );
     }
 
     @Test

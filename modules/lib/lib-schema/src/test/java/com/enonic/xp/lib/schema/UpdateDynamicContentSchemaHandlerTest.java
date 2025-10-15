@@ -68,7 +68,7 @@ public class UpdateDynamicContentSchemaHandlerTest
             return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/updateMixin.js" );
+        runScript( "/lib/xp/examples/schema/updateFormFragment.js" );
     }
 
     @Test

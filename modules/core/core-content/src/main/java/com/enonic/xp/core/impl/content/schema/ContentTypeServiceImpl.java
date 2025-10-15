@@ -17,7 +17,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.xp.schema.formfragment.FormFragmentService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 
 @Component(immediate = true)
 public final class ContentTypeServiceImpl
@@ -25,14 +25,14 @@ public final class ContentTypeServiceImpl
 {
     private final ContentTypeRegistry registry;
 
-    private final FormFragmentService mixinService;
+    private final CmsFormFragmentService formFragmentService;
 
     @Activate
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
-                                   final @Reference FormFragmentService mixinService )
+                                   final @Reference CmsFormFragmentService formFragmentService )
     {
         this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
-        this.mixinService = mixinService;
+        this.formFragmentService = formFragmentService;
     }
 
     @Override
@@ -78,7 +78,7 @@ public final class ContentTypeServiceImpl
 
     private ContentType transformInlineMixins( final ContentType contentType )
     {
-        return ContentType.create( contentType ).form( mixinService.inlineFormItems( contentType.getForm() ) ).build();
+        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
     }
 
     private ContentTypes transformInlineMixins( final ContentTypes contentTypes )

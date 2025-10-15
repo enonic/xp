@@ -9,7 +9,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.formfragment.FormFragmentService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -18,7 +18,7 @@ public final class ContentTypeHandler
 {
     private Supplier<ContentTypeService> contentTypeService;
 
-    private Supplier<FormFragmentService> mixinService;
+    private Supplier<CmsFormFragmentService> mixinService;
 
     private String name;
 
@@ -47,7 +47,7 @@ public final class ContentTypeHandler
     public void initialize( final BeanContext context )
     {
         contentTypeService = context.getService( ContentTypeService.class );
-        mixinService = context.getService( FormFragmentService.class );
+        mixinService = context.getService( CmsFormFragmentService.class );
     }
 
 }

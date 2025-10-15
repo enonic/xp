@@ -25,23 +25,23 @@ import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.formfragment.FormFragmentService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptors;
 
 @Component(immediate = true)
-public final class FormFragmentServiceImpl
-    implements FormFragmentService
+public final class CmsFormFragmentServiceImpl
+    implements CmsFormFragmentService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( FormFragmentServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CmsFormFragmentServiceImpl.class );
 
-    private final FormFragmentLoader mixinLoader;
+    private final CmsFormFragmentLoader mixinLoader;
 
     private final ApplicationService applicationService;
 
     @Activate
-    public FormFragmentServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
+    public CmsFormFragmentServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
-        this.mixinLoader = new FormFragmentLoader( resourceService );
+        this.mixinLoader = new CmsFormFragmentLoader( resourceService );
         this.applicationService = applicationService;
     }
 

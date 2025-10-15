@@ -1,11 +1,14 @@
-package com.enonic.xp.schema.formfragment;
+package com.enonic.xp.schema.content;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptors;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 
 @PublicApi
-public interface FormFragmentService
+public interface CmsFormFragmentService
 {
     FormFragmentDescriptor getByName( FormFragmentName name );
 

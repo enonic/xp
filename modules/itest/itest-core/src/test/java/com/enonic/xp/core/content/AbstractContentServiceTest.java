@@ -109,7 +109,7 @@ import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.formfragment.FormFragmentService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -153,7 +153,7 @@ public abstract class AbstractContentServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    protected FormFragmentService mixinService;
+    protected CmsFormFragmentService mixinService;
 
     protected XDataService xDataService;
 
@@ -263,7 +263,7 @@ public abstract class AbstractContentServiceTest
         nodeService =
             new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
-        mixinService = mock( FormFragmentService.class );
+        mixinService = mock( CmsFormFragmentService.class );
         when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         xDataService = mock( XDataService.class );

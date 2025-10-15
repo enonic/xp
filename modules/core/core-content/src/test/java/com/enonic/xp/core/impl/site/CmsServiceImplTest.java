@@ -11,7 +11,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.formfragment.FormFragmentService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.XDataMappings;
 
@@ -25,14 +25,14 @@ import static org.mockito.Mockito.when;
 public class CmsServiceImplTest
     extends ApplicationTestSupport
 {
-    protected FormFragmentService mixinService;
+    protected CmsFormFragmentService mixinService;
 
     protected CmsServiceImpl service;
 
     @Override
     protected void initialize()
     {
-        this.mixinService = mock( FormFragmentService.class );
+        this.mixinService = mock( CmsFormFragmentService.class );
         when( this.mixinService.inlineFormItems( Mockito.any() ) ).thenAnswer( ( invocation ) -> invocation.getArguments()[0] );
         addApplication( "myapp", "/apps/myapp" );
 

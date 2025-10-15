@@ -9,12 +9,12 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 
-final class FormFragmentLoader
+final class CmsFormFragmentLoader
     extends SchemaLoader<FormFragmentName, FormFragmentDescriptor>
 {
-    FormFragmentLoader( final ResourceService resourceService )
+    CmsFormFragmentLoader( final ResourceService resourceService )
     {
-        super( resourceService, "/form-fragments" );
+        super( resourceService, "/cms/form-fragments" );
     }
 
     @Override

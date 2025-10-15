@@ -376,7 +376,7 @@ public class DynamicSchemaServiceImplTest
     public void createMixinSchema()
         throws Exception
     {
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_formFragment.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mymixin" ) )
@@ -405,10 +405,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/form-fragments/mymixin/mymixin.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/form-fragments/mymixin/mymixin.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/form-fragments/mymixin/mymixin.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/mymixin/mymixin.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -417,7 +417,7 @@ public class DynamicSchemaServiceImplTest
     public void createMixinSchemaAsDevSchemaAdmin()
         throws Exception
     {
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_formFragment.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mymixin" ) )
@@ -435,7 +435,7 @@ public class DynamicSchemaServiceImplTest
     public void createMixinSchemaAsNonSchemaAdmin()
         throws Exception
     {
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_formFragment.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mymixin" ) )
@@ -463,7 +463,7 @@ public class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_formFragment.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mymixin" ) )
@@ -492,10 +492,10 @@ public class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/form-fragments/mymixin/mymixin.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/form-fragments/mymixin/mymixin.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/form-fragments/mymixin/mymixin.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/mymixin/mymixin.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -516,7 +516,7 @@ public class DynamicSchemaServiceImplTest
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_formFragment.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mymixin" ) )
@@ -545,7 +545,7 @@ public class DynamicSchemaServiceImplTest
 
         createSchemaAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_mixin.yml" );
+        final String resource = readResource( "_formFragment.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
             .name( FormFragmentName.from( "myapp:mymixin" ) )
@@ -1272,19 +1272,19 @@ public class DynamicSchemaServiceImplTest
         DynamicSchemaResult<FormFragmentDescriptor> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "my-other-app:mytype" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
 
@@ -1320,19 +1320,19 @@ public class DynamicSchemaServiceImplTest
         DynamicSchemaResult<FormFragmentDescriptor> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
         DynamicSchemaResult<FormFragmentDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( FormFragmentName.from( "my-other-app:mytype" ) )
-                .resource( readResource( "_mixin.yml" ) )
+                .resource( readResource( "_formFragment.yml" ) )
                 .type( DynamicContentSchemaType.FORM_FRAGMENT )
                 .build() ) );
 
@@ -1367,17 +1367,17 @@ public class DynamicSchemaServiceImplTest
 
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                                            .name( FormFragmentName.from( "myapp:mytype1" ) )
-                                                                                           .resource( readResource( "_mixin.yml" ) )
+                                                                                           .resource( readResource( "_formFragment.yml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                                            .name( FormFragmentName.from( "myapp:mytype2" ) )
-                                                                                           .resource( readResource( "_mixin.yml" ) )
+                                                                                           .resource( readResource( "_formFragment.yml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
         createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
                                                                                            .name( FormFragmentName.from( "my-other-app:mytype" ) )
-                                                                                           .resource( readResource( "_mixin.yml" ) )
+                                                                                           .resource( readResource( "_formFragment.yml" ) )
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
 

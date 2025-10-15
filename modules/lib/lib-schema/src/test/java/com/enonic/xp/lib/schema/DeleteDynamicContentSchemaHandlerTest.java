@@ -33,7 +33,7 @@ public class DeleteDynamicContentSchemaHandlerTest
             return DynamicContentSchemaType.FORM_FRAGMENT == schemaParams.getType();
         } );
 
-        runScript( "/lib/xp/examples/schema/deleteMixin.js" );
+        runScript( "/lib/xp/examples/schema/deleteFormFragment.js" );
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.core.impl.form.mixin.FormFragmentServiceImpl;
+import com.enonic.xp.core.impl.form.mixin.CmsFormFragmentServiceImpl;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FormFragmentServiceImplTest
     extends ApplicationTestSupport
 {
-    protected FormFragmentServiceImpl service;
+    protected CmsFormFragmentServiceImpl service;
 
     @Override
     protected void initialize()
     {
-        this.service = new FormFragmentServiceImpl( this.applicationService, this.resourceService );
+        this.service = new CmsFormFragmentServiceImpl( this.applicationService, this.resourceService );
     }
 
     @Test
