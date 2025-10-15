@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
@@ -65,11 +64,18 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.page.EditablePage;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.project.ModifyProjectParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
+import com.enonic.xp.resource.ResourceProcessor;
+import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteDescriptor;
+import com.enonic.xp.site.XDataMapping;
+import com.enonic.xp.site.XDataMappings;
 
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -83,6 +89,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.when;
 
 public class ProjectContentEventListenerTest
     extends AbstractContentSynchronizerTest
@@ -476,8 +484,34 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testUpdated()
+    public void testUpdatedWithExtradata()
     {
+        final ApplicationKey myApp = ApplicationKey.from( "myApp" );
+        final XDataName xDataName = XDataName.from( myApp, "xData" );
+
+        projectContext.runWith( () -> projectService.modify( ModifyProjectParams.create()
+                                                                 .addSiteConfig( SiteConfig.create()
+                                                                                     .application( myApp )
+                                                                                     .config( new PropertyTree() )
+                                                                                     .build() )
+                                                                 .name( ProjectName.from( projectContext.getRepositoryId() ) )
+                                                                 .displayName( "new display name" )
+                                                                 .build() ) );
+
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+                                                                                                  .applicationKey( myApp )
+                                                                                                  .xDataMappings( XDataMappings.from(
+                                                                                                      XDataMapping.create()
+                                                                                                          .xDataName( xDataName )
+                                                                                                          .allowContentTypes(
+                                                                                                              "base:folder" )
+                                                                                                          .optional( true )
+                                                                                                          .build() ) )
+                                                                                                  .build() );
+
+        final XData xData = XData.create().name( xDataName ).form( Form.create().build() ).build();
+        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
         final Content updatedContent = projectContext.callWith(
@@ -508,7 +542,7 @@ public class ProjectContentEventListenerTest
             () -> contentService.update( new UpdateContentParams().contentId( sourceContent2.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
-                edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
+                edit.extraDatas = ExtraDatas.create().build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
@@ -1166,7 +1200,7 @@ public class ProjectContentEventListenerTest
 
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "abc:abc" );
 
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) )
+        when( pageDescriptorService.getByKey( pageDescriptorKey ) )
             .thenReturn( PageDescriptor.create()
                              .displayName( "Landing page" )
                              .config( pageDescriptorForm )

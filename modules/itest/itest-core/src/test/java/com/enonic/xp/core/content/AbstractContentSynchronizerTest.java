@@ -107,6 +107,10 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
+    protected ResourceService resourceService;
+
+    protected XDataService xDataService;
+
     protected Context projectContext;
 
     protected Context secondProjectContext;
@@ -293,7 +297,7 @@ public abstract class AbstractContentSynchronizerTest
 
         mediaInfoService = new MediaInfoServiceImpl( extractor );
 
-        XDataService xDataService = mock( XDataService.class );
+        xDataService = mock( XDataService.class );
 
         MixinService mixinService = mock( MixinService.class );
         when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
@@ -304,7 +308,7 @@ public abstract class AbstractContentSynchronizerTest
 
         contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
-        final ResourceService resourceService = mock( ResourceService.class );
+        resourceService = mock( ResourceService.class );
         final SiteServiceImpl siteService = new SiteServiceImpl();
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );

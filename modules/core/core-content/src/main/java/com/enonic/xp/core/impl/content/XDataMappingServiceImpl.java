@@ -50,7 +50,7 @@ public final class XDataMappingServiceImpl
         return getXDataByApps( applicationKeys, type );
     }
 
-    public XDataOptions getXDataByApps( final ApplicationKeys applicationKeys, final ContentTypeName type )
+    private XDataOptions getXDataByApps( final ApplicationKeys applicationKeys, final ContentTypeName type )
     {
         final XDataMappings.Builder builder = XDataMappings.create();
 
