@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;

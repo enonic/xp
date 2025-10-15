@@ -11,7 +11,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
@@ -37,8 +37,8 @@ class SubmitTaskHandlerTest
         addService( TaskService.class, taskService );
         final TaskDescriptorService taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         addService( TaskDescriptorService.class, taskDescriptorService );
-        final MixinService mixinService = Mockito.mock( MixinService.class );
-        addService( MixinService.class, mixinService );
+        final FormFragmentService mixinService = Mockito.mock( FormFragmentService.class );
+        addService( FormFragmentService.class, mixinService );
 
         final Form cfg1 = Form.create().
             addFormItem( Input.create().

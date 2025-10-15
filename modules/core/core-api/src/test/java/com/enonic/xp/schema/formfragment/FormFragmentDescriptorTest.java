@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MixinTest
+public class FormFragmentDescriptorTest
 {
 
     @Test

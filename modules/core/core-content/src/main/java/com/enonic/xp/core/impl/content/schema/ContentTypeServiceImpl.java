@@ -17,7 +17,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 
 @Component(immediate = true)
 public final class ContentTypeServiceImpl
@@ -25,11 +25,11 @@ public final class ContentTypeServiceImpl
 {
     private final ContentTypeRegistry registry;
 
-    private final MixinService mixinService;
+    private final FormFragmentService mixinService;
 
     @Activate
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
-                                   final @Reference MixinService mixinService )
+                                   final @Reference FormFragmentService mixinService )
     {
         this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
         this.mixinService = mixinService;

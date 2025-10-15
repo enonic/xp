@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.core.impl.form.mixin.MixinServiceImpl;
+import com.enonic.xp.core.impl.form.mixin.FormFragmentServiceImpl;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -12,34 +12,34 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
-import com.enonic.xp.schema.mixin.FormFragmentName;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MixinServiceImplTest
+public class FormFragmentServiceImplTest
     extends ApplicationTestSupport
 {
-    protected MixinServiceImpl service;
+    protected FormFragmentServiceImpl service;
 
     @Override
     protected void initialize()
     {
-        this.service = new MixinServiceImpl( this.applicationService, this.resourceService );
+        this.service = new FormFragmentServiceImpl( this.applicationService, this.resourceService );
     }
 
     @Test
     public void testEmpty()
     {
-        final Mixins types1 = this.service.getAll();
+        final FormFragmentDescriptors types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 0, types1.getSize() );
 
-        final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
+        final FormFragmentDescriptors types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
         assertNotNull( types2 );
         assertEquals( 0, types2.getSize() );
 
@@ -52,15 +52,15 @@ public class MixinServiceImplTest
     {
         initializeApps();
 
-        final Mixins types1 = this.service.getAll();
+        final FormFragmentDescriptors types1 = this.service.getAll();
         assertNotNull( types1 );
         assertEquals( 8, types1.getSize() );
 
-        final Mixins types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
+        final FormFragmentDescriptors types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( types2 );
         assertEquals( 2, types2.getSize() );
 
-        final Mixins types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
+        final FormFragmentDescriptors types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
         assertNotNull( types3 );
         assertEquals( 6, types3.getSize() );
 

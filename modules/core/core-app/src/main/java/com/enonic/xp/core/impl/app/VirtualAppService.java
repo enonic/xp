@@ -168,7 +168,7 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.MIXIN_ROOT_NAME )
+                                       .name( VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME )
                                        .parent( parent )
                                        .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();

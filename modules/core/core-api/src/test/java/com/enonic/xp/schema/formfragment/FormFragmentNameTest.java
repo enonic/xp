@@ -1,10 +1,10 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class MixinNameTest
+public class FormFragmentNameTest
 {
     @Test
     public void equalsContract()

@@ -43,7 +43,7 @@ public final class NodeResourceApplicationUrlResolver
         final CompareExpr underSitePath = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
             "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) );
         final CompareExpr underFormFragmentsPath = CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
-            "/" + applicationKey + "/" + VirtualAppConstants.MIXIN_ROOT_NAME + "/*/*" ) );
+            "/" + applicationKey + "/" + VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME + "/*/*" ) );
 
         final QueryExpr query = QueryExpr.from( LogicalExpr.or( underSitePath, underFormFragmentsPath ) );
 
@@ -62,7 +62,7 @@ public final class NodeResourceApplicationUrlResolver
     public Resource findResource( final String path )
     {
         if ( !( path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) ||
-            path.startsWith( "/" + VirtualAppConstants.MIXIN_ROOT_NAME + "/" ) ) )
+            path.startsWith( "/" + VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME + "/" ) ) )
         {
             return null;
         }

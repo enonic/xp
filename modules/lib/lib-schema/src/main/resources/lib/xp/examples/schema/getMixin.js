@@ -6,7 +6,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Fetch virtual mixin type.
 var result = schemaLib.getSchema({
-    name: 'mymixin',
+    name: 'myapp:mymixin',
     type: 'FORM_FRAGMENT'
 });
 
@@ -22,7 +22,7 @@ assert.assertJsonEquals({
     createdTime: '2009-01-01T10:00:00Z',
     creator: 'user:system:anonymous',
     modifiedTime: '2010-01-01T10:00:00Z',
-    resource: '<mixin><some-data></some-data></mixin>',
+    resource: 'displayName: \"Virtual FormFragment\"\ndescription: \"FormFragment description\"\nform:\n- type: \"TextLine\"\n  name: \"text\"\n  label: \"Text\"\n',
     type: 'FORM_FRAGMENT',
     form: [
         {

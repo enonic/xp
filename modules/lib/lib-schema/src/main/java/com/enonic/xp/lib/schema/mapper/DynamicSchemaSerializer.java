@@ -75,7 +75,7 @@ public class DynamicSchemaSerializer
         }
         else if ( item instanceof FormFragment )
         {
-            serializeInlineMixin( gen, (FormFragment) item );
+            serializeFormFragmentMixin( gen, (FormFragment) item );
         }
         else if ( item instanceof FormOptionSet )
         {
@@ -152,7 +152,7 @@ public class DynamicSchemaSerializer
         gen.end();
     }
 
-    private static void serializeInlineMixin( final MapGenerator gen, final FormFragment inlineMixin )
+    private static void serializeFormFragmentMixin( final MapGenerator gen, final FormFragment inlineMixin )
     {
         gen.map();
         gen.value( "formItemType", "FormFragment" );

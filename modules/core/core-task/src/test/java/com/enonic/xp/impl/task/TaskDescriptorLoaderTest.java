@@ -9,7 +9,7 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +28,7 @@ public class TaskDescriptorLoaderTest
     @Override
     protected void initialize()
     {
-        MixinService mixinService = mock( MixinService.class );
+        FormFragmentService mixinService = mock( FormFragmentService.class );
         when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         this.loader = new TaskDescriptorLoader( this.resourceService, mixinService );

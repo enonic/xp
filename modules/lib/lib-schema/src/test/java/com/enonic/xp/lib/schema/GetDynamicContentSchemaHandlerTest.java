@@ -14,8 +14,8 @@ import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.security.User;
 
@@ -89,9 +89,16 @@ public class GetDynamicContentSchemaHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<mixin><some-data></some-data></mixin>" );
+            when( resource.readString() ).thenReturn( """
+                                                          displayName: "Virtual FormFragment"
+                                                          description: "FormFragment description"
+                                                          form:
+                                                          - type: "TextLine"
+                                                            name: "text"
+                                                            label: "Text"
+                                                          """ );
 
-            return new DynamicSchemaResult<FormFragmentDescriptor>( mixin, resource );
+            return new DynamicSchemaResult<>( mixin, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getMixin.js" );

@@ -103,8 +103,8 @@ import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.RoleKeys;
@@ -399,7 +399,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "Virtual Mixin", mixin.getDisplayName() );
         assertEquals( "Mixin description", mixin.getDescription() );
         assertEquals( 2, mixin.getForm().size() );
-        assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
+        assertEquals( "myapp:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
@@ -486,7 +486,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "Virtual Mixin", mixin.getDisplayName() );
         assertEquals( "Mixin description", mixin.getDescription() );
         assertEquals( 2, mixin.getForm().size() );
-        assertEquals( "myapplication:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
+        assertEquals( "myapp:inline", mixin.getForm().getInlineMixin( "inline" ).getFormFragmentName().toString() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );

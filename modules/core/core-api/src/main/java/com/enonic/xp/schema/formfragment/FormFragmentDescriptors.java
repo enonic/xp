@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -10,19 +10,19 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
-public final class Mixins
+public final class FormFragmentDescriptors
     extends AbstractImmutableEntityList<FormFragmentDescriptor>
 {
-    private static final Mixins EMPTY = new Mixins( ImmutableList.of() );
+    private static final FormFragmentDescriptors EMPTY = new FormFragmentDescriptors( ImmutableList.of() );
 
-    private Mixins( final ImmutableList<FormFragmentDescriptor> list )
+    private FormFragmentDescriptors( final ImmutableList<FormFragmentDescriptor> list )
     {
         super( list );
     }
 
-    public MixinNames getNames()
+    public FormFragmentNames getNames()
     {
-        return stream().map( BaseSchema::getName ).collect( MixinNames.collector() );
+        return stream().map( BaseSchema::getName ).collect( FormFragmentNames.collector() );
     }
 
     public FormFragmentDescriptor getMixin( final FormFragmentName mixinName )
@@ -30,29 +30,29 @@ public final class Mixins
         return stream().filter( m -> mixinName.equals( m.getName() ) ).findFirst().orElse( null );
     }
 
-    public static Mixins empty()
+    public static FormFragmentDescriptors empty()
     {
         return EMPTY;
     }
 
-    public static Mixins from( final FormFragmentDescriptor... mixins )
+    public static FormFragmentDescriptors from( final FormFragmentDescriptor... mixins )
     {
         return fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Mixins from( final Iterable<FormFragmentDescriptor> mixins )
+    public static FormFragmentDescriptors from( final Iterable<FormFragmentDescriptor> mixins )
     {
-        return mixins instanceof Mixins m ? m : fromInternal( ImmutableList.copyOf( mixins ) );
+        return mixins instanceof FormFragmentDescriptors m ? m : fromInternal( ImmutableList.copyOf( mixins ) );
     }
 
-    public static Collector <FormFragmentDescriptor, ?, Mixins> collector()
+    public static Collector <FormFragmentDescriptor, ?, FormFragmentDescriptors> collector()
     {
-        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), Mixins::fromInternal );
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), FormFragmentDescriptors::fromInternal );
     }
 
-    private static Mixins fromInternal( final ImmutableList<FormFragmentDescriptor> list )
+    private static FormFragmentDescriptors fromInternal( final ImmutableList<FormFragmentDescriptor> list )
     {
-        return list.isEmpty() ? EMPTY : new Mixins( list );
+        return list.isEmpty() ? EMPTY : new FormFragmentDescriptors( list );
     }
 
     public static Builder create()
@@ -80,7 +80,7 @@ public final class Mixins
             return this;
         }
 
-        public Mixins build()
+        public FormFragmentDescriptors build()
         {
             return fromInternal( builder.build() );
         }

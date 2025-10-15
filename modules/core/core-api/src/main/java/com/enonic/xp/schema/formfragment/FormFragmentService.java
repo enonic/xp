@@ -1,17 +1,17 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 
 @PublicApi
-public interface MixinService
+public interface FormFragmentService
 {
     FormFragmentDescriptor getByName( FormFragmentName name );
 
-    Mixins getAll();
+    FormFragmentDescriptors getAll();
 
-    Mixins getByApplication( ApplicationKey applicationKey );
+    FormFragmentDescriptors getByApplication( ApplicationKey applicationKey );
 
     Form inlineFormItems( Form form );
 }

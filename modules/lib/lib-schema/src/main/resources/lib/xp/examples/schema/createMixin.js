@@ -13,12 +13,12 @@ form:
     min: 0
     max: 1
 - type: "FormFragment"
-  name: "myapp:inline"`;
+  name: "inline"`;
 
 // BEGIN
 // Create virtual mixin.
 var result = schemaLib.createSchema({
-    name: 'mytype',
+    name: 'myapp:mytype',
     type: 'FORM_FRAGMENT',
     resource
 
@@ -45,7 +45,7 @@ assert.assertJsonEquals({
               '    min: 0\n' +
               '    max: 1\n' +
               '- type: "FormFragment"\n' +
-              '  name: "myapp:inline"',
+              '  name: "inline"',
     type: 'FORM_FRAGMENT',
     form: [
         {

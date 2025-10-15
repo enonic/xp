@@ -6,8 +6,8 @@ import com.enonic.xp.core.impl.schema.SchemaLoader;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 
 final class FormFragmentLoader
     extends SchemaLoader<FormFragmentName, FormFragmentDescriptor>

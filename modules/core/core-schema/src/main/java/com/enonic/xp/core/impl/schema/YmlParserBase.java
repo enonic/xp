@@ -37,7 +37,7 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
@@ -68,7 +68,6 @@ public final class YmlParserBase
 
         mapper.addMixIn( FormFragment.class, FormFragmentMapper.class );
         mapper.addMixIn( FormFragment.Builder.class, FormFragmentMapper.Builder.class );
-//        mapper.addMixIn( FormFragmentName.class, FormFragmentNameMapper.class );
 
         mapper.addMixIn( FormItemSet.class, FormItemSetMapper.class );
         mapper.addMixIn( FormItemSet.Builder.class, FormItemSetMapper.Builder.class );

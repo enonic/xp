@@ -18,7 +18,7 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 
 @Component(immediate = true)
 public class PageDescriptorLoader
@@ -28,10 +28,10 @@ public class PageDescriptorLoader
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
-    private final MixinService mixinService;
+    private final FormFragmentService mixinService;
 
     @Activate
-    public PageDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public PageDescriptorLoader( @Reference final ResourceService resourceService, @Reference final FormFragmentService mixinService )
     {
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, true );
         this.mixinService = mixinService;

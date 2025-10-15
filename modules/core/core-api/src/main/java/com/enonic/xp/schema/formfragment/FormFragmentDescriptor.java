@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import java.util.Objects;
 

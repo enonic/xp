@@ -14,7 +14,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.XDataMapping;
@@ -47,10 +47,10 @@ public class CmsServiceImpl
 
     private final ResourceService resourceService;
 
-    private final MixinService mixinService;
+    private final FormFragmentService mixinService;
 
     @Activate
-    public CmsServiceImpl( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public CmsServiceImpl( @Reference final ResourceService resourceService, @Reference final FormFragmentService mixinService )
     {
         this.resourceService = resourceService;
         this.mixinService = mixinService;

@@ -12,7 +12,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -23,13 +23,13 @@ public class ContentTypeServiceTest
 {
     protected ContentTypeServiceImpl service;
 
-    protected MixinService mixinService;
+    protected FormFragmentService mixinService;
 
     @Override
     protected void initialize()
         throws Exception
     {
-        this.mixinService = Mockito.mock( MixinService.class );
+        this.mixinService = Mockito.mock( FormFragmentService.class );
         this.service = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.mixinService );
     }
 

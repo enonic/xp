@@ -23,23 +23,23 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
-import com.enonic.xp.schema.mixin.FormFragmentName;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.schema.mixin.Mixins;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptors;
 
 @Component(immediate = true)
-public final class MixinServiceImpl
-    implements MixinService
+public final class FormFragmentServiceImpl
+    implements FormFragmentService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( MixinServiceImpl.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FormFragmentServiceImpl.class );
 
     private final FormFragmentLoader mixinLoader;
 
     private final ApplicationService applicationService;
 
     @Activate
-    public MixinServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
+    public FormFragmentServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
         this.mixinLoader = new FormFragmentLoader( resourceService );
         this.applicationService = applicationService;
@@ -52,9 +52,9 @@ public final class MixinServiceImpl
     }
 
     @Override
-    public Mixins getAll()
+    public FormFragmentDescriptors getAll()
     {
-        final Mixins.Builder builder = Mixins.create();
+        final FormFragmentDescriptors.Builder builder = FormFragmentDescriptors.create();
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
         {
@@ -65,9 +65,9 @@ public final class MixinServiceImpl
     }
 
     @Override
-    public Mixins getByApplication( final ApplicationKey key )
+    public FormFragmentDescriptors getByApplication( final ApplicationKey key )
     {
-        return mixinLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect( Mixins.collector() );
+        return mixinLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect( FormFragmentDescriptors.collector() );
     }
 
     @Override

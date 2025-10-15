@@ -4,8 +4,8 @@ package com.enonic.xp.form;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.mixin.FormFragmentDescriptor;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 
 @PublicApi
 public final class FormFragment

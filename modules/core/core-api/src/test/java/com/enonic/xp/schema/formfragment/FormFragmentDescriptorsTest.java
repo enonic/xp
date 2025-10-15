@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.mixin;
+package com.enonic.xp.schema.formfragment;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,14 +10,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MixinsTest
+public class FormFragmentDescriptorsTest
 {
     @Test
     public void test_immutable_mixins()
     {
         FormFragmentName mixinName = FormFragmentName.from( "myapplication:my1" );
         FormFragmentDescriptor mixin = FormFragmentDescriptor.create().name( mixinName ).build();
-        Mixins mixins = Mixins.from( mixin );
+        FormFragmentDescriptors mixins = FormFragmentDescriptors.from( mixin );
 
         assertTrue( mixins.getNames().getSize() == 1 );
         assertNotNull( mixins.getMixin( mixinName ) );
@@ -30,7 +30,7 @@ public class MixinsTest
         {
             assertTrue( e instanceof UnsupportedOperationException );
         }
-        mixins = Mixins.from( Collections.singleton( mixin ) );
+        mixins = FormFragmentDescriptors.from( Collections.singleton( mixin ) );
         try
         {
             mixins.getList().add( null );
@@ -40,9 +40,9 @@ public class MixinsTest
             assertTrue( e instanceof UnsupportedOperationException );
         }
 
-        mixins = Mixins.create().add( mixin ).build();
+        mixins = FormFragmentDescriptors.create().add( mixin ).build();
         assertEquals( 1, mixins.getNames().getSize() );
-        assertTrue( Mixins.empty().isEmpty() );
+        assertTrue( FormFragmentDescriptors.empty().isEmpty() );
     }
 
     @Test
@@ -51,8 +51,8 @@ public class MixinsTest
         FormFragmentDescriptor mixin1 = FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build();
         FormFragmentDescriptor mixin2 = FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build();
 
-        Mixins mixinsFromList = Mixins.create().addAll( Arrays.asList( mixin1, mixin2 ) ).build();
-        Mixins mixinsFromMixins = Mixins.create().addAll( Mixins.create().add( mixin1 ).add( mixin2 ).build() ).build();
+        FormFragmentDescriptors mixinsFromList = FormFragmentDescriptors.create().addAll( Arrays.asList( mixin1, mixin2 ) ).build();
+        FormFragmentDescriptors mixinsFromMixins = FormFragmentDescriptors.create().addAll( FormFragmentDescriptors.create().add( mixin1 ).add( mixin2 ).build() ).build();
 
         assertEquals( 2, mixinsFromList.getSize() );
         assertEquals( 2, mixinsFromMixins.getSize() );
@@ -61,14 +61,15 @@ public class MixinsTest
     @Test
     public void from()
     {
-        Mixins mixins = Mixins.from( FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build(),
-                                     FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build() );
+        FormFragmentDescriptors
+            mixins = FormFragmentDescriptors.from( FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build(),
+                                                   FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build() );
 
         List<FormFragmentDescriptor> mixinList = List.of( FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).build(),
                                                           FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my2" ) ).build() );
 
         assertEquals( 2, mixins.getSize() );
-        assertEquals( 2, Mixins.from( mixins ).getSize() );
-        assertEquals( 2, Mixins.from( mixinList ).getSize() );
+        assertEquals( 2, FormFragmentDescriptors.from( mixins ).getSize() );
+        assertEquals( 2, FormFragmentDescriptors.from( mixinList ).getSize() );
     }
 }

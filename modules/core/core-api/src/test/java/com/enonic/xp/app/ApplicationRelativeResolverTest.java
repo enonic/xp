@@ -4,7 +4,7 @@ package com.enonic.xp.app;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

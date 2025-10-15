@@ -13,13 +13,13 @@ form:
     min: 0
     max: 1
 - type: "FormFragment"
-  name: "myapp:inline"
+  name: "inline"
 `;
 
 // BEGIN
 // Update virtual mixin.
 var result = schemaLib.updateSchema({
-    name: 'mytype',
+    name: 'myapp:mytype',
     type: 'FORM_FRAGMENT',
     resource
 
@@ -36,7 +36,7 @@ assert.assertJsonEquals({
     description: 'Mixin description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'displayName: \"Virtual Mixin\"\ndescription: \"Mixin description\"\nform:\n- type: \"TextLine\"\n  name: \"text2\"\n  label: \"Text 2\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"myapp:inline\"\n',
+    resource: 'displayName: \"Virtual Mixin\"\ndescription: \"Mixin description\"\nform:\n- type: \"TextLine\"\n  name: \"text2\"\n  label: \"Text 2\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"inline\"\n',
     type: 'FORM_FRAGMENT',
     form: [
         {

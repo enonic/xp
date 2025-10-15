@@ -12,7 +12,7 @@ import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.formfragment.FormFragmentService;
 import com.enonic.xp.task.TaskDescriptor;
 
 @Component(immediate = true)
@@ -23,10 +23,10 @@ public final class TaskDescriptorLoader
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
-    private final MixinService mixinService;
+    private final FormFragmentService mixinService;
 
     @Activate
-    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public TaskDescriptorLoader( @Reference final ResourceService resourceService, @Reference final FormFragmentService mixinService )
     {
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
         this.mixinService = mixinService;

@@ -2,7 +2,7 @@ package com.enonic.xp.app;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.FormFragmentName;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XDataName;
 
 @PublicApi

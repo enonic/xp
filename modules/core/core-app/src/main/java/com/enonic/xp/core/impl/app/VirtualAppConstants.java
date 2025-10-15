@@ -24,7 +24,7 @@ public final class VirtualAppConstants
                   .build() )
         .build();
 
-    public static final String MIXIN_ROOT_NAME = "form-fragments";
+    public static final String FORM_FRAGMENTS_ROOT_NAME = "form-fragments";
 
     public static final String X_DATA_ROOT_NAME = "x-data";
 
