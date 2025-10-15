@@ -49,6 +49,7 @@ import com.enonic.xp.site.XDataMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -425,6 +426,100 @@ public class ContentServiceImplTest_create
 
         assertEquals( 1, content.getAllExtraData().getNames().getSet().size() );
         assertEquals( new PropertyTree(), content.getAllExtraData().getMetadata( xdata ).getData() );
+    }
+
+    @Test
+    public void create_with_missing_required_x_data()
+        throws Exception
+    {
+        final PropertyTree siteData = new PropertyTree();
+
+        final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "app" ) ).config( new PropertyTree() ).build();
+        final PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
+
+        SiteConfigsDataSerializer.toData( SiteConfigs.create().add( siteConfig ).build(), siteData.getRoot() );
+
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( siteData )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.site() )
+            .build();
+
+        final Content parent = this.contentService.create( createContentParams );
+
+        final XDataName xdata = XDataName.from( "app:xdata1" );
+
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+                                                                                                  .applicationKey(
+                                                                                                      ApplicationKey.from( "app" ) )
+                                                                                                  .xDataMappings( XDataMappings.from(
+                                                                                                      XDataMapping.create()
+                                                                                                          .xDataName( xdata )
+                                                                                                          .allowContentTypes(
+                                                                                                              "base:folder" )
+                                                                                                          .optional( false )
+                                                                                                          .build() ) )
+                                                                                                  .build() );
+
+        assertThrows( IllegalStateException.class, () -> this.contentService.create( CreateContentParams.create()
+                                                                                         .contentData( new PropertyTree() )
+                                                                                         .displayName( "This is my content" )
+                                                                                         .parent( parent.getPath() )
+                                                                                         .type( ContentTypeName.folder() )
+                                                                                         .build() ) );
+
+    }
+
+    @Test
+    public void create_with_missing_optional_x_data()
+        throws Exception
+    {
+        final PropertyTree siteData = new PropertyTree();
+
+        final SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "app" ) ).config( new PropertyTree() ).build();
+        final PropertySet parentSet = siteData.getRoot();
+        final PropertySet siteConfigAsSet = parentSet.addSet( "siteConfig" );
+        siteConfigAsSet.addString( "applicationKey", siteConfig.getApplicationKey().toString() );
+        siteConfigAsSet.addSet( "config", siteConfig.getConfig().getRoot().copy( parentSet.getTree() ) );
+
+        SiteConfigsDataSerializer.toData( SiteConfigs.create().add( siteConfig ).build(), siteData.getRoot() );
+
+        final CreateContentParams createContentParams = CreateContentParams.create()
+            .contentData( siteData )
+            .displayName( "This is my content" )
+            .parent( ContentPath.ROOT )
+            .type( ContentTypeName.site() )
+            .build();
+
+        final Content parent = this.contentService.create( createContentParams );
+
+        final XDataName xdata = XDataName.from( "app:xdata1" );
+
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+                                                                                                  .applicationKey(
+                                                                                                      ApplicationKey.from( "app" ) )
+                                                                                                  .xDataMappings( XDataMappings.from(
+                                                                                                      XDataMapping.create()
+                                                                                                          .xDataName( xdata )
+                                                                                                          .allowContentTypes(
+                                                                                                              "base:folder" )
+                                                                                                          .optional( true )
+                                                                                                          .build() ) )
+                                                                                                  .build() );
+
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "This is my content" )
+                                                                .parent( parent.getPath() )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        assertFalse( content.hasExtraData() );
+
     }
 
     @Test
