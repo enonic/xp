@@ -342,6 +342,12 @@ public class ContentServiceImplTest_create
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( true )
+                                                                                                          .build(), XDataMapping.create()
+                                                                                                          .xDataName( XDataName.from(
+                                                                                                              "app:xdata3" ) )
+                                                                                                          .allowContentTypes(
+                                                                                                              "base:folder" )
+                                                                                                          .optional( false )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
@@ -349,6 +355,8 @@ public class ContentServiceImplTest_create
         when( xDataService.getByName( xData1.getName() ) ).thenReturn( xData1 );
         final XData xData2 = XData.create().name( XDataName.from( "app:xdata2" ) ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData2.getName() ) ).thenReturn( xData2 );
+        final XData xData3 = XData.create().name( XDataName.from( "app:xdata3" ) ).form( Form.create().build() ).build();
+        when( xDataService.getByName( xData3.getName() ) ).thenReturn( xData3 );
 
         final Content storedContent = this.contentService.create( CreateContentParams.create()
                                                                       .contentData( new PropertyTree() )
@@ -363,7 +371,7 @@ public class ContentServiceImplTest_create
 
         assertEquals( 2, storedContent.getAllExtraData().getNames().getSet().size() );
         assertTrue( storedContent.getAllExtraData().getNames().contains( xData1.getName() ) );
-        assertTrue( storedContent.getAllExtraData().getNames().contains( xData2.getName() ) );
+        assertTrue( storedContent.getAllExtraData().getNames().contains( xData3.getName() ) );
 
 
     }
@@ -389,30 +397,34 @@ public class ContentServiceImplTest_create
             .type( ContentTypeName.site() )
             .build();
 
-        final Content content = this.contentService.create( createContentParams );
+        final Content parent = this.contentService.create( createContentParams );
+
+        final XDataName xdata = XDataName.from( "app:xdata1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
                                                                                                   .xDataMappings( XDataMappings.from(
                                                                                                       XDataMapping.create()
-                                                                                                          .xDataName( XDataName.from(
-                                                                                                              "app:xdata1" ) )
+                                                                                                          .xDataName( xdata )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final XData xData1 = XData.create().name( XDataName.from( "app:xdata1" ) ).form( Form.create().build() ).build();
+        final XData xData1 = XData.create().name( xdata ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData1.getName() ) ).thenReturn( xData1 );
 
-        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( CreateContentParams.create()
-                                                                                            .contentData( new PropertyTree() )
-                                                                                            .displayName( "This is my content" )
-                                                                                            .parent( content.getPath() )
-                                                                                            .type( ContentTypeName.folder() )
-                                                                                            .build() ) );
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "This is my content" )
+                                                                .parent( parent.getPath() )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        assertEquals( 1, content.getAllExtraData().getNames().getSet().size() );
+        assertEquals( new PropertyTree(), content.getAllExtraData().getMetadata( xdata ).getData() );
     }
 
     @Test

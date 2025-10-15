@@ -53,6 +53,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
@@ -157,6 +158,8 @@ public abstract class AbstractContentServiceTest
     protected XDataService xDataService;
 
     protected XDataMappingServiceImpl xDataMappingService;
+
+    protected SiteConfigServiceImpl siteConfigService;
 
     protected AuditLogService auditLogService;
 
@@ -332,12 +335,13 @@ public abstract class AbstractContentServiceTest
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
-        xDataMappingService =
-            new XDataMappingServiceImpl( nodeService, projectService, siteService, xDataService, contentTypeService, eventPublisher );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
             new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+                                    siteConfigService,
                                     ( form, data ) -> {
             }, ( page ) -> {
             }, ( extraDatas ) -> {

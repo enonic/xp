@@ -110,6 +110,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.trace.Tracer;
@@ -147,7 +148,9 @@ public class ContentServiceImpl
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
-    private XDataMappingService xDataMappingService;
+    private final XDataMappingService xDataMappingService;
+
+    private final SiteConfigService siteConfigService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -164,6 +167,7 @@ public class ContentServiceImpl
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
                                @Reference final XDataMappingService xDataMappingService,
+                               @Reference final SiteConfigService siteConfigService,
                                @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor,
                                @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor,
                                @Reference final XDataDefaultValuesProcessor xDataDefaultValuesProcessor, ContentConfig config )
@@ -174,6 +178,7 @@ public class ContentServiceImpl
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
         this.xDataMappingService = xDataMappingService;
+        this.siteConfigService = siteConfigService;
         this.translator = new ContentNodeTranslator();
 
         this.formDefaultValuesProcessor = formDefaultValuesProcessor;
@@ -199,6 +204,7 @@ public class ContentServiceImpl
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .xDataMappingService( this.xDataMappingService )
+            .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
@@ -240,8 +246,7 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .mediaInfoService( this.mediaInfoService )
             .siteService( this.siteService )
-            .xDataService( this.xDataService )
-            .xDataMappingService( this.xDataMappingService )
+            .xDataService( this.xDataService ).xDataMappingService( this.xDataMappingService ).siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )

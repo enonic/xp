@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
@@ -44,9 +45,12 @@ import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.site.XDataOption;
+import com.enonic.xp.site.XDataOptions;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -63,6 +67,8 @@ final class CreateContentCommand
 
     private final XDataMappingService xDataMappingService;
 
+    private final SiteConfigService siteConfigService;
+
     private CreateContentParams params;
 
     private CreateContentCommand( final Builder builder )
@@ -74,6 +80,7 @@ final class CreateContentCommand
         this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
         this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
         this.xDataMappingService = builder.xDataMappingService;
+        this.siteConfigService = builder.siteConfigService;
     }
 
     static Builder create()
@@ -94,11 +101,25 @@ final class CreateContentCommand
     private ExtraDatas mergeExtraData()
     {
         final ExtraDatas.Builder result = ExtraDatas.create();
+        ApplicationKeys applicationKeys;
 
-        final List<XDataOption> allowedXData =
-            params.getType().isSite()
-                ? xDataMappingService.fetch( SiteConfigsDataSerializer.fromData( params.getData().getRoot() ), params.getType() )
-                : xDataMappingService.fetch( params.getParent(), params.getType() );
+        if ( params.getType().isSite() )
+        {
+            applicationKeys = SiteConfigsDataSerializer.fromData( params.getData().getRoot() )
+                .stream()
+                .map( SiteConfig::getApplicationKey )
+                .collect( ApplicationKeys.collector() );
+        }
+        else
+        {
+            applicationKeys = siteConfigService.getSiteConfigs( params.getParent() )
+                .stream()
+                .map( SiteConfig::getApplicationKey )
+                .collect( ApplicationKeys.collector() );
+
+        }
+        final XDataOptions allowedXData = xDataMappingService.fetch( params.getType(), applicationKeys );
+
         final Set<XDataName> allowedXDataName =
             allowedXData.stream().map( XDataOption::xdata ).map( XData::getName ).collect( Collectors.toSet() );
 
@@ -393,6 +414,8 @@ final class CreateContentCommand
 
         private XDataMappingService xDataMappingService;
 
+        private SiteConfigService siteConfigService;
+
         private Builder()
         {
         }
@@ -438,6 +461,12 @@ final class CreateContentCommand
             return this;
         }
 
+        Builder siteConfigService( final SiteConfigService siteConfigService )
+        {
+            this.siteConfigService = siteConfigService;
+            return this;
+        }
+
         @Override
         void validate()
         {
@@ -447,6 +476,7 @@ final class CreateContentCommand
             Objects.requireNonNull( pageFormDefaultValuesProcessor );
             Objects.requireNonNull( xDataDefaultValuesProcessor );
             Objects.requireNonNull( xDataMappingService );
+            Objects.requireNonNull( siteConfigService );
             ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 

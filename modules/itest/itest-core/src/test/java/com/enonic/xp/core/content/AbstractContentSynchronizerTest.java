@@ -32,6 +32,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
@@ -101,6 +102,8 @@ public abstract class AbstractContentSynchronizerTest
     protected LayoutDescriptorService layoutDescriptorService;
 
     protected XDataMappingServiceImpl xDataMappingService;
+
+    protected SiteConfigServiceImpl siteConfigService;
 
     protected ContentTypeServiceImpl contentTypeService;
 
@@ -188,7 +191,8 @@ public abstract class AbstractContentSynchronizerTest
                 .build()
                 .initialize();
 
-            projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
+            projectService =
+                new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, projectConfig );
 
             project = projectService.create( CreateProjectParams.create()
                                                  .name( ProjectName.from( "source_project" ) )
@@ -313,14 +317,15 @@ public abstract class AbstractContentSynchronizerTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
-        xDataMappingService =
-            new XDataMappingServiceImpl( nodeService, projectService, siteService, xDataService, contentTypeService, eventPublisher );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
             new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+                                    siteConfigService,
                                     ( form, data ) -> {
-            }, ( page ) -> {
+                                    }, ( page ) -> {
             }, ( extraDatas ) -> {
             }, config );
         contentService.setEventPublisher( eventPublisher );
