@@ -8,7 +8,7 @@ import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
-import com.enonic.xp.core.impl.form.mixin.YmlMixinParser;
+import com.enonic.xp.core.impl.schema.YmlFormFragmentParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
@@ -20,8 +20,8 @@ import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.site.CmsDescriptor;
@@ -50,8 +50,8 @@ final class DynamicResourceParser
         {
             case CONTENT_TYPE:
                 return parseContentTypeDescriptor( (ContentTypeName) name, resource );
-            case MIXIN:
-                return parseMixinDescriptor( (MixinName) name, resource );
+            case FORM_FRAGMENT:
+                return parseFormFragmentDescriptor( (FormFragmentName) name, resource );
             case XDATA:
                 return parseXDataDescriptor( (XDataName) name, resource );
             default:
@@ -101,9 +101,9 @@ final class DynamicResourceParser
         }
     }
 
-    private Mixin parseMixinDescriptor( final MixinName name, final String resource )
+    private FormFragmentDescriptor parseFormFragmentDescriptor( final FormFragmentName name, final String resource )
     {
-        return YmlMixinParser.parse( resource, name.getApplicationKey() ).name( name ).build();
+        return YmlFormFragmentParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
     private XData parseXDataDescriptor( final XDataName name, final String resource )

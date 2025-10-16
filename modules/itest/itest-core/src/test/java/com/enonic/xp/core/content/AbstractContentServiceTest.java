@@ -111,7 +111,7 @@ import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -157,7 +157,7 @@ public abstract class AbstractContentServiceTest
 
     protected ContentTypeServiceImpl contentTypeService;
 
-    protected MixinService mixinService;
+    protected CmsFormFragmentService formFragmentService;
 
     protected XDataService xDataService;
 
@@ -271,8 +271,8 @@ public abstract class AbstractContentServiceTest
         nodeService =
             new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
 
-        mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
+        formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
         xDataService = mock( XDataService.class );
 
@@ -288,9 +288,9 @@ public abstract class AbstractContentServiceTest
 
         resourceService = mock( ResourceService.class );
 
-        final CmsService cmsService = new CmsServiceImpl( resourceService, mixinService );
+        final CmsService cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
-        contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( resourceService, null, formFragmentService );
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );

@@ -219,7 +219,7 @@ public class UpdateContentHandlerTest
             .build();
         when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
         when( this.xDataService.getByName( eq( xData2.getName() ) ) ).thenReturn( xData2 );
-        when( mixinService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
+        when( formFragmentService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
     }
 
     private Content invokeUpdate( final UpdateContentParams params, final Content content )

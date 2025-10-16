@@ -17,7 +17,7 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.validator.ContentTypeValidationResult;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 
 @Component(immediate = true)
 public final class ContentTypeServiceImpl
@@ -25,14 +25,14 @@ public final class ContentTypeServiceImpl
 {
     private final ContentTypeRegistry registry;
 
-    private final MixinService mixinService;
+    private final CmsFormFragmentService formFragmentService;
 
     @Activate
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
-                                   final @Reference MixinService mixinService )
+                                   final @Reference CmsFormFragmentService formFragmentService )
     {
         this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
-        this.mixinService = mixinService;
+        this.formFragmentService = formFragmentService;
     }
 
     @Override
@@ -46,19 +46,19 @@ public final class ContentTypeServiceImpl
             return null;
         }
 
-        return transformInlineMixins( contentType );
+        return transformFormFragments( contentType );
     }
 
     @Override
     public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return transformInlineMixins( this.registry.getByApplication( applicationKey ) );
+        return transformFormFragments( this.registry.getByApplication( applicationKey ) );
     }
 
     @Override
     public ContentTypes getAll()
     {
-        return transformInlineMixins( this.registry.getAll() );
+        return transformFormFragments( this.registry.getAll() );
     }
 
     @Override
@@ -76,13 +76,13 @@ public final class ContentTypeServiceImpl
         return validator.getResult();
     }
 
-    private ContentType transformInlineMixins( final ContentType contentType )
+    private ContentType transformFormFragments( final ContentType contentType )
     {
-        return ContentType.create( contentType ).form( mixinService.inlineFormItems( contentType.getForm() ) ).build();
+        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
     }
 
-    private ContentTypes transformInlineMixins( final ContentTypes contentTypes )
+    private ContentTypes transformFormFragments( final ContentTypes contentTypes )
     {
-        return contentTypes.stream().map( this::transformInlineMixins ).collect( ContentTypes.collector() );
+        return contentTypes.stream().map( this::transformFormFragments ).collect( ContentTypes.collector() );
     }
 }

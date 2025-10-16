@@ -1,0 +1,6 @@
+displayName: "DisplayName of the FormFragment"
+description: "Description of the FormFragment"
+form:
+  - type: "TextLine"
+    name: "myField"
+    label: "My Field"

@@ -25,15 +25,15 @@ public class DeleteDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testMixin()
+    public void testFormFragment()
     {
         when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
 
-            return DynamicContentSchemaType.MIXIN == schemaParams.getType();
+            return DynamicContentSchemaType.FORM_FRAGMENT == schemaParams.getType();
         } );
 
-        runScript( "/lib/xp/examples/schema/deleteMixin.js" );
+        runScript( "/lib/xp/examples/schema/deleteFormFragment.js" );
     }
 
     @Test

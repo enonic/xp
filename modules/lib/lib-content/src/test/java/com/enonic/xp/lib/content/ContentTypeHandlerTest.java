@@ -36,7 +36,7 @@ public class ContentTypeHandlerTest
     public void testExampleGetType()
     {
         final Form form = getExampleForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = exampleContentType();
         Mockito.when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
@@ -48,7 +48,7 @@ public class ContentTypeHandlerTest
     public void testExampleGetTypes()
     {
         final Form form = getForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );
@@ -61,7 +61,7 @@ public class ContentTypeHandlerTest
         throws Exception
     {
         final Form form = getForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentType contentType = testContentType();
         final GetContentTypeParams params = new GetContentTypeParams().contentTypeName( contentType.getName() );
@@ -89,7 +89,7 @@ public class ContentTypeHandlerTest
         throws Exception
     {
         final Form form = getForm();
-        Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
+        Mockito.when( formFragmentService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
 
         final ContentTypes contentTypes = testContentTypes();
         Mockito.when( contentTypeService.getAll() ).thenReturn( contentTypes );

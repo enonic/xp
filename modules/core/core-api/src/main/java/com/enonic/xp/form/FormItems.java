@@ -84,10 +84,10 @@ final class FormItems
         {
             return formOptionSetOption.getFormItem( path.asNewWithoutFirstPathElement() );
         }
-        else if ( foundFormItem instanceof InlineMixin )
+        else if ( foundFormItem instanceof FormFragment )
         {
-            throw new IllegalArgumentException( "Cannot get formItem [" + path + "] because it's past a InlineMixin [" + foundFormItem +
-                                                    "], resolve the InlineMixin first." );
+            throw new IllegalArgumentException( "Cannot get formItem [" + path + "] because it's past a FormFragment [" + foundFormItem +
+                                                    "], resolve the FormFragment first." );
         }
         else
         {
@@ -117,9 +117,9 @@ final class FormItems
         return typeCast( getFormItem( path ), FormItemSet.class );
     }
 
-    InlineMixin getInlineMixin( final FormItemPath path )
+    FormFragment getFormFragment( final FormItemPath path )
     {
-        return typeCast( getFormItem( path ), InlineMixin.class );
+        return typeCast( getFormItem( path ), FormFragment.class );
     }
 
     FormOptionSet getOptionSet( final FormItemPath path )

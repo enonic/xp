@@ -141,7 +141,7 @@ public class ContentServiceImplTest_move
 
     private ExtraDatas createExtraDatas()
     {
-        final XDataName xDataName = XDataName.from( "com.enonic.app.test:mixin" );
+        final XDataName xDataName = XDataName.from( "com.enonic.app.test:xdata1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(

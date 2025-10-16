@@ -14,8 +14,8 @@ import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.security.User;
 
@@ -68,20 +68,20 @@ public class GetDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testMixin()
+    public void testFormFragment()
     {
         when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
-            if ( DynamicContentSchemaType.MIXIN != schemaParams.getType() )
+            if ( DynamicContentSchemaType.FORM_FRAGMENT != schemaParams.getType() )
             {
                 throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
             }
 
-            final Mixin mixin = Mixin.create()
-                .name( (MixinName) schemaParams.getName() )
-                .description( "My mixin description" )
-                .displayName( "My mixin display name" )
+            final FormFragmentDescriptor fragmentDescriptor = FormFragmentDescriptor.create()
+                .name( (FormFragmentName) schemaParams.getName() )
+                .description( "My FormFragment description" )
+                .displayName( "My FormFragment display name" )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .createdTime( Instant.parse( "2009-01-01T10:00:00Z" ) )
                 .creator( User.ANONYMOUS.getKey() )
@@ -89,12 +89,19 @@ public class GetDynamicContentSchemaHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<mixin><some-data></some-data></mixin>" );
+            when( resource.readString() ).thenReturn( """
+                                                          displayName: "Virtual FormFragment"
+                                                          description: "FormFragment description"
+                                                          form:
+                                                          - type: "TextLine"
+                                                            name: "text"
+                                                            label: "Text"
+                                                          """ );
 
-            return new DynamicSchemaResult<Mixin>( mixin, resource );
+            return new DynamicSchemaResult<>( fragmentDescriptor, resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/getMixin.js" );
+        runScript( "/lib/xp/examples/schema/getFormFragment.js" );
     }
 
     @Test

@@ -44,7 +44,7 @@ public class XDataServiceImplTest
     }
 
     @Test
-    public void testSystemMixins()
+    public void testSystemXDatas()
     {
         XDatas xDatas = service.getAll();
         assertNotNull( xDatas );

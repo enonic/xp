@@ -43,10 +43,10 @@ public class ExtraDataValidator
                 continue;
             }
 
-            final Form mixinForm = xData.getForm();
+            final Form xDataForm = xData.getForm();
             if ( extraData.getData().getRoot().getPropertySize() > 0 )
             {
-                OccurrenceValidator.validate( mixinForm, extraData.getData().getRoot(), validationErrorsBuilder );
+                OccurrenceValidator.validate( xDataForm, extraData.getData().getRoot(), validationErrorsBuilder );
             }
         }
     }

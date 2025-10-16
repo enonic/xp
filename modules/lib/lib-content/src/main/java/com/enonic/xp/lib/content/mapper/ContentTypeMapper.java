@@ -7,7 +7,7 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
@@ -80,9 +80,9 @@ public final class ContentTypeMapper
         {
             serializeInput( gen, (Input) item );
         }
-        else if ( item instanceof InlineMixin )
+        else if ( item instanceof FormFragment )
         {
-            // mixins have been inlined in form
+            // form fragments have been inlined in form
         }
         else if ( item instanceof FormOptionSet )
         {

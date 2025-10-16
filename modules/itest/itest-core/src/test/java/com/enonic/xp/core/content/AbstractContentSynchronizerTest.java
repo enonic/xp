@@ -43,8 +43,6 @@ import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.core.impl.site.CmsServiceImpl;
-import com.enonic.xp.core.internal.concurrent.RecurringJob;
-import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
@@ -59,7 +57,7 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -301,17 +299,17 @@ public abstract class AbstractContentSynchronizerTest
 
         xDataService = mock( XDataService.class );
 
-        MixinService mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
+        CmsFormFragmentService formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         pageDescriptorService = mock( PageDescriptorService.class );
         partDescriptorService = mock( PartDescriptorService.class );
         layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-        contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
+        contentTypeService = new ContentTypeServiceImpl( null, null, formFragmentService );
 
         resourceService = mock( ResourceService.class );
-        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, mixinService );
+        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
         final ContentAuditLogFilterService contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
 

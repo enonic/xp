@@ -42,8 +42,8 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.mixin.Mixin;
-import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -316,12 +316,15 @@ public class ContentServiceImplTest_update
             data.setString( "testString", "value" );
             data.setString( "testString2", "value" );
 
-            final Mixin mixin = Mixin.create()
-                .name( "myapplication:my_mixin" )
-                .addFormItem( Input.create().name( "inputToBeMixedIn" ).label( "Mixed in" ).inputType( InputTypeName.TEXT_LINE ).build() )
-                .build();
+            final FormFragmentDescriptor descriptor = FormFragmentDescriptor.create().name( "myapplication:my_fragment" ).
+                addFormItem( Input.create().
+                name( "inputToBeMixedIn" ).
+                label( "Mixed in" ).
+                inputType( InputTypeName.TEXT_LINE ).
+                build() ).
+                build();
 
-            when( this.mixinService.getByName( Mockito.isA( MixinName.class ) ) ).thenReturn( mixin );
+            when( this.formFragmentService.getByName( Mockito.isA( FormFragmentName.class ) ) ).thenReturn( descriptor );
 
             final ExtraDatas extraDatas = createExtraDatas();
 
@@ -639,7 +642,7 @@ public class ContentServiceImplTest_update
 
     private ExtraDatas createExtraDatas()
     {
-        final XDataName xDataName = XDataName.from( "com.enonic.app.test:mixin" );
+        final XDataName xDataName = XDataName.from( "com.enonic.app.test:my_fragment" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(

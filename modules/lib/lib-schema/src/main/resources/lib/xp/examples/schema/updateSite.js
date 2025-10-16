@@ -7,7 +7,7 @@ let resource = `x:
 - name: "myapp1:menu-item"
   optional: false
   allowContentTypes: "mycontent"
-- name: "myapp2:my-meta-mixin"
+- name: "myapp2:my-meta-fragment"
   optional: false
 form:
 - type: "TextLine"
@@ -37,7 +37,7 @@ assert.assertJsonEquals({
 - name: "myapp1:menu-item"
   optional: false
   allowContentTypes: "mycontent"
-- name: "myapp2:my-meta-mixin"
+- name: "myapp2:my-meta-fragment"
   optional: false
 form:
 - type: "TextLine"
@@ -67,7 +67,7 @@ form:
             'allowContentTypes': 'mycontent'
         },
         {
-            'name': 'myapp2:my-meta-mixin',
+            'name': 'myapp2:my-meta-fragment',
             'optional': false
         }
     ]

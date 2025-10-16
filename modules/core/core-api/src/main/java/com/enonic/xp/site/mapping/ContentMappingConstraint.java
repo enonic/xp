@@ -98,25 +98,25 @@ public final class ContentMappingConstraint
             final String dataPath = id.substring( XDATA_PROPERTY_PREFIX.length() );
 
             final String appPrefix;
-            final String mixinName;
+            final String xDataName;
             final String propertyName;
 
             final int firstIndex = dataPath.indexOf( '.' );
             if ( firstIndex == -1 )
             {
                 appPrefix = dataPath;
-                mixinName = "";
+                xDataName = "";
                 propertyName = "";
             }
             else
             {
                 appPrefix = dataPath.substring( 0, firstIndex );
                 final int secondIndex = dataPath.indexOf( '.', firstIndex + 1 );
-                mixinName = secondIndex == -1 ? dataPath.substring( firstIndex + 1 ) : dataPath.substring( firstIndex + 1, secondIndex );
+                xDataName = secondIndex == -1 ? dataPath.substring( firstIndex + 1 ) : dataPath.substring( firstIndex + 1, secondIndex );
                 propertyName = secondIndex == -1 ? "" : dataPath.substring( secondIndex + 1 );
             }
 
-            final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
+            final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, xDataName );
             if ( xData == null )
             {
                 return false;

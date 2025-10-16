@@ -171,9 +171,9 @@ public class ContentDataSerializerTest
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
-        PropertyTree mixinData = new PropertyTree();
-        mixinData.setString( "myKey1", "myValue1" );
-        mixinData.setString( "myKey2", "myValue2" );
+        PropertyTree fragmentData = new PropertyTree();
+        fragmentData.setString( "myKey1", "myValue1" );
+        fragmentData.setString( "myKey2", "myValue2" );
 
         final PropertyTree data = contentDataSerializer.toCreateNodeData( CreateContentTranslatorParams.create()
                                                                               .parent( ContentPath.ROOT )
@@ -186,8 +186,8 @@ public class ContentDataSerializerTest
                                                                               .extraDatas( ExtraDatas.create()
                                                                                                .add( new ExtraData(
                                                                                                    XDataName.from( ApplicationKey.SYSTEM,
-                                                                                                                   "myMixin" ),
-                                                                                                   mixinData ) )
+                                                                                                                   "myFragment" ),
+                                                                                                   fragmentData ) )
                                                                                                .build() )
                                                                               .build() );
 
@@ -195,10 +195,10 @@ public class ContentDataSerializerTest
         assertNotNull( extraData );
         final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
-        final PropertySet myMixinData = systemAppData.getSet( "myMixin" );
-        assertNotNull( myMixinData );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
+        final PropertySet myFragmentData = systemAppData.getSet( "myFragment" );
+        assertNotNull( myFragmentData );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
     }
 
 
@@ -207,9 +207,9 @@ public class ContentDataSerializerTest
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
-        PropertyTree mixinData = new PropertyTree();
-        mixinData.setString( "myKey1", "myValue1" );
-        mixinData.setString( "myKey2", "myValue2" );
+        PropertyTree fragmentData = new PropertyTree();
+        fragmentData.setString( "myKey1", "myValue1" );
+        fragmentData.setString( "myKey2", "myValue2" );
 
         final PropertyTree updatedProperties = contentDataSerializer.toNodeData( Content.create()
                                                                                      .name( "myContent" )
@@ -218,7 +218,7 @@ public class ContentDataSerializerTest
                                                                                      .extraDatas( ExtraDatas.create()
                                                                                                       .add( new ExtraData( XDataName.from(
                                                                                                           ApplicationKey.SYSTEM,
-                                                                                                          "myMixin" ), mixinData ) )
+                                                                                                          "myFragment" ), fragmentData ) )
                                                                                                       .build() )
                                                                                      .modifier( PrincipalKey.ofAnonymous() )
                                                                                      .build() );
@@ -227,10 +227,10 @@ public class ContentDataSerializerTest
         assertNotNull( extraData );
         final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
-        final PropertySet myMixinData = systemAppData.getSet( "myMixin" );
-        assertNotNull( myMixinData );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
-        assertEquals( "myValue1", myMixinData.getString( "myKey1" ) );
+        final PropertySet myFragmentData = systemAppData.getSet( "myFragment" );
+        assertNotNull( myFragmentData );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
+        assertEquals( "myValue1", myFragmentData.getString( "myKey1" ) );
     }
 
 
