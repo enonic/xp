@@ -42,21 +42,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
 
-public class ContentServiceImplTest_publish
+class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
 {
 
     private Content content1, content2, content1_1, content1_2_offline, content2_1;
 
     @Test
-    public void push_one_content()
-        throws Exception
+    void push_one_content()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -113,8 +111,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void publish_workflow_not_ready()
-        throws Exception
+    void publish_workflow_not_ready()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -154,8 +151,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void push_dependencies()
-        throws Exception
+    void push_dependencies()
     {
         createContentTree();
 
@@ -167,8 +163,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void push_with_children()
-        throws Exception
+    void push_with_children()
     {
         createContentTree();
 
@@ -187,8 +182,7 @@ public class ContentServiceImplTest_publish
      * ./content3
      */
     @Test
-    public void push_parent_of_dependencies()
-        throws Exception
+    void push_parent_of_dependencies()
     {
         createContentTree2();
 
@@ -206,8 +200,7 @@ public class ContentServiceImplTest_publish
 
     @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
-    public void push_exclude_empty()
-        throws Exception
+    void push_exclude_empty()
     {
         createContentTree();
 
@@ -222,8 +215,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void push_exclude_without_children()
-        throws Exception
+    void push_exclude_without_children()
     {
         createContentTree();
 
@@ -240,8 +232,7 @@ public class ContentServiceImplTest_publish
 
     @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
-    public void push_exclude_with_children()
-        throws Exception
+    void push_exclude_with_children()
     {
         createContentTree();
 
@@ -271,8 +262,7 @@ public class ContentServiceImplTest_publish
      * ./content3
      */
     @Test
-    public void push_without_dependencies()
-        throws Exception
+    void push_without_dependencies()
     {
         createContentTree2();
 
@@ -293,8 +283,7 @@ public class ContentServiceImplTest_publish
      * /content2_1 -> ref:content1_1
      */
     @Test
-    public void publish_move_delete_old_parent()
-        throws Exception
+    void publish_move_delete_old_parent()
     {
         createContentTree();
 
@@ -317,8 +306,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void move_delete_published()
-        throws Exception
+    void move_delete_published()
     {
         final Content s1 = createContent( ContentPath.ROOT, "s1" );
         final Content f1 = createContent( s1.getPath(), "f1" );
@@ -356,8 +344,7 @@ public class ContentServiceImplTest_publish
      */
 
     @Test
-    public void publish_rename_move_publish()
-        throws Exception
+    void publish_rename_move_publish()
     {
         final Content a = createContent( ContentPath.ROOT, "a" );
         final Content b = createContent( ContentPath.ROOT, "b" );
@@ -405,7 +392,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void publish_with_message()
+    void publish_with_message()
     {
         final Content content = createContent( ContentPath.ROOT, "a" );
 
@@ -421,11 +408,11 @@ public class ContentServiceImplTest_publish
         ContentVersion version = iterator.next();
         assertNotNull( version.getCommitInfo().getTimestamp() );
         assertEquals( "user:system:test-user", version.getCommitInfo().getPublisher().toString() );
-        assertEquals( "My message", version.getCommitInfo().getMessage() );
+        assertEquals( "COM_ENONIC_XP_CONTENT_PUBLISH My message", version.getCommitInfo().getMessage() );
     }
 
     @Test
-    public void publish_with_message_no_message()
+    void publish_with_message_no_message()
     {
         final Content content = createContent( ContentPath.ROOT, "a" );
 
@@ -440,12 +427,11 @@ public class ContentServiceImplTest_publish
         ContentVersion version = iterator.next();
         assertNotNull( version.getCommitInfo().getTimestamp() );
         assertEquals( "user:system:test-user", version.getCommitInfo().getPublisher().toString() );
-        assertNull( version.getCommitInfo().getMessage() );
+        assertEquals( "COM_ENONIC_XP_CONTENT_PUBLISH", version.getCommitInfo().getMessage() );
     }
 
     @Test
-    public void audit_data()
-        throws Exception
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -476,8 +462,7 @@ public class ContentServiceImplTest_publish
     }
 
     @Test
-    public void push_not_from_draft()
-        throws Exception
+    void push_not_from_draft()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )

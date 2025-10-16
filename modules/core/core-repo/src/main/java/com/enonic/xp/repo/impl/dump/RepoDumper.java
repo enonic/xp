@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.blob.BlobKey;
+import com.enonic.xp.blob.BlobKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -34,7 +35,6 @@ import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -93,58 +93,57 @@ public class RepoDumper
         final Consumer<NodeId> nodeIdsAccumulator = includeVersions ? dumpedNodes::add : nodeId -> {
         };
 
-        this.nodeService.refresh( RefreshMode.ALL );
-
-        for ( Branch branch : this.repository.getBranches() )
-        {
-            setContext( branch ).runWith( () -> dumpBranch( nodeIdsAccumulator ) );
-        }
-
-        if ( includeVersions )
-        {
-            setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> dumpVersions( dumpedNodes ) );
-        }
-
-        setContext( RepositoryConstants.MASTER_BRANCH ).runWith( this::dumpCommits );
+        setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> {
+            this.nodeService.refresh( RefreshMode.ALL );
+            for ( Branch branch : this.repository.getBranches() )
+            {
+                dumpBranch( branch, nodeIdsAccumulator );
+            }
+            if ( includeVersions )
+            {
+                dumpVersions( dumpedNodes );
+            }
+            dumpCommits();
+        } );
 
         return this.dumpResult.build();
     }
 
-    private void dumpBranch( Consumer<NodeId> nodeIdsAccumulator )
+    private void dumpBranch( final Branch branch, Consumer<NodeId> nodeIdsAccumulator )
     {
-        final Branch branch = ContextAccessor.current().getBranch();
-
-        final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
-        writer.openBranchMeta( repository.getId(), branch );
-        try
-        {
-            final FindNodesByParentResult children = this.nodeService.findByParent(
-                FindNodesByParentParams.create().parentId( Node.ROOT_UUID ).recursive( true ).childOrder( ChildOrder.path() ).build() );
-
-            this.listener.dumpingBranch( repository.getId(), branch, children.getTotalHits() + 1 );
-            LOG.info( "Dumping repository [{}], branch [{}]", repository.getId(), branch );
-
-            doDumpNode( Node.ROOT_UUID, branch, branchDumpResult );
-            nodeIdsAccumulator.accept( Node.ROOT_UUID );
-
-            for ( final NodeId child : children.getNodeIds() )
+        setContext( branch ).runWith( () -> {
+            final BranchDumpResult.Builder branchDumpResult = BranchDumpResult.create( branch );
+            writer.openBranchMeta( repository.getId(), branch );
+            try
             {
-                doDumpNode( child, branch, branchDumpResult );
-                nodeIdsAccumulator.accept( child );
-            }
-        }
-        catch ( Exception e )
-        {
-            LOG.error( "Cannot fully dump repository [{}] branch [{}]", repository.getId(), branch, e );
-            branchDumpResult.error(
-                DumpError.error( "Cannot fully dump repository [" + repository.getId() + "] branch [" + branch + "]: " + e.getMessage() ) );
-        }
-        finally
-        {
-            writer.closeMeta();
-        }
+                final FindNodesByParentResult children = this.nodeService.findByParent(
+                    FindNodesByParentParams.create().parentId( Node.ROOT_UUID ).recursive( true ).childOrder( ChildOrder.path() ).build() );
 
-        this.dumpResult.add( branchDumpResult.build() );
+                this.listener.dumpingBranch( repository.getId(), branch, children.getTotalHits() + 1 );
+                LOG.info( "Dumping repository [{}], branch [{}]", repository.getId(), branch );
+
+                doDumpNode( Node.ROOT_UUID, branch, branchDumpResult );
+                nodeIdsAccumulator.accept( Node.ROOT_UUID );
+
+                for ( final NodeId child : children.getNodeIds() )
+                {
+                    doDumpNode( child, branch, branchDumpResult );
+                    nodeIdsAccumulator.accept( child );
+                }
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Cannot fully dump repository [{}] branch [{}]", repository.getId(), branch, e );
+                branchDumpResult.error( DumpError.error(
+                    "Cannot fully dump repository [" + repository.getId() + "] branch [" + branch + "]: " + e.getMessage() ) );
+            }
+            finally
+            {
+                writer.closeMeta();
+            }
+
+            this.dumpResult.add( branchDumpResult.build() );
+        } );
     }
 
     private void dumpVersions( final Collection<NodeId> dumpedNodes )
@@ -152,31 +151,29 @@ public class RepoDumper
         writer.openVersionsMeta( repository.getId() );
         try
         {
-            try
+            for ( NodeId nodeId : dumpedNodes )
             {
-                for ( NodeId nodeId : dumpedNodes )
+                final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
+
+                final NodeVersionQueryResult versions = getVersions( nodeId );
+                for ( final NodeVersionMetadata metaData : versions.getNodeVersionMetadatas() )
                 {
-                    final VersionsDumpEntry.Builder builder = VersionsDumpEntry.create( nodeId );
-
-                    final NodeVersionQueryResult versions = getVersions( nodeId );
-                    for ( final NodeVersionMetadata metaData : versions.getNodeVersionMetadatas() )
-                    {
-                        doStoreVersion( builder, metaData, this.dumpResult );
-                        this.dumpResult.addedVersion();
-                    }
-
-                    writer.writeVersionsEntry( builder.build() );
+                    builder.addVersion( VersionMetaFactory.create( metaData ) );
+                    doStoreVersion( metaData, this.dumpResult );
+                    this.dumpResult.addedVersion();
                 }
-            }
-            finally
-            {
-                writer.closeMeta();
+
+                writer.writeVersionsEntry( builder.build() );
             }
         }
-        catch ( RepoDumpException e )
+        catch ( Exception e )
         {
             LOG.error( "Cannot fully dump repository [{}] versions", repository.getId(), e );
             dumpResult.error( DumpError.error( "Cannot fully dump repository [" + repository.getId() + "] versions: " + e.getMessage() ) );
+        }
+        finally
+        {
+            writer.closeMeta();
         }
     }
 
@@ -204,16 +201,13 @@ public class RepoDumper
         }
     }
 
-    private void doStoreVersion( final VersionsDumpEntry.Builder builder, final NodeVersionMetadata metaData,
+    private void doStoreVersion( final NodeVersionMetadata metaData,
                                  final RepoDumpResult.Builder dumpResult )
     {
         try
         {
-            final NodeVersion nodeVersion = this.nodeService.getByNodeVersionKey( metaData.getNodeVersionKey() );
-            builder.addVersion( VersionMetaFactory.create( metaData ) );
-
             storeVersionBlob( metaData.getNodeVersionId(), metaData.getNodeVersionKey() );
-            storeVersionBinaries( metaData.getNodeVersionId(), nodeVersion );
+            storeVersionBinaries( metaData.getNodeVersionId(), metaData.getBinaryBlobKeys() );
         }
         catch ( Exception e )
         {
@@ -234,17 +228,17 @@ public class RepoDumper
         }
     }
 
-    private void storeVersionBinaries( final NodeVersionId nodeVersionId, final NodeVersion nodeVersion )
+    private void storeVersionBinaries( final NodeVersionId nodeVersionId, final BlobKeys attachedBinaries )
     {
-        nodeVersion.getAttachedBinaries().forEach( ( attachedBinary ) -> {
+        attachedBinaries.forEach( ( attachedBinary ) -> {
             try
             {
-                this.writer.writeBinaryBlob( repository.getId(), BlobKey.from( attachedBinary.getBlobKey() ) );
+                this.writer.writeBinaryBlob( repository.getId(), attachedBinary );
             }
             catch ( Exception e )
             {
                 // Report
-                LOG.error( "Failed to write binary for nodeVersion " + nodeVersionId + ", binary " + attachedBinary.getBlobKey(), e );
+                LOG.error( "Failed to write binary for nodeVersion " + nodeVersionId + ", binary " + attachedBinary, e );
             }
         } );
     }
@@ -260,7 +254,7 @@ public class RepoDumper
         {
             final BranchDumpEntry branchDumpEntry = createDumpEntry( nodeId, branch );
             writer.writeBranchEntry( branchDumpEntry );
-            writer.writeNodeVersionBlobs( repository.getId(), branchDumpEntry.getMeta().getNodeVersionKey() );
+            writer.writeNodeVersionBlobs( repository.getId(), branchDumpEntry.getMeta().nodeVersionKey() );
             writeBinaries( dumpResult, branchDumpEntry.getBinaryReferences() );
             dumpResult.addedNode();
             this.listener.nodeDumped();

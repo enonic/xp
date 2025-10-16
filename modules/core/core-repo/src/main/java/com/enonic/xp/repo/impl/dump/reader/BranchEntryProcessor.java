@@ -57,10 +57,10 @@ public class BranchEntryProcessor
 
         try
         {
-            final Node node = NodeFactory.create( nodeVersion, meta.getVersion(), meta.getNodePath(),
-                                                  meta.getTimestamp().truncatedTo( ChronoUnit.MILLIS ) );
+            final Node node = NodeFactory.create( nodeVersion, meta.version(), meta.nodePath(),
+                                                  meta.timestamp().truncatedTo( ChronoUnit.MILLIS ) );
 
-            this.nodeService.loadNode( LoadNodeParams.create().node( node ).nodeCommitId( meta.getNodeCommitId() ).build() );
+            this.nodeService.loadNode( LoadNodeParams.create().node( node ).nodeCommitId( meta.nodeCommitId() ).build() );
 
             addBinary( nodeVersion, result );
 
@@ -69,7 +69,7 @@ public class BranchEntryProcessor
         catch ( Exception e )
         {
             final String message =
-                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.getNodePath(), e.getMessage() );
+                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.nodePath(), e.getMessage() );
             result.error( EntryLoadError.error( message ) );
             LOG.error( message, e );
         }
@@ -79,11 +79,11 @@ public class BranchEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( repositoryId, meta.getNodeVersionKey() );
+            return this.dumpReader.get( repositoryId, meta.nodeVersionKey() );
         }
         catch ( RepoLoadException e )
         {
-            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.getVersion(), e );
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.version(), e );
             return null;
         }
     }

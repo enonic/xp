@@ -49,11 +49,6 @@ public final class NodeVersionMetadata
         return new Builder();
     }
 
-    public static Builder create( NodeVersionMetadata nodeVersionMetadata )
-    {
-        return new Builder( nodeVersionMetadata );
-    }
-
     public NodeVersionId getNodeVersionId()
     {
         return nodeVersionId;
@@ -112,17 +107,6 @@ public final class NodeVersionMetadata
 
         private Builder()
         {
-        }
-
-        private Builder( NodeVersionMetadata nodeVersionMetadata )
-        {
-            nodeVersionId = nodeVersionMetadata.nodeVersionId;
-            nodeVersionKey = nodeVersionMetadata.nodeVersionKey;
-            binaryBlobKeys = nodeVersionMetadata.binaryBlobKeys;
-            nodeId = nodeVersionMetadata.nodeId;
-            nodePath = nodeVersionMetadata.nodePath;
-            nodeCommitId = nodeVersionMetadata.nodeCommitId;
-            timestamp = nodeVersionMetadata.timestamp;
         }
 
         public Builder nodeVersionId( NodeVersionId nodeVersionId )
