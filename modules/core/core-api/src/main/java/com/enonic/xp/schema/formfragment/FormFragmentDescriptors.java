@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
@@ -18,16 +17,6 @@ public final class FormFragmentDescriptors
     private FormFragmentDescriptors( final ImmutableList<FormFragmentDescriptor> list )
     {
         super( list );
-    }
-
-    public FormFragmentNames getNames()
-    {
-        return stream().map( BaseSchema::getName ).collect( FormFragmentNames.collector() );
-    }
-
-    public FormFragmentDescriptor getFormFragmentDescriptor( final FormFragmentName formFragmentName )
-    {
-        return stream().filter( m -> formFragmentName.equals( m.getName() ) ).findFirst().orElse( null );
     }
 
     public static FormFragmentDescriptors empty()
