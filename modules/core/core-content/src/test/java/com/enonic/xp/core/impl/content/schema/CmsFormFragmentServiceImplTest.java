@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.fragment;
+package com.enonic.xp.core.impl.content.schema;
 
 import org.junit.jupiter.api.Test;
 
