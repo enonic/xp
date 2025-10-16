@@ -18,7 +18,7 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 
 @Component(immediate = true)
 public class LayoutDescriptorLoader
@@ -26,14 +26,14 @@ public class LayoutDescriptorLoader
 {
     private static final String PATH = "/cms/layouts";
 
-    private final MixinService mixinService;
+    private final CmsFormFragmentService formFragmentService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
-    public LayoutDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public LayoutDescriptorLoader( @Reference final ResourceService resourceService, @Reference final CmsFormFragmentService formFragmentService )
     {
-        this.mixinService = mixinService;
+        this.formFragmentService = formFragmentService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( resourceService, PATH, false );
     }
 
@@ -79,6 +79,6 @@ public class LayoutDescriptorLoader
     @Override
     public LayoutDescriptor postProcess( final LayoutDescriptor descriptor )
     {
-        return LayoutDescriptor.copyOf( descriptor ).config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).build();
+        return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 }

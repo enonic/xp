@@ -9,15 +9,10 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TaskDescriptorLoaderTest
     extends ApplicationTestSupport
@@ -28,10 +23,7 @@ public class TaskDescriptorLoaderTest
     @Override
     protected void initialize()
     {
-        MixinService mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
-
-        this.loader = new TaskDescriptorLoader( this.resourceService, mixinService );
+        this.loader = new TaskDescriptorLoader( this.resourceService );
         addApplication( "myapp1", "/apps/myapp1" );
     }
 

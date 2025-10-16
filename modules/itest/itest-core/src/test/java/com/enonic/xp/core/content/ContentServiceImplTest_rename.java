@@ -63,7 +63,7 @@ public class ContentServiceImplTest_rename
 
     private ExtraDatas createExtraDatas()
     {
-        return ExtraDatas.create().add( new ExtraData( XDataName.from( "com.enonic.app.test:mixin" ), new PropertyTree() ) ).build();
+        return ExtraDatas.create().add( new ExtraData( XDataName.from( "com.enonic.app.test:xdata1" ), new PropertyTree() ) ).build();
     }
 
     private PropertySet createSiteConfig( PropertyTree tree )

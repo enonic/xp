@@ -12,8 +12,8 @@ exports.getInvalidContentSchemaType = function () {
 
 exports.getNullSchema = function () {
     assert.assertNull(schemaLib.getSchema({
-        name: 'myapp:non-existing-schema',
-        type: 'MIXIN'
+        name: 'non-existing-schema',
+        type: 'FORM_FRAGMENT'
     }));
 };
 

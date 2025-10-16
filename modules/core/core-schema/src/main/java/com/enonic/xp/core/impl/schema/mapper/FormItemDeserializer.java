@@ -13,7 +13,7 @@ import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.InlineMixin;
+import com.enonic.xp.form.FormFragment;
 
 public class FormItemDeserializer
     extends JsonDeserializer<FormItem>
@@ -33,7 +33,7 @@ public class FormItemDeserializer
             case "ItemSet" -> mapper.treeToValue( node, FormItemSet.class );
             case "OptionSet" -> mapper.treeToValue( node, FormOptionSet.class );
             case "OptionSetOption" -> mapper.treeToValue( node, FormOptionSetOption.class );
-            case "FormFragment" -> mapper.treeToValue( node, InlineMixin.class );
+            case "FormFragment" -> mapper.treeToValue( node, FormFragment.class );
             default ->
             {
                 final InputYml inputYml = mapper.treeToValue( node, InputRegistry.getInputType( type ) );

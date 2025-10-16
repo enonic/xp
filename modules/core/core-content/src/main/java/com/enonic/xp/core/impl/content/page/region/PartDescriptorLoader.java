@@ -18,7 +18,7 @@ import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 
 @Component(immediate = true)
 public class PartDescriptorLoader
@@ -28,15 +28,15 @@ public class PartDescriptorLoader
 
     private final ResourceService resourceService;
 
-    private final MixinService mixinService;
+    private final CmsFormFragmentService formFragmentService;
 
     private final DescriptorKeyLocator descriptorKeyLocator;
 
     @Activate
-    public PartDescriptorLoader( @Reference final ResourceService resourceService, @Reference final MixinService mixinService )
+    public PartDescriptorLoader( @Reference final ResourceService resourceService, @Reference final CmsFormFragmentService formFragmentService )
     {
         this.resourceService = resourceService;
-        this.mixinService = mixinService;
+        this.formFragmentService = formFragmentService;
         this.descriptorKeyLocator = new DescriptorKeyLocator( this.resourceService, PATH, true );
     }
 
@@ -76,7 +76,7 @@ public class PartDescriptorLoader
     @Override
     public PartDescriptor postProcess( final PartDescriptor descriptor )
     {
-        return PartDescriptor.copyOf( descriptor ).config( this.mixinService.inlineFormItems( descriptor.getConfig() ) ).build();
+        return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
     protected final Icon loadIcon( final DescriptorKey name )

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationRelativeResolver;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.inputtype.InputTypeConfig;
@@ -33,7 +32,23 @@ public final class YmlContentTypeParser
         final ContentType contentType = builder.build();
 
         return ContentType.create( contentType )
-            .superType( new ApplicationRelativeResolver( currentApplication ).toContentTypeName( contentType.getSuperType().toString() ) );
+            .superType( toContentTypeName( contentType.getSuperType().toString(), currentApplication ) );
+    }
+
+    private static ContentTypeName toContentTypeName( final String name, final ApplicationKey currentApplication )
+    {
+
+        if ( name.contains( ":" ) )
+        {
+            return ContentTypeName.from( name );
+        }
+
+        if ( currentApplication == null )
+        {
+            throw new IllegalArgumentException( String.format( "Unable to resolve application for ContentType [%s]", name ) );
+        }
+
+        return ContentTypeName.from( currentApplication, name );
     }
 
     private abstract static class ContentTypeNameMixIn

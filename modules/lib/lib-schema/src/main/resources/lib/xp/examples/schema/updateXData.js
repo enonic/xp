@@ -14,7 +14,7 @@ form:
     max: 2`;
 
 // BEGIN
-// Update virtual mixin.
+// Update virtual x-data.
 var result = schemaLib.updateSchema({
     name: 'myapp:mydata',
     type: 'XDATA',

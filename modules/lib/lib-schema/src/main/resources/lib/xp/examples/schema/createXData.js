@@ -14,7 +14,7 @@ form:
     max: 2`;
 
 // BEGIN
-// Create virtual mixin.
+// Create virtual xdata.
 var result = schemaLib.createSchema({
     name: 'myapp:mydata',
     type: 'XDATA',

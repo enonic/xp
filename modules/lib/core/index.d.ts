@@ -1167,6 +1167,7 @@ export type Filter = ExistsFilter | NotExistsFilter | HasValueFilter | IdsFilter
 export type InputType =
     | 'Time'
     | 'DateTime'
+    | 'Instant'
     | 'CheckBox'
     | 'ComboBox'
     | 'Long'
@@ -1273,9 +1274,9 @@ export interface FormItemOptionSet {
     }[];
 }
 
-export interface FormItemInlineMixin {
-    formItemType: 'InlineMixin';
+export interface FormItemFormFragment {
+    formItemType: 'FormFragment';
     name: string;
 }
 
-export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput | FormItemInlineMixin;
+export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput | FormItemFormFragment;

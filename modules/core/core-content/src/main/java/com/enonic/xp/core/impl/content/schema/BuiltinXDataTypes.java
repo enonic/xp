@@ -55,7 +55,7 @@ final class BuiltinXDataTypes
     BuiltinXDataTypes()
     {
         this.xDatas = Stream.of( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA )
-            .map( mixin -> XData.create( mixin ).icon( loadSchemaIcon( XDATA_FOLDER, mixin.getName().getLocalName() ) ).build() )
+            .map( xData -> XData.create( xData ).icon( loadSchemaIcon( XDATA_FOLDER, xData.getName().getLocalName() ) ).build() )
             .collect( XDatas.collector() );
         this.map = this.xDatas.stream().collect( Collectors.toUnmodifiableMap( XData::getName, Function.identity() ) );
     }
