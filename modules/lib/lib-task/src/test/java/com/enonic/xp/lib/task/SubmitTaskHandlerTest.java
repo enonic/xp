@@ -11,7 +11,6 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
@@ -19,7 +18,6 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -37,32 +35,23 @@ class SubmitTaskHandlerTest
         addService( TaskService.class, taskService );
         final TaskDescriptorService taskDescriptorService = Mockito.mock( TaskDescriptorService.class );
         addService( TaskDescriptorService.class, taskDescriptorService );
-        final CmsFormFragmentService formFragmentService = Mockito.mock( CmsFormFragmentService.class );
-        addService( CmsFormFragmentService.class, formFragmentService );
 
-        final Form cfg1 = Form.create().
-            addFormItem( Input.create().
-                name( "count" ).
-                label( "Count" ).
-                inputType( InputTypeName.LONG ).
-                required( true ).
-                build() ).
-            build();
-        final Form cfg2 = Form.create().
-            addFormItem( Input.create().
-                name( "values" ).
-                label( "Values" ).
-                inputType( InputTypeName.TEXT_LINE ).
-                required( true ).
-                multiple( true ).
-                build() ).
-            build();
+        final Form cfg1 = Form.create()
+            .addFormItem( Input.create().name( "count" ).label( "Count" ).inputType( InputTypeName.LONG ).required( true ).build() )
+            .build();
+        final Form cfg2 = Form.create()
+            .addFormItem( Input.create()
+                              .name( "values" )
+                              .label( "Values" )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .required( true )
+                              .multiple( true )
+                              .build() )
+            .build();
         final TaskDescriptor desc1 = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:job42" ) ).config( cfg1 ).build();
         final TaskDescriptor desc2 = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:my-task" ) ).config( cfg2 ).build();
         final TaskDescriptor desc3 = TaskDescriptor.create().key( DescriptorKey.from( "other-app:some-task" ) ).build();
         when( taskDescriptorService.getTasks() ).thenReturn( Descriptors.from( desc1, desc2, desc3 ) );
-
-        when( formFragmentService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
 
         addService( PropertyTreeMarshallerService.class, PropertyTreeMarshallerServiceFactory.newInstance() );
     }
@@ -71,8 +60,7 @@ class SubmitTaskHandlerTest
     void testExample()
     {
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).
-            thenReturn( taskId );
+        when( this.taskService.submitTask( any( SubmitTaskParams.class ) ) ).thenReturn( taskId );
 
         runScript( "/lib/xp/examples/task/submitTask.js" );
     }
