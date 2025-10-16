@@ -68,7 +68,7 @@ public class GetDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testMixin()
+    public void testFormFragment()
     {
         when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
@@ -80,8 +80,8 @@ public class GetDynamicContentSchemaHandlerTest
 
             final FormFragmentDescriptor fragmentDescriptor = FormFragmentDescriptor.create()
                 .name( (FormFragmentName) schemaParams.getName() )
-                .description( "My mixin description" )
-                .displayName( "My mixin display name" )
+                .description( "My FormFragment description" )
+                .displayName( "My FormFragment display name" )
                 .modifiedTime( Instant.parse( "2010-01-01T10:00:00Z" ) )
                 .createdTime( Instant.parse( "2009-01-01T10:00:00Z" ) )
                 .creator( User.ANONYMOUS.getKey() )

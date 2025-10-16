@@ -39,13 +39,13 @@ public class FormItemSetTest
             .name( "mySet" )
             .label( "Label" )
             .multiple( true )
-            .addFormItem( FormFragment.create().formFragment( "myapplication:mymixin" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "myapplication:myFormFragment" ).build() )
             .build();
 
         // exercise
 
         // verify
-        assertEquals( "mySet.mymixin", formItemSet.getFormFragment( "mymixin" ).getPath().toString() );
+        assertEquals( "mySet.myFormFragment", formItemSet.getFormFragment( "myFormFragment" ).getPath().toString() );
     }
 
 

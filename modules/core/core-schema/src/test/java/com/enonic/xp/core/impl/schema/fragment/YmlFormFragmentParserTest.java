@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.form.mixin;
+package com.enonic.xp.core.impl.schema.fragment;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,15 +28,15 @@ public class YmlFormFragmentParserTest
 
         final FormFragmentDescriptor.Builder builder = YmlFormFragmentParser.parse( yaml, currentApplication );
 
-        builder.name( FormFragmentName.from( currentApplication, "my-mixin" ) );
+        builder.name( FormFragmentName.from( currentApplication, "my-form-fragment" ) );
 
         final FormFragmentDescriptor descriptor = builder.build();
 
         assertEquals( currentApplication, descriptor.getName().getApplicationKey() );
-        assertEquals( "my-mixin", descriptor.getName().getLocalName() );
-        assertEquals( "DisplayName of the MixIn", descriptor.getDisplayName() );
+        assertEquals( "my-form-fragment", descriptor.getName().getLocalName() );
+        assertEquals( "DisplayName of the FormFragment", descriptor.getDisplayName() );
         assertNull( descriptor.getDisplayNameI18nKey() );
-        assertEquals( "Description of the MixIn", descriptor.getDescription() );
+        assertEquals( "Description of the FormFragment", descriptor.getDescription() );
         assertNull( descriptor.getDescriptionI18nKey() );
 
         // verify form

@@ -1,7 +1,7 @@
 x:
   - name: "system:menu-item"
     optional: false
-  - name: "myapplication:my-meta-mixin"
+  - name: "myapplication:my-meta-fragment"
     optional: false
 form:
   - type: "TextLine"

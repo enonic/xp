@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.form.mixin;
+package com.enonic.xp.core.impl.schema.fragment;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

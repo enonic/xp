@@ -1,27 +1,24 @@
-package com.enonic.xp.core.impl.schema.mixin;
+package com.enonic.xp.core.impl.schema.fragment;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.core.impl.form.mixin.CmsFormFragmentServiceImpl;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.formfragment.FormFragmentDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FormFragmentServiceImplTest
+public class CmsFormFragmentServiceImplTest
     extends ApplicationTestSupport
 {
     protected CmsFormFragmentServiceImpl service;
@@ -29,22 +26,14 @@ public class FormFragmentServiceImplTest
     @Override
     protected void initialize()
     {
-        this.service = new CmsFormFragmentServiceImpl( this.applicationService, this.resourceService );
+        this.service = new CmsFormFragmentServiceImpl( this.resourceService );
     }
 
     @Test
     public void testEmpty()
     {
-        final FormFragmentDescriptors types1 = this.service.getAll();
-        assertNotNull( types1 );
-        assertEquals( 0, types1.getSize() );
-
-        final FormFragmentDescriptors types2 = this.service.getByApplication( ApplicationKey.from( "other" ) );
-        assertNotNull( types2 );
-        assertEquals( 0, types2.getSize() );
-
-        final FormFragmentDescriptor mixin = service.getByName( FormFragmentName.from( "other:mytype" ) );
-        assertNull( mixin );
+        final FormFragmentDescriptor fragmentDescriptor = service.getByName( FormFragmentName.from( "other:mytype" ) );
+        assertNull( fragmentDescriptor );
     }
 
     @Test
@@ -52,20 +41,8 @@ public class FormFragmentServiceImplTest
     {
         initializeApps();
 
-        final FormFragmentDescriptors types1 = this.service.getAll();
-        assertNotNull( types1 );
-        assertEquals( 8, types1.getSize() );
-
-        final FormFragmentDescriptors types2 = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
-        assertNotNull( types2 );
-        assertEquals( 2, types2.getSize() );
-
-        final FormFragmentDescriptors types3 = this.service.getByApplication( ApplicationKey.from( "myapp2" ) );
-        assertNotNull( types3 );
-        assertEquals( 6, types3.getSize() );
-
-        final FormFragmentDescriptor mixin = service.getByName( FormFragmentName.from( "myapp2:mixin1" ) );
-        assertNotNull( mixin );
+        final FormFragmentDescriptor fragmentDescriptor = service.getByName( FormFragmentName.from( "myapp2:fragment1" ) );
+        assertNotNull( fragmentDescriptor );
     }
 
     @Test
@@ -75,7 +52,7 @@ public class FormFragmentServiceImplTest
 
         final Form form = Form.create()
             .addFormItem( Input.create().name( "my_input" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build() )
-            .addFormItem( FormFragment.create().formFragment( "myapp2:mixin2" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "myapp2:fragment2" ).build() )
             .build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -113,8 +90,10 @@ public class FormFragmentServiceImplTest
         final Form form = Form.create()
             .addFormItem(
                 FormItemSet.create().name( "home" ).addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() ).build() )
-            .addFormItem(
-                FormItemSet.create().name( "cottage" ).addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() ).build() )
+            .addFormItem( FormItemSet.create()
+                              .name( "cottage" )
+                              .addFormItem( FormFragment.create().formFragment( "myapp2:address" ).build() )
+                              .build() )
             .build();
 
         final Form transformedForm = service.inlineFormItems( form );
@@ -145,7 +124,7 @@ public class FormFragmentServiceImplTest
     }
 
     @Test
-    public void testInlineMixinsWithCycles()
+    public void testFormFragmentsWithCycles()
     {
         initializeApps();
 
@@ -155,7 +134,7 @@ public class FormFragmentServiceImplTest
             .build();
 
         final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> service.inlineFormItems( form ) );
-        assertEquals( "Cycle detected in mixin [myapp2:inline1]. It contains an inline mixin that references itself.",
+        assertEquals( "Cycle detected in form fragment [myapp2:inline1]. It contains a form fragment that references itself.",
                       exception.getMessage() );
     }
 

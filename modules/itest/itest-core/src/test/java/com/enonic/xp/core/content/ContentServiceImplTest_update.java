@@ -293,7 +293,7 @@ public class ContentServiceImplTest_update
         data.setString( "testString", "value" );
         data.setString( "testString2", "value" );
 
-        final FormFragmentDescriptor mixin = FormFragmentDescriptor.create().name( "myapplication:my_mixin" ).
+        final FormFragmentDescriptor descriptor = FormFragmentDescriptor.create().name( "myapplication:my_fragment" ).
             addFormItem( Input.create().
                 name( "inputToBeMixedIn" ).
                 label( "Mixed in" ).
@@ -302,9 +302,9 @@ public class ContentServiceImplTest_update
             build();
 
         Mockito.when( this.formFragmentService.getByName( Mockito.isA( FormFragmentName.class ) ) ).
-            thenReturn( mixin );
+            thenReturn( descriptor );
 
-        final ExtraData extraData = new ExtraData( XDataName.from( "myapplication:my_mixin" ), new PropertyTree() );
+        final ExtraData extraData = new ExtraData( XDataName.from( "myapplication:my_fragment" ), new PropertyTree() );
 
         ExtraDatas extraDatas = ExtraDatas.from( List.of( extraData ) );
 

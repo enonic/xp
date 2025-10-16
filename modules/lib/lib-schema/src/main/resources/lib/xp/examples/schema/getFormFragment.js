@@ -4,21 +4,21 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual mixin type.
+// Fetch virtual form fragment type.
 var result = schemaLib.getSchema({
-    name: 'myapp:mymixin',
+    name: 'myapp:myFormFragment',
     type: 'FORM_FRAGMENT'
 });
 
-log.info('Fetched mixin: ' + result.name);
+log.info('Fetched form fragment: ' + result.name);
 
 // END
 
 
 assert.assertJsonEquals({
-    name: 'myapp:mymixin',
-    displayName: 'My mixin display name',
-    description: 'My mixin description',
+    name: 'myapp:myFormFragment',
+    displayName: 'My FormFragment display name',
+    description: 'My FormFragment description',
     createdTime: '2009-01-01T10:00:00Z',
     creator: 'user:system:anonymous',
     modifiedTime: '2010-01-01T10:00:00Z',

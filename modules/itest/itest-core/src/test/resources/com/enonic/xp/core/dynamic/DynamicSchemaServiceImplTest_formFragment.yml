@@ -1,5 +1,5 @@
-displayName: "Virtual Mixin"
-description: "Mixin description"
+displayName: "Virtual FormFragment"
+description: "FormFragment description"
 form:
   - type: "TextLine"
     name: "text2"

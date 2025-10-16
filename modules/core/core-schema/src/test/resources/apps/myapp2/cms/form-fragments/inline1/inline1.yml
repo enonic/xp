@@ -1,4 +1,4 @@
-displayName: "Inline Mixin 1"
+displayName: "FormFragment 1"
 form:
 - type: "TextLine"
   name: "text1"

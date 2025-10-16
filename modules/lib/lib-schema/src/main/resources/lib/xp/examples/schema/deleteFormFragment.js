@@ -7,7 +7,7 @@ var assert = require('/lib/xp/testing');
 // Create virtual part.
 
 var params = {
-    name: 'mymixin',
+    name: 'myapp:myFragment',
     type: 'FORM_FRAGMENT'
 };
 
@@ -15,9 +15,9 @@ var result = schemaLib.deleteSchema(params);
 
 
 if (result) {
-    log.info('Deleted mixin: ' + params.key);
+    log.info('Deleted FormFragment: ' + params.key);
 } else {
-    log.info('Mixin deletion failed: ' + params.key);
+    log.info('FormFragment deletion failed: ' + params.key);
 }
 
 // END

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
-import com.enonic.xp.core.impl.form.mixin.YmlFormFragmentParser;
+import com.enonic.xp.core.impl.schema.fragment.YmlFormFragmentParser;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
@@ -49,7 +49,7 @@ public class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testMixin()
+    public void testFormFragment()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );

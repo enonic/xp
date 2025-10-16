@@ -444,7 +444,7 @@ public class FormDefaultValuesProcessorImplTest
     {
         FieldSet.Builder fieldSet = FieldSet.create()
             .label( "FieldSet" )
-            .addFormItem( FormFragment.create().formFragment( "testApp:testMixin" ).build() )
+            .addFormItem( FormFragment.create().formFragment( "testApp:testFragment" ).build() )
             .addFormItem( Input.create()
                               .name( "testInput" )
                               .label( "testInput" )

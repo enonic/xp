@@ -8,7 +8,7 @@ import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
-import com.enonic.xp.core.impl.form.mixin.YmlFormFragmentParser;
+import com.enonic.xp.core.impl.schema.fragment.YmlFormFragmentParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;

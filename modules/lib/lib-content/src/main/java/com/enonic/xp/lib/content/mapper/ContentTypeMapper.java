@@ -82,7 +82,7 @@ public final class ContentTypeMapper
         }
         else if ( item instanceof FormFragment )
         {
-            // mixins have been inlined in form
+            // form fragments have been inlined in form
         }
         else if ( item instanceof FormOptionSet )
         {

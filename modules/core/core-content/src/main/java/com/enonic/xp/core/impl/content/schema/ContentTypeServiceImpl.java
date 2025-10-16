@@ -46,19 +46,19 @@ public final class ContentTypeServiceImpl
             return null;
         }
 
-        return transformInlineMixins( contentType );
+        return transformFormFragments( contentType );
     }
 
     @Override
     public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return transformInlineMixins( this.registry.getByApplication( applicationKey ) );
+        return transformFormFragments( this.registry.getByApplication( applicationKey ) );
     }
 
     @Override
     public ContentTypes getAll()
     {
-        return transformInlineMixins( this.registry.getAll() );
+        return transformFormFragments( this.registry.getAll() );
     }
 
     @Override
@@ -76,13 +76,13 @@ public final class ContentTypeServiceImpl
         return validator.getResult();
     }
 
-    private ContentType transformInlineMixins( final ContentType contentType )
+    private ContentType transformFormFragments( final ContentType contentType )
     {
         return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
     }
 
-    private ContentTypes transformInlineMixins( final ContentTypes contentTypes )
+    private ContentTypes transformFormFragments( final ContentTypes contentTypes )
     {
-        return contentTypes.stream().map( this::transformInlineMixins ).collect( ContentTypes.collector() );
+        return contentTypes.stream().map( this::transformFormFragments ).collect( ContentTypes.collector() );
     }
 }

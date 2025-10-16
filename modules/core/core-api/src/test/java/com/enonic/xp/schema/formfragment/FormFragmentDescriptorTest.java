@@ -12,15 +12,15 @@ public class FormFragmentDescriptorTest
 {
 
     @Test
-    public void mixinBuilderTest()
+    public void formFragmentBuilderTest()
     {
         final Form.Builder formBuilder = Form.create();
         formBuilder.addFormItem( Input.create().name( "name" ).label( "Name" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
-        FormFragmentDescriptor
-            mixin1 = FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).form( formBuilder.build() ).build();
-        FormFragmentDescriptor mixin2 = FormFragmentDescriptor.create( mixin1 ).build();
-        assertEquals( mixin1.getForm(), mixin2.getForm() );
+        FormFragmentDescriptor fragment1 =
+            FormFragmentDescriptor.create().name( FormFragmentName.from( "myapplication:my1" ) ).form( formBuilder.build() ).build();
+        FormFragmentDescriptor fragment2 = FormFragmentDescriptor.create( fragment1 ).build();
+        assertEquals( fragment1.getForm(), fragment2.getForm() );
     }
 
 }

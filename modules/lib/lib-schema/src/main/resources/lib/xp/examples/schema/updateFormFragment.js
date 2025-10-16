@@ -17,7 +17,7 @@ form:
 `;
 
 // BEGIN
-// Update virtual mixin.
+// Update virtual fragment.
 var result = schemaLib.updateSchema({
     name: 'myapp:mytype',
     type: 'FORM_FRAGMENT',

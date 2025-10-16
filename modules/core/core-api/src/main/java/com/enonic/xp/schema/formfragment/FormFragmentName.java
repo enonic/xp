@@ -7,7 +7,6 @@ import com.enonic.xp.schema.BaseSchemaName;
 @PublicApi
 public final class FormFragmentName
     extends BaseSchemaName
-    implements Comparable<FormFragmentName>
 {
     private FormFragmentName( final String name )
     {
@@ -27,16 +26,5 @@ public final class FormFragmentName
     public static FormFragmentName from( final String formFragmentName )
     {
         return new FormFragmentName( formFragmentName );
-    }
-
-    public String getApplicationPrefix()
-    {
-        return this.getApplicationKey() == null ? "" : this.getApplicationKey().toString().replace( '.', '-' );
-    }
-
-    @Override
-    public int compareTo( final FormFragmentName that )
-    {
-        return this.toString().compareTo( that.toString() );
     }
 }

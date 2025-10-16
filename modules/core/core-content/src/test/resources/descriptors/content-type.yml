@@ -35,7 +35,7 @@ form:
           text: "Description"
 
   - type: "FormFragment"
-    name: "myapp:mymixin"
+    name: "myFragment"
 
   - type: "ItemSet"
     name: "Panel"
