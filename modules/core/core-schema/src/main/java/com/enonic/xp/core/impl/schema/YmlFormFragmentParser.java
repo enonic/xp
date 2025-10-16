@@ -1,10 +1,9 @@
-package com.enonic.xp.core.impl.schema.fragment;
+package com.enonic.xp.core.impl.schema;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;

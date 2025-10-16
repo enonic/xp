@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
 import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
-import com.enonic.xp.core.impl.schema.fragment.YmlFormFragmentParser;
+import com.enonic.xp.core.impl.schema.YmlFormFragmentParser;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.DynamicSchemaResult;

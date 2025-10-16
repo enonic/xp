@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.content.schema;
 import java.time.Instant;
 
 import com.enonic.xp.core.impl.schema.SchemaLoader;
-import com.enonic.xp.core.impl.schema.fragment.YmlFormFragmentParser;
+import com.enonic.xp.core.impl.schema.YmlFormFragmentParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;

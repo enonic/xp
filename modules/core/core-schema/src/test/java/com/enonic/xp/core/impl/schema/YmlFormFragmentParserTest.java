@@ -1,4 +1,4 @@
-package com.enonic.xp.core.impl.schema.fragment;
+package com.enonic.xp.core.impl.schema;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
