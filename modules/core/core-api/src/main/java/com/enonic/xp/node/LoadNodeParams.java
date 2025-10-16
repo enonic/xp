@@ -1,15 +1,20 @@
 package com.enonic.xp.node;
 
+import com.enonic.xp.util.Attributes;
+
 public final class LoadNodeParams
 {
     private final Node node;
 
     private final NodeCommitId nodeCommitId;
 
+    private final Attributes attributes;
+
     private LoadNodeParams( final Builder builder )
     {
         node = builder.node;
         nodeCommitId = builder.nodeCommitId;
+        attributes = builder.attributes;
     }
 
     public Node getNode()
@@ -20,6 +25,11 @@ public final class LoadNodeParams
     public NodeCommitId getNodeCommitId()
     {
         return nodeCommitId;
+    }
+
+    public Attributes getAttributes()
+    {
+        return attributes;
     }
 
     public static Builder create()
@@ -34,6 +44,8 @@ public final class LoadNodeParams
 
         private NodeCommitId nodeCommitId;
 
+        private Attributes attributes;
+
         private Builder()
         {
         }
@@ -47,6 +59,12 @@ public final class LoadNodeParams
         public Builder nodeCommitId( final NodeCommitId val )
         {
             nodeCommitId = val;
+            return this;
+        }
+
+        public Builder attributes( final Attributes val )
+        {
+            attributes = val;
             return this;
         }
 

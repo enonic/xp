@@ -995,6 +995,7 @@ public class NodeServiceImpl
             .path( params.getPath() )
             .editor( params.getEditor() )
             .setBinaryAttachments( params.getBinaryAttachments() )
+            .versionAttributes( params.getVersionAttributes() )
             .refresh( params.getRefresh() )
             .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
             .build();

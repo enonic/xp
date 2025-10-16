@@ -88,6 +88,7 @@ public class NodeStorageServiceImpl
             .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
             .nodePath( node.path() )
             .nodeCommitId( params.getNodeCommitId() )
+            .attributes( params.getVersionAttributes() )
             .timestamp( timestamp )
             .build();
 
@@ -138,6 +139,7 @@ public class NodeStorageServiceImpl
             nodePath( params.getNodePath() ).
             nodeCommitId( params.getNodeCommitId() ).
             timestamp( params.getTimestamp() ).
+            attributes( params.getAttributes() ).
             build(), context );
     }
 
@@ -187,13 +189,14 @@ public class NodeStorageServiceImpl
                 this.versionService.getVersion( routableNodeVersionId.getNodeVersionId(), context );
 
             final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create().
-                nodeCommitId( nodeCommitId ).
                 nodeVersionId( existingVersion.getNodeVersionId() ).
                 nodeVersionKey( existingVersion.getNodeVersionKey() ).
                 binaryBlobKeys( existingVersion.getBinaryBlobKeys() ).
                 nodeId( existingVersion.getNodeId() ).
                 nodePath( existingVersion.getNodePath() ).
                 timestamp( existingVersion.getTimestamp() ).
+                attributes(  existingVersion.getAttributes() ).
+                nodeCommitId( nodeCommitId ).
                 build();
             this.versionService.store( updatedVersion, context );
         }

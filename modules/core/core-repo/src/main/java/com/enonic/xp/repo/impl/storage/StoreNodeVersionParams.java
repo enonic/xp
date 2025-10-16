@@ -66,6 +66,11 @@ public final class StoreNodeVersionParams
         return nodeCommitId;
     }
 
+    public Attributes getAttributes()
+    {
+        return attributes;
+    }
+
     public static Builder create()
     {
         return new Builder();

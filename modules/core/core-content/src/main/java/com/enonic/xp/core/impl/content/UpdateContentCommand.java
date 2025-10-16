@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -41,7 +42,9 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.util.Attributes;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.PropertyValue;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -106,9 +109,16 @@ final class UpdateContentCommand
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
         }
 
+        final Attributes versionAttributes = Attributes.create()
+            .add( "content.update",
+                  Map.of( "user", PropertyValue.stringValue( getCurrentUser().getKey().toString() ), "optime",
+                          PropertyValue.stringValue( Instant.now().toString() ) ) )
+            .build();
+
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
+            .versionAttributes( versionAttributes )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )

@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
+import com.enonic.xp.util.Attributes;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
@@ -21,18 +22,26 @@ public final class UpdateNodeParams
 
     private final RefreshMode refresh;
 
+    private final Attributes versionAttributes;
+
     private UpdateNodeParams( final Builder builder )
     {
         this.id = builder.id;
         this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
+        this.versionAttributes = builder.versionAttributes;
         this.refresh = builder.refresh;
     }
 
     public BinaryAttachments getBinaryAttachments()
     {
         return binaryAttachments;
+    }
+
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
     }
 
     public static Builder create()
@@ -70,8 +79,9 @@ public final class UpdateNodeParams
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        private RefreshMode refresh;
+        public Attributes versionAttributes;
 
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -108,6 +118,12 @@ public final class UpdateNodeParams
             {
                 binaryAttachments.stream().forEach( this.binaryAttachments::add );
             }
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

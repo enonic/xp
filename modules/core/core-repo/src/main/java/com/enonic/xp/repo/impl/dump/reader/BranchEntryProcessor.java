@@ -60,7 +60,8 @@ public class BranchEntryProcessor
             final Node node = NodeFactory.create( nodeVersion, meta.version(), meta.nodePath(),
                                                   meta.timestamp().truncatedTo( ChronoUnit.MILLIS ) );
 
-            this.nodeService.loadNode( LoadNodeParams.create().node( node ).nodeCommitId( meta.nodeCommitId() ).build() );
+            this.nodeService.loadNode(
+                LoadNodeParams.create().node( node ).nodeCommitId( meta.nodeCommitId() ).attributes( meta.attributes() ).build() );
 
             addBinary( nodeVersion, result );
 

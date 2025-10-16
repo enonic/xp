@@ -29,6 +29,7 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.util.Attributes;
 
 import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
@@ -199,7 +200,7 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext );
+            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ), internalContext );
         }
     }
 

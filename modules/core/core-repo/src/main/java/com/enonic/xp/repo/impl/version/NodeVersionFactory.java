@@ -1,18 +1,25 @@
 package com.enonic.xp.repo.impl.version;
 
+import java.io.IOException;
 import java.time.Instant;
+
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.storage.GetResult;
+import com.enonic.xp.util.Attributes;
+import com.enonic.xp.util.PropertyValue;
 
 class NodeVersionFactory
 {
@@ -29,6 +36,7 @@ class NodeVersionFactory
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
         final Object commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() );
+        final Object attributes = values.getSingleValue( VersionIndexPath.ATTRIBUTES.getPath() );
 
         final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeysReturnValue );
 
@@ -44,6 +52,7 @@ class NodeVersionFactory
                                  .build() )
             .binaryBlobKeys( binaryBlobKeys )
             .nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId ) )
+            .attributes( attributes == null ? null : stringToAttributes( attributes.toString() ) )
             .build();
     }
 
@@ -53,5 +62,22 @@ class NodeVersionFactory
             .stream()
             .map( value -> BlobKey.from( value.toString() ) )
             .collect( BlobKeys.collector() ) : BlobKeys.empty();
+    }
+
+    private static Attributes stringToAttributes( String val )
+    {
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer( PropertyValue.class, new PropertyValueDeserializer() );
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule( module );
+        try (MappingIterator<PropertyValue> iterator = new ObjectMapper().readerFor( PropertyValue.class ).readValues( val ))
+        {
+            return Attributes.create().addAll( iterator.readAll() ).build();
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 }

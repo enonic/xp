@@ -22,4 +22,5 @@ public class VersionIndexPath
 
     public static final IndexPath COMMIT_ID = IndexPath.from( "commitid" );
 
+    public static final IndexPath ATTRIBUTES = IndexPath.from( "attributes" );
 }
