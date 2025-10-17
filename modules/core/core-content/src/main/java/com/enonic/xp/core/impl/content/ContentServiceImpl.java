@@ -134,6 +134,8 @@ public class ContentServiceImpl
 
     private XDataService xDataService;
 
+    private XDataMappingService xDataMappingService;
+
     private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
 
     private SiteService siteService;
@@ -147,8 +149,6 @@ public class ContentServiceImpl
     private final FormDefaultValuesProcessor formDefaultValuesProcessor;
 
     private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-    private final XDataMappingService xDataMappingService;
 
     private final SiteConfigService siteConfigService;
 
@@ -166,7 +166,6 @@ public class ContentServiceImpl
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
-                               @Reference final XDataMappingService xDataMappingService,
                                @Reference final SiteConfigService siteConfigService,
                                @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor,
                                @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor,
@@ -177,7 +176,6 @@ public class ContentServiceImpl
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.xDataMappingService = xDataMappingService;
         this.siteConfigService = siteConfigService;
         this.translator = new ContentNodeTranslator();
 
@@ -1069,6 +1067,12 @@ public class ContentServiceImpl
     public void setxDataService( final XDataService xDataService )
     {
         this.xDataService = xDataService;
+    }
+
+    @Reference
+    public void setXDataMappingService( final XDataMappingService xDataMappingService )
+    {
+        this.xDataMappingService = xDataMappingService;
     }
 
     @Reference

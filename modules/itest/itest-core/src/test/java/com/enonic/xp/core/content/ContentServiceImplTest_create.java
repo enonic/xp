@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
@@ -26,6 +27,8 @@ import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -55,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -125,6 +129,11 @@ public class ContentServiceImplTest_create
     public void create_with_attachments()
         throws Exception
     {
+        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
+
         final String name = "cat-small.jpg";
         final ByteSource image = loadImage( name );
 

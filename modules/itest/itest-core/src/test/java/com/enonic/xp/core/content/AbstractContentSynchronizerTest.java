@@ -325,8 +325,7 @@ public abstract class AbstractContentSynchronizerTest
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService,
                                     siteConfigService,
                                     ( form, data ) -> {
                                     }, ( page ) -> {
@@ -337,6 +336,7 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
     }
 
