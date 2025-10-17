@@ -47,8 +47,8 @@ import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
 
@@ -644,7 +644,7 @@ public class ContentServiceImplTest_update
     {
         final XDataName xDataName = XDataName.from( "com.enonic.app.test:my_fragment" );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(
                                                                                                       "com.enonic.app.test" ) )
                                                                                                   .xDataMappings( XDataMappings.from(

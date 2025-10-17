@@ -38,13 +38,12 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
 
@@ -328,7 +327,7 @@ public class ContentServiceImplTest_create
 
         final Content content = this.contentService.create( createContentParams );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
                                                                                                   .xDataMappings( XDataMappings.from(
@@ -403,7 +402,7 @@ public class ContentServiceImplTest_create
 
         final XDataName xdata = XDataName.from( "app:xdata1" );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
                                                                                                   .xDataMappings( XDataMappings.from(
@@ -454,7 +453,7 @@ public class ContentServiceImplTest_create
 
         final XDataName xdata = XDataName.from( "app:xdata1" );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
                                                                                                   .xDataMappings( XDataMappings.from(
@@ -500,7 +499,7 @@ public class ContentServiceImplTest_create
 
         final XDataName xdata = XDataName.from( "app:xdata1" );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
                                                                                                   .xDataMappings( XDataMappings.from(

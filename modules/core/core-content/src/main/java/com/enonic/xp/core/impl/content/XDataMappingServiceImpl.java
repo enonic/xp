@@ -16,7 +16,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.site.SiteService;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.site.XDataMappings;
 import com.enonic.xp.site.XDataOption;
@@ -28,14 +28,14 @@ import static com.google.common.base.Strings.nullToEmpty;
 public final class XDataMappingServiceImpl
     implements XDataMappingService
 {
-    private final SiteService siteService;
+    private final CmsService cmsService;
 
     private final XDataService xDataService;
 
     @Activate
-    public XDataMappingServiceImpl( @Reference SiteService siteService, @Reference XDataService xDataService )
+    public XDataMappingServiceImpl( @Reference CmsService cmsService, @Reference XDataService xDataService )
     {
-        this.siteService = siteService;
+        this.cmsService = cmsService;
         this.xDataService = xDataService;
     }
 
@@ -55,7 +55,7 @@ public final class XDataMappingServiceImpl
         final XDataMappings.Builder builder = XDataMappings.create();
 
         applicationKeys.stream()
-            .map( siteService::getDescriptor )
+            .map( cmsService::getDescriptor )
             .filter( Objects::nonNull )
             .forEach( siteDescriptor -> builder.addAll( siteDescriptor.getXDataMappings() ) );
 

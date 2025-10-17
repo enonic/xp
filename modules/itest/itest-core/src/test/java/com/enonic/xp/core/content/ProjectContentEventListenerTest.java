@@ -72,8 +72,8 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.XDataMapping;
 import com.enonic.xp.site.XDataMappings;
 
@@ -498,7 +498,7 @@ public class ProjectContentEventListenerTest
                                                                  .displayName( "new display name" )
                                                                  .build() ) );
 
-        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( SiteDescriptor.create()
+        when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( myApp )
                                                                                                   .xDataMappings( XDataMappings.from(
                                                                                                       XDataMapping.create()
