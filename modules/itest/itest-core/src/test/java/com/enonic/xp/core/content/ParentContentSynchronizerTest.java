@@ -393,6 +393,11 @@ public class ParentContentSynchronizerTest
     public void updateAttachmentsChanged()
         throws Exception
     {
+        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
+
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         syncCreated( sourceContent.getId() );
 
