@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.attachment.AttachmentNames;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
@@ -43,6 +44,8 @@ import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
+import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -72,6 +75,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class ParentContentSynchronizerTest
     extends AbstractContentSynchronizerTest
@@ -300,6 +304,11 @@ public class ParentContentSynchronizerTest
     public void updateMediaChanged()
         throws Exception
     {
+        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
+
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
@@ -384,6 +393,11 @@ public class ParentContentSynchronizerTest
     public void updateAttachmentsChanged()
         throws Exception
     {
+        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
+
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         syncCreated( sourceContent.getId() );
 

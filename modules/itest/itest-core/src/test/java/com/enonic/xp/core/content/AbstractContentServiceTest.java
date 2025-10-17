@@ -340,10 +340,9 @@ public abstract class AbstractContentServiceTest
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
-                                    siteConfigService,
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, siteConfigService,
                                     ( form, data ) -> {
-            }, ( page ) -> {
+                                    }, ( page ) -> {
             }, ( extraDatas ) -> {
             }, config );
         contentService.setEventPublisher( eventPublisher );
@@ -351,6 +350,7 @@ public abstract class AbstractContentServiceTest
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );

@@ -111,6 +111,8 @@ public abstract class AbstractContentSynchronizerTest
 
     protected XDataService xDataService;
 
+    protected SiteServiceImpl siteService;
+
     protected Context projectContext;
 
     protected Context secondProjectContext;
@@ -309,7 +311,7 @@ public abstract class AbstractContentSynchronizerTest
         contentTypeService = new ContentTypeServiceImpl( null, null, mixinService );
 
         resourceService = mock( ResourceService.class );
-        final SiteServiceImpl siteService = new SiteServiceImpl();
+        siteService = new SiteServiceImpl();
         siteService.setResourceService( resourceService );
         siteService.setMixinService( mixinService );
 
@@ -325,8 +327,7 @@ public abstract class AbstractContentSynchronizerTest
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
+        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService,
                                     siteConfigService,
                                     ( form, data ) -> {
                                     }, ( page ) -> {
@@ -337,6 +338,7 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setSiteService( siteService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
     }
 
