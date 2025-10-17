@@ -6,17 +6,14 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.InputTypes;
 
 import static com.enonic.xp.form.FormItemType.FORM_ITEM_SET;
 import static com.enonic.xp.form.FormItemType.FORM_OPTION_SET;
@@ -42,37 +39,7 @@ public final class FormDefaultValuesProcessorImpl
         {
             if ( formItem.getType() == INPUT )
             {
-                Input input = formItem.toInput();
-                if ( input.getDefaultValue() != null )
-                {
-                    try
-                    {
-                        final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
-
-                        final PropertyPath propertyPath = PropertyPath.from( input.getName() );
-
-                        if ( defaultValue != null && dataSet.getProperty( propertyPath ) == null )
-                        {
-                            if ( input.getOccurrences().getMinimum() > 0 )
-                            {
-                                for ( int i = 0; i < input.getOccurrences().getMinimum(); i++ )
-                                {
-                                    dataSet.setProperty( input.getName(), i, defaultValue );
-                                }
-                            }
-                            else
-                            {
-                                dataSet.setProperty( input.getName(), defaultValue );
-                            }
-                        }
-                    }
-                    catch ( IllegalArgumentException ex )
-                    {
-                        LOG.warn(
-                            "Invalid default value for " + input.getInputType() + " input type with name '" + input.getName() + "': '" +
-                                input.getDefaultValue().getRootValue() + "'" + ( ex.getMessage() == null ? "" : " - " + ex.getMessage() ) );
-                    }
-                }
+                // do nothing
             }
             else if ( formItem.getType() == FORM_ITEM_SET )
             {
@@ -135,7 +102,7 @@ public final class FormDefaultValuesProcessorImpl
             if ( formItem.getType() == INPUT )
             {
                 Input input = formItem.toInput();
-                return input.getOccurrences().getMinimum() > 0 || input.getDefaultValue() != null;
+                return input.getOccurrences().getMinimum() > 0;
             }
             else if ( formItem.getType() == FORM_ITEM_SET )
             {

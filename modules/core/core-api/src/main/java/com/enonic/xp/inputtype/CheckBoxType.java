@@ -5,17 +5,12 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 @PublicApi
 final class CheckBoxType
     extends InputTypeBase
 {
     public static final CheckBoxType INSTANCE = new CheckBoxType();
-
-    private static final String VALID_VALUE = "checked";
 
     private CheckBoxType()
     {
@@ -26,21 +21,6 @@ final class CheckBoxType
     public Value createValue( final Value value, final InputTypeConfig config )
     {
         return ValueFactory.newBoolean( value.asBoolean() );
-    }
-
-    @Override
-    public Value createDefaultValue( final Input input )
-    {
-        final String defaultValue = input.getDefaultValue().getRootValue();
-
-        if ( !isNullOrEmpty( defaultValue ) )
-        {
-            if ( VALID_VALUE.equals( defaultValue ) )
-            {
-                return ValueFactory.newBoolean( true );
-            }
-        }
-        return super.createDefaultValue( input );
     }
 
     @Override
