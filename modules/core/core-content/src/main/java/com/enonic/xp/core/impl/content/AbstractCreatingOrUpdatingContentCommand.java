@@ -99,12 +99,10 @@ class AbstractCreatingOrUpdatingContentCommand
     ExtraDatas mergeExtraData( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final ExtraDatas extraDatas )
     {
         final ExtraDatas.Builder result = ExtraDatas.create();
-        final ApplicationKeys.Builder applicationKeys = ApplicationKeys.create();
+        final ApplicationKeys.Builder applicationKeys = ApplicationKeys.create().add( ApplicationKey.PORTAL );
 
         if ( type.isSite() )
         {
-            applicationKeys.add( ApplicationKey.PORTAL );
-
             SiteConfigsDataSerializer.fromData( data.getRoot() )
                 .stream()
                 .map( SiteConfig::getApplicationKey )
