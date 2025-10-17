@@ -1,9 +1,8 @@
 package com.enonic.xp.repo.impl.version;
 
-import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 
-import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -36,7 +35,7 @@ class NodeVersionFactory
         final String id = values.getSingleValue( VersionIndexPath.NODE_ID.getPath() ).toString();
         final String path = values.getSingleValue( VersionIndexPath.NODE_PATH.getPath() ).toString();
         final Object commitId = values.getSingleValue( VersionIndexPath.COMMIT_ID.getPath() );
-        final Object attributes = values.getSingleValue( VersionIndexPath.ATTRIBUTES.getPath() );
+        final ReturnValue attributes = values.get( VersionIndexPath.ATTRIBUTES.getPath() );
 
         final BlobKeys binaryBlobKeys = toBlobKeys( binaryBlobKeysReturnValue );
 
@@ -52,7 +51,7 @@ class NodeVersionFactory
                                  .build() )
             .binaryBlobKeys( binaryBlobKeys )
             .nodeCommitId( commitId == null ? null : NodeCommitId.from( commitId ) )
-            .attributes( attributes == null ? null : stringToAttributes( attributes.toString() ) )
+            .attributes( stringToAttributes( attributes ) )
             .build();
     }
 
@@ -64,20 +63,22 @@ class NodeVersionFactory
             .collect( BlobKeys.collector() ) : BlobKeys.empty();
     }
 
-    private static Attributes stringToAttributes( String val )
+    private static Attributes stringToAttributes( ReturnValue val )
     {
+        if ( val == null )
+        {
+            return null;
+        }
         SimpleModule module = new SimpleModule();
         module.addDeserializer( PropertyValue.class, new PropertyValueDeserializer() );
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule( module );
-        try (MappingIterator<PropertyValue> iterator = new ObjectMapper().readerFor( PropertyValue.class ).readValues( val ))
+        var list = new ArrayList<PropertyValue>();
+        for ( Object value : val.getValues() )
         {
-            return Attributes.create().addAll( iterator.readAll() ).build();
+            list.add( mapper.convertValue( value, PropertyValue.class ) );
         }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e );
-        }
+        return Attributes.create().addAll(  list ).build();
     }
 }

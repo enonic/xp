@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -44,7 +43,6 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.util.Attributes;
 import com.enonic.xp.util.BinaryReference;
-import com.enonic.xp.util.PropertyValue;
 
 final class UpdateContentCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -110,9 +108,11 @@ final class UpdateContentCommand
         }
 
         final Attributes versionAttributes = Attributes.create()
-            .add( "content.update",
-                  Map.of( "user", PropertyValue.stringValue( getCurrentUser().getKey().toString() ), "optime",
-                          PropertyValue.stringValue( Instant.now().toString() ) ) )
+            .attribute( "content.update" )
+            .put( "user", getCurrentUser().getKey().toString() )
+            .put( "optime", Instant.now().toString() )
+            .putArray( "fields", ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent ) )
+            .end()
             .build();
 
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()

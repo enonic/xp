@@ -121,7 +121,7 @@ public final class PropertyValue
     @SuppressWarnings("unchecked")
     private <T> T whenListOrElse( final Function<List<PropertyValue>, T> then, final Supplier<T> orElse )
     {
-        return value instanceof Map ? then.apply( (List<PropertyValue>) value ) : orElse.get();
+        return value instanceof List ? then.apply( (List<PropertyValue>) value ) : orElse.get();
     }
 
     public static PropertyValue longValue( long value )
@@ -154,6 +154,11 @@ public final class PropertyValue
         return new PropertyValue( ImmutableMap.copyOf( value ) );
     }
 
+    public static ObjectBuilder object()
+    {
+        return new ObjectBuilder();
+    }
+
     public enum Type
     {
         NUMBER, STRING, BOOLEAN, LIST, OBJECT
@@ -169,5 +174,38 @@ public final class PropertyValue
     public int hashCode()
     {
         return Objects.hashCode( value );
+    }
+
+    public static final class ObjectBuilder
+    {
+        private final ImmutableMap.Builder<String, PropertyValue> map = ImmutableMap.builder();
+
+        private ObjectBuilder()
+        {
+        }
+
+        public ObjectBuilder put( String key, String value )
+        {
+            map.put( key, PropertyValue.stringValue( value ) );
+            return this;
+        }
+
+        public ObjectBuilder put( String key, PropertyValue value )
+        {
+            map.put( key, value );
+            return this;
+        }
+
+        public ObjectBuilder putArray( String key, List<String> value )
+        {
+            map.put( key, PropertyValue.listValue(
+                value.stream().map( PropertyValue::stringValue ).collect( ImmutableList.toImmutableList() ) ) );
+            return this;
+        }
+
+        public PropertyValue build()
+        {
+            return PropertyValue.objectValue( map.build() );
+        }
     }
 }

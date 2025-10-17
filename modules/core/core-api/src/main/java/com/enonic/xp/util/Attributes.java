@@ -1,27 +1,27 @@
 package com.enonic.xp.util;
 
 import java.util.List;
-import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public final class Attributes
 {
-    private final ImmutableMap<String, PropertyValue> list;
+    private final ImmutableMap<String, PropertyValue> attrs;
 
     private Attributes( final ImmutableMap<String, PropertyValue> list )
     {
-        this.list = list;
+        this.attrs = list;
     }
 
     public List<PropertyValue> list()
     {
-        return list.values().asList();
+        return attrs.values().asList();
     }
 
     public PropertyValue get( final String key )
     {
-        return list.get( key );
+        return attrs.get( key );
     }
 
     public static Builder create()
@@ -31,29 +31,60 @@ public final class Attributes
 
     public static class Builder
     {
-        private final ImmutableMap.Builder<String, PropertyValue> list = ImmutableMap.builder();
+        private final ImmutableMap.Builder<String, PropertyValue> builder = ImmutableMap.builder();
 
-        public Builder add( final String key, final Map<String, PropertyValue> value )
+        public AttributeBuilder attribute( final String key )
         {
-            ImmutableMap.Builder<String, PropertyValue> builder = ImmutableMap.builder();
-            builder.putAll( value );
-            builder.put( "_key", PropertyValue.stringValue( key ) );
-            list.put( key, PropertyValue.objectValue( builder.build() ) );
-            return this;
+            return new AttributeBuilder( this, key );
         }
 
         public Builder addAll( final Iterable<PropertyValue> values )
         {
             for ( PropertyValue value : values )
             {
-                list.put( value.property( "_key" ).asString(), value );
+                builder.put( value.property( "_key" ).asString(), value );
             }
             return this;
         }
 
         public Attributes build()
         {
-            return new Attributes( list.build() );
+            return new Attributes( builder.build() );
+        }
+    }
+
+    public static final class AttributeBuilder
+    {
+        private final PropertyValue.ObjectBuilder obj = PropertyValue.object();
+
+        private final Attributes.Builder attributesBuilder;
+
+        private final String key;
+
+        private AttributeBuilder( final Attributes.Builder attributesBuilder, final String key )
+        {
+            this.attributesBuilder = attributesBuilder;
+            this.key = key;
+            obj.put( "_key", key );
+        }
+
+        public AttributeBuilder put( final String key, final String value )
+        {
+            obj.put( key, value );
+            return this;
+        }
+
+        public AttributeBuilder putArray( final String key, final List<String> value )
+        {
+            obj.put( key, PropertyValue.listValue(
+                value.stream().map( PropertyValue::stringValue ).collect( ImmutableList.toImmutableList() ) ) );
+            return this;
+        }
+
+        public Attributes.Builder end()
+        {
+            attributesBuilder.builder.put( key, obj.build() );
+            return attributesBuilder;
         }
     }
 }

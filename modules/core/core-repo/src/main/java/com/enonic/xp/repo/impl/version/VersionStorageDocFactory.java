@@ -1,5 +1,8 @@
 package com.enonic.xp.repo.impl.version;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -49,8 +52,7 @@ public class VersionStorageDocFactory
             .build();
     }
 
-
-    private static String attributesToString( final Attributes attributes )
+    private static List<String> attributesToString( final Attributes attributes )
     {
         SimpleModule module = new SimpleModule();
         module.addSerializer( PropertyValue.class, new PropertyValueSerializer() );
@@ -58,19 +60,19 @@ public class VersionStorageDocFactory
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule( module );
 
-        StringBuilder sb = new StringBuilder();
+        var result = new ArrayList<String>();
         try
         {
             for ( PropertyValue p : attributes.list() )
             {
-                sb.append( mapper.writeValueAsString( p ) ).append( '\n' );
+                result.add( mapper.writeValueAsString( p ) );
             }
         }
         catch ( JsonProcessingException e )
         {
             throw new RuntimeException( e );
         }
-        return sb.toString();
+        return result;
     }
 
 }
