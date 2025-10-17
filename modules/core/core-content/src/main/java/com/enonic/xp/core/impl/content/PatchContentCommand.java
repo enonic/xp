@@ -61,7 +61,8 @@ public class PatchContentCommand
                 .build();
         }
 
-        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create().editedContent( patchedContent )
+        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
+            .editedContent( patchedContent )
             .createAttachments( params.getCreateAttachments() )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )

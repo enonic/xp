@@ -2,17 +2,13 @@ package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
+import com.enonic.xp.content.ContentVersionCommitInfo;
 import com.enonic.xp.content.ContentVersionId;
-import com.enonic.xp.content.ContentVersionPublishInfo;
-import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.core.impl.content.serializer.PublishInfoSerializer;
 import com.enonic.xp.core.impl.content.serializer.WorkflowInfoSerializer;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeCommitEntry;
-import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -34,108 +30,80 @@ class ContentVersionFactory
     public ContentVersion create( final NodeVersionMetadata nodeVersionMetadata )
     {
         final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
-        return doCreateContentVersion( nodeVersionMetadata, nodeVersion );
-    }
 
-    private ContentVersion doCreateContentVersion( final NodeVersionMetadata nodeVersionMetadata, final NodeVersion nodeVersion )
-    {
         final PropertyTree data = nodeVersion.getData();
 
-        return ContentVersion.create()
-            .displayName( data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString() )
+        final ContentVersion.Builder builder = ContentVersion.create()
+            .id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
             .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersionMetadata.getNodePath() ) )
-            .comment( "No comments" )
-            .modified( data.getProperty( ContentPropertyNames.MODIFIED_TIME ).getInstant() )
             .timestamp( nodeVersionMetadata.getTimestamp() )
             .childOrder( nodeVersion.getChildOrder() )
-            .modifier( PrincipalKey.from( data.getProperty( ContentPropertyNames.MODIFIER ).getString() ) )
-            .id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
-            .publishInfo( doCreateContentVersionPublishInfo( nodeVersionMetadata.getNodeCommitId(), data.getRoot() ) )
-            .workflowInfo( doCreateContentVersionWorkflowInfo( data.getRoot() ) )
             .permissions( nodeVersion.getPermissions() )
-            .build();
-    }
+            .displayName( data.getString( ContentPropertyNames.DISPLAY_NAME ) )
+            .publishInfo( publishInfoSerializer.serialize( data.getSet( ContentPropertyNames.PUBLISH_INFO ) ) )
+            .workflowInfo( workflowInfoSerializer.extract( data.getSet( ContentPropertyNames.WORKFLOW_INFO ) ) )
+            .modifier( PrincipalKey.from( data.getString( ContentPropertyNames.MODIFIER ) ) )
+            .modified( data.getInstant( ContentPropertyNames.MODIFIED_TIME ) )
+            .attributes( nodeVersionMetadata.getAttributes() );
 
-    private ContentVersionPublishInfo doCreateContentVersionPublishInfo( final NodeCommitId nodeCommitId,
-                                                                         final PropertySet nodeVersionData )
-    {
-        if ( nodeCommitId != null )
+        if ( nodeVersionMetadata.getNodeCommitId() != null )
         {
-            final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeCommitId );
-
+            final NodeCommitEntry nodeCommitEntry = nodeService.getCommit( nodeVersionMetadata.getNodeCommitId() );
             if ( nodeCommitEntry != null )
             {
-                final ContentVersionPublishInfo.Builder builder = ContentVersionPublishInfo.create()
-                    .message( getMessage( nodeCommitEntry ) )
-                    .type( getType( nodeCommitEntry ) )
-                    .publisher( nodeCommitEntry.getCommitter() )
-                    .timestamp( nodeCommitEntry.getTimestamp() );
-
-                if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) ||
-                    nodeCommitEntry.getMessage().startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
-                {
-                    final ContentPublishInfo contentPublishInfo = publishInfoSerializer.serialize( nodeVersionData );
-
-                    if ( contentPublishInfo != null )
-                    {
-                        builder.contentPublishInfo( contentPublishInfo );
-                    }
-                }
-
-                return builder.build();
+                final String commitMessage = nodeCommitEntry.getMessage();
+                builder.commitInfo( ContentVersionCommitInfo.create()
+                                        .message( commitMessage )
+                                        .type( getType( commitMessage ) )
+                                        .commiter( nodeCommitEntry.getCommitter() )
+                                        .timestamp( nodeCommitEntry.getTimestamp() )
+                                        .build() );
+                builder.comment( getCommentPart( commitMessage ) );
             }
         }
-        return null;
+
+        return builder.build();
     }
 
-    private WorkflowInfo doCreateContentVersionWorkflowInfo( final PropertySet nodeVersionData )
+    private static String getCommentPart( final String message )
     {
-        final PropertySet workflowInfoSet = nodeVersionData.getPropertySet( ContentPropertyNames.WORKFLOW_INFO );
-        return workflowInfoSerializer.extract( workflowInfoSet );
+        if ( message.startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return message.substring(
+                ContentConstants.PUBLISH_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+        else if ( message.startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        {
+            return message.substring(
+                ContentConstants.ARCHIVE_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+        }
+        else
+        {
+            return null;
+        }
     }
 
-    private String getMessage( final NodeCommitEntry nodeCommitEntry )
+    private static ContentVersionCommitInfo.CommitType getType( final String message )
     {
-        if ( nodeCommitEntry.getMessage()
-            .startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        if ( message.startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
         {
-            return nodeCommitEntry.getMessage()
-                .substring( ContentConstants.PUBLISH_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+            return ContentVersionCommitInfo.CommitType.PUBLISHED;
         }
-
-        if ( nodeCommitEntry.getMessage()
-            .startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER ) )
+        else if ( message.startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
         {
-            return nodeCommitEntry.getMessage()
-                .substring( ContentConstants.ARCHIVE_COMMIT_PREFIX.length() + ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER.length() );
+            return ContentVersionCommitInfo.CommitType.UNPUBLISHED;
         }
-
-        return null;
+        else if ( message.startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX ) )
+        {
+            return ContentVersionCommitInfo.CommitType.ARCHIVED;
+        }
+        else if ( message.startsWith( ContentConstants.RESTORE_COMMIT_PREFIX ) )
+        {
+            return ContentVersionCommitInfo.CommitType.RESTORED;
+        }
+        else
+        {
+            return ContentVersionCommitInfo.CommitType.CUSTOM;
+        }
     }
-
-    private ContentVersionPublishInfo.CommitType getType( final NodeCommitEntry nodeCommitEntry )
-    {
-        if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.PUBLISH_COMMIT_PREFIX ) )
-        {
-            return ContentVersionPublishInfo.CommitType.PUBLISHED;
-        }
-
-        if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.UNPUBLISH_COMMIT_PREFIX ) )
-        {
-            return ContentVersionPublishInfo.CommitType.UNPUBLISHED;
-        }
-
-        if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.ARCHIVE_COMMIT_PREFIX ) )
-        {
-            return ContentVersionPublishInfo.CommitType.ARCHIVED;
-        }
-
-        if ( nodeCommitEntry.getMessage().startsWith( ContentConstants.RESTORE_COMMIT_PREFIX ) )
-        {
-            return ContentVersionPublishInfo.CommitType.RESTORED;
-        }
-
-        return ContentVersionPublishInfo.CommitType.CUSTOM;
-    }
-
 }

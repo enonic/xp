@@ -41,6 +41,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.util.Attributes;
 import com.enonic.xp.util.BinaryReference;
 
 final class UpdateContentCommand
@@ -106,9 +107,18 @@ final class UpdateContentCommand
                                 NodeIds.from( NodeId.from( params.getContentId() ) ) );
         }
 
+        final Attributes versionAttributes = Attributes.create()
+            .attribute( "content.update" )
+            .put( "user", getCurrentUser().getKey().toString() )
+            .put( "optime", Instant.now().toString() )
+            .putArray( "fields", ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent ) )
+            .end()
+            .build();
+
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
+            .versionAttributes( versionAttributes )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )

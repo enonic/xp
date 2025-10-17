@@ -7,10 +7,8 @@ import com.enonic.xp.data.PropertySet;
 public class PublishInfoSerializer
 {
 
-    public ContentPublishInfo serialize( final PropertySet contentAsSet )
+    public ContentPublishInfo serialize( final PropertySet publishInfo )
     {
-        final PropertySet publishInfo = contentAsSet.getSet( ContentPropertyNames.PUBLISH_INFO );
-
         if ( publishInfo == null )
         {
             return null;

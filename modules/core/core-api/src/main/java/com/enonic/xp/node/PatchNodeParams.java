@@ -8,6 +8,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.util.Attributes;
 import com.enonic.xp.util.BinaryReference;
 
 @PublicApi
@@ -21,6 +22,8 @@ public final class PatchNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
+    private final Attributes versionAttributes;
+
     private final RefreshMode refresh;
 
     private final Branches branches;
@@ -31,6 +34,7 @@ public final class PatchNodeParams
         this.path = builder.path;
         this.editor = builder.editor;
         this.binaryAttachments = builder.binaryAttachments.build();
+        this.versionAttributes = builder.versionAttributes;
         this.refresh = builder.refresh;
         this.branches = Branches.from( builder.branches.build() );
     }
@@ -70,6 +74,11 @@ public final class PatchNodeParams
         return branches;
     }
 
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public static final class Builder
     {
         private final ImmutableSet.Builder<Branch> branches = ImmutableSet.builder();
@@ -82,8 +91,9 @@ public final class PatchNodeParams
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
 
-        private RefreshMode refresh;
+        public Attributes versionAttributes;
 
+        private RefreshMode refresh;
 
         private Builder()
         {
@@ -123,6 +133,12 @@ public final class PatchNodeParams
             return this;
         }
 
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
+            return this;
+        }
+
         public Builder refresh( final RefreshMode refresh )
         {
             this.refresh = refresh;
@@ -145,7 +161,7 @@ public final class PatchNodeParams
         {
             if ( this.id == null && this.path == null )
             {
-                throw new IllegalArgumentException("Either id or path is required");
+                throw new IllegalArgumentException( "Either id or path is required" );
             }
             Objects.requireNonNull( this.editor, "editor is required" );
         }

@@ -14,7 +14,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -27,6 +26,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesListener;
@@ -88,6 +88,7 @@ public class NodeStorageServiceImpl
             .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
             .nodePath( node.path() )
             .nodeCommitId( params.getNodeCommitId() )
+            .attributes( params.getVersionAttributes() )
             .timestamp( timestamp )
             .build();
 
@@ -138,6 +139,7 @@ public class NodeStorageServiceImpl
             nodePath( params.getNodePath() ).
             nodeCommitId( params.getNodeCommitId() ).
             timestamp( params.getTimestamp() ).
+            attributes( params.getAttributes() ).
             build(), context );
     }
 
@@ -180,11 +182,20 @@ public class NodeStorageServiceImpl
             nodeCommitId( nodeCommitId ).
             build();
         this.commitService.store( updatedCommitEntry, context );
+
         for ( RoutableNodeVersionId routableNodeVersionId : routableNodeVersionIds )
         {
             final NodeVersionMetadata existingVersion =
                 this.versionService.getVersion( routableNodeVersionId.getNodeVersionId(), context );
-            final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create( existingVersion ).
+
+            final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create().
+                nodeVersionId( existingVersion.getNodeVersionId() ).
+                nodeVersionKey( existingVersion.getNodeVersionKey() ).
+                binaryBlobKeys( existingVersion.getBinaryBlobKeys() ).
+                nodeId( existingVersion.getNodeId() ).
+                nodePath( existingVersion.getNodePath() ).
+                timestamp( existingVersion.getTimestamp() ).
+                attributes(  existingVersion.getAttributes() ).
                 nodeCommitId( nodeCommitId ).
                 build();
             this.versionService.store( updatedVersion, context );
