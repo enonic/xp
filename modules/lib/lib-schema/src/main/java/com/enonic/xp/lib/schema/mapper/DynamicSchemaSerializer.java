@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormFragment;
@@ -12,7 +11,6 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.script.serializer.InputTypeConfigSerializer;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -147,7 +145,6 @@ public class DynamicSchemaSerializer
         gen.value( "helpText", input.getHelpText() );
         gen.value( "inputType", input.getInputType().toString() );
         serializeOccurrences( gen, input.getOccurrences() );
-        serializeDefaultValue( gen, input );
         serializeConfig( gen, input.getInputTypeConfig() );
         gen.end();
     }
@@ -158,28 +155,6 @@ public class DynamicSchemaSerializer
         gen.value( "formItemType", "FormFragment" );
         gen.value( "name", formFragment.getFormFragmentName() );
         gen.end();
-    }
-
-    private static void serializeDefaultValue( final MapGenerator gen, final Input input )
-    {
-        if ( input.getDefaultValue() != null )
-        {
-            try
-            {
-                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
-                if ( defaultValue != null )
-                {
-                    gen.map( "default" );
-                    gen.value( "value", defaultValue.getObject() );
-                    gen.value( "type", defaultValue.getType().getName() );
-                    gen.end();
-                }
-            }
-            catch ( IllegalArgumentException ex )
-            {
-                // DO NOTHING
-            }
-        }
     }
 
     private static void serializeLayout( final MapGenerator gen, final FieldSet fieldSet )

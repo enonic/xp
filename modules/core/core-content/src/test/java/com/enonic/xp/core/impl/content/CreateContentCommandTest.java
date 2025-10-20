@@ -692,11 +692,6 @@ public class CreateContentCommandTest
             .pageDescriptorService( this.pageDescriptorService )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
-            .formDefaultValuesProcessor( ( form, data ) -> {
-            } ).pageFormDefaultValuesProcessor( ( page ) -> {
-            } )
-            .xDataDefaultValuesProcessor( extraDatas -> {
-            } )
             .build();
     }
 

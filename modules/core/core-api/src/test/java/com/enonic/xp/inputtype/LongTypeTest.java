@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,18 +38,6 @@ public class LongTypeTest
         final Value value = this.type.createValue( ValueFactory.newDouble( 13.0 ), config );
         assertNotNull( value );
         assertSame( ValueTypes.LONG, value.getType() );
-    }
-
-    @Test
-    public void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.LONG, "2" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( 2L, value.asLong().longValue() );
-
     }
 
     @Test

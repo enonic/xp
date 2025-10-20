@@ -203,10 +203,6 @@ exports.updateWithForm = function () {
                                     'maximum': 1,
                                     'minimum': 1
                                 },
-                                'default': {
-                                    'value': 'something',
-                                    'type': 'String'
-                                },
                                 'config': {}
                             },
                             {

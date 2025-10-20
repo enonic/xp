@@ -17,7 +17,6 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.PropertyValue;
@@ -162,9 +161,7 @@ public class ContentTypeHandlerTest
             .inputType( InputTypeName.CHECK_BOX )
             .label( "My checkbox input" )
             .required( false )
-            .defaultValue( InputTypeDefault.create()
-                               .property( InputTypeProperty.create( "default", PropertyValue.stringValue( "checked" ) ).build() )
-                               .build() )
+            .inputTypeProperty( InputTypeProperty.create( "default", PropertyValue.stringValue( "checked" ) ).build() )
             .build();
 
         Input radioButtonInput = Input.create()

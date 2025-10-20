@@ -6,4 +6,5 @@ form:
     occurrences:
       min: 1
       max: 1
-    default: "something"
+    config:
+      default: "something"

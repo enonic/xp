@@ -80,14 +80,12 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -98,7 +96,6 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
-import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -134,8 +131,6 @@ public class ContentServiceImpl
 
     private XDataService xDataService;
 
-    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
     private CmsService cmsService;
 
     private final ContentNodeTranslator translator;
@@ -143,10 +138,6 @@ public class ContentServiceImpl
     private final List<ContentProcessor> contentProcessors = new CopyOnWriteArrayList<>();
 
     private final List<ContentValidator> contentValidators = new CopyOnWriteArrayList<>();
-
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
     private final XDataMappingService xDataMappingService;
 
@@ -167,10 +158,7 @@ public class ContentServiceImpl
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
                                @Reference final XDataMappingService xDataMappingService,
-                               @Reference final SiteConfigService siteConfigService,
-                               @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor,
-                               @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor,
-                               @Reference final XDataDefaultValuesProcessor xDataDefaultValuesProcessor, ContentConfig config )
+                               @Reference final SiteConfigService siteConfigService, ContentConfig config )
     {
         this.config = config;
         this.nodeService = nodeService;
@@ -180,10 +168,6 @@ public class ContentServiceImpl
         this.xDataMappingService = xDataMappingService;
         this.siteConfigService = siteConfigService;
         this.translator = new ContentNodeTranslator();
-
-        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-        this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
-        this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
     }
 
     @Override
@@ -200,9 +184,6 @@ public class ContentServiceImpl
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -251,9 +232,6 @@ public class ContentServiceImpl
             .siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )

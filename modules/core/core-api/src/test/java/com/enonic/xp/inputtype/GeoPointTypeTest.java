@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,25 +39,6 @@ public class GeoPointTypeTest
 
         assertNotNull( value );
         assertSame( ValueTypes.GEO_POINT, value.getType() );
-    }
-
-    @Test
-    public void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.GEO_POINT, "41.387588,2.169994" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( "41.387588,2.169994", value.toString() );
-
-    }
-
-    @Test
-    public void testCreateDefaultValue_invalid()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.GEO_POINT, "41.387588;2.169994" ).build();
-        assertThrows(IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test

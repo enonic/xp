@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,17 +38,6 @@ public class DoubleTypeTest
         final Value value = this.type.createValue( ValueFactory.newDouble( 1.3 ), config );
         assertNotNull( value );
         assertSame( ValueTypes.DOUBLE, value.getType() );
-    }
-
-    @Test
-    public void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DOUBLE, "1.3" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( 1.3D, value.asDouble(), Double.MIN_NORMAL );
     }
 
     @Test
