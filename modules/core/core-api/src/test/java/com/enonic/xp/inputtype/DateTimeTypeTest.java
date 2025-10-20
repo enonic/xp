@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,26 +39,6 @@ public class DateTimeTypeTest
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
-    }
-
-    @Test
-    public void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T05:03:45" ).build();
-
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
-        assertEquals( "2014-08-16T05:03:45", value.toString() );
-    }
-
-    @Test
-    public void testRelativeDefaultValue_date_time_invalid()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1haaur" ).build();
-
-        assertThrows( IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test

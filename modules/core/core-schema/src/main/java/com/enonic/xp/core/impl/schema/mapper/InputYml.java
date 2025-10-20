@@ -4,12 +4,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.PropertyValue;
@@ -29,9 +27,6 @@ public abstract class InputYml
     public LocalizedText helpText;
 
     public Occurrences occurrences;
-
-    @JsonProperty("default")
-    public Object defaultValue;
 
     public Map<String, PropertyValue> config;
 
@@ -57,15 +52,6 @@ public abstract class InputYml
         if ( occurrences != null )
         {
             builder.occurrences( occurrences );
-        }
-
-        if ( defaultValue != null )
-        {
-            // TODO maybe default should be moved to an implementation
-            builder.defaultValue( InputTypeDefault.create()
-                                      .property( InputTypeProperty.create( "default", PropertyValue.stringValue( defaultValue.toString() ) )
-                                                     .build() )
-                                      .build() );
         }
 
         final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();

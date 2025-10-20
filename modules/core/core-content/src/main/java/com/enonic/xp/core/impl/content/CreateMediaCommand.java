@@ -9,12 +9,9 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfigService;
@@ -27,12 +24,6 @@ final class CreateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
     private final XDataMappingService xDataMappingService;
 
     private final SiteConfigService siteConfigService;
@@ -42,9 +33,6 @@ final class CreateMediaCommand
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
-        this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
-        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
         this.xDataMappingService = builder.xDataMappingService;
         this.siteConfigService = builder.siteConfigService;
     }
@@ -111,9 +99,6 @@ final class CreateMediaCommand
             .params( createContentParams )
             .cmsService( this.cmsService )
             .xDataService( this.xDataService )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
@@ -144,12 +129,6 @@ final class CreateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        private FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-        private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
         private XDataMappingService xDataMappingService;
 
         private SiteConfigService siteConfigService;
@@ -163,24 +142,6 @@ final class CreateMediaCommand
         public Builder mediaInfoService( final MediaInfoService value )
         {
             this.mediaInfoService = value;
-            return this;
-        }
-
-        public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-        {
-            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder pageFormDefaultValuesProcessor( final PageDefaultValuesProcessor pageFormDefaultValuesProcessor )
-        {
-            this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
-        {
-            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
             return this;
         }
 
@@ -201,8 +162,6 @@ final class CreateMediaCommand
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
-            Objects.requireNonNull( formDefaultValuesProcessor );
-            Objects.requireNonNull( xDataDefaultValuesProcessor );
             Objects.requireNonNull( xDataMappingService );
             Objects.requireNonNull( siteConfigService );
         }

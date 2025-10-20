@@ -45,17 +45,6 @@ public class TextLineTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
-    {
-        final Input input = getDefaultInputBuilder( InputTypeName.TEXT_LINE, "testString" ).build();
-        final Value value = this.type.createDefaultValue( input );
-
-        assertNotNull( value );
-        assertEquals( "testString", value.toString() );
-
-    }
-
-    @Test
     public void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();

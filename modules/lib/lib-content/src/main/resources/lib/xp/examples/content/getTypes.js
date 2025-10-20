@@ -51,11 +51,9 @@ var expected = [
                     'maximum': 1,
                     'minimum': 0
                 },
-                'default': {
-                    'value': true,
-                    'type': 'Boolean'
-                },
-                'config': {}
+                'config': {
+                    'default': 'checked'
+                }
             },
             {
                 'formItemType': 'Input',

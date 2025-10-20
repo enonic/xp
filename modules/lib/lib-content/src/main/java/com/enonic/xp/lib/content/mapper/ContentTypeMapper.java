@@ -1,18 +1,16 @@
 package com.enonic.xp.lib.content.mapper;
 
-import com.enonic.xp.data.Value;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.script.serializer.InputTypeConfigSerializer;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -154,7 +152,6 @@ public final class ContentTypeMapper
         gen.value( "helpText", input.getHelpText() );
         gen.value( "inputType", input.getInputType().toString() );
         serializeOccurrences( gen, input.getOccurrences() );
-        serializeDefaultValue( gen, input );
         serializeConfig( gen, input.getInputTypeConfig() );
         gen.end();
     }
@@ -162,28 +159,6 @@ public final class ContentTypeMapper
     private void serializeConfig( final MapGenerator gen, final InputTypeConfig config )
     {
         InputTypeConfigSerializer.serializeConfig( gen, config );
-    }
-
-    private void serializeDefaultValue( final MapGenerator gen, final Input input )
-    {
-        if ( input.getDefaultValue() != null )
-        {
-            try
-            {
-                final Value defaultValue = InputTypes.BUILTIN.resolve( input.getInputType() ).createDefaultValue( input );
-                if ( defaultValue != null )
-                {
-                    gen.map( "default" );
-                    gen.value( "value", defaultValue.getObject() );
-                    gen.value( "type", defaultValue.getType().getName() );
-                    gen.end();
-                }
-            }
-            catch ( IllegalArgumentException ex )
-            {
-                // DO NOTHING
-            }
-        }
     }
 
     private void serializeLayout( final MapGenerator gen, final FieldSet fieldSet )

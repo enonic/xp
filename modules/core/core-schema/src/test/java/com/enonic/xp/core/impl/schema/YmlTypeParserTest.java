@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.schema;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,16 +27,12 @@ import com.enonic.xp.core.impl.schema.mapper.TagYml;
 import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
 import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.core.impl.schema.mapper.TimeYml;
-import com.enonic.xp.data.Value;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.InputType;
 import com.enonic.xp.inputtype.InputTypeConfig;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.inputtype.PropertyValue;
-import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,12 +55,6 @@ public class YmlTypeParserTest
 
         assertEquals( "RadioButton", input.getInputType().toString() );
 
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isString() );
-        assertEquals( "cookie", defaultValue.asString() );
-
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
         assertEquals( 2, inputTypeConfig.getProperties( "option" ).size() );
@@ -86,12 +75,6 @@ public class YmlTypeParserTest
         Input input = textLineYml.convertToInput();
 
         assertEquals( "TextLine", input.getInputType().toString() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isString() );
-        assertEquals( "000-00-0000", defaultValue.asString() );
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
@@ -118,12 +101,6 @@ public class YmlTypeParserTest
         Input input = doubleYml.convertToInput();
 
         assertEquals( "Double", input.getInputType().toString() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isNumericType() );
-        assertEquals( 250.0, defaultValue.asDouble() );
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
@@ -183,11 +160,6 @@ public class YmlTypeParserTest
 
         final Input input = customSelectorYml.convertToInput();
 
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isString() );
-        assertEquals( "DefaultValue", defaultValue.asString() );
-
         assertEquals( InputTypeName.CUSTOM_SELECTOR, input.getInputType() );
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
@@ -209,12 +181,6 @@ public class YmlTypeParserTest
 
         assertEquals( "HtmlArea", input.getInputType().toString() );
 
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isString() );
-        assertEquals( "<h3>Enter description here</h3>", defaultValue.asString() );
-
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
         assertTrue( inputTypeConfig.getProperty( "exclude" ).map( InputTypeProperty::getValue ).isPresent() );
@@ -235,12 +201,6 @@ public class YmlTypeParserTest
         final Input input = inputYml.convertToInput();
 
         assertEquals( "TextArea", input.getInputType().toString() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isString() );
-        assertEquals( "Default text goes here", defaultValue.asString() );
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
@@ -269,12 +229,6 @@ public class YmlTypeParserTest
         assertEquals( "My Date", input.getLabel() );
         assertEquals( "mydate", input.getName() );
 
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isDateType() );
-        assertEquals( "2025-08-29", defaultValue.asString() );
-
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
         assertTrue(
@@ -294,12 +248,6 @@ public class YmlTypeParserTest
         assertEquals( "Instant", input.getInputType().toString() );
         assertEquals( "My Instant", input.getLabel() );
         assertEquals( "myInstant", input.getName() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isDateType() );
-        assertEquals( "2025-08-29T07:44:27Z", defaultValue.asString() );
     }
 
     @Test
@@ -315,12 +263,6 @@ public class YmlTypeParserTest
         assertEquals( "DateTime", input.getInputType().toString() );
         assertEquals( "My DateTime", input.getLabel() );
         assertEquals( "myDateTime", input.getName() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isDateType() );
-        assertEquals( "2025-08-29T07:44:27", defaultValue.asString() );
     }
 
     @Test
@@ -336,12 +278,6 @@ public class YmlTypeParserTest
         assertEquals( "Time", input.getInputType().toString() );
         assertEquals( "My Time", input.getLabel() );
         assertEquals( "mytime", input.getName() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isJavaType( LocalTime.class ) );
-        assertEquals( "13:22", defaultValue.asString() );
     }
 
     @Test
@@ -357,12 +293,6 @@ public class YmlTypeParserTest
         assertEquals( "CheckBox", input.getInputType().toString() );
         assertEquals( "My Checkbox", input.getLabel() );
         assertEquals( "mycheckbox", input.getName() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isBoolean() );
-        assertTrue( defaultValue.asBoolean() );
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
@@ -385,12 +315,6 @@ public class YmlTypeParserTest
         assertEquals( "ComboBox", input.getInputType().toString() );
         assertEquals( "My Combobox", input.getLabel() );
         assertEquals( "mycombobox", input.getName() );
-
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isString() );
-        assertEquals( "one", defaultValue.asString() );
 
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
@@ -534,12 +458,6 @@ public class YmlTypeParserTest
         assertEquals( "myLong", input.getName() );
         assertEquals( "My Long", input.getLabel() );
 
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isNumericType() );
-        assertEquals( 1000, defaultValue.asDouble() );
-
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
         assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );
@@ -559,14 +477,6 @@ public class YmlTypeParserTest
         assertEquals( "myGeoPoint", input.getName() );
         assertEquals( "My GeoPoint", input.getLabel() );
 
-        final InputType inputType = InputTypes.BUILTIN.resolve( input.getInputType() );
-
-        final Value defaultValue = inputType.createDefaultValue( input );
-        assertTrue( defaultValue.isGeoPoint() );
-
-        final GeoPoint geoPoint = defaultValue.asGeoPoint();
-        assertEquals( 51.5, geoPoint.getLatitude() );
-        assertEquals( -0.1, geoPoint.getLongitude() );
         final InputTypeConfig inputTypeConfig = input.getInputTypeConfig();
 
         assertTrue( inputTypeConfig.getProperty( "disabled" ).map( InputTypeProperty::getValue ).isPresent() );

@@ -7,7 +7,6 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeDefault;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 
@@ -24,8 +23,6 @@ public final class Input
     private final String label;
 
     private final String labelI18nKey;
-
-    private final InputTypeDefault defaultValue;
 
     private final Occurrences occurrences;
 
@@ -48,7 +45,6 @@ public final class Input
         this.type = builder.inputType;
         this.label = builder.label;
         this.labelI18nKey = builder.labelI18nKey;
-        this.defaultValue = builder.defaultValue;
         this.occurrences = builder.occurrences;
         this.helpText = builder.helpText;
         this.helpTextI18nKey = builder.helpTextI18nKey;
@@ -75,11 +71,6 @@ public final class Input
     public String getLabel()
     {
         return label;
-    }
-
-    public InputTypeDefault getDefaultValue()
-    {
-        return defaultValue;
     }
 
     public boolean isRequired()
@@ -137,16 +128,16 @@ public final class Input
 
         final Input that = (Input) o;
         return super.equals( o ) && Objects.equals( this.type, that.type ) && Objects.equals( this.label, that.label ) &&
-            Objects.equals( this.defaultValue, that.defaultValue ) && Objects.equals( this.occurrences, that.occurrences ) &&
-            Objects.equals( this.helpText, that.helpText ) && Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) &&
-            Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) && Objects.equals( this.labelI18nKey, that.labelI18nKey );
+            Objects.equals( this.occurrences, that.occurrences ) && Objects.equals( this.helpText, that.helpText ) &&
+            Objects.equals( this.inputTypeConfig, that.inputTypeConfig ) && Objects.equals( this.helpTextI18nKey, that.helpTextI18nKey ) &&
+            Objects.equals( this.labelI18nKey, that.labelI18nKey );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), this.type, this.label, this.defaultValue, this.occurrences, this.helpText,
-                             this.inputTypeConfig, this.labelI18nKey, this.helpTextI18nKey );
+        return Objects.hash( super.hashCode(), this.type, this.label, this.occurrences, this.helpText, this.inputTypeConfig,
+                             this.labelI18nKey, this.helpTextI18nKey );
     }
 
     public static Builder create()
@@ -169,8 +160,6 @@ public final class Input
 
         private String labelI18nKey;
 
-        private InputTypeDefault defaultValue;
-
         private Occurrences occurrences = Occurrences.create( 0, 1 );
 
         private String helpText;
@@ -188,7 +177,6 @@ public final class Input
             this.name = source.name;
             this.inputType = source.type;
             this.label = source.label;
-            this.defaultValue = source.defaultValue;
             this.occurrences = source.occurrences;
             this.helpText = source.helpText;
             this.labelI18nKey = source.labelI18nKey;
@@ -221,12 +209,6 @@ public final class Input
         public Builder labelI18nKey( String value )
         {
             labelI18nKey = value;
-            return this;
-        }
-
-        public Builder defaultValue( InputTypeDefault value )
-        {
-            defaultValue = value;
             return this;
         }
 

@@ -8,9 +8,6 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class DoubleType
     extends InputTypeBase
@@ -28,17 +25,6 @@ final class DoubleType
     public Value createValue( final Value value, final InputTypeConfig config )
     {
         return ValueFactory.newDouble( value.asDouble() );
-    }
-
-    @Override
-    public Value createDefaultValue( final Input input )
-    {
-        final String defaultValue = input.getDefaultValue().getRootValue();
-        if ( !isNullOrEmpty( defaultValue ) )
-        {
-            return ValueFactory.newDouble( Double.valueOf( defaultValue ) );
-        }
-        return super.createDefaultValue( input );
     }
 
     @Override

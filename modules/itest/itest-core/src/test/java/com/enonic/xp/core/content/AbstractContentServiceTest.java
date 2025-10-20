@@ -333,11 +333,7 @@ public abstract class AbstractContentServiceTest
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
             new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
-                                    siteConfigService,
-                                    ( form, data ) -> {
-                                    }, ( page ) -> {
-            }, ( extraDatas ) -> {
-            }, config );
+                                    siteConfigService, config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setCmsService( cmsService );
@@ -564,16 +560,8 @@ public abstract class AbstractContentServiceTest
             .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
             .addFormItem( Input.create().name( "geoPoint" ).label( "Geopoint" ).inputType( InputTypeName.GEO_POINT ).build() )
             .addFormItem( Input.create().name( "htmlArea" ).label( "Htmlarea" ).inputType( InputTypeName.HTML_AREA ).build() )
-            .addFormItem( Input.create()
-                              .name( "localDateTime" )
-                              .label( "Local datetime" )
-                              .inputType( InputTypeName.DATE_TIME )
-                              .build() )
-            .addFormItem( Input.create()
-                              .name( "dateTime" )
-                              .label( "Datetime" )
-                              .inputType( InputTypeName.INSTANT )
-                              .build() )
+            .addFormItem( Input.create().name( "localDateTime" ).label( "Local datetime" ).inputType( InputTypeName.DATE_TIME ).build() )
+            .addFormItem( Input.create().name( "dateTime" ).label( "Datetime" ).inputType( InputTypeName.INSTANT ).build() )
             .addFormItem( set )
             .build();
     }
