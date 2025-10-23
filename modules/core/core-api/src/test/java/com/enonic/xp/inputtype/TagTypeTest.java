@@ -43,7 +43,6 @@ public class TagTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
     }
 
