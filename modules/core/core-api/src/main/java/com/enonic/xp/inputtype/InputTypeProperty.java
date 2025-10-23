@@ -6,7 +6,7 @@ public final class InputTypeProperty
 {
     private final String name;
 
-    private final PropertyValue value;
+    private final GenericValue value;
 
     private InputTypeProperty( final Builder builder )
     {
@@ -19,7 +19,7 @@ public final class InputTypeProperty
         return this.name;
     }
 
-    public PropertyValue getValue()
+    public GenericValue getValue()
     {
         return this.value;
     }
@@ -51,7 +51,7 @@ public final class InputTypeProperty
         return this.name + "=" + this.value;
     }
 
-    public static Builder create( final String name, final PropertyValue value )
+    public static Builder create( final String name, final GenericValue value )
     {
         return new Builder( name, value );
     }
@@ -60,12 +60,12 @@ public final class InputTypeProperty
     {
         private final String name;
 
-        private final PropertyValue value;
+        private final GenericValue value;
 
-        private Builder( final String name, final PropertyValue value )
+        private Builder( final String name, final GenericValue value )
         {
             this.name = name;
-            this.value = value != null ? value : PropertyValue.stringValue( "" );
+            this.value = value != null ? value : GenericValue.stringValue( "" );
         }
 
         public InputTypeProperty build()

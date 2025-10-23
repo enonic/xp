@@ -22,20 +22,20 @@ final class DoubleType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newDouble( value.asDouble() );
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.DOUBLE );
         validateMin( property, config );
         validateMax( property, config );
     }
 
-    private void validateMin( final Property property, final InputTypeConfig config )
+    private void validateMin( final Property property, final GenericValue config )
     {
         try
         {
@@ -54,7 +54,7 @@ final class DoubleType
         }
     }
 
-    private void validateMax( final Property property, final InputTypeConfig config )
+    private void validateMax( final Property property, final GenericValue config )
     {
         try
         {
@@ -72,8 +72,8 @@ final class DoubleType
         }
     }
 
-    private Double getDoubleValueFromConfig( final InputTypeConfig config, final String key )
+    private Double getDoubleValueFromConfig( final GenericValue config, final String key )
     {
-        return config.getProperty( key ).map( InputTypeProperty::getValue ).map( PropertyValue::asDouble ).orElse( null );
+        return config.optional( key ).map( GenericValue::asDouble ).orElse( null );
     }
 }

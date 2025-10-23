@@ -1,7 +1,5 @@
 package com.enonic.xp.inputtype;
 
-import java.util.LinkedHashMap;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.Value;
@@ -36,8 +34,7 @@ public class RadioButtonTypeTest
     @Test
     public void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "one" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "one" ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
@@ -46,40 +43,37 @@ public class RadioButtonTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = newValidConfig();
+        final GenericValue config = newValidConfig();
         this.type.validate( stringProperty( "one" ), config );
     }
 
     @Test
     public void testValidate_invalid()
     {
-        final InputTypeConfig config = newValidConfig();
+        final GenericValue config = newValidConfig();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "unknown" ), config ) );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
+        final GenericValue config = GenericValue.object().build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
     }
 
-    private InputTypeConfig newValidConfig()
+    private GenericValue newValidConfig()
     {
-        return InputTypeConfig.create().property( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
-        {{
-            put( "value", PropertyValue.stringValue( "one" ) );
-            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
-            {{
-                put( "text", PropertyValue.stringValue( "Value One" ) );
-            }} ) );
-        }} ) ).build() ).property( InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
-        {{
-            put( "value", PropertyValue.stringValue( "two" ) );
-            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
-            {{
-                put( "text", PropertyValue.stringValue( "Value Two" ) );
-            }} ) );
-        }} ) ).build() ).build();
+        return GenericValue.object()
+            .put( "option", GenericValue.list()
+                .add( GenericValue.object()
+                          .put( "value", "one" )
+                          .put( "label", GenericValue.object().put( "text", "Value One" ).build() )
+                          .build() )
+                .add( GenericValue.object()
+                          .put( "value", "two" )
+                          .put( "label", GenericValue.object().put( "text", "Value Two" ).build() )
+                          .build() )
+                .build() )
+            .build();
     }
 }

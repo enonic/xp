@@ -1,54 +1,53 @@
 package com.enonic.xp.script.serializer;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.inputtype.InputTypeConfig;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.inputtype.GenericValue;
 
 public final class InputTypeConfigSerializer
 {
-    public static void serializeConfig( final MapGenerator gen, final InputTypeConfig config )
+    public static void serializeConfig( final MapGenerator gen, final GenericValue config )
     {
         gen.map( "config" );
-        for ( String name : config.getNames() )
-        {
-            final Set<InputTypeProperty> properties = config.getProperties( name );
+
+        config.getProperties().forEach( e -> {
+            final List<GenericValue> properties = e.getValue().asList();
+            final String propertyName = e.getKey();
+
             if ( properties.size() > 1 )
             {
-                gen.array( name );
-                for ( final InputTypeProperty property : properties )
+                gen.array( propertyName );
+                for ( final GenericValue property : properties )
                 {
-                    serializeConfigProperty( gen, property, true );
+                    serializeConfigProperty( gen, propertyName, property, true );
                 }
                 gen.end();
             }
             else
             {
-                serializeConfigProperty( gen, properties.iterator().next(), false );
+                serializeConfigProperty( gen, propertyName, properties.getFirst(), false );
             }
-        }
+        } );
+
         gen.end();
     }
 
-    private static void serializeConfigProperty( final MapGenerator gen, final InputTypeProperty property, final boolean withoutName )
+    private static void serializeConfigProperty( final MapGenerator gen, final String propertyName, final GenericValue property, final boolean withoutName )
     {
-        final PropertyValue propertyValue = property.getValue();
-
-        switch ( propertyValue.getType() )
+        switch ( property.getType() )
         {
-            case STRING -> writeValue( gen, property.getName(), propertyValue.asString(), withoutName );
-            case BOOLEAN -> writeValue( gen, property.getName(), propertyValue.asBoolean(), withoutName );
-            case NUMBER -> writeValue( gen, property.getName(), propertyValue.asDouble(), withoutName );
-            case LIST -> writeArray( gen, property.getName(), withoutName,
-                                     g -> propertyValue.asList().forEach( pv -> g.value( unwrapScalarOrComposite( pv ) ) ) );
-            case OBJECT -> writeMap( gen, property.getName(), withoutName, g -> propertyValue.getProperties()
+            case STRING -> writeValue( gen, propertyName, property.asString(), withoutName );
+            case BOOLEAN -> writeValue( gen, propertyName, property.asBoolean(), withoutName );
+            case NUMBER -> writeValue( gen, propertyName, property.asDouble(), withoutName );
+            case LIST -> writeArray( gen, propertyName, withoutName,
+                                     g -> property.asList().forEach( pv -> g.value( unwrapScalarOrComposite( pv ) ) ) );
+            case OBJECT -> writeMap( gen, propertyName, withoutName, g -> property.getProperties()
                 .forEach( entry -> g.value( entry.getKey(), unwrapScalarOrComposite( entry.getValue() ) ) ) );
-            default -> throw new AssertionError( "Unrecognized property type: " + property.getValue() );
+            default -> throw new AssertionError( "Unrecognized property type: " + property );
         }
     }
 
@@ -94,7 +93,7 @@ public final class InputTypeConfigSerializer
         gen.end();
     }
 
-    private static Object unwrapScalarOrComposite( final PropertyValue propertyValue )
+    private static Object unwrapScalarOrComposite( final GenericValue propertyValue )
     {
         return switch ( propertyValue.getType() )
         {

@@ -34,8 +34,7 @@ public class DateTimeTypeTest
     @Test
     public void testCreateProperty()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00" ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE_TIME, value.getType() );
@@ -44,26 +43,19 @@ public class DateTimeTypeTest
     @Test
     public void testValidate_dateTime()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        assertThrows( InputTypeValidationException.class, () -> this.type.validate( dateTimeProperty(), config ) );
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( dateTimeProperty(), GenericValue.object().build() ) );
     }
 
     @Test
     public void testValidate_localDateTime()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( localDateTimeProperty(), config );
+        this.type.validate( localDateTimeProperty(), GenericValue.object().build() );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
-    }
-
-    private InputTypeConfig newEmptyConfig()
-    {
-        return InputTypeConfig.create().build();
+        assertThrows( InputTypeValidationException.class,
+                      () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
     }
 }

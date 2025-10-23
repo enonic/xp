@@ -17,19 +17,19 @@ final class TextLineType
         super( InputTypeName.TEXT_LINE );
     }
 
-    private String regexp( final InputTypeConfig config )
+    private String regexp( final GenericValue config )
     {
-        return config.getProperty( "regexp" ).map( InputTypeProperty::getValue ).map( PropertyValue::asString ).orElse( "" );
+        return config.optional( "regexp" ).map( GenericValue::asString ).orElse( "" );
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newString( value.asString() );
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.STRING );
         final String regexp = regexp( config ).trim();

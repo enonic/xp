@@ -34,8 +34,7 @@ public class ContentSelectorTypeTest
     @Test
     public void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.REFERENCE, value.getType() );
@@ -44,19 +43,12 @@ public class ContentSelectorTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        this.type.validate( referenceProperty( "name" ), config );
+        this.type.validate( referenceProperty( "name" ), GenericValue.object().build() );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        final InputTypeConfig config = newEmptyConfig();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
-    }
-
-    private InputTypeConfig newEmptyConfig()
-    {
-        return InputTypeConfig.create().build();
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ));
     }
 }

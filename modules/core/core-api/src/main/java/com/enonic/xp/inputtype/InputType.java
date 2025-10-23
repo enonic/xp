@@ -9,7 +9,7 @@ public interface InputType
 {
     InputTypeName getName();
 
-    Value createValue( Value value, InputTypeConfig config );
+    Value createValue( Value value, GenericValue config );
 
-    void validate( Property property, InputTypeConfig config );
+    void validate( Property property, GenericValue config );
 }

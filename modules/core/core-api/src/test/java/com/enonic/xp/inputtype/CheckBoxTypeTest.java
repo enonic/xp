@@ -34,8 +34,7 @@ public class CheckBoxTypeTest
     @Test
     public void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "true" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "true" ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.BOOLEAN, value.getType() );
@@ -44,14 +43,12 @@ public class CheckBoxTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( booleanProperty( true ), config );
+        this.type.validate( booleanProperty( true ), GenericValue.object().build() );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "value" ), config ));
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "value" ), GenericValue.object().build() ));
     }
 }

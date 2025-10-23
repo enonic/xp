@@ -36,13 +36,12 @@ public class SiteConfiguratorTypeTest
     public void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
-        final InputTypeConfig config = InputTypeConfig.create().build();
         final PropertySet siteConfig = tree.newSet();
         siteConfig.setString( "applicationKey", "com.enonic.app.myapp" );
         final PropertySet appConfig = tree.newSet();
         appConfig.setString( "param", "value" );
         siteConfig.setSet( "config", appConfig );
-        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), config );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
@@ -51,7 +50,6 @@ public class SiteConfiguratorTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "test" ), config );
+        this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
     }
 }

@@ -8,7 +8,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.GenericValue;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.LocalizedText;
 
@@ -28,7 +28,7 @@ public final class ContentType
 
     private final Form form;
 
-    private final InputTypeConfig schemaConfig;
+    private final GenericValue schemaConfig;
 
     private final List<String> allowChildContentType;
 
@@ -98,7 +98,7 @@ public final class ContentType
         return this.form;
     }
 
-    public InputTypeConfig getSchemaConfig()
+    public GenericValue getSchemaConfig()
     {
         return schemaConfig;
     }
@@ -143,7 +143,7 @@ public final class ContentType
 
         private List<String> allowChildContentType;
 
-        private final InputTypeConfig.Builder schemaConfig = InputTypeConfig.create();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.object();
 
         private Builder()
         {
@@ -165,11 +165,12 @@ public final class ContentType
             this.isBuiltIn = source.isBuiltIn();
             this.superType = source.getSuperType();
             this.formBuilder = Form.create( source.getForm() );
+            this.allowChildContentType = source.allowChildContentType;
+
             if ( source.schemaConfig != null )
             {
-                this.schemaConfig.config( source.schemaConfig );
+                source.schemaConfig.getProperties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
             }
-            this.allowChildContentType = source.allowChildContentType;
         }
 
         @Override
@@ -258,9 +259,9 @@ public final class ContentType
             return this;
         }
 
-        public Builder schemaConfig( final InputTypeConfig config )
+        public Builder schemaConfig( final GenericValue config )
         {
-            this.schemaConfig.config( config );
+            config.getProperties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

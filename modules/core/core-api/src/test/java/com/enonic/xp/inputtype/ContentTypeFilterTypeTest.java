@@ -34,8 +34,7 @@ public class ContentTypeFilterTypeTest
     @Test
     public void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
@@ -44,14 +43,13 @@ public class ContentTypeFilterTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "name" ), config );
+        this.type.validate( stringProperty( "name" ), GenericValue.object().build() );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
+        assertThrows( InputTypeValidationException.class,
+                      () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
     }
 }

@@ -35,8 +35,7 @@ public class ImageUploaderTypeTest
     public void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newPropertySet( tree.newSet() ), config );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( tree.newSet() ), GenericValue.object().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
@@ -45,7 +44,6 @@ public class ImageUploaderTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "test" ), config );
+        this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
     }
 }

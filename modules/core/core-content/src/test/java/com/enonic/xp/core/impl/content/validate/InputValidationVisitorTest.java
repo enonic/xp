@@ -17,7 +17,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
-import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.inputtype.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -183,10 +183,9 @@ public class InputValidationVisitorTest
                               .inputType( InputTypeName.TEXT_LINE )
                               .label( "URL" )
                               .occurrences( 0, 0 )
-                              .inputTypeConfig( InputTypeConfig.create()
-                                                    .property( InputTypeProperty.create( "regexp", PropertyValue.stringValue(
-                                                            "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" ) )
-                                                                   .build() )
+                              .inputTypeConfig( GenericValue.object()
+                                                    .put( "regexp",
+                                                          "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
                                                     .build() )
                               .build() )
             .build();
@@ -222,12 +221,9 @@ public class InputValidationVisitorTest
                                                                          .name( "htmlData" )
                                                                          .label( "htmlData" )
                                                                          .inputType( InputTypeName.TEXT_LINE )
-                                                                         .inputTypeConfig( InputTypeConfig.create()
-                                                                                               .property(
-                                                                                                   InputTypeProperty.create( "regexp",
-                                                                                                                             PropertyValue.stringValue(
-                                                                                                                                 "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" ) )
-                                                                                                       .build() )
+                                                                         .inputTypeConfig( GenericValue.object()
+                                                                                               .put( "regexp",
+                                                                                                     "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
                                                                                                .build() )
                                                                          .build() )
                                                        .build() )

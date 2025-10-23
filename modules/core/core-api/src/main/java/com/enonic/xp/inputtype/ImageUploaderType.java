@@ -17,14 +17,14 @@ final class ImageUploaderType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newPropertySet( value.asData() );
     }
 
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         boolean isAttachment = ContentPropertyNames.MEDIA_ATTACHMENT.equals( property.getName() );
         boolean isX = ContentPropertyNames.MEDIA_FOCAL_POINT_X.equals( property.getName() );

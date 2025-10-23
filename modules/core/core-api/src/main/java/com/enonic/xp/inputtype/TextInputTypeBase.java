@@ -11,15 +11,14 @@ abstract class TextInputTypeBase
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateMaxLength( property, config );
     }
 
-    private void validateMaxLength( final Property property, final InputTypeConfig config )
+    private void validateMaxLength( final Property property, final GenericValue config )
     {
-        final Integer maxLength =
-            config.getProperty( "maxLength" ).map( InputTypeProperty::getValue ).map( PropertyValue::asInteger ).orElse( null );
+        final Integer maxLength = config.optional( "maxLength" ).map( GenericValue::asInteger ).orElse( null );
 
         final String propertyValue = property.getString();
 

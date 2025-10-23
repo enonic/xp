@@ -29,7 +29,7 @@ public abstract class InputTypeBase
     }
 
     @Override
-    public abstract Value createValue( Value value, InputTypeConfig config );
+    public abstract Value createValue( Value value, GenericValue config );
 
     protected final void validateType( final Property property, final ValueType expectedType )
     {
@@ -71,5 +71,5 @@ public abstract class InputTypeBase
     }
 
     @Override
-    public abstract void validate( Property property, InputTypeConfig config );
+    public abstract void validate( Property property, GenericValue config );
 }

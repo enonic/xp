@@ -18,13 +18,13 @@ final class CheckBoxType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newBoolean( value.asBoolean() );
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.BOOLEAN );
     }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.inputtype.GenericValue;
 import com.enonic.xp.schema.LocalizedText;
 
 public final class OptionYml
@@ -20,10 +20,10 @@ public final class OptionYml
     public LocalizedText label;
 
     @JsonIgnore
-    private final Map<String, PropertyValue> attributes = new LinkedHashMap<>();
+    private final Map<String, GenericValue> attributes = new LinkedHashMap<>();
 
     @JsonAnySetter
-    public void addAttribute( final String key, final PropertyValue value )
+    public void addAttribute( final String key, final GenericValue value )
     {
         if ( !RESERVED_VALUES.contains( key ) )
         {
@@ -32,7 +32,7 @@ public final class OptionYml
     }
 
     @JsonAnyGetter
-    public Map<String, PropertyValue> getAttributes()
+    public Map<String, GenericValue> getAttributes()
     {
         return attributes;
     }
