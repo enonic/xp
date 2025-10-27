@@ -178,6 +178,8 @@ public abstract class AbstractContentServiceTest
 
     private Context initialContext;
 
+    protected CmsService cmsService;
+
     protected Context ctxDraft()
     {
         return ContextBuilder.create()
@@ -285,7 +287,7 @@ public abstract class AbstractContentServiceTest
 
         resourceService = mock( ResourceService.class );
 
-        final CmsService cmsService = new CmsServiceImpl( resourceService, formFragmentService );
+        cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
         contentTypeService = new ContentTypeServiceImpl( resourceService, null, formFragmentService );
 
@@ -329,8 +331,8 @@ public abstract class AbstractContentServiceTest
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
-                                    siteConfigService, config );
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, siteConfigService,
+                                    config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setCmsService( cmsService );

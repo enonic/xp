@@ -149,6 +149,8 @@ public abstract class AbstractContentSynchronizerTest
 
     protected EventListener listener;
 
+    protected CmsServiceImpl cmsService;
+
     protected static Context adminContext()
     {
         return ContextBuilder.create()
@@ -309,7 +311,7 @@ public abstract class AbstractContentSynchronizerTest
         contentTypeService = new ContentTypeServiceImpl( null, null, formFragmentService );
 
         resourceService = mock( ResourceService.class );
-        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, formFragmentService );
+        cmsService = new CmsServiceImpl( resourceService, formFragmentService );
 
         final ContentAuditLogFilterService contentAuditLogFilterService = mock( ContentAuditLogFilterService.class, invocation -> true );
 
@@ -324,8 +326,8 @@ public abstract class AbstractContentSynchronizerTest
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         contentService =
-            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, xDataMappingService,
-                                    siteConfigService, config );
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, siteConfigService,
+                                    config );
         contentService.setEventPublisher( eventPublisher );
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setCmsService( cmsService );

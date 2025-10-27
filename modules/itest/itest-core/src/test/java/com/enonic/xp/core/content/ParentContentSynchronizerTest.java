@@ -45,7 +45,7 @@ import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.schema.XDataServiceImpl;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -305,7 +305,7 @@ public class ParentContentSynchronizerTest
         throws Exception
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
         contentService.setxDataService( xDataService );
         contentService.setXDataMappingService( xDataMappingService );
 
@@ -394,7 +394,7 @@ public class ParentContentSynchronizerTest
         throws Exception
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
         contentService.setxDataService( xDataService );
         contentService.setXDataMappingService( xDataMappingService );
 

@@ -17,7 +17,7 @@ import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.schema.XDataServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +38,7 @@ public class ContentServiceImplTest_media
         throws Exception
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
         contentService.setxDataService( xDataService );
         contentService.setXDataMappingService( xDataMappingService );
     }

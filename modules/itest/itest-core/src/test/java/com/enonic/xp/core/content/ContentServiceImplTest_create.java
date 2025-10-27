@@ -28,7 +28,7 @@ import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.schema.XDataServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -130,7 +130,7 @@ public class ContentServiceImplTest_create
         throws Exception
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
         contentService.setxDataService( xDataService );
         contentService.setXDataMappingService( xDataMappingService );
 
