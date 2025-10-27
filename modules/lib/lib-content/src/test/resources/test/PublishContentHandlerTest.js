@@ -61,3 +61,21 @@ exports.publishWithMessage = function () {
 
     assert.assertJsonEquals(expectedJson, result);
 };
+
+var contentNotFoundExpectedJson = {
+    "pushedContents": [],
+    "failedContents": [
+        "/non-existing-content"
+    ]
+};
+
+exports.contentNotFound = function () {
+    var result = content.publish({
+        keys: ['/non-existing-content'],
+        sourceBranch: 'master',
+        targetBranch: 'draft',
+        message: 'My first publish',
+    });
+
+    assert.assertJsonEquals(contentNotFoundExpectedJson, result);
+};
