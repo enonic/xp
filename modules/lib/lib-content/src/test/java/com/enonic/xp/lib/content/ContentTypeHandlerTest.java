@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -28,7 +27,6 @@ public class ContentTypeHandlerTest
     extends BaseContentHandlerTest
 {
 
-    @Disabled // TODO REMOVE
     @Test
     public void testExampleGetType()
     {

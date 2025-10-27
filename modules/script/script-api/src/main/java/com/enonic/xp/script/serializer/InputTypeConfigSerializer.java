@@ -1,7 +1,6 @@
 package com.enonic.xp.script.serializer;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -15,13 +14,11 @@ public final class InputTypeConfigSerializer
         gen.map( "config" );
 
         config.getProperties().forEach( e -> {
-            final List<GenericValue> properties = e.getValue().asList();
             final String propertyName = e.getKey();
-
-            if ( properties.size() > 1 )
+            if ( e.getValue().getType() == GenericValue.Type.LIST )
             {
                 gen.array( propertyName );
-                for ( final GenericValue property : properties )
+                for ( final GenericValue property : e.getValue().asList() )
                 {
                     serializeConfigProperty( gen, propertyName, property, true );
                 }
@@ -29,14 +26,15 @@ public final class InputTypeConfigSerializer
             }
             else
             {
-                serializeConfigProperty( gen, propertyName, properties.getFirst(), false );
+                serializeConfigProperty( gen, propertyName, e.getValue(), false );
             }
         } );
 
         gen.end();
     }
 
-    private static void serializeConfigProperty( final MapGenerator gen, final String propertyName, final GenericValue property, final boolean withoutName )
+    private static void serializeConfigProperty( final MapGenerator gen, final String propertyName, final GenericValue property,
+                                                 final boolean withoutName )
     {
         switch ( property.getType() )
         {
