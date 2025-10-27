@@ -10,7 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.region.PartDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,13 +45,13 @@ public class YmlPartDescriptorParserTest
         assertNotNull( form.getFormItem( FormItemPath.from( "myField" ) ) );
 
         // verify config
-        final InputTypeConfig schemaConfig = descriptor.getSchemaConfig();
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
 
-        assertTrue( schemaConfig.getProperty( "p1" ).isPresent() );
-        assertEquals( "v1", schemaConfig.getProperty( "p1" ).get().getValue().asString() );
+        assertTrue( schemaConfig.optional( "p1" ).isPresent() );
+        assertEquals( "v1", schemaConfig.optional( "p1" ).get().asString() );
 
-        assertTrue( schemaConfig.getProperty( "p2" ).isPresent() );
-        assertEquals( "v2", schemaConfig.getProperty( "p2" ).get().getValue().asString() );
+        assertTrue( schemaConfig.optional( "p2" ).isPresent() );
+        assertEquals( "v2", schemaConfig.optional( "p2" ).get().asString() );
     }
 
     private String readAsString( final String name )

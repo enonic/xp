@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.LocalizedText;
@@ -41,7 +41,6 @@ public final class YmlPageDescriptorParser
         abstract PageDescriptor.Builder regions( RegionDescriptors value );
 
         @JsonProperty("config")
-        @JsonDeserialize(using = InputTypeConfigDeserializer.class)
-        abstract PageDescriptor.Builder schemaConfig( InputTypeConfig value );
+        abstract PageDescriptor.Builder schemaConfig( GenericValue value );
     }
 }

@@ -73,6 +73,6 @@ public class TaskDescriptorLoaderTest
         assertEquals( "MyTask", descriptor.getDescription() );
 
         Input formItem = descriptor.getConfig().getInput( "param1" );
-        assertTrue( formItem.getInputTypeConfig().getProperty( "default" ).isPresent() );
+        assertTrue( formItem.getInputTypeConfig().optional( "default" ).isPresent() );
     }
 }

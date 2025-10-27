@@ -17,8 +17,6 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -211,8 +209,7 @@ public class FormJsonToPropertyTreeTranslatorTest
                               .name( "contentSelector" )
                               .label( "Content selector" )
                               .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty( InputTypeProperty.create( "allowContentType", PropertyValue.stringValue(
-                                  ContentTypeName.folder().toString() ) ).build() )
+                              .inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "contentTypeFilter" )

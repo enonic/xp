@@ -6,9 +6,8 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -30,7 +29,7 @@ public final class Input
 
     private final String helpTextI18nKey;
 
-    private final InputTypeConfig inputTypeConfig;
+    private final GenericValue inputTypeConfig;
 
     private Input( Builder builder )
     {
@@ -93,7 +92,7 @@ public final class Input
         return helpText;
     }
 
-    public InputTypeConfig getInputTypeConfig()
+    public GenericValue getInputTypeConfig()
     {
         return inputTypeConfig;
     }
@@ -166,7 +165,7 @@ public final class Input
 
         private String helpTextI18nKey;
 
-        private final InputTypeConfig.Builder inputTypeConfig = InputTypeConfig.create();
+        private final GenericValue.ObjectBuilder inputTypeConfig = GenericValue.object();
 
         private Builder()
         {
@@ -184,7 +183,7 @@ public final class Input
 
             if ( source.inputTypeConfig != null )
             {
-                this.inputTypeConfig.config( source.inputTypeConfig );
+                source.inputTypeConfig.getProperties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -274,15 +273,21 @@ public final class Input
             return this;
         }
 
-        public Builder inputTypeProperty( final InputTypeProperty property )
+        public Builder inputTypeProperty( String name, String value )
         {
-            this.inputTypeConfig.property( property );
+            this.inputTypeConfig.put( name, value );
             return this;
         }
 
-        public Builder inputTypeConfig( final InputTypeConfig config )
+        public Builder inputTypeProperty( String name, GenericValue value )
         {
-            this.inputTypeConfig.config( config );
+            this.inputTypeConfig.put( name, value );
+            return this;
+        }
+
+        public Builder inputTypeConfig( GenericValue config )
+        {
+            config.getProperties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
             return this;
         }
 

@@ -8,7 +8,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
@@ -39,12 +39,12 @@ public class YmlContentTypeParserTest
         assertNotNull( contentType.getForm() );
         assertEquals( now, contentType.getCreatedTime() );
 
-        final InputTypeConfig schemaConfig = contentType.getSchemaConfig();
+        final GenericValue schemaConfig = contentType.getSchemaConfig();
 
         assertNotNull( schemaConfig );
-        assertTrue( schemaConfig.getProperty( "displayNamePlaceholder" ).isPresent() );
-        assertTrue( schemaConfig.getProperty( "displayNameExpression" ).isPresent() );
-        assertTrue( schemaConfig.getProperty( "listTitleExpression" ).isPresent() );
+        assertTrue( schemaConfig.optional( "displayNamePlaceholder" ).isPresent() );
+        assertTrue( schemaConfig.optional( "displayNameExpression" ).isPresent() );
+        assertTrue( schemaConfig.optional( "listTitleExpression" ).isPresent() );
     }
 
     private String readAsString( final String name )

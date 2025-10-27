@@ -11,7 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
@@ -57,15 +57,15 @@ public class YmlLayoutDescriptorParserTest
         assertEquals( "right", regionIterator.next().getName() );
 
         // verify config
-        final InputTypeConfig schemaConfig = descriptor.getSchemaConfig();
+        final GenericValue schemaConfig = descriptor.getSchemaConfig();
 
-        assertTrue( schemaConfig.getProperty( "myString" ).isPresent() );
-        assertEquals( "String value", schemaConfig.getProperty( "myString" ).get().getValue().asString() );
+        assertTrue( schemaConfig.optional( "myString" ).isPresent() );
+        assertEquals( "String value", schemaConfig.optional( "myString" ).get().asString() );
 
-        assertTrue( schemaConfig.getProperty( "myInt" ).isPresent() );
-        assertEquals( 42, schemaConfig.getProperty( "myInt" ).get().getValue().asInteger() );
+        assertTrue( schemaConfig.optional( "myInt" ).isPresent() );
+        assertEquals( 42, schemaConfig.optional( "myInt" ).get().asInteger() );
 
-        assertTrue( schemaConfig.getProperty( "myList" ).isPresent() );
+        assertTrue( schemaConfig.optional( "myList" ).isPresent() );
     }
 
     private String readAsString( final String name )

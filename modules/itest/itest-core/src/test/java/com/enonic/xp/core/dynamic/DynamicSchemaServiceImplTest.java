@@ -682,7 +682,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( 2, partDescriptor.getConfig().size() );
         assertNotNull( partDescriptor.getModifiedTime() );
 
-        assertEquals( 1, partDescriptor.getSchemaConfig().getSize() );
+        assertEquals( 1, partDescriptor.getSchemaConfig().getProperties().size() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
@@ -740,7 +740,7 @@ public class DynamicSchemaServiceImplTest
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
         assertEquals( 2, partDescriptor.getConfig().size() );
 
-        assertEquals( 1, partDescriptor.getSchemaConfig().getSize() );
+        assertEquals( 1, partDescriptor.getSchemaConfig().getProperties().size() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );

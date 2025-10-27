@@ -7,10 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.schema.LocalizedText;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -28,7 +26,7 @@ public abstract class InputYml
 
     public Occurrences occurrences;
 
-    public Map<String, PropertyValue> config;
+    public Map<String, GenericValue> config;
 
     protected InputYml( final InputTypeName inputTypeName )
     {
@@ -54,21 +52,17 @@ public abstract class InputYml
             builder.occurrences( occurrences );
         }
 
-        final InputTypeConfig.Builder configBuilder = InputTypeConfig.create();
-
         if ( config != null )
         {
-            config.forEach( ( name, value ) -> configBuilder.property( InputTypeProperty.create( name, value ).build() ) );
+            config.forEach( builder::inputTypeProperty );
         }
 
-        customizeInputType( configBuilder );
-
-        builder.inputTypeConfig( configBuilder.build() );
+        customizeInputType( builder );
 
         return builder.build();
     }
 
-    public void customizeInputType( final InputTypeConfig.Builder configBuilder )
+    public void customizeInputType( final Input.Builder builder )
     {
     }
 }

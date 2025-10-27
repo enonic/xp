@@ -4,12 +4,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -90,8 +89,7 @@ public final class YmlContentTypeParser
         abstract ContentType.Builder allowChildContentType( List<String> allowChildContentType );
 
         @JsonProperty("config")
-        @JsonDeserialize(using = InputTypeConfigDeserializer.class)
-        abstract ContentType.Builder schemaConfig( InputTypeConfig config );
+        abstract ContentType.Builder schemaConfig( GenericValue config );
     }
 
 }

@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,12 +13,10 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
-import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -199,26 +196,16 @@ public class InputValidatorTest
                               .name( "comboBox" )
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeConfig( InputTypeConfig.create()
-                                                    .property(
-                                                        InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                        {{
-                                                            put( "value", PropertyValue.stringValue( "value1" ) );
-                                                            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                            {{
-                                                                put( "text", PropertyValue.stringValue( "label1" ) );
-                                                            }} ) );
-                                                        }} ) ).build() )
-                                                    .property(
-                                                        InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                        {{
-                                                            put( "value", PropertyValue.stringValue( "value2" ) );
-                                                            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                            {{
-                                                                put( "text", PropertyValue.stringValue( "label2" ) );
-                                                            }} ) );
-                                                        }} ) ).build() )
-                                                    .build() )
+                              .inputTypeProperty( "option", GenericValue.list()
+                                  .add( GenericValue.object()
+                                            .put( "value", "value1" )
+                                            .put( "label", GenericValue.object().put( "text", "label1" ).build() )
+                                            .build() )
+                                  .add( GenericValue.object()
+                                            .put( "value", "value2" )
+                                            .put( "label", GenericValue.object().put( "text", "label2" ).build() )
+                                            .build() )
+                                  .build() )
                               .build() )
             .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
             .addFormItem( Input.create().name( "tag" ).label( "Tag" ).inputType( InputTypeName.TAG ).build() )
@@ -226,8 +213,7 @@ public class InputValidatorTest
                               .name( "contentSelector" )
                               .label( "Content selector" )
                               .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty( InputTypeProperty.create( "allowContentType", PropertyValue.stringValue(
-                                  ContentTypeName.folder().toString() ) ).build() )
+                              .inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "contentTypeFilter" )

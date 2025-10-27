@@ -35,7 +35,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.security.PrincipalKey;
@@ -55,7 +55,7 @@ public final class YmlParserBase
         module.addDeserializer( DescriptorKeys.class, new DescriptorKeysDeserializer() );
         module.addDeserializer( DescriptorKey.class, new DescriptorKeyDeserializer() );
         module.addDeserializer( ResourceKey.class, new ResourceKeyDeserializer() );
-        module.addDeserializer( PropertyValue.class, new PropertyValueDeserializer() );
+        module.addDeserializer( GenericValue.class, new PropertyValueDeserializer() );
 
         mapper.registerModule( module );
 

@@ -8,6 +8,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.util.GenericValue;
 
 final class LongType
     extends InputTypeBase
@@ -22,20 +23,20 @@ final class LongType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newLong( value.asLong() );
     }
 
     @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.LONG );
         validateMin( property, config );
         validateMax( property, config );
     }
 
-    private void validateMin( final Property property, final InputTypeConfig config )
+    private void validateMin( final Property property, final GenericValue config )
     {
         try
         {
@@ -55,7 +56,7 @@ final class LongType
         }
     }
 
-    private void validateMax( final Property property, final InputTypeConfig config )
+    private void validateMax( final Property property, final GenericValue config )
     {
         try
         {
@@ -73,8 +74,8 @@ final class LongType
         }
     }
 
-    private Long getLongValueFromConfig( final InputTypeConfig config, final String key )
+    private Long getLongValueFromConfig( final GenericValue config, final String key )
     {
-        return config.getProperty( key ).map( InputTypeProperty::getValue ).map( PropertyValue::asLong ).orElse( null );
+        return config.optional( key ).map( GenericValue::asLong ).orElse( null );
     }
 }

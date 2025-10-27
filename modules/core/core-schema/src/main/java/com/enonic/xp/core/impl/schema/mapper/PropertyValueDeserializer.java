@@ -1,9 +1,6 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -11,13 +8,13 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.enonic.xp.inputtype.PropertyValue;
+import com.enonic.xp.util.GenericValue;
 
 public class PropertyValueDeserializer
-    extends JsonDeserializer<PropertyValue>
+    extends JsonDeserializer<GenericValue>
 {
     @Override
-    public PropertyValue deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
+    public GenericValue deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
         throws IOException
     {
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
@@ -26,7 +23,7 @@ public class PropertyValueDeserializer
         return fromYml( node );
     }
 
-    public static PropertyValue fromYml( final JsonNode node )
+    public static GenericValue fromYml( final JsonNode node )
     {
         if ( node == null )
         {
@@ -34,30 +31,31 @@ public class PropertyValueDeserializer
         }
         else if ( node.isTextual() )
         {
-            return PropertyValue.stringValue( node.asText() );
+            return GenericValue.stringValue( node.asText() );
         }
         else if ( node.isDouble() )
         {
-            return PropertyValue.doubleValue( node.asDouble() );
+            return GenericValue.doubleValue( node.asDouble() );
         }
         else if ( node.canConvertToLong() )
         {
-            return PropertyValue.longValue( node.asLong() );
+            return GenericValue.longValue( node.asLong() );
         }
         else if ( node.isBoolean() )
         {
-            return PropertyValue.booleanValue( node.asBoolean() );
+            return GenericValue.booleanValue( node.asBoolean() );
         }
         else if ( node.isArray() )
         {
-            return PropertyValue.listValue( node.valueStream().map( PropertyValueDeserializer::fromYml ).toList() );
+            final GenericValue.ListBuilder listBuilder = GenericValue.list();
+            node.valueStream().forEach( item -> listBuilder.add( PropertyValueDeserializer.fromYml( item ) ) );
+            return listBuilder.build();
         }
         else if ( node.isObject() )
         {
-            return PropertyValue.objectValue( node.propertyStream()
-                                                  .collect(
-                                                      Collectors.toMap( Map.Entry::getKey, e -> fromYml( e.getValue() ), ( a, b ) -> a,
-                                                                        LinkedHashMap::new ) ) );
+            final GenericValue.ObjectBuilder objectBuilder = GenericValue.object();
+            node.propertyStream().forEach( e -> objectBuilder.put( e.getKey(), fromYml( e.getValue() ) ) );
+            return objectBuilder.build();
         }
         else
         {

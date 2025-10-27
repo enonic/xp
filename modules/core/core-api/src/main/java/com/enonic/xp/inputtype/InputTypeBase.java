@@ -4,6 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
+import com.enonic.xp.util.GenericValue;
 
 @PublicApi
 public abstract class InputTypeBase
@@ -29,7 +30,7 @@ public abstract class InputTypeBase
     }
 
     @Override
-    public abstract Value createValue( Value value, InputTypeConfig config );
+    public abstract Value createValue( Value value, GenericValue config );
 
     protected final void validateType( final Property property, final ValueType expectedType )
     {
@@ -71,5 +72,5 @@ public abstract class InputTypeBase
     }
 
     @Override
-    public abstract void validate( Property property, InputTypeConfig config );
+    public abstract void validate( Property property, GenericValue config );
 }

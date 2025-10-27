@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,8 +38,7 @@ public class TextLineTypeTest
     @Test
     public void testCreateProperty()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        final Value value = this.type.createValue( ValueFactory.newString( "test" ), config );
+        final Value value = this.type.createValue( ValueFactory.newString( "test" ), GenericValue.object().build() );
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
     }
@@ -47,62 +46,58 @@ public class TextLineTypeTest
     @Test
     public void testValidate()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        this.type.validate( stringProperty( "test" ), config );
+        this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        final InputTypeConfig config = InputTypeConfig.create().build();
-        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );
+        assertThrows( InputTypeValidationException.class,
+                      () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
     }
 
     @Test
     public void testValidateRegexInvalid()
     {
-        final InputTypeConfig config = newValidConfig();
+        final GenericValue config = newValidConfig();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ) );
     }
 
     @Test
     public void testValidateRegexEmptyValue()
     {
-        final InputTypeConfig config = newValidConfig();
+        final GenericValue config = newValidConfig();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "" ), config ) );
     }
 
     @Test
     public void testValidateRegexValid()
     {
-        final InputTypeConfig config = newValidConfig();
+        final GenericValue config = newValidConfig();
         this.type.validate( stringProperty( "10.192.6.144" ), config );
     }
 
     @Test
     public void testValidateMalformedRegex()
     {
-        final InputTypeConfig config = newInvalidConfig();
+        final GenericValue config = newInvalidConfig();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ) );
     }
 
     @Test
     public void testValidate_invalidMaxLength()
     {
-        final InputTypeConfig config =
-            InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", PropertyValue.longValue( 5 ) ).build() ).build();
+        final GenericValue config = GenericValue.object().put( "maxLength", GenericValue.longValue( 5 ) ).build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ) );
     }
 
-    private InputTypeConfig newValidConfig()
+    private GenericValue newValidConfig()
     {
-        return InputTypeConfig.create()
-            .property( InputTypeProperty.create( "regexp", PropertyValue.stringValue( IP_ADDRESS_REGEXP ) ).build() )
-            .build();
+        return GenericValue.object().put( "regexp", IP_ADDRESS_REGEXP ).build();
     }
 
-    private InputTypeConfig newInvalidConfig()
+    private GenericValue newInvalidConfig()
     {
-        return InputTypeConfig.create().property( InputTypeProperty.create( "regexp", PropertyValue.stringValue( "[" ) ).build() ).build();
+        return GenericValue.object().put( "regexp", "[" ).build();
     }
 }

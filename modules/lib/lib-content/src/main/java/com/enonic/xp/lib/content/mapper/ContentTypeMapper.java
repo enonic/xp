@@ -10,7 +10,7 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.script.serializer.InputTypeConfigSerializer;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -156,7 +156,7 @@ public final class ContentTypeMapper
         gen.end();
     }
 
-    private void serializeConfig( final MapGenerator gen, final InputTypeConfig config )
+    private void serializeConfig( final MapGenerator gen, final GenericValue config )
     {
         InputTypeConfigSerializer.serializeConfig( gen, config );
     }

@@ -10,7 +10,6 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -79,10 +78,8 @@ import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
-import com.enonic.xp.inputtype.PropertyValue;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.CreateProjectParams;
@@ -516,25 +513,17 @@ public abstract class AbstractContentServiceTest
                               .name( "comboBox" )
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeConfig( InputTypeConfig.create()
-                                                    .property(
-                                                        InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                        {{
-                                                            put( "value", PropertyValue.stringValue( "value1" ) );
-                                                            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                            {{
-                                                                put( "text", PropertyValue.stringValue( "label1" ) );
-                                                            }} ) );
-                                                        }} ) ).build() )
-                                                    .property(
-                                                        InputTypeProperty.create( "option", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                        {{
-                                                            put( "value", PropertyValue.stringValue( "value2" ) );
-                                                            put( "label", PropertyValue.objectValue( new LinkedHashMap<>()
-                                                            {{
-                                                                put( "text", PropertyValue.stringValue( "label2" ) );
-                                                            }} ) );
-                                                        }} ) ).build() )
+                              .inputTypeConfig( GenericValue.object()
+                                                    .put( "option", GenericValue.list()
+                                                        .add( GenericValue.object()
+                                                                  .put( "value", "value1" )
+                                                                  .put( "label", GenericValue.object().put( "text", "label1" ).build() )
+                                                                  .build() )
+                                                        .add( GenericValue.object()
+                                                                  .put( "value", "value2" )
+                                                                  .put( "label", GenericValue.object().put( "text", "label2" ).build() )
+                                                                  .build() )
+                                                        .build() )
                                                     .build() )
                               .build() )
             .addFormItem( Input.create().name( "checkbox" ).label( "Checkbox" ).inputType( InputTypeName.CHECK_BOX ).build() )
@@ -543,8 +532,7 @@ public abstract class AbstractContentServiceTest
                               .name( "contentSelector" )
                               .label( "Content selector" )
                               .inputType( InputTypeName.CONTENT_SELECTOR )
-                              .inputTypeProperty( InputTypeProperty.create( "allowContentType", PropertyValue.stringValue(
-                                  ContentTypeName.folder().toString() ) ).build() )
+                              .inputTypeProperty( "allowContentType", ContentTypeName.folder().toString() )
                               .build() )
             .addFormItem( Input.create()
                               .name( "contentTypeFilter" )
