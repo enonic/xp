@@ -331,6 +331,7 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
     }
 

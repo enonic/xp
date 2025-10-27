@@ -1,9 +1,11 @@
 package com.enonic.xp.core.content;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.audit.LogAuditLogParams;
@@ -14,6 +16,8 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
+import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.schema.xdata.XDataServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,12 +25,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ContentServiceImplTest_media
     extends AbstractContentServiceTest
 {
+
+    @BeforeEach
+    public void beforeEach()
+        throws Exception
+    {
+        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
+        contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
+    }
 
     @Test
     public void create_media_image()

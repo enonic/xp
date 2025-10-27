@@ -336,6 +336,7 @@ public abstract class AbstractContentServiceTest
         contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
         contentService.setxDataService( xDataService );
+        contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );

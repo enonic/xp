@@ -80,6 +80,7 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -131,6 +132,8 @@ public class ContentServiceImpl
 
     private XDataService xDataService;
 
+    private XDataMappingService xDataMappingService;
+
     private CmsService cmsService;
 
     private final ContentNodeTranslator translator;
@@ -138,8 +141,6 @@ public class ContentServiceImpl
     private final List<ContentProcessor> contentProcessors = new CopyOnWriteArrayList<>();
 
     private final List<ContentValidator> contentValidators = new CopyOnWriteArrayList<>();
-
-    private final XDataMappingService xDataMappingService;
 
     private final SiteConfigService siteConfigService;
 
@@ -157,7 +158,6 @@ public class ContentServiceImpl
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
-                               @Reference final XDataMappingService xDataMappingService,
                                @Reference final SiteConfigService siteConfigService, ContentConfig config )
     {
         this.config = config;
@@ -165,7 +165,6 @@ public class ContentServiceImpl
         this.pageDescriptorService = pageDescriptorService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
-        this.xDataMappingService = xDataMappingService;
         this.siteConfigService = siteConfigService;
         this.translator = new ContentNodeTranslator();
     }
@@ -1048,6 +1047,12 @@ public class ContentServiceImpl
     public void setxDataService( final XDataService xDataService )
     {
         this.xDataService = xDataService;
+    }
+
+    @Reference
+    public void setXDataMappingService( final XDataMappingService xDataMappingService )
+    {
+        this.xDataMappingService = xDataMappingService;
     }
 
     @Reference
