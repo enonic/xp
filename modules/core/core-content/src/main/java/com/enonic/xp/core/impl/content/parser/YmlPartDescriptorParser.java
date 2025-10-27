@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.inputtype.GenericValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.schema.LocalizedText;
 

@@ -1,13 +1,13 @@
 package com.enonic.xp.inputtype;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.util.GenericValue;
 
 final class RadioButtonType
     extends InputTypeBase

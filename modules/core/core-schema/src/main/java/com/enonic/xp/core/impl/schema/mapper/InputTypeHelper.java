@@ -3,7 +3,7 @@ package com.enonic.xp.core.impl.schema.mapper;
 import java.util.List;
 
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.GenericValue;
+import com.enonic.xp.util.GenericValue;
 
 final class InputTypeHelper
 {

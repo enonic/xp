@@ -7,7 +7,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.inputtype.GenericValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.LocalizedText;
 

@@ -35,7 +35,7 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.GenericValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.security.PrincipalKey;

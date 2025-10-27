@@ -30,7 +30,7 @@ import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
 import com.enonic.xp.core.impl.schema.mapper.TimeYml;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.inputtype.GenericValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

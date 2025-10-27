@@ -4,6 +4,7 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueType;
+import com.enonic.xp.util.GenericValue;
 
 @PublicApi
 public abstract class InputTypeBase

@@ -1,6 +1,7 @@
 package com.enonic.xp.inputtype;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.util.GenericValue;
 
 abstract class TextInputTypeBase
     extends InputTypeBase

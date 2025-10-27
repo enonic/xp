@@ -1,4 +1,4 @@
-package com.enonic.xp.inputtype;
+package com.enonic.xp.util;
 
 import java.io.Serial;
 import java.io.Serializable;

@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.GenericValue;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 
 public class TextLineYml
