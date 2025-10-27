@@ -12,12 +12,10 @@ import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.inputtype.InputTypeConfig;
+import com.enonic.xp.inputtype.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
-import com.enonic.xp.inputtype.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
