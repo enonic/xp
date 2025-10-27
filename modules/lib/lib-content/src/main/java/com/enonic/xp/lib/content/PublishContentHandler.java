@@ -71,8 +71,15 @@ public final class PublishContentHandler
             }
         }
 
-        final PushContentParams.Builder builder = PushContentParams.create();
-        builder.contentIds( contentIds.build() );
+        final ContentIds idsToPublish = contentIds.build();
+
+        if ( idsToPublish.isEmpty() )
+        {
+            return new PublishContentResultMapper( PublishContentResult.create().build(), contentNotFound );
+        }
+
+        final PushContentParams.Builder builder = PushContentParams.create().contentIds( idsToPublish );
+
         if ( this.contentPublishInfo != null )
         {
             final Object from = this.contentPublishInfo.get( "from" );
@@ -93,8 +100,7 @@ public final class PublishContentHandler
         }
         builder.message( message );
 
-        final PublishContentResult result = this.contentService.publish( builder.build() );
-        return new PublishContentResultMapper( result, contentNotFound );
+        return new PublishContentResultMapper( this.contentService.publish( builder.build() ), contentNotFound );
     }
 
     private Content getByPath( final ContentPath contentPath )

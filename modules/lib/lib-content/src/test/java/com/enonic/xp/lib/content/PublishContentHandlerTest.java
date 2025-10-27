@@ -140,4 +140,10 @@ public class PublishContentHandlerTest
         assertThat( captor.getValue() ).extracting( "contentIds", "message" )
             .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), "My first publish" );
     }
+
+    @Test
+    public void testContentNotFound()
+    {
+        runFunction( "/test/PublishContentHandlerTest.js", "contentNotFound" );
+    }
 }
