@@ -42,7 +42,7 @@ public class YmlAdminToolDescriptorParserTest
         final DescriptorKeys apiMounts = descriptor.getApiMounts();
         assertEquals( 2, apiMounts.getSize() );
         final Iterator<DescriptorKey> apisIterator = apiMounts.iterator();
-        assertEquals( "admin:widget", apisIterator.next().toString() );
+        assertEquals( "admin:extension", apisIterator.next().toString() );
         assertEquals( "myapp:content", apisIterator.next().toString() );
 
         final Iterator<String> interfacesIterator = descriptor.getInterfaces().iterator();

@@ -22,15 +22,15 @@ import com.enonic.xp.web.WebResponse;
 @Component(immediate = true, service = GetAdminExtensionIconHandler.class)
 public class GetAdminExtensionIconHandler
 {
-    private final AdminExtensionDescriptorService widgetDescriptorService;
+    private final AdminExtensionDescriptorService descriptorService;
 
     private final AdminExtensionIconResolver extensionIconResolver;
 
     @Activate
-    public GetAdminExtensionIconHandler( @Reference final AdminExtensionDescriptorService widgetDescriptorService,
+    public GetAdminExtensionIconHandler( @Reference final AdminExtensionDescriptorService descriptorService,
                                          @Reference final AdminExtensionIconResolver extensionIconResolver )
     {
-        this.widgetDescriptorService = widgetDescriptorService;
+        this.descriptorService = descriptorService;
         this.extensionIconResolver = extensionIconResolver;
     }
 
@@ -43,7 +43,7 @@ public class GetAdminExtensionIconHandler
         final String version = params.containsKey( "v" ) ? params.get( "v" ).iterator().next() : null;
 
         final DescriptorKey descriptorKey = DescriptorKey.from( resolveApplicationKey( appKeyStr ), descriptorName );
-        final AdminExtensionDescriptor descriptor = this.widgetDescriptorService.getByKey( descriptorKey );
+        final AdminExtensionDescriptor descriptor = this.descriptorService.getByKey( descriptorKey );
 
         final Icon icon = extensionIconResolver.resolve( descriptor );
 

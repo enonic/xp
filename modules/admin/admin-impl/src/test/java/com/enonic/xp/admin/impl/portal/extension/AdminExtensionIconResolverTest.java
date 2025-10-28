@@ -29,7 +29,7 @@ class AdminExtensionIconResolverTest
     }
 
     @Test
-    void testResolveGetIconFromWidget()
+    void testResolveGetIconFromExtension()
     {
         final Icon icon = mock( Icon.class );
 

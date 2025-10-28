@@ -22,13 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AdminExtensionDescriptorServiceTest
 {
-    private DescriptorService descriptorService;
-
     private AdminExtensionDescriptorServiceImpl service;
 
     private AdminExtensionDescriptor descriptor1;
-
-    private AdminExtensionDescriptor descriptor2;
 
     private AdminExtensionDescriptor descriptor3;
 
@@ -39,14 +35,14 @@ class AdminExtensionDescriptorServiceTest
     @BeforeEach
     void setup()
     {
-        this.descriptorService = Mockito.mock( DescriptorService.class );
+        final DescriptorService descriptorService = Mockito.mock( DescriptorService.class );
 
-        this.service = new AdminExtensionDescriptorServiceImpl( this.descriptorService );
+        this.service = new AdminExtensionDescriptorServiceImpl( descriptorService );
 
         descriptor1 =
             AdminExtensionDescriptor.create().key( DescriptorKey.from( "app:a" ) ).addInterface( "com.enonic.xp.my-interface" ).build();
 
-        descriptor2 =
+        final AdminExtensionDescriptor descriptor2 =
             AdminExtensionDescriptor.create().key( DescriptorKey.from( "app:b" ) ).addInterface( "com.enonic.xp.another-interface" ).build();
 
         descriptor3 = AdminExtensionDescriptor.create()
@@ -67,14 +63,14 @@ class AdminExtensionDescriptorServiceTest
             .allowedPrincipals( PrincipalKeys.from( Collections.emptyList() ) )
             .build();
 
-        final Descriptors<AdminExtensionDescriptor> widgetDescriptors =
+        final Descriptors<AdminExtensionDescriptor> descriptors =
             Descriptors.from( descriptor1, descriptor2, descriptor3, descriptor4, descriptor5 );
-        Mockito.when( this.descriptorService.getAll( AdminExtensionDescriptor.class ) ).thenReturn( widgetDescriptors );
-        Mockito.when( this.descriptorService.get( AdminExtensionDescriptor.class, DescriptorKey.from( "app:c" ) ) ).thenReturn(
+        Mockito.when( descriptorService.getAll( AdminExtensionDescriptor.class ) ).thenReturn( descriptors );
+        Mockito.when( descriptorService.get( AdminExtensionDescriptor.class, DescriptorKey.from( "app:c" ) ) ).thenReturn(
             descriptor3 );
-        Mockito.when( this.descriptorService.get( AdminExtensionDescriptor.class, DescriptorKey.from( "app:d" ) ) ).thenReturn(
+        Mockito.when( descriptorService.get( AdminExtensionDescriptor.class, DescriptorKey.from( "app:d" ) ) ).thenReturn(
             descriptor4 );
-        Mockito.when( this.descriptorService.get( AdminExtensionDescriptor.class, ApplicationKeys.from( "app" ) ) )
+        Mockito.when( descriptorService.get( AdminExtensionDescriptor.class, ApplicationKeys.from( "app" ) ) )
             .thenReturn( Descriptors.from( descriptor3, descriptor4 ) );
     }
 

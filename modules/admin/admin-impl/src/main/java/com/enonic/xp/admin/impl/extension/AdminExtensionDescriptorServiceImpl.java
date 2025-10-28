@@ -31,7 +31,7 @@ public final class AdminExtensionDescriptorServiceImpl
     {
         return this.descriptorService.getAll( AdminExtensionDescriptor.class )
             .stream()
-            .filter( widgetDescriptor -> Arrays.stream( interfaceNames ).anyMatch( widgetDescriptor::hasInterface ) )
+            .filter( descriptor -> Arrays.stream( interfaceNames ).anyMatch( descriptor::hasInterface ) )
             .collect( Descriptors.collector() );
     }
 

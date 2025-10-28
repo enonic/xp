@@ -36,7 +36,7 @@ class AdminExtensionDispatcherApiHandlerTest
         WebException ex = assertThrows( WebException.class, () -> handler.handle( webRequest ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
 
-        // get widget icon
+        // get extension icon
         Multimap<String, String> params = HashMultimap.create();
         params.put( "app", "myapp" );
         params.put( "extension", "myextension" );
@@ -48,7 +48,7 @@ class AdminExtensionDispatcherApiHandlerTest
         when( webRequest.getParams() ).thenReturn( params );
         assertEquals( response, handler.handle( webRequest ) );
 
-        // list widgets
+        // list extensions
         params = HashMultimap.create();
         params.put( "interface", "admin.dashboard" );
 
@@ -56,7 +56,7 @@ class AdminExtensionDispatcherApiHandlerTest
         when( listExtensionsHandler.handle( webRequest ) ).thenReturn( response );
         assertEquals( response, handler.handle( webRequest ) );
 
-        // widget harmonized api
+        // extension harmonized api
         when( webRequest.getEndpointPath() ).thenReturn( "/_/admin:extension/myapp/myextension" );
         when( webRequest.getParams() ).thenReturn( null );
         when( extensionApiHandler.handle( webRequest ) ).thenReturn( response );

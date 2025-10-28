@@ -49,7 +49,7 @@ public class ApplicationDeployerManager
     }
 
     @Reference
-    public void setWidgetDescriptorService( final AdminExtensionDescriptorService widgetDescriptorService )
+    public void setAdminExtensionDescriptorService( final AdminExtensionDescriptorService adminExtensionDescriptorService )
     {
         //Needed to ensure startup-order
     }

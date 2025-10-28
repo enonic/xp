@@ -14,7 +14,7 @@ public final class YmlAdminExtensionDescriptorParser
 
     static
     {
-        PARSER.addMixIn( AdminExtensionDescriptor.Builder.class, WidgetDescriptorBuilderMapper.class );
+        PARSER.addMixIn( AdminExtensionDescriptor.Builder.class, AdminExtensionDescriptorBuilderMapper.class );
     }
 
     public static AdminExtensionDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
@@ -22,7 +22,7 @@ public final class YmlAdminExtensionDescriptorParser
         return PARSER.parse( resource, AdminExtensionDescriptor.Builder.class, currentApplication );
     }
 
-    private abstract static class WidgetDescriptorBuilderMapper
+    private abstract static class AdminExtensionDescriptorBuilderMapper
     {
         @JsonProperty("displayName")
         public abstract AdminExtensionDescriptor.Builder displayName( LocalizedText text );
