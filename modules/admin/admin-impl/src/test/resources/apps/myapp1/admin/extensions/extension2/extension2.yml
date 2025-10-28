@@ -1,0 +1,4 @@
+displayName: "MyExtension2"
+description: "MyExtension2 description"
+interfaces:
+  - "com.enonic.xp.my-interface"
