@@ -6,7 +6,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TaskIdTest
+class TaskIdTest
 {
     @Test
     void equalsContract()
@@ -15,7 +15,7 @@ public class TaskIdTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final TaskId id = TaskId.from( "123" );
         assertEquals( "123", id.toString() );

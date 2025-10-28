@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_restore
+class ContentServiceImplTest_restore
     extends AbstractContentServiceTest
 {
     private TestListener listener;
@@ -48,8 +48,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_tree()
-        throws Exception
+    void restore_tree()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child1 = createContent( parent.getPath(), "child1" );
@@ -82,8 +81,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_to_tree()
-        throws Exception
+    void restore_to_tree()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child1 = createContent( parent.getPath(), "child1" );
@@ -100,8 +98,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_to_custom_path()
-        throws Exception
+    void restore_to_custom_path()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content target = createContent( ContentPath.ROOT, "target" );
@@ -119,8 +116,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_to_custom_root_path()
-        throws Exception
+    void restore_to_custom_root_path()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child1 = createContent( parent.getPath(), "child1" );
@@ -137,8 +133,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_to_custom_not_existed_path()
-        throws Exception
+    void restore_to_custom_not_existed_path()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child1 = createContent( parent.getPath(), "child1" );
@@ -155,8 +150,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_to_not_existed_parent()
-        throws Exception
+    void restore_to_not_existed_parent()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child1 = createContent( parent.getPath(), "child1" );
@@ -174,8 +168,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_not_archived()
-        throws Exception
+    void restore_not_archived()
     {
         final Content content = createContent( ContentPath.ROOT, "archive" );
 
@@ -186,8 +179,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_with_existed_name()
-        throws Exception
+    void restore_with_existed_name()
     {
         final Content content = createContent( ContentPath.ROOT, "archive" );
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
@@ -201,8 +193,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_not_content()
-        throws Exception
+    void restore_not_content()
     {
         final Node node = this.nodeService.create(
             CreateNodeParams.create().name( "my-node" ).parent( ContentConstants.CONTENT_ROOT_PATH ).data( new PropertyTree() ).build() );
@@ -215,7 +206,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_inherited()
+    void restore_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -237,7 +228,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_dont_stop_inherited()
+    void restore_dont_stop_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -258,8 +249,7 @@ public class ContentServiceImplTest_restore
     }
 
     @Test
-    public void restore_check_properties()
-        throws Exception
+    void restore_check_properties()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child = createContent( parent.getPath(), "content" );

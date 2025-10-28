@@ -77,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class ParentContentSynchronizerTest
+class ParentContentSynchronizerTest
     extends AbstractContentSynchronizerTest
 {
     private ParentContentSynchronizer synchronizer;
@@ -150,8 +150,7 @@ public class ParentContentSynchronizerTest
 
 
     @Test
-    public void testCreatedChild()
-        throws Exception
+    void testCreatedChild()
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceParent.getPath() ) );
@@ -169,8 +168,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void syncCreatedWithChildren()
-        throws Exception
+    void syncCreatedWithChildren()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -194,8 +192,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void testCreateExisted()
-        throws Exception
+    void testCreateExisted()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
@@ -207,8 +204,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void testCreatedWithoutSynchedParent()
-        throws Exception
+    void testCreatedWithoutSynchedParent()
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceParent.getPath() ) );
@@ -218,8 +214,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void testCreatedWithSetOriginProject()
-        throws Exception
+    void testCreatedWithSetOriginProject()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( ContentPropertyNames.ORIGIN_PROJECT, "first" );
@@ -248,15 +243,13 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateNotCreated()
-        throws Exception
+    void updateNotCreated()
     {
         assertNull( syncUpdated( ContentId.from( "source" ) ) );
     }
 
     @Test
-    public void syncInvalidParent()
-        throws Exception
+    void syncInvalidParent()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         syncCreated( sourceContent.getId() );
@@ -273,8 +266,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateNotChanged()
-        throws Exception
+    void updateNotChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
@@ -285,8 +277,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateDataChanged()
-        throws Exception
+    void updateDataChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -301,8 +292,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateMediaChanged()
-        throws Exception
+    void updateMediaChanged()
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
         xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
@@ -343,8 +333,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void patch()
-        throws Exception
+    void patch()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         syncCreated( sourceContent.getId() );
@@ -390,8 +379,7 @@ public class ParentContentSynchronizerTest
 
 
     @Test
-    public void updateAttachmentsChanged()
-        throws Exception
+    void updateAttachmentsChanged()
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
         xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
@@ -448,8 +436,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateThumbnailCreated()
-        throws Exception
+    void updateThumbnailCreated()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -481,8 +468,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateThumbnailUpdated()
-        throws Exception
+    void updateThumbnailUpdated()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -538,8 +524,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateBinaryChanged()
-        throws Exception
+    void updateBinaryChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         syncCreated( sourceContent.getId() );
@@ -575,8 +560,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void renameNotSynched()
-        throws Exception
+    void renameNotSynched()
     {
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -584,15 +568,13 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void renameNotExisted()
-        throws Exception
+    void renameNotExisted()
     {
         assertNull( syncRenamed( ContentId.from( "source" ) ) );
     }
 
     @Test
-    public void renameNotChanged()
-        throws Exception
+    void renameNotChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -603,8 +585,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void renameChanged()
-        throws Exception
+    void renameChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -620,23 +601,20 @@ public class ParentContentSynchronizerTest
 
 
     @Test
-    public void sortNotExisted()
-        throws Exception
+    void sortNotExisted()
     {
         assertNull( syncSorted( ContentId.from( "source" ) ) );
     }
 
     @Test
-    public void sortNotSynched()
-        throws Exception
+    void sortNotSynched()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         assertThrows( IllegalArgumentException.class, () -> syncSorted( sourceContent.getId() ) );
     }
 
     @Test
-    public void sortNotChanged()
-        throws Exception
+    void sortNotChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -646,8 +624,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void sortChanged()
-        throws Exception
+    void sortChanged()
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetParent = syncCreated( sourceParent.getId() );
@@ -663,8 +640,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void sortRestoredToManual()
-        throws Exception
+    void sortRestoredToManual()
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceParent.getPath(), "name1" ) );
@@ -723,15 +699,13 @@ public class ParentContentSynchronizerTest
 
 
     @Test
-    public void moveNotExisted()
-        throws Exception
+    void moveNotExisted()
     {
         assertNull( syncMoved( ContentId.from( "source" ) ), "sourceContent must be set." );
     }
 
     @Test
-    public void moveNotSynched()
-        throws Exception
+    void moveNotSynched()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -739,8 +713,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void moveNotChanged()
-        throws Exception
+    void moveNotChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -750,8 +723,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void moveChanged()
-        throws Exception
+    void moveChanged()
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
         final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name2" ) );
@@ -772,15 +744,13 @@ public class ParentContentSynchronizerTest
 
 
     @Test
-    public void deleteNotExisted()
-        throws Exception
+    void deleteNotExisted()
     {
         assertNull( syncDeleted( ContentId.from( "source" ) ) );
     }
 
     @Test
-    public void deleteNotSynched()
-        throws Exception
+    void deleteNotSynched()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -788,8 +758,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void deleteNotDeletedInParent()
-        throws Exception
+    void deleteNotDeletedInParent()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -798,8 +767,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void deleteDeletedInParent()
-        throws Exception
+    void deleteDeletedInParent()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -811,8 +779,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void syncDeletedInParent()
-        throws Exception
+    void syncDeletedInParent()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         syncCreated( sourceContent.getId() );
@@ -826,8 +793,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void syncDeletionInMiddleLayer()
-        throws Exception
+    void syncDeletionInMiddleLayer()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         syncCreated( sourceContent.getId() );
@@ -853,8 +819,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void syncWithChildren()
-        throws Exception
+    void syncWithChildren()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -884,8 +849,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void syncWithoutChildren()
-        throws Exception
+    void syncWithoutChildren()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -897,8 +861,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void syncByRoot()
-        throws Exception
+    void syncByRoot()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -913,15 +876,13 @@ public class ParentContentSynchronizerTest
 
 
     @Test
-    public void updateManualOrderNotExisted()
-        throws Exception
+    void updateManualOrderNotExisted()
     {
         assertNull( syncUpdated( ContentId.from( "source" ) ), "sourceContent must be set." );
     }
 
     @Test
-    public void updateManualOrderNotSynched()
-        throws Exception
+    void updateManualOrderNotSynched()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -929,8 +890,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateManualOrderNotChanged()
-        throws Exception
+    void updateManualOrderNotChanged()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -940,7 +900,7 @@ public class ParentContentSynchronizerTest
     }
 
     @Test
-    public void updateManualOrderValue()
+    void updateManualOrderValue()
     {
         final Content sourceParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceParent.getPath(), "child1" ) );

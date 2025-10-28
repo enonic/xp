@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlServiceDescriptorParserTest
+class XmlServiceDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlServiceDescriptorParser parser;
@@ -21,7 +21,7 @@ public class XmlServiceDescriptorParserTest
     private ServiceDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlServiceDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -32,7 +32,7 @@ public class XmlServiceDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -40,7 +40,7 @@ public class XmlServiceDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -48,7 +48,6 @@ public class XmlServiceDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final ServiceDescriptor result = this.builder.build();
         assertEquals( "myapplication:myservice", result.getKey().toString() );

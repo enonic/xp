@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class RelativeTimeParserTest
+class RelativeTimeParserTest
 {
 
     private final RelativeTimeParser timeParser = new RelativeTimeParser();
 
     @Test
-    public void testNow()
+    void testNow()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "now" );
 
@@ -26,7 +26,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testZero()
+    void testZero()
     {
         final RelativeTime relativeTime = RelativeTimeParser.parse( "0" );
         assertEquals( relativeTime.getTime(), Duration.ZERO );
@@ -34,7 +34,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testSeconds()
+    void testSeconds()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3s " );
 
@@ -58,7 +58,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testMinutes()
+    void testMinutes()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3m " );
 
@@ -82,7 +82,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testHours()
+    void testHours()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3h " );
 
@@ -106,7 +106,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testTime()
+    void testTime()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3h +2m" );
 
@@ -124,7 +124,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testDays()
+    void testDays()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3d " );
 
@@ -148,7 +148,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testMonths()
+    void testMonths()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3M " );
 
@@ -172,7 +172,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testYears()
+    void testYears()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( "+3y " );
 
@@ -196,7 +196,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testDate()
+    void testDate()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( " +3y +2d " );
 
@@ -211,7 +211,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testDateTime()
+    void testDateTime()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( " +3M -3m " );
 
@@ -230,7 +230,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testOverload()
+    void testOverload()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( " +1s-1s " );
 
@@ -247,7 +247,7 @@ public class RelativeTimeParserTest
     }
 
     @Test
-    public void testInvalid()
+    void testInvalid()
     {
         RelativeTime relativeTime = RelativeTimeParser.parse( " +1v " );
         assertNull( relativeTime );

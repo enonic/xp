@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ResourceProblemExceptionTest
+class ResourceProblemExceptionTest
 {
     @Test
-    public void testSimple()
+    void testSimple()
     {
         final ResourceKey resource = ResourceKey.from( "myapplication:/test.js" );
 
@@ -29,7 +29,7 @@ public class ResourceProblemExceptionTest
     }
 
     @Test
-    public void testMessage()
+    void testMessage()
     {
         final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.message( "A {problem} here" );
@@ -40,7 +40,7 @@ public class ResourceProblemExceptionTest
     }
 
     @Test
-    public void testMessageWithArgs()
+    void testMessageWithArgs()
     {
         final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.message( "A {0} here", "problem" );
@@ -51,7 +51,7 @@ public class ResourceProblemExceptionTest
     }
 
     @Test
-    public void testCallStack()
+    void testCallStack()
     {
         final ResourceProblemException.Builder builder = ResourceProblemException.create();
         builder.callLine( "first", 1 );
@@ -65,7 +65,7 @@ public class ResourceProblemExceptionTest
     }
 
     @Test
-    public void testInnerError()
+    void testInnerError()
     {
         final ResourceProblemException.Builder builder1 = ResourceProblemException.create();
         ResourceProblemException cause1 = builder1.build();

@@ -35,10 +35,10 @@ import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
-public class GraalJSDiscoveryTest
+class GraalJSDiscoveryTest
 {
     @Test
-    public void testFunction()
+    void testFunction()
         throws Exception
     {
         Context context = Context.create( "js" );
@@ -94,7 +94,7 @@ public class GraalJSDiscoveryTest
     }
 
     @Test
-    public void test4()
+    void test4()
     {
         Map<String, Object> beanAsMap = new HashMap<>();
         beanAsMap.put( "require", new RequireFunction() );
@@ -110,7 +110,7 @@ public class GraalJSDiscoveryTest
     }
 
     @Test
-    public void test5()
+    void test5()
         throws Exception
     {
         final ApplicationKey APPLICATION_KEY = ApplicationKey.from( "graaljs" );

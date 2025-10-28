@@ -11,7 +11,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DeletePrincipalHandlerTest
+class DeletePrincipalHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -26,19 +26,19 @@ public class DeletePrincipalHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         runScript( "/lib/xp/examples/auth/deletePrincipal.js" );
     }
 
     @Test
-    public void testDeleteUser()
+    void testDeleteUser()
     {
         runFunction( "/test/deletePrincipal-test.js", "deleteUser" );
     }
 
     @Test
-    public void testDeleteNonExistingUser()
+    void testDeleteNonExistingUser()
     {
         final PrincipalKey principalKey = PrincipalKey.from( "user:myIdProvider:XXX" );
         Mockito.doThrow( new PrincipalNotFoundException( principalKey ) ).when( securityService ).deletePrincipal( principalKey );
@@ -46,13 +46,13 @@ public class DeletePrincipalHandlerTest
     }
 
     @Test
-    public void testDeleteSystemUser()
+    void testDeleteSystemUser()
     {
         assertThrows(ResourceProblemException.class, () -> runFunction( "/test/deletePrincipal-test.js", "deleteSystemUser" ));
     }
 
     @Test
-    public void testDeletePrincipalWithoutKey()
+    void testDeletePrincipalWithoutKey()
     {
         runFunction( "/test/deletePrincipal-test.js", "deletePrincipalWithoutKey" );
     }

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PageUrlParamsTest
+class PageUrlParamsTest
 {
     @Test
-    public void testId()
+    void testId()
     {
         final PageUrlParams params = new PageUrlParams();
         assertNull( params.getId() );
@@ -21,7 +21,7 @@ public class PageUrlParamsTest
     }
 
     @Test
-    public void testPath()
+    void testPath()
     {
         final PageUrlParams params = new PageUrlParams();
         assertNull( params.getPath() );
@@ -34,7 +34,7 @@ public class PageUrlParamsTest
     }
 
     @Test
-    public void testSetAsMap()
+    void testSetAsMap()
     {
         final PageUrlParams params = new PageUrlParams();
         params.path( "/a/b" );

@@ -2,7 +2,7 @@ package com.enonic.xp.testing.usage;
 
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
-public class AssertScriptTest
+class AssertScriptTest
     extends ScriptRunnerSupport
 {
     @Override

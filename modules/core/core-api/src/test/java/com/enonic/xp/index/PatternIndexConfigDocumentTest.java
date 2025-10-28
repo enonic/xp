@@ -6,11 +6,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PatternIndexConfigDocumentTest
+class PatternIndexConfigDocumentTest
 {
     @Test
-    public void pattern_best_match()
-        throws Exception
+    void pattern_best_match()
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.MINIMAL ).
@@ -26,8 +25,7 @@ public class PatternIndexConfigDocumentTest
     }
 
     @Test
-    public void no_match_use_default()
-        throws Exception
+    void no_match_use_default()
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.NONE ).
@@ -42,8 +40,7 @@ public class PatternIndexConfigDocumentTest
     }
 
     @Test
-    public void pattern_wildcard_match()
-        throws Exception
+    void pattern_wildcard_match()
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( "page", IndexConfig.MINIMAL ).

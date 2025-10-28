@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ModifyScheduledJobParamsTest
+class ModifyScheduledJobParamsTest
 {
     @Test
-    public void testInvalid()
+    void testInvalid()
     {
         assertThrows( NullPointerException.class, () -> ModifyScheduledJobParams.create().build() );
         assertThrows( NullPointerException.class,
@@ -20,7 +20,7 @@ public class ModifyScheduledJobParamsTest
 
 
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final ScheduledJobEditor editor = edit -> {
         };

@@ -22,13 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BinaryExtractorImplTest
+class BinaryExtractorImplTest
 {
     private BinaryExtractorImpl extractor;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         final ExtractorConfig extractorConfig = mock( ExtractorConfig.class );
         when( extractorConfig.body_size_limit() ).thenReturn( 200000 );
@@ -37,8 +36,7 @@ public class BinaryExtractorImplTest
     }
 
     @Test
-    public void extract_image()
-        throws Exception
+    void extract_image()
     {
         final ExtractedData extractedData = this.extractor.extract(
             Resources.asByteSource( BinaryExtractorImplTest.class.getResource( "Multiple-colorSpace-entries.jpg" ) ) );
@@ -51,7 +49,6 @@ public class BinaryExtractorImplTest
     @Test
     @Disabled("Requires PDFBox Tika Parser in classpath. But tika-parsers 1.x heavily pollutes classpath with other jars")
     public void extract_pdf()
-        throws Exception
     {
         final ExtractedData extractedData =
             this.extractor.extract( Resources.asByteSource( BinaryExtractorImplTest.class.getResource( "sommerfest.pdf" ) ) );

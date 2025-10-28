@@ -13,19 +13,17 @@ import com.enonic.xp.node.RefreshMode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodesByQueryCommandTest_func_pathMatch
+class FindNodesByQueryCommandTest_func_pathMatch
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void matches_subPath()
-        throws Exception
+    void matches_subPath()
     {
         createNode( CreateNodeParams.create().
             name( "node1" ).
@@ -40,8 +38,7 @@ public class FindNodesByQueryCommandTest_func_pathMatch
 
 
     @Test
-    public void matches_subPath_minimum_match()
-        throws Exception
+    void matches_subPath_minimum_match()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             name( "node1" ).
@@ -68,8 +65,7 @@ public class FindNodesByQueryCommandTest_func_pathMatch
     }
 
     @Test
-    public void score_order_most_matching_first()
-        throws Exception
+    void score_order_most_matching_first()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             name( "node1" ).

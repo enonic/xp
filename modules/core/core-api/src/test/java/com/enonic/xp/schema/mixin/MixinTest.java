@@ -8,11 +8,11 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MixinTest
+class MixinTest
 {
 
     @Test
-    public void mixinBuilderTest()
+    void mixinBuilderTest()
     {
         final Form.Builder formBuilder = Form.create();
         formBuilder.addFormItem( Input.create().name( "name" ).label( "Name" ).inputType( InputTypeName.TEXT_LINE ).build() );

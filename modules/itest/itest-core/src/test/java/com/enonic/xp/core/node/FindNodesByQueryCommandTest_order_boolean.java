@@ -10,19 +10,18 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
-public class FindNodesByQueryCommandTest_order_boolean
+class FindNodesByQueryCommandTest_order_boolean
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void most_matching_boolean_expressions()
+    void most_matching_boolean_expressions()
     {
         PropertyTree data1 = new PropertyTree();
         data1.addDouble( "double1", 1.0 );

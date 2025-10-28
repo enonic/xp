@@ -16,19 +16,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ZipDumpReaderTest
+class ZipDumpReaderTest
     extends BaseDumpReaderTest
 {
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         this.dumpFolder = Files.createDirectory( temporaryFolder.resolve( "myDump" ) );
     }
 
     @Test
-    public void test_archive_without_root_folder()
+    void test_archive_without_root_folder()
         throws Exception
     {
         createMetaDataFile( dumpFolder );
@@ -48,7 +48,7 @@ public class ZipDumpReaderTest
     }
 
     @Test
-    public void test_archive_without_dumpJson()
+    void test_archive_without_dumpJson()
         throws Exception
     {
         final Path metaPath = createFolder( dumpFolder, "meta" );
@@ -69,7 +69,7 @@ public class ZipDumpReaderTest
     }
 
     @Test
-    public void test_archive_with_rootFolder_with_same_name()
+    void test_archive_with_rootFolder_with_same_name()
         throws Exception
     {
         final Path rootPath = createFolder( dumpFolder, "archive" );
@@ -84,7 +84,7 @@ public class ZipDumpReaderTest
     }
 
     @Test
-    public void test_archive_with_dumpJson_not_in_root()
+    void test_archive_with_dumpJson_not_in_root()
         throws Exception
     {
         final Path folder = createFolder( dumpFolder, "folder" );

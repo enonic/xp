@@ -7,10 +7,10 @@ import com.enonic.xp.trace.TraceLocation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TraceLocationImplTest
+class TraceLocationImplTest
 {
     @Test
-    public void testLocation()
+    void testLocation()
     {
         final TraceLocation location = TraceLocationImpl.findLocation();
         assertNotNull( location );

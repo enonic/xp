@@ -13,11 +13,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GetApplicationHandlerTest
+class GetApplicationHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
 
         when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
@@ -46,7 +46,7 @@ public class GetApplicationHandlerTest
     }
 
     @Test
-    public void testMissing()
+    void testMissing()
     {
 
         when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );

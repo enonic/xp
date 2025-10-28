@@ -9,7 +9,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
-public class ContextScriptTest
+class ContextScriptTest
     extends ScriptRunnerSupport
 {
     @Override

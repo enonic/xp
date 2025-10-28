@@ -2,33 +2,29 @@ package com.enonic.xp.lib.project;
 
 import org.junit.jupiter.api.Test;
 
-public class GetAvailableApplicationsHandlerTest
+class GetAvailableApplicationsHandlerTest
     extends BaseProjectHandlerTest
 {
     @Test
-    public void getAvailableApplications()
-        throws Exception
+    void getAvailableApplications()
     {
         runFunction( "/test/GetAvailableApplicationsTest.js", "getAvailableApplications" );
     }
 
     @Test
-    public void getProjectWithoutApplications()
-        throws Exception
+    void getProjectWithoutApplications()
     {
         runFunction( "/test/GetAvailableApplicationsTest.js", "getProjectWithoutApplications" );
     }
 
     @Test
-    public void getProjectNull()
-        throws Exception
+    void getProjectNull()
     {
         runFunction( "/test/GetAvailableApplicationsTest.js", "getProjectNull" );
     }
 
     @Test
-    public void getProjectNotExist()
-        throws Exception
+    void getProjectNotExist()
     {
         runFunction( "/test/GetAvailableApplicationsTest.js", "getProjectNotExist" );
     }

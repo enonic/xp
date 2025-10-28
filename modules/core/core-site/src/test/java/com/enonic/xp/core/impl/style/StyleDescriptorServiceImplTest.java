@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StyleDescriptorServiceImplTest
+class StyleDescriptorServiceImplTest
     extends ApplicationTestSupport
 
 {
@@ -23,7 +23,6 @@ public class StyleDescriptorServiceImplTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
@@ -34,7 +33,7 @@ public class StyleDescriptorServiceImplTest
     }
 
     @Test
-    public void getByApplication()
+    void getByApplication()
     {
         final ApplicationKey appKey = ApplicationKey.from( "myapp1" );
         final StyleDescriptor descriptor = this.service.getByApplication( appKey );
@@ -44,7 +43,7 @@ public class StyleDescriptorServiceImplTest
     }
 
     @Test
-    public void getByApplications()
+    void getByApplications()
     {
         final ApplicationKeys appKeys = ApplicationKeys.from( "myapp1", "myapp2" );
         final StyleDescriptors descriptors = this.service.getByApplications( appKeys );
@@ -53,7 +52,7 @@ public class StyleDescriptorServiceImplTest
     }
 
     @Test
-    public void getAll()
+    void getAll()
     {
         final ApplicationKey appKey = ApplicationKey.from( "myapp1" );
         final StyleDescriptors descriptors = this.service.getAll();
@@ -62,7 +61,7 @@ public class StyleDescriptorServiceImplTest
     }
 
     @Test
-    public void getByApplicationInvalidStyles()
+    void getByApplicationInvalidStyles()
     {
         addApplication( "myapp3", "/apps/myapp3" );
 

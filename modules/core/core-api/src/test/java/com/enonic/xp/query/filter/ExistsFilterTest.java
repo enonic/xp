@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ExistsFilterTest
+class ExistsFilterTest
 {
 
     @Test
-    public void testBuildler()
+    void testBuildler()
     {
         final ExistsFilter filter = ExistsFilter.create().
             fieldName( "field1" ).
@@ -20,7 +20,7 @@ public class ExistsFilterTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final ExistsFilter filter = ExistsFilter.create().
             fieldName( "field1" ).

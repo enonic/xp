@@ -10,12 +10,12 @@ import com.enonic.xp.web.multipart.MultipartService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JaxRsServiceFactoryImplTest
+class JaxRsServiceFactoryImplTest
 {
     private JaxRsServiceFactoryImpl factory;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.factory = new JaxRsServiceFactoryImpl();
         this.factory.setMultipartService( Mockito.mock( MultipartService.class ) );
@@ -23,7 +23,7 @@ public class JaxRsServiceFactoryImplTest
     }
 
     @Test
-    public void newService()
+    void newService()
     {
         final JaxRsService service = this.factory.newService( "test", "/*", null );
         assertNotNull( service );

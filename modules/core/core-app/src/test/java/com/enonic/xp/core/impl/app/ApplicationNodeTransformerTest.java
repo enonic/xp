@@ -19,11 +19,11 @@ import com.enonic.xp.util.BinaryReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ApplicationNodeTransformerTest
+class ApplicationNodeTransformerTest
     extends BundleBasedTest
 {
     @Test
-    public void binary_reference_added()
+    void binary_reference_added()
         throws Exception
     {
         final Application app = Mockito.mock( Application.class );
@@ -50,7 +50,7 @@ public class ApplicationNodeTransformerTest
 
 
     @Test
-    public void app_binary_updated()
+    void app_binary_updated()
         throws Exception
     {
 

@@ -25,12 +25,12 @@ import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InputValidatorTest
+class InputValidatorTest
 {
     private InputValidator inputValidator;
 
     @BeforeEach
-    public void before()
+    void before()
     {
         final ContentType contentType = createContentTypeForAllInputTypes( ContentTypeName.audioMedia() );
         this.inputValidator = InputValidator.
@@ -41,7 +41,7 @@ public class InputValidatorTest
     }
 
     @Test
-    public void validate_correct_input_types()
+    void validate_correct_input_types()
     {
         //Creates the correct data to validate
         final PropertyTree data = new PropertyTree();
@@ -75,7 +75,7 @@ public class InputValidatorTest
     }
 
     @Test
-    public void validate_incorrect_input_types()
+    void validate_incorrect_input_types()
     {
         //Validates an incorrect value
         PropertyTree invalidData = new PropertyTree();

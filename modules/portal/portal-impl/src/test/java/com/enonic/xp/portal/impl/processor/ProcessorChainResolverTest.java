@@ -18,7 +18,7 @@ import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ProcessorChainResolverTest
+class ProcessorChainResolverTest
 {
     private PortalRequest portalRequest;
 
@@ -27,7 +27,7 @@ public class ProcessorChainResolverTest
     private ProcessorChainResolver resolver;
 
     @BeforeEach
-    public void before()
+    void before()
     {
         portalRequest = new PortalRequest();
         siteService = Mockito.mock( SiteService.class );
@@ -36,7 +36,7 @@ public class ProcessorChainResolverTest
     }
 
     @Test
-    public void testFilterChainResolver()
+    void testFilterChainResolver()
     {
         ApplicationKey ak1 = ApplicationKey.from( "ak1" );
         SiteConfig sc1 = SiteConfig.create().application( ak1 ).config( new PropertyTree() ).build();
@@ -121,7 +121,7 @@ public class ProcessorChainResolverTest
     }
 
     @Test
-    public void testEmptySite()
+    void testEmptySite()
     {
         ResponseProcessorDescriptors filters = resolver.resolve( portalRequest );
         assertEquals( 0, filters.getSize() );

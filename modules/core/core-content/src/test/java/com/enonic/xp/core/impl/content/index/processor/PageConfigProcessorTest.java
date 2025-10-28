@@ -28,31 +28,28 @@ import static com.enonic.xp.core.impl.content.index.processor.PageConfigProcesso
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageConfigProcessorTest
+class PageConfigProcessorTest
 {
     private PageDescriptorService pageDescriptorService;
 
     private DescriptorKey descriptorKey;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.descriptorKey = DescriptorKey.from( "appKey:descriptorName" );
     }
 
     @Test
-    public void test_size()
-        throws Exception
+    void test_size()
     {
         final PatternIndexConfigDocument result = processForm( Form.empty() );
         assertEquals( 4, result.getPathIndexConfigs().size() );
     }
 
     @Test
-    public void test_empty_config()
-        throws Exception
+    void test_empty_config()
     {
         final PatternIndexConfigDocument result = processForm( Form.empty() );
 
@@ -85,8 +82,7 @@ public class PageConfigProcessorTest
     }
 
     @Test
-    public void test_config_with_data()
-        throws Exception
+    void test_config_with_data()
     {
         final PatternIndexConfigDocument result = processForm( Form.create().
             addFormItem( FormItemSet.create().
@@ -131,8 +127,7 @@ public class PageConfigProcessorTest
     }
 
     @Test
-    public void test_page_config_form_with_html_area_simple()
-        throws Exception
+    void test_page_config_form_with_html_area_simple()
     {
         Input myTextLine = Input.create().
             name( "htmlArea" ).

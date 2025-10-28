@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ContentServiceImplTest_getNearestSite
+class ContentServiceImplTest_getNearestSite
     extends AbstractContentServiceTest
 {
     @Test
-    public void child_of_site()
+    void child_of_site()
     {
         final Content site = createSite();
 
@@ -45,7 +45,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void is_site()
+    void is_site()
     {
         final Content site = createSite();
 
@@ -56,7 +56,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void no_site_in_path()
+    void no_site_in_path()
     {
         final Content content = createContent( ContentPath.ROOT );
 
@@ -65,7 +65,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void deep_child_of_site()
+    void deep_child_of_site()
     {
         final Content site = createSite();
 
@@ -80,7 +80,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void child_of_site_pending_publish_master()
+    void child_of_site_pending_publish_master()
     {
         final Content site = createSite();
 
@@ -93,7 +93,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void deep_child_of_site_pending_publish_master()
+    void deep_child_of_site_pending_publish_master()
     {
         final Content site = createSite();
         final Content childLevel1 = createContent( site.getPath() );
@@ -107,7 +107,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void child_of_site_published_master()
+    void child_of_site_published_master()
     {
         final Content site = createSite();
         final Content child = createContent( site.getPath(), ContentPublishInfo.create()
@@ -121,7 +121,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void testPublishInfo()
+    void testPublishInfo()
     {
         final Content site = createSite();
         this.contentService.publish( PushContentParams.create()
@@ -140,7 +140,7 @@ public class ContentServiceImplTest_getNearestSite
     }
 
     @Test
-    public void test_getNearestSite_WhenSomeParentInPathDoestNotHaveReadPermission()
+    void test_getNearestSite_WhenSomeParentInPathDoestNotHaveReadPermission()
     {
         final Content site = createSite();
 

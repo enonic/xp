@@ -6,11 +6,11 @@ import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetCurrentComponentScriptTest
+class GetCurrentComponentScriptTest
     extends ScriptTestSupport
 {
     @Test
-    public void currentComponent()
+    void currentComponent()
     {
         final Component component = TestDataFixtures.newLayoutComponent();
         this.portalRequest.setComponent( component );
@@ -19,14 +19,14 @@ public class GetCurrentComponentScriptTest
     }
 
     @Test
-    public void noCurrentComponent()
+    void noCurrentComponent()
     {
         this.portalRequest.setComponent( null );
         runFunction( "/test/getCurrentComponent-test.js", "noCurrentComponent" );
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Component component = TestDataFixtures.newLayoutComponent();
         this.portalRequest.setComponent( component );

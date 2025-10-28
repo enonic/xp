@@ -8,20 +8,18 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
-public class FindNodesByQueryCommandTest_paths
+class FindNodesByQueryCommandTest_paths
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
 
     @Test
-    public void path_equals()
-        throws Exception
+    void path_equals()
     {
 
         final Node rootNode = createNode( NodePath.ROOT, "rootNode" );
@@ -44,8 +42,7 @@ public class FindNodesByQueryCommandTest_paths
     }
 
     @Test
-    public void path_wildcard()
-        throws Exception
+    void path_wildcard()
     {
 
         final Node rootNode = createNode( NodePath.ROOT, "rootNode" );

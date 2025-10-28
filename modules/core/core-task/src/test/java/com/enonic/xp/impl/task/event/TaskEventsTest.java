@@ -16,11 +16,11 @@ import com.enonic.xp.task.TaskState;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class TaskEventsTest
+class TaskEventsTest
 {
 
     @Test
-    public void submitted()
+    void submitted()
     {
         TaskInfo taskInfo = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
@@ -49,7 +49,7 @@ public class TaskEventsTest
     }
 
     @Test
-    public void updated()
+    void updated()
     {
         TaskInfo taskInfo = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
@@ -73,7 +73,7 @@ public class TaskEventsTest
     }
 
     @Test
-    public void finished()
+    void finished()
     {
         TaskInfo taskInfo = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
@@ -97,7 +97,7 @@ public class TaskEventsTest
     }
 
     @Test
-    public void failed()
+    void failed()
     {
         TaskInfo taskInfo = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
@@ -121,7 +121,7 @@ public class TaskEventsTest
     }
 
     @Test
-    public void removed()
+    void removed()
     {
         TaskInfo taskInfo = TaskInfo.create().
             id( TaskId.from( "task1" ) ).
@@ -146,7 +146,7 @@ public class TaskEventsTest
 
 
     @Test
-    public void checkNull()
+    void checkNull()
     {
         final Event event = TaskEvents.submitted( null );
         assertNull( event );

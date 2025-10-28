@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HttpMethodTest
+class HttpMethodTest
 {
     @Test
-    public void testMethods()
+    void testMethods()
     {
         assertEquals( 16, HttpMethod.values().length );
     }

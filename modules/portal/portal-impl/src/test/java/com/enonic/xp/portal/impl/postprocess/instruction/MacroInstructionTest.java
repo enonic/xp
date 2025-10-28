@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class MacroInstructionTest
+class MacroInstructionTest
 {
     private MacroDescriptorService macroDescriptorService;
 
@@ -44,7 +44,7 @@ public class MacroInstructionTest
     private PortalRequest portalRequest;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         macroDescriptorService = Mockito.mock( MacroDescriptorService.class );
         macroProcessorFactory = Mockito.mock( MacroProcessorFactory.class );
@@ -60,8 +60,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testInstructionMacro()
-        throws Exception
+    void testInstructionMacro()
     {
         MacroKey key = MacroKey.from( "myapp:mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
@@ -75,8 +74,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testNoMacroInstruction()
-        throws Exception
+    void testNoMacroInstruction()
     {
         PortalResponse response =
             macroInstruction.evaluate( portalRequest, "MY_INSTRUCTION _name=\"mymacro\" param1=\"value1\" _body=\"body\"" );
@@ -84,8 +82,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testInvalidMacroInstruction()
-        throws Exception
+    void testInvalidMacroInstruction()
     {
         PortalResponse response =
             macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param.with.dot=\"value1\" _body=\"body\"" );
@@ -93,16 +90,14 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testMacroInstructionWithoutName()
-        throws Exception
+    void testMacroInstructionWithoutName()
     {
         PortalResponse response = macroInstruction.evaluate( portalRequest, "MACRO param1=\"value1\" _body=\"body\"" );
         assertNull( response );
     }
 
     @Test
-    public void testMacroInstructionNotSiteContext()
-        throws Exception
+    void testMacroInstructionNotSiteContext()
     {
         portalRequest.setSite( null );
         try
@@ -117,8 +112,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testMacroInstructionMissingController()
-        throws Exception
+    void testMacroInstructionMissingController()
     {
         MacroKey key = MacroKey.from( "myapp:mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
@@ -137,8 +131,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testInstructionSystemMacro()
-        throws Exception
+    void testInstructionSystemMacro()
     {
         MacroKey key = MacroKey.from( ApplicationKey.SYSTEM, "mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
@@ -155,8 +148,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testInstructionMissingMacro()
-        throws Exception
+    void testInstructionMissingMacro()
     {
         MacroKey key = MacroKey.from( "myapp:somemacro" );
         Form form = Form.empty();
@@ -170,8 +162,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testInstructionMacroParamsCaseInsensitive()
-        throws Exception
+    void testInstructionMacroParamsCaseInsensitive()
     {
         MacroKey key = MacroKey.from( "myapp:mymacro" );
         Form form = Form.create().
@@ -191,8 +182,7 @@ public class MacroInstructionTest
     }
 
     @Test
-    public void testInstructionMacroMultiValue()
-        throws Exception
+    void testInstructionMacroMultiValue()
     {
         MacroKey key = MacroKey.from( "myapp:mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();

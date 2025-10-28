@@ -17,18 +17,17 @@ import com.enonic.xp.repo.impl.node.SortNodeCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SortNodeCommandTest_manualOrder
+class SortNodeCommandTest_manualOrder
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void move_first()
+    void move_first()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -55,7 +54,7 @@ public class SortNodeCommandTest_manualOrder
     }
 
     @Test
-    public void move_in_between()
+    void move_in_between()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -82,7 +81,7 @@ public class SortNodeCommandTest_manualOrder
     }
 
     @Test
-    public void move_last()
+    void move_last()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -109,7 +108,7 @@ public class SortNodeCommandTest_manualOrder
     }
 
     @Test
-    public void move_inexistent_keeps_seed()
+    void move_inexistent_keeps_seed()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -140,7 +139,7 @@ public class SortNodeCommandTest_manualOrder
     }
 
     @Test
-    public void move_before_inexistent_keeps_seed()
+    void move_before_inexistent_keeps_seed()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -168,7 +167,7 @@ public class SortNodeCommandTest_manualOrder
     }
 
     @Test
-    public void reorder()
+    void reorder()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -203,7 +202,7 @@ public class SortNodeCommandTest_manualOrder
     }
 
     @Test
-    public void move_last_missing_order_values()
+    void move_last_missing_order_values()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node" ).

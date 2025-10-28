@@ -12,12 +12,11 @@ import com.enonic.xp.repo.impl.node.NodeManualOrderValueResolver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OrderbyValueResolverTestJava
+class OrderbyValueResolverTestJava
 {
 
     @Test
-    public void testName()
-        throws Exception
+    void testName()
     {
 
         List<String> orderStrings = new ArrayList<>();

@@ -7,11 +7,10 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.testing.helper.JsonAssert;
 
-public class IndexConfigDocMapperTest
+class IndexConfigDocMapperTest
 {
     @Test
-    public void all()
-        throws Exception
+    void all()
     {
         final IndexConfigDocument doc = PatternIndexConfigDocument.create().
             defaultConfig( IndexConfig.BY_TYPE ).

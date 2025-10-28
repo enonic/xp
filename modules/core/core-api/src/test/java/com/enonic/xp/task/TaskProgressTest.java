@@ -7,10 +7,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class TaskProgressTest
+class TaskProgressTest
 {
     @Test
-    public void testAccessors()
+    void testAccessors()
     {
         final TaskProgress p = TaskProgress.create().info( "test" ).current( 30 ).total( 100 ).build();
 
@@ -20,7 +20,7 @@ public class TaskProgressTest
     }
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         final TaskProgress p1 = TaskProgress.create().current( 0 ).total( 100 ).build();
         final TaskProgress p2 = p1.copy().current( 30 ).build();
@@ -29,13 +29,13 @@ public class TaskProgressTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( TaskProgress.class ).withNonnullFields( "info" ).verify();
     }
-    
+
     @Test
-    public void testToString()
+    void testToString()
     {
         final TaskProgress p = TaskProgress.create().info( "test" ).current( 0 ).total( 100 ).build();
         assertEquals( "TaskProgress{current=0, total=100, info=test}", p.toString() );

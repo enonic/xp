@@ -13,20 +13,18 @@ import com.enonic.xp.repo.impl.node.GetNodesByPathsCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GetNodesByPathsCommandTest
+class GetNodesByPathsCommandTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_by_paths()
-        throws Exception
+    void get_by_paths()
     {
         final Node createdNode1 = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -53,8 +51,7 @@ public class GetNodesByPathsCommandTest
     }
 
     @Test
-    public void get_by_paths_empty()
-        throws Exception
+    void get_by_paths_empty()
     {
         final Nodes result = GetNodesByPathsCommand.create().
             paths( NodePaths.from( "/dummy1", "dummy2" ) ).

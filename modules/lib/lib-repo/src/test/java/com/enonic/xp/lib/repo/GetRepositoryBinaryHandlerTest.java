@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class GetRepositoryBinaryHandlerTest
+class GetRepositoryBinaryHandlerTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
@@ -33,7 +33,6 @@ public class GetRepositoryBinaryHandlerTest
 
     @Test
     void getBinary()
-        throws Exception
     {
         runScript( "/lib/xp/examples/repo/getBinary.js" );
 

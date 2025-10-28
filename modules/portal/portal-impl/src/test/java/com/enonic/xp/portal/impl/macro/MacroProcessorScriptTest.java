@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MacroProcessorScriptTest
+class MacroProcessorScriptTest
 {
     private MacroProcessorFactoryImpl factory;
 
@@ -40,8 +40,7 @@ public class MacroProcessorScriptTest
     private ResourceService resourceService;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         this.macroContext = MacroContext.create().
             request( new PortalRequest() ).
@@ -93,7 +92,7 @@ public class MacroProcessorScriptTest
     }
 
     @Test
-    public void testMacro()
+    void testMacro()
     {
         final PortalResponse response = execute( "myapplication:/macro/macro.js" );
         assertEquals(
@@ -104,7 +103,7 @@ public class MacroProcessorScriptTest
     }
 
     @Test
-    public void testMissingMacro()
+    void testMissingMacro()
     {
         final PortalResponse response = execute( "myapplication:/macro/missing-macro.js" );
         assertNull( response );

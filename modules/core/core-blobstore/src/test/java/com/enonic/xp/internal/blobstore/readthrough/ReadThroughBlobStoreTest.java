@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ReadThroughBlobStoreTest
+class ReadThroughBlobStoreTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -31,16 +31,14 @@ public class ReadThroughBlobStoreTest
     private MemoryBlobStore finalStore;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.readThroughStore = new MemoryBlobStore();
         this.finalStore = new MemoryBlobStore();
     }
 
     @Test
-    public void stored_in_readthrough()
-        throws Exception
+    void stored_in_readthrough()
     {
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
             readThroughStore( this.readThroughStore ).
@@ -58,8 +56,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void stored_after_read()
-        throws Exception
+    void stored_after_read()
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
         final Segment segment = Segment.from( "test", "blob" );
@@ -79,7 +76,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void obey_size_threshold()
+    void obey_size_threshold()
         throws Exception
     {
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
@@ -98,8 +95,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void removeRecord()
-        throws Exception
+    void removeRecord()
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
         final Segment segment = Segment.from( "test", "blob" );
@@ -120,8 +116,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void list()
-        throws Exception
+    void list()
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
         final Segment segment = Segment.from( "test", "blob" );
@@ -139,8 +134,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void invalidate()
-        throws Exception
+    void invalidate()
     {
         final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
         final Segment segment = Segment.from( "test", "blob" );
@@ -162,8 +156,7 @@ public class ReadThroughBlobStoreTest
 
 
     @Test
-    public void last_modified()
-        throws Exception
+    void last_modified()
     {
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
             readThroughStore( this.readThroughStore ).
@@ -185,7 +178,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void last_modified_updated()
+    void last_modified_updated()
         throws Exception
     {
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
@@ -213,7 +206,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void listSegments()
+    void listSegments()
     {
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
             readThroughStore( readThroughStore ).
@@ -229,7 +222,7 @@ public class ReadThroughBlobStoreTest
     }
 
     @Test
-    public void deleteSegment()
+    void deleteSegment()
     {
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create().
             readThroughStore( readThroughStore ).

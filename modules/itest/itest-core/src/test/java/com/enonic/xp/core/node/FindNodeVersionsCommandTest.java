@@ -30,7 +30,6 @@ class FindNodeVersionsCommandTest
 {
     @BeforeEach
     void setUp()
-        throws Exception
     {
         createDefaultRootNode();
     }

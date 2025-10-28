@@ -29,13 +29,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ContentServiceImplTest_media
+class ContentServiceImplTest_media
     extends AbstractContentServiceTest
 {
 
     @BeforeEach
-    public void beforeEach()
-        throws Exception
+    void beforeEach()
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
         xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
@@ -44,8 +43,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void create_media_image()
-        throws Exception
+    void create_media_image()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
@@ -67,8 +65,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void create_media_image_invalid_file_name()
-        throws Exception
+    void create_media_image_invalid_file_name()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         // file ending with point is illegal on Windows
@@ -80,8 +77,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void create_media_image_invalid_file_name_allowed_by_config()
-        throws Exception
+    void create_media_image_invalid_file_name_allowed_by_config()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         // file ending with point is illegal on Windows
@@ -101,8 +97,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void no_file_extension_in_display_name()
-        throws Exception
+    void no_file_extension_in_display_name()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
@@ -119,8 +114,7 @@ public class ContentServiceImplTest_media
 
 
     @Test
-    public void update_media_image()
-        throws Exception
+    void update_media_image()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
@@ -154,7 +148,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void update_media_image_skip_not_changed()
+    void update_media_image_skip_not_changed()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
@@ -174,8 +168,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void update_media_image_invalid_file_name()
-        throws Exception
+    void update_media_image_invalid_file_name()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).
@@ -222,8 +215,7 @@ public class ContentServiceImplTest_media
     }
 
     @Test
-    public void create_media_document()
-        throws Exception
+    void create_media_document()
     {
         final CreateMediaParams createMediaParams = new CreateMediaParams();
         createMediaParams.byteSource( loadImage( "document.pdf" ) ).

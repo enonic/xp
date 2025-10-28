@@ -11,10 +11,10 @@ import com.enonic.xp.vfs.VirtualFile;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ImportNodesParamsTest
+class ImportNodesParamsTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         ImportNodesParams.Builder builder = ImportNodesParams.create();
 

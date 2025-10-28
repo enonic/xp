@@ -2,20 +2,20 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FilterChainImplTest
+class FilterChainImplTest
 {
     private ServletPipeline servletPipeline;
 
@@ -28,7 +28,7 @@ public class FilterChainImplTest
     private FilterChainImpl chain;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.servletPipeline = Mockito.mock( ServletPipeline.class );
         this.request = Mockito.mock( HttpServletRequest.class );
@@ -38,7 +38,7 @@ public class FilterChainImplTest
     }
 
     @Test
-    public void doFilter()
+    void doFilter()
         throws Exception
     {
         this.chain.doFilter( this.request, this.response );
@@ -47,7 +47,7 @@ public class FilterChainImplTest
     }
 
     @Test
-    public void doFilter_not_http()
+    void doFilter_not_http()
     {
         assertThrows( ClassCastException.class,
                       () -> this.chain.doFilter( Mockito.mock( ServletRequest.class ), Mockito.mock( ServletResponse.class ) ) );

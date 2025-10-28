@@ -14,7 +14,7 @@ import com.enonic.xp.content.SyncContentService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ResetInheritanceHandlerTest
+class ResetInheritanceHandlerTest
     extends BaseContentHandlerTest
 {
     private SyncContentService syncContentService;
@@ -34,7 +34,7 @@ public class ResetInheritanceHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = Mockito.mock( Content.class );
 

@@ -7,19 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UdcInfoGeneratorTest
+class UdcInfoGeneratorTest
 {
     private UdcInfoGenerator generator;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.generator = new UdcInfoGenerator();
     }
 
     @Test
-    public void generate()
-        throws Exception
+    void generate()
     {
         final UdcInfo info = this.generator.generate();
         assertNotNull( info );

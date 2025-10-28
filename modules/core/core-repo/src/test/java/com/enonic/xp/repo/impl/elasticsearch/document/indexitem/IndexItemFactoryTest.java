@@ -17,11 +17,10 @@ import com.enonic.xp.util.GeoPoint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class IndexItemFactoryTest
+class IndexItemFactoryTest
 {
     @Test
-    public void instant_minimal()
-        throws Exception
+    void instant_minimal()
     {
         final List<IndexItem> indexItems =
             IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
@@ -32,8 +31,7 @@ public class IndexItemFactoryTest
     }
 
     @Test
-    public void instant_by_type()
-        throws Exception
+    void instant_by_type()
     {
         final List<IndexItem> indexItems =
             IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDateTime( Instant.parse( "2015-12-11T10:29:30Z" ) ),
@@ -44,8 +42,7 @@ public class IndexItemFactoryTest
     }
 
     @Test
-    public void string_minimal()
-        throws Exception
+    void string_minimal()
     {
         final List<IndexItem> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newString( "ost" ),
                                                                     createDefaultDocument( IndexConfig.MINIMAL ) );
@@ -55,8 +52,7 @@ public class IndexItemFactoryTest
     }
 
     @Test
-    public void string_by_type()
-        throws Exception
+    void string_by_type()
     {
         final List<IndexItem> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newString( "ost" ),
                                                                     createDefaultDocument( IndexConfig.BY_TYPE ) );
@@ -66,8 +62,7 @@ public class IndexItemFactoryTest
     }
 
     @Test
-    public void double_minimal()
-        throws Exception
+    void double_minimal()
     {
         final List<IndexItem> indexItems = IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newDouble( 12.3 ),
                                                                     createDefaultDocument( IndexConfig.MINIMAL ) );
@@ -76,8 +71,7 @@ public class IndexItemFactoryTest
     }
 
     @Test
-    public void geopoint_minimal()
-        throws Exception
+    void geopoint_minimal()
     {
         final List<IndexItem> indexItems =
             IndexItemFactory.create( IndexPath.from( "myProperty" ), ValueFactory.newGeoPoint( new GeoPoint( 80, 80 ) ),

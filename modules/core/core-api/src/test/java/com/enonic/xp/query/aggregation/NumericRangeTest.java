@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NumericRangeTest
+class NumericRangeTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final NumericRange numericRange = NumericRange.create().key( "key" ).from( 0.0 ).to( 1.0 ).build();
 

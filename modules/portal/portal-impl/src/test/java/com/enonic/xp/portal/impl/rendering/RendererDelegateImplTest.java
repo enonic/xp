@@ -11,8 +11,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.portal.PortalRequest;
@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RendererDelegateImplTest
+class RendererDelegateImplTest
 {
     @Test
-    public void given_Renderable_matching_only_on_superType_when_getRenderer_then_Renderer_for_superType_is_returned()
+    void given_Renderable_matching_only_on_superType_when_getRenderer_then_Renderer_for_superType_is_returned()
     {
         RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ), mock( LayoutDescriptorService.class ) );
         final PortalResponse response = PortalResponse.create().build();
@@ -51,7 +51,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void given_Renderable_having_not_matching_Renderer_when_getRenderer_then_Renderer_for_that_type_is_returned()
+    void given_Renderable_having_not_matching_Renderer_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
         RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ), mock( LayoutDescriptorService.class ) );
         final PortalResponse response = PortalResponse.create().build();
@@ -65,7 +65,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void given_Renderable_matching_no_given_type_when_getRenderer_then_Renderer_for_that_type_is_returned()
+    void given_Renderable_matching_no_given_type_when_getRenderer_then_Renderer_for_that_type_is_returned()
     {
         RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ), mock( LayoutDescriptorService.class ) );
         factory.addRenderer( createRenderer( RendererDelegateImplTest.class, null ) );
@@ -75,7 +75,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void renderEmptyFragment()
+    void renderEmptyFragment()
     {
         RendererDelegateImpl factory = new RendererDelegateImpl( mock( ContentService.class ), mock( LayoutDescriptorService.class ) );
         final PortalRequest portalRequest = new PortalRequest();
@@ -89,7 +89,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentNotFoundInEditMode()
+    void fragmentNotFoundInEditMode()
     {
         final ContentService contentService = mock( ContentService.class );
         final ContentId contentId = ContentId.from( "contentId" );
@@ -106,7 +106,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentContentHasNoPage()
+    void fragmentContentHasNoPage()
     {
         final ContentService contentService = mock( ContentService.class );
         final ContentId contentId = ContentId.from( "contentId" );
@@ -121,7 +121,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentNotFoundInNonEditMode()
+    void fragmentNotFoundInNonEditMode()
     {
         final ContentService contentService = mock( ContentService.class );
         final ContentId contentId = ContentId.from( "contentId" );
@@ -136,7 +136,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentRenderLayoutNoDescriptor()
+    void fragmentRenderLayoutNoDescriptor()
     {
         final ContentService contentService = mock( ContentService.class );
         final ContentId contentId = ContentId.from( "contentId" );
@@ -153,7 +153,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentRenderLayoutWithoDescriptor()
+    void fragmentRenderLayoutWithoDescriptor()
     {
         final ContentService contentService = mock( ContentService.class );
         final LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
@@ -183,7 +183,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentRenderComponentNonUTF8()
+    void fragmentRenderComponentNonUTF8()
     {
         final String textComponentValue = "textrendered";
         final PortalResponse fragmentResponse = PortalResponse.create().body( textComponentValue ).build();
@@ -193,7 +193,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentRenderComponentUTF8()
+    void fragmentRenderComponentUTF8()
     {
         final String textComponentValue = "textrendered";
         final PortalResponse fragmentResponse =
@@ -204,7 +204,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentRenderNonEditMode()
+    void fragmentRenderNonEditMode()
     {
         final String textComponentValue = "textrendered";
         final PortalResponse fragmentResponse =
@@ -215,7 +215,7 @@ public class RendererDelegateImplTest
     }
 
     @Test
-    public void fragmentRenderWithNoSuchMethodError()
+    void fragmentRenderWithNoSuchMethodError()
     {
         final String errorText = "No method provided to handle request";
         final PortalResponse fragmentResponse = PortalResponse.create().contentType( MediaType.HTML_UTF_8 ).body( errorText ).build();

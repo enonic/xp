@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DescriptorTest
+class DescriptorTest
 {
     private static final class MyDescriptor
         extends Descriptor
@@ -16,7 +16,7 @@ public class DescriptorTest
     }
 
     @Test
-    public void testAccessors()
+    void testAccessors()
     {
         final MyDescriptor descriptor = new MyDescriptor( "app:abc" );
         assertEquals( "app:abc", descriptor.getKey().toString() );

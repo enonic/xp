@@ -14,7 +14,7 @@ import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetTaskHandlerTest
+class GetTaskHandlerTest
     extends ScriptTestSupport
 {
     private TaskService taskService;
@@ -29,7 +29,7 @@ public class GetTaskHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final TaskInfo taskInfo = TaskInfo.create().
             state( TaskState.RUNNING ).
@@ -47,8 +47,7 @@ public class GetTaskHandlerTest
     }
 
     @Test
-    public void testGetTaskExisting()
-        throws Exception
+    void testGetTaskExisting()
     {
         final TaskInfo taskInfo = TaskInfo.create().
             state( TaskState.RUNNING ).
@@ -66,8 +65,7 @@ public class GetTaskHandlerTest
     }
 
     @Test
-    public void testGetTaskNotFound()
-        throws Exception
+    void testGetTaskNotFound()
     {
         Mockito.when( this.taskService.getTaskInfo( TaskId.from( "123" ) ) ).thenReturn( null );
 

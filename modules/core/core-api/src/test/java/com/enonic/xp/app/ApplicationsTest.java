@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ApplicationsTest
+class ApplicationsTest
 {
     private static final ArrayList<Application> list = new ArrayList();
 
@@ -32,14 +32,14 @@ public class ApplicationsTest
     }
 
     @Test
-    public void fromEmpty()
+    void fromEmpty()
     {
         Applications applications = Applications.empty();
         assertEquals( 0, applications.getSize() );
     }
 
     @Test
-    public void fromIterable()
+    void fromIterable()
     {
         final Applications applications = Applications.from( ApplicationsTest.list );
 
@@ -49,7 +49,7 @@ public class ApplicationsTest
 
 
     @Test
-    public void getApplicationKeys()
+    void getApplicationKeys()
     {
         final Applications applications = Applications.from( ApplicationsTest.list );
 

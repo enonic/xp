@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BundleClassLoaderTest
+class BundleClassLoaderTest
     extends BundleBasedTest
 {
     @Test
-    public void testLoadClass()
+    void testLoadClass()
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
@@ -30,8 +30,7 @@ public class BundleClassLoaderTest
     }
 
     @Test
-    public void testLoadClass_failed()
-        throws Exception
+    void testLoadClass_failed()
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false );
 
@@ -41,8 +40,7 @@ public class BundleClassLoaderTest
     }
 
     @Test
-    public void testGetResource()
-        throws Exception
+    void testGetResource()
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).
             addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
@@ -58,7 +56,7 @@ public class BundleClassLoaderTest
     }
 
     @Test
-    public void testGetResources()
+    void testGetResources()
         throws Exception
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", false ).

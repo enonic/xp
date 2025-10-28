@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DateTypeTest
+class DateTypeTest
     extends BaseInputTypeTest
 {
     public DateTypeTest()
@@ -23,19 +23,19 @@ public class DateTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "Date", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "Date", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = newEmptyConfig();
         final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02" ), config );
@@ -45,7 +45,7 @@ public class DateTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE, "2014-08-16" ).build();
 
@@ -57,7 +57,7 @@ public class DateTypeTest
     }
 
     @Test
-    public void testRelativeDefaultValue()
+    void testRelativeDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE, "+1year -5months -36d" ).build();
 
@@ -69,7 +69,7 @@ public class DateTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue_invalid()
+    void testCreateDefaultValue_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE, "2014-18-16" ).build();
 
@@ -77,14 +77,14 @@ public class DateTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = newEmptyConfig();
         this.type.validate( localDateProperty(), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );

@@ -44,8 +44,7 @@ public abstract class AbstractErrorHandlerTest
     }
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         this.portalRequest = new PortalRequest();
         this.portalRequest.setMethod( HttpMethod.GET );

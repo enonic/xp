@@ -36,7 +36,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SnapshotServiceImplTest
+class SnapshotServiceImplTest
 {
     private ClusterAdminClient clusterAdminClient;
 

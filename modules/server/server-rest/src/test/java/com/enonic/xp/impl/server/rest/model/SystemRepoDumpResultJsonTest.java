@@ -11,11 +11,10 @@ import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SystemRepoDumpResultJsonTest
+class SystemRepoDumpResultJsonTest
 {
     @Test
-    public void create()
-        throws Exception
+    void create()
     {
         final SystemDumpResult systemDumpResult = SystemDumpResult.create().
             add( RepoDumpResult.create( RepositoryId.from( "repo1" ) ).

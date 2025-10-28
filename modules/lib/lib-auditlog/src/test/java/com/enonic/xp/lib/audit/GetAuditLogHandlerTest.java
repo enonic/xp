@@ -9,7 +9,7 @@ import com.enonic.xp.audit.LogAuditLogParams;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GetAuditLogHandlerTest
+class GetAuditLogHandlerTest
     extends BaseAuditLogHandlerTest
 {
     public void mockCreateLog()
@@ -23,7 +23,7 @@ public class GetAuditLogHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockCreateLog();
         assertNotNull( runScript( "/lib/xp/examples/auditlog/get.js" ) );

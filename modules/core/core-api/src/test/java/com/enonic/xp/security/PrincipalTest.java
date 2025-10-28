@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PrincipalTest
+class PrincipalTest
 {
     @Test
-    public void testCreateUser()
+    void testCreateUser()
     {
         final User user = User.create().
             login( "userlogin" ).
@@ -37,7 +37,7 @@ public class PrincipalTest
     }
 
     @Test
-    public void testCreateGroup()
+    void testCreateGroup()
     {
         final Group group = Group.create().
             displayName( "my group" ).
@@ -56,7 +56,7 @@ public class PrincipalTest
     }
 
     @Test
-    public void testAnonymous()
+    void testAnonymous()
     {
         assertTrue( User.ANONYMOUS.getKey().isAnonymous() );
         assertEquals( "anonymous", User.ANONYMOUS.getKey().getId() );
@@ -66,7 +66,7 @@ public class PrincipalTest
     }
 
     @Test
-    public void testCreateRole()
+    void testCreateRole()
     {
         final Role role = Role.create().
             displayName( "my role" ).

@@ -35,7 +35,7 @@ class NullSessionStoreFactoryActivatorTest
     private ServiceRegistration<SessionCacheFactory> sessionCacheFactoryServiceRegistration;
 
     @Test
-    public void verifyActivateDeactivate()
+    void verifyActivateDeactivate()
     {
         when( bundleContext.registerService( same( SessionDataStoreFactory.class ), any( SessionDataStoreFactory.class ), isNull() ) ).
             thenReturn( sessionDataStoreFactoryServiceRegistration );

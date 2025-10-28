@@ -20,19 +20,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GetActiveNodeVersionsCommandTest
+class GetActiveNodeVersionsCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_active_versions()
-        throws Exception
+    void get_active_versions()
     {
 
         final PropertyTree data = new PropertyTree();

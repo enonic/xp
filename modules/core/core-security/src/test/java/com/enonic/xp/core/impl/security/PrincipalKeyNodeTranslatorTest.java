@@ -16,11 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PrincipalKeyNodeTranslatorTest
+class PrincipalKeyNodeTranslatorTest
 {
     @Test
-    public void toNodeName()
-        throws Exception
+    void toNodeName()
     {
         PrincipalKey principalKey = PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "rmy" );
 
@@ -38,8 +37,7 @@ public class PrincipalKeyNodeTranslatorTest
     }
 
     @Test
-    public void userKeyFromNode()
-        throws Exception
+    void userKeyFromNode()
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, PrincipalType.USER.toString() );
@@ -57,8 +55,7 @@ public class PrincipalKeyNodeTranslatorTest
     }
 
     @Test
-    public void unknown_type()
-        throws Exception
+    void unknown_type()
     {
         PropertyTree rootDataSet = new PropertyTree();
         rootDataSet.setString( PrincipalPropertyNames.PRINCIPAL_TYPE_KEY, "fisk" );

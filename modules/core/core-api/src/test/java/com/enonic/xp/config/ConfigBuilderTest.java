@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConfigBuilderTest
+class ConfigBuilderTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final Configuration config = ConfigBuilder.create().build();
 
@@ -24,7 +24,7 @@ public class ConfigBuilderTest
     }
 
     @Test
-    public void testAdd()
+    void testAdd()
     {
         final Configuration config = ConfigBuilder.create().
             add( "key1", "value1" ).
@@ -41,7 +41,7 @@ public class ConfigBuilderTest
     }
 
     @Test
-    public void testAddAll_map()
+    void testAddAll_map()
     {
         final Map<String, String> source = new HashMap<>();
         source.put( "key1", "value1" );
@@ -62,7 +62,7 @@ public class ConfigBuilderTest
     }
 
     @Test
-    public void testAddAll_properties()
+    void testAddAll_properties()
     {
         final Properties properties = new Properties();
         properties.put( "key1", "value1" );
@@ -83,7 +83,7 @@ public class ConfigBuilderTest
     }
 
     @Test
-    public void testAddAll_dictionary()
+    void testAddAll_dictionary()
     {
         Map<String, String> dictionary = Map.of( "key1", "value1", "key2", "value2" );
 
@@ -102,7 +102,7 @@ public class ConfigBuilderTest
     }
 
     @Test
-    public void testAddConfig()
+    void testAddConfig()
     {
         final Configuration config1 = ConfigBuilder.create().
             add( "key1", "value1" ).
@@ -124,7 +124,7 @@ public class ConfigBuilderTest
     }
 
     @Test
-    public void testLoad()
+    void testLoad()
     {
         final Configuration config1 = ConfigBuilder.create().
             load( getClass(), "ConfigLoaderTest.properties" ).

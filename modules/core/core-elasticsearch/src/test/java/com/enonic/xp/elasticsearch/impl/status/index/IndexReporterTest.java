@@ -26,7 +26,7 @@ import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IndexReporterTest
+class IndexReporterTest
 {
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
@@ -35,7 +35,7 @@ public class IndexReporterTest
     private IndexReporter reporter;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
 
@@ -49,7 +49,7 @@ public class IndexReporterTest
     }
 
     @Test
-    public void testGetReport()
+    void testGetReport()
         throws Exception
     {
         Mockito.doAnswer( invocation -> {
@@ -94,7 +94,7 @@ public class IndexReporterTest
     }
 
     @Test
-    public void testGetReportWithError()
+    void testGetReportWithError()
         throws Exception
     {
         Mockito.doAnswer( invocation -> null ).

@@ -34,12 +34,12 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContentServiceImplTest_find
+class ContentServiceImplTest_find
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void order_by_path()
+    void order_by_path()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -57,7 +57,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void test_pending_publish_draft()
+    void test_pending_publish_draft()
     {
         final FindContentIdsByQueryResult result =
             createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
@@ -65,7 +65,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void test_pending_publish_master()
+    void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
             final FindContentIdsByQueryResult result =
@@ -76,7 +76,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void test_publish_expired_draft()
+    void test_publish_expired_draft()
     {
         final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                           .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
@@ -86,7 +86,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void test_publish_expired_master()
+    void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
             final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
@@ -99,7 +99,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void test_published_draft()
+    void test_published_draft()
     {
         final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
                                                                           .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
@@ -109,7 +109,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void test_published_master()
+    void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
@@ -123,7 +123,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void multipleFilters()
+    void multipleFilters()
     {
         createContent( ContentPath.ROOT, "title1" );
         createContent( ContentPath.ROOT, "title2" );
@@ -144,7 +144,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void aggregations()
+    void aggregations()
     {
         createContent( ContentPath.ROOT, "title1",new PropertyTree(), ContentTypeName.folder() );
         createContent( ContentPath.ROOT, "title2",new PropertyTree(), ContentTypeName.unknownMedia() );
@@ -166,7 +166,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void aggregations_with_unlimited_size()
+    void aggregations_with_unlimited_size()
     {
         final Content content1 = createContent( ContentPath.ROOT, "title1", new PropertyTree(), ContentTypeName.folder() );
         final Content content2 = createContent( ContentPath.ROOT, "title2", new PropertyTree(), ContentTypeName.unknownMedia() );
@@ -188,7 +188,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_geo_point()
+    void dsl_query_geo_point()
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -214,7 +214,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_term_uppercase()
+    void dsl_query_term_uppercase()
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -239,7 +239,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_term_localdatetime()
+    void dsl_query_term_localdatetime()
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -264,7 +264,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_term_localdate()
+    void dsl_query_term_localdate()
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -289,7 +289,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_term_localdatetime_string()
+    void dsl_query_term_localdatetime_string()
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -314,7 +314,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_term_geopoint()
+    void dsl_query_term_geopoint()
     {
         PropertyTree data = createPropertyTreeForAllInputTypes();
 
@@ -339,7 +339,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_like_query()
+    void dsl_like_query()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -362,7 +362,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query()
+    void dsl_query()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -383,7 +383,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_exists_string()
+    void dsl_exists_string()
     {
         PropertyTree siteData = new PropertyTree();
         siteData.setString( "myField", "stringValue" );
@@ -402,7 +402,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_exists_long()
+    void dsl_exists_long()
     {
         PropertyTree data = new PropertyTree();
         data.setLong( "myField", 2L );
@@ -420,7 +420,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_exists_boolean()
+    void dsl_exists_boolean()
     {
         PropertyTree data = new PropertyTree();
         data.setBoolean( "myField", true );
@@ -438,7 +438,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_exists_set()
+    void dsl_exists_set()
     {
         PropertyTree data = new PropertyTree();
         data.setSet( "myField", data.newSet() );
@@ -468,7 +468,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_empty()
+    void dsl_query_empty()
     {
         final ContentQuery queryDsl = ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( new PropertyTree() ) ) ).build();
 
@@ -476,7 +476,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_two_root_properties()
+    void dsl_query_two_root_properties()
     {
         final PropertyTree request = new PropertyTree();
         request.addSet( "fulltext", request.newSet() );
@@ -488,7 +488,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_sort()
+    void dsl_query_sort()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -520,7 +520,7 @@ public class ContentServiceImplTest_find
     }
 
     @Test
-    public void dsl_query_range()
+    void dsl_query_range()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 

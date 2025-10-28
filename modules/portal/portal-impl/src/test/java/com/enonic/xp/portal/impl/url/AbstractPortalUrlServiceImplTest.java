@@ -50,7 +50,7 @@ public abstract class AbstractPortalUrlServiceImplTest
     HttpServletRequest req;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
         final Application application = mock( Application.class );
@@ -93,7 +93,7 @@ public abstract class AbstractPortalUrlServiceImplTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         PortalRequestAccessor.remove();
     }

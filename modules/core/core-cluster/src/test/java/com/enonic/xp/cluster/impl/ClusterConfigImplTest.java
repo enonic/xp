@@ -11,11 +11,10 @@ import com.enonic.xp.cluster.NodeDiscovery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ClusterConfigImplTest
+class ClusterConfigImplTest
 {
     @Test
-    public void discovery()
-        throws Exception
+    void discovery()
     {
         final ClusterConfigImpl config = new ClusterConfigImpl();
 
@@ -31,8 +30,7 @@ public class ClusterConfigImplTest
     }
 
     @Test
-    public void default_name()
-        throws Exception
+    void default_name()
     {
         final Map<String, String> settings = new HashMap<>();
         final ClusterConfigImpl config = new ClusterConfigImpl();

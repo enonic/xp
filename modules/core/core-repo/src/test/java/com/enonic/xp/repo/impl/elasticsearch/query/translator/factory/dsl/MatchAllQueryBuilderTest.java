@@ -5,19 +5,19 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 
-public class MatchAllQueryBuilderTest
+class MatchAllQueryBuilderTest
     extends QueryBuilderTest
 {
 
     @Test
-    public void match_all()
+    void match_all()
         throws Exception
     {
         test( "match_all" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );

@@ -30,19 +30,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ControllerMappingsResolverTest
+class ControllerMappingsResolverTest
 {
     private SiteService siteService;
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.siteService = Mockito.mock( SiteService.class );
     }
 
     @Test
-    public void testNoDescriptors()
+    void testNoDescriptors()
     {
         final Content content = newContent();
         final Site site = newSite();
@@ -56,7 +55,7 @@ public class ControllerMappingsResolverTest
     }
 
     @Test
-    public void testResolve()
+    void testResolve()
     {
         final Content content = newContent();
         final Site site = newSite();
@@ -77,7 +76,7 @@ public class ControllerMappingsResolverTest
     }
 
     @Test
-    public void testResolveWithParameters()
+    void testResolveWithParameters()
     {
         final Content content = newContent();
         final Site site = newSite();
@@ -97,7 +96,7 @@ public class ControllerMappingsResolverTest
     }
 
     @Test
-    public void testResolvePatternWithParametersNoMatch()
+    void testResolvePatternWithParametersNoMatch()
     {
         final Content content = newContent();
         final Site site = newSite();
@@ -115,7 +114,7 @@ public class ControllerMappingsResolverTest
     }
 
     @Test
-    public void testResolveService()
+    void testResolveService()
     {
         final Content content = newContent();
         final Site site = newSite();
@@ -139,7 +138,7 @@ public class ControllerMappingsResolverTest
     }
 
     @Test
-    public void testPatternCatchAll_matches_anything()
+    void testPatternCatchAll_matches_anything()
     {
         final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
             .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )
@@ -182,7 +181,7 @@ public class ControllerMappingsResolverTest
     }
 
     @Test
-    public void testPatternCatchAllType_not_matches_missing()
+    void testPatternCatchAllType_not_matches_missing()
     {
         final ControllerMappingDescriptor mapping1 = ControllerMappingDescriptor.create()
             .controller( ResourceKey.from( getAppKey2(), "/other/controller1.js" ) )

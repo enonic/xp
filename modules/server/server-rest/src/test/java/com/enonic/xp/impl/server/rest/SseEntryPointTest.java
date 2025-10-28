@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-public class SseEntryPointTest
+class SseEntryPointTest
 {
     private SseEntryPoint listener;
 
@@ -49,7 +49,7 @@ public class SseEntryPointTest
     private OutboundSseEvent.Builder eventBuilder;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         applicationService = mock( ApplicationService.class );
         listener = new SseEntryPoint( applicationService );
@@ -68,7 +68,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testOnEvent()
+    void testOnEvent()
     {
         listener.setSse( sse );
 
@@ -103,7 +103,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testOnEvent_AppNotFound()
+    void testOnEvent_AppNotFound()
     {
         listener.setSse( sse );
 
@@ -121,7 +121,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testOnEvent_Uninstalled()
+    void testOnEvent_Uninstalled()
     {
         listener.setSse( sse );
 
@@ -136,7 +136,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testOnEvent_UnsupportedEventType()
+    void testOnEvent_UnsupportedEventType()
     {
         listener.setSse( sse );
 
@@ -149,7 +149,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testOnEvent_NoSseContext()
+    void testOnEvent_NoSseContext()
     {
         listener.onEvent( Event.create( "application.cluster" ).
             localOrigin( true ).
@@ -160,7 +160,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testSubscribe()
+    void testSubscribe()
     {
         listener.setSse( sse );
 
@@ -196,7 +196,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testSubscribe_NoSseContext()
+    void testSubscribe_NoSseContext()
     {
         final SseEventSink eventSink = mock( SseEventSink.class );
 
@@ -204,7 +204,7 @@ public class SseEntryPointTest
     }
 
     @Test
-    public void testLifecycle()
+    void testLifecycle()
     {
         listener.setSse( sse );
         listener.deactivate();

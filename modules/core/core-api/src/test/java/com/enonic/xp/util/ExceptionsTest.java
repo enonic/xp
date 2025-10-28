@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ExceptionsTest
+class ExceptionsTest
 {
     @Test
-    public void throwUnchecked()
+    void throwUnchecked()
     {
         assertThrows(IOException.class, () -> {throw Exceptions.unchecked( new IOException() ); } );
     }

@@ -13,10 +13,10 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.User;
 import com.enonic.xp.testing.helper.JsonAssert;
 
-public class PrincipalsResultMapperTest
+class PrincipalsResultMapperTest
 {
     @Test
-    public void testUsersSerialized()
+    void testUsersSerialized()
         throws Exception
     {
         final PrincipalsResultMapper principalsResultMapper = new PrincipalsResultMapper( createUserPrincipals(), 10 );
@@ -24,7 +24,7 @@ public class PrincipalsResultMapperTest
     }
 
     @Test
-    public void testGroupsSerialized()
+    void testGroupsSerialized()
         throws Exception
     {
 
@@ -47,7 +47,7 @@ public class PrincipalsResultMapperTest
     }
 
     @Test
-    public void testRolesSerialized()
+    void testRolesSerialized()
         throws Exception
     {
 

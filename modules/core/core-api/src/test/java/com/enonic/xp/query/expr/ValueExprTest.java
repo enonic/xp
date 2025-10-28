@@ -7,10 +7,10 @@ import com.enonic.xp.data.ValueTypes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ValueExprTest
+class ValueExprTest
 {
     @Test
-    public void quoteForString()
+    void quoteForString()
     {
         quoteForString( "test", "'test'" );
         quoteForString( "te'st", "\"te'st\"" );
@@ -25,7 +25,7 @@ public class ValueExprTest
     }
 
     @Test
-    public void stringValue()
+    void stringValue()
     {
         final ValueExpr expr = ValueExpr.string( "value" );
 
@@ -35,7 +35,7 @@ public class ValueExprTest
     }
 
     @Test
-    public void numberValue()
+    void numberValue()
     {
         final ValueExpr expr = ValueExpr.number( 33 );
 
@@ -45,7 +45,7 @@ public class ValueExprTest
     }
 
     @Test
-    public void dateTimeValue()
+    void dateTimeValue()
     {
         final ValueExpr expr = ValueExpr.instant( "2013-11-11T22:22:22.000Z" );
 
@@ -55,7 +55,7 @@ public class ValueExprTest
     }
 
     @Test
-    public void geoPointValue()
+    void geoPointValue()
     {
         final ValueExpr expr = ValueExpr.geoPoint( "11,22" );
 

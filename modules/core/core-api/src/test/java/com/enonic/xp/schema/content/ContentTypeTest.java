@@ -15,7 +15,7 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentTypeTest
+class ContentTypeTest
 {
     private static final Form MEDIA_DEFAULT = Form.create().
         addFormItem( Input.create().name( ContentPropertyNames.MEDIA ).
@@ -24,7 +24,7 @@ public class ContentTypeTest
         build();
 
     @Test
-    public void layout()
+    void layout()
     {
         ContentType contentType = ContentType.create()
             .superType( ContentTypeName.structured() )
@@ -40,7 +40,7 @@ public class ContentTypeTest
     }
 
     @Test
-    public void layout_inside_formItemSet()
+    void layout_inside_formItemSet()
     {
         FieldSet layout = FieldSet.create().
             label( "Personalia" ).
@@ -55,7 +55,7 @@ public class ContentTypeTest
     }
 
     @Test
-    public void address()
+    void address()
     {
         FormItemSet formItemSet = FormItemSet.create()
             .name( "address" )
@@ -80,7 +80,7 @@ public class ContentTypeTest
     }
 
     @Test
-    public void formItemSet_in_formItemSet()
+    void formItemSet_in_formItemSet()
     {
         FormItemSet formItemSet = FormItemSet.create().
             name( "top-set" ).
@@ -113,7 +113,7 @@ public class ContentTypeTest
     }
 
     @Test
-    public void contentTypeBuilder()
+    void contentTypeBuilder()
     {
         ContentType.Builder builder =
             ContentType.
@@ -153,7 +153,7 @@ public class ContentTypeTest
     }
 
     @Test
-    public void getChildContentTypesParams()
+    void getChildContentTypesParams()
     {
         GetChildContentTypesParams params1 = new GetChildContentTypesParams();
         params1.parentName( ContentTypeName.archiveMedia() );

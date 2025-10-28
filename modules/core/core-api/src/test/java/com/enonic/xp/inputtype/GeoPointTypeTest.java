@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GeoPointTypeTest
+class GeoPointTypeTest
     extends BaseInputTypeTest
 {
     public GeoPointTypeTest()
@@ -21,19 +21,19 @@ public class GeoPointTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "GeoPoint", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "GeoPoint", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "1,2" ), config );
@@ -43,7 +43,7 @@ public class GeoPointTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.GEO_POINT, "41.387588,2.169994" ).build();
 
@@ -55,21 +55,21 @@ public class GeoPointTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue_invalid()
+    void testCreateDefaultValue_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.GEO_POINT, "41.387588;2.169994" ).build();
         assertThrows(IllegalArgumentException.class, () -> this.type.createDefaultValue( input ) );
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( geoPointProperty( "1,2" ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));

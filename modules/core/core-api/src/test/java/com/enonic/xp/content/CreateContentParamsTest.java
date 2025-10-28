@@ -16,11 +16,11 @@ import static com.enonic.xp.security.acl.Permission.READ;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CreateContentParamsTest
+class CreateContentParamsTest
 {
 
     @Test
-    public void allParameters()
+    void allParameters()
     {
         final AccessControlList permissions =
             AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
@@ -55,7 +55,7 @@ public class CreateContentParamsTest
     }
 
     @Test
-    public void copyConstructor()
+    void copyConstructor()
     {
         final AccessControlList permissions =
             AccessControlList.of( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( READ ).build() );
@@ -92,7 +92,7 @@ public class CreateContentParamsTest
     }
 
     @Test
-    public void missingContentParamDisplayName()
+    void missingContentParamDisplayName()
     {
         CreateContentParams.create().
             type( ContentTypeName.site() ).
@@ -102,7 +102,7 @@ public class CreateContentParamsTest
     }
 
     @Test
-    public void missingContentParamType()
+    void missingContentParamType()
     {
         try
         {
@@ -120,7 +120,7 @@ public class CreateContentParamsTest
     }
 
     @Test
-    public void missingContentParamParentPath()
+    void missingContentParamParentPath()
     {
         try
         {
@@ -138,7 +138,7 @@ public class CreateContentParamsTest
     }
 
     @Test
-    public void missingContentParamData()
+    void missingContentParamData()
     {
         try
         {

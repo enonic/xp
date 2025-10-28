@@ -1,6 +1,5 @@
 package com.enonic.xp.core.node;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,21 +26,19 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodeIdsByParentCommandTest
+class FindNodeIdsByParentCommandTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
 
     @Test
-    public void getChildren()
-        throws Exception
+    void getChildren()
     {
 
         final Node root = createNode( CreateNodeParams.create().
@@ -78,8 +75,7 @@ public class FindNodeIdsByParentCommandTest
 
 
     @Test
-    public void find_after_move_to_folder_with_same_name()
-        throws Exception
+    void find_after_move_to_folder_with_same_name()
     {
         final Node node = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node" ) ).
@@ -122,8 +118,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void findByParent_recursive()
-        throws IOException
+    void findByParent_recursive()
     {
         /*
                 |-node1
@@ -150,8 +145,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void getChildren_2()
-        throws Exception
+    void getChildren_2()
     {
         this.createDefaultRootNode();
 
@@ -182,8 +176,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void size()
-        throws Exception
+    void size()
     {
         this.createDefaultRootNode();
 
@@ -213,8 +206,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void from()
-        throws Exception
+    void from()
     {
         this.createDefaultRootNode();
 
@@ -267,8 +259,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void get_by_parent_one_child()
-        throws Exception
+    void get_by_parent_one_child()
     {
         this.createDefaultRootNode();
 
@@ -292,8 +283,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void get_children_order()
-        throws Exception
+    void get_children_order()
     {
         this.createDefaultRootNode();
 
@@ -375,8 +365,7 @@ public class FindNodeIdsByParentCommandTest
     }
 
     @Test
-    public void child_order_use_root_node()
-        throws Exception
+    void child_order_use_root_node()
     {
         CreateRootNodeCommand.create().
             params( CreateRootNodeParams.create().

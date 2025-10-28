@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ScriptValueFactoryImplTest
+class ScriptValueFactoryImplTest
 {
     private ScriptValueFactory factory;
 
     private ScriptEngine engine;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );
 
@@ -35,14 +35,14 @@ public class ScriptValueFactoryImplTest
     }
 
     @Test
-    public void newValue_null()
+    void newValue_null()
     {
         final ScriptValue value = this.factory.newValue( null );
         assertNull( value );
     }
 
     @Test
-    public void newValue_scalar()
+    void newValue_scalar()
     {
         final ScriptValue value = this.factory.newValue( "2" );
 
@@ -62,7 +62,7 @@ public class ScriptValueFactoryImplTest
     }
 
     @Test
-    public void newValue_function()
+    void newValue_function()
     {
         final Object obj = execute( "var result = function() {}; result;" );
 
@@ -80,8 +80,7 @@ public class ScriptValueFactoryImplTest
     }
 
     @Test
-    public void newValue_array()
-        throws Exception
+    void newValue_array()
     {
         final Object obj = execute( "var result = ['1', '2']; result;" );
         final ScriptValue value = this.factory.newValue( obj );
@@ -110,8 +109,7 @@ public class ScriptValueFactoryImplTest
     }
 
     @Test
-    public void array_toList()
-        throws Exception
+    void array_toList()
     {
         final Object obj = execute( "var result = ['1', null, 2, {'key': 'value'}, [42]]; result;" );
         final ScriptValue value = this.factory.newValue( obj );
@@ -134,8 +132,7 @@ public class ScriptValueFactoryImplTest
     }
 
     @Test
-    public void newValue_object()
-        throws Exception
+    void newValue_object()
     {
         final Object obj = execute( "var result = {'a':1, 'b':2}; result;" );
         final ScriptValue value = this.factory.newValue( obj );

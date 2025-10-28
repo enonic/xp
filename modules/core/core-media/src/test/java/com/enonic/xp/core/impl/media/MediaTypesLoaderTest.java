@@ -8,18 +8,18 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MediaTypesLoaderTest
+class MediaTypesLoaderTest
 {
     private MediaTypesLoader loader;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.loader = new MediaTypesLoader();
     }
 
     @Test
-    public void testActivate()
+    void testActivate()
     {
         final Map<String, String> config = new HashMap<>();
         config.put( "a", "b" );

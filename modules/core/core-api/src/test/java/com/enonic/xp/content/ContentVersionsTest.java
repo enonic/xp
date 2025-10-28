@@ -8,10 +8,10 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentVersionsTest
+class ContentVersionsTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
 
         final Instant now1 = Instant.now();

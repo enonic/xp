@@ -22,14 +22,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ContentResourceTest
+class ContentResourceTest
     extends JaxRsResourceTestSupport
 {
 
     private TaskService taskService;
 
     @Test
-    public void sync()
+    void sync()
         throws Exception
     {
         when( this.taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );

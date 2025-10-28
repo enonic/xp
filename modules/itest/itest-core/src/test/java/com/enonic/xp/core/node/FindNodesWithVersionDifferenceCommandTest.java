@@ -20,21 +20,19 @@ import com.enonic.xp.repo.impl.node.PushNodesCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodesWithVersionDifferenceCommandTest
+class FindNodesWithVersionDifferenceCommandTest
     extends AbstractNodeTest
 {
     private Node rootNode;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.rootNode = this.createDefaultRootNode();
     }
 
     @Test
-    public void only_in_source()
-        throws Exception
+    void only_in_source()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -53,8 +51,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void only_in_source_with_path()
-        throws Exception
+    void only_in_source_with_path()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -90,8 +87,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void same_version()
-        throws Exception
+    void same_version()
     {
         final Node node = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -106,8 +102,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void newer_in_source()
-        throws Exception
+    void newer_in_source()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -124,8 +119,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void newer_in_target()
-        throws Exception
+    void newer_in_target()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -142,8 +136,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void moved_in_source()
-        throws Exception
+    void moved_in_source()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -168,8 +161,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void moved_in_target()
-        throws Exception
+    void moved_in_target()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -194,8 +186,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void deleted_in_source()
-        throws Exception
+    void deleted_in_source()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).
@@ -220,7 +211,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void assure_correct_diff_order_when_there_are_children()
+    void assure_correct_diff_order_when_there_are_children()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "dddd" ) ).
@@ -289,8 +280,7 @@ public class FindNodesWithVersionDifferenceCommandTest
     }
 
     @Test
-    public void deleted_in_target()
-        throws Exception
+    void deleted_in_target()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "mynode" ).

@@ -10,10 +10,10 @@ import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AggregationMapperTest
+class AggregationMapperTest
 {
     @Test
-    public void test()
+    void test()
     {
         Aggregations aggregations =
             Aggregations.create().add( SingleValueMetricAggregation.create( "testCountAgg" ).value( 3d ).build() ).build();

@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConfigurationTest
+class ConfigurationTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final Map<String, String> source = new HashMap<>();
         final Configuration config = ConfigurationImpl.create( source );
@@ -33,7 +33,7 @@ public class ConfigurationTest
     }
 
     @Test
-    public void testConfig()
+    void testConfig()
     {
         final Map<String, String> source = Map.of( "key1", "value1", "key2", "33" );
         final Configuration config = ConfigurationImpl.create( source );
@@ -53,7 +53,7 @@ public class ConfigurationTest
     }
 
     @Test
-    public void testSubConfig()
+    void testSubConfig()
     {
         final Map<String, String> source = Map.of( "key1", "value1", "my.key2", "value2" );
         final Configuration config1 = ConfigurationImpl.create( source );
@@ -70,7 +70,7 @@ public class ConfigurationTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final Map<String, String> source1 = Map.of( "key1", "value1", "key2", "value2" );
         final Configuration config1 = ConfigurationImpl.create( source1 );

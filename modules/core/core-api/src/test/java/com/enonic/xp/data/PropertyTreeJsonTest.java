@@ -18,7 +18,7 @@ import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PropertyTreeJsonTest
+class PropertyTreeJsonTest
 {
     private final JsonTestHelper jsonTestHelper;
 
@@ -75,7 +75,7 @@ public class PropertyTreeJsonTest
     }
 
     @Test
-    public void serialization_equals_serialization_of_deserialization()
+    void serialization_equals_serialization_of_deserialization()
         throws IOException
     {
         PropertyTree tree = createPropertyTree_with_all_types();
@@ -98,7 +98,7 @@ public class PropertyTreeJsonTest
     }
 
     @Test
-    public void serialization_equals_serialization_of_deserialization_nullSet()
+    void serialization_equals_serialization_of_deserialization_nullSet()
         throws IOException
     {
         PropertyTree tree = new PropertyTree();
@@ -122,8 +122,7 @@ public class PropertyTreeJsonTest
     }
 
     @Test
-    public void deserialized_from_serialized_with_null_set()
-        throws IOException
+    void deserialized_from_serialized_with_null_set()
     {
         PropertyTree sourceTree = new PropertyTree();
         sourceTree.addSet( "nullSet", null );
@@ -138,8 +137,7 @@ public class PropertyTreeJsonTest
     }
 
     @Test
-    public void deserialized_from_serialized()
-        throws IOException
+    void deserialized_from_serialized()
     {
         PropertyTree sourceTree = createPropertyTree_with_all_types();
         List<PropertyArrayJson> serializedTree = PropertyTreeJson.toJson( sourceTree );
@@ -170,7 +168,7 @@ public class PropertyTreeJsonTest
     }
 
     @Test
-    public void serialized_as_JsonNode()
+    void serialized_as_JsonNode()
         throws IOException
     {
         PropertyTree tree = createPropertyTree_with_all_types();

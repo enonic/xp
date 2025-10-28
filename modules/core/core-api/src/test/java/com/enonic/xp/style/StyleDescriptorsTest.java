@@ -8,11 +8,11 @@ import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StyleDescriptorsTest
+class StyleDescriptorsTest
 {
 
     @Test
-    public void from()
+    void from()
     {
         StyleDescriptor styleDescriptor = StyleDescriptor.create().
             application( ApplicationKey.from( "myapp" ) ).
@@ -30,7 +30,7 @@ public class StyleDescriptorsTest
     }
 
     @Test
-    public void from1()
+    void from1()
     {
         StyleDescriptor styleDescriptor = StyleDescriptor.create().
             application( ApplicationKey.from( "myapp" ) ).
@@ -48,7 +48,7 @@ public class StyleDescriptorsTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         final StyleDescriptors styleDescriptors = StyleDescriptors.empty();
         assertEquals( 0, styleDescriptors.getSize() );

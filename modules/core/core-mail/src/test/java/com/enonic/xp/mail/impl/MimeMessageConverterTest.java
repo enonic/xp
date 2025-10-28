@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MimeMessageConverterTest
+class MimeMessageConverterTest
 {
     @Test
-    public void testSimpleMail()
+    void testSimpleMail()
         throws Exception
     {
         SendMailParams params = SendMailParams.create()
@@ -60,7 +60,7 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testMultiRecipientsMail()
+    void testMultiRecipientsMail()
         throws Exception
     {
         SendMailParams params = SendMailParams.create()
@@ -85,7 +85,7 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testRfc822AddressMail()
+    void testRfc822AddressMail()
         throws Exception
     {
         SendMailParams params = SendMailParams.create()
@@ -107,7 +107,7 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testDefaultFromMail()
+    void testDefaultFromMail()
         throws Exception
     {
         SendMailParams params = SendMailParams.create()
@@ -129,8 +129,7 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testInvalidDefaultFromMail()
-        throws Exception
+    void testInvalidDefaultFromMail()
     {
         SendMailParams params = SendMailParams.create()
             .subject( "test subject" )
@@ -148,7 +147,7 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testSendMailWithContentType()
+    void testSendMailWithContentType()
         throws Exception
     {
         SendMailParams params = SendMailParams.create()
@@ -169,7 +168,7 @@ public class MimeMessageConverterTest
     }
 
     @Test
-    public void testSendWithAttachments()
+    void testSendWithAttachments()
         throws Exception
     {
         SendMailParams params = SendMailParams.create()

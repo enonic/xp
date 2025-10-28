@@ -20,20 +20,18 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AccessControlTest
+class AccessControlTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void index_has_read()
-        throws Exception
+    void index_has_read()
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -57,8 +55,7 @@ public class AccessControlTest
 
 
     @Test
-    public void role_system_admin_can_access_everything()
-        throws Exception
+    void role_system_admin_can_access_everything()
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().

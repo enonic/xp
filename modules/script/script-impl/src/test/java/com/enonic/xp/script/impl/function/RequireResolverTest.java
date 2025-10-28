@@ -6,12 +6,11 @@ import com.enonic.xp.resource.ResourceKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RequireResolverTest
+class RequireResolverTest
     extends ResolverTestSupport
 {
     @Test
-    public void resolve_js()
-        throws Exception
+    void resolve_js()
     {
         final ResourceKey key = resolve( "/a/b/c.js", "/dummy.js" );
         assertEquals( "/dummy.js", key.getPath() );
@@ -27,7 +26,7 @@ public class RequireResolverTest
     }
 
     @Test
-    public void resolve_no_ext_js()
+    void resolve_no_ext_js()
         throws Exception
     {
         touchFile( "dummy/index.js" );
@@ -37,7 +36,7 @@ public class RequireResolverTest
     }
 
     @Test
-    public void resolve_no_ext_json()
+    void resolve_no_ext_json()
         throws Exception
     {
         touchFile( "dummy/index.json" );
@@ -47,7 +46,7 @@ public class RequireResolverTest
     }
 
     @Test
-    public void resolve_relative()
+    void resolve_relative()
         throws Exception
     {
         touchFile( "a/b/dummy.js" );
@@ -57,7 +56,7 @@ public class RequireResolverTest
     }
 
     @Test
-    public void findAllSearchPaths()
+    void findAllSearchPaths()
     {
         assertEquals( "[/a.js]", RequireResolver.findSearchPaths( "/a.js" ).toString() );
         assertEquals( "[/a.js, /a/index.js, /a.json, /a/index.json]", RequireResolver.findSearchPaths( "/a" ).toString() );

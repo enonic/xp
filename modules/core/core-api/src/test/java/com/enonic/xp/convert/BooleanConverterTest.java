@@ -4,16 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BooleanConverterTest
+class BooleanConverterTest
 {
     @Test
-    public void testSameType()
+    void testSameType()
     {
         assertEquals( true, Converters.convert( true, Boolean.class ) );
     }
 
     @Test
-    public void testFromString()
+    void testFromString()
     {
         assertEquals( true, Converters.convert( "true", Boolean.class ) );
         assertEquals( true, Converters.convert( "on", Boolean.class ) );
@@ -25,7 +25,7 @@ public class BooleanConverterTest
     }
 
     @Test
-    public void testFromNumber()
+    void testFromNumber()
     {
         assertEquals( true, Converters.convert( 11, Boolean.class ) );
         assertEquals( true, Converters.convert( 2L, Boolean.class ) );

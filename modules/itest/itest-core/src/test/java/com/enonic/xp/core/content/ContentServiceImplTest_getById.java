@@ -16,13 +16,12 @@ import com.enonic.xp.node.NodePath;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContentServiceImplTest_getById
+class ContentServiceImplTest_getById
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void test_pending_publish_draft()
-        throws Exception
+    void test_pending_publish_draft()
     {
         final Content content =
             createContent( ContentPath.ROOT, ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
@@ -31,8 +30,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_pending_publish_master()
-        throws Exception
+    void test_pending_publish_master()
     {
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
             final Content content =
@@ -43,8 +41,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_publish_expired_draft()
-        throws Exception
+    void test_publish_expired_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
             .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
@@ -55,8 +52,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_publish_expired_master()
-        throws Exception
+    void test_publish_expired_master()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
             .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
@@ -70,8 +66,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_published_draft()
-        throws Exception
+    void test_published_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
             .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
@@ -82,8 +77,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_published_master()
-        throws Exception
+    void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
@@ -97,8 +91,7 @@ public class ContentServiceImplTest_getById
     }
 
     @Test
-    public void test_get_content_from_wrong_context()
-        throws Exception
+    void test_get_content_from_wrong_context()
     {
         final Content content = ctxMasterSu().callWith( () -> createContent( ContentPath.ROOT, "my-content" ) );
 

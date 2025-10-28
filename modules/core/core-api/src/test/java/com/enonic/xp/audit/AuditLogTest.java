@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuditLogTest
+class AuditLogTest
 {
     @Test
-    public void create_no_params()
+    void create_no_params()
     {
         assertThrows( NullPointerException.class, () -> {
             AuditLog.create().build();
@@ -20,7 +20,7 @@ public class AuditLogTest
     }
 
     @Test
-    public void create()
+    void create()
     {
         AuditLog log = getBuilder().build();
 
@@ -34,7 +34,7 @@ public class AuditLogTest
     }
 
     @Test
-    public void equals()
+    void equals()
     {
         AuditLog log1 = getBuilder().build();
         AuditLog log2 = getBuilder().build();
@@ -44,7 +44,7 @@ public class AuditLogTest
     }
 
     @Test
-    public void equals_rainy()
+    void equals_rainy()
     {
         AuditLog log1 = getBuilder().build();
         AuditLog log2 = getBuilder().id( AuditLogId.from( 234 ) ).build();

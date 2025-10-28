@@ -20,6 +20,7 @@ import org.osgi.framework.ServiceRegistration;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.impl.scheduler.distributed.RescheduleTask;
 import com.enonic.xp.impl.scheduler.distributed.SchedulableTask;
@@ -31,7 +32,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.scheduler.CalendarService;
@@ -230,8 +230,7 @@ class SchedulerServiceActivatorTest
     }
 
     @Test
-    public void restoreInitialized()
-        throws Exception
+    void restoreInitialized()
     {
         activator.onEvent( Event.create( "repository.restoreInitialized" ).
             build() );

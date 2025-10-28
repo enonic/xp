@@ -6,13 +6,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.branch.BranchService;
@@ -72,7 +72,7 @@ class NodeStorageServiceImplTest
     }
 
     @Test
-    public void testGetNode()
+    void testGetNode()
     {
         final NodeVersionMetadata nodeVersionMetadata = NodeVersionMetadata.create().
             nodeId( NodeId.from( "nodeId1" ) ).
@@ -107,7 +107,7 @@ class NodeStorageServiceImplTest
     }
 
     @Test
-    public void testGetNode_NodeVersionMetadataNotFound()
+    void testGetNode_NodeVersionMetadataNotFound()
     {
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( null );
@@ -122,7 +122,7 @@ class NodeStorageServiceImplTest
     }
 
     @Test
-    public void testGetNode_NodeVersionNotFound()
+    void testGetNode_NodeVersionNotFound()
     {
         when( versionService.getVersion( any( NodeVersionId.class ), any( InternalContext.class ) ) ).
             thenReturn( NodeVersionMetadata.create().

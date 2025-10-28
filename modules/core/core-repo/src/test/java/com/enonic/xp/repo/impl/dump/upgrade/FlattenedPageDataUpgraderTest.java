@@ -15,33 +15,33 @@ import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageDataUpgra
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FlattenedPageDataUpgraderTest
+class FlattenedPageDataUpgraderTest
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
-    public void testPageFlattened()
+    void testPageFlattened()
         throws Exception
     {
         test( "old-page-components", "new-page-components" );
     }
 
     @Test
-    public void testFragmentFlattened()
+    void testFragmentFlattened()
         throws Exception
     {
         test( "old-fragment-components", "new-fragment-components" );
     }
 
     @Test
-    public void testTemplateReference()
+    void testTemplateReference()
         throws Exception
     {
         test( "old-templateref", "new-templateref" );
     }
 
     @Test
-    public void testTemplateReferenceWithComponents()
+    void testTemplateReferenceWithComponents()
         throws Exception
     {
         test( "old-templateref-with-components", "new-templateref-with-components" );

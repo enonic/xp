@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HSBColorizeFilterTest
+class HSBColorizeFilterTest
     extends BaseImageFilterTest
 {
 
@@ -17,7 +17,7 @@ public class HSBColorizeFilterTest
     private static final int RESULT_COLOR = 0xFAFAFA;
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final RGBImageFilter filter = new HSBColorizeFilter( FILTER_COLOR );
         final int result = filter.filterRGB( 0, 0, 0 );
@@ -27,7 +27,7 @@ public class HSBColorizeFilterTest
     }
 
     @Test
-    public void testFilter()
+    void testFilter()
     {
         final RGBImageFilter filter = new HSBColorizeFilter( FILTER_COLOR );
         final int result = filter.filterRGB( 0, 0, SOURCE_COLOR );
@@ -37,7 +37,7 @@ public class HSBColorizeFilterTest
     }
 
     @Test
-    public void testWhiteOnWhiteFilter()
+    void testWhiteOnWhiteFilter()
     {
         final RGBImageFilter filter = new HSBColorizeFilter( FILTER_COLOR );
         final int result = filter.filterRGB( 0, 0, FILTER_COLOR );

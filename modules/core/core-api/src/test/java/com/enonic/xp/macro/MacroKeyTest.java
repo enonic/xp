@@ -8,17 +8,17 @@ import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MacroKeyTest
+class MacroKeyTest
 {
     @Test
-    public void testName()
+    void testName()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "my-app" ), "macros1" );
         assertEquals( "my-app:macros1", macroKey.toString() );
     }
 
     @Test
-    public void testFrom()
+    void testFrom()
     {
         final MacroKey macroKey1 = MacroKey.from( ApplicationKey.from( "my-app" ), "macros1" );
         assertEquals( "my-app:macros1", macroKey1.toString() );

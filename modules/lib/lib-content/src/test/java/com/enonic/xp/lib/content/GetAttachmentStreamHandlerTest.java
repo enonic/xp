@@ -13,13 +13,13 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 
-public class GetAttachmentStreamHandlerTest
+class GetAttachmentStreamHandlerTest
     extends BaseContentHandlerTest
 {
     private static final byte[] ATTACHMENT_DATA = "data".getBytes( StandardCharsets.UTF_8 );
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockAttachmentBinary();
         runScript( "/lib/xp/examples/content/getAttachmentStream.js" );
@@ -36,24 +36,21 @@ public class GetAttachmentStreamHandlerTest
     }
 
     @Test
-    public void getById()
-        throws Exception
+    void getById()
     {
         mockAttachmentBinary();
         runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamById" );
     }
 
     @Test
-    public void getByPath()
-        throws Exception
+    void getByPath()
     {
         mockAttachmentBinary();
         runFunction( "/test/GetAttachmentStreamHandlerTest.js", "getAttachmentStreamByPath" );
     }
 
     @Test
-    public void getById_notFound()
-        throws Exception
+    void getById_notFound()
     {
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( Mockito.any() ) )
@@ -64,8 +61,7 @@ public class GetAttachmentStreamHandlerTest
     }
 
     @Test
-    public void getByPath_notFound()
-        throws Exception
+    void getByPath_notFound()
     {
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
@@ -74,8 +70,7 @@ public class GetAttachmentStreamHandlerTest
     }
 
     @Test
-    public void getById_AttachmentNotFound()
-        throws Exception
+    void getById_AttachmentNotFound()
     {
         final Content content = TestDataFixtures.newContent();
         final Attachment attachment = content.getAttachments().byName( "document.pdf" );

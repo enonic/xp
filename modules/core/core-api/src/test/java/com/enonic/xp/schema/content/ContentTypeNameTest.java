@@ -8,16 +8,16 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentTypeNameTest
+class ContentTypeNameTest
 {
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( ContentTypeName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
     }
 
     @Test
-    public void testPredefinedTypes()
+    void testPredefinedTypes()
     {
         assertTrue( ContentTypeName.media().isMedia() );
         assertTrue( ContentTypeName.folder().isFolder() );

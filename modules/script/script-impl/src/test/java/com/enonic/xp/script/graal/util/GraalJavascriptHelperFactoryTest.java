@@ -11,14 +11,14 @@ import com.enonic.xp.script.impl.util.JavascriptHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GraalJavascriptHelperFactoryTest
+class GraalJavascriptHelperFactoryTest
 {
     private Context context;
 
     private JavascriptHelper<Value> javascriptHelper;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.context =new GraalJSContextFactory().create();
 
@@ -27,13 +27,13 @@ public class GraalJavascriptHelperFactoryTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         this.context.close();
     }
 
     @Test
-    public void testNewObject()
+    void testNewObject()
     {
         Value config = javascriptHelper.newJsObject();
         config.putMember( "prop1", Value.asValue( "value1" ) );
@@ -49,7 +49,7 @@ public class GraalJavascriptHelperFactoryTest
     }
 
     @Test
-    public void testNewArray()
+    void testNewArray()
     {
         Value array = javascriptHelper.newJsArray();
         array.getMember( "push" ).execute( Value.asValue( "1" ) );
@@ -63,7 +63,7 @@ public class GraalJavascriptHelperFactoryTest
     }
 
     @Test
-    public void testParseJson()
+    void testParseJson()
     {
         Value jsonObject = javascriptHelper.parseJson( "{\"name\": \"Username\", \"age\": 30 }" );
 
@@ -72,7 +72,7 @@ public class GraalJavascriptHelperFactoryTest
     }
 
     @Test
-    public void test()
+    void test()
     {
         Value array = javascriptHelper.newJsArray();
         GraalJSHelper.addToNativeArray( array, 1 );

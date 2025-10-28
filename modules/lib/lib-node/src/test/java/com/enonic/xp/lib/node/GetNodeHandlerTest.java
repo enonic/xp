@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
-public class GetNodeHandlerTest
+class GetNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     private void mockGetNode()
@@ -27,7 +27,7 @@ public class GetNodeHandlerTest
     }
 
     @Test
-    public void testExample1()
+    void testExample1()
     {
         mockGetNode();
 
@@ -41,7 +41,7 @@ public class GetNodeHandlerTest
     }
 
     @Test
-    public void testExample2()
+    void testExample2()
     {
         Mockito.when( this.nodeService.getById( Mockito.isA( NodeId.class ) ) ).
             thenReturn( createNode() );
@@ -56,7 +56,7 @@ public class GetNodeHandlerTest
     }
 
     @Test
-    public void testExample3() {
+    void testExample3() {
         mockGetNode();
 
         Mockito.when( this.repositoryService.get( RepositoryId.from( "com.enonic.cms.default" ) ) ).

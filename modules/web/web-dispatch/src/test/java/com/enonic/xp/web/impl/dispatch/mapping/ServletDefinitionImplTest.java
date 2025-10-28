@@ -2,12 +2,12 @@ package com.enonic.xp.web.impl.dispatch.mapping;
 
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.Test;
+
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ServletDefinitionImplTest
+class ServletDefinitionImplTest
     extends ResourceDefinitionImplTest<Servlet, ServletDefinition>
 {
     @Override
@@ -40,7 +40,7 @@ public class ServletDefinitionImplTest
     }
 
     @Test
-    public void create_noAnnotations()
+    void create_noAnnotations()
     {
         assertNull( ResourceDefinitionFactory.create( this.resource, new ArrayList<>() ) );
     }
@@ -66,7 +66,7 @@ public class ServletDefinitionImplTest
     }
 
     @Test
-    public void service()
+    void service()
         throws Exception
     {
         final ServletDefinition def = newDefinition();

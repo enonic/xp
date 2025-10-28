@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MixinNamesTest
+class MixinNamesTest
 {
     @Test
-    public void test_immutable_MixinNames()
+    void test_immutable_MixinNames()
     {
         List<MixinName> names = new ArrayList<>();
         MixinName mixinName = MixinName.from( "myapplication:my" );
@@ -45,7 +45,7 @@ public class MixinNamesTest
     }
 
     @Test
-    public void from()
+    void from()
     {
         MixinNames mixinNames = MixinNames.from( MixinName.from( "myapplication:my1" ), MixinName.from( "myapplication:my2" ),
                                                  MixinName.from( "myapplication:my3" ) );

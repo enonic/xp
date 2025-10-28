@@ -18,7 +18,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-public class LocalizeNoHttpTest
+class LocalizeNoHttpTest
     extends ScriptRunnerSupport
 {
     @Override

@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class InputTest
+class InputTest
 {
     @Test
-    public void copy()
+    void copy()
     {
         // setup
         Input original = Input.create().name( "myInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).build();
@@ -32,7 +32,7 @@ public class InputTest
     }
 
     @Test
-    public void toInput_given_FormItem_of_type_Input_then_Input_is_returned()
+    void toInput_given_FormItem_of_type_Input_then_Input_is_returned()
     {
         // setup
         FormItem formItem = Input.create().label( "Input" ).name( "myInput" ).inputType( InputTypeName.TEXT_LINE ).build();
@@ -45,7 +45,7 @@ public class InputTest
     }
 
     @Test
-    public void toInput_given_FormItem_of_type_FormItemSet_then_exception_is_thrown()
+    void toInput_given_FormItem_of_type_FormItemSet_then_exception_is_thrown()
     {
         // setup
         FormItem formItem = FormItemSet.create().name( "mySet" ).build();

@@ -11,12 +11,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TermExpressionBuilderTest
+class TermExpressionBuilderTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void compare_eq_string()
-        throws Exception
+    void compare_eq_string()
     {
         final String expected = load( "compare_eq_string.json" );
 
@@ -28,8 +27,7 @@ public class TermExpressionBuilderTest
     }
 
     @Test
-    public void compare_eq_number()
-        throws Exception
+    void compare_eq_number()
     {
         final String expected = load( "compare_eq_number.json" );
 
@@ -40,8 +38,7 @@ public class TermExpressionBuilderTest
     }
 
     @Test
-    public void compare_eq_datetime()
-        throws Exception
+    void compare_eq_datetime()
     {
         final String expected = load( "compare_eq_datetime.json" );
 
@@ -53,8 +50,7 @@ public class TermExpressionBuilderTest
     }
 
     @Test
-    public void compare_eq_geopoint()
-        throws Exception
+    void compare_eq_geopoint()
     {
         final String expected = load( "compare_eq_geopoint.json" );
 

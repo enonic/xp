@@ -10,11 +10,9 @@ import com.enonic.xp.content.UpdateContentParams;
 
 public class AddAttachmentHandlerTest
     extends BaseContentHandlerTest
-
 {
-
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -24,8 +22,7 @@ public class AddAttachmentHandlerTest
     }
 
     @Test
-    public void addAttachmentById()
-        throws Exception
+    void addAttachmentById()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -34,8 +31,7 @@ public class AddAttachmentHandlerTest
     }
 
     @Test
-    public void addAttachmentWithString()
-        throws Exception
+    void addAttachmentWithString()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -44,8 +40,7 @@ public class AddAttachmentHandlerTest
     }
 
     @Test
-    public void addAttachmentWithObject()
-        throws Exception
+    void addAttachmentWithObject()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );

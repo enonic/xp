@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class FileBlobStoreTest
+class FileBlobStoreTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -31,13 +31,13 @@ public class FileBlobStoreTest
     private final Segment segment = Segment.from( "test", "blob" );
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.blobStore = new FileBlobStore( this.temporaryFolder );
     }
 
     @Test
-    public void getRecord()
+    void getRecord()
     {
         final BlobKey key = createRecord( "hello" ).getKey();
         final BlobRecord record = this.blobStore.getRecord( this.segment, key );
@@ -45,14 +45,14 @@ public class FileBlobStoreTest
     }
 
     @Test
-    public void getRecord_notFound()
+    void getRecord_notFound()
     {
         final BlobRecord record = this.blobStore.getRecord( this.segment, BlobKey.from( "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d" ) );
         assertNull( record );
     }
 
     @Test
-    public void addRecord()
+    void addRecord()
         throws Exception
     {
         final BlobRecord record = this.blobStore.addRecord( this.segment, ByteSource.wrap( "hello".getBytes() ) );
@@ -64,8 +64,7 @@ public class FileBlobStoreTest
     }
 
     @Test
-    public void removeRecord()
-        throws Exception
+    void removeRecord()
     {
         final BlobRecord createdRecord = createRecord( "bye" );
         final BlobRecord retrievedRecord = this.blobStore.getRecord( this.segment, createdRecord.getKey() );
@@ -78,8 +77,7 @@ public class FileBlobStoreTest
     }
 
     @Test
-    public void list()
-        throws Exception
+    void list()
     {
         List<BlobRecord> stored = new ArrayList<>();
         stored.add( createRecord( "f1" ) );
@@ -95,7 +93,7 @@ public class FileBlobStoreTest
     }
 
     @Test
-    public void listSegments()
+    void listSegments()
     {
         final Segment secondSegment = Segment.from( "test", "blob2" );
         assertEquals( 0, blobStore.listSegments().count() );
@@ -109,7 +107,7 @@ public class FileBlobStoreTest
     }
 
     @Test
-    public void deleteSegment()
+    void deleteSegment()
     {
         final Segment secondSegment = Segment.from( "test", "blob2" );
         createRecord( "hello" ).getKey();

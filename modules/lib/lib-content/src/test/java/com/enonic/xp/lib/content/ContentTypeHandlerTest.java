@@ -25,12 +25,12 @@ import com.enonic.xp.schema.content.GetContentTypeParams;
 
 import static org.mockito.ArgumentMatchers.any;
 
-public class ContentTypeHandlerTest
+class ContentTypeHandlerTest
     extends BaseContentHandlerTest
 {
 
     @Test
-    public void testExampleGetType()
+    void testExampleGetType()
     {
         final Form form = getExampleForm();
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
@@ -42,7 +42,7 @@ public class ContentTypeHandlerTest
     }
 
     @Test
-    public void testExampleGetTypes()
+    void testExampleGetTypes()
     {
         final Form form = getForm();
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
@@ -54,8 +54,7 @@ public class ContentTypeHandlerTest
     }
 
     @Test
-    public void testGet()
-        throws Exception
+    void testGet()
     {
         final Form form = getForm();
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );
@@ -68,22 +67,19 @@ public class ContentTypeHandlerTest
     }
 
     @Test
-    public void testGetNotFound()
-        throws Exception
+    void testGetNotFound()
     {
         runFunction( "/test/ContentTypeHandlerTest.js", "testGetNotFound" );
     }
 
     @Test
-    public void testGetNoName()
-        throws Exception
+    void testGetNoName()
     {
         runFunction( "/test/ContentTypeHandlerTest.js", "testGetNoName" );
     }
 
     @Test
-    public void testList()
-        throws Exception
+    void testList()
     {
         final Form form = getForm();
         Mockito.when( mixinService.inlineFormItems( Mockito.eq( form ) ) ).thenReturn( form );

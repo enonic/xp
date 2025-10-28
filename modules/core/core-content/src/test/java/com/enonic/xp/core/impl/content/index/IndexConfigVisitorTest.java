@@ -13,11 +13,10 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IndexConfigVisitorTest
+class IndexConfigVisitorTest
 {
     @Test
-    public void top_htmlArea()
-        throws Exception
+    void top_htmlArea()
     {
         Input myTextLine = Input.create().
             name( "htmlArea" ).
@@ -40,8 +39,7 @@ public class IndexConfigVisitorTest
     }
 
     @Test
-    public void htmlArea_in_itemSet()
-        throws Exception
+    void htmlArea_in_itemSet()
     {
         FormItemSet myFormItemSet = FormItemSet.create().
             name( "myFormItemSet" ).
@@ -69,8 +67,7 @@ public class IndexConfigVisitorTest
     }
 
     @Test
-    public void htmlArea_in_optionSet()
-        throws Exception
+    void htmlArea_in_optionSet()
     {
         FormOptionSet formOptionSet = FormOptionSet.create().
             name( "myOptionSet" ).

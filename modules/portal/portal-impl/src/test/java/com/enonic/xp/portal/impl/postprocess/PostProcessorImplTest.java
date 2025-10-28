@@ -17,39 +17,38 @@ import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class PostProcessorImplTest
+class PostProcessorImplTest
 {
     @Test
-    public void testPostProcessingInstructions_GET()
+    void testPostProcessingInstructions_GET()
         throws Exception
     {
         testPostProcessingInstructions( HttpMethod.GET );
     }
 
     @Test
-    public void testPostProcessingInstructions_POST()
+    void testPostProcessingInstructions_POST()
         throws Exception
     {
         testPostProcessingInstructions( HttpMethod.POST );
     }
 
     @Test
-    public void testPostProcessingInjections_GET()
+    void testPostProcessingInjections_GET()
         throws Exception
     {
         testPostProcessingInjections( HttpMethod.GET );
     }
 
     @Test
-    public void testPostProcessingInjections_POST()
+    void testPostProcessingInjections_POST()
         throws Exception
     {
         testPostProcessingInjections( HttpMethod.POST );
     }
 
     @Test
-    public void processResponse_skip_non_html()
-        throws Exception
+    void processResponse_skip_non_html()
     {
         final PostProcessorImpl postProcessor = new PostProcessorImpl();
 

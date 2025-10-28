@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class CreateRoleHandlerTest
+class CreateRoleHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -21,14 +21,14 @@ public class CreateRoleHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.when( securityService.createRole( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestRole() );
         runScript( "/lib/xp/examples/auth/createRole.js" );
     }
 
     @Test
-    public void testCreateRole()
+    void testCreateRole()
     {
         Mockito.when( securityService.createRole( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestRole() );
 

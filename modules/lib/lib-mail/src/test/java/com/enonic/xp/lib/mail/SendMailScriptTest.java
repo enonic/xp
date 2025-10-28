@@ -48,19 +48,19 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/mail/send.js" );
     }
 
     @Test
-    public void testGetDefaultFromEmail()
+    void testGetDefaultFromEmail()
     {
         runScript( "/lib/xp/examples/mail/getDefaultFromEmail.js" );
     }
 
     @Test
-    public void testSimpleMail()
+    void testSimpleMail()
     {
         runFunction( "/test/send-test.js", "simpleMail" );
 
@@ -78,7 +78,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testMultiRecipientsMail()
+    void testMultiRecipientsMail()
     {
         runFunction( "/test/send-test.js", "multiRecipientsMail" );
 
@@ -94,8 +94,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testRFC822AddressMail()
-        throws Exception
+    void testRFC822AddressMail()
     {
         runFunction( "/test/send-test.js", "rfc822AddressMail" );
 
@@ -108,7 +107,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testFailSendMail()
+    void testFailSendMail()
         throws Exception
     {
         final MailService mailService = new MailService()
@@ -133,8 +132,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testMailWithContentType()
-        throws Exception
+    void testMailWithContentType()
     {
         runFunction( "/test/send-test.js", "sendMailWithContentType" );
 
@@ -148,7 +146,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testFailMissingFrom()
+    void testFailMissingFrom()
         throws Exception
     {
         final MailService mailService = new MailService()
@@ -181,7 +179,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testFailMissingTo()
+    void testFailMissingTo()
         throws Exception
     {
         addService( MailService.class, new MailService()
@@ -213,7 +211,7 @@ public class SendMailScriptTest
     }
 
     @Test
-    public void testMailWithAttachments()
+    void testMailWithAttachments()
         throws Exception
     {
         runFunction( "/test/send-test.js", "sendWithAttachments" );

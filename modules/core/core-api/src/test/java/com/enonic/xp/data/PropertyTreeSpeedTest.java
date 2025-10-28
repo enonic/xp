@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.base.Stopwatch;
 
-public class PropertyTreeSpeedTest
+class PropertyTreeSpeedTest
 {
     private static final int ONE_MILLION = 1000000;
 
     @Test
-    public void adding_one_million_properties_with_same_name_and_value_to_root()
+    void adding_one_million_properties_with_same_name_and_value_to_root()
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
@@ -27,7 +27,7 @@ public class PropertyTreeSpeedTest
     }
 
     @Test
-    public void adding_one_million_properties_with_same_name_and_different_value_to_root()
+    void adding_one_million_properties_with_same_name_and_different_value_to_root()
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 
@@ -44,7 +44,7 @@ public class PropertyTreeSpeedTest
     }
 
     @Test
-    public void creating_tree_with_10_branches_with_width_of_10_and_depth_of_5()
+    void creating_tree_with_10_branches_with_width_of_10_and_depth_of_5()
     {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
 

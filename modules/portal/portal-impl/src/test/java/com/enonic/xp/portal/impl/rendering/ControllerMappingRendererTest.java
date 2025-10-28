@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ControllerMappingRendererTest
+class ControllerMappingRendererTest
 {
     private PortalRequest portalRequest;
 
@@ -39,7 +39,7 @@ public class ControllerMappingRendererTest
     PostProcessorImpl postProcessor;
 
     @BeforeEach
-    public void before()
+    void before()
     {
 
         final PostProcessorImpl processorImpl = new PostProcessorImpl();
@@ -58,7 +58,7 @@ public class ControllerMappingRendererTest
     }
 
     @Test
-    public void pageContributionsAndResponseProcessorsAreIgnoredFortServiceMappings()
+    void pageContributionsAndResponseProcessorsAreIgnoredFortServiceMappings()
     {
         // setup
         final ControllerMappingDescriptor mappingDescriptor = ControllerMappingDescriptor.create()
@@ -77,7 +77,7 @@ public class ControllerMappingRendererTest
     }
 
     @Test
-    public void pageContributionsAndResponseProcessorsAreNotIgnored()
+    void pageContributionsAndResponseProcessorsAreNotIgnored()
     {
         // setup
         final ControllerMappingDescriptor mappingDescriptor = ControllerMappingDescriptor.create()

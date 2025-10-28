@@ -1,12 +1,12 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
@@ -23,7 +23,7 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
     HttpServletResponse response;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.pipeline = newPipeline();
         this.context = Mockito.mock( ServletContext.class );
@@ -36,14 +36,14 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
     abstract D newDefinition();
 
     @Test
-    public void testAddNull()
+    void testAddNull()
     {
         this.pipeline.add( null );
         assertThat( this.pipeline.list.snapshot() ).isEmpty();
     }
 
     @Test
-    public void testInit()
+    void testInit()
         throws Exception
     {
         final D def1 = newDefinition();
@@ -59,7 +59,7 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
     }
 
     @Test
-    public void testDestroy()
+    void testDestroy()
     {
         final D def = newDefinition();
         this.pipeline.add( def );

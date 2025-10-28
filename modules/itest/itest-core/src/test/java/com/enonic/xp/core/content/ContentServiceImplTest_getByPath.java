@@ -14,13 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContentServiceImplTest_getByPath
+class ContentServiceImplTest_getByPath
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void test_pending_publish_draft()
-        throws Exception
+    void test_pending_publish_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
@@ -30,8 +29,7 @@ public class ContentServiceImplTest_getByPath
     }
 
     @Test
-    public void test_pending_publish_master()
-        throws Exception
+    void test_pending_publish_master()
     {
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -43,8 +41,7 @@ public class ContentServiceImplTest_getByPath
     }
 
     @Test
-    public void test_publish_expired_draft()
-        throws Exception
+    void test_publish_expired_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
@@ -55,8 +52,7 @@ public class ContentServiceImplTest_getByPath
     }
 
     @Test
-    public void test_publish_expired_master()
-        throws Exception
+    void test_publish_expired_master()
     {
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -69,8 +65,7 @@ public class ContentServiceImplTest_getByPath
     }
 
     @Test
-    public void test_published_draft()
-        throws Exception
+    void test_published_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
@@ -81,8 +76,7 @@ public class ContentServiceImplTest_getByPath
     }
 
     @Test
-    public void test_published_master()
-        throws Exception
+    void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
@@ -96,8 +90,7 @@ public class ContentServiceImplTest_getByPath
     }
 
     @Test
-    public void test_root()
-        throws Exception
+    void test_root()
     {
         final Content content = contentService.getByPath( ContentPath.ROOT );
 

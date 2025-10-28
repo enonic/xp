@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WebAppHandlerTest
+class WebAppHandlerTest
 {
     private WebAppHandler handler;
 
@@ -40,7 +40,7 @@ public class WebAppHandlerTest
     private WebHandlerChain chain;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         ExceptionRenderer exceptionRenderer = mock( ExceptionRenderer.class );
 
@@ -65,13 +65,13 @@ public class WebAppHandlerTest
     }
 
     @AfterEach
-    public void tearDown()
+    void tearDown()
     {
         Tracer.setManager( null );
     }
 
     @Test
-    public void canHandle()
+    void canHandle()
     {
         this.request.setRawPath( "/site/a/b" );
         assertFalse( this.handler.canHandle( this.request ) );
@@ -84,7 +84,7 @@ public class WebAppHandlerTest
     }
 
     @Test
-    public void handle_executeController()
+    void handle_executeController()
         throws Exception
     {
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
@@ -102,7 +102,7 @@ public class WebAppHandlerTest
     }
 
     @Test
-    public void handle_executeController_error()
+    void handle_executeController_error()
         throws Exception
     {
         this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );

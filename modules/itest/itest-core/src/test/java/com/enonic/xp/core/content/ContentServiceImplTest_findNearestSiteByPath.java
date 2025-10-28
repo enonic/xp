@@ -13,7 +13,7 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentServiceImplTest_findNearestSiteByPath
+class ContentServiceImplTest_findNearestSiteByPath
     extends AbstractContentServiceTest
 {
     @Test

@@ -10,7 +10,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetRepositoryScriptTest
+class GetRepositoryScriptTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
@@ -33,7 +33,7 @@ public class GetRepositoryScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/repo/get.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).get( Mockito.any() );

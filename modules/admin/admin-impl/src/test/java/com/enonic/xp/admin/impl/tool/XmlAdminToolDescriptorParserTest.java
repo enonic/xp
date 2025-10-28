@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlAdminToolDescriptorParserTest
+class XmlAdminToolDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlAdminToolDescriptorParser parser;
@@ -27,7 +27,7 @@ public class XmlAdminToolDescriptorParserTest
     private AdminToolDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlAdminToolDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -38,7 +38,7 @@ public class XmlAdminToolDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -48,7 +48,7 @@ public class XmlAdminToolDescriptorParserTest
     }
 
     @Test
-    public void testParseWithApis()
+    void testParseWithApis()
         throws Exception
     {
         parse( this.parser, "-apis.xml" );
@@ -70,7 +70,7 @@ public class XmlAdminToolDescriptorParserTest
     }
 
     @Test
-    public void testParseWithInterfaces()
+    void testParseWithInterfaces()
         throws Exception
     {
         parse( this.parser, "-interfaces.xml" );
@@ -87,14 +87,14 @@ public class XmlAdminToolDescriptorParserTest
     }
 
     @Test
-    public void testParseWithInvalidApis()
+    void testParseWithInvalidApis()
     {
         XmlException ex = assertThrows( XmlException.class, () -> parse( this.parser, "-apis-invalid.xml" ) );
         assertEquals( "Invalid applicationKey ''", ex.getMessage() );
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );

@@ -21,7 +21,7 @@ import com.enonic.xp.event.Event;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class EventJsonSerializerTest
+class EventJsonSerializerTest
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
@@ -32,7 +32,7 @@ public class EventJsonSerializerTest
     private BundleEvent bundleEvent;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.serializer = new EventJsonSerializer();
 
@@ -45,7 +45,7 @@ public class EventJsonSerializerTest
     }
 
     @Test
-    public void testEvent()
+    void testEvent()
         throws Exception
     {
         final Event event = Event.create( "node.created" ).

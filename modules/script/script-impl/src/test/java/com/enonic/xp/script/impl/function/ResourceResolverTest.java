@@ -6,11 +6,11 @@ import com.enonic.xp.resource.ResourceKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ResourceResolverTest
+class ResourceResolverTest
     extends ResolverTestSupport
 {
     @Test
-    public void resolve_absolute()
+    void resolve_absolute()
         throws Exception
     {
         touchFile( "dummy.txt" );
@@ -25,7 +25,7 @@ public class ResourceResolverTest
     }
 
     @Test
-    public void resolve_relative()
+    void resolve_relative()
         throws Exception
     {
         touchFile( "dir1/dir2/dummy.txt" );

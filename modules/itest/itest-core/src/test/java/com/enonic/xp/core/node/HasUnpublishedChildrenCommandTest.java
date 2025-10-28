@@ -12,20 +12,18 @@ import com.enonic.xp.repo.impl.node.HasUnpublishedChildrenCommand;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HasUnpublishedChildrenCommandTest
+class HasUnpublishedChildrenCommandTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void resolve_all_unpublished()
-        throws Exception
+    void resolve_all_unpublished()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         final Node node1_1 = createNode( node1.path(), "node1_1" );
@@ -41,8 +39,7 @@ public class HasUnpublishedChildrenCommandTest
     }
 
     @Test
-    public void parent_is_already_published()
-        throws Exception
+    void parent_is_already_published()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         final Node node1_1 = createNode( node1.path(), "node1_1" );

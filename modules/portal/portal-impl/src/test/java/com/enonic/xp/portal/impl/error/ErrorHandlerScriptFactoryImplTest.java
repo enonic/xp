@@ -7,12 +7,12 @@ import com.enonic.xp.web.HttpStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ErrorHandlerScriptFactoryImplTest
+class ErrorHandlerScriptFactoryImplTest
     extends AbstractErrorHandlerTest
 {
 
     @Test
-    public void testGenericErrorHandler()
+    void testGenericErrorHandler()
     {
         execute( "myapplication:/error/error.js", HttpStatus.INTERNAL_SERVER_ERROR );
         assertEquals( HttpStatus.INTERNAL_SERVER_ERROR, this.portalResponse.getStatus() );
@@ -21,7 +21,7 @@ public class ErrorHandlerScriptFactoryImplTest
     }
 
     @Test
-    public void testSpecificErrorHandler()
+    void testSpecificErrorHandler()
     {
         execute( "myapplication:/error/error.js", HttpStatus.NOT_FOUND );
         assertEquals( HttpStatus.NOT_FOUND, this.portalResponse.getStatus() );
@@ -30,14 +30,14 @@ public class ErrorHandlerScriptFactoryImplTest
     }
 
     @Test
-    public void testNoHandlersInScript()
+    void testNoHandlersInScript()
     {
         execute( "myapplication:/error/notAnErrorHandler.js", HttpStatus.NOT_FOUND );
         assertNull( this.portalResponse );
     }
 
     @Test
-    public void testRedirectInErrorHandler()
+    void testRedirectInErrorHandler()
     {
         execute( "myapplication:/error/errorRedirect.js", HttpStatus.INTERNAL_SERVER_ERROR );
         assertEquals( HttpStatus.SEE_OTHER, this.portalResponse.getStatus() );
@@ -45,7 +45,7 @@ public class ErrorHandlerScriptFactoryImplTest
     }
 
     @Test
-    public void testChangeStatusInErrorHandler()
+    void testChangeStatusInErrorHandler()
     {
         execute( "myapplication:/error/errorChangeStatus.js", HttpStatus.INTERNAL_SERVER_ERROR );
         assertEquals( HttpStatus.MOVED_PERMANENTLY, this.portalResponse.getStatus() );

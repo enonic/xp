@@ -13,7 +13,7 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IndexNodeIndexPathResolverTest
+class IndexNodeIndexPathResolverTest
 {
 
     public static Stream<Arguments> testParams()

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContextImplTest
+class ContextImplTest
 {
     private static final class SampleValue
     {
@@ -33,7 +33,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testAttributeByKey()
+    void testAttributeByKey()
     {
         final ContextImpl context = createContext( "key1", "value1" );
         assertEquals( "value1", context.getAttribute( "key1" ) );
@@ -41,7 +41,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testAttributeByKey_foundInLocal()
+    void testAttributeByKey_foundInLocal()
     {
         final ContextImpl context = createContext();
         context.getLocalScope().setAttribute( "key1", "value1" );
@@ -51,7 +51,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testAttributeByType()
+    void testAttributeByType()
     {
         final SampleValue value = new SampleValue();
         final ContextImpl context = createContext( value.getClass().getName(), value );
@@ -61,7 +61,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testRunWith()
+    void testRunWith()
     {
         final Context old = createContext();
         ContextAccessor.INSTANCE.set( old );
@@ -75,7 +75,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testCallWith()
+    void testCallWith()
     {
         final Context old = createContext();
         ContextAccessor.INSTANCE.set( old );
@@ -92,7 +92,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testRunWith_runtimeException()
+    void testRunWith_runtimeException()
     {
         final ContextImpl context = createContext();
 
@@ -103,7 +103,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testRunWith_checkedException()
+    void testRunWith_checkedException()
     {
         final ContextImpl context = createContext();
 
@@ -114,7 +114,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testRepositoryId()
+    void testRepositoryId()
     {
         final ContextImpl context = createContext();
         assertNull( context.getRepositoryId() );
@@ -125,7 +125,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testBranch()
+    void testBranch()
     {
         final ContextImpl context = createContext();
         assertNull( context.getBranch() );
@@ -136,7 +136,7 @@ public class ContextImplTest
     }
 
     @Test
-    public void testAuthInfo()
+    void testAuthInfo()
     {
         final ContextImpl context = createContext();
         assertEquals( AuthenticationInfo.unAuthenticated(), context.getAuthInfo() );

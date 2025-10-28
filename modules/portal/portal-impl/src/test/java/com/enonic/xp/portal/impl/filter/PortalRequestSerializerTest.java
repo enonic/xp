@@ -25,18 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PortalRequestSerializerTest
+class PortalRequestSerializerTest
 {
     private ScriptValueFactory<?> factory;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.factory = ScriptFixturesFacade.getInstance().scriptValueFactory();
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
         throws Exception
     {
         if ( factory instanceof Closeable )
@@ -46,7 +46,7 @@ public class PortalRequestSerializerTest
     }
 
     @Test
-    public void serializeComplete()
+    void serializeComplete()
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
@@ -85,7 +85,7 @@ public class PortalRequestSerializerTest
     }
 
     @Test
-    public void serializeNoHeadersNoParams()
+    void serializeNoHeadersNoParams()
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();
@@ -115,8 +115,7 @@ public class PortalRequestSerializerTest
     }
 
     @Test
-    public void serializeNonObject()
-        throws Exception
+    void serializeNonObject()
     {
         final PortalRequest sourceRequest = new PortalRequest();
         final ScriptValue value = factory.evalValue( "var result = 'response'; result;" );
@@ -157,7 +156,7 @@ public class PortalRequestSerializerTest
     }
 
     @Test
-    public void serialize_no_params_duplication()
+    void serialize_no_params_duplication()
         throws Exception
     {
         final PortalRequest sourceRequest = new PortalRequest();

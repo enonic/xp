@@ -11,7 +11,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LogoutHandlerTest
+class LogoutHandlerTest
     extends ScriptTestSupport
 {
     private Session session;
@@ -27,7 +27,7 @@ public class LogoutHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
@@ -40,7 +40,7 @@ public class LogoutHandlerTest
     }
 
     @Test
-    public void testLogout()
+    void testLogout()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
         this.session.setAttribute( authInfo );
@@ -53,7 +53,7 @@ public class LogoutHandlerTest
     }
 
     @Test
-    public void testLogoutWithoutSession()
+    void testLogoutWithoutSession()
     {
         assertFalse( ContextAccessor.current().getAuthInfo().isAuthenticated() );
 

@@ -6,10 +6,10 @@ import com.google.common.io.ByteSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateAttachmentTest
+class CreateAttachmentTest
 {
     @Test
-    public void getNameWithoutExtension()
+    void getNameWithoutExtension()
     {
 
         assertEquals( "MyImage", CreateAttachment.create().
@@ -28,7 +28,7 @@ public class CreateAttachmentTest
     }
 
     @Test
-    public void getExtension()
+    void getExtension()
     {
         assertEquals( "jpg", CreateAttachment.create().
             name( "MyImage.jpg" ).
@@ -57,7 +57,7 @@ public class CreateAttachmentTest
     }
 
     @Test
-    public void getBinaryReference()
+    void getBinaryReference()
     {
         assertEquals( "MyImage.jpg", CreateAttachment.create().
             byteSource( ByteSource.empty() ).

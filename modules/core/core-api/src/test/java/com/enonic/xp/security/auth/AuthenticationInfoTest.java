@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuthenticationInfoTest
+class AuthenticationInfoTest
 {
     @Test
-    public void testWithoutPrincipals()
+    void testWithoutPrincipals()
     {
         final User user = User.create().
             login( "userlogin" ).
@@ -40,7 +40,7 @@ public class AuthenticationInfoTest
     }
 
     @Test
-    public void testWithPrincipals()
+    void testWithPrincipals()
     {
         final User user = User.create().
             login( "userlogin" ).
@@ -75,7 +75,7 @@ public class AuthenticationInfoTest
     }
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         final User user = User.create().
             login( "userlogin" ).
@@ -102,7 +102,6 @@ public class AuthenticationInfoTest
 
     @Test
     void testSerialization()
-        throws Exception
     {
         final User user = User.create().
             login( "userlogin" ).
@@ -131,7 +130,6 @@ public class AuthenticationInfoTest
 
     @Test
     void testSerializationWithUserProfile()
-        throws Exception
     {
         final PropertyTree userProfile = new PropertyTree();
         final PropertySet data = userProfile.newSet();
@@ -167,7 +165,6 @@ public class AuthenticationInfoTest
 
     @Test
     void testSerializationMinimalFields()
-        throws Exception
     {
         final User user = User.create().
             login( "userlogin" ).
@@ -186,7 +183,6 @@ public class AuthenticationInfoTest
 
     @Test
     void testSerializationUnauthenticated()
-        throws Exception
     {
         final AuthenticationInfo info = AuthenticationInfo.unAuthenticated();
 

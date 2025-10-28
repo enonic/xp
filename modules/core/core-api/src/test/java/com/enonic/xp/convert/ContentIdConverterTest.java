@@ -7,17 +7,17 @@ import com.enonic.xp.content.ContentId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ContentIdConverterTest
+class ContentIdConverterTest
 {
     @Test
-    public void testSameType()
+    void testSameType()
     {
         final ContentId id = ContentId.from( "123" );
         assertSame( id, Converters.convert( id, ContentId.class ) );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( ContentId.from( "123" ), Converters.convert( "123", ContentId.class ) );
         assertEquals( ContentId.from( "123" ), Converters.convertOrDefault( null, ContentId.class, ContentId.from( "123" ) ) );

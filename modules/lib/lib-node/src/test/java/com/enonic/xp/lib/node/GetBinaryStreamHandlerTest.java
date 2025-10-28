@@ -10,7 +10,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.BinaryReference;
 
-public class GetBinaryStreamHandlerTest
+class GetBinaryStreamHandlerTest
     extends BaseNodeHandlerTest
 {
     private void mockGetBinary()
@@ -24,7 +24,7 @@ public class GetBinaryStreamHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockGetBinary();
         runScript( "/lib/xp/examples/node/getBinary.js" );

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SharedMapHandlerTest
+class SharedMapHandlerTest
     extends ScriptTestSupport
 {
     private SharedMapService sharedMapService;
@@ -31,7 +31,7 @@ public class SharedMapHandlerTest
     }
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.sharedMap = mock( SharedMap.class );
 
@@ -39,14 +39,14 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testGetWithoutKey()
+    void testGetWithoutKey()
     {
         runFunction( "/test/grid-test.js", "testGetWithoutKey" );
         verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
     }
 
     @Test
-    public void testGet()
+    void testGet()
     {
         when( sharedMap.get( "key" ) ).thenReturn( "value" );
 
@@ -57,14 +57,14 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testDeleteWithoutKey()
+    void testDeleteWithoutKey()
     {
         runFunction( "/test/grid-test.js", "testDeleteWithoutKey" );
         verify( sharedMapService, times( 1 ) ).getSharedMap( "mapId" );
     }
 
     @Test
-    public void testDelete()
+    void testDelete()
     {
         doNothing().when( sharedMap ).delete( "key" );
 
@@ -75,7 +75,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testSetWithoutKey()
+    void testSetWithoutKey()
     {
         runFunction( "/test/grid-test.js", "testSetWithoutKey" );
 
@@ -83,7 +83,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testSetWithoutTtlSeconds()
+    void testSetWithoutTtlSeconds()
     {
         doNothing().when( sharedMap ).set( "key", "value" );
 
@@ -94,7 +94,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testSet()
+    void testSet()
     {
         doNothing().when( sharedMap ).set( "key", "value", 2 * 60 * 1000 );
 
@@ -105,7 +105,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testSetWithNullValue()
+    void testSetWithNullValue()
     {
         doNothing().when( sharedMap ).set( "key", null, -1 );
 
@@ -116,7 +116,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testModifyWithoutKey()
+    void testModifyWithoutKey()
     {
         runFunction( "/test/grid-test.js", "testModifyWithoutKey" );
 
@@ -124,7 +124,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testModifyWithoutFunc()
+    void testModifyWithoutFunc()
     {
         runFunction( "/test/grid-test.js", "testModifyWithoutFunc" );
 
@@ -132,7 +132,7 @@ public class SharedMapHandlerTest
     }
 
     @Test
-    public void testModifyWithWrongArgumentFunc()
+    void testModifyWithWrongArgumentFunc()
     {
         runFunction( "/test/grid-test.js", "testModifyWithWrongArgumentFunc" );
 

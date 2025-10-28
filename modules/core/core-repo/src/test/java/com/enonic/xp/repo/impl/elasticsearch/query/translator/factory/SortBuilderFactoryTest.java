@@ -24,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SortBuilderFactoryTest
+class SortBuilderFactoryTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void createFieldSort()
+    void createFieldSort()
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) );
@@ -40,7 +40,7 @@ public class SortBuilderFactoryTest
     }
 
     @Test
-    public void createFieldWithoutDirectionSort()
+    void createFieldWithoutDirectionSort()
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), null ) );
@@ -52,7 +52,7 @@ public class SortBuilderFactoryTest
     }
 
     @Test
-    public void createMultipleFieldSort()
+    void createMultipleFieldSort()
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new FieldOrderExpr( FieldExpr.from( "myField" ), OrderExpr.Direction.ASC ) );
@@ -66,7 +66,7 @@ public class SortBuilderFactoryTest
     }
 
     @Test
-    public void createGeoDistance()
+    void createGeoDistance()
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new DynamicOrderExpr( new FunctionExpr( "geoDistance",
@@ -80,7 +80,7 @@ public class SortBuilderFactoryTest
     }
 
     @Test
-    public void createGeoDistanceWithoutDirection()
+    void createGeoDistanceWithoutDirection()
     {
         final Set<OrderExpr> orderExprs = new HashSet<>();
         orderExprs.add( new DynamicOrderExpr( new FunctionExpr( "geoDistance",
@@ -94,13 +94,13 @@ public class SortBuilderFactoryTest
     }
 
     @Test
-    public void createEmpty()
+    void createEmpty()
     {
         assertTrue( new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of() ).isEmpty() );
     }
 
     @Test
-    public void createDsl()
+    void createDsl()
     {
         final PropertyTree geoExpression = new PropertyTree();
         geoExpression.addString( "type", "geoDistance" );
@@ -150,7 +150,7 @@ public class SortBuilderFactoryTest
     }
 
     @Test
-    public void createDslInvalidFunction()
+    void createDslInvalidFunction()
     {
         final PropertyTree geoExpression = new PropertyTree();
         geoExpression.addString( "type", "unknownFunction" );

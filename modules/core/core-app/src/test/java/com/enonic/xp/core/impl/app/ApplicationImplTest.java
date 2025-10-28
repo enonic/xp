@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ApplicationImplTest
+class ApplicationImplTest
     extends BundleBasedTest
 {
     @Test
-    public void testApplication()
+    void testApplication()
         throws Exception
     {
         final Bundle bundle = deployBundle();
@@ -48,7 +48,6 @@ public class ApplicationImplTest
     }
 
     private Bundle deployBundle()
-        throws Exception
     {
         final InputStream in = newBundle( "myapplication", true ).setHeader( Constants.BUNDLE_NAME, "myapplication" )
             .setHeader( ApplicationManifestConstants.X_APPLICATION_URL, "http://enonic.com/path/to/application" )

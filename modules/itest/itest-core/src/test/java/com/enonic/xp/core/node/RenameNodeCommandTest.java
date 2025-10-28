@@ -16,19 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RenameNodeCommandTest
+class RenameNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void rename()
-        throws Exception
+    void rename()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -50,7 +48,7 @@ public class RenameNodeCommandTest
     }
 
     @Test
-    public void rename_to_same()
+    void rename_to_same()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -69,7 +67,7 @@ public class RenameNodeCommandTest
     }
 
     @Test
-    public void rename_to_existing_fails()
+    void rename_to_existing_fails()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -93,8 +91,7 @@ public class RenameNodeCommandTest
     }
 
     @Test
-    public void timestamp_updated()
-        throws Exception
+    void timestamp_updated()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -119,8 +116,7 @@ public class RenameNodeCommandTest
 
 
     @Test
-    public void rename_with_children()
-        throws Exception
+    void rename_with_children()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             name( "my-node" ).
@@ -181,8 +177,7 @@ public class RenameNodeCommandTest
     }
 
     @Test
-    public void rename_then_create_with_same_name()
-        throws Exception
+    void rename_then_create_with_same_name()
     {
         final CreateNodeParams createNodeNamedMyNodeParams = CreateNodeParams.create().
             name( "my-node" ).
@@ -205,8 +200,7 @@ public class RenameNodeCommandTest
     }
 
     @Test
-    public void cannot_rename_root_node()
-        throws Exception
+    void cannot_rename_root_node()
     {
         assertThrows( OperationNotPermittedException.class, () -> MoveNodeCommand.create()
             .id( Node.ROOT_UUID )

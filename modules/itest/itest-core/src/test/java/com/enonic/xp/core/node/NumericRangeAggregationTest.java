@@ -23,19 +23,17 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NumericRangeAggregationTest
+class NumericRangeAggregationTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void ranges()
-        throws Exception
+    void ranges()
     {
         createNode( 100d, "n1", NodePath.ROOT );
         createNode( 300d, "n2", NodePath.ROOT );
@@ -81,8 +79,7 @@ public class NumericRangeAggregationTest
     }
 
     @Test
-    public void keys()
-        throws Exception
+    void keys()
     {
         createNode( 100d, "n1", NodePath.ROOT );
         createNode( 200d, "n4", NodePath.ROOT );

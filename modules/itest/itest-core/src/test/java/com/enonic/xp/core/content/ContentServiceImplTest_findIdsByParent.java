@@ -15,13 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_findIdsByParent
+class ContentServiceImplTest_findIdsByParent
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void root_content()
-        throws Exception
+    void root_content()
     {
         createContent( ContentPath.ROOT );
         createContent( ContentPath.ROOT );
@@ -35,8 +34,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void root_no_content()
-        throws Exception
+    void root_no_content()
     {
         final FindContentByParentParams params = FindContentByParentParams.create().from( 0 ).size( 30 ).parentPath( null ).build();
 
@@ -48,8 +46,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void root_children()
-        throws Exception
+    void root_children()
     {
 
         final Content parentContent = createContent( ContentPath.ROOT );
@@ -70,8 +67,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void deep_children()
-        throws Exception
+    void deep_children()
     {
 
         final Content rootContent = createContent( ContentPath.ROOT );
@@ -93,8 +89,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void invalid_parent_path()
-        throws Exception
+    void invalid_parent_path()
     {
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content childrenLevel1 = createContent( rootContent.getPath() );
@@ -110,8 +105,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void params_size_zero()
-        throws Exception
+    void params_size_zero()
     {
         final Content parentContent = createContent( ContentPath.ROOT );
         createContent( parentContent.getPath() );
@@ -130,8 +124,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void params_size_one()
-        throws Exception
+    void params_size_one()
     {
 
         final Content parentContent = createContent( ContentPath.ROOT );
@@ -153,8 +146,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void params_from_beyond()
-        throws Exception
+    void params_from_beyond()
     {
         final Content parentContent = createContent( ContentPath.ROOT );
         createContent( parentContent.getPath() );
@@ -170,8 +162,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void params_from()
-        throws Exception
+    void params_from()
     {
 
         final Content parentContent = createContent( ContentPath.ROOT );
@@ -193,7 +184,7 @@ public class ContentServiceImplTest_findIdsByParent
 
 
     @Test
-    public void test_pending_publish_draft()
+    void test_pending_publish_draft()
         throws Exception
     {
         final FindContentIdsByParentResult result =
@@ -202,8 +193,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void test_pending_publish_master()
-        throws Exception
+    void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
             final FindContentIdsByParentResult result =
@@ -214,7 +204,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void test_publish_expired_draft()
+    void test_publish_expired_draft()
         throws Exception
     {
         final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
@@ -225,8 +215,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void test_publish_expired_master()
-        throws Exception
+    void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
             final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
@@ -239,7 +228,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void test_published_draft()
+    void test_published_draft()
         throws Exception
     {
         final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
@@ -250,8 +239,7 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     @Test
-    public void test_published_master()
-        throws Exception
+    void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
@@ -265,7 +253,6 @@ public class ContentServiceImplTest_findIdsByParent
     }
 
     private FindContentIdsByParentResult createAndFindContent( final ContentPublishInfo publishInfo )
-        throws Exception
     {
         createContent( ContentPath.ROOT, publishInfo );
 

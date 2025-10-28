@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.support.AbstractEqualsTest;
 
-public class DescriptorKeyTest
+class DescriptorKeyTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {

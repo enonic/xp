@@ -17,7 +17,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ModifyProfileHandlerTest
+class ModifyProfileHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -32,7 +32,7 @@ public class ModifyProfileHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final User user = TestDataFixtures.getTestUser();
 
@@ -46,7 +46,7 @@ public class ModifyProfileHandlerTest
     }
 
     @Test
-    public void keep_original_value_types_when_not_touched()
+    void keep_original_value_types_when_not_touched()
     {
 
         final User user = TestDataFixtures.getTestUserWithProfile();

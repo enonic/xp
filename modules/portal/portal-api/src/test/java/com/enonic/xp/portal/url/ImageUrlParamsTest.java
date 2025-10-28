@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ImageUrlParamsTest
+class ImageUrlParamsTest
 {
     @Test
-    public void testId()
+    void testId()
     {
         final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getId() );
@@ -21,7 +21,7 @@ public class ImageUrlParamsTest
     }
 
     @Test
-    public void testPath()
+    void testPath()
     {
         final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getPath() );
@@ -34,7 +34,7 @@ public class ImageUrlParamsTest
     }
 
     @Test
-    public void testFormat()
+    void testFormat()
     {
         final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getFormat() );
@@ -47,7 +47,7 @@ public class ImageUrlParamsTest
     }
 
     @Test
-    public void testFilter()
+    void testFilter()
     {
         final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getFilter() );
@@ -60,7 +60,7 @@ public class ImageUrlParamsTest
     }
 
     @Test
-    public void testBackground()
+    void testBackground()
     {
         final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getBackground() );
@@ -73,7 +73,7 @@ public class ImageUrlParamsTest
     }
 
     @Test
-    public void testQuality()
+    void testQuality()
     {
         final ImageUrlParams params = new ImageUrlParams();
         assertNull( params.getQuality() );
@@ -86,7 +86,7 @@ public class ImageUrlParamsTest
     }
 
     @Test
-    public void testSetAsMap()
+    void testSetAsMap()
     {
         final ImageUrlParams params = new ImageUrlParams();
         params.id( "123456" );

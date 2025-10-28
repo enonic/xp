@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AccessControlEntryTest
+class AccessControlEntryTest
 {
 
     @Test
-    public void testAccessControlEntry()
+    void testAccessControlEntry()
     {
         final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -33,7 +33,7 @@ public class AccessControlEntryTest
     }
 
     @Test
-    public void testNoPermissions()
+    void testNoPermissions()
     {
         final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -48,7 +48,7 @@ public class AccessControlEntryTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -73,7 +73,7 @@ public class AccessControlEntryTest
     }
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         final AccessControlEntry ace = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).

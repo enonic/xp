@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class GeoDistanceRangeBucketTest
+class GeoDistanceRangeBucketTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         GeoDistanceRangeBucket.Builder builder = GeoDistanceRangeBucket.create();
 

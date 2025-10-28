@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class PropertyTest
+class PropertyTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -48,7 +48,7 @@ public class PropertyTest
     }
 
     @Test
-    public void property_copy()
+    void property_copy()
     {
         PropertyTree sourceTree = new PropertyTree();
         sourceTree.setString( "outerSet.innerSet.myString", "myValue" );
@@ -66,7 +66,7 @@ public class PropertyTest
     }
 
     @Test
-    public void property_copy_indexed()
+    void property_copy_indexed()
     {
         PropertyTree sourceTree = new PropertyTree();
         sourceTree.addSet( "outerSet" );
@@ -84,25 +84,25 @@ public class PropertyTest
     }
 
     @Test
-    public void check_exception_is_thrown_when_name_is_null()
+    void check_exception_is_thrown_when_name_is_null()
     {
         assertThrows( NullPointerException.class, () -> Property.checkName( null ) );
     }
 
     @Test
-    public void check_exception_is_thrown_when_name_is_blank()
+    void check_exception_is_thrown_when_name_is_blank()
     {
         assertThrows( IllegalArgumentException.class, () -> Property.checkName( "" ) );
     }
 
     @Test
-    public void check_exception_is_thrown_when_name_contains_dot()
+    void check_exception_is_thrown_when_name_contains_dot()
     {
         assertThrows( IllegalArgumentException.class, () -> Property.checkName( "." ) );
     }
 
     @Test
-    public void check_exception_is_thrown_when_name_contains_brackets()
+    void check_exception_is_thrown_when_name_contains_brackets()
     {
         assertThrows( IllegalArgumentException.class, () -> Property.checkName( "[]" ) );
     }

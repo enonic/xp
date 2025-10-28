@@ -19,7 +19,7 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-public class PublishContentHandlerTest
+class PublishContentHandlerTest
     extends BaseContentHandlerTest
 {
     private static final String PUB_ID_1 = "d7ad428b-eae2-4ff1-9427-e8e8a8a3ab23";
@@ -67,7 +67,7 @@ public class PublishContentHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = exampleContent( PUB_ID_1, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" );
         when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
@@ -82,7 +82,7 @@ public class PublishContentHandlerTest
     }
 
     @Test
-    public void publishById()
+    void publishById()
     {
         final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
         when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult() );
@@ -93,7 +93,7 @@ public class PublishContentHandlerTest
     }
 
     @Test
-    public void publishByPath()
+    void publishByPath()
     {
         final Content myContent = exampleContent( PUB_ID_2, "mycontent", "My Content", "/myfolder/mycontent", "myfield", "Hello World" );
         when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );
@@ -111,7 +111,7 @@ public class PublishContentHandlerTest
     }
 
     @Test
-    public void publishWithoutChildrenOrDependencies()
+    void publishWithoutChildrenOrDependencies()
     {
         Contents published =
             Contents.from( exampleContent( PUB_ID_3, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ) );
@@ -129,7 +129,7 @@ public class PublishContentHandlerTest
     }
 
     @Test
-    public void publishWithMessage()
+    void publishWithMessage()
     {
         final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
 
@@ -142,7 +142,7 @@ public class PublishContentHandlerTest
     }
 
     @Test
-    public void testContentNotFound()
+    void testContentNotFound()
     {
         runFunction( "/test/PublishContentHandlerTest.js", "contentNotFound" );
     }

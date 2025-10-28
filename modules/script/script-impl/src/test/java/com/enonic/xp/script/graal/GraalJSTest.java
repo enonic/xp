@@ -24,10 +24,10 @@ import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
 
-public class GraalJSTest
+class GraalJSTest
 {
     @Test
-    public void test()
+    void test()
         throws Exception
     {
         final ApplicationKey APPLICATION_KEY = ApplicationKey.from( "graaljs" );

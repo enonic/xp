@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
-public class WebSocketServiceImplTest
+class WebSocketServiceImplTest
     extends JettyTestSupport
 {
     private TestEndpoint endpoint;
@@ -24,7 +24,6 @@ public class WebSocketServiceImplTest
 
     @Override
     protected void configure()
-        throws Exception
     {
         this.endpoint = new TestEndpoint();
 
@@ -46,7 +45,7 @@ public class WebSocketServiceImplTest
     }
 
     @Test
-    public void sendFromServer()
+    void sendFromServer()
         throws Exception
     {
         final ClientTestListener listener1 = new ClientTestListener();
@@ -64,7 +63,7 @@ public class WebSocketServiceImplTest
     }
 
     @Test
-    public void sendFromClient()
+    void sendFromClient()
         throws Exception
     {
         final ClientTestListener listener1 = new ClientTestListener();

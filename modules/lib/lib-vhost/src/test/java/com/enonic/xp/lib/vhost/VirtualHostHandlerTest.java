@@ -12,7 +12,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostService;
 
-public class VirtualHostHandlerTest
+class VirtualHostHandlerTest
     extends ScriptTestSupport
 {
 
@@ -30,7 +30,7 @@ public class VirtualHostHandlerTest
     }
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         Mockito.when( virtualHostService.isEnabled() ).thenReturn( true );
 
@@ -47,13 +47,13 @@ public class VirtualHostHandlerTest
     }
 
     @Test
-    public void testEnabled()
+    void testEnabled()
     {
         runFunction( "/com/enonic/xp/lib/vhost/vhost-test.js", "testEnabled" );
     }
 
     @Test
-    public void testGetVirtualHosts()
+    void testGetVirtualHosts()
     {
         VirtualHost virtualHost2 = Mockito.mock( VirtualHost.class );
 

@@ -7,32 +7,29 @@ import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ExistsQueryBuilderTest
+class ExistsQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void empty_field()
-        throws Exception
+    void empty_field()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "empty_field" ) );
     }
 
     @Test
-    public void null_field()
-        throws Exception
+    void null_field()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "null_field" ) );
     }
 
     @Test
-    public void number()
-        throws Exception
+    void number()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "number" ) );
     }
 
     @Test
-    public void simple()
+    void simple()
         throws Exception
     {
         test( "simple" );

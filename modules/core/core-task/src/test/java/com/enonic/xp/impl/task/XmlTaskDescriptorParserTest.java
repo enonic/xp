@@ -4,16 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.xml.parser.XmlModelParserTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlTaskDescriptorParserTest
+class XmlTaskDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlTaskDescriptorParser parser;
@@ -21,7 +21,7 @@ public class XmlTaskDescriptorParserTest
     private TaskDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlTaskDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -32,7 +32,7 @@ public class XmlTaskDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -40,7 +40,7 @@ public class XmlTaskDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -48,7 +48,6 @@ public class XmlTaskDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final TaskDescriptor result = this.builder.build();
         assertEquals( "myapplication:mytask", result.getKey().toString() );

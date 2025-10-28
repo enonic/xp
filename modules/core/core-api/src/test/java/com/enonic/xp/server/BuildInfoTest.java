@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BuildInfoTest
+class BuildInfoTest
 {
     @Test
-    public void testInfo()
+    void testInfo()
     {
         final Properties props = new Properties();
         props.setProperty( "xp.build.branch", "master" );

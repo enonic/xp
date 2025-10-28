@@ -5,12 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateScheduledJobHandlerTest
+class CreateScheduledJobHandlerTest
     extends BaseScheduledJobHandlerTest
 {
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockOneTimeCalendar();
         mockCronCalendar();
@@ -19,31 +19,27 @@ public class CreateScheduledJobHandlerTest
 
 
     @Test
-    public void createOneTimeJob()
-        throws Exception
+    void createOneTimeJob()
     {
         mockOneTimeCalendar();
         runFunction( "/test/CreateScheduledJobHandlerTest.js", "createOneTimeJob" );
     }
 
     @Test
-    public void createCronJob()
-        throws Exception
+    void createCronJob()
     {
         mockCronCalendar();
         runFunction( "/test/CreateScheduledJobHandlerTest.js", "createCronJob" );
     }
 
     @Test
-    public void createWithoutName()
-        throws Exception
+    void createWithoutName()
     {
         runFunction( "/test/CreateScheduledJobHandlerTest.js", "createWithoutName" );
     }
 
     @Test
-    public void createWithoutDescriptor()
-        throws Exception
+    void createWithoutDescriptor()
     {
         mockCronCalendar();
 
@@ -51,15 +47,13 @@ public class CreateScheduledJobHandlerTest
     }
 
     @Test
-    public void createWithoutCalendar()
-        throws Exception
+    void createWithoutCalendar()
     {
         runFunction( "/test/CreateScheduledJobHandlerTest.js", "createWithoutCalendar" );
     }
 
     @Test
-    public void createWithoutUser()
-        throws Exception
+    void createWithoutUser()
     {
         mockCronCalendar();
 
@@ -68,8 +62,7 @@ public class CreateScheduledJobHandlerTest
 
 
     @Test
-    public void createWithoutConfig()
-        throws Exception
+    void createWithoutConfig()
     {
         mockCronCalendar();
 

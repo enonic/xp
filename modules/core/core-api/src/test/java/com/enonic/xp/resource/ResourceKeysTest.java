@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ResourceKeysTest
+class ResourceKeysTest
 {
     private static final String RESOURCE_URI_1 = "myapplication-1.0.0:";
 
@@ -28,7 +28,7 @@ public class ResourceKeysTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         ResourceKeys resourceKeys = ResourceKeys.empty();
 
@@ -36,7 +36,7 @@ public class ResourceKeysTest
     }
 
     @Test
-    public void fromArray()
+    void fromArray()
     {
         ResourceKeys resourceKeys =
             ResourceKeys.from( ResourceKeysTest.list.get( 0 ), ResourceKeysTest.list.get( 1 ), ResourceKeysTest.list.get( 2 ) );
@@ -48,7 +48,7 @@ public class ResourceKeysTest
     }
 
     @Test
-    public void fromIterable()
+    void fromIterable()
     {
         ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.list );
 
@@ -59,7 +59,7 @@ public class ResourceKeysTest
     }
 
     @Test
-    public void fromCollection()
+    void fromCollection()
     {
         ResourceKeys resourceKeys = ResourceKeys.from( ResourceKeysTest.list );
 
@@ -70,7 +70,7 @@ public class ResourceKeysTest
     }
 
     @Test
-    public void fromStringArray()
+    void fromStringArray()
     {
         ResourceKeys resourceKeys = ResourceKeys.from( RESOURCE_URI_1, RESOURCE_URI_2, RESOURCE_URI_3 );
 

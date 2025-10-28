@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ValidateContentDataCommandTest
+class ValidateContentDataCommandTest
 {
     private ContentTypeService contentTypeService;
 
@@ -45,8 +45,7 @@ public class ValidateContentDataCommandTest
     private SiteService siteService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.xDataService = Mockito.mock( XDataService.class );
@@ -54,7 +53,7 @@ public class ValidateContentDataCommandTest
     }
 
     @Test
-    public void validation_with_errors()
+    void validation_with_errors()
     {
         // setup
         final ContentType contentType = ContentType.create()
@@ -85,7 +84,7 @@ public class ValidateContentDataCommandTest
     }
 
     @Test
-    public void validation_no_errors()
+    void validation_no_errors()
     {
         // setup
         final FieldSet fieldSet = FieldSet.create()
@@ -111,7 +110,7 @@ public class ValidateContentDataCommandTest
     }
 
     @Test
-    public void testSiteConfigTextRegexpFailure()
+    void testSiteConfigTextRegexpFailure()
     {
         final ContentType contentType =
             ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();
@@ -135,7 +134,7 @@ public class ValidateContentDataCommandTest
     }
 
     @Test
-    public void test_empty_displayName()
+    void test_empty_displayName()
     {
         // setup
         final FieldSet fieldSet = FieldSet.create()
@@ -162,7 +161,7 @@ public class ValidateContentDataCommandTest
     }
 
     @Test
-    public void test_unnamed()
+    void test_unnamed()
     {
         // setup
         final FieldSet fieldSet = FieldSet.create()
@@ -206,7 +205,7 @@ public class ValidateContentDataCommandTest
     }
 
     @Test
-    public void testSiteConfigTextRegexpPasses()
+    void testSiteConfigTextRegexpPasses()
     {
         final ContentType contentType =
             ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();

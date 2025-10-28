@@ -6,18 +6,17 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GeneratePasswordHandlerTest
+class GeneratePasswordHandlerTest
     extends ScriptTestSupport
 {
     @Test
-    public void testExamples()
+    void testExamples()
     {
         runScript( "/lib/xp/examples/auth/generatePassword.js" );
     }
 
     @Test
-    public void testPasswordGeneration()
-        throws Exception
+    void testPasswordGeneration()
     {
         for ( int i = 0; i < 20; i++ )
         {
@@ -26,7 +25,7 @@ public class GeneratePasswordHandlerTest
     }
 
     @Test
-    public void testFunction()
+    void testFunction()
     {
         runFunction( "/test/generatePassword-test.js", "generatePassword" );
     }

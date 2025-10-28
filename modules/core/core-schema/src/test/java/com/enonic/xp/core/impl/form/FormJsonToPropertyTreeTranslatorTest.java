@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FormJsonToPropertyTreeTranslatorTest
+class FormJsonToPropertyTreeTranslatorTest
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
-    public void all_input_types()
+    void all_input_types()
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
@@ -42,7 +42,7 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
-    public void item_not_allowed_in_form()
+    void item_not_allowed_in_form()
         throws Exception
     {
         final JsonNode node = loadJson( "propertyNotInForm" );
@@ -54,7 +54,7 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
-    public void map_array_values()
+    void map_array_values()
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
@@ -76,7 +76,7 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
-    public void boolean_value()
+    void boolean_value()
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
@@ -90,7 +90,7 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
-    public void map_dateTime()
+    void map_dateTime()
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
@@ -107,7 +107,7 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
-    public void map_optionSet()
+    void map_optionSet()
         throws Exception
     {
         final JsonNode node = loadJson( "allInputTypes" );
@@ -139,7 +139,7 @@ public class FormJsonToPropertyTreeTranslatorTest
     }
 
     @Test
-    public void translateFormWithFieldSet()
+    void translateFormWithFieldSet()
         throws Exception
     {
         final JsonNode node = loadJson( "fieldset" );

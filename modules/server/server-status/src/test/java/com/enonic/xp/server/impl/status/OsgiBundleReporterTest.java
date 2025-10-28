@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OsgiBundleReporterTest
+class OsgiBundleReporterTest
     extends BaseOsgiReporterTest<OsgiBundleReporter>
 {
     public OsgiBundleReporterTest()
@@ -19,7 +19,6 @@ public class OsgiBundleReporterTest
 
     @Override
     protected OsgiBundleReporter newReporter()
-        throws Exception
     {
         final Bundle bundle1 = newBundle( 0, "foo.bar1" );
         final Bundle bundle2 = newBundle( 1, "foo.bar2" );
@@ -33,7 +32,7 @@ public class OsgiBundleReporterTest
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();
@@ -43,7 +42,7 @@ public class OsgiBundleReporterTest
     }
 
     @Test
-    public void testStateString()
+    void testStateString()
     {
         assertEquals( "ACTIVE", this.reporter.stateAsString( Bundle.ACTIVE ) );
         assertEquals( "STARTING", this.reporter.stateAsString( Bundle.STARTING ) );

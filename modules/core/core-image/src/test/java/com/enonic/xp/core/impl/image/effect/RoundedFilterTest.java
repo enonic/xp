@@ -9,14 +9,14 @@ import com.enonic.xp.core.impl.image.ImageFunction;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class RoundedFilterTest
+class RoundedFilterTest
     extends BaseImageFilterTest
 {
 
     private static final int BL_COLOR = -16777216;
 
     @Test
-    public void testFilter()
+    void testFilter()
     {
         ImageFunction filter = newFilters().rounded( 20, 10, BL_COLOR );
         BufferedImage result = filter.apply( getOpaque() );

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class LogicalExprTest
+class LogicalExprTest
 {
     @Test
-    public void andExpression()
+    void andExpression()
     {
         final CompareExpr left = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
         final CompareExpr right = CompareExpr.eq( FieldExpr.from( "b" ), ValueExpr.number( 2 ) );
@@ -21,7 +21,7 @@ public class LogicalExprTest
     }
 
     @Test
-    public void orExpression()
+    void orExpression()
     {
         final CompareExpr left = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
         final CompareExpr right = CompareExpr.eq( FieldExpr.from( "b" ), ValueExpr.number( 2 ) );

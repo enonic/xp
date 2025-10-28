@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LayoutDescriptorServiceTest
+class LayoutDescriptorServiceTest
     extends AbstractDescriptorServiceTest
 {
     protected LayoutDescriptorServiceImpl service;
@@ -30,8 +30,7 @@ public class LayoutDescriptorServiceTest
     }
 
     @Test
-    public void testGetByKey()
-        throws Exception
+    void testGetByKey()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mylayout" );
         final LayoutDescriptor descriptor = this.service.getByKey( key );
@@ -41,8 +40,7 @@ public class LayoutDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplication()
-        throws Exception
+    void testGetByApplication()
     {
         final LayoutDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
@@ -51,8 +49,7 @@ public class LayoutDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplications()
-        throws Exception
+    void testGetByApplications()
     {
         final LayoutDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 

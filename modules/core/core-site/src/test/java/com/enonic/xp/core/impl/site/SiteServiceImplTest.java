@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SiteServiceImplTest
+class SiteServiceImplTest
     extends ApplicationTestSupport
 {
     protected MixinService mixinService;
@@ -43,7 +43,7 @@ public class SiteServiceImplTest
     }
 
     @Test
-    public void get_descriptor()
+    void get_descriptor()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
@@ -56,7 +56,7 @@ public class SiteServiceImplTest
     }
 
     @Test
-    public void get_portal_descriptor()
+    void get_portal_descriptor()
     {
         final ApplicationKey applicationKey = ApplicationKey.PORTAL;
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );
@@ -75,7 +75,7 @@ public class SiteServiceImplTest
     }
 
     @Test
-    public void get_descriptor_for_unknown_application()
+    void get_descriptor_for_unknown_application()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "unknown" );
         final SiteDescriptor siteDescriptor = this.service.getDescriptor( applicationKey );

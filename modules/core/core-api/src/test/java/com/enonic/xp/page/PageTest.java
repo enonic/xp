@@ -10,10 +10,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PageTest
+class PageTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         final PropertyTree config1 = new PropertyTree();
         config1.addString( "some", "config" );
@@ -104,7 +104,7 @@ public class PageTest
     }
 
     @Test
-    public void copy()
+    void copy()
     {
         final PropertyTree config1 = new PropertyTree();
         config1.addString( "some", "config" );

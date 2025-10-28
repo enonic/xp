@@ -18,13 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MailServiceImplTest
+class MailServiceImplTest
 {
     private MailServiceImpl mailService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         final MailConfig config = mock( MailConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( config.defaultFromEmail() ).thenReturn( "noreply@domain.com" );
@@ -34,14 +33,13 @@ public class MailServiceImplTest
     }
 
     @AfterEach
-    public void tearDown()
-        throws Exception
+    void tearDown()
     {
         Mailbox.clearAll();
     }
 
     @Test
-    public void sendTest()
+    void sendTest()
         throws Exception
     {
         this.mailService.send( createMockMessage() );
@@ -51,8 +49,7 @@ public class MailServiceImplTest
     }
 
     @Test
-    public void sessionNotActivatedTest()
-        throws Exception
+    void sessionNotActivatedTest()
     {
 
         MailServiceImpl mailService = new MailServiceImpl();
@@ -61,14 +58,14 @@ public class MailServiceImplTest
     }
 
     @Test
-    public void testSend()
+    void testSend()
     {
         assertDoesNotThrow( () -> this.mailService.send(
             SendMailParams.create().subject( "test subject" ).body( "test body" ).to( "to@bar.com" ).from( "from@bar.com" ).build() ) );
     }
 
     @Test
-    public void testGetDefaultFromEmail()
+    void testGetDefaultFromEmail()
     {
         assertEquals( "noreply@domain.com", this.mailService.getDefaultFromEmail() );
     }

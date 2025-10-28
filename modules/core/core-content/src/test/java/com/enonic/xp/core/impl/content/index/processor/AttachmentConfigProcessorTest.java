@@ -11,7 +11,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import static com.enonic.xp.content.ContentPropertyNames.ATTACHMENT_TEXT_COMPONENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AttachmentConfigProcessorTest
+class AttachmentConfigProcessorTest
 {
     private ContentTypeName contentTypeName;
 
@@ -20,15 +20,13 @@ public class AttachmentConfigProcessorTest
     private PatternIndexConfigDocument.Builder builder;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         builder = PatternIndexConfigDocument.create();
     }
 
     @Test
-    public void test_textual_media()
-        throws Exception
+    void test_textual_media()
     {
         this.contentTypeName = ContentTypeName.textMedia();
         this.configProcessor = new AttachmentConfigProcessor( contentTypeName );
@@ -47,8 +45,7 @@ public class AttachmentConfigProcessorTest
     }
 
     @Test
-    public void test_non_textual_media()
-        throws Exception
+    void test_non_textual_media()
     {
         this.contentTypeName = ContentTypeName.folder();
         this.configProcessor = new AttachmentConfigProcessor( contentTypeName );

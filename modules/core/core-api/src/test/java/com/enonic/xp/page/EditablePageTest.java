@@ -9,10 +9,10 @@ import com.enonic.xp.region.Regions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EditablePageTest
+class EditablePageTest
 {
     @Test
-    public void create_from_source()
+    void create_from_source()
     {
         final Page page = createPage();
 
@@ -25,7 +25,7 @@ public class EditablePageTest
     }
 
     @Test
-    public void build_page()
+    void build_page()
     {
         final EditablePage editablePage = new EditablePage( createPage() );
 

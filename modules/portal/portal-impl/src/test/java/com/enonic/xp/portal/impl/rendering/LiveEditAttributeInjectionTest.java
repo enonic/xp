@@ -10,10 +10,10 @@ import com.enonic.xp.region.TextComponentType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LiveEditAttributeInjectionTest
+class LiveEditAttributeInjectionTest
 {
     @Test
-    public void simpleInjection()
+    void simpleInjection()
         throws Exception
     {
         final String html = readResource( "part1Source.html" );
@@ -31,7 +31,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectWithAttributes()
+    void injectWithAttributes()
         throws Exception
     {
         final String html = readResource( "part2Source.html" );
@@ -49,7 +49,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectEmptySingleTag()
+    void injectEmptySingleTag()
         throws Exception
     {
         final String html = readResource( "part3Source.html" );
@@ -67,7 +67,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectWithXmlDeclaration()
+    void injectWithXmlDeclaration()
         throws Exception
     {
         final String html = readResource( "part4Source.html" );
@@ -85,7 +85,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectWithDocType()
+    void injectWithDocType()
         throws Exception
     {
         final String html = readResource( "part5Source.html" );
@@ -103,7 +103,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void nonSingleRootTagHtml()
+    void nonSingleRootTagHtml()
         throws Exception
     {
         final String html = readResource( "part6Source.html" );
@@ -120,7 +120,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectWithLeadingWhitespace()
+    void injectWithLeadingWhitespace()
         throws Exception
     {
         final String html = readResource( "part7Source.html" );
@@ -138,7 +138,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectWithSingleComment()
+    void injectWithSingleComment()
         throws Exception
     {
         final String html = readResource( "part8Source.html" );
@@ -156,7 +156,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectWithMultipleComments()
+    void injectWithMultipleComments()
         throws Exception
     {
         final String html = readResource( "part9Source.html" );
@@ -174,7 +174,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectHtmlWithBom()
+    void injectHtmlWithBom()
         throws Exception
     {
         final String html = readResource( "part1SourceBom.html" );
@@ -192,8 +192,7 @@ public class LiveEditAttributeInjectionTest
     }
 
     @Test
-    public void injectEmptyHtml()
-        throws Exception
+    void injectEmptyHtml()
     {
         final String html = "";
 

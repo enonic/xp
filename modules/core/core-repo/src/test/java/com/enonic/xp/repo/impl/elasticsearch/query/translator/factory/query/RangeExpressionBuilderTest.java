@@ -11,13 +11,12 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RangeExpressionBuilderTest
+class RangeExpressionBuilderTest
     extends BaseTestBuilderFactory
 {
 
     @Test
-    public void compare_gt_number()
-        throws Exception
+    void compare_gt_number()
     {
         final String expected = load( "compare_gt_number.json" );
 
@@ -29,8 +28,7 @@ public class RangeExpressionBuilderTest
 
 
     @Test
-    public void compare_lt_number()
-        throws Exception
+    void compare_lt_number()
     {
         final String expected = load( "compare_lt_number.json" );
 
@@ -41,8 +39,7 @@ public class RangeExpressionBuilderTest
     }
 
     @Test
-    public void compare_gte_number()
-        throws Exception
+    void compare_gte_number()
     {
         final String expected = load( "compare_gte_number.json" );
 
@@ -53,8 +50,7 @@ public class RangeExpressionBuilderTest
     }
 
     @Test
-    public void compare_gte_instant()
-        throws Exception
+    void compare_gte_instant()
     {
         final String expected = load( "compare_gt_datetime.json" );
 
@@ -66,8 +62,7 @@ public class RangeExpressionBuilderTest
     }
 
     @Test
-    public void compare_gt_string()
-        throws Exception
+    void compare_gt_string()
     {
         final String expected = load( "compare_gt_string.json" );
 

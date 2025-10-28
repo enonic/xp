@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class SystemPropertiesTest
+class SystemPropertiesTest
 {
     @Test
-    public void testEnv()
+    void testEnv()
     {
         final SystemProperties props = new SystemProperties();
         assertNull( props.getEnv( "MY_ENV" ) );
@@ -24,7 +24,7 @@ public class SystemPropertiesTest
     }
 
     @Test
-    public void testPutAllEnv()
+    void testPutAllEnv()
     {
         final SystemProperties props = new SystemProperties();
         assertNull( props.getEnv( "MY_ENV" ) );
@@ -37,7 +37,7 @@ public class SystemPropertiesTest
     }
 
     @Test
-    public void testDefault()
+    void testDefault()
     {
         final SystemProperties props = SystemProperties.getDefault();
 

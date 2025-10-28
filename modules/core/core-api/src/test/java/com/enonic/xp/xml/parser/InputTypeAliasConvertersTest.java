@@ -8,17 +8,17 @@ import com.enonic.xp.inputtype.InputTypeName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class InputTypeAliasConvertersTest
+class InputTypeAliasConvertersTest
 {
     @Test
-    public void testConvertersExist()
+    void testConvertersExist()
     {
         assertNotNull( InputTypeAliasConverters.getConverter( InputTypeName.CONTENT_SELECTOR ) );
         assertNotNull( InputTypeAliasConverters.getConverter( InputTypeName.from( "some-name" ) ) );
     }
 
     @Test
-    public void testContentSelectorConverters()
+    void testContentSelectorConverters()
     {
         final String contentType = "allowType";
         final String shouldBeUnchanged = "relationshipX";
@@ -30,7 +30,7 @@ public class InputTypeAliasConvertersTest
     }
 
     @Test
-    public void testMediaSelectorConverters()
+    void testMediaSelectorConverters()
     {
         final String contentType = "allowType";
         final String shouldBeUnchanged = "relationshipX";
@@ -42,7 +42,7 @@ public class InputTypeAliasConvertersTest
     }
 
     @Test
-    public void testImageSelectorConverters()
+    void testImageSelectorConverters()
     {
         final String contentType = "allowType";
         final String shouldBeUnchanged = "shouldBeUnchanged";
@@ -54,7 +54,7 @@ public class InputTypeAliasConvertersTest
     }
 
     @Test
-    public void testDefaultConverter()
+    void testDefaultConverter()
     {
         final String type = "some-type";
         final String result = convert( InputTypeName.CONTENT_SELECTOR, type );

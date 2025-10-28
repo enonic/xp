@@ -12,13 +12,12 @@ import com.enonic.xp.content.ContentPublishInfo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_contentExists
+class ContentServiceImplTest_contentExists
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void test_pending_publish_draft()
-        throws Exception
+    void test_pending_publish_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
@@ -29,8 +28,7 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_pending_publish_master()
-        throws Exception
+    void test_pending_publish_master()
     {
         final Content content = ctxMaster().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
@@ -43,8 +41,7 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_publish_expired_draft()
-        throws Exception
+    void test_publish_expired_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
@@ -56,8 +53,7 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_publish_expired_master()
-        throws Exception
+    void test_publish_expired_master()
     {
         final Content content = ctxMaster().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
@@ -71,8 +67,7 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_published_draft()
-        throws Exception
+    void test_published_draft()
     {
         final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
@@ -84,8 +79,7 @@ public class ContentServiceImplTest_contentExists
     }
 
     @Test
-    public void test_published_master()
-        throws Exception
+    void test_published_master()
     {
         final Content content = ctxMaster().callWith( () -> createContent( ContentPath.ROOT, ContentPublishInfo.create().
             from( Instant.now().minus( Duration.ofDays( 1 ) ) ).

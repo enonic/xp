@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.trace.TraceEvent;
 import com.enonic.xp.trace.TraceListener;
 
-public class TraceListenersTest
+class TraceListenersTest
 {
     @Test
-    public void testAddRemove()
+    void testAddRemove()
     {
         final TraceEvent event = TraceEvent.start( null );
         final TraceListeners listeners = new TraceListeners();

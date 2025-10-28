@@ -45,7 +45,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AdminSiteHandlerTest
+class AdminSiteHandlerTest
     extends BaseHandlerTest
 {
     private AdminSiteHandler handler;
@@ -60,7 +60,6 @@ public class AdminSiteHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.contentService = mock( ContentService.class );
         this.projectService = mock( ProjectService.class );
@@ -78,14 +77,14 @@ public class AdminSiteHandlerTest
     }
 
     @Test
-    public void testCanHandle()
+    void testCanHandle()
     {
         this.request.setRawPath( "/admin/site/repo/master/content/1" );
         assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
-    public void testCanHandleRootContent()
+    void testCanHandleRootContent()
     {
         this.request.setRawPath( "/admin/site/repo/master" );
         assertTrue( this.handler.canHandle( this.request ) );
@@ -95,21 +94,21 @@ public class AdminSiteHandlerTest
     }
 
     @Test
-    public void testCannotHandle()
+    void testCannotHandle()
     {
         this.request.setRawPath( "/admin/repo/master/content/1" );
         assertFalse( this.handler.canHandle( this.request ) );
     }
 
     @Test
-    public void testCreatePortalRequestWithoutMode()
+    void testCreatePortalRequestWithoutMode()
     {
         this.request.setRawPath( "/admin/site/repo/master/content/1" );
         assertThrows( WebException.class, () -> this.handler.createPortalRequest( this.request, this.response ) );
     }
 
     @Test
-    public void testCreatePortalRequest()
+    void testCreatePortalRequest()
     {
         this.request.setRawPath( "/admin/site/edit/repo/master/content/1" );
         PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
@@ -122,7 +121,7 @@ public class AdminSiteHandlerTest
     }
 
     @Test
-    public void testInlineAssetRequest()
+    void testInlineAssetRequest()
     {
         this.request.setRawPath( "/admin/site/inline/repo/draft/_/asset/com.enonic.app.superhero:1622131535374/css/style.css" );
         PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
@@ -135,7 +134,7 @@ public class AdminSiteHandlerTest
     }
 
     @Test
-    public void testCreatePortalRequestRootContentPath()
+    void testCreatePortalRequestRootContentPath()
     {
         this.request.setRawPath( "/admin/site/edit/repo/master" );
         PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );
@@ -148,7 +147,7 @@ public class AdminSiteHandlerTest
     }
 
     @Test
-    public void testCreatePortalRequestEmptyContentPath()
+    void testCreatePortalRequestEmptyContentPath()
     {
         this.request.setRawPath( "/admin/site/edit/repo/master/" );
         PortalRequest portalRequest = this.handler.createPortalRequest( this.request, this.response );

@@ -24,7 +24,7 @@ class ApplicationKeysTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         ApplicationKeys applicationKeys = ApplicationKeys.empty();
 
@@ -32,7 +32,7 @@ class ApplicationKeysTest
     }
 
     @Test
-    public void fromArray()
+    void fromArray()
     {
         ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.list.get( 0 ), ApplicationKeysTest.list.get( 1 ),
                                                                 ApplicationKeysTest.list.get( 2 ) );
@@ -44,7 +44,7 @@ class ApplicationKeysTest
     }
 
     @Test
-    public void fromIterable()
+    void fromIterable()
     {
         ApplicationKeys applicationKeys = ApplicationKeys.from( (Iterable<ApplicationKey>) ApplicationKeysTest.list );
 
@@ -55,7 +55,7 @@ class ApplicationKeysTest
     }
 
     @Test
-    public void fromCollection()
+    void fromCollection()
     {
         ApplicationKeys applicationKeys = ApplicationKeys.from( ApplicationKeysTest.list );
 
@@ -66,7 +66,7 @@ class ApplicationKeysTest
     }
 
     @Test
-    public void fromStringArray()
+    void fromStringArray()
     {
         ApplicationKeys applicationKeys = ApplicationKeys.from( "aaa", "bbb", "ccc" );
 

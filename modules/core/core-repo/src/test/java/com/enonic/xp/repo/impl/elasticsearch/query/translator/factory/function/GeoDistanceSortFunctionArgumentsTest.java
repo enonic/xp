@@ -9,10 +9,10 @@ import com.enonic.xp.query.expr.ValueExpr;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GeoDistanceSortFunctionArgumentsTest
+class GeoDistanceSortFunctionArgumentsTest
 {
     @Test
-    public void argumentsRead()
+    void argumentsRead()
     {
         final GeoDistanceSortFunctionArguments arguments =
             new GeoDistanceSortFunctionArguments( List.of( ValueExpr.string( "myField" ), ValueExpr.string( "79,80" ), ValueExpr.string( "km" ) ) );
@@ -25,7 +25,7 @@ public class GeoDistanceSortFunctionArgumentsTest
     }
 
     @Test
-    public void illegalGeoPosition()
+    void illegalGeoPosition()
     {
         final FunctionQueryBuilderException ex = assertThrows( FunctionQueryBuilderException.class,
                                                                () -> new GeoDistanceSortFunctionArguments(

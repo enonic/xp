@@ -5,19 +5,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
-import org.mockito.Mockito;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
+import com.enonic.xp.core.internal.json.JsonHelper;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.PropertyTreeMarshallerService;
-import com.enonic.xp.schema.mixin.MixinService;
-import com.enonic.xp.core.internal.json.JsonHelper;
 
 public abstract class QueryBuilderTest
 {
@@ -36,7 +32,6 @@ public abstract class QueryBuilderTest
     }
 
     protected final String load( final String name )
-        throws Exception
     {
         try (InputStream stream = getClass().getResourceAsStream( name ))
         {

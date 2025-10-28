@@ -18,12 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JsonToFilterMapperTest
+class JsonToFilterMapperTest
 {
 
     @Test
-    public void exists_filter()
-        throws Exception
+    void exists_filter()
     {
         final Map<String, Object> existsFilter = createExistsFilter();
 
@@ -34,8 +33,7 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void notExists_filter()
-        throws Exception
+    void notExists_filter()
     {
         Map<String, Object> value = new HashMap<>();
 
@@ -56,8 +54,7 @@ public class JsonToFilterMapperTest
 
     @SuppressWarnings("unchecked")
     @Test
-    public void boolean_filter()
-        throws Exception
+    void boolean_filter()
     {
         Map<String, Object> filter = new HashMap<>();
 
@@ -86,8 +83,7 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void values_filter()
-        throws Exception
+    void values_filter()
     {
         Map<String, Object> value = new HashMap<>();
 
@@ -106,8 +102,7 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void ids_filter()
-        throws Exception
+    void ids_filter()
     {
         Map<String, Object> value = new HashMap<>();
 
@@ -124,7 +119,7 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void invalid_filter_type()
+    void invalid_filter_type()
         throws IllegalArgumentException
     {
         Map<String, Object> value = new HashMap<>();
@@ -137,8 +132,7 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void array_on_root_single()
-        throws Exception
+    void array_on_root_single()
     {
         final List<Map<String, Object>> existsFilters = new ArrayList<>();
         existsFilters.add( createExistsFilter() );
@@ -149,8 +143,7 @@ public class JsonToFilterMapperTest
     }
 
     @Test
-    public void array_on_root()
-        throws Exception
+    void array_on_root()
     {
         final List<Map<String, Object>> existsFilters = new ArrayList<>();
         existsFilters.add( createExistsFilter() );

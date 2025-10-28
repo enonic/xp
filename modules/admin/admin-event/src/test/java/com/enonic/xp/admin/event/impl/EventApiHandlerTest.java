@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class EventApiHandlerTest
+class EventApiHandlerTest
 {
     private EventApiHandler instance;
 

@@ -18,7 +18,7 @@ import com.enonic.xp.xml.DomHelper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlInputTypeConfigMapperTest
+class XmlInputTypeConfigMapperTest
 {
     private static final ApplicationKey APP_KEY = ApplicationKey.from( "myapp" );
 
@@ -53,7 +53,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseNone()
+    void parseNone()
     {
         final InputTypeConfig config = build( "none.xml" );
         assertNotNull( config );
@@ -61,7 +61,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseSimple()
+    void parseSimple()
     {
         final InputTypeConfig config = build( "simple.xml" );
         assertNotNull( config );
@@ -72,7 +72,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseAttributes()
+    void parseAttributes()
     {
         final InputTypeConfig config = build( "attributes.xml" );
         assertNotNull( config );
@@ -82,7 +82,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseResolve()
+    void parseResolve()
     {
         final InputTypeConfig config = build( "resolve.xml" );
         assertNotNull( config );
@@ -101,7 +101,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseAliased()
+    void parseAliased()
     {
         final InputTypeConfig config = build( "aliased.xml", InputTypeName.CONTENT_SELECTOR );
         assertNotNull( config );
@@ -111,7 +111,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseCamelCase()
+    void parseCamelCase()
     {
         final InputTypeConfig config = build( "camelcase.xml" );
         assertNotNull( config );
@@ -130,7 +130,7 @@ public class XmlInputTypeConfigMapperTest
     }
 
     @Test
-    public void parseEmpty()
+    void parseEmpty()
     {
         final InputTypeConfig config = build( "empty.xml" );
         assertNotNull( config );

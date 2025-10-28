@@ -84,7 +84,7 @@ class ApplicationServiceImplTest
     private VirtualAppService virtualAppService;
 
     @BeforeEach
-    public void initService()
+    void initService()
     {
         final BundleContext bundleContext = getBundleContext();
 
@@ -110,8 +110,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_installed_application()
-        throws Exception
+    void get_installed_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.installApplication( bundle );
@@ -122,8 +121,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application()
-        throws Exception
+    void get_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.installApplication( bundle );
@@ -134,8 +132,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_virtual_application()
-        throws Exception
+    void get_virtual_application()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         when( nodeService.nodeExists(
@@ -166,8 +163,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void create_virtual_application_without_admin()
-        throws Exception
+    void create_virtual_application_without_admin()
     {
         final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
@@ -179,7 +175,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void delete_virtual_application()
+    void delete_virtual_application()
     {
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
@@ -192,7 +188,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void delete_virtual_application_without_admin()
+    void delete_virtual_application_without_admin()
     {
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
@@ -205,14 +201,13 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application_not_found()
+    void get_application_not_found()
     {
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "app1" ) ) );
     }
 
     @Test
-    public void get_all_applications()
-        throws Exception
+    void get_all_applications()
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
@@ -227,8 +222,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void list()
-        throws Exception
+    void list()
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
@@ -254,8 +248,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_application()
-        throws Exception
+    void start_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
 
@@ -274,7 +267,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_missing_application()
+    void start_missing_application()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
@@ -286,8 +279,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_application_no_triggerEvent()
-        throws Exception
+    void start_application_no_triggerEvent()
     {
         final Bundle bundle = deployAppBundle( "app1" );
 
@@ -306,8 +298,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_atleast_version()
-        throws Exception
+    void start_app_atleast_version()
     {
         // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "6.0" ) );
@@ -320,8 +311,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_version_range()
-        throws Exception
+    void start_app_version_range()
     {
         // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "(6.0,9999.0]" ) );
@@ -334,8 +324,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_invalid_version_range()
-        throws Exception
+    void start_app_invalid_version_range()
     {
         // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "[5.1,5.2)" ) );
@@ -348,8 +337,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_ex()
-        throws Exception
+    void start_ex()
     {
         // There is no version 0.0 of Felix.
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "[0.0,0.0]" ) );
@@ -362,7 +350,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void stop_application()
+    void stop_application()
         throws Exception
     {
         final Bundle bundle = deployAppBundle( "app1" );
@@ -383,7 +371,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void stop_system_application_ignored()
+    void stop_system_application_ignored()
         throws Exception
     {
         final Bundle bundle = deploySystemAppBundle( "systemApp" );
@@ -399,7 +387,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void stop_application_no_triggerEvent()
+    void stop_application_no_triggerEvent()
         throws Exception
     {
         final Bundle bundle = deployAppBundle( "app1" );
@@ -420,7 +408,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global()
+    void install_global()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -444,7 +432,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global_invalid()
+    void install_global_invalid()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -460,7 +448,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global_denied()
+    void install_global_denied()
         throws Exception
     {
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( false );
@@ -478,7 +466,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_local()
+    void install_local()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -501,7 +489,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_local_invalid()
+    void install_local_invalid()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -517,7 +505,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void update_installed_application()
+    void update_installed_application()
         throws Exception
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -545,7 +533,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void update_installed_local_application()
+    void update_installed_local_application()
         throws Exception
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -575,14 +563,13 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_stored_application_not_found()
-        throws Exception
+    void install_stored_application_not_found()
     {
         assertThrows( ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ), ApplicationInstallationParams.create().build() ) );
     }
 
     @Test
-    public void install_stored_application()
+    void install_stored_application()
         throws Exception
     {
         final Node node = Node.create()
@@ -607,7 +594,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_stored_application_denied()
+    void install_stored_application_denied()
         throws Exception
     {
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( false );
@@ -627,7 +614,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_stored_applications()
+    void install_stored_applications()
         throws Exception
     {
         final String bundleName1 = "my-bundle1";
@@ -667,7 +654,7 @@ class ApplicationServiceImplTest
 
 
     @Test
-    public void uninstall_global_application()
+    void uninstall_global_application()
         throws Exception
     {
         final Node node = Node.create()
@@ -693,7 +680,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void uninstall_local_application()
+    void uninstall_local_application()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -716,7 +703,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_local_overriding_global()
+    void install_local_overriding_global()
         throws Exception
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -748,7 +735,7 @@ class ApplicationServiceImplTest
 
 
     @Test
-    public void uninstall_local_reinstall_global()
+    void uninstall_local_reinstall_global()
         throws Exception
     {
         PropertyTree data = new PropertyTree();
@@ -792,7 +779,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global_when_local_installed()
+    void install_global_when_local_installed()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -817,7 +804,6 @@ class ApplicationServiceImplTest
 
     @Test
     void deactivate()
-        throws Exception
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
@@ -832,8 +818,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void configuration_comes_first()
-        throws Exception
+    void configuration_comes_first()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
@@ -846,8 +831,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void configuration_comes_last()
-        throws Exception
+    void configuration_comes_last()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
@@ -862,8 +846,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void configuration_comes_twice()
-        throws Exception
+    void configuration_comes_twice()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
@@ -883,8 +866,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void configuration_comes_twice_invalidators_called()
-        throws Exception
+    void configuration_comes_twice_invalidators_called()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
@@ -905,8 +887,7 @@ class ApplicationServiceImplTest
 
 
     @Test
-    public void get_application_mode()
-        throws Exception
+    void get_application_mode()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
@@ -956,8 +937,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application_mode_bundled()
-        throws Exception
+    void get_application_mode_bundled()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
@@ -1013,7 +993,6 @@ class ApplicationServiceImplTest
     }
 
     private Bundle deployBundle( final String key )
-        throws Exception
     {
         final InputStream in = newBundle( key, false ).build();
 
@@ -1021,7 +1000,6 @@ class ApplicationServiceImplTest
     }
 
     private Bundle deployAppBundle( final String key )
-        throws Exception
     {
         final InputStream in = newBundle( key, true ).build();
 
@@ -1029,7 +1007,6 @@ class ApplicationServiceImplTest
     }
 
     private Bundle deployAppBundle( final String key, final VersionRange systemVersionRange )
-        throws Exception
     {
         final InputStream in = newBundle( key, true ).setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION,
                                                            systemVersionRange != null ? systemVersionRange.toString() : null ).build();
@@ -1038,7 +1015,6 @@ class ApplicationServiceImplTest
     }
 
     private Bundle deploySystemAppBundle( final String key )
-        throws Exception
     {
         final InputStream in = newBundle( key, true ).setHeader( ApplicationManifestConstants.X_BUNDLE_TYPE, "system" ).build();
 

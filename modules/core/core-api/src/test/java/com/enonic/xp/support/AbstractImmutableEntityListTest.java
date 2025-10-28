@@ -13,23 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AbstractImmutableEntityListTest
+class AbstractImmutableEntityListTest
 {
 
     @Test
-    public void isNotEmpty()
+    void isNotEmpty()
     {
         assertTrue( new MyList( List.of( "a", "b", "c" ) ).isNotEmpty() );
     }
 
     @Test
-    public void isEmpty()
+    void isEmpty()
     {
         assertFalse( new MyList( List.of( "a", "b", "c" ) ).isEmpty() );
     }
 
     @Test
-    public void testAccessors()
+    void testAccessors()
     {
         MyList list = new MyList( List.of( "a", "b", "c" ) );
         MyList emptyList = new MyList( List.of() );
@@ -49,7 +49,7 @@ public class AbstractImmutableEntityListTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         MyList list1 = new MyList( List.of( "a", "b", "c" ) );
         MyList list2 = new MyList( List.of( "a", "c", "b" ) );

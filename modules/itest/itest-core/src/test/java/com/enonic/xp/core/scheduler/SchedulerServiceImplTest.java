@@ -17,6 +17,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
 import com.enonic.xp.impl.scheduler.LocalSystemScheduler;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
@@ -30,7 +31,6 @@ import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
@@ -338,7 +338,6 @@ class SchedulerServiceImplTest
 
     @Test
     void modifyClearLastRun()
-        throws Exception
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 

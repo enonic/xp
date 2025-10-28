@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MacroDescriptorServiceTest
+class MacroDescriptorServiceTest
     extends ApplicationTestSupport
 {
 
@@ -25,7 +25,6 @@ public class MacroDescriptorServiceTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
@@ -34,8 +33,7 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testGetByKey()
-        throws Exception
+    void testGetByKey()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.from( "myapp1" ), "macro1" );
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
@@ -45,8 +43,7 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testGetBySystemKey()
-        throws Exception
+    void testGetBySystemKey()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "disable" );
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
@@ -58,8 +55,7 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testIconAdded()
-        throws Exception
+    void testIconAdded()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "disable" );
         final MacroDescriptor descriptor = this.service.getByKey( macroKey );
@@ -69,8 +65,7 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplication()
-        throws Exception
+    void testGetByApplication()
     {
         final MacroDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( result );
@@ -78,8 +73,7 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testGetBySystemApplication()
-        throws Exception
+    void testGetBySystemApplication()
     {
         final MacroDescriptors result = this.service.getByApplication( ApplicationKey.SYSTEM );
         assertNotNull( result );
@@ -87,8 +81,7 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplications()
-        throws Exception
+    void testGetByApplications()
     {
         final MacroDescriptors result =
             this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2", ApplicationKey.SYSTEM.getName() ) );
@@ -98,16 +91,14 @@ public class MacroDescriptorServiceTest
     }
 
     @Test
-    public void testGetAll()
-        throws Exception
+    void testGetAll()
     {
         final MacroDescriptors result = this.service.getAll();
         assertEquals( 4, result.getSize() );
     }
 
     @Test
-    public void testGetInvalidByKey()
-        throws Exception
+    void testGetInvalidByKey()
     {
         addApplication( "myapp3", "/apps/myapp3" );
 

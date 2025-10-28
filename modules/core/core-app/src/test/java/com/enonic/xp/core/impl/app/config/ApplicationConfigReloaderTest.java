@@ -12,10 +12,10 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class ApplicationConfigReloaderTest
+class ApplicationConfigReloaderTest
 {
     @Test
-    public void updated_null_config_becomes_empty()
+    void updated_null_config_becomes_empty()
     {
         final Bundle bundle = mock( Bundle.class );
         final ApplicationRegistry serviceMock = mock( ApplicationRegistry.class );
@@ -24,7 +24,7 @@ public class ApplicationConfigReloaderTest
     }
 
     @Test
-    public void updated()
+    void updated()
     {
         final Bundle bundle = mock( Bundle.class );
         final ApplicationRegistry serviceMock = mock( ApplicationRegistry.class );

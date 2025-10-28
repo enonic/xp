@@ -8,17 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ResourceKeyConverterTest
+class ResourceKeyConverterTest
 {
     @Test
-    public void testSameType()
+    void testSameType()
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/some/path" );
         assertSame( key, Converters.convert( key, ResourceKey.class ) );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( ResourceKey.from( "myapplication:/some/path" ), Converters.convert( "myapplication:/some/path", ResourceKey.class ) );
         assertEquals( ResourceKey.from( "myapplication:/some/path" ),
@@ -27,7 +27,7 @@ public class ResourceKeyConverterTest
     }
 
     @Test
-    public void testFailure()
+    void testFailure()
     {
         assertThrows(ConvertException.class, () -> Converters.convert( "/some/path", ResourceKey.class ));
     }

@@ -8,11 +8,10 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class VacuumTasksTest
+class VacuumTasksTest
 {
     @Test
-    public void order()
-        throws Exception
+    void order()
     {
         final VacuumTasks tasks = new VacuumTasks();
 

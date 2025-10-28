@@ -18,19 +18,19 @@ import com.enonic.xp.region.RegionDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RegionDataSerializerTest
+class RegionDataSerializerTest
     extends AbstractDataSerializerTest
 {
     private RegionDataSerializer regionSerializer;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.regionSerializer = new RegionDataSerializer( new ComponentDataSerializerProvider() );
     }
 
     @Test
-    public void region()
+    void region()
     {
         final PropertyTree myPartConfig = new PropertyTree();
         myPartConfig.addString( "some", "config" );

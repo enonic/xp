@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindContentVersionsResultTest
+class FindContentVersionsResultTest
 {
     @Test
-    public void sameVersion()
-        throws Exception
+    void sameVersion()
     {
         final Instant now = Instant.now();
 

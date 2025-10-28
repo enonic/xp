@@ -6,11 +6,11 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class IssueNameTest
+class IssueNameTest
 {
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -42,19 +42,19 @@ public class IssueNameTest
     }
 
     @Test
-    public void testIllegalName1()
+    void testIllegalName1()
     {
         assertThrows(NullPointerException.class, () -> IssueName.from( null ));
     }
 
     @Test
-    public void testIllegalName2()
+    void testIllegalName2()
     {
         assertThrows(IllegalArgumentException.class, () -> IssueName.from( "" ) );
     }
 
     @Test
-    public void testIllegalName3()
+    void testIllegalName3()
     {
         assertThrows(IllegalArgumentException.class, () -> IssueName.from( "a/" ) );
     }

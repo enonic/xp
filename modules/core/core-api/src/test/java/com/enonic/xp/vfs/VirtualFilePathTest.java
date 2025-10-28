@@ -7,11 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class VirtualFilePathTest
+class VirtualFilePathTest
 {
     @Test
-    public void fromPath()
-        throws Exception
+    void fromPath()
     {
         final VirtualFilePath virtualFilePath = VirtualFilePaths.from( Path.of( "this", "is", "my", "test" ) );
 
@@ -19,8 +18,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void fromString()
-        throws Exception
+    void fromString()
     {
         final VirtualFilePath virtualFilePath = VirtualFilePaths.from( "/this/is/my/test", "/" );
 
@@ -28,8 +26,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void double_slashes()
-        throws Exception
+    void double_slashes()
     {
         final VirtualFilePath virtualFilePath = VirtualFilePaths.from( "//this/is/my//test", "/" );
 
@@ -37,8 +34,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void relative()
-        throws Exception
+    void relative()
     {
         final VirtualFilePath virtualFilePath = VirtualFilePaths.from( "this/is/my/test", "/" );
 
@@ -46,8 +42,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void subtract_absolute()
-        throws Exception
+    void subtract_absolute()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "/this/is/my/test", "/" );
         final VirtualFilePath subtract = VirtualFilePaths.from( "/this/is", "/" );
@@ -56,8 +51,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void subtract_relative()
-        throws Exception
+    void subtract_relative()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "this/is/my/test", "/" );
         final VirtualFilePath subtract = VirtualFilePaths.from( "this/is", "/" );
@@ -66,8 +60,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void subtract_not_part_of()
-        throws Exception
+    void subtract_not_part_of()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "this/is/my/test", "/" );
         final VirtualFilePath subtract = VirtualFilePaths.from( "dummy/path", "/" );
@@ -75,8 +68,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void subtract_longer_than()
-        throws Exception
+    void subtract_longer_than()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "this/is/my/test", "/" );
         final VirtualFilePath subtract = VirtualFilePaths.from( "this/is/my/test/longer", "/" );
@@ -84,8 +76,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void join_strings()
-        throws Exception
+    void join_strings()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "this/is/my/test", "/" );
 
@@ -96,8 +87,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void join_strings_absolute()
-        throws Exception
+    void join_strings_absolute()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "/this/is/my/test", "/" );
 
@@ -108,8 +98,7 @@ public class VirtualFilePathTest
     }
 
     @Test
-    public void join_strings_with_separator()
-        throws Exception
+    void join_strings_with_separator()
     {
         final VirtualFilePath path = VirtualFilePaths.from( "/this/is/my/test", "/" );
 

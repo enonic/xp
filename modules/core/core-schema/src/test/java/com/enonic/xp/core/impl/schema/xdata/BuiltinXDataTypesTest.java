@@ -9,10 +9,10 @@ import com.enonic.xp.schema.xdata.XDatas;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BuiltinXDataTypesTest
+class BuiltinXDataTypesTest
 {
     @Test
-    public void testGetAll()
+    void testGetAll()
     {
         final XDatas xdatas = new BuiltinXDataTypes().getAll();
         assertEquals( 3, xdatas.getSize() );

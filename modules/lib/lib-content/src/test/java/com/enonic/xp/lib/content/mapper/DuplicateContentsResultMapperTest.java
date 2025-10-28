@@ -11,10 +11,10 @@ import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DuplicateContentsResultMapperTest
+class DuplicateContentsResultMapperTest
 {
     @Test
-    public void test()
+    void test()
     {
         JsonMapGenerator jsonGenerator = new JsonMapGenerator();
 

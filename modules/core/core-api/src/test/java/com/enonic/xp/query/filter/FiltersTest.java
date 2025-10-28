@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FiltersTest
+class FiltersTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final Filters filters = Filters.create().
             add( ExistsFilter.create().fieldName( "fieldName" ).build() ).
@@ -22,7 +22,7 @@ public class FiltersTest
     }
 
     @Test
-    public void from()
+    void from()
     {
         final Filters filters = Filters.from( ExistsFilter.create().fieldName( "fieldName" ).build(), ExistsFilter.create().fieldName( "fieldName" ).build() );
 

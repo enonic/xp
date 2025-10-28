@@ -33,14 +33,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class LocaleServiceImplTest
+class LocaleServiceImplTest
 {
     private LocaleServiceImpl localeService;
 
     private ResourceService resourceService;
 
     @BeforeEach
-    public void before()
+    void before()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
         when( resourceService.getResource( any() ) ).thenAnswer( this::loadResource );
@@ -56,7 +56,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_norwegian_no()
+    void get_bundle_norwegian_no()
     {
         final MessageBundle bundle =
             localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.forLanguageTag( "no" ), "norwegian" );
@@ -65,7 +65,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_norwegian_nb()
+    void get_bundle_norwegian_nb()
     {
         final MessageBundle bundle =
             localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.forLanguageTag( "nb" ), "norwegian" );
@@ -75,7 +75,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_norwegian_nn()
+    void get_bundle_norwegian_nn()
     {
         final MessageBundle bundle =
             localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.forLanguageTag( "nn" ), "norwegian" );
@@ -84,14 +84,14 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_no_application()
+    void get_bundle_no_application()
     {
         final MessageBundle bundle = localeService.getBundle( null, Locale.ENGLISH );
         assertNull( bundle );
     }
 
     @Test
-    public void get_bundle_no_locale()
+    void get_bundle_no_locale()
     {
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), null );
 
@@ -101,7 +101,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_with_country()
+    void get_bundle_with_country()
     {
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.US );
 
@@ -111,7 +111,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_with_variant()
+    void get_bundle_with_variant()
     {
         final Locale locale = new Locale( "en", "US", "1" );
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), locale );
@@ -122,7 +122,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_UTF8_chars()
+    void get_UTF8_chars()
     {
         final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
 
@@ -135,7 +135,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void get_bundle_multi()
+    void get_bundle_multi()
     {
         final MessageBundle bundle =
             localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH, "/phrases", "/override" );
@@ -146,7 +146,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getLocales()
+    void getLocales()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/i18n/myphrases.properties", "myapplication:/i18n/myphrases_en.properties",
@@ -168,7 +168,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void bundleInvalidateCaching()
+    void bundleInvalidateCaching()
     {
         final ResourceKeys resourceKeys = ResourceKeys.empty();
         when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
@@ -197,7 +197,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_onePreferredFound()
+    void getSupportedLocale_onePreferredFound()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
@@ -215,7 +215,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_LanguagePreferredFound()
+    void getSupportedLocale_LanguagePreferredFound()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
@@ -233,7 +233,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_moreThanOneFound()
+    void getSupportedLocale_moreThanOneFound()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
@@ -252,7 +252,7 @@ public class LocaleServiceImplTest
 
 
     @Test
-    public void getSupportedLocale_noPreferredFound()
+    void getSupportedLocale_noPreferredFound()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_en.properties",
@@ -269,7 +269,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_no_file_supports_nb_locale()
+    void getSupportedLocale_no_file_supports_nb_locale()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_no.properties" );
@@ -284,7 +284,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_no_file_supports_nn_locale()
+    void getSupportedLocale_no_file_supports_nn_locale()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_no.properties" );
@@ -299,7 +299,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_nb_file_supports_no_locale()
+    void getSupportedLocale_nb_file_supports_no_locale()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_nb.properties" );
@@ -314,7 +314,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_nn_file_supports_no_locale()
+    void getSupportedLocale_nn_file_supports_no_locale()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_nn.properties" );
@@ -329,7 +329,7 @@ public class LocaleServiceImplTest
     }
 
     @Test
-    public void getSupportedLocale_nb_file_does_not_support_nn_locale()
+    void getSupportedLocale_nb_file_does_not_support_nn_locale()
     {
         final ResourceKeys resourceKeys =
             ResourceKeys.from( "myapplication:/site/i18n/myphrases.properties", "myapplication:/site/i18n/myphrases_nn.properties" );

@@ -9,19 +9,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class InputTypeNameTest
 {
     @Test
-    public void toString_keeps_case()
+    void toString_keeps_case()
     {
         assertEquals( "TextArea", InputTypeName.from( "TextArea" ).toString() );
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( InputTypeName.class ).withIgnoredFields( "name" ).withNonnullFields( "lowercaseName" ).verify();
     }
 
     @Test
-    public void case_insensitive()
+    void case_insensitive()
     {
         assertEquals( InputTypeName.from( "htmlarea" ), InputTypeName.from( "HtmlArea" ) );
     }

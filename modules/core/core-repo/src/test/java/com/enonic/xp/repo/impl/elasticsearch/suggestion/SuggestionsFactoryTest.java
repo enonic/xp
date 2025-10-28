@@ -21,18 +21,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SuggestionsFactoryTest
+class SuggestionsFactoryTest
 {
     private SuggestionsFactory suggestionsFactory;
 
     @BeforeEach
-    public void init()
+    void init()
     {
         suggestionsFactory = new SuggestionsFactory();
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final Suggest suggest = new Suggest();
         final Suggestions suggestions = SuggestionsFactory.create( suggest );
@@ -42,7 +42,7 @@ public class SuggestionsFactoryTest
     }
 
     @Test
-    public void testTermSuggestion()
+    void testTermSuggestion()
     {
         final Option option1 = Mockito.mock( Option.class );
         Mockito.when( option1.getText() ).thenReturn( new Text( "option1" ) );

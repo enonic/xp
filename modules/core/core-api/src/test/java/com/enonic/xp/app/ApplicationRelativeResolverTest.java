@@ -9,10 +9,10 @@ import com.enonic.xp.schema.mixin.MixinName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ApplicationRelativeResolverTest
+class ApplicationRelativeResolverTest
 {
     @Test
-    public void toContentTypeName()
+    void toContentTypeName()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
         ContentTypeName contentTypeName = resolver.toContentTypeName( "bbb" );
@@ -23,14 +23,14 @@ public class ApplicationRelativeResolverTest
     }
 
     @Test
-    public void toContentTypeNameEmpty()
+    void toContentTypeNameEmpty()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
         assertThrows(IllegalArgumentException.class, () -> resolver.toContentTypeName( "aaa" ) );
     }
 
     @Test
-    public void toMixinName()
+    void toMixinName()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( ApplicationKey.from( "aaa" ) );
         MixinName mixinName = resolver.toMixinName( "bbb" );
@@ -41,7 +41,7 @@ public class ApplicationRelativeResolverTest
     }
 
     @Test
-    public void toMixinNameEmpty()
+    void toMixinNameEmpty()
     {
         final ApplicationRelativeResolver resolver = new ApplicationRelativeResolver( null );
         assertThrows(IllegalArgumentException.class, () -> resolver.toMixinName( "aaa" ) );

@@ -25,20 +25,18 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RepoDumperTest
+class RepoDumperTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         createDefaultRootNode();
     }
 
     @Test
-    public void children()
-        throws Exception
+    void children()
     {
         final Node node1 = createNode( NodePath.ROOT, "myNode" );
         createNode( node1.path(), "myChild" );
@@ -55,8 +53,7 @@ public class RepoDumperTest
     }
 
     @Test
-    public void node_versions_stored()
-        throws Exception
+    void node_versions_stored()
     {
         final Node node1 = createNode( NodePath.ROOT, "myNode" );
 
@@ -74,8 +71,7 @@ public class RepoDumperTest
     }
 
     @Test
-    public void binaries()
-        throws Exception
+    void binaries()
     {
         final BinaryReference fiskRef = BinaryReference.from( "fisk" );
 
@@ -99,8 +95,7 @@ public class RepoDumperTest
     }
 
     @Test
-    public void binaries_with_versions()
-        throws Exception
+    void binaries_with_versions()
     {
         final BinaryReference ref1 = BinaryReference.from( "fisk" );
         final BinaryReference ref2 = BinaryReference.from( "fisk2" );
@@ -132,8 +127,7 @@ public class RepoDumperTest
     }
 
     @Test
-    public void versions_max_age_filter()
-        throws Exception
+    void versions_max_age_filter()
     {
         final Node node1 = createNode( NodePath.ROOT, "myNode" );
         createNode( node1.path(), "myChild" );

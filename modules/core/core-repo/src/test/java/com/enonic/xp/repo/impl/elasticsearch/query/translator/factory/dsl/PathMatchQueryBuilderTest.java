@@ -5,32 +5,32 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 
-public class PathMatchQueryBuilderTest
+class PathMatchQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void simple()
+    void simple()
         throws Exception
     {
         test( "simple" );
     }
 
     @Test
-    public void minimum_match()
+    void minimum_match()
         throws Exception
     {
         test( "minimum_match" );
     }
 
     @Test
-    public void empty_path()
+    void empty_path()
         throws Exception
     {
         test( "empty_path" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );

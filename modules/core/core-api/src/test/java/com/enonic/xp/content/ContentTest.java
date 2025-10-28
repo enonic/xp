@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ContentTest
+class ContentTest
 {
     private static final ContentPath MY_CONTENT_PATH = ContentPath.from( "/mycontent" );
 
     @Test
-    public void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
+    void given_array_when_setting_data_of_another_type_to_array_then_exception_is_thrown()
     {
         // setup
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
@@ -41,7 +41,7 @@ public class ContentTest
     }
 
     @Test
-    public void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
+    void given_a_controller_and_a_pageTemplate_when_build_then_IllegalArgumentException_is_thrown()
     {
         assertThrows(IllegalArgumentException.class, () -> {
             Content.create().
@@ -55,7 +55,7 @@ public class ContentTest
     }
 
     @Test
-    public void given_no_workflow_info_default_state_should_be_ready_with_no_checks()
+    void given_no_workflow_info_default_state_should_be_ready_with_no_checks()
     {
         Content content = Content.create().path( MY_CONTENT_PATH ).build();
         assertEquals( WorkflowState.READY, content.getWorkflowInfo().getState() );

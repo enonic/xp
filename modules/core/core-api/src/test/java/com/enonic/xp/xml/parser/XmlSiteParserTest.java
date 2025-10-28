@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class XmlSiteParserTest
+class XmlSiteParserTest
 {
     private final XmlTestHelper xmlTestHelper;
 
@@ -38,7 +38,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlDeserialization()
+    void testSiteXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-site.xml" );
 
@@ -59,7 +59,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testEmptySiteXmlDeserialization()
+    void testEmptySiteXmlDeserialization()
     {
         final String xml = loadTestXml( "empty-site.xml" );
 
@@ -80,7 +80,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlDeserializationWithMappings()
+    void testSiteXmlDeserializationWithMappings()
     {
         final String xml = loadTestXml( "serialized-site-with-mappings.xml" );
 
@@ -119,7 +119,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlDeserializationWithMappingFilters()
+    void testSiteXmlDeserializationWithMappingFilters()
     {
         final String xml = loadTestXml( "serialized-site-with-mapping-filters.xml" );
 
@@ -148,7 +148,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlDeserializationWithMappingService()
+    void testSiteXmlDeserializationWithMappingService()
     {
         final String xml = loadTestXml( "serialized-site-with-mapping-service.xml" );
 
@@ -176,7 +176,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlDeserializationWithMappingServiceInvalid()
+    void testSiteXmlDeserializationWithMappingServiceInvalid()
     {
         final String xml = loadTestXml( "serialized-site-with-mapping-service-invalid.xml" );
 
@@ -193,7 +193,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlWithUtf8BomEncoding()
+    void testSiteXmlWithUtf8BomEncoding()
     {
         final String xml = loadTestFile( "utf8bom.xml", StandardCharsets.UTF_8 );
 
@@ -214,7 +214,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlWithUtf16LeBomEncoding()
+    void testSiteXmlWithUtf16LeBomEncoding()
     {
         final String xml = loadTestFile( "utf16lebom.xml", StandardCharsets.UTF_16LE );
 
@@ -235,7 +235,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlWithUtf16BeBomEncoding()
+    void testSiteXmlWithUtf16BeBomEncoding()
     {
         final String xml = loadTestFile( "utf16bebom.xml", StandardCharsets.UTF_16BE );
 
@@ -255,7 +255,7 @@ public class XmlSiteParserTest
     }
 
     @Test
-    public void testSiteXmlWithApis()
+    void testSiteXmlWithApis()
     {
         final String xml = loadTestXml( "serialized-site-with-apis.xml" );
 

@@ -1,10 +1,10 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
-import jakarta.servlet.ServletContext;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.ServletContext;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
@@ -38,7 +38,7 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     }
 
     @Test
-    public void testCreate()
+    void testCreate()
     {
         final D def = newDefinition();
         assertEquals( 10, def.getOrder() );
@@ -49,7 +49,7 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     }
 
     @Test
-    public void testMatches()
+    void testMatches()
     {
         final ResourceDefinitionImpl def = (ResourceDefinitionImpl) newDefinition();
         assertFalse( def.matches( "/a/b/c" ) );
@@ -68,7 +68,7 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
         throws Exception;
 
     @Test
-    public void testInitDestroy()
+    void testInitDestroy()
         throws Exception
     {
         final D def = newDefinition();
@@ -91,7 +91,7 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     }
 
     @Test
-    public void testInitException()
+    void testInitException()
         throws Exception
     {
         final D def = newDefinition();

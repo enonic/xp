@@ -20,7 +20,7 @@ import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.TEXT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IssueCommentDataSerializerTest
+class IssueCommentDataSerializerTest
 {
 
     private IssueCommentDataSerializer serializer;
@@ -30,7 +30,7 @@ public class IssueCommentDataSerializerTest
     private Instant createdTime;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         serializer = new IssueCommentDataSerializer();
         creator = PrincipalKey.from( "user:store:one" );
@@ -38,7 +38,7 @@ public class IssueCommentDataSerializerTest
     }
 
     @Test
-    public void testCreate()
+    void testCreate()
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().
             issue( IssueId.create() ).
@@ -58,7 +58,7 @@ public class IssueCommentDataSerializerTest
     }
 
     @Test
-    public void testUpdate()
+    void testUpdate()
     {
         PropertyTree data = new PropertyTree();
         data.addString( TEXT, "Comment text..." );
@@ -69,7 +69,7 @@ public class IssueCommentDataSerializerTest
     }
 
     @Test
-    public void testDeserialize()
+    void testDeserialize()
     {
         PropertyTree data = new PropertyTree();
         data.addString( TEXT, "Comment text..." );

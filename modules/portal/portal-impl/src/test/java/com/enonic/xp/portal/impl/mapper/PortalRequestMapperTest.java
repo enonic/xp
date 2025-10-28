@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
-public class PortalRequestMapperTest
+class PortalRequestMapperTest
 {
     private PortalRequest portalRequest;
 

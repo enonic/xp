@@ -12,12 +12,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FilterBuilderFactoryTest
+class FilterBuilderFactoryTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void createStringValueFilter()
-        throws Exception
+    void createStringValueFilter()
     {
         final ValueFilter queryFilter = ValueFilter.create().
             fieldName( "myField" ).
@@ -33,8 +32,7 @@ public class FilterBuilderFactoryTest
     }
 
     @Test
-    public void createNumberValueFilter()
-        throws Exception
+    void createNumberValueFilter()
     {
         final ValueFilter queryFilter = ValueFilter.create().
             fieldName( "myField" ).
@@ -50,8 +48,7 @@ public class FilterBuilderFactoryTest
     }
 
     @Test
-    public void createExistsFilter()
-        throws Exception
+    void createExistsFilter()
     {
         final ExistsFilter queryFilter = ExistsFilter.create().
             fieldName( "myField" ).
@@ -65,8 +62,7 @@ public class FilterBuilderFactoryTest
     }
 
     @Test
-    public void createBooleanFilter()
-        throws Exception
+    void createBooleanFilter()
     {
         final BooleanFilter.Builder builder = BooleanFilter.create();
 

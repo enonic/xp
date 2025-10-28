@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 
-public class GetOutboundDependenciesHandlerTest
+class GetOutboundDependenciesHandlerTest
     extends BaseContentHandlerTest
 {
 
@@ -17,7 +17,7 @@ public class GetOutboundDependenciesHandlerTest
         ContentIds.from( "d898972d-f1eb-40a8-a7f2-16abd4c105da", "9efadb7b-bb14-4c74-82ec-cec95069d0c2" );
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         final Content content = Mockito.mock( Content.class );
 
@@ -26,7 +26,7 @@ public class GetOutboundDependenciesHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         Mockito.when( this.contentService.getOutboundDependencies( Mockito.any( ContentId.class ) ) ).thenReturn( CONTENT_IDS );
 
@@ -34,7 +34,7 @@ public class GetOutboundDependenciesHandlerTest
     }
 
     @Test
-    public void testGetOutboundDependencies_ById()
+    void testGetOutboundDependencies_ById()
     {
         Mockito.when( contentService.getOutboundDependencies( Mockito.any( ContentId.class ) ) ).thenReturn( CONTENT_IDS );
 
@@ -42,7 +42,7 @@ public class GetOutboundDependenciesHandlerTest
     }
 
     @Test
-    public void testGetOutboundDependencies_ByPath()
+    void testGetOutboundDependencies_ByPath()
     {
         Mockito.when( contentService.getOutboundDependencies( Mockito.any( ContentId.class ) ) ).thenReturn( CONTENT_IDS );
 

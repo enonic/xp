@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DateTimeTypeTest
+class DateTimeTypeTest
     extends BaseInputTypeTest
 {
     public DateTimeTypeTest()
@@ -21,19 +21,19 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "DateTime", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "DateTime", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = newEmptyConfig();
         final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00" ), config );
@@ -43,7 +43,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCreateProperty_withTimezone()
+    void testCreateProperty_withTimezone()
     {
         final InputTypeConfig config = newFullConfig();
         final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00Z" ), config );
@@ -53,7 +53,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T05:03:45" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -71,7 +71,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue_withTimezone_format1()
+    void testCreateDefaultValue_withTimezone_format1()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45Z" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -89,7 +89,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue_withTimezone_format2_plus()
+    void testCreateDefaultValue_withTimezone_format2_plus()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45+03:00" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -107,7 +107,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue_withTimezone_format2_minus()
+    void testCreateDefaultValue_withTimezone_format2_minus()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T10:03:45-03:00" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -124,7 +124,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue_withTimezone_format2_day_change()
+    void testCreateDefaultValue_withTimezone_format2_day_change()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-08-16T22:03:45-03:00" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -142,7 +142,7 @@ public class DateTimeTypeTest
 
 
     @Test
-    public void testCreateDefaultValue_invalid()
+    void testCreateDefaultValue_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "2014-18-16T05:03:45" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -155,7 +155,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testRelativeDefaultValue_only_relative_date_exists()
+    void testRelativeDefaultValue_only_relative_date_exists()
     {
 
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d" ).build();
@@ -167,7 +167,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testRelativeDefaultValue_only_relative_time_exists()
+    void testRelativeDefaultValue_only_relative_time_exists()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1hour -5minutes -36s" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -183,7 +183,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testRelativeDefaultValue_date_time()
+    void testRelativeDefaultValue_date_time()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1h" ).
             inputTypeConfig( InputTypeConfig.create().
@@ -199,7 +199,7 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testRelativeDefaultValue_date_time_invalid()
+    void testRelativeDefaultValue_date_time_invalid()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.DATE_TIME, "+1year -5months -36d +2minutes -1haaur" ).build();
 
@@ -207,21 +207,21 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testValidate_dateTime()
+    void testValidate_dateTime()
     {
         final InputTypeConfig config = newEmptyConfig();
         this.type.validate( dateTimeProperty(), config );
     }
 
     @Test
-    public void testValidate_localDateTime()
+    void testValidate_localDateTime()
     {
         final InputTypeConfig config = newEmptyConfig();
         this.type.validate( localDateTimeProperty(), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));

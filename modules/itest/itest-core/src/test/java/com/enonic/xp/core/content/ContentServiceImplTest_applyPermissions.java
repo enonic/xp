@@ -32,13 +32,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class ContentServiceImplTest_applyPermissions
+class ContentServiceImplTest_applyPermissions
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void content_not_found()
-        throws Exception
+    void content_not_found()
     {
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
             .contentId( ContentId.from( "id1" ) )
@@ -49,8 +48,7 @@ public class ContentServiceImplTest_applyPermissions
     }
 
     @Test
-    public void success()
-        throws Exception
+    void success()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -79,8 +77,7 @@ public class ContentServiceImplTest_applyPermissions
     }
 
     @Test
-    public void no_rights()
-        throws Exception
+    void no_rights()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )

@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ApplicationNameResolverTest
+class ApplicationNameResolverTest
     extends BundleBasedTest
 {
     @Test
-    public void valid_bundle()
+    void valid_bundle()
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", true ) );
@@ -29,8 +29,7 @@ public class ApplicationNameResolverTest
     }
 
     @Test
-    public void invalid_bundle()
-        throws Exception
+    void invalid_bundle()
     {
         final ByteSource source = ByteSource.wrap( "abc".getBytes() );
         assertThrows(IOException.class, () -> {
@@ -41,7 +40,7 @@ public class ApplicationNameResolverTest
     }
 
     @Test
-    public void not_application()
+    void not_application()
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", false ) );
@@ -51,7 +50,7 @@ public class ApplicationNameResolverTest
 
 
     @Test
-    public void has_application_header()
+    void has_application_header()
         throws Exception
     {
         final ByteSource source = wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ) );

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class HtmlAreaTypeTest
+class HtmlAreaTypeTest
     extends BaseInputTypeTest
 {
     public HtmlAreaTypeTest()
@@ -21,19 +21,19 @@ public class HtmlAreaTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "HtmlArea", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "HtmlArea", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "test"), config );
@@ -43,7 +43,7 @@ public class HtmlAreaTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.HTML_AREA, "<p>test</p>" ).build();
 
@@ -55,14 +55,14 @@ public class HtmlAreaTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( stringProperty( "test" ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));

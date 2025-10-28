@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FormOptionSetTest
+class FormOptionSetTest
 {
     private FormOptionSet set;
 
     @BeforeEach
-    public void before()
+    void before()
     {
         this.set = FormOptionSet.create().
             name( "myOptionSet" ).
@@ -39,7 +39,7 @@ public class FormOptionSetTest
     }
 
     @Test
-    public void testConstructor()
+    void testConstructor()
     {
         assertEquals( "myOptionSet", this.set.getName() );
         assertEquals( "My option set", this.set.getLabel() );
@@ -69,7 +69,7 @@ public class FormOptionSetTest
     }
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         final FormOptionSet copy = (FormOptionSet) this.set.copy();
 

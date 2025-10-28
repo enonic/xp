@@ -8,7 +8,7 @@ import com.enonic.xp.support.XmlTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XmlApplicationParserTest
+class XmlApplicationParserTest
 {
     private final XmlTestHelper xmlTestHelper;
 
@@ -26,7 +26,7 @@ public class XmlApplicationParserTest
     }
 
     @Test
-    public void testSiteXmlDeserialization()
+    void testSiteXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-application.xml" );
 

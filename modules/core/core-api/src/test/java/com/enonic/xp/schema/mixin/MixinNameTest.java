@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class MixinNameTest
+class MixinNameTest
 {
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( MixinName.class ).usingGetClass().withNonnullFields( "applicationKey", "localName" ).verify();
     }

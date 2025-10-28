@@ -11,7 +11,7 @@ import com.enonic.xp.security.Role;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetMembershipsHandlerTest
+class GetMembershipsHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -26,7 +26,7 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final Role role = TestDataFixtures.getTestRole();
         final Group group = TestDataFixtures.getTestGroup();
@@ -39,7 +39,7 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
-    public void testGetUserMemberships()
+    void testGetUserMemberships()
     {
         final Group group = TestDataFixtures.getTestGroup();
         final PrincipalKeys principalKeys = PrincipalKeys.from( group.getKey() );
@@ -54,7 +54,7 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
-    public void testGetTransitiveUserMemberships()
+    void testGetTransitiveUserMemberships()
     {
         final Group group = TestDataFixtures.getTestGroup();
         final PrincipalKeys principalKeys = PrincipalKeys.from( group.getKey() );
@@ -69,7 +69,7 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
-    public void testGetUserMembershipsWithRoleAndGroup()
+    void testGetUserMembershipsWithRoleAndGroup()
     {
         final Role role = TestDataFixtures.getTestRole();
         final Group group = TestDataFixtures.getTestGroup();
@@ -83,7 +83,7 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
-    public void testGetNonExistingMembership()
+    void testGetNonExistingMembership()
     {
         Mockito.when( securityService.getPrincipals( Mockito.any() ) ).thenReturn( Principals.empty() );
 
@@ -91,7 +91,7 @@ public class GetMembershipsHandlerTest
     }
 
     @Test
-    public void testGetMembershipsWithoutKey()
+    void testGetMembershipsWithoutKey()
     {
         Mockito.when( securityService.getPrincipals( Mockito.any() ) ).thenReturn( Principals.empty() );
 

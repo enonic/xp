@@ -4,19 +4,17 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.script.impl.AbstractScriptTest;
 
-public class ScriptLoggerTest
+class ScriptLoggerTest
     extends AbstractScriptTest
 {
     @Test
-    public void testLog()
-        throws Exception
+    void testLog()
     {
         runTestScript( "logging/log-test.js" );
     }
 
     @Test
-    public void testFormat()
-        throws Exception
+    void testFormat()
     {
         runTestScript( "logging/format-test.js" );
     }

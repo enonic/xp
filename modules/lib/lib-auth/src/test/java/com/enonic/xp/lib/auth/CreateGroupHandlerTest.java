@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class CreateGroupHandlerTest
+class CreateGroupHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -21,14 +21,14 @@ public class CreateGroupHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
         runScript( "/lib/xp/examples/auth/createGroup.js" );
     }
 
     @Test
-    public void testCreateGroup()
+    void testCreateGroup()
     {
         Mockito.when( securityService.createGroup( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestGroup() );
 

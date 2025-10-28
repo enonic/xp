@@ -31,7 +31,6 @@ class ApplicationRepoServiceImplTest
 
     @BeforeEach
     void setUp()
-        throws Exception
     {
         this.service = new ApplicationRepoServiceImpl( this.nodeService );
     }

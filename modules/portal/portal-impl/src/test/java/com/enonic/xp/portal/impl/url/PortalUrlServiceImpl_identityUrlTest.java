@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_identityUrlTest
+class PortalUrlServiceImpl_identityUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
-    public void createUrl()
+    void createUrl()
     {
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
@@ -30,7 +30,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
-    public void createUrl_withRedirect()
+    void createUrl_withRedirect()
     {
         when( redirectChecksumService.generateChecksum( "https://example.com" ) ).thenReturn( "some-great-checksum" );
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() )
@@ -42,7 +42,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
-    public void createUrl_withContentPath()
+    void createUrl_withContentPath()
     {
         final IdentityUrlParams params = new IdentityUrlParams().contextPathType( ContextPathType.RELATIVE.getValue() )
             .idProviderKey( IdProviderKey.system() )
@@ -53,7 +53,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
-    public void createUrl_normalizedCharacters()
+    void createUrl_normalizedCharacters()
     {
         this.portalRequest.setContentPath( ContentPath.from( ContentPath.ROOT, "feåtures" ) );
 
@@ -65,7 +65,7 @@ public class PortalUrlServiceImpl_identityUrlTest
 
 
     @Test
-    public void createUrl_withoutFunction()
+    void createUrl_withoutFunction()
     {
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() );
 
@@ -74,7 +74,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
-    public void createUrl_withVirtualHost()
+    void createUrl_withVirtualHost()
     {
         final IdentityUrlParams params = new IdentityUrlParams().idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
 
@@ -120,7 +120,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
-    public void createUrl_absolute()
+    void createUrl_absolute()
     {
         final IdentityUrlParams params =
             new IdentityUrlParams().type( UrlTypeConstants.ABSOLUTE ).idProviderKey( IdProviderKey.system() ).idProviderFunction( "login" );
@@ -134,7 +134,7 @@ public class PortalUrlServiceImpl_identityUrlTest
     }
 
     @Test
-    public void createUrlOnVhostMapping()
+    void createUrlOnVhostMapping()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );

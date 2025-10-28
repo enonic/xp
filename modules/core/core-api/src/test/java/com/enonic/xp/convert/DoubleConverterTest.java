@@ -1,6 +1,6 @@
 package com.enonic.xp.convert;
 
-public class DoubleConverterTest
+class DoubleConverterTest
     extends NumberConverterTest<Double>
 {
     public DoubleConverterTest()

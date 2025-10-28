@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MoveContentParamsTest
+class MoveContentParamsTest
 {
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final ContentId contentId = ContentId.from( "a" );
 
@@ -25,7 +25,7 @@ public class MoveContentParamsTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         assertThrows( NullPointerException.class, () -> MoveContentParams.create().build() );
     }

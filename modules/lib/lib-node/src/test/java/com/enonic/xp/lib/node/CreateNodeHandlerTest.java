@@ -19,7 +19,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public class CreateNodeHandlerTest
+class CreateNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     private void mockCreateNode( final Node node )
@@ -29,7 +29,7 @@ public class CreateNodeHandlerTest
     }
 
     @Test
-    public void example_1()
+    void example_1()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "likes", "plywood" );
@@ -58,7 +58,7 @@ public class CreateNodeHandlerTest
     }
 
     @Test
-    public void example_2()
+    void example_2()
     {
         mockCreateNode( createNode() );
 
@@ -72,7 +72,7 @@ public class CreateNodeHandlerTest
     }
 
     @Test
-    public void example_3()
+    void example_3()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "displayName", "Child node inheriting permissions" );

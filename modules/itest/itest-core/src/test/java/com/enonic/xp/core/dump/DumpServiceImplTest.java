@@ -106,7 +106,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class DumpServiceImplTest
+class DumpServiceImplTest
     extends AbstractNodeTest
 {
     private static final AtomicLong UPDATE_COUNTER = new AtomicLong();
@@ -119,8 +119,7 @@ public class DumpServiceImplTest
     }
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         final RepoConfigurationDynamic repoConfiguration = new RepoConfigurationDynamic();
         repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
@@ -130,8 +129,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void zip_unzip()
-        throws Exception
+    void zip_unzip()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         updateNode( node );
@@ -160,8 +158,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void admin_role_required()
-        throws Exception
+    void admin_role_required()
     {
         assertThrows( RepoDumpException.class, () -> {
             doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
@@ -170,8 +167,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void existing_repositories_deleted()
-        throws Exception
+    void existing_repositories_deleted()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
@@ -190,8 +186,7 @@ public class DumpServiceImplTest
 
 
     @Test
-    public void obsolete_repository_deleted()
-        throws Exception
+    void obsolete_repository_deleted()
     {
         final RepositoryEntry newRepoInsideDump = NodeHelper.runAsAdmin(
             () -> doCreateRepository( RepositoryId.from( "new-repo-inside-dump" ), false ) );
@@ -229,8 +224,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void repositories_loaded()
-        throws Exception
+    void repositories_loaded()
     {
         final Repositories repositoriesBefore = NodeHelper.runAsAdmin( this::doListRepositories );
 
@@ -242,8 +236,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void dumpAndLoad()
-        throws Exception
+    void dumpAndLoad()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
@@ -269,8 +262,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void dumpAndLoadWithAttachments()
-        throws Exception
+    void dumpAndLoadWithAttachments()
     {
         NodeHelper.runAsAdmin( () -> {
             final RepositoryEntry newRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "new-repo" ), false ) );
@@ -303,8 +295,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void dump_long_filename()
-        throws Exception
+    void dump_long_filename()
     {
         final String nodeName = "this-is-my-node-with-very-long-filename-more-than-100-characters-yes-it-has-to-be-very-long-indeed-sir";
         final Node node = createNode( NodePath.ROOT, nodeName );
@@ -324,8 +315,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void verify_result()
-        throws Exception
+    void verify_result()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         updateNode( node );
@@ -345,8 +335,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void root_node_gets_correct_properties()
-        throws Exception
+    void root_node_gets_correct_properties()
     {
         final AccessControlList newRepoACL =
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allowAll().build() ).build();
@@ -369,8 +358,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void branch_created_if_missing()
-        throws Exception
+    void branch_created_if_missing()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Branch branch = WS_DEFAULT;
@@ -391,8 +379,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void versions()
-        throws Exception
+    void versions()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Node updatedNode = updateNode( node );
@@ -416,8 +403,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void same_version_in_different_branches_not_duplicated()
-        throws Exception
+    void same_version_in_different_branches_not_duplicated()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
@@ -442,8 +428,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void different_versions_in_different_branches_not_duplicated()
-        throws Exception
+    void different_versions_in_different_branches_not_duplicated()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         updateNode( node );
@@ -465,8 +450,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void active_versions_after_load()
-        throws Exception
+    void active_versions_after_load()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
@@ -490,8 +474,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void active_versions_in_versions_list()
-        throws Exception
+    void active_versions_in_versions_list()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
@@ -515,8 +498,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void version_ids_should_stay_the_same_if_no_changes()
-        throws Exception
+    void version_ids_should_stay_the_same_if_no_changes()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
@@ -549,8 +531,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void binaries()
-        throws Exception
+    void binaries()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "binaryRef" );
@@ -570,8 +551,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void limit_number_of_versions()
-        throws Exception
+    void limit_number_of_versions()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
 
@@ -590,7 +570,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void number_of_versions_in_other_repo()
+    void number_of_versions_in_other_repo()
     {
         final RepositoryEntry myRepo = NodeHelper.runAsAdmin( () -> doCreateRepository( RepositoryId.from( "myrepo" ), false ) );
 
@@ -629,8 +609,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void binaries_in_versions()
-        throws Exception
+    void binaries_in_versions()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "binaryRef" );
@@ -660,7 +639,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void dumpAndLoadListener()
+    void dumpAndLoadListener()
     {
         createNode( NodePath.ROOT, "myNode" );
 
@@ -697,8 +676,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void skip_versions()
-        throws Exception
+    void skip_versions()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Node updatedNode = updateNode( node );
@@ -718,7 +696,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void upgrade_up_to_date()
+    void upgrade_up_to_date()
     {
         NodeHelper.runAsAdmin( () -> {
             doDump( SystemDumpParams.create().dumpName( "testDump" ).build() );
@@ -731,7 +709,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void upgrade()
+    void upgrade()
         throws Exception
     {
         final String dumpName = "testDump";
@@ -757,7 +735,7 @@ public class DumpServiceImplTest
     }
 
     @Test
-    public void loadWithUpgrade()
+    void loadWithUpgrade()
         throws Exception
     {
         final String dumpName = "testDump";

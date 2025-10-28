@@ -15,11 +15,11 @@ import com.enonic.xp.icon.Icon;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ListVirtualApplicationHandlerTest
+class ListVirtualApplicationHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
 
         when( applicationService.list() ).thenAnswer( params -> {

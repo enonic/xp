@@ -14,10 +14,10 @@ import com.enonic.xp.query.expr.ValueExpr;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FunctionExpressionBuilderTest
+class FunctionExpressionBuilderTest
 {
     @Test
-    public void test_fulltext()
+    void test_fulltext()
     {
         List<ValueExpr> arguments =
             List.of( ValueExpr.string( "myField" ), ValueExpr.string( "mySearchString" ), ValueExpr.string( "OR" ) );
@@ -28,7 +28,7 @@ public class FunctionExpressionBuilderTest
     }
 
     @Test
-    public void test_ngram()
+    void test_ngram()
     {
         final QueryBuilder nGram = FunctionExpressionBuilder.build(
             FunctionExpr.from( "ngram", ValueExpr.string( "fiskebolle" ), ValueExpr.string( "Her er teksten min" ) ) );
@@ -37,7 +37,7 @@ public class FunctionExpressionBuilderTest
     }
 
     @Test
-    public void test_path_match()
+    void test_path_match()
     {
         final QueryBuilder pathMatch = FunctionExpressionBuilder.build(
             FunctionExpr.from( "pathMatch", ValueExpr.string( "myPath" ), ValueExpr.string( "/fisk" ), ValueExpr.number( 3 ) ) );
@@ -46,7 +46,7 @@ public class FunctionExpressionBuilderTest
     }
 
     @Test
-    public void test_range()
+    void test_range()
     {
         final QueryBuilder pathMatch = FunctionExpressionBuilder.build(
             FunctionExpr.from( "range", ValueExpr.string( "MyField" ), ValueExpr.instant( "1975-08-01T10:00Z" ),
@@ -56,7 +56,7 @@ public class FunctionExpressionBuilderTest
     }
 
     @Test
-    public void test_stemmed()
+    void test_stemmed()
     {
         final QueryBuilder stemmed = FunctionExpressionBuilder.build(
             FunctionExpr.from( "stemmed", ValueExpr.string( "field" ), ValueExpr.string( "organize" ), ValueExpr.string( "OR" ),
@@ -65,7 +65,7 @@ public class FunctionExpressionBuilderTest
     }
 
     @Test
-    public void test_unsupported()
+    void test_unsupported()
     {
         assertThrows(UnsupportedOperationException.class, () -> FunctionExpressionBuilder.build(
             FunctionExpr.from( "unsupported", ValueExpr.string( "field" ), ValueExpr.string( "organize" ), ValueExpr.string( "OR" ),

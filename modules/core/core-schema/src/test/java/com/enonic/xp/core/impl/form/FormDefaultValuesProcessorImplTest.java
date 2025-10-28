@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FormDefaultValuesProcessorImplTest
+class FormDefaultValuesProcessorImplTest
 {
 
     private void defaultValue_string( final InputTypeName inputTypeName )
@@ -52,7 +52,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void defaultValue_string_nonEmptyData()
+    void defaultValue_string_nonEmptyData()
     {
         Input input = Input.create().
             name( "testInput" ).
@@ -74,19 +74,19 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void defaultValue_combobox()
+    void defaultValue_combobox()
     {
         this.defaultValue_string( InputTypeName.COMBO_BOX );
     }
 
     @Test
-    public void defaultValue_radio()
+    void defaultValue_radio()
     {
         this.defaultValue_string( InputTypeName.RADIO_BUTTON );
     }
 
     @Test
-    public void defaultValue_checkbox()
+    void defaultValue_checkbox()
     {
         Input input = Input.create().
             name( "testInput" ).
@@ -107,7 +107,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void defaultValue_checkbox_invalid()
+    void defaultValue_checkbox_invalid()
     {
         Input input = Input.create().
             name( "testInput" ).
@@ -128,7 +128,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testOptionSetItemsAreDefaulted()
+    void testOptionSetItemsAreDefaulted()
     {
         FormOptionSet.Builder myOptionSet =
             FormOptionSet.create().required( false ).name( "myOptionSet" ).occurrences( Occurrences.create( 1, 1 ) );
@@ -163,7 +163,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testOptionSetIsNotDefaultedForUnselected()
+    void testOptionSetIsNotDefaultedForUnselected()
     {
         FormOptionSet.Builder myOptionSet =
             FormOptionSet.create().required( false ).name( "myOptionSet" ).occurrences( Occurrences.create( 1, 1 ) );
@@ -202,7 +202,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testDefaultValueForInputAndItemSetWithOccurrences()
+    void testDefaultValueForInputAndItemSetWithOccurrences()
     {
         Input input = Input.create().
             name( "testInput" ).
@@ -233,7 +233,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testDefaultValueForInputWithOccurrences()
+    void testDefaultValueForInputWithOccurrences()
     {
         Input input = Input.create().
             name( "testInput" ).
@@ -258,7 +258,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testOptionSetWithDefaultValueAndMinOccurrencesMoreThanZero()
+    void testOptionSetWithDefaultValueAndMinOccurrencesMoreThanZero()
     {
         FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
             required( false ).
@@ -303,7 +303,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testOptionSetWithMinOccurrencesEqualZero()
+    void testOptionSetWithMinOccurrencesEqualZero()
     {
         FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
             required( false ).
@@ -325,7 +325,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testOptionSetWithMinOccurrencesMoreZero()
+    void testOptionSetWithMinOccurrencesMoreZero()
     {
         FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
             required( false ).
@@ -353,7 +353,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testItemSetWithMinOccurrencesMoreZero()
+    void testItemSetWithMinOccurrencesMoreZero()
     {
         FormOptionSet.Builder checkOptionSet = FormOptionSet.create().
             required( false ).
@@ -385,7 +385,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testItemSetWithMinOccurrencesMoreEqualZero()
+    void testItemSetWithMinOccurrencesMoreEqualZero()
     {
         FormItemSet.Builder checkItemSet = FormItemSet.create().
             name( "checkItemSet" ).
@@ -413,7 +413,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testItemSetWithMinOccurrencesGreaterMoreZero()
+    void testItemSetWithMinOccurrencesGreaterMoreZero()
     {
         FormItemSet.Builder itemSet = FormItemSet.create().
             name( "rootItemSet" ).
@@ -452,7 +452,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testFieldSet()
+    void testFieldSet()
     {
         FieldSet.Builder fieldSet = FieldSet.create()
             .label( "FieldSet" )
@@ -493,7 +493,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testItemSetWithOptionSetWithMinOccurrencesMoreEqualZero()
+    void testItemSetWithOptionSetWithMinOccurrencesMoreEqualZero()
     {
         FormItemSet.Builder checkItemSet = FormItemSet.create().
             name( "checkItemSet" ).
@@ -518,7 +518,7 @@ public class FormDefaultValuesProcessorImplTest
     }
 
     @Test
-    public void testOptionSetWithItemSetWithMinOccurrencesMoreEqualZero()
+    void testOptionSetWithItemSetWithMinOccurrencesMoreEqualZero()
     {
         final Form form = Form.create().
             addFormItem( FormOptionSet.create().

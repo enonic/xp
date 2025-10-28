@@ -11,27 +11,24 @@ import com.enonic.xp.macro.Macro;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HtmlMacroEvaluatorTest
+class HtmlMacroEvaluatorTest
 {
     @Test
-    public void macroInTag()
-        throws Exception
+    void macroInTag()
     {
         String result = testMacro( "<p>[macro test=\"123\"/]</p>", 1 );
         assertEquals( "<p>{macro test=\"123\"/}</p>", result );
     }
 
     @Test
-    public void macroInTagMultiAttr()
-        throws Exception
+    void macroInTagMultiAttr()
     {
         String result = testMacro( "<p class=\"foo\" title = \"bar\" >[macro test=\"123\"/]</p>", 1 );
         assertEquals( "<p class=\"foo\" title = \"bar\" >{macro test=\"123\"/}</p>", result );
     }
 
     @Test
-    public void macroInTagMultiValues()
-        throws Exception
+    void macroInTagMultiValues()
     {
         String result =
             testMacro( "<p class=\"foo\" title = \"bar\" >[macro param1=\"123\" param1=\"456\" param1=\"789\" param2=\"abc\"/]</p>", 1 );
@@ -40,112 +37,98 @@ public class HtmlMacroEvaluatorTest
     }
 
     @Test
-    public void macroSingleQuoteAttr()
-        throws Exception
+    void macroSingleQuoteAttr()
     {
         String result = testMacro( "<p class='foo' title='bar'>[macro test=\"123\"/]</p>", 1 );
         assertEquals( "<p class='foo' title='bar'>{macro test=\"123\"/}</p>", result );
     }
 
     @Test
-    public void macroUnquotedAttr()
-        throws Exception
+    void macroUnquotedAttr()
     {
         String result = testMacro( "<p checked title = bar readonly  class=foo>[macro test=\"123\"/]</p>", 1 );
         assertEquals( "<p checked title = bar readonly  class=foo>{macro test=\"123\"/}</p>", result );
     }
 
     @Test
-    public void macroUnquotedAttr2()
-        throws Exception
+    void macroUnquotedAttr2()
     {
         String result = testMacro( "<p checked/>[macro test=\"123\"/]</p>", 1 );
         assertEquals( "<p checked/>{macro test=\"123\"/}</p>", result );
     }
 
     @Test
-    public void selfClosingTag()
-        throws Exception
+    void selfClosingTag()
     {
         String result = testMacro( "<button/>[macro test=\"123\"/]  <span /> [macro test=\"123\"/]", 2 );
         assertEquals( "<button/>{macro test=\"123\"/}  <span /> {macro test=\"123\"/}", result );
     }
 
     @Test
-    public void macroInTags()
-        throws Exception
+    void macroInTags()
     {
         String result = testMacro( "<p>[macro test=\"123\"/]</p>  <span class=\"foo\"> [mymacro/]</span>", 2 );
         assertEquals( "<p>{macro test=\"123\"/}</p>  <span class=\"foo\"> {mymacro/}</span>", result );
     }
 
     @Test
-    public void macroInAttribute()
-        throws Exception
+    void macroInAttribute()
     {
         String result = testMacro( "<p test='[macro test=\"123\"/]'></p>", 0 );
         assertEquals( "<p test='[macro test=\"123\"/]'></p>", result );
     }
 
     @Test
-    public void nonClosingTags()
-        throws Exception
+    void nonClosingTags()
     {
         String result = testMacro( "<p><img  src  = \"img.jpg\">[macro test=\"123\"/]<span>  <span class=\"foo\"> [mymacro/]<img>", 2 );
         assertEquals( "<p><img  src  = \"img.jpg\">{macro test=\"123\"/}<span>  <span class=\"foo\"> {mymacro/}<img>", result );
     }
 
     @Test
-    public void ignoreEscapedMacro()
-        throws Exception
+    void ignoreEscapedMacro()
     {
         String result = testMacro( "<p>\\[macro test=\"123\"/]'></p>", 0 );
         assertEquals( "<p>\\[macro test=\"123\"/]'></p>", result );
     }
 
     @Test
-    public void macroInComments()
-        throws Exception
+    void macroInComments()
     {
         String result = testMacro( "<p><!-- [macro test=\"123\"/] --></p>", 0 );
         assertEquals( "<p><!-- [macro test=\"123\"/] --></p>", result );
     }
 
     @Test
-    public void macroInComments2()
-        throws Exception
+    void macroInComments2()
     {
         String result = testMacro( "<p><!-- -- - [macro test=\"123\"/] --></p>[macro2/]<!---->[macro3/]", 2 );
         assertEquals( "<p><!-- -- - [macro test=\"123\"/] --></p>{macro2/}<!---->{macro3/}", result );
     }
 
     @Test
-    public void docType()
-        throws Exception
+    void docType()
     {
         String result = testMacro( "<!DOCTYPE html><p>[macro test=\"123\"/]</p>", 1 );
         assertEquals( "<!DOCTYPE html><p>{macro test=\"123\"/}</p>", result );
     }
 
     @Test
-    public void cdata()
-        throws Exception
+    void cdata()
     {
         String result = testMacro( "<![CDATA[[macro test=\"123\"/]]]>[macro2/]", 1 );
         assertEquals( "<![CDATA[[macro test=\"123\"/]]]>{macro2/}", result );
     }
 
     @Test
-    public void invalidComments()
-        throws Exception
+    void invalidComments()
     {
         String result = testMacro( "<!wrong>[macro1/]</some <>[macro2/]", 2 );
         assertEquals( "<!wrong>{macro1/}</some <>{macro2/}", result );
     }
 
     @Test
-    public void bigHtmlContent()
-        throws Exception
+    void bigHtmlContent()
     {
         final StringBuilder input = new StringBuilder();
         final StringBuilder expectedResult = new StringBuilder();
@@ -159,7 +142,6 @@ public class HtmlMacroEvaluatorTest
     }
 
     private String testMacro( final String macroText, final int expectedMacros )
-        throws Exception
     {
         final List<Macro> macros = new ArrayList<>();
         HtmlMacroEvaluator macroService = new HtmlMacroEvaluator( macroText, ( macro ) -> {

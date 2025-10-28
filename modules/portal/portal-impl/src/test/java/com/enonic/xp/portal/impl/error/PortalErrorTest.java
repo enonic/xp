@@ -8,12 +8,11 @@ import com.enonic.xp.web.HttpStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class PortalErrorTest
+class PortalErrorTest
 {
 
     @Test
-    public void testGetStatus()
-        throws Exception
+    void testGetStatus()
     {
         final PortalRequest request = new PortalRequest();
         final PortalError error = PortalError.create().
@@ -24,8 +23,7 @@ public class PortalErrorTest
     }
 
     @Test
-    public void testGetRequest()
-        throws Exception
+    void testGetRequest()
     {
         final PortalRequest request = new PortalRequest();
         final PortalError error = PortalError.create().
@@ -36,8 +34,7 @@ public class PortalErrorTest
     }
 
     @Test
-    public void testGetMessage()
-        throws Exception
+    void testGetMessage()
     {
         final PortalRequest request = new PortalRequest();
         final PortalError error = PortalError.create().
@@ -56,8 +53,7 @@ public class PortalErrorTest
     }
 
     @Test
-    public void testGetException()
-        throws Exception
+    void testGetException()
     {
         final Exception exception = new Exception( "my exception" );
         final PortalRequest request = new PortalRequest();
@@ -70,8 +66,7 @@ public class PortalErrorTest
     }
 
     @Test
-    public void testCopy()
-        throws Exception
+    void testCopy()
     {
         final Exception exception = new Exception( "my exception" );
         final PortalRequest request = new PortalRequest();

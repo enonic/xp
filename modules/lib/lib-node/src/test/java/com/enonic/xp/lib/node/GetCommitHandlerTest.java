@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.PrincipalKey;
 
-public class GetCommitHandlerTest
+class GetCommitHandlerTest
     extends BaseNodeHandlerTest
 {
     private void mock()
@@ -40,14 +40,14 @@ public class GetCommitHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mock();
         runScript( "/lib/xp/examples/node/getCommit.js" );
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         runFunction( "/test/GetCommitHandlerTest.js", "testEmpty" );
     }

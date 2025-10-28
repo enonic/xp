@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PropertyPathTest
+class PropertyPathTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -47,13 +47,13 @@ public class PropertyPathTest
     }
 
     @Test
-    public void root_is_absolute()
+    void root_is_absolute()
     {
         assertFalse( PropertyPath.ROOT.isRelative() );
     }
 
     @Test
-    public void parentPath()
+    void parentPath()
     {
         assertNull( PropertyPath.from( "a" ).getParent() );
         assertEquals( PropertyPath.from( "a" ) , PropertyPath.from( "a.b" ).getParent() );
@@ -62,7 +62,7 @@ public class PropertyPathTest
     }
 
     @Test
-    public void startsWith()
+    void startsWith()
     {
         assertTrue( PropertyPath.from( "a" ).startsWith( PropertyPath.from( "a" ) ) );
         assertTrue( PropertyPath.from( ".a" ).startsWith( PropertyPath.from( ".a" ) ) );
@@ -85,27 +85,27 @@ public class PropertyPathTest
     }
 
     @Test
-    public void given_a_path_with_one_element_without_index_specified_when_getIndex_of_firstElement_then_index_is_zero()
+    void given_a_path_with_one_element_without_index_specified_when_getIndex_of_firstElement_then_index_is_zero()
     {
         PropertyPath path = PropertyPath.from( "a" );
         assertEquals( 0, path.getFirstElement().getIndex() );
     }
 
     @Test
-    public void given_path_with_zero_indexes_explicitly_set_then_toString_returns_path_with_implicit_zero_indexes()
+    void given_path_with_zero_indexes_explicitly_set_then_toString_returns_path_with_implicit_zero_indexes()
     {
         assertEquals( "a.b", PropertyPath.from( "a[0].b[0]" ).toString() );
     }
 
     @Test
-    public void invalid_index()
+    void invalid_index()
     {
         assertThrows( IllegalArgumentException.class, () -> PropertyPath.from( "a.b[-1]" ) );
     }
 
 
     @Test
-    public void build_with_strings()
+    void build_with_strings()
     {
         assertEquals( "a.b.c.d.e", PropertyPath.from( "a.b.c", "d", "e" ).toString() );
     }

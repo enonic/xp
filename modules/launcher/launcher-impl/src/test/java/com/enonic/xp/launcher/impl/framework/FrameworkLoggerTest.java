@@ -5,18 +5,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 
-public class FrameworkLoggerTest
+class FrameworkLoggerTest
 {
     private FrameworkLogger logger;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.logger = new FrameworkLogger();
     }
 
     @Test
-    public void testLog()
+    void testLog()
     {
         this.logger.doLog( null, null, FrameworkLogger.LOG_DEBUG, "test", null );
         this.logger.doLog( null, null, FrameworkLogger.LOG_INFO, "test", null );
@@ -26,7 +26,7 @@ public class FrameworkLoggerTest
     }
 
     @Test
-    public void testLog_bundle()
+    void testLog_bundle()
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "foo.bar" );

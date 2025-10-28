@@ -18,7 +18,7 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-public class UnpublishContentHandlerTest
+class UnpublishContentHandlerTest
     extends BaseContentHandlerTest
 {
     private static final String PUB_ID_1 = "d7ad428b-eae2-4ff1-9427-e8e8a8a3ab23";
@@ -59,7 +59,7 @@ public class UnpublishContentHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = exampleContent( PUB_ID_1, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" );
         when( this.contentService.getByPath( ContentPath.from( "/mysite/somepage" ) ) ).thenReturn( content );
@@ -74,7 +74,7 @@ public class UnpublishContentHandlerTest
     }
 
     @Test
-    public void unpublishById()
+    void unpublishById()
     {
         final ArgumentCaptor<UnpublishContentParams> captor = ArgumentCaptor.forClass( UnpublishContentParams.class );
         when( this.contentService.unpublish( captor.capture() ) ).thenReturn( exampleResult() );
@@ -86,7 +86,7 @@ public class UnpublishContentHandlerTest
     }
 
     @Test
-    public void unpublishByPath()
+    void unpublishByPath()
     {
         final Content myContent = exampleContent( PUB_ID_2, "mycontent", "My Content", "/myfolder/mycontent", "myfield", "Hello World" );
         when( this.contentService.getByPath( ContentPath.from( "/myfolder/mycontent" ) ) ).thenReturn( myContent );

@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AdminToolHandlerTest
+class AdminToolHandlerTest
     extends BaseHandlerTest
 {
 
@@ -81,14 +81,14 @@ public class AdminToolHandlerTest
     }
 
     @Test
-    public void testCanHandle()
+    void testCanHandle()
     {
         this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
         assertTrue( this.handler.canHandle( this.portalRequest ) );
     }
 
     @Test
-    public void testWithoutPermissions()
+    void testWithoutPermissions()
     {
         this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
         when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( false );
@@ -96,7 +96,7 @@ public class AdminToolHandlerTest
     }
 
     @Test
-    public void testWithNoDescriptor()
+    void testWithNoDescriptor()
     {
         when( this.adminToolDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( null );
         this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
@@ -104,7 +104,7 @@ public class AdminToolHandlerTest
     }
 
     @Test
-    public void testWithNoAccessToApplication()
+    void testWithNoAccessToApplication()
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), false );
         this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
@@ -112,7 +112,7 @@ public class AdminToolHandlerTest
     }
 
     @Test
-    public void test()
+    void test()
         throws Exception
     {
         this.mockDescriptor( DescriptorKey.from( "app:tool" ), true );

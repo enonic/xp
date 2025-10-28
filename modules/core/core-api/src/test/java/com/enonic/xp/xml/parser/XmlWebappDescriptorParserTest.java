@@ -13,7 +13,7 @@ import com.enonic.xp.xml.XmlException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class XmlWebappDescriptorParserTest
+class XmlWebappDescriptorParserTest
 {
     private final XmlTestHelper xmlTestHelper;
 
@@ -31,7 +31,7 @@ public class XmlWebappDescriptorParserTest
     }
 
     @Test
-    public void testWebappXmlDeserialization()
+    void testWebappXmlDeserialization()
     {
         final String xml = loadTestXml( "serialized-webapp.xml" );
 
@@ -66,7 +66,7 @@ public class XmlWebappDescriptorParserTest
     }
 
     @Test
-    public void testWebappXmlEmpty()
+    void testWebappXmlEmpty()
     {
         final String xml = loadTestXml( "empty-webapp.xml" );
 
@@ -84,7 +84,7 @@ public class XmlWebappDescriptorParserTest
     }
 
     @Test
-    public void testWebappXmlInvalid()
+    void testWebappXmlInvalid()
     {
         final String xml = loadTestXml( "webapp-invalid-mounts.xml" );
 

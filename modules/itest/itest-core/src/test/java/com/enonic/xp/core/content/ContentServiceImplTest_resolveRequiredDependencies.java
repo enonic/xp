@@ -10,14 +10,13 @@ import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_resolveRequiredDependencies
+class ContentServiceImplTest_resolveRequiredDependencies
     extends AbstractContentServiceTest
 {
     private Content content1, content2, content3;
 
     @Test
-    public void resolve_empty()
-        throws Exception
+    void resolve_empty()
     {
         content1 = createContent( ContentPath.ROOT );
         content2 = createContent( content1.getPath() );
@@ -31,8 +30,7 @@ public class ContentServiceImplTest_resolveRequiredDependencies
     }
 
     @Test
-    public void resolve_with_no_parent()
-        throws Exception
+    void resolve_with_no_parent()
     {
         content1 = createContent( ContentPath.ROOT );
         content2 = createContent( ContentPath.ROOT );
@@ -46,8 +44,7 @@ public class ContentServiceImplTest_resolveRequiredDependencies
     }
 
     @Test
-    public void resolve_with_parent()
-        throws Exception
+    void resolve_with_parent()
     {
         Content content1 = createContent( ContentPath.ROOT );
         Content content2 = createContent( content1.getPath() );
@@ -60,8 +57,7 @@ public class ContentServiceImplTest_resolveRequiredDependencies
     }
 
     @Test
-    public void resolve_hierarchy()
-        throws Exception
+    void resolve_hierarchy()
     {
         Content content1 = createContent( ContentPath.ROOT );
         Content content2 = createContent( content1.getPath() );

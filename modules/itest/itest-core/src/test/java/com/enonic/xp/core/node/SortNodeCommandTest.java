@@ -30,19 +30,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SortNodeCommandTest
+class SortNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void order_by_name_asc()
-        throws Exception
+    void order_by_name_asc()
     {
         final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPath.NAME, OrderExpr.Direction.ASC );
 
@@ -58,8 +56,7 @@ public class SortNodeCommandTest
     }
 
     @Test
-    public void order_by_name_desc()
-        throws Exception
+    void order_by_name_desc()
     {
         final FindNodesByParentResult result = createNodeAndReturnOrderedChildren( NodeIndexPath.NAME, OrderExpr.Direction.DESC );
 
@@ -75,8 +72,7 @@ public class SortNodeCommandTest
     }
 
     @Test
-    public void order_by_data_value()
-        throws Exception
+    void order_by_data_value()
     {
         final FindNodesByParentResult result =
             createNodeAndReturnOrderedChildren( IndexPath.from( "displayName" ), OrderExpr.Direction.ASC );
@@ -94,8 +90,7 @@ public class SortNodeCommandTest
 
 
     @Test
-    public void order_manual()
-        throws Exception
+    void order_manual()
     {
         final Node node = createParentNode();
         createChildNodes( node );
@@ -120,8 +115,7 @@ public class SortNodeCommandTest
     }
 
     @Test
-    public void order_manual_initial_as_previous()
-        throws Exception
+    void order_manual_initial_as_previous()
     {
         final Node node = createParentNode();
         createChildNodes( node );
@@ -158,8 +152,7 @@ public class SortNodeCommandTest
     }
 
     @Test
-    public void order_without_permission()
-        throws Exception
+    void order_without_permission()
     {
         final Node createUngrantedNode = createNode( CreateNodeParams.create().
             name( "my-node" ).

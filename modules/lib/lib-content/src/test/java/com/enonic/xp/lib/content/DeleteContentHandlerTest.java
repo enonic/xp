@@ -9,11 +9,11 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.DeleteContentsResult;
 
-public class DeleteContentHandlerTest
+class DeleteContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
@@ -21,8 +21,7 @@ public class DeleteContentHandlerTest
     }
 
     @Test
-    public void deleteById()
-        throws Exception
+    void deleteById()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -33,8 +32,7 @@ public class DeleteContentHandlerTest
     }
 
     @Test
-    public void deleteByPath()
-        throws Exception
+    void deleteByPath()
     {
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenReturn( DeleteContentsResult.create().build() );
 
@@ -42,8 +40,7 @@ public class DeleteContentHandlerTest
     }
 
     @Test
-    public void deleteById_notFound()
-        throws Exception
+    void deleteById_notFound()
     {
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( Mockito.any() ) )
@@ -53,8 +50,7 @@ public class DeleteContentHandlerTest
     }
 
     @Test
-    public void deleteByPath_notFound()
-        throws Exception
+    void deleteByPath_notFound()
     {
         final ContentPath path = ContentPath.from( "/a/b" );
         Mockito.when( this.contentService.delete( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );

@@ -17,19 +17,17 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodesByQueryCommandTest_func_range
+class FindNodesByQueryCommandTest_func_range
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void string_range()
-        throws Exception
+    void string_range()
     {
         createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -56,8 +54,7 @@ public class FindNodesByQueryCommandTest_func_range
     }
 
     @Test
-    public void array_values()
-        throws Exception
+    void array_values()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "version", "6.2.5" );
@@ -76,8 +73,7 @@ public class FindNodesByQueryCommandTest_func_range
     }
 
     @Test
-    public void instant_values()
-        throws Exception
+    void instant_values()
     {
         final PropertyTree node1 = new PropertyTree();
         node1.addInstant( "publishFrom", Instant.parse( "2015-08-01T10:00:00Z" ) );
@@ -104,8 +100,7 @@ public class FindNodesByQueryCommandTest_func_range
     }
 
     @Test
-    public void numeric_values()
-        throws Exception
+    void numeric_values()
     {
         final PropertyTree node1 = new PropertyTree();
         node1.addDouble( "myValue", 2.0 );
@@ -133,8 +128,7 @@ public class FindNodesByQueryCommandTest_func_range
     }
 
     @Test
-    public void array_values_in_range()
-        throws Exception
+    void array_values_in_range()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "version", "6.2.5" );
@@ -151,8 +145,7 @@ public class FindNodesByQueryCommandTest_func_range
     }
 
     @Test
-    public void empty_to_string()
-        throws Exception
+    void empty_to_string()
     {
         final PropertyTree node1 = new PropertyTree();
         node1.addString( "myValue", "a" );
@@ -188,8 +181,7 @@ public class FindNodesByQueryCommandTest_func_range
     }
 
     @Test
-    public void empty_to_instant()
-        throws Exception
+    void empty_to_instant()
     {
         final PropertyTree node1 = new PropertyTree();
         node1.addInstant( "publishFrom", Instant.parse( "2015-08-01T10:00:00Z" ) );

@@ -19,12 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class IssueServiceImplTest_updateComment
+class IssueServiceImplTest_updateComment
     extends AbstractIssueServiceTest
 {
     @Test
-    public void updateComment()
-        throws Exception
+    void updateComment()
     {
         Issue issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
 
@@ -53,8 +52,7 @@ public class IssueServiceImplTest_updateComment
     }
 
     @Test
-    public void udpateComment_noComment()
-        throws Exception
+    void udpateComment_noComment()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
             text( "text" ).

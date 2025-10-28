@@ -1,7 +1,5 @@
 package com.enonic.xp.image;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
@@ -12,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ReadImageParamsTest
+class ReadImageParamsTest
 {
     @Test
-    public void test()
+    void test()
     {
         final ReadImageParams readImageParams = ReadImageParams.newImageParams().
             contentId( ContentId.from( "contentId" ) ).
@@ -50,8 +48,7 @@ public class ReadImageParamsTest
     }
 
     @Test
-    public void testWithoutMimeTypeAndFormat()
-        throws IOException
+    void testWithoutMimeTypeAndFormat()
     {
         assertThrows( NullPointerException.class, () -> ReadImageParams.newImageParams().
             contentId( ContentId.from( "content-id" ) ).
@@ -60,7 +57,7 @@ public class ReadImageParamsTest
     }
 
     @Test
-    public void testQuality()
+    void testQuality()
     {
         assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
             contentId( ContentId.from( "content-id" ) ).
@@ -91,7 +88,7 @@ public class ReadImageParamsTest
     }
 
     @Test
-    public void testBackgroundColor()
+    void testBackgroundColor()
     {
         assertThrows( IllegalArgumentException.class, () -> ReadImageParams.newImageParams().
             contentId( ContentId.from( "content-id" ) ).

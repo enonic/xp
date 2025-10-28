@@ -13,11 +13,10 @@ import com.enonic.xp.repository.RepositoryId;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class RepositoryNodeTranslatorTest
+class RepositoryNodeTranslatorTest
 {
     @Test
-    public void values_not_duplicated()
-        throws Exception
+    void values_not_duplicated()
     {
         final PropertyTree indexMapping = new PropertyTree();
         indexMapping.addString( "myMapping", "myMappingValue" );

@@ -15,10 +15,10 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentVersionTest
+class ContentVersionTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final Instant now1 = Instant.now();
         final Instant now2 = Instant.now();

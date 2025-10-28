@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OrderExpressionsTest
+class OrderExpressionsTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final FieldOrderExpr expr1 = FieldOrderExpr.create( IndexPath.from( "name" ), OrderExpr.Direction.DESC );
         final FieldOrderExpr expr2 = FieldOrderExpr.create( IndexPath.from( "date" ), OrderExpr.Direction.ASC );
@@ -30,7 +30,7 @@ public class OrderExpressionsTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         final OrderExpressions orderExprs = OrderExpressions.empty();
 
@@ -38,7 +38,7 @@ public class OrderExpressionsTest
     }
 
     @Test
-    public void from()
+    void from()
     {
         final FieldOrderExpr expr1 = FieldOrderExpr.create( "name", OrderExpr.Direction.DESC );
         final FieldOrderExpr expr2 = FieldOrderExpr.create( "date", OrderExpr.Direction.ASC );

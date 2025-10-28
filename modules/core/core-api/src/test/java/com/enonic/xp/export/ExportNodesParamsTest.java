@@ -7,10 +7,10 @@ import com.enonic.xp.node.NodePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ExportNodesParamsTest
+class ExportNodesParamsTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         ExportNodesParams.Builder builder = ExportNodesParams.create();
 

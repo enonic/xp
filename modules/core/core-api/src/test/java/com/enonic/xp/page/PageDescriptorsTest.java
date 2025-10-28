@@ -13,16 +13,16 @@ import com.enonic.xp.region.RegionDescriptors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageDescriptorsTest
+class PageDescriptorsTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         assertTrue( PageDescriptors.empty().isEmpty() );
     }
 
     @Test
-    public void from()
+    void from()
     {
         final Form pageForm = Form.create().
             addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypeName.DOUBLE ).build() ).

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class MacroTest
+class MacroTest
 {
     @Test
-    public void testCreation()
+    void testCreation()
     {
         final Macro macro = Macro.create().name( "macro" ).
             body( "body" ).
@@ -18,14 +18,14 @@ public class MacroTest
     }
 
     @Test
-    public void testBodyNull()
+    void testBodyNull()
     {
         final Macro macro = Macro.create().name( "macro" ).param( "param1", "value1" ).build();
         assertEquals( "[macro param1=\"value1\"/]", macro.toString() );
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final Macro macro1 = Macro.create().name( "macro" ).
             body( "body" ).
@@ -50,7 +50,7 @@ public class MacroTest
     }
 
     @Test
-    public void testMultipleValues()
+    void testMultipleValues()
     {
         final Macro macro = Macro.create().name( "macro" ).
             body( "body" ).

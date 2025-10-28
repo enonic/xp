@@ -27,11 +27,11 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class UpdateContentHandlerTest
+class UpdateContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         when( this.contentTypeService.getByName( any() ) ).thenReturn(
             ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
@@ -47,7 +47,7 @@ public class UpdateContentHandlerTest
     }
 
     @Test
-    public void updateSiteConfig()
+    void updateSiteConfig()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -77,7 +77,7 @@ public class UpdateContentHandlerTest
     }
 
     @Test
-    public void updateSiteSingleDescriptor()
+    void updateSiteSingleDescriptor()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -101,7 +101,7 @@ public class UpdateContentHandlerTest
 
 
     @Test
-    public void updateById()
+    void updateById()
     {
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
@@ -116,7 +116,7 @@ public class UpdateContentHandlerTest
     }
 
     @Test
-    public void updateByPath()
+    void updateByPath()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -131,7 +131,7 @@ public class UpdateContentHandlerTest
     }
 
     @Test
-    public void updateNotMappedXDataFieldNameStricted()
+    void updateNotMappedXDataFieldNameStricted()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -146,7 +146,7 @@ public class UpdateContentHandlerTest
     }
 
     @Test
-    public void updateNotMappedXDataFieldNameNotStricted()
+    void updateNotMappedXDataFieldNameNotStricted()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -161,14 +161,13 @@ public class UpdateContentHandlerTest
     }
 
     @Test
-    public void updateNotFound()
+    void updateNotFound()
     {
         runFunction( "/test/UpdateContentHandlerTest.js", "update_notFound" );
     }
 
     @Test
-    public void updatePageAllComponents()
-        throws Exception
+    void updatePageAllComponents()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );

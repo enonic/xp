@@ -12,11 +12,11 @@ import com.enonic.xp.node.SortNodeResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
-public class SortNodeHandlerTest
+class SortNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testSort()
+    void testSort()
     {
         final ArgumentCaptor<SortNodeParams> argumentCaptor = ArgumentCaptor.forClass( SortNodeParams.class );
         final Node node = Node.create( createNode() ).childOrder( ChildOrder.from( "field DESC" ) ).build();

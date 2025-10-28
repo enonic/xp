@@ -18,19 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
-public class GetNodeByIdCommandTest
+class GetNodeByIdCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_rootNode()
-        throws Exception
+    void get_rootNode()
     {
         final Node rootNode = GetNodeByIdCommand.create().
             id( Node.ROOT_UUID ).
@@ -45,8 +43,7 @@ public class GetNodeByIdCommandTest
     }
 
     @Test
-    public void get_by_id()
-        throws Exception
+    void get_by_id()
     {
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
             name( "my-node" ).
@@ -67,8 +64,7 @@ public class GetNodeByIdCommandTest
     }
 
     @Test
-    public void get_by_id_no_access()
-        throws Exception
+    void get_by_id_no_access()
     {
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
             name( "my-node" ).

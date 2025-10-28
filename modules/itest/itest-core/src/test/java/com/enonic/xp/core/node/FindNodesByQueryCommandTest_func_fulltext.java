@@ -26,19 +26,17 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_func_fulltext
+class FindNodesByQueryCommandTest_func_fulltext
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void fulltext()
-        throws Exception
+    void fulltext()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -63,8 +61,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void fulltext_norwegian_characters()
-        throws Exception
+    void fulltext_norwegian_characters()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myProperty", "æ" );
@@ -109,8 +106,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void fulltext_norwegian_characters_check_asciifolding()
-        throws Exception
+    void fulltext_norwegian_characters_check_asciifolding()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myProperty", "æ" );
@@ -155,8 +151,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void ascii_folding_with_wildcard()
-        throws Exception
+    void ascii_folding_with_wildcard()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myProperty", "grønnsaker" );
@@ -185,8 +180,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void fulltext_with_path()
-        throws Exception
+    void fulltext_with_path()
     {
 
         final PropertyTree data = new PropertyTree();
@@ -223,8 +217,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void fulltext_fuzzy()
-        throws Exception
+    void fulltext_fuzzy()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshtein" );
@@ -255,8 +248,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
 
     @Test
-    public void fulltext_fuzzy_2()
-        throws Exception
+    void fulltext_fuzzy_2()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshtein" );
@@ -301,8 +293,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
 
     @Test
-    public void negate()
-        throws Exception
+    void negate()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "fisk kake" );
@@ -345,8 +336,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
 
     @Test
-    public void boost_field()
-        throws Exception
+    void boost_field()
     {
         createWithTitleAndDescription( "1", "fish", "fash" );
         createWithTitleAndDescription( "2", "fosh", "basics and some fish other words not relevant" );
@@ -360,8 +350,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void ngram_not_fulltext()
-        throws Exception
+    void ngram_not_fulltext()
     {
         createWithTitle( "1", "fishing techniques" );
         createWithTitle( "2", "fishing time interrupted by fiance" );
@@ -374,8 +363,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void fulltext_wildcard_paths()
-        throws Exception
+    void fulltext_wildcard_paths()
     {
         final PropertyTree data = new PropertyTree();
         final String path1 = "test.of.string-1.with.path-1";
@@ -447,8 +435,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void fulltext_word_breaking_character()
-        throws Exception
+    void fulltext_word_breaking_character()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "Levenshteins-algorithm" );
@@ -470,8 +457,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
 
 
     @Test
-    public void word_delimiter_testing_underscore()
-        throws Exception
+    void word_delimiter_testing_underscore()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing_delimiter" );
@@ -492,8 +478,7 @@ public class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
-    public void word_delimiter_testing_dot()
-        throws Exception
+    void word_delimiter_testing_dot()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing.delimiter" );

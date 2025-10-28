@@ -10,10 +10,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class LayoutComponentTest
+class LayoutComponentTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -53,7 +53,7 @@ public class LayoutComponentTest
     }
 
     @Test
-    public void copy()
+    void copy()
     {
         final LayoutComponent source = createLayouComponent();
 

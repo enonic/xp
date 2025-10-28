@@ -12,7 +12,7 @@ import com.enonic.xp.region.PartDescriptor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlPartDescriptorParserTest
+class XmlPartDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlPartDescriptorParser parser;
@@ -20,7 +20,7 @@ public class XmlPartDescriptorParserTest
     private PartDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlPartDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -31,7 +31,7 @@ public class XmlPartDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -39,7 +39,7 @@ public class XmlPartDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -47,7 +47,6 @@ public class XmlPartDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final PartDescriptor result = this.builder.build();
         assertEquals( "myapplication:mypart", result.getKey().toString() );

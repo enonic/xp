@@ -7,17 +7,17 @@ import com.enonic.xp.content.ContentPath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ContentPathConverterTest
+class ContentPathConverterTest
 {
     @Test
-    public void testSameType()
+    void testSameType()
     {
         final ContentPath path = ContentPath.from( "/some/path" );
         assertSame( path, Converters.convert( path, ContentPath.class ) );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( ContentPath.from( "/some/path" ), Converters.convert( "/some/path", ContentPath.class ) );
         assertEquals( ContentPath.from( "/some/path" ),

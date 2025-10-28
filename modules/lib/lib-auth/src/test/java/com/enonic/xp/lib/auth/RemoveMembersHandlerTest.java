@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 
-public class RemoveMembersHandlerTest
+class RemoveMembersHandlerTest
     extends ScriptTestSupport
 {
     private static final PrincipalKey USER = PrincipalKey.from( "user:myIdProvider:userId" );
@@ -37,14 +37,13 @@ public class RemoveMembersHandlerTest
 
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         runScript( "/lib/xp/examples/auth/removeMembers.js" );
     }
 
     @Test
-    public void testRemoveMembersFromUser()
-        throws Exception
+    void testRemoveMembersFromUser()
     {
         try
         {
@@ -59,8 +58,7 @@ public class RemoveMembersHandlerTest
     }
 
     @Test
-    public void testRemoveMembersFromRole()
-        throws Exception
+    void testRemoveMembersFromRole()
     {
         runFunction( "/test/removeMembers-test.js", "removeMembersFromRole" );
 
@@ -69,8 +67,7 @@ public class RemoveMembersHandlerTest
     }
 
     @Test
-    public void testRemoveMembersFromGroup()
-        throws Exception
+    void testRemoveMembersFromGroup()
     {
         runFunction( "/test/removeMembers-test.js", "removeMembersFromGroup" );
 
@@ -79,8 +76,7 @@ public class RemoveMembersHandlerTest
     }
 
     @Test
-    public void testRemoveMembersEmptyListPassed()
-        throws Exception
+    void testRemoveMembersEmptyListPassed()
     {
         runFunction( "/test/removeMembers-test.js", "removeMembersEmptyList" );
         Mockito.verify( this.securityService, Mockito.times( 0 ) ).removeRelationship( Mockito.any() );

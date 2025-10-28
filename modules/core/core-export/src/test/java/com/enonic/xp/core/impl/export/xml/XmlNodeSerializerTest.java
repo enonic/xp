@@ -29,11 +29,11 @@ import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Link;
 import com.enonic.xp.util.Reference;
 
-public class XmlNodeSerializerTest
+class XmlNodeSerializerTest
     extends BaseXmlSerializerTest
 {
     @Test
-    public void testSerialize()
+    void testSerialize()
         throws Exception
     {
         final Instant instant = Instant.parse( "2014-11-28T14:16:00Z" );

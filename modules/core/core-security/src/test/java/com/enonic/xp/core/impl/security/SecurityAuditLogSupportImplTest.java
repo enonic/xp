@@ -26,14 +26,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SecurityAuditLogSupportImplTest
+class SecurityAuditLogSupportImplTest
 {
     private SecurityAuditLogSupportImpl instance;
 
     private AuditLogService auditLogService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         SecurityConfig config = mock( SecurityConfig.class );
         when( config.auditlog_enabled() ).thenReturn( true );
@@ -45,7 +45,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testCreateUser()
+    void testCreateUser()
     {
         instance.createUser( CreateUserParams.create()
                                  .userKey( PrincipalKey.from( "user:system:testUser" ) )
@@ -65,7 +65,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateUser()
+    void testUpdateUser()
     {
         instance.updateUser( UpdateUserParams.create()
                                  .userKey( PrincipalKey.from( "user:system:testUser" ) )
@@ -84,7 +84,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testCreateRole()
+    void testCreateRole()
     {
         instance.createRole( CreateRoleParams.create()
                                  .roleKey( PrincipalKey.ofRole( "testRole" ) )
@@ -102,7 +102,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateRole()
+    void testUpdateRole()
     {
         instance.updateRole( UpdateRoleParams.create()
                                  .roleKey( PrincipalKey.ofRole( "testRole" ) )
@@ -119,7 +119,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testCreateGroup()
+    void testCreateGroup()
     {
         instance.createGroup( CreateGroupParams.create()
                                   .groupKey( PrincipalKey.ofGroup( IdProviderKey.from( "idProvider" ), "groupId" ) )
@@ -136,7 +136,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateGroup()
+    void testUpdateGroup()
     {
         instance.updateGroup( UpdateGroupParams.create()
                                   .groupKey( PrincipalKey.ofGroup( IdProviderKey.from( "idProvider" ), "groupId" ) )
@@ -153,7 +153,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testRemovePrincipal()
+    void testRemovePrincipal()
     {
         instance.removePrincipal( PrincipalKey.ofUser( IdProviderKey.from( "system" ), "userId" ) );
 
@@ -167,7 +167,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testCreateIdProvider()
+    void testCreateIdProvider()
     {
         instance.createIdProvider( CreateIdProviderParams.create()
                                        .key( IdProviderKey.from( "system" ) )
@@ -184,7 +184,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateIdProvider()
+    void testUpdateIdProvider()
     {
         instance.updateIdProvider( UpdateIdProviderParams.create()
                                        .key( IdProviderKey.from( "system" ) )
@@ -201,7 +201,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testRemoveIdProvider()
+    void testRemoveIdProvider()
     {
         instance.removeIdProvider( IdProviderKey.from( "system" ) );
 
@@ -214,7 +214,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testAddRelationship()
+    void testAddRelationship()
     {
         instance.addRelationship(
             PrincipalRelationship.from( PrincipalKey.from( "role:roleId" ) ).to( PrincipalKey.from( "user:custom:userId" ) ) );
@@ -228,7 +228,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testRemoveRelationship()
+    void testRemoveRelationship()
     {
         instance.removeRelationship(
             PrincipalRelationship.from( PrincipalKey.from( "role:roleId" ) ).to( PrincipalKey.from( "user:custom:userId" ) ) );
@@ -242,7 +242,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testRemoveRelationships()
+    void testRemoveRelationships()
     {
         instance.removeRelationships( PrincipalKey.from( "role:roleId" ) );
 
@@ -255,7 +255,7 @@ public class SecurityAuditLogSupportImplTest
     }
 
     @Test
-    public void testSetPassword()
+    void testSetPassword()
     {
         instance.setPassword( PrincipalKey.from( "user:system:userId" ) );
 

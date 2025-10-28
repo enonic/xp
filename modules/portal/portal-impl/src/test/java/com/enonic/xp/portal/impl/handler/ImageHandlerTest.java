@@ -48,7 +48,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ImageHandlerTest
+class ImageHandlerTest
 {
     private ImageHandler handler;
 
@@ -251,7 +251,6 @@ public class ImageHandlerTest
 
     @Test
     void imageNotFound()
-        throws Exception
     {
         when( this.contentService.getById( ContentId.from( "654321" ) ) ).thenThrow( ContentNotFoundException.class );
 

@@ -26,7 +26,7 @@ import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SegmentVacuumTaskTest
+class SegmentVacuumTaskTest
 {
     private MemoryBlobStore blobStore;
 
@@ -43,8 +43,7 @@ public class SegmentVacuumTaskTest
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.blobStore = new MemoryBlobStore();
         this.repositoryId = RepositoryId.from( "test" );
@@ -64,7 +63,7 @@ public class SegmentVacuumTaskTest
     }
 
     @Test
-    public void test()
+    void test()
     {
         final BlobRecord record = blobStore.addRecord( segment, ByteSource.wrap( "hello".getBytes() ) );
         final BlobRecord record2 = blobStore.addRecord( segment2, ByteSource.wrap( "hello".getBytes() ) );

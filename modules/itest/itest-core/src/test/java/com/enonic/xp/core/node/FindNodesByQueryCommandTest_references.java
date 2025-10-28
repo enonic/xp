@@ -18,19 +18,17 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_references
+class FindNodesByQueryCommandTest_references
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void incomingReferences()
-        throws Exception
+    void incomingReferences()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             name( "node1" ).

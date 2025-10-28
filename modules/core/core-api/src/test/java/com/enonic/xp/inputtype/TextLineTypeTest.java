@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TextLineTypeTest
+class TextLineTypeTest
     extends BaseInputTypeTest
 {
 
@@ -24,19 +24,19 @@ public class TextLineTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "TextLine", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "TextLine", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "test" ), config );
@@ -45,7 +45,7 @@ public class TextLineTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.TEXT_LINE, "testString" ).build();
         final Value value = this.type.createDefaultValue( input );
@@ -56,49 +56,49 @@ public class TextLineTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( stringProperty( "test" ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 
     @Test
-    public void testValidateRegexInvalid()
+    void testValidateRegexInvalid()
     {
         final InputTypeConfig config = newValidConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ));
     }
 
     @Test
-    public void testValidateRegexEmptyValue()
+    void testValidateRegexEmptyValue()
     {
         final InputTypeConfig config = newValidConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "" ), config ));
     }
 
     @Test
-    public void testValidateRegexValid()
+    void testValidateRegexValid()
     {
         final InputTypeConfig config = newValidConfig();
         this.type.validate( stringProperty( "10.192.6.144" ), config );
     }
 
     @Test
-    public void testValidateMalformedRegex()
+    void testValidateMalformedRegex()
     {
         final InputTypeConfig config = newInvalidConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "abc" ), config ));
     }
 
     @Test
-    public void testValidate_invalidMaxLength()
+    void testValidate_invalidMaxLength()
     {
         final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "maxLength", "5" ).build() ).build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( stringProperty( "max-length" ), config ));

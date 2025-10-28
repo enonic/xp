@@ -12,7 +12,7 @@ import com.enonic.xp.form.Form;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PartDescriptorsTest
+class PartDescriptorsTest
 {
 
     private static final List<PartDescriptor> PART_DESCRIPTORS_LIST = new ArrayList<>();
@@ -44,7 +44,7 @@ public class PartDescriptorsTest
     }
 
     @Test
-    public void fromArray()
+    void fromArray()
     {
         final PartDescriptors partDescriptors =
             PartDescriptors.from( PART_DESCRIPTORS_LIST.get( 0 ), PART_DESCRIPTORS_LIST.get( 1 ), PART_DESCRIPTORS_LIST.get( 2 ) );
@@ -56,7 +56,7 @@ public class PartDescriptorsTest
     }
 
     @Test
-    public void fromCollection()
+    void fromCollection()
     {
         final PartDescriptors partDescriptors = PartDescriptors.from( PART_DESCRIPTORS_LIST );
 
@@ -67,7 +67,7 @@ public class PartDescriptorsTest
     }
 
     @Test
-    public void fromIterable()
+    void fromIterable()
     {
         final PartDescriptors partDescriptors = PartDescriptors.from( (Iterable) PART_DESCRIPTORS_LIST );
 

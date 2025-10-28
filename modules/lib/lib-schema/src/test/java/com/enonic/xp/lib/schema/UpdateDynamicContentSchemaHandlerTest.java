@@ -21,11 +21,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UpdateDynamicContentSchemaHandlerTest
+class UpdateDynamicContentSchemaHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testContentType()
+    void testContentType()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
@@ -56,7 +56,7 @@ public class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testMixin()
+    void testMixin()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
@@ -87,7 +87,7 @@ public class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testXData()
+    void testXData()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
@@ -118,7 +118,7 @@ public class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void updateWithForm()
+    void updateWithForm()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
@@ -149,13 +149,13 @@ public class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testInvalidContentSchemaType()
+    void testInvalidContentSchemaType()
     {
         runFunction( "/test/UpdateDynamicContentSchemaHandlerTest.js", "updateInvalidContentSchemaType" );
     }
 
     @Test
-    public void testInvalidContentSchema()
+    void testInvalidContentSchema()
     {
         runFunction( "/test/UpdateDynamicContentSchemaHandlerTest.js", "updateInvalidContentSchema" );
     }

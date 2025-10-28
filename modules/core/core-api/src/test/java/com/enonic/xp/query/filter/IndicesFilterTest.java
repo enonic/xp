@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IndicesFilterTest
+class IndicesFilterTest
 {
 
     @Test
-    public void testBuildler()
+    void testBuildler()
     {
         final IndicesFilter filter = IndicesFilter.create().
             addIndices( "index1" ).
@@ -21,7 +21,7 @@ public class IndicesFilterTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final IndicesFilter filter = IndicesFilter.create().
             addIndices( "index1" ).

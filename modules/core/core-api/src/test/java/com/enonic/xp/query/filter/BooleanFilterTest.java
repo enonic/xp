@@ -7,11 +7,11 @@ import com.enonic.xp.data.ValueFactory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BooleanFilterTest
+class BooleanFilterTest
 {
 
     @Test
-    public void testBuildler()
+    void testBuildler()
     {
         final IdFilter filter1 = IdFilter.create().fieldName( "field1" ).value( "node1" ).build();
         final IndicesFilter filter2 = IndicesFilter.create()
@@ -37,7 +37,7 @@ public class BooleanFilterTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final IdFilter filter1 = IdFilter.create().fieldName( "field1" ).value( "node1" ).build();
         final IndicesFilter filter2 = IndicesFilter.create()

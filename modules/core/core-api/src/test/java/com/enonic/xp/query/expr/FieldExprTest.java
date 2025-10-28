@@ -6,10 +6,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FieldExprTest
+class FieldExprTest
 {
     @Test
-    public void testExpression()
+    void testExpression()
     {
         final FieldExpr expr = FieldExpr.from( "name" );
 
@@ -18,7 +18,7 @@ public class FieldExprTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( FieldExpr.class ).withNonnullFields( "indexPath" ).verify();
     }

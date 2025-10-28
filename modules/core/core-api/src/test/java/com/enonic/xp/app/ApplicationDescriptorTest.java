@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ApplicationDescriptorTest
+class ApplicationDescriptorTest
 {
     @Test
-    public void getters()
+    void getters()
     {
         final Icon icon = Icon.from( new byte[]{0, 1}, "image/png", Instant.now() );
         final ApplicationKey key = ApplicationKey.from( "app" );
@@ -32,7 +32,7 @@ public class ApplicationDescriptorTest
     }
 
     @Test
-    public void null_description()
+    void null_description()
     {
         final ApplicationKey key = ApplicationKey.from( "app" );
         final ApplicationDescriptor desc = ApplicationDescriptor.create().
@@ -46,7 +46,7 @@ public class ApplicationDescriptorTest
     }
 
     @Test
-    public void testHashCode()
+    void testHashCode()
     {
         final Icon icon = Icon.from( new byte[]{0, 1}, "image/png", Instant.now() );
         final ApplicationKey key = ApplicationKey.from( "app" );

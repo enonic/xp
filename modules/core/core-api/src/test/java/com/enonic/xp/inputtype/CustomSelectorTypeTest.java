@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CustomSelectorTypeTest
+class CustomSelectorTypeTest
     extends BaseInputTypeTest
 {
     public CustomSelectorTypeTest()
@@ -21,19 +21,19 @@ public class CustomSelectorTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "CustomSelector", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "CustomSelector", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
@@ -43,7 +43,7 @@ public class CustomSelectorTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.CUSTOM_SELECTOR, "testValue" ).build();
         final Value value = this.type.createDefaultValue( input );
@@ -54,14 +54,14 @@ public class CustomSelectorTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = newEmptyConfig();
         this.type.validate( stringProperty( "name" ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));

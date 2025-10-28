@@ -8,11 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfigLoaderTest
+class ConfigLoaderTest
 {
     @Test
-    public void loadConfig()
-        throws Exception
+    void loadConfig()
     {
         final ConfigLoader loader = new ConfigLoader( getClass() );
         final Properties config = loader.load( "ConfigLoaderTest.properties" );
@@ -23,8 +22,7 @@ public class ConfigLoaderTest
     }
 
     @Test
-    public void loadConfig_notFound()
-        throws Exception
+    void loadConfig_notFound()
     {
         final ConfigLoader loader = new ConfigLoader( getClass() );
         assertThrows(IllegalArgumentException.class, () ->  loader.load( "unknown.properties" ) );

@@ -9,11 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IdProviderTest
+class IdProviderTest
 {
     @Test
-    public void testCreateIdProvider()
-        throws Exception
+    void testCreateIdProvider()
     {
         final IdProviderKey idProviderKey = IdProviderKey.from( "myIdProvider" );
         final IdProvider idProvider = IdProvider.create().displayName( "my id provider" ).key( idProviderKey ).build();
@@ -23,8 +22,7 @@ public class IdProviderTest
     }
 
     @Test
-    public void testCreateIdProviderFromSource()
-        throws Exception
+    void testCreateIdProviderFromSource()
     {
         final IdProviderKey key = IdProviderKey.from( "myIdProvider" );
         final String displayName = "My id provider";
@@ -43,8 +41,7 @@ public class IdProviderTest
     }
 
     @Test
-    public void testIdProviderKey()
-        throws Exception
+    void testIdProviderKey()
     {
         final IdProviderKey idProviderKey = IdProviderKey.from( "myIdProvider" );
         final IdProviderKey idProviderKey2 = IdProviderKey.from( "myIdProvider" );
@@ -54,29 +51,25 @@ public class IdProviderTest
     }
 
     @Test
-    public void testInvalidIdProviderKeyCharacter1()
-        throws Exception
+    void testInvalidIdProviderKeyCharacter1()
     {
         assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "my<IdProvider" ));
     }
 
     @Test
-    public void testInvalidIdProviderKeyCharacter2()
-        throws Exception
+    void testInvalidIdProviderKeyCharacter2()
     {
         assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUser>Store" ));
     }
 
     @Test
-    public void testInvalidIdProviderKeyCharacter3()
-        throws Exception
+    void testInvalidIdProviderKeyCharacter3()
     {
         assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUser\"Store" ));
     }
 
     @Test
-    public void testInvalidIdProviderKeyCharacter4()
-        throws Exception
+    void testInvalidIdProviderKeyCharacter4()
     {
         assertThrows(IllegalArgumentException.class, () -> IdProviderKey.from( "myUserSt'ore" ));
     }

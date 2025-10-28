@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class WeightedQueryFieldNamesTest
+class WeightedQueryFieldNamesTest
 {
     @Test
-    public void createWeightedQueryFieldNames()
+    void createWeightedQueryFieldNames()
     {
         createWeightedQueryFieldName( "myfied", 1 );
         createWeightedQueryFieldName( "myfield^5", 1 );

@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ImageUploaderTypeTest
+class ImageUploaderTypeTest
     extends BaseInputTypeTest
 {
     public ImageUploaderTypeTest()
@@ -20,19 +20,19 @@ public class ImageUploaderTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "ImageUploader", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "ImageUploader", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
         final InputTypeConfig config = InputTypeConfig.create().build();
@@ -43,7 +43,7 @@ public class ImageUploaderTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( stringProperty( "test" ), config );

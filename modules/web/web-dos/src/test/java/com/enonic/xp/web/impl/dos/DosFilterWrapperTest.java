@@ -1,19 +1,19 @@
 package com.enonic.xp.web.impl.dos;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DosFilterWrapperTest
+class DosFilterWrapperTest
 {
     private DosFilterWrapper filter;
 
@@ -28,7 +28,7 @@ public class DosFilterWrapperTest
     private FilterChain filterChain;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.filter = new DosFilterWrapper();
         this.config = Mockito.mock( DosFilterConfig.class );
@@ -39,7 +39,7 @@ public class DosFilterWrapperTest
     }
 
     @Test
-    public void testNotEnabled()
+    void testNotEnabled()
         throws Exception
     {
         Mockito.when( this.config.enabled() ).thenReturn( false );
@@ -56,7 +56,7 @@ public class DosFilterWrapperTest
     }
 
     @Test
-    public void testEnabled()
+    void testEnabled()
         throws Exception
     {
         Mockito.when( this.config.enabled() ).thenReturn( true );

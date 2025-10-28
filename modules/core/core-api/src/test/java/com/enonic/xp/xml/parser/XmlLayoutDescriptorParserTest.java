@@ -13,7 +13,7 @@ import com.enonic.xp.region.RegionDescriptors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlLayoutDescriptorParserTest
+class XmlLayoutDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlLayoutDescriptorParser parser;
@@ -21,7 +21,7 @@ public class XmlLayoutDescriptorParserTest
     private LayoutDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlLayoutDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -32,7 +32,7 @@ public class XmlLayoutDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -40,7 +40,7 @@ public class XmlLayoutDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -48,7 +48,6 @@ public class XmlLayoutDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final LayoutDescriptor result = this.builder.build();
         assertEquals( "myapplication:mylayout", result.getKey().toString() );

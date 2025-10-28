@@ -1,6 +1,6 @@
 package com.enonic.xp.convert;
 
-public class LongConverterTest
+class LongConverterTest
     extends NumberConverterTest<Long>
 {
     public LongConverterTest()

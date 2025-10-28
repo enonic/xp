@@ -13,11 +13,11 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.impl.AbstractScriptTest;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class ScriptMapGeneratorTest
+class ScriptMapGeneratorTest
     extends AbstractScriptTest
 {
     @Test
-    public void testObject()
+    void testObject()
     {
         final Object obj = (MapSerializable) gen -> {
             gen.value( "a", 1 );
@@ -31,7 +31,7 @@ public class ScriptMapGeneratorTest
     }
 
     @Test
-    public void testArray()
+    void testArray()
     {
         final Object obj = (MapSerializable) gen -> {
             gen.value( "a", 1 );
@@ -44,7 +44,7 @@ public class ScriptMapGeneratorTest
     }
 
     @Test
-    public void testMapValue()
+    void testMapValue()
     {
         final Map<String, Object> submap = new HashMap<>();
         submap.put( "child1", 1 );
@@ -66,7 +66,7 @@ public class ScriptMapGeneratorTest
     }
 
     @Test
-    public void testListValue()
+    void testListValue()
     {
         final List<Object> level2List = new ArrayList<>();
         level2List.add( "list2A" );
@@ -97,7 +97,7 @@ public class ScriptMapGeneratorTest
     }
 
     @Test
-    public void testMultimapValue()
+    void testMultimapValue()
     {
         final HashMultimap<Object, Object> submap = HashMultimap.create();
         submap.put( "children", 5 );

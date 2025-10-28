@@ -22,7 +22,7 @@ import com.enonic.xp.schema.xdata.XDatas;
 import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XDataConfigProcessorTest
+class XDataConfigProcessorTest
 {
     private ContentTypeService contentTypeService;
 
@@ -31,8 +31,7 @@ public class XDataConfigProcessorTest
     private ContentTypeName contentTypeName;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.xDataService = Mockito.mock( XDataService.class );
@@ -40,8 +39,7 @@ public class XDataConfigProcessorTest
     }
 
     @Test
-    public void test_data()
-        throws Exception
+    void test_data()
     {
         final PatternIndexConfigDocument result = processForms( Form.empty() );
 
@@ -51,8 +49,7 @@ public class XDataConfigProcessorTest
     }
 
     @Test
-    public void test_data_form_with_html_area()
-        throws Exception
+    void test_data_form_with_html_area()
     {
         Input myTextLine = Input.create().
             name( "htmlArea" ).

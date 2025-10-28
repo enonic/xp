@@ -44,10 +44,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ContentDataSerializerTest
+class ContentDataSerializerTest
 {
     @Test
-    public void create_propertyTree_populated_with_attachment_properties()
+    void create_propertyTree_populated_with_attachment_properties()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -84,7 +84,7 @@ public class ContentDataSerializerTest
     }
 
     @Test
-    public void update_propertyTree_populated_with_new_attachment_properties()
+    void update_propertyTree_populated_with_new_attachment_properties()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -134,7 +134,7 @@ public class ContentDataSerializerTest
 
 
     @Test
-    public void update_validationErrors()
+    void update_validationErrors()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -167,7 +167,7 @@ public class ContentDataSerializerTest
     }
 
     @Test
-    public void create_propertyTree_populated_with_extraData()
+    void create_propertyTree_populated_with_extraData()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -203,7 +203,7 @@ public class ContentDataSerializerTest
 
 
     @Test
-    public void update_propertyTree_populated_with_extraData()
+    void update_propertyTree_populated_with_extraData()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -235,7 +235,7 @@ public class ContentDataSerializerTest
 
 
     @Test
-    public void create_add_content_data()
+    void create_add_content_data()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -260,7 +260,7 @@ public class ContentDataSerializerTest
     }
 
     @Test
-    public void create_add_page()
+    void create_add_page()
     {
         final PropertyTree tree = new PropertyTree();
         tree.addProperty( "htmlData", ValueFactory.newString( "<img src =\"source\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
@@ -302,7 +302,7 @@ public class ContentDataSerializerTest
     }
 
     @Test
-    public void update_add_content_data()
+    void update_add_content_data()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -324,7 +324,7 @@ public class ContentDataSerializerTest
     }
 
     @Test
-    public void create_propertyTree_populated_with_workflowInfo()
+    void create_propertyTree_populated_with_workflowInfo()
     {
         final String check1Name = "myCheck1";
         final WorkflowCheckState check1State = WorkflowCheckState.APPROVED;
@@ -361,7 +361,7 @@ public class ContentDataSerializerTest
     }
 
     @Test
-    public void update_add_workflow_info()
+    void update_add_workflow_info()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 

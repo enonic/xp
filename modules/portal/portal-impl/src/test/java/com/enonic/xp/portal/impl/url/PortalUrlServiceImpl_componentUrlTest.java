@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_componentUrlTest
+class PortalUrlServiceImpl_componentUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
 

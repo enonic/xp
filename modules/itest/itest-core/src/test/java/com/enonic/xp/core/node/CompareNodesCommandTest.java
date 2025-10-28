@@ -14,19 +14,17 @@ import com.enonic.xp.repo.impl.node.CompareNodesCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompareNodesCommandTest
+class CompareNodesCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void compare_nodes()
-        throws Exception
+    void compare_nodes()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "node1" ).

@@ -7,10 +7,10 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeExportResultTest
+class NodeExportResultTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         NodeExportResult.Builder builder = NodeExportResult.create();
 
@@ -26,7 +26,7 @@ public class NodeExportResultTest
     }
 
     @Test
-    public void tostring()
+    void tostring()
     {
         NodeExportResult.Builder builder = NodeExportResult.create();
 

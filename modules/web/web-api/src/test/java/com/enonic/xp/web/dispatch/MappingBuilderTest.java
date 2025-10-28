@@ -11,21 +11,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MappingBuilderTest
+class MappingBuilderTest
 {
     private Filter filter;
 
     private Servlet servlet;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.filter = Mockito.mock( Filter.class );
         this.servlet = Mockito.mock( Servlet.class );
     }
 
     @Test
-    public void testFilter_default()
+    void testFilter_default()
     {
         final FilterMapping mapping = MappingBuilder.newBuilder().filter( this.filter );
         assertSame( this.filter, mapping.getResource() );
@@ -33,7 +33,7 @@ public class MappingBuilderTest
     }
 
     @Test
-    public void testServlet_default()
+    void testServlet_default()
     {
         final ServletMapping mapping = MappingBuilder.newBuilder().servlet( this.servlet );
         assertSame( this.servlet, mapping.getResource() );
@@ -41,7 +41,7 @@ public class MappingBuilderTest
     }
 
     @Test
-    public void testFilter_values()
+    void testFilter_values()
     {
         final MappingBuilder builder = MappingBuilder.newBuilder();
         buildValues( builder );
@@ -52,7 +52,7 @@ public class MappingBuilderTest
     }
 
     @Test
-    public void testServlet_values()
+    void testServlet_values()
     {
         final MappingBuilder builder = MappingBuilder.newBuilder();
         buildValues( builder );
@@ -88,13 +88,13 @@ public class MappingBuilderTest
     }
 
     @Test
-    public void testFilter_null()
+    void testFilter_null()
     {
         assertThrows(NullPointerException.class, () -> MappingBuilder.newBuilder().filter( null ));
     }
 
     @Test
-    public void testServlet_null()
+    void testServlet_null()
     {
         assertThrows(NullPointerException.class, () -> MappingBuilder.newBuilder().servlet( null ));
     }

@@ -18,19 +18,17 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_func_stemmed
+class FindNodesByQueryCommandTest_func_stemmed
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void ascii_folding_with_wildcard()
-        throws Exception
+    void ascii_folding_with_wildcard()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "grønnsaker" );

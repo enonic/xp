@@ -33,21 +33,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class PageTemplateServiceTest
+class PageTemplateServiceTest
 {
     private ContentService contentService;
 
     private PageTemplateServiceImpl service;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.contentService = mock( ContentService.class );
         this.service = new PageTemplateServiceImpl( this.contentService );
     }
 
     @Test
-    public void testCreate_withAllParameters()
+    void testCreate_withAllParameters()
     {
         final ContentTypeName supportedType = ContentTypeName.from( "com.myapp:supported-type" );
         final ContentTypeNames supports = ContentTypeNames.from( supportedType );
@@ -90,7 +90,7 @@ public class PageTemplateServiceTest
     }
 
     @Test
-    public void testGetByKey()
+    void testGetByKey()
     {
         final ContentId contentId = ContentId.from( "some-id" );
         final PageTemplateKey key = PageTemplateKey.from( contentId );
@@ -106,14 +106,14 @@ public class PageTemplateServiceTest
     }
 
     @Test
-    public void testGetByKey_nullKey()
+    void testGetByKey_nullKey()
     {
         final NullPointerException exception = assertThrows( NullPointerException.class, () -> this.service.getByKey( null ) );
         assertEquals( "pageTemplateKey is required", exception.getMessage() );
     }
 
     @Test
-    public void testGetDefault()
+    void testGetDefault()
     {
         final ContentId siteId = ContentId.from( "site-id" );
         final ContentPath sitePath = ContentPath.from( "/my-site" );
@@ -147,7 +147,7 @@ public class PageTemplateServiceTest
     }
 
     @Test
-    public void testGetBySite()
+    void testGetBySite()
     {
         final ContentId siteId = ContentId.from( "site-id" );
         final ContentPath sitePath = ContentPath.from( "/my-site" );
@@ -175,7 +175,7 @@ public class PageTemplateServiceTest
     }
 
     @Test
-    public void testGetBySite_nullSiteId()
+    void testGetBySite_nullSiteId()
     {
         final NullPointerException exception = assertThrows( NullPointerException.class, () -> this.service.getBySite( null ) );
         assertEquals( "siteId is required", exception.getMessage() );

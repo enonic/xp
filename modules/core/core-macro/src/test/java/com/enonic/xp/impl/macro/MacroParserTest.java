@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MacroParserTest
+class MacroParserTest
 {
 
     private void assertValidMacro( final boolean expectedValid, final String text )
@@ -33,7 +33,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testValidMacro()
+    void testValidMacro()
     {
         assertValidMacro( true, "[macroName /]" );
         assertValidMacro( true, "[macroName/]" );
@@ -68,7 +68,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testMacroInBody()
+    void testMacroInBody()
     {
         final String test1 = "[macroName]body [macroInBody/] body[/macroName]";
         final MacroParser macroParser1 = new MacroParser();
@@ -90,7 +90,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testParseWithBodyAndAttributes()
+    void testParseWithBodyAndAttributes()
     {
         final String macro = "[macroName par1=\"val1\" par2=\"val2\" par3=\"val3\"]body body[/macroName]";
         final MacroParser parser = new MacroParser();
@@ -111,7 +111,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testParseWithBody()
+    void testParseWithBody()
     {
         final String macro = "[macroName ]body body[/macroName]";
         final MacroParser parser = new MacroParser();
@@ -123,7 +123,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testParseWithoutBodyAndAttributes()
+    void testParseWithoutBodyAndAttributes()
     {
         final String macro = "[macroName par1=\"val1\" par2=\"val2\" par3=\"val3\"/]";
         final MacroParser parser = new MacroParser();
@@ -138,7 +138,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testParseWithoutBody()
+    void testParseWithoutBody()
     {
         final String macro = "[macroName /]";
         final MacroParser parser = new MacroParser();
@@ -150,7 +150,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testParseWithEscapedAttributes()
+    void testParseWithEscapedAttributes()
     {
         final String macro =
             "[macro_name123 par1 = \"value\\\"1\" par2 = \"\\\\va\\\"l\\\"ue2\"]/][body][/[/macro_name123 [/macro_name123]";
@@ -165,7 +165,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testNameNotStartingWithUnderscore()
+    void testNameNotStartingWithUnderscore()
     {
         final String macro = "[_mymacro][/_mymacro]";
         try
@@ -181,7 +181,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testAttributeNameNotStartingWithUnderscore()
+    void testAttributeNameNotStartingWithUnderscore()
     {
         final String macro = "[mymacro _body=\"something\"]real body[/mymacro]";
         try
@@ -197,7 +197,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testValidMacroWithMultiValues()
+    void testValidMacroWithMultiValues()
     {
         final String macro = "[macroName par1=\"val1\" par1=\"val2\" par2=\"other1\" par2=\"other2\" par3=\"something\" /]";
         assertValidMacro( true, macro );
@@ -218,7 +218,7 @@ public class MacroParserTest
     }
 
     @Test
-    public void testParseWithHtmlEncodedAttributes()
+    void testParseWithHtmlEncodedAttributes()
     {
         final String macro = "[macroName par1=\"&oslash;&aelig;&aring;\" par2=\"oea\"]body[/macroName]";
         final MacroParser parser = new MacroParser();

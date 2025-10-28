@@ -7,7 +7,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class CreateBranchScriptTest
+class CreateBranchScriptTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
@@ -23,7 +23,7 @@ public class CreateBranchScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/repo/createBranch.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).createBranch( Mockito.any() );

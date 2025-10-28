@@ -8,10 +8,10 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentVersionDateComparatorTest
+class ContentVersionDateComparatorTest
 {
     @Test
-    public void testComparison()
+    void testComparison()
     {
         final Instant now1 = Instant.now();
 

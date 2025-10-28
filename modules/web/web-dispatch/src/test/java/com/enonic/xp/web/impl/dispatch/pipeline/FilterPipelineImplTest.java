@@ -1,18 +1,16 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
-import java.io.IOException;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.FilterMapping;
@@ -20,7 +18,7 @@ import com.enonic.xp.web.impl.dispatch.mapping.FilterDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FilterPipelineImplTest
+class FilterPipelineImplTest
     extends ResourcePipelineImplTest<FilterDefinition, FilterPipelineImpl>
 {
     @WebFilter
@@ -29,14 +27,12 @@ public class FilterPipelineImplTest
     {
         @Override
         public void init( final FilterConfig config )
-            throws ServletException
         {
             // Do nothing
         }
 
         @Override
         public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
-            throws IOException, ServletException
         {
             // Do nothing
         }
@@ -63,7 +59,7 @@ public class FilterPipelineImplTest
     }
 
     @Test
-    public void addRemove_filter()
+    void addRemove_filter()
     {
         final MyFilter filter = new MyFilter();
 
@@ -75,7 +71,7 @@ public class FilterPipelineImplTest
     }
 
     @Test
-    public void addRemove_mapping()
+    void addRemove_mapping()
     {
         final FilterMapping mapping = Mockito.mock( FilterMapping.class );
         Mockito.when( mapping.getResource() ).thenReturn( Mockito.mock( Filter.class ) );
@@ -88,7 +84,7 @@ public class FilterPipelineImplTest
     }
 
     @Test
-    public void testFilter()
+    void testFilter()
         throws Exception
     {
         final ServletPipeline servletPipeline = Mockito.mock( ServletPipeline.class );

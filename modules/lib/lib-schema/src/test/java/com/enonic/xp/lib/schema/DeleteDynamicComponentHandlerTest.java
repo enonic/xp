@@ -9,11 +9,11 @@ import com.enonic.xp.resource.DynamicComponentType;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class DeleteDynamicComponentHandlerTest
+class DeleteDynamicComponentHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testPart()
+    void testPart()
     {
         when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
@@ -25,7 +25,7 @@ public class DeleteDynamicComponentHandlerTest
     }
 
     @Test
-    public void testLayout()
+    void testLayout()
     {
         when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
@@ -37,7 +37,7 @@ public class DeleteDynamicComponentHandlerTest
     }
 
     @Test
-    public void testPage()
+    void testPage()
     {
         when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
@@ -50,7 +50,7 @@ public class DeleteDynamicComponentHandlerTest
 
 
     @Test
-    public void testInvalidSchemaType()
+    void testInvalidSchemaType()
     {
         runFunction( "/test/DeleteDynamicComponentHandlerTest.js", "deleteInvalidComponentType" );
     }

@@ -10,11 +10,11 @@ import com.enonic.xp.content.ContentPath;
 
 import static org.mockito.Mockito.when;
 
-public class ArchiveContentHandlerTest
+class ArchiveContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         when( this.contentService.getByPath( ContentPath.from( "/path/to/mycontent" ) ) ).thenReturn( content );

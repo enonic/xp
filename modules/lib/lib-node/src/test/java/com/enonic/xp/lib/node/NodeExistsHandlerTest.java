@@ -6,11 +6,11 @@ import org.mockito.Mockito;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 
-public class NodeExistsHandlerTest
+class NodeExistsHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExistsByPath()
+    void testExistsByPath()
     {
         Mockito.when( this.nodeService.nodeExists( new NodePath( "/path/to/mynode" ) ) ).thenReturn( true );
 
@@ -18,7 +18,7 @@ public class NodeExistsHandlerTest
     }
 
     @Test
-    public void testExistsById()
+    void testExistsById()
     {
         Mockito.when( this.nodeService.nodeExists( NodeId.from( "123" ) ) ).thenReturn( true );
 

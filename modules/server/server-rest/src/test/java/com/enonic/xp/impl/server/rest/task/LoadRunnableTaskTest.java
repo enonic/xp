@@ -47,7 +47,7 @@ class LoadRunnableTaskTest
     private Path dumpDir;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         this.dumpService = mock( DumpService.class );
@@ -71,7 +71,7 @@ class LoadRunnableTaskTest
     }
 
     @Test
-    public void load_system()
+    void load_system()
         throws Exception
     {
         Files.createDirectory( dumpDir.resolve( "name" ) );

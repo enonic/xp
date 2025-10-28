@@ -22,20 +22,18 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FindIssueCommentsCommandTest
+class FindIssueCommentsCommandTest
 {
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
     }
 
     @Test
-    public void testFindIssues()
-        throws Exception
+    void testFindIssues()
     {
         final IssueId issueId = IssueId.create();
         final Node issueNode = Node.create().id( NodeId.from( issueId ) ).name( "parent-issue" ).build();
@@ -67,8 +65,7 @@ public class FindIssueCommentsCommandTest
     }
 
     @Test
-    public void testFindIssuesIssueNotExists()
-        throws Exception
+    void testFindIssuesIssueNotExists()
     {
         final IssueId issueId = IssueId.create();
 
@@ -87,8 +84,7 @@ public class FindIssueCommentsCommandTest
     }
 
     @Test
-    public void testFindIssuesNoIssue()
-        throws Exception
+    void testFindIssuesNoIssue()
     {
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
         final IssueCommentQuery commentQuery = IssueCommentQuery.create().

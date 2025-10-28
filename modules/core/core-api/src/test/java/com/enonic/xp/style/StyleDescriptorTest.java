@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class StyleDescriptorTest
+class StyleDescriptorTest
 {
 
     @Test
-    public void testCreate()
+    void testCreate()
     {
         ImageStyle element = ImageStyle.create().
             name( "editor-style-cinema" ).
@@ -34,7 +34,7 @@ public class StyleDescriptorTest
     }
 
     @Test
-    public void testDuplicateStyles()
+    void testDuplicateStyles()
     {
         ImageStyle element = ImageStyle.create().
             name( "editor-style-cinema" ).
@@ -58,14 +58,14 @@ public class StyleDescriptorTest
     }
 
     @Test
-    public void testToResourceKey()
+    void testToResourceKey()
     {
         final ResourceKey resourceKey = StyleDescriptor.toResourceKey( ApplicationKey.from( "myapp" ) );
         assertEquals( "myapp:/site/styles.xml", resourceKey.toString() );
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         ImageStyle element = ImageStyle.create().
             name( "editor-style-cinema" ).

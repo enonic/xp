@@ -14,20 +14,18 @@ import com.enonic.xp.repo.impl.node.CreateNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class CheckNodeExistsCommandTest
+class CheckNodeExistsCommandTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void exists()
-        throws Exception
+    void exists()
     {
         final Node node = CreateNodeCommand.create().
             indexServiceInternal( this.indexServiceInternal ).
@@ -52,8 +50,7 @@ public class CheckNodeExistsCommandTest
     }
 
     @Test
-    public void not_exists()
-        throws Exception
+    void not_exists()
     {
         assertFalse( CheckNodeExistsCommand.create().
             indexServiceInternal( this.indexServiceInternal ).

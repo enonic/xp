@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AggregationQueriesTest
+class AggregationQueriesTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final NumericRange numericRange1 = NumericRange.create().key( "key" ).from( 0.0 ).to( 1.0 ).build();
         final NumericRange numericRange2 = NumericRange.create().key( "key2" ).from( 20.0 ).to( 31.0 ).build();
@@ -30,7 +30,7 @@ public class AggregationQueriesTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final AggregationQueries queries = AggregationQueries.empty();
 

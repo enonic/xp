@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AdminToolDescriptorServiceImplTest
+class AdminToolDescriptorServiceImplTest
     extends ApplicationTestSupport
 {
     protected AdminToolDescriptorServiceImpl service;
@@ -29,7 +29,7 @@ public class AdminToolDescriptorServiceImplTest
     }
 
     @Test
-    public void getAllowedAdminToolDescriptors()
+    void getAllowedAdminToolDescriptors()
     {
         final PrincipalKeys principalKeys = PrincipalKeys.from( PrincipalKey.from( "role:system.user.admin" ) );
         AdminToolDescriptors result = this.service.getAllowedAdminToolDescriptors( principalKeys );
@@ -42,7 +42,7 @@ public class AdminToolDescriptorServiceImplTest
     }
 
     @Test
-    public void getByApplication()
+    void getByApplication()
     {
         final AdminToolDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
@@ -57,7 +57,7 @@ public class AdminToolDescriptorServiceImplTest
 
 
     @Test
-    public void getByKey()
+    void getByKey()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myadmintool" );
         final AdminToolDescriptor result = this.service.getByKey( descriptorKey );
@@ -69,7 +69,7 @@ public class AdminToolDescriptorServiceImplTest
     }
 
     @Test
-    public void getIconByKey()
+    void getIconByKey()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( ApplicationKey.from( "myapp1" ), "myadmintool" );
         final String icon = this.service.getIconByKey( descriptorKey );

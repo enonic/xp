@@ -1,6 +1,6 @@
 package com.enonic.xp.convert;
 
-public class ShortConverterTest
+class ShortConverterTest
     extends NumberConverterTest<Short>
 {
     public ShortConverterTest()

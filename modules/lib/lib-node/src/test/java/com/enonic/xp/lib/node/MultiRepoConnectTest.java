@@ -10,11 +10,11 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class MultiRepoConnectTest
+class MultiRepoConnectTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Context context = ContextBuilder.create().
             authInfo( AuthenticationInfo.create().

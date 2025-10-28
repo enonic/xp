@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AuditLogParamsTest
+class AuditLogParamsTest
 {
 
     @Test
-    public void create_empty()
+    void create_empty()
     {
         assertThrows(NullPointerException.class, () -> {
             LogAuditLogParams.create().build();
@@ -18,7 +18,7 @@ public class AuditLogParamsTest
     }
 
     @Test
-    public void create_only_type()
+    void create_only_type()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( AuditLogTestBuilder.type ).build();
 
@@ -31,7 +31,7 @@ public class AuditLogParamsTest
     }
 
     @Test
-    public void create()
+    void create()
     {
         LogAuditLogParams params = LogAuditLogParams.create().
             type( AuditLogTestBuilder.type ).

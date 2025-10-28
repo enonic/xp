@@ -43,13 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AttachmentMediaHandlerTest
+class AttachmentMediaHandlerTest
 {
     private AttachmentMediaHandler handler;
 
@@ -167,7 +166,6 @@ public class AttachmentMediaHandlerTest
 
     @Test
     void testAttachmentForEndpointOnSite()
-        throws Exception
     {
         setupMedia();
 
@@ -268,7 +266,6 @@ public class AttachmentMediaHandlerTest
 
     @Test
     void testOptions()
-        throws Exception
     {
         this.request.setBaseUri( "" );
         this.request.setEndpointPath( null );

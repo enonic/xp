@@ -13,11 +13,11 @@ import com.enonic.xp.image.FocalPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SquareScaleTest
+class SquareScaleTest
     extends BaseImageFilterTest
 {
     @Test
-    public void testDownscale()
+    void testDownscale()
     {
         BufferedImage scaled = scale( 100 );
         assertEquals( 100, scaled.getWidth() );
@@ -25,7 +25,7 @@ public class SquareScaleTest
     }
 
     @Test
-    public void testUpscale()
+    void testUpscale()
     {
         BufferedImage scaled = scale( 600 );
         assertEquals( 600, scaled.getWidth() );

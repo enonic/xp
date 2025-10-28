@@ -36,13 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ContentServiceImplTest_versions
+class ContentServiceImplTest_versions
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void get_versions()
-        throws Exception
+    void get_versions()
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -69,8 +68,7 @@ public class ContentServiceImplTest_versions
     }
 
     @Test
-    public void get_active_versions()
-        throws Exception
+    void get_active_versions()
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -113,8 +111,7 @@ public class ContentServiceImplTest_versions
     }
 
     @Test
-    public void version_workflow_info()
-        throws Exception
+    void version_workflow_info()
     {
         final Map<String, WorkflowCheckState> checks =
             Map.of( "checkName1", WorkflowCheckState.APPROVED, "checkName2", WorkflowCheckState.PENDING );
@@ -146,8 +143,7 @@ public class ContentServiceImplTest_versions
     }
 
     @Test
-    public void get_published_versions()
-        throws Exception
+    void get_published_versions()
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).

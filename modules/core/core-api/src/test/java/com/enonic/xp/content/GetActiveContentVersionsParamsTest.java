@@ -7,13 +7,13 @@ import com.enonic.xp.branch.Branches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GetActiveContentVersionsParamsTest
+class GetActiveContentVersionsParamsTest
 {
 
     private final ContentId contentId = ContentId.from( "a" );
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         Branch branch = Branch.create().value( "branchName" ).build();
         Branches branches = Branches.from( branch );

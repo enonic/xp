@@ -12,13 +12,12 @@ import com.enonic.xp.repository.RepositoryService;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AuditLogServiceImplDisabledTest
+class AuditLogServiceImplDisabledTest
 {
     private AuditLogServiceImpl auditLogService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         AuditLogConfig config = Mockito.mock( AuditLogConfig.class );
         Mockito.when( config.isEnabled() ).thenReturn( false );
@@ -37,7 +36,7 @@ public class AuditLogServiceImplDisabledTest
     }
 
     @Test
-    public void log_when_disabled()
+    void log_when_disabled()
     {
         AuditLog log = auditLogService.log( LogAuditLogParams.create().type( "test" ).build() );
         assertNull( log );

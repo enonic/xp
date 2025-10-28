@@ -15,7 +15,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class ModifyProjectReadAccessHandlerTest
+class ModifyProjectReadAccessHandlerTest
     extends BaseProjectHandlerTest
 {
     @Override
@@ -39,15 +39,13 @@ public class ModifyProjectReadAccessHandlerTest
     }
 
     @Test
-    public void modifyReadAccess()
-        throws Exception
+    void modifyReadAccess()
     {
         runFunction( "/test/ModifyProjectReadAccessHandlerTest.js", "modifyReadAccess" );
     }
 
     @Test
-    public void modifyReadAccessNull()
-        throws Exception
+    void modifyReadAccessNull()
     {
         runFunction( "/test/ModifyProjectReadAccessHandlerTest.js", "modifyReadAccessNull" );
     }

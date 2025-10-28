@@ -22,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ServletStatusReporterTest
+class ServletStatusReporterTest
 {
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final Servlet servlet1 = new MyServlet1();

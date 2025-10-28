@@ -48,7 +48,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SiteHandlerTest
+class SiteHandlerTest
 {
     private SiteHandler handler;
 
@@ -62,7 +62,6 @@ public class SiteHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.contentService = mock( ContentService.class );
         this.projectService = mock( ProjectService.class );
@@ -88,7 +87,7 @@ public class SiteHandlerTest
     }
 
     @Test
-    public void testCreateRequestForAnonymousDraft()
+    void testCreateRequestForAnonymousDraft()
     {
         try
         {
@@ -129,7 +128,7 @@ public class SiteHandlerTest
     }
 
     @Test
-    public void testCreatePortalRequestForAssetAndIdproviderEndpoints()
+    void testCreatePortalRequestForAssetAndIdproviderEndpoints()
     {
         this.request.setRawPath( "/site/myrepo/draft/mycontent/_/asset/demo/css/main.css" );
         this.request.setEndpointPath( "/_/asset/demo/css/main.css" );

@@ -19,9 +19,9 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ScheduleAuditLogSupportImplTest
+class ScheduleAuditLogSupportImplTest
 {
     @Mock
     private AuditLogService auditLogService;
@@ -59,7 +59,7 @@ public class ScheduleAuditLogSupportImplTest
     private Context context;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         Mockito.when( config.auditlogEnabled() ).thenReturn( true );
 
@@ -88,7 +88,7 @@ public class ScheduleAuditLogSupportImplTest
     }
 
     @Test
-    public void testCreateJob()
+    void testCreateJob()
         throws Exception
     {
         final PropertyTree config = new PropertyTree();
@@ -164,7 +164,7 @@ public class ScheduleAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateContent()
+    void testUpdateContent()
         throws Exception
     {
         final PropertyTree config = new PropertyTree();
@@ -218,7 +218,7 @@ public class ScheduleAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateWithoutCreator()// jobs were produced with an empty `creator` and `createdTime` fields from 7.7.0 to 7.7.2
+    void testUpdateWithoutCreator()// jobs were produced with an empty `creator` and `createdTime` fields from 7.7.0 to 7.7.2
     throws Exception
     {
         final PropertyTree config = new PropertyTree();
@@ -269,7 +269,7 @@ public class ScheduleAuditLogSupportImplTest
     }
 
     @Test
-    public void delete()
+    void delete()
         throws Exception
     {
         context.runWith( () -> support.delete( name, true ) );
@@ -286,7 +286,7 @@ public class ScheduleAuditLogSupportImplTest
     }
 
     @Test
-    public void auditLogDisabled()
+    void auditLogDisabled()
         throws Exception
     {
         Mockito.when( config.auditlogEnabled() ).thenReturn( false );

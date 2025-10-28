@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_apiUrlTest
+class PortalUrlServiceImpl_apiUrlTest
 {
 
     private PortalUrlService service;
@@ -42,7 +42,7 @@ public class PortalUrlServiceImpl_apiUrlTest
     private HttpServletRequest req;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
 
@@ -59,7 +59,7 @@ public class PortalUrlServiceImpl_apiUrlTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         PortalRequestAccessor.remove();
     }

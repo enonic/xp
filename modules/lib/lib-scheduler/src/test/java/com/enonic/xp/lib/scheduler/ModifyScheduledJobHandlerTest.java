@@ -5,11 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class ModifyScheduledJobHandlerTest
+class ModifyScheduledJobHandlerTest
     extends BaseScheduledJobHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         mockOneTimeCalendar();
         mockCronCalendar();
@@ -18,8 +18,7 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyJob()
-        throws Exception
+    void modifyJob()
     {
         mockOneTimeCalendar();
         mockCronCalendar();
@@ -28,8 +27,7 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyJobWithNull()
-        throws Exception
+    void modifyJobWithNull()
     {
         mockOneTimeCalendar();
 
@@ -37,8 +35,7 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyDescriptorWithNull()
-        throws Exception
+    void modifyDescriptorWithNull()
     {
         mockOneTimeCalendar();
 
@@ -46,8 +43,7 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyConfigWithNull()
-        throws Exception
+    void modifyConfigWithNull()
     {
         mockOneTimeCalendar();
 
@@ -55,8 +51,7 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyCalendarWithNull()
-        throws Exception
+    void modifyCalendarWithNull()
     {
         mockOneTimeCalendar();
 
@@ -64,8 +59,7 @@ public class ModifyScheduledJobHandlerTest
     }
 
     @Test
-    public void modifyEnabledWithNull()
-        throws Exception
+    void modifyEnabledWithNull()
     {
         mockOneTimeCalendar();
 

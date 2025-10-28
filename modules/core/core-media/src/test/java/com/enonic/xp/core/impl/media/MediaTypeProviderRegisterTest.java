@@ -11,18 +11,18 @@ import com.enonic.xp.util.MediaTypes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MediaTypeProviderRegisterTest
+class MediaTypeProviderRegisterTest
 {
     private MediaTypeProviderRegister register;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.register = new MediaTypeProviderRegister();
     }
 
     @Test
-    public void testAddRemove()
+    void testAddRemove()
     {
         final MediaTypeProvider provider = Mockito.mock( MediaTypeProvider.class );
         assertEquals( 0, Lists.newArrayList( MediaTypes.instance() ).size() );

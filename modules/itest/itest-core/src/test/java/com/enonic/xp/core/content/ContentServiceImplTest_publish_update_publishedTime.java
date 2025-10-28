@@ -26,13 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ContentServiceImplTest_publish_update_publishedTime
+class ContentServiceImplTest_publish_update_publishedTime
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void set_published_time()
-        throws Exception
+    void set_published_time()
     {
         final Content content = doCreateContent();
         assertNull( content.getPublishInfo() );
@@ -55,8 +54,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     }
 
     @Test
-    public void keep_original_published_time()
-        throws Exception
+    void keep_original_published_time()
     {
         final Content content = doCreateContent();
 
@@ -82,8 +80,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     }
 
     @Test
-    public void set_publish_time_again_if_reset()
-        throws Exception
+    void set_publish_time_again_if_reset()
     {
         final Content content = doCreateContent();
         doPublishContent( content );
@@ -100,8 +97,7 @@ public class ContentServiceImplTest_publish_update_publishedTime
     }
 
     @Test
-    public void publish_info_is_removed_on_duplicate()
-        throws Exception
+    void publish_info_is_removed_on_duplicate()
     {
 
         final Content rootContent = createContent( ContentPath.ROOT );

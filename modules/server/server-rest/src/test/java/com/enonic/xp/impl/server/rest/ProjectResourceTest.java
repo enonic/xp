@@ -44,7 +44,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ProjectResourceTest
+class ProjectResourceTest
 {
     private ProjectResource resource;
 
@@ -55,13 +55,13 @@ public class ProjectResourceTest
     private ProjectService projectService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         resource = new ProjectResource( projectService, contentService );
     }
 
     @Test
-    public void testListProjects()
+    void testListProjects()
     {
         final Projects projects = Projects.create()
             .addAll( List.of( mockProject( ProjectName.from( "project1" ) ), mockProject( ProjectName.from( "project2" ) ) ) )
@@ -89,7 +89,7 @@ public class ProjectResourceTest
     }
 
     @Test
-    public void testListEmpty()
+    void testListEmpty()
     {
         when( projectService.list() ).thenReturn( Projects.empty() );
 

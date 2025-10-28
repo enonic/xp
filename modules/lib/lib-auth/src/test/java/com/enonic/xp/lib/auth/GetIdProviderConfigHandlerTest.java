@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetIdProviderConfigHandlerTest
+class GetIdProviderConfigHandlerTest
     extends ScriptTestSupport
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final IdProvider idProvider = TestDataFixtures.getTestIdProvider();
         this.portalRequest.setIdProvider( idProvider );
@@ -19,7 +19,7 @@ public class GetIdProviderConfigHandlerTest
 
 
     @Test
-    public void noIdProviderConfig()
+    void noIdProviderConfig()
     {
         this.portalRequest.setIdProvider( null );
         runFunction( "/test/getIdProviderConfig-test.js", "noIdProvider" );

@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EventTest
+class EventTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final Event event = this.createTestEvent();
 
@@ -26,7 +26,7 @@ public class EventTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final Event event = this.createTestEvent();
 
@@ -38,7 +38,7 @@ public class EventTest
     }
 
     @Test
-    public void testClone()
+    void testClone()
     {
         final Event event = this.createTestEvent();
         final Event clonedEvent = Event.create( event ).build();
@@ -50,7 +50,7 @@ public class EventTest
     }
 
     @Test
-    public void testDataValues()
+    void testDataValues()
     {
         final Event testEvent = Event.create( "type" ).
             distributed( true ).
@@ -71,7 +71,7 @@ public class EventTest
     }
 
     @Test
-    public void testGetValueAs()
+    void testGetValueAs()
     {
         final Event testEvent = Event.create( "type" ).
             value( "int1", 1 ).
@@ -86,7 +86,7 @@ public class EventTest
     }
 
     @Test
-    public void testGetNullValues()
+    void testGetNullValues()
     {
         final Event testEvent = Event.create( "type" ).
             value( "key1", "val1" ).
@@ -97,7 +97,7 @@ public class EventTest
     }
 
     @Test
-    public void testSubTypes()
+    void testSubTypes()
     {
         final Event testEvent = Event.create( "type1.type2.type3.type4" ).build();
 

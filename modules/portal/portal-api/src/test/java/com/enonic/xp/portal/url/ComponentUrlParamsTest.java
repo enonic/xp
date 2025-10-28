@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ComponentUrlParamsTest
+class ComponentUrlParamsTest
 {
     @Test
-    public void testId()
+    void testId()
     {
         final ComponentUrlParams params = new ComponentUrlParams();
         assertNull( params.getId() );
@@ -21,7 +21,7 @@ public class ComponentUrlParamsTest
     }
 
     @Test
-    public void testPath()
+    void testPath()
     {
         final ComponentUrlParams params = new ComponentUrlParams();
         assertNull( params.getPath() );
@@ -34,7 +34,7 @@ public class ComponentUrlParamsTest
     }
 
     @Test
-    public void testComponent()
+    void testComponent()
     {
         final ComponentUrlParams params = new ComponentUrlParams();
         assertNull( params.getComponent() );
@@ -47,7 +47,7 @@ public class ComponentUrlParamsTest
     }
 
     @Test
-    public void testSetAsMap()
+    void testSetAsMap()
     {
         final ComponentUrlParams params = new ComponentUrlParams();
         params.id( "123456" );

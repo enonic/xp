@@ -19,16 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageTemplatesTest
+class PageTemplatesTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         assertTrue( PageTemplates.empty().isEmpty() );
     }
 
     @Test
-    public void getTemplate()
+    void getTemplate()
     {
         final PageTemplates pageTemplates = PageTemplates.from( PageTemplate.newPageTemplate().
             key( PageTemplateKey.from( "testKey" ) ).
@@ -43,7 +43,7 @@ public class PageTemplatesTest
     }
 
     @Test
-    public void filterTest()
+    void filterTest()
     {
         final PageTemplates pageTemplates = PageTemplates.create().
             add( generatePageTemplate1() ).

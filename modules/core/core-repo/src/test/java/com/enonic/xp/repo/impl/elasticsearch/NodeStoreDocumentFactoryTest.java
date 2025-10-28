@@ -20,11 +20,10 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NodeStoreDocumentFactoryTest
+class NodeStoreDocumentFactoryTest
 {
     @Test
-    public void references()
-        throws Exception
+    void references()
     {
         final PropertyTree data = new PropertyTree();
         data.addReference( "myRef", new Reference( NodeId.from( "otherNode" ) ) );

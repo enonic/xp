@@ -52,8 +52,7 @@ class AuditLogServiceImplTest
     private AuditLogConfig config;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         PropertyTree data = new PropertyTree();
         data.setString( "a", "b" );
@@ -104,7 +103,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void log_no_parameters()
+    void log_no_parameters()
     {
         assertThrows( NullPointerException.class, () -> {
             auditLogService.log( LogAuditLogParams.create().build() );
@@ -112,21 +111,21 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void log_with_only_type()
+    void log_with_only_type()
     {
         AuditLog log = auditLogService.log( LogAuditLogParams.create().type( "test" ).build() );
         assertLog( log );
     }
 
     @Test
-    public void get_by_id()
+    void get_by_id()
     {
         AuditLog log = auditLogService.get( new AuditLogId() );
         assertLog( log );
     }
 
     @Test
-    public void find_no_filter()
+    void find_no_filter()
     {
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().build() );
         assertEquals( 1, result.getHits().getSize() );
@@ -135,7 +134,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find()
+    void find()
     {
         FindAuditLogResult result = auditLogService.find( FindAuditLogParams.create().
             type( auditLogParams.getType() ).
@@ -146,7 +145,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void cleanUpOneEmpty()
+    void cleanUpOneEmpty()
     {
         when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 
@@ -166,7 +165,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void cleanUpOneBatch()
+    void cleanUpOneBatch()
     {
         when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 
@@ -193,7 +192,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void cleanUpMultipleBatch()
+    void cleanUpMultipleBatch()
     {
         when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 

@@ -130,7 +130,7 @@ class NodePathTest
     }
 
     @Test
-    public void serializable()
+    void serializable()
     {
         final NodePath nodePath = new NodePath( "/abc" );
         final byte[] serializedObject = SerializableUtils.serialize( nodePath );
@@ -139,7 +139,7 @@ class NodePathTest
     }
 
     @Test
-    public void nodeWithParent()
+    void nodeWithParent()
     {
         assertEquals( "/r/abc", new NodePath( new NodePath( "/r" ), NodeName.from( "abc" ) ).toString() );
         assertEquals( "/r/abc", new NodePath( new NodePath( "/r/" ), NodeName.from( "abc" ) ).toString() );

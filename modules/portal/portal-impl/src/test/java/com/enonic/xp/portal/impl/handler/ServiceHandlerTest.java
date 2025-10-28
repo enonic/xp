@@ -52,7 +52,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ServiceHandlerTest
+class ServiceHandlerTest
 {
     private ServiceHandler handler;
 
@@ -66,7 +66,6 @@ public class ServiceHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
@@ -98,7 +97,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
         this.request.setMethod( HttpMethod.OPTIONS );
@@ -113,7 +112,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void testNotValidUrlPattern()
+    void testNotValidUrlPattern()
         throws Exception
     {
         this.request.setEndpointPath( "/_/service/" );
@@ -131,7 +130,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void testForbiddenService()
+    void testForbiddenService()
         throws Exception
     {
         final DescriptorKey serviceDescriptorKey = DescriptorKey.from( "demo:test" );
@@ -158,7 +157,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void executeScript_noContent()
+    void executeScript_noContent()
         throws Exception
     {
         this.request.setBaseUri( "/webapp/demo" );
@@ -175,7 +174,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void executeScript_validSite()
+    void executeScript_validSite()
         throws Exception
     {
         setupContentAndSite();
@@ -195,7 +194,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void executeScript_invalidSite()
+    void executeScript_invalidSite()
     {
         setupContentAndSite();
         this.request.setEndpointPath( "/_/service/forbidden/test" );
@@ -203,7 +202,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void executeScript_validApplication()
+    void executeScript_validApplication()
         throws Exception
     {
         this.request.setBaseUri( "/webapp/demo" );
@@ -217,7 +216,7 @@ public class ServiceHandlerTest
     }
 
     @Test
-    public void executeScript_invalidApplication()
+    void executeScript_invalidApplication()
     {
         this.request.setBaseUri( "/webapp/forbidden" );
         this.request.setRawPath( "/webapp/forbidden/_/service/demo/test" );

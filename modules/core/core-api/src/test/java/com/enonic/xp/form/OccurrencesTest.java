@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OccurrencesTest
+class OccurrencesTest
 {
     @Test
-    public void required()
+    void required()
     {
         assertEquals( false, Occurrences.create( 0, 0 ).impliesRequired() );
         assertEquals( true, Occurrences.create( 1, 0 ).impliesRequired() );
@@ -16,7 +16,7 @@ public class OccurrencesTest
     }
 
     @Test
-    public void multiple()
+    void multiple()
     {
         assertEquals( true, Occurrences.create( 0, 0 ).isMultiple() );
         assertEquals( false, Occurrences.create( 0, 1 ).isMultiple() );
@@ -24,7 +24,7 @@ public class OccurrencesTest
     }
 
     @Test
-    public void unlimited()
+    void unlimited()
     {
         assertEquals( true, Occurrences.create( 0, 0 ).isUnlimited() );
         assertEquals( false, Occurrences.create( 0, 1 ).isUnlimited() );

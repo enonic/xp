@@ -1,16 +1,20 @@
 package com.enonic.xp.core.impl.export.xml;
 
 import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
+
 import com.google.common.io.Resources;
+
 import com.enonic.xp.node.Node;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XmlNodeParserTest
+class XmlNodeParserTest
     extends BaseXmlSerializerTest
 {
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         final Node.Builder builder = Node.create();
@@ -30,7 +34,7 @@ public class XmlNodeParserTest
     }
 
     @Test
-    public void testParse_empty_tags()
+    void testParse_empty_tags()
         throws Exception
     {
         final Node.Builder builder = Node.create();
@@ -50,7 +54,7 @@ public class XmlNodeParserTest
     }
 
     @Test
-    public void testParse_valueStartsWithSpace()
+    void testParse_valueStartsWithSpace()
     {
         final Node.Builder builder = Node.create();
 

@@ -30,20 +30,18 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ImportNodeCommandTest
+class ImportNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         ctxDefault().callWith( this::createDefaultRootNode );
         ctxOther().callWith( this::createDefaultRootNode );
     }
 
     @Test
-    public void no_timestamp()
-        throws Exception
+    void no_timestamp()
     {
         final Node importNode = Node.create().
             name( "myNode" ).
@@ -57,8 +55,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void created_nodes_with_id_and_timestamp_should_be_equal()
-        throws Exception
+    void created_nodes_with_id_and_timestamp_should_be_equal()
     {
         ctxDefault().callWith( () -> importNode( Node.create().
             id( NodeId.from( "abc" ) ).
@@ -87,8 +84,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void import_with_id()
-        throws Exception
+    void import_with_id()
     {
         final Node importNode = Node.create().
             id( NodeId.from( "abc" ) ).
@@ -105,8 +101,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void permissions_on_root_create()
-        throws Exception
+    void permissions_on_root_create()
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -143,8 +138,7 @@ public class ImportNodeCommandTest
 
 
     @Test
-    public void keep_permissions_on_create()
-        throws Exception
+    void keep_permissions_on_create()
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -176,8 +170,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void skip_permissions_on_create()
-        throws Exception
+    void skip_permissions_on_create()
     {
         final AccessControlList aclList = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -205,8 +198,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void keep_permissions_on_update()
-        throws Exception
+    void keep_permissions_on_update()
     {
         importNode( Node.create().
             id( NodeId.from( "abc" ) ).
@@ -236,8 +228,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void skip_permissions_on_update()
-        throws Exception
+    void skip_permissions_on_update()
     {
         final Node createdNode = importNode( Node.create().
             id( NodeId.from( "abc" ) ).
@@ -269,7 +260,7 @@ public class ImportNodeCommandTest
     }
 
     @Test
-    public void import_existing_node()
+    void import_existing_node()
     {
         PropertyTree data = new PropertyTree();
         data.addString( "name", "value" );

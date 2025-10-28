@@ -22,19 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageDataSerializerTest
+class PageDataSerializerTest
     extends AbstractDataSerializerTest
 {
     private PageDataSerializer pageDataSerializer;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.pageDataSerializer = new PageDataSerializer();
     }
 
     @Test
-    public void page()
+    void page()
     {
         final Page page = createPage();
 
@@ -47,7 +47,7 @@ public class PageDataSerializerTest
     }
 
     @Test
-    public void page_config()
+    void page_config()
     {
         final Page page = createPage();
 
@@ -60,13 +60,13 @@ public class PageDataSerializerTest
     }
 
     @Test
-    public void noComponentsNoPage()
+    void noComponentsNoPage()
     {
         assertNull( pageDataSerializer.fromData( new PropertyTree().newSet() ) );
     }
 
     @Test
-    public void component_config()
+    void component_config()
     {
         final Page page = createPage();
 
@@ -79,7 +79,7 @@ public class PageDataSerializerTest
     }
 
     @Test
-    public void page_template()
+    void page_template()
     {
         Page page = Page.create().
             template( PageTemplateKey.from( "template-id" ) ).
@@ -94,7 +94,7 @@ public class PageDataSerializerTest
     }
 
     @Test
-    public void page_with_regions_as_null()
+    void page_with_regions_as_null()
     {
         final PropertyTree pageConfig = new PropertyTree();
         pageConfig.addString( "some", "config" );
@@ -114,7 +114,7 @@ public class PageDataSerializerTest
     }
 
     @Test
-    public void fragmentPage()
+    void fragmentPage()
     {
         Page page = Page.create().
             fragment( createLayoutComponent() ).

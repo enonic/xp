@@ -13,7 +13,7 @@ import com.enonic.xp.macro.MacroKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlMacroDescriptorParserTest
+class XmlMacroDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlMacroDescriptorParser parser;
@@ -21,7 +21,7 @@ public class XmlMacroDescriptorParserTest
     private MacroDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlMacroDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -32,7 +32,7 @@ public class XmlMacroDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -40,7 +40,7 @@ public class XmlMacroDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -48,7 +48,6 @@ public class XmlMacroDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final MacroDescriptor result = this.builder.build();
         assertEquals( "myapplication:mymacro", result.getKey().toString() );

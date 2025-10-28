@@ -28,7 +28,6 @@ public abstract class XmlModelParserTest
     }
 
     protected final void parse( final XmlModelParser parser, final String suffix )
-        throws Exception
     {
         final URL resource = findResource( suffix );
         parser.systemId( resource.toString() );

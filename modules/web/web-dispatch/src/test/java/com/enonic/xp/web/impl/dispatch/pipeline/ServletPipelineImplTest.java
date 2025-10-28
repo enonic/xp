@@ -2,12 +2,12 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.Map;
 
+import org.junit.jupiter.api.Test;
+
 import jakarta.servlet.Servlet;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.dispatch.ServletMapping;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ServletPipelineImplTest
+class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
 {
     @WebServlet
@@ -43,7 +43,7 @@ public class ServletPipelineImplTest
     }
 
     @Test
-    public void addRemove_servlet()
+    void addRemove_servlet()
     {
         final MyServlet servlet = new MyServlet();
 
@@ -55,7 +55,7 @@ public class ServletPipelineImplTest
     }
 
     @Test
-    public void addRemove_mapping()
+    void addRemove_mapping()
     {
         final ServletMapping mapping = mock( ServletMapping.class );
         when( mapping.getResource() ).thenReturn( mock( Servlet.class ) );
@@ -68,7 +68,7 @@ public class ServletPipelineImplTest
     }
 
     @Test
-    public void testService()
+    void testService()
         throws Exception
     {
         final ServletDefinition def1 = newDefinition();

@@ -11,12 +11,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LikeExpressionBuilderTest
+class LikeExpressionBuilderTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void compareLikeString()
-        throws Exception
+    void compareLikeString()
     {
         final String expected = load( "compare_like_string.json" );
 

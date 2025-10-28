@@ -7,10 +7,10 @@ import com.enonic.xp.schema.content.ContentTypes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BuiltinContentTypesTest
+class BuiltinContentTypesTest
 {
     @Test
-    public void testBuiltin()
+    void testBuiltin()
     {
         final ContentTypes types = new BuiltinContentTypes().getAll();
         assertEquals( 22, types.getSize() );

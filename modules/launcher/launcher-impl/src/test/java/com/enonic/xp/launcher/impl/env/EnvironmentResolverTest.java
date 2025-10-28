@@ -11,13 +11,13 @@ import static com.enonic.xp.launcher.impl.SharedConstants.XP_HOME_DIR;
 import static com.enonic.xp.launcher.impl.SharedConstants.XP_INSTALL_DIR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EnvironmentResolverTest
+class EnvironmentResolverTest
 {
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void testInstallDir()
+    void testInstallDir()
         throws Exception
     {
         final Path dir = Files.createDirectories( this.temporaryFolder.resolve( "dir" ) );
@@ -28,7 +28,7 @@ public class EnvironmentResolverTest
     }
 
     @Test
-    public void testHomeDir()
+    void testHomeDir()
         throws Exception
     {
         final Path dir = Files.createDirectories( this.temporaryFolder.resolve( "dir" ) );

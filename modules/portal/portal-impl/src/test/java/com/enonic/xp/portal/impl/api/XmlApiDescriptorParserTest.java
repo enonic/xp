@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlApiDescriptorParserTest
+class XmlApiDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlApiDescriptorParser parser;
@@ -24,7 +24,7 @@ public class XmlApiDescriptorParserTest
     private ApiDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.builder = ApiDescriptor.create();
         this.builder.key( DescriptorKey.from( ApplicationKey.from( "myapplication" ), "myapi" ) );
@@ -34,7 +34,7 @@ public class XmlApiDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -42,7 +42,7 @@ public class XmlApiDescriptorParserTest
     }
 
     @Test
-    public void testParseNoNs()
+    void testParseNoNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -50,7 +50,7 @@ public class XmlApiDescriptorParserTest
     }
 
     @Test
-    public void testParseInvalid()
+    void testParseInvalid()
         throws Exception
     {
         parse( this.parser, "-invalid.xml" );

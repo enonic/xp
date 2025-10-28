@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -23,7 +23,7 @@ import com.enonic.xp.task.TaskId;
 
 import static org.mockito.Mockito.mock;
 
-public class SchedulerResourceTest
+class SchedulerResourceTest
     extends JaxRsResourceTestSupport
 {
     private SchedulerService schedulerService;
@@ -37,7 +37,7 @@ public class SchedulerResourceTest
     }
 
     @Test
-    public void list()
+    void list()
         throws Exception
     {
         final DescriptorKey descriptor = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.features" ), "landing" );

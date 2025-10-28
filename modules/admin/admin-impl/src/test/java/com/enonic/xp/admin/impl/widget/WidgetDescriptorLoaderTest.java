@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
-import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -21,14 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WidgetDescriptorLoaderTest
+class WidgetDescriptorLoaderTest
     extends ApplicationTestSupport
 {
     private WidgetDescriptorLoader loader;
 
     @Override
     protected void initialize()
-        throws Exception
     {
         this.loader = new WidgetDescriptorLoader( this.resourceService );
 
@@ -38,20 +37,20 @@ public class WidgetDescriptorLoaderTest
     }
 
     @Test
-    public void testGetType()
+    void testGetType()
     {
         assertEquals( WidgetDescriptor.class, this.loader.getType() );
     }
 
     @Test
-    public void testPostProcess()
+    void testPostProcess()
     {
         final WidgetDescriptor descriptor = WidgetDescriptor.create().key( DescriptorKey.from( "myapp:a" ) ).build();
         assertSame( descriptor, this.loader.postProcess( descriptor ) );
     }
 
     @Test
-    public void testCreateDefault()
+    void testCreateDefault()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:widget1" );
         final WidgetDescriptor descriptor = this.loader.createDefault( key );
@@ -61,14 +60,14 @@ public class WidgetDescriptorLoaderTest
     }
 
     @Test
-    public void testFind()
+    void testFind()
     {
         final DescriptorKeys keys = this.loader.find( ApplicationKey.from( "myapp1" ) );
         assertThat( keys ).map( Objects::toString ).containsExactlyInAnyOrder( "myapp1:widget1", "myapp1:widget2" );
     }
 
     @Test
-    public void testLoadMax()
+    void testLoadMax()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget1" );
 
@@ -86,7 +85,7 @@ public class WidgetDescriptorLoaderTest
     }
 
     @Test
-    public void testLoadMin()
+    void testLoadMin()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:widget2" );
         final ResourceKey resourceKey = this.loader.toResource( descriptorKey );

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class VerifiedEmailAuthTokenTest
+class VerifiedEmailAuthTokenTest
 {
     @Test
-    public void userName()
+    void userName()
     {
         final VerifiedEmailAuthToken token = new VerifiedEmailAuthToken();
         token.setEmail( "user@domain.com" );

@@ -5,11 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteScheduledJobHandlerTest
+class DeleteScheduledJobHandlerTest
     extends BaseScheduledJobHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         mockOneTimeCalendar();
 
@@ -17,8 +17,7 @@ public class DeleteScheduledJobHandlerTest
     }
 
     @Test
-    public void deleteJob()
-        throws Exception
+    void deleteJob()
     {
         mockOneTimeCalendar();
         mockCronCalendar();
@@ -27,15 +26,13 @@ public class DeleteScheduledJobHandlerTest
     }
 
     @Test
-    public void deleteNotExist()
-        throws Exception
+    void deleteNotExist()
     {
         runFunction( "/test/DeleteScheduledJobHandlerTest.js", "deleteNotExist" );
     }
 
     @Test
-    public void deleteNull()
-        throws Exception
+    void deleteNull()
     {
         runFunction( "/test/DeleteScheduledJobHandlerTest.js", "deleteNull" );
     }

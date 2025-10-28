@@ -12,14 +12,14 @@ import com.sun.net.httpserver.HttpServer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PingSenderTest
+class PingSenderTest
 {
     private PingSender sender;
 
     private HttpServer server;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         this.server = HttpServer.create( new InetSocketAddress( 0 ), 0 );
@@ -30,14 +30,13 @@ public class PingSenderTest
     }
 
     @AfterEach
-    public void shutdown()
-        throws Exception
+    void shutdown()
     {
         this.server.stop( 0 );
     }
 
     @Test
-    public void testPing()
+    void testPing()
         throws Exception
     {
         CompletableFuture<String> requestMethod = new CompletableFuture<>();

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class AggregationsTest
+class AggregationsTest
 {
 
     private static final ArrayList<Aggregation> list = new ArrayList();
@@ -24,14 +24,14 @@ public class AggregationsTest
     }
 
     @Test
-    public void fromEmpty()
+    void fromEmpty()
     {
         Aggregations aggregations = Aggregations.empty();
         assertEquals( 0, aggregations.getSize() );
     }
 
     @Test
-    public void fromIterable()
+    void fromIterable()
     {
         Aggregations aggregations = Aggregations.from( AggregationsTest.list );
 
@@ -43,7 +43,7 @@ public class AggregationsTest
     }
 
     @Test
-    public void fromArrayList()
+    void fromArrayList()
     {
         Aggregations aggregations =
             Aggregations.from( AggregationsTest.list.get( 0 ), AggregationsTest.list.get( 1 ), AggregationsTest.list.get( 2 ) );

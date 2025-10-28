@@ -15,7 +15,7 @@ import com.enonic.xp.i18n.MessageBundle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MessageBundleImplTest
+class MessageBundleImplTest
 {
     private MessageBundle createDefault()
     {
@@ -30,28 +30,28 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void testNonExistingKey()
+    void testNonExistingKey()
     {
         MessageBundle resourceBundle = createDefault();
         assertNull( resourceBundle.localize( "dummyKey" ) );
     }
 
     @Test
-    public void testEmptyValue()
+    void testEmptyValue()
     {
         MessageBundle resourceBundle = createDefault();
         assertNull( resourceBundle.localize( "key6" ) );
     }
 
     @Test
-    public void testEmptyResourceBundle()
+    void testEmptyResourceBundle()
     {
         MessageBundle resourceBundle = new MessageBundleImpl( new Properties(), Locale.ENGLISH );
         assertNull( resourceBundle.localize( "dummyKey" ) );
     }
 
     @Test
-    public void dateTime()
+    void dateTime()
     {
         final Properties properties = new Properties();
         properties.put( "key1", "{0,time,short} {0,date,short}" );
@@ -60,7 +60,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void nullArguments()
+    void nullArguments()
     {
         final Properties properties = new Properties();
         properties.put( "key1", "{0}" );
@@ -69,7 +69,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void nullArgument()
+    void nullArgument()
     {
         final Properties properties = new Properties();
         properties.put( "key1", "{0}" );
@@ -78,7 +78,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void localDateTime()
+    void localDateTime()
     {
         LocalTime lt = LocalTime.of( 13, 56, 4 );
         LocalDate ld = LocalDate.of( 2021, 5, 3 );
@@ -94,7 +94,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void alwaysUTC()
+    void alwaysUTC()
     {
         final Properties properties = new Properties();
         properties.put( "key1", "{0,date,z}" );
@@ -103,7 +103,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void testAsMap()
+    void testAsMap()
     {
         final MessageBundle resourceBundle = createDefault();
         final Map<String, String> map = resourceBundle.asMap();
@@ -112,7 +112,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void testParameterizedPhrase()
+    void testParameterizedPhrase()
     {
         MessageBundle resourceBundle = createDefault();
 
@@ -124,7 +124,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void testParameterizedPhraseMissingParameter()
+    void testParameterizedPhraseMissingParameter()
     {
         MessageBundle resourceBundle = createDefault();
 
@@ -136,7 +136,7 @@ public class MessageBundleImplTest
     }
 
     @Test
-    public void testParameterizedPhrase_two_values()
+    void testParameterizedPhrase_two_values()
     {
         MessageBundle resourceBundle = createDefault();
 

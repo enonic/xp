@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * http://docs.jboss.org/osgi/jboss-osgi-1.0.0/apidocs/org/jboss/osgi/vfs/VirtualFile.html
  */
-public class PathBasedVirtualFileTest
+class PathBasedVirtualFileTest
     extends AbstractVirtualFileTest
 {
     @Test
-    public void testFolder()
+    void testFolder()
     {
         final VirtualFile file = VirtualFiles.from( this.rootDir );
 
@@ -35,7 +35,7 @@ public class PathBasedVirtualFileTest
     }
 
     @Test
-    public void testResolve()
+    void testResolve()
     {
         final VirtualFile file1 = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir1", "/" ) );
         assertTrue( file1.exists() );
@@ -54,7 +54,7 @@ public class PathBasedVirtualFileTest
     }
 
     @Test
-    public void testFile()
+    void testFile()
         throws Exception
     {
         final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir1/file1.txt", "/" ) );
@@ -74,7 +74,7 @@ public class PathBasedVirtualFileTest
     }
 
     @Test
-    public void testGetChildren()
+    void testGetChildren()
     {
         final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "dir2", "/" ) );
 
@@ -90,7 +90,7 @@ public class PathBasedVirtualFileTest
     }
 
     @Test
-    public void testNotExists()
+    void testNotExists()
     {
         final VirtualFile file = VirtualFiles.from( this.rootDir ).resolve( VirtualFilePaths.from( "notFound", "/" ) );
         assertFalse( file.exists() );

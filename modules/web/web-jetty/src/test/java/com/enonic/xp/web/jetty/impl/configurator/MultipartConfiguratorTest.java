@@ -10,7 +10,7 @@ import jakarta.servlet.MultipartConfigElement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MultipartConfiguratorTest
+class MultipartConfiguratorTest
     extends JettyConfiguratorTest<ServletHolder>
 {
     private MockServletHolder servletHolder;
@@ -34,7 +34,7 @@ public class MultipartConfiguratorTest
     }
 
     @Test
-    public void testConfigure()
+    void testConfigure()
     {
         configure();
 
@@ -46,7 +46,7 @@ public class MultipartConfiguratorTest
     }
 
     @Test
-    public void overrideConfig()
+    void overrideConfig()
     {
         Mockito.when( this.config.multipart_store() ).thenReturn( "/other" );
         Mockito.when( this.config.multipart_maxFileSize() ).thenReturn( 2000L );

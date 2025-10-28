@@ -11,7 +11,7 @@ import com.enonic.xp.impl.task.MockTaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ProjectCreatedEventListenerTest
+class ProjectCreatedEventListenerTest
     extends AbstractContentSynchronizerTest
 {
     @BeforeEach
@@ -22,7 +22,7 @@ public class ProjectCreatedEventListenerTest
     }
 
     @Test
-    public void testSingle()
+    void testSingle()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -34,7 +34,7 @@ public class ProjectCreatedEventListenerTest
     }
 
     @Test
-    public void testChildren()
+    void testChildren()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "name" ) );
@@ -50,7 +50,7 @@ public class ProjectCreatedEventListenerTest
     }
 
     @Test
-    public void testFromMultipleParents()
+    void testFromMultipleParents()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 

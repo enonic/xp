@@ -25,14 +25,13 @@ class DeleteIssueCommentCommandTest
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
     }
 
     @Test
-    public void delete()
+    void delete()
     {
         DeleteIssueCommentParams params = DeleteIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
 
@@ -49,7 +48,7 @@ class DeleteIssueCommentCommandTest
     }
 
     @Test
-    public void testNoCommentId()
+    void testNoCommentId()
     {
         final DeleteIssueCommentParams params = DeleteIssueCommentParams.create().build();
         final DeleteIssueCommentCommand command = createDeleteIssueCommentCommand( params );

@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InternalHtmlParserTest
+class InternalHtmlParserTest
 {
     @Test
-    public void testHtmlSelector()
+    void testHtmlSelector()
     {
         HtmlDocumentInternal document =
             HtmlParserInternal.parse( "<p><img alt=\"Alt Text\" data-src=\"image://image-id\" src=\"image/image-id\"></p>" );

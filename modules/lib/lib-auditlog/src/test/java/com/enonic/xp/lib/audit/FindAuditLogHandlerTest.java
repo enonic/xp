@@ -12,7 +12,7 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class FindAuditLogHandlerTest
+class FindAuditLogHandlerTest
     extends BaseAuditLogHandlerTest
 {
     public void mockCreateLog()
@@ -30,7 +30,7 @@ public class FindAuditLogHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockCreateLog();
         assertNotNull( runScript( "/lib/xp/examples/auditlog/find.js" ) );

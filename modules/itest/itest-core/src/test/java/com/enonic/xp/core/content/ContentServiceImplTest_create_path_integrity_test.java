@@ -18,12 +18,12 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentServiceImplTest_create_path_integrity_test
+class ContentServiceImplTest_create_path_integrity_test
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void create()
+    void create()
     {
         final int concurrentAttempts = 5;
         final int expectedSuccessfulAttempts = 1;

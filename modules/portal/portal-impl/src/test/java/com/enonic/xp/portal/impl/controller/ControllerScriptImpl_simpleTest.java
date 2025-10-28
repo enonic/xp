@@ -7,11 +7,11 @@ import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ControllerScriptImpl_simpleTest
+class ControllerScriptImpl_simpleTest
     extends AbstractControllerTest
 {
     @Test
-    public void testExecute()
+    void testExecute()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         execute( "myapplication:/controller/simple.js" );
@@ -20,7 +20,7 @@ public class ControllerScriptImpl_simpleTest
 
 
     @Test
-    public void testMethodNotSupported()
+    void testMethodNotSupported()
     {
         this.portalRequest.setMethod( HttpMethod.POST );
         execute( "myapplication:/controller/simple.js" );

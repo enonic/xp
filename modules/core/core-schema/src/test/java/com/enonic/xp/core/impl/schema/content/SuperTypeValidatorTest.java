@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SuperTypeValidatorTest
+class SuperTypeValidatorTest
 {
 
     @Test
-    public void content_type_passes_validation()
+    void content_type_passes_validation()
     {
         ContentType contentType = ContentType.create().name( ContentTypeName.documentMedia() ).superType( ContentTypeName.media() ).build();
 
@@ -31,7 +31,7 @@ public class SuperTypeValidatorTest
     }
 
     @Test
-    public void content_type_super_is_null()
+    void content_type_super_is_null()
     {
         final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
@@ -44,7 +44,7 @@ public class SuperTypeValidatorTest
     }
 
     @Test
-    public void validationResult()
+    void validationResult()
     {
         ContentTypeValidationResult validationResult1 = ContentTypeValidationResult.from(
             new ContentTypeValidationError( "superType not found: superTypeName", ContentTypeName.media() ) );

@@ -22,7 +22,6 @@ class WebSocketEventMapperTest
 
     @Test
     void user()
-        throws Exception
     {
         final Session session = mock( Session.class );
         when( session.getRequestURI() ).thenReturn( URI.create( "http://localhost/ws" ) );

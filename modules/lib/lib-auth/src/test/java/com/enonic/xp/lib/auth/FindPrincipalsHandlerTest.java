@@ -9,7 +9,7 @@ import com.enonic.xp.security.PrincipalQueryResult;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class FindPrincipalsHandlerTest
+class FindPrincipalsHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -24,7 +24,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final PrincipalQueryResult result = PrincipalQueryResult.create().
             addPrincipal( TestDataFixtures.getTestGroup() ).
@@ -39,7 +39,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsDefaultParameters()
+    void testFindPrincipalsDefaultParameters()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().build();
 
@@ -55,7 +55,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsUsers()
+    void testFindPrincipalsUsers()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeUsers().
@@ -74,7 +74,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsGroups()
+    void testFindPrincipalsGroups()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeGroups().
@@ -93,7 +93,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsRoles()
+    void testFindPrincipalsRoles()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             includeRoles().
@@ -112,7 +112,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsByName()
+    void testFindPrincipalsByName()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             idProvider( IdProviderKey.from( "enonic" ) ).
@@ -129,7 +129,7 @@ public class FindPrincipalsHandlerTest
     }
 
     @Test
-    public void testFindPrincipalsBySearchText()
+    void testFindPrincipalsBySearchText()
     {
         final PrincipalQuery expectedQuery = PrincipalQuery.create().
             searchText( "enonic" ).

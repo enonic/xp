@@ -10,7 +10,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IOHandlerBeanTest
+class IOHandlerBeanTest
     extends ScriptTestSupport
 {
     private IOHandlerBean bean;
@@ -26,7 +26,7 @@ public class IOHandlerBeanTest
     }
 
     @Test
-    public void readText()
+    void readText()
         throws Exception
     {
         final String text1 = this.bean.readText( null );
@@ -40,7 +40,7 @@ public class IOHandlerBeanTest
     }
 
     @Test
-    public void readLines()
+    void readLines()
         throws Exception
     {
         final List<String> lines = this.bean.readLines( bean.newStream( "value1\nvalue2\n" ) );
@@ -48,7 +48,7 @@ public class IOHandlerBeanTest
     }
 
     @Test
-    public void processLines()
+    void processLines()
         throws Exception
     {
         final StringBuilder result = new StringBuilder();
@@ -61,7 +61,7 @@ public class IOHandlerBeanTest
     }
 
     @Test
-    public void getSize()
+    void getSize()
         throws Exception
     {
         final long size = this.bean.getSize( bean.newStream( "value" ) );
@@ -69,8 +69,7 @@ public class IOHandlerBeanTest
     }
 
     @Test
-    public void getMimeType()
-        throws Exception
+    void getMimeType()
     {
         final String type1 = this.bean.getMimeType( null );
         assertEquals( "application/octet-stream", type1 );
@@ -80,8 +79,7 @@ public class IOHandlerBeanTest
     }
 
     @Test
-    public void getResource()
-        throws Exception
+    void getResource()
     {
         final Resource res1 = this.bean.getResource( "/unknown.txt" );
         assertEquals( false, res1.exists() );

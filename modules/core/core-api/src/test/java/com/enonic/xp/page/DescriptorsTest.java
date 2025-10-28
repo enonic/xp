@@ -12,10 +12,10 @@ import com.enonic.xp.region.RegionDescriptors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DescriptorsTest
+class DescriptorsTest
 {
     @Test
-    public void pageDescriptor()
+    void pageDescriptor()
     {
         final Form pageForm = Form.create().
             addFormItem( Input.create().name( "pause" ).label( "pause" ).inputType( InputTypeName.DOUBLE ).build() ).
@@ -34,7 +34,7 @@ public class DescriptorsTest
     }
 
     @Test
-    public void partDescriptor()
+    void partDescriptor()
     {
         final Form partForm = Form.create().
             addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypeName.DOUBLE ).build() ).
@@ -53,7 +53,7 @@ public class DescriptorsTest
     }
 
     @Test
-    public void layoutDescriptor()
+    void layoutDescriptor()
     {
         final Form layoutForm = Form.create().
             addFormItem( Input.create().name( "columns" ).label( "columns" ).inputType( InputTypeName.DOUBLE ).build() ).

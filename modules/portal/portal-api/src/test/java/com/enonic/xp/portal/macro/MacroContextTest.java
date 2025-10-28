@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MacroContextTest
+class MacroContextTest
 {
     @Test
-    public void testCreation()
+    void testCreation()
     {
         final MacroContext macroContext = MacroContext.create().name( "name" ).
             body( "body" ).
@@ -21,7 +21,7 @@ public class MacroContextTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final MacroContext macroContext1 = MacroContext.create().name( "name" ).
             body( "body" ).param( "param1", "value1" ).
@@ -44,7 +44,7 @@ public class MacroContextTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final MacroContext macroContext1 = MacroContext.create().name( "name" ).
             body( "body" ).
@@ -60,7 +60,7 @@ public class MacroContextTest
     }
 
     @Test
-    public void testMultipleValues()
+    void testMultipleValues()
     {
         final MacroContext macroContext1 = MacroContext.create().name( "name" ).
             body( "body" ).

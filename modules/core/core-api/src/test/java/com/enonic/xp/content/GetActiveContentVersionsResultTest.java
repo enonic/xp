@@ -9,11 +9,10 @@ import com.enonic.xp.branch.Branch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GetActiveContentVersionsResultTest
+class GetActiveContentVersionsResultTest
 {
     @Test
-    public void same_version()
-        throws Exception
+    void same_version()
     {
         final Instant now = Instant.now();
 
@@ -35,8 +34,7 @@ public class GetActiveContentVersionsResultTest
     }
 
     @Test
-    public void skip_null()
-        throws Exception
+    void skip_null()
     {
         final Instant now = Instant.now();
 
@@ -57,8 +55,7 @@ public class GetActiveContentVersionsResultTest
     }
 
     @Test
-    public void test_ordering()
-        throws Exception
+    void test_ordering()
     {
         final Instant oldest = Instant.parse( "2014-09-25T10:00:00.00Z" );
         final Instant middle = Instant.parse( "2014-09-25T11:00:00.00Z" );

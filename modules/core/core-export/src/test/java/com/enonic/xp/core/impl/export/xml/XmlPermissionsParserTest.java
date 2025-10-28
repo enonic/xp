@@ -16,12 +16,12 @@ import com.enonic.xp.xml.DomHelper;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlPermissionsParserTest
+class XmlPermissionsParserTest
     extends BaseXmlSerializerTest
 {
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         final Document doc;

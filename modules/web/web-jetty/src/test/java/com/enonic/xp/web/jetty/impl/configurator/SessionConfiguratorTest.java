@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SessionConfiguratorTest
+class SessionConfiguratorTest
     extends JettyConfiguratorTest<SessionHandler>
 {
     @Override
@@ -29,7 +29,7 @@ public class SessionConfiguratorTest
     }
 
     @Test
-    public void defaultConfig()
+    void defaultConfig()
     {
         configure();
 
@@ -41,7 +41,7 @@ public class SessionConfiguratorTest
     }
 
     @Test
-    public void overrideConfig()
+    void overrideConfig()
     {
         Mockito.when( this.config.session_timeout() ).thenReturn( 1 );
         Mockito.when( this.config.session_cookieName() ).thenReturn( "mycookie" );
@@ -57,7 +57,7 @@ public class SessionConfiguratorTest
     }
 
     @Test
-    public void sameSiteNotSet()
+    void sameSiteNotSet()
     {
         Mockito.when( this.config.session_cookieSameSite() ).thenReturn( "" );
 

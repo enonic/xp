@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 import static com.enonic.xp.audit.AuditLogTestBuilder.getBuilder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AuditLogsTest
+class AuditLogsTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         AuditLogs logs = AuditLogs.empty();
         assertEquals( 0, logs.getSize() );
     }
 
     @Test
-    public void from()
+    void from()
     {
         AuditLogs logs1 = AuditLogs.from( getBuilder().build() );
         assertEquals( 1, logs1.getSize() );
@@ -27,7 +27,7 @@ public class AuditLogsTest
     }
 
     @Test
-    public void builder()
+    void builder()
     {
         AuditLogs.Builder builder = AuditLogs.create();
         builder.add( getBuilder().id( AuditLogId.from( 1 ) ).build() );
@@ -38,7 +38,7 @@ public class AuditLogsTest
     }
 
     @Test
-    public void getById()
+    void getById()
     {
         AuditLogs.Builder builder = AuditLogs.create();
 

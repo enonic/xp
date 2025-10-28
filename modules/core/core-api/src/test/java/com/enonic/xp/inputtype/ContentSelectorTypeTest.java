@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContentSelectorTypeTest
+class ContentSelectorTypeTest
     extends BaseInputTypeTest
 {
     public ContentSelectorTypeTest()
@@ -20,19 +20,19 @@ public class ContentSelectorTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "ContentSelector", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "ContentSelector", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "name" ), config );
@@ -42,14 +42,14 @@ public class ContentSelectorTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = newEmptyConfig();
         this.type.validate( referenceProperty( "name" ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = newEmptyConfig();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));

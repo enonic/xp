@@ -24,19 +24,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DeleteNodeByIdCommandTest_error_handling
+class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void delete_fails()
-        throws Exception
+    void delete_fails()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -49,8 +47,7 @@ public class DeleteNodeByIdCommandTest_error_handling
     }
 
     @Test
-    public void delete_children_first()
-        throws Exception
+    void delete_children_first()
     {
         final Node n1 = createNode( NodePath.ROOT, "n1" );
         final Node n2 = createNode( NodePath.ROOT, "n2" );

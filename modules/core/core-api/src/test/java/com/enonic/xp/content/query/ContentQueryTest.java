@@ -27,10 +27,10 @@ import com.enonic.xp.util.GeoPoint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ContentQueryTest
+class ContentQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final ContentQuery query = createTestQuery();
 

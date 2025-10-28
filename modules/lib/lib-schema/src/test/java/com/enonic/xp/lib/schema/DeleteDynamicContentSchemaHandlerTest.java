@@ -9,11 +9,11 @@ import com.enonic.xp.resource.DynamicContentSchemaType;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class DeleteDynamicContentSchemaHandlerTest
+class DeleteDynamicContentSchemaHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testContentType()
+    void testContentType()
     {
         when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
@@ -25,7 +25,7 @@ public class DeleteDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testMixin()
+    void testMixin()
     {
         when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
@@ -37,7 +37,7 @@ public class DeleteDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testXData()
+    void testXData()
     {
         when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
@@ -50,7 +50,7 @@ public class DeleteDynamicContentSchemaHandlerTest
 
 
     @Test
-    public void testInvalidSchemaType()
+    void testInvalidSchemaType()
     {
         runFunction( "/test/DeleteDynamicContentSchemaHandlerTest.js", "deleteInvalidContentSchemaType" );
     }

@@ -53,7 +53,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find_anonymous()
+    void find_anonymous()
     {
         final Context context = ContextBuilder.create().
             repositoryId( AuditLogConstants.AUDIT_LOG_REPO_ID ).
@@ -87,7 +87,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find()
+    void find()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
         AuditLog log = logAsAdmin( params );
@@ -100,7 +100,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find_all()
+    void find_all()
     {
         LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
         logAsAdmin( params );
@@ -110,7 +110,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find_from()
+    void find_from()
     {
         AuditLog log = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
@@ -131,7 +131,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find_to()
+    void find_to()
     {
         AuditLog log = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
@@ -153,7 +153,7 @@ class AuditLogServiceImplTest
 
 
     @Test
-    public void find_type()
+    void find_type()
     {
         AuditLog log1 = logAsAdmin( LogAuditLogParams.create().
             type( "type1" ).
@@ -178,7 +178,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void find_source()
+    void find_source()
     {
         AuditLog log1 = logAsAdmin( LogAuditLogParams.create().
             type( "test" ).
@@ -205,7 +205,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void log_anonymous()
+    void log_anonymous()
     {
         final Context context = ContextBuilder.create().
             repositoryId( AuditLogConstants.AUDIT_LOG_REPO_ID ).
@@ -223,7 +223,7 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    public void get()
+    void get()
     {
         final LogAuditLogParams params = LogAuditLogParams.create().type( "test" ).build();
 

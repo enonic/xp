@@ -10,12 +10,11 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentServiceImplTest_findPaths
+class ContentServiceImplTest_findPaths
     extends AbstractContentServiceTest
 {
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
         final ContentQuery query = ContentQuery.create().
             queryExpr( QueryParser.parse( "" ) ).
@@ -25,8 +24,7 @@ public class ContentServiceImplTest_findPaths
     }
 
     @Test
-    public void single_item()
-        throws Exception
+    void single_item()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 
@@ -42,8 +40,7 @@ public class ContentServiceImplTest_findPaths
     }
 
     @Test
-    public void multiple_items()
-        throws Exception
+    void multiple_items()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
 

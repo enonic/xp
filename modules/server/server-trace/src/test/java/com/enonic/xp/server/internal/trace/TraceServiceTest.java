@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TraceServiceTest
+class TraceServiceTest
 {
     private TraceEventDispatcher dispatcher;
 
     private TraceService service;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.dispatcher = Mockito.mock( TraceEventDispatcher.class );
         this.service = new TraceService();
@@ -29,13 +29,13 @@ public class TraceServiceTest
     }
 
     @AfterEach
-    public void tearDown()
+    void tearDown()
     {
         Tracer.setManager( null );
     }
 
     @Test
-    public void testDisabled()
+    void testDisabled()
     {
         final TraceConfig config = Mockito.mock( TraceConfig.class );
         Mockito.when( config.enabled() ).thenReturn( false );
@@ -45,7 +45,7 @@ public class TraceServiceTest
     }
 
     @Test
-    public void testEnabled()
+    void testEnabled()
     {
         final TraceConfig config = Mockito.mock( TraceConfig.class );
         Mockito.when( config.enabled() ).thenReturn( true );
@@ -58,14 +58,14 @@ public class TraceServiceTest
     }
 
     @Test
-    public void testNewTrace()
+    void testNewTrace()
     {
         final Trace trace = this.service.newTrace( "test", null );
         assertNotNull( trace );
     }
 
     @Test
-    public void testDispatch()
+    void testDispatch()
     {
         final TraceEvent event = TraceEvent.start( null );
         this.service.dispatch( event );
@@ -74,7 +74,7 @@ public class TraceServiceTest
     }
 
     @Test
-    public void testEnableTracing()
+    void testEnableTracing()
     {
         assertFalse( Tracer.isEnabled() );
         this.service.enable( true );
@@ -83,7 +83,7 @@ public class TraceServiceTest
     }
 
     @Test
-    public void testDisableTracing()
+    void testDisableTracing()
     {
         final TraceConfig config = Mockito.mock( TraceConfig.class );
         Mockito.when( config.enabled() ).thenReturn( true );

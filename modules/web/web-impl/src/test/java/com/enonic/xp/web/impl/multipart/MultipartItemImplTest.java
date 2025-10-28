@@ -2,19 +2,19 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.io.ByteArrayInputStream;
 
-import jakarta.servlet.http.Part;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.Part;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MultipartItemImplTest
+class MultipartItemImplTest
 {
     @Test
-    public void testItem()
+    void testItem()
         throws Exception
     {
         final Part part = Mockito.mock( Part.class );

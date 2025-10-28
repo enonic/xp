@@ -13,7 +13,6 @@ class PortalResponseMapperTest
 
     @Test
     void cookies()
-        throws Exception
     {
         final Cookie simpleCookie = new Cookie( "simple", "value" );
 

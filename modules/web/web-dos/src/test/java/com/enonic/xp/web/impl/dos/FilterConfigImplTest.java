@@ -3,24 +3,24 @@ package com.enonic.xp.web.impl.dos;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletContext;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class FilterConfigImplTest
+class FilterConfigImplTest
 {
     private FilterConfigImpl wrapped;
 
     private ServletContext servletContext;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         final FilterConfig delegate = Mockito.mock( FilterConfig.class );
         Mockito.when( delegate.getFilterName() ).thenReturn( "dos-filter" );
@@ -32,14 +32,14 @@ public class FilterConfigImplTest
     }
 
     @Test
-    public void testGetters()
+    void testGetters()
     {
         assertEquals( "dos-filter", this.wrapped.getFilterName() );
         assertSame( this.servletContext, this.wrapped.getServletContext() );
     }
 
     @Test
-    public void testConfig()
+    void testConfig()
     {
         final DosFilterConfig config = Mockito.mock( DosFilterConfig.class );
         Mockito.when( config.maxRequestsPerSec() ).thenReturn( 25 );

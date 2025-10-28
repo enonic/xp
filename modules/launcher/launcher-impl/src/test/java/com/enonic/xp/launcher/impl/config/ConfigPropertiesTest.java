@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConfigPropertiesTest
+class ConfigPropertiesTest
 {
     @Test
-    public void testPut()
+    void testPut()
     {
         final ConfigProperties props = new ConfigProperties();
         props.put( "key1", "value1" );
@@ -22,7 +22,7 @@ public class ConfigPropertiesTest
     }
 
     @Test
-    public void testPutAll()
+    void testPutAll()
     {
         final Map<String, String> map = new HashMap<>();
         map.put( "key1", "value1" );
@@ -36,7 +36,7 @@ public class ConfigPropertiesTest
     }
 
     @Test
-    public void testInterpolate()
+    void testInterpolate()
     {
         final ConfigProperties props = new ConfigProperties();
         props.put( "key1", "value1" );
@@ -50,7 +50,7 @@ public class ConfigPropertiesTest
     }
 
     @Test
-    public void testInterpolate_errorLoop()
+    void testInterpolate_errorLoop()
     {
         final ConfigProperties props = new ConfigProperties();
         props.put( "key1", "value1 ${key1}" );

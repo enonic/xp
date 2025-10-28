@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WebappServiceImplTest
+class WebappServiceImplTest
     extends ApplicationTestSupport
 {
 
@@ -23,7 +23,6 @@ public class WebappServiceImplTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         addApplication( "mywebapp", "/apps/mywebapp" );
         addApplication( "mywebapp2", "/apps/mywebapp2" );

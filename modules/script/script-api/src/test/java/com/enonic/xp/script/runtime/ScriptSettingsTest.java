@@ -6,17 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ScriptSettingsTest
+class ScriptSettingsTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final ScriptSettings settings = ScriptSettings.create().build();
         assertNull( settings.getBinding( String.class ) );
     }
 
     @Test
-    public void testAttributes()
+    void testAttributes()
     {
         final ScriptSettings settings = ScriptSettings.create().
             binding( String.class, () -> "hello" ).
@@ -31,7 +31,7 @@ public class ScriptSettingsTest
     }
 
     @Test
-    public void testGlobals()
+    void testGlobals()
     {
         final ScriptSettings settings = ScriptSettings.create().
             globalVariable( "var", "hello" ).

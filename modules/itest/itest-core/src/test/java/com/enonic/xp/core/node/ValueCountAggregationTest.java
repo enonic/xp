@@ -22,19 +22,17 @@ import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ValueCountAggregationTest
+class ValueCountAggregationTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void terms_stats_aggregation()
-        throws Exception
+    void terms_stats_aggregation()
     {
         createNode( "c1", "n1", NodePath.ROOT );
         createNode( "c1", "n2", NodePath.ROOT );
@@ -74,7 +72,7 @@ public class ValueCountAggregationTest
     }
 
     @Test
-    public void testCountAggregation()
+    void testCountAggregation()
     {
         createNode( "c1", "n1", NodePath.ROOT );
         createNode( "c2", "n2", NodePath.ROOT );

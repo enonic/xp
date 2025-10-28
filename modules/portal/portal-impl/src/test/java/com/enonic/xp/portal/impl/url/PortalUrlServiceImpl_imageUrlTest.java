@@ -41,7 +41,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_imageUrlTest
+class PortalUrlServiceImpl_imageUrlTest
 {
     private ContentService contentService;
 
@@ -54,7 +54,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     private PortalUrlGeneratorService portalUrlGeneratorService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.contentService = mock( ContentService.class );
 
@@ -73,7 +73,7 @@ public class PortalUrlServiceImpl_imageUrlTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         PortalRequestAccessor.remove();
     }

@@ -26,13 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
 
-public class ContentServiceImplTest_unpublish
+class ContentServiceImplTest_unpublish
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void unpublish()
-        throws Exception
+    void unpublish()
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -64,8 +63,7 @@ public class ContentServiceImplTest_unpublish
     }
 
     @Test
-    public void unpublish_with_children()
-        throws Exception
+    void unpublish_with_children()
     {
 
         final Content content = this.contentService.create( CreateContentParams.create().
@@ -104,8 +102,7 @@ public class ContentServiceImplTest_unpublish
     }
 
     @Test
-    public void audit_data()
-        throws Exception
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 

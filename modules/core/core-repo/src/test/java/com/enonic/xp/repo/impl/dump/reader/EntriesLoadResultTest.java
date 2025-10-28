@@ -4,12 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntriesLoadResultTest
+class EntriesLoadResultTest
 {
 
     @Test
-    public void build()
-        throws Exception
+    void build()
     {
         final EntriesLoadResult.Builder builder = EntriesLoadResult.create();
 

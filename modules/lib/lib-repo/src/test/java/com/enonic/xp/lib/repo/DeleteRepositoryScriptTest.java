@@ -7,7 +7,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class DeleteRepositoryScriptTest
+class DeleteRepositoryScriptTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
@@ -24,7 +24,7 @@ public class DeleteRepositoryScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/repo/delete.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).deleteRepository( Mockito.any() );

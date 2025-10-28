@@ -11,7 +11,7 @@ import com.enonic.xp.service.ServiceDescriptors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ServiceDescriptorServiceImplTest
+class ServiceDescriptorServiceImplTest
     extends AbstractDescriptorServiceTest
 {
     private ServiceDescriptorServiceImpl service;
@@ -26,8 +26,7 @@ public class ServiceDescriptorServiceImplTest
     }
 
     @Test
-    public void testGetByKey()
-        throws Exception
+    void testGetByKey()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:myservice1" );
         final ServiceDescriptor descriptor = this.service.getByKey( key );
@@ -36,8 +35,7 @@ public class ServiceDescriptorServiceImplTest
     }
 
     @Test
-    public void testGetByKey_default()
-        throws Exception
+    void testGetByKey_default()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:unknown" );
         final ServiceDescriptor descriptor = this.service.getByKey( key );
@@ -45,8 +43,7 @@ public class ServiceDescriptorServiceImplTest
     }
 
     @Test
-    public void testGetByApplication()
-        throws Exception
+    void testGetByApplication()
     {
         final ServiceDescriptors descriptors = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
         assertNotNull( descriptors );

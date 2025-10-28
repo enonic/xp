@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class LongTypeTest
+class LongTypeTest
     extends BaseInputTypeTest
 {
     public LongTypeTest()
@@ -21,19 +21,19 @@ public class LongTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "Long", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "Long", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newDouble( 13.0 ), config );
@@ -42,7 +42,7 @@ public class LongTypeTest
     }
 
     @Test
-    public void testCreateDefaultValue()
+    void testCreateDefaultValue()
     {
         final Input input = getDefaultInputBuilder( InputTypeName.LONG, "2" ).build();
 
@@ -54,28 +54,28 @@ public class LongTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( longProperty( 13 ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ));
     }
 
     @Test
-    public void testValidate_invalidMin()
+    void testValidate_invalidMin()
     {
         final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "min", "5" ).build( )).build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( longProperty( 2 ), config ));
     }
 
     @Test
-    public void testValidate_invalidMax()
+    void testValidate_invalidMax()
     {
         final InputTypeConfig config = InputTypeConfig.create().property( InputTypeProperty.create( "max", "5" ).build( )).build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( longProperty( 7 ), config ));

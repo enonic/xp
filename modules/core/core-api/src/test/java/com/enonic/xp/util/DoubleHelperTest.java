@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DoubleHelperTest
+class DoubleHelperTest
 {
 
     private static final double ZERO = 0.0;
@@ -14,7 +14,7 @@ public class DoubleHelperTest
     private static final double ONE = 1.0;
 
     @Test
-    public void test_compare()
+    void test_compare()
     {
         assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.0 ) );
         assertTrue( DoubleHelper.fuzzyEquals( ONE, 1.00000000000000001D ) );
@@ -24,7 +24,7 @@ public class DoubleHelperTest
     }
 
     @Test
-    public void test_compare_zero()
+    void test_compare_zero()
     {
         assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.0 ) );
         assertTrue( DoubleHelper.fuzzyEquals( ZERO, 0.000000000000000001D ) );
@@ -33,7 +33,7 @@ public class DoubleHelperTest
     }
 
     @Test
-    public void test_compare_with_diff_zero()
+    void test_compare_with_diff_zero()
     {
         assertTrue( DoubleHelper.fuzzyEquals( ZERO, -0.0 ) );
         assertTrue( DoubleHelper.fuzzyEquals( ZERO, -0.0000000000000001 ) );

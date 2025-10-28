@@ -19,19 +19,17 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_func_ngram
+class FindNodesByQueryCommandTest_func_ngram
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void ngram_and()
-        throws Exception
+    void ngram_and()
     {
         final Node node = createNodes();
 
@@ -39,8 +37,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void ngram_or()
-        throws Exception
+    void ngram_or()
     {
         final Node node = createNodes();
 
@@ -48,8 +45,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void ngram_one_char()
-        throws Exception
+    void ngram_one_char()
     {
         final Node node = createNodes();
 
@@ -57,8 +53,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void ngram_word_breaking_character()
-        throws Exception
+    void ngram_word_breaking_character()
     {
         final Node node = createNodes();
 
@@ -66,8 +61,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void fuzzy()
-        throws Exception
+    void fuzzy()
     {
         final Node node = createNodes();
 
@@ -75,8 +69,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void word_delimiter_underscore()
-        throws Exception
+    void word_delimiter_underscore()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing_delimiter" );
@@ -97,8 +90,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void word_delimiter_dot()
-        throws Exception
+    void word_delimiter_dot()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "testing.delimiter" );
@@ -119,8 +111,7 @@ public class FindNodesByQueryCommandTest_func_ngram
     }
 
     @Test
-    public void ascii_folding_with_wildcard()
-        throws Exception
+    void ascii_folding_with_wildcard()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "title", "grønnsaker" );

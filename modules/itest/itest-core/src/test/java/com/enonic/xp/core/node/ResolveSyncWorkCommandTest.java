@@ -31,22 +31,20 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ResolveSyncWorkCommandTest
+class ResolveSyncWorkCommandTest
     extends AbstractNodeTest
 {
 
     private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void ignore_nodes_without_diff()
-        throws Exception
+    void ignore_nodes_without_diff()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -113,7 +111,7 @@ public class ResolveSyncWorkCommandTest
      * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
      */
     @Test
-    public void resolveDependenciesOfMovedNodes()
+    void resolveDependenciesOfMovedNodes()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -175,7 +173,7 @@ public class ResolveSyncWorkCommandTest
      * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
      */
     @Test
-    public void resolveDependenciesOfMovedNodes2()
+    void resolveDependenciesOfMovedNodes2()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -239,7 +237,7 @@ public class ResolveSyncWorkCommandTest
      * So ResolveSyncWorkCommand will return only "Moved" parents of passed node and passed node itself when includeChildren=false
      */
     @Test
-    public void resolveDependenciesOfMovedNodes3()
+    void resolveDependenciesOfMovedNodes3()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -300,8 +298,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void include_referred_nodes()
-        throws Exception
+    void include_referred_nodes()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -349,8 +346,7 @@ public class ResolveSyncWorkCommandTest
     - Node3 -> Ref:2_1
   */
     @Test
-    public void reference_to_another_branch_with_another_branch_reference()
-        throws Exception
+    void reference_to_another_branch_with_another_branch_reference()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -418,8 +414,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void duplicate_node_with_reference_then_resolve()
-        throws Exception
+    void duplicate_node_with_reference_then_resolve()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -473,7 +468,7 @@ public class ResolveSyncWorkCommandTest
         Resolve: Root
      */
     @Test
-    public void publish_root_all_new()
+    void publish_root_all_new()
     {
         createS1S2Tree();
 
@@ -509,8 +504,7 @@ public class ResolveSyncWorkCommandTest
      Resolve A2_1
   */
     @Test
-    public void reference_moved_must_be_pushed()
-        throws Exception
+    void reference_moved_must_be_pushed()
     {
         createS1S2Tree();
 
@@ -539,8 +533,7 @@ public class ResolveSyncWorkCommandTest
         Resolve: A2_1
      */
     @Test
-    public void reference_has_been_moved_push_reference_not_parents_even_if_modified()
-        throws Exception
+    void reference_has_been_moved_push_reference_not_parents_even_if_modified()
     {
         createS1S2Tree();
 
@@ -575,8 +568,7 @@ public class ResolveSyncWorkCommandTest
         Resolve: a2_1
  	 */
     @Test
-    public void reference_and_parents_has_been_moved_must_push_reference_and_parents()
-        throws Exception
+    void reference_and_parents_has_been_moved_must_push_reference_and_parents()
     {
         createS1S2Tree();
 
@@ -594,8 +586,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void modified_parent_should_not_be_pushed()
-        throws Exception
+    void modified_parent_should_not_be_pushed()
     {
         createS1S2Tree();
 
@@ -629,8 +620,7 @@ public class ResolveSyncWorkCommandTest
       Resolve: A2_1
     */
     @Test
-    public void do_not_publish_other_children_of_dependent_parent()
-        throws Exception
+    void do_not_publish_other_children_of_dependent_parent()
     {
         createS1S2Tree();
 
@@ -666,8 +656,7 @@ public class ResolveSyncWorkCommandTest
       Resolve: A2_1
     */
     @Test
-    public void do_not_publish_dependencies_of_equal_parent()
-        throws Exception
+    void do_not_publish_dependencies_of_equal_parent()
     {
         createS1S2Tree();
         pushAllNodesInS1S2Tree();
@@ -681,8 +670,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void do_not_publish_dependencies_of_modified_parent()
-        throws Exception
+    void do_not_publish_dependencies_of_modified_parent()
     {
         createS1S2Tree();
         pushAllNodesInS1S2Tree();
@@ -697,8 +685,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void do_publish_new_dependencies_of_moved_parent()
-        throws Exception
+    void do_publish_new_dependencies_of_moved_parent()
     {
         createS1S2Tree();
         pushAllNodesInS1S2Tree();
@@ -744,8 +731,7 @@ public class ResolveSyncWorkCommandTest
         Should publish S1, A1, A2, A2_1, B2_1, B2, S2
      */
     @Test
-    public void publish_original_with_duplicate_do_not_publish_duplicate()
-        throws Exception
+    void publish_original_with_duplicate_do_not_publish_duplicate()
     {
         createS1S2Tree();
 
@@ -769,8 +755,7 @@ public class ResolveSyncWorkCommandTest
         Resolve: S1
     */
     @Test
-    public void resolve_with_include_children()
-        throws Exception
+    void resolve_with_include_children()
     {
         createS1S2Tree();
 
@@ -792,8 +777,7 @@ public class ResolveSyncWorkCommandTest
             Resolve: S1
         */
     @Test
-    public void resolve_with_include_children_a1()
-        throws Exception
+    void resolve_with_include_children_a1()
     {
         createS1S2Tree();
 
@@ -815,8 +799,7 @@ public class ResolveSyncWorkCommandTest
          Resolve: A1
      */
     @Test
-    public void resolve_with_include_children_a_2()
-        throws Exception
+    void resolve_with_include_children_a_2()
     {
         createS1S2Tree();
 
@@ -837,7 +820,7 @@ public class ResolveSyncWorkCommandTest
            - B2_1 (New)
       */
     @Test
-    public void make_sure_referred_nodes_includes_parents_if_missing()
+    void make_sure_referred_nodes_includes_parents_if_missing()
     {
         createS1S2Tree();
 
@@ -864,7 +847,7 @@ public class ResolveSyncWorkCommandTest
          - B2_1 (New)
     */
     @Test
-    public void make_missing_parents_references_parents_nodes_included()
+    void make_missing_parents_references_parents_nodes_included()
     {
         createS1S2Tree();
 
@@ -893,8 +876,7 @@ public class ResolveSyncWorkCommandTest
              - A2_1d - Ref:B2_1 (New)
          */
     @Test
-    public void publish_duplicate_of_original_do_not_publish_original()
-        throws Exception
+    void publish_duplicate_of_original_do_not_publish_original()
     {
         createS1S2Tree();
 
@@ -913,8 +895,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void reference_to_another_branch_with_back_reference()
-        throws Exception
+    void reference_to_another_branch_with_back_reference()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "node1" ) ).
@@ -974,7 +955,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void exclude_empty()
+    void exclude_empty()
     {
         createS1S2Tree();
         refresh();
@@ -1004,7 +985,7 @@ public class ResolveSyncWorkCommandTest
             - A2_1 - Ref:B2_1
         */
     @Test
-    public void exclude_itself()
+    void exclude_itself()
     {
         createS1S2Tree();
         refresh();
@@ -1022,7 +1003,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void exclude_all()
+    void exclude_all()
     {
         createS1S2Tree();
         refresh();
@@ -1033,7 +1014,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void exclude_all_children()
+    void exclude_all_children()
     {
         createS1S2Tree();
         refresh();
@@ -1065,7 +1046,7 @@ public class ResolveSyncWorkCommandTest
         */
 
     @Test
-    public void exclude_child_with_refs()
+    void exclude_child_with_refs()
     {
         createS1S2Tree();
         refresh();
@@ -1078,7 +1059,7 @@ public class ResolveSyncWorkCommandTest
     }
 
     @Test
-    public void exclude_referencies()
+    void exclude_referencies()
     {
         createS1S2Tree();
         refresh();
@@ -1105,7 +1086,7 @@ public class ResolveSyncWorkCommandTest
             - A2_1d - Ref:B2_1 (New)
         */
     @Test
-    public void exclude_referencies_in_the_middle()
+    void exclude_referencies_in_the_middle()
     {
         createS1S2Tree();
         refresh();
@@ -1132,7 +1113,7 @@ public class ResolveSyncWorkCommandTest
      *** b2_1
      */
     @Test
-    public void not_include_dependencies()
+    void not_include_dependencies()
     {
         createS1S2Tree();
         refresh();
@@ -1146,7 +1127,7 @@ public class ResolveSyncWorkCommandTest
 
 
     @Test
-    public void change_child_order_manual_yields_children_changed()
+    void change_child_order_manual_yields_children_changed()
     {
         final Node node1 = createNode( NodePath.ROOT, "node1" );
         createNode( node1.path(), "node1_1" );

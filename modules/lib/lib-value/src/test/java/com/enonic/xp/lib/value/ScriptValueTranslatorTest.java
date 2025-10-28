@@ -20,8 +20,7 @@ public class ScriptValueTranslatorTest
     extends ScriptTestSupport
 {
     @Test
-    public void geoPoint()
-        throws Exception
+    void geoPoint()
     {
         final PropertyTree properties = getPropertyTree( "geoPoint" );
         assertNotNull( properties.getGeoPoint( "myGeoPoint" ) );
@@ -29,8 +28,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void instant()
-        throws Exception
+    void instant()
     {
         final PropertyTree properties = getPropertyTree( "instant" );
         assertNotNull( properties.getInstant( "myInstant" ) );
@@ -38,8 +36,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void instantFromDate()
-        throws Exception
+    void instantFromDate()
     {
         final PropertyTree properties = getPropertyTree( "instantFromDate" );
         assertNotNull( properties.getInstant( "myInstant" ) );
@@ -48,8 +45,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void booleanTest()
-        throws Exception
+    void booleanTest()
     {
         final PropertyTree properties = getPropertyTree( "boolean" );
         assertNotNull( properties.getBoolean( "myBoolean" ) );
@@ -57,8 +53,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void reference()
-        throws Exception
+    void reference()
     {
         final PropertyTree properties = getPropertyTree( "reference" );
         assertNotNull( properties.getReference( "myReference" ) );
@@ -66,8 +61,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void localDateTime()
-        throws Exception
+    void localDateTime()
     {
         final PropertyTree properties = getPropertyTree( "localDateTime" );
         assertNotNull( properties.getLocalDateTime( "myLocalDateTime" ) );
@@ -75,8 +69,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void localDateTimeFromDate()
-        throws Exception
+    void localDateTimeFromDate()
     {
         final PropertyTree properties = getPropertyTree( "localDateTimeFromDate" );
         assertNotNull( properties.getLocalDateTime( "myLocalDateTime" ) );
@@ -85,8 +78,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void localDate()
-        throws Exception
+    void localDate()
     {
         final PropertyTree properties = getPropertyTree( "localDate" );
         assertNotNull( properties.getLocalDate( "myLocalDate" ) );
@@ -94,8 +86,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void localDateFromDate()
-        throws Exception
+    void localDateFromDate()
     {
         final PropertyTree properties = getPropertyTree( "localDateFromDate" );
         assertNotNull( properties.getLocalDate( "myLocalDate" ) );
@@ -105,8 +96,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void localTime()
-        throws Exception
+    void localTime()
     {
         final PropertyTree properties = getPropertyTree( "localTime" );
         assertNotNull( properties.getLocalTime( "myLocalTime" ) );
@@ -114,8 +104,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void localTimeFromDate()
-        throws Exception
+    void localTimeFromDate()
     {
         final PropertyTree properties = getPropertyTree( "localTimeFromDate" );
         assertNotNull( properties.getLocalTime( "myLocalTime" ) );
@@ -124,8 +113,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void date()
-        throws Exception
+    void date()
     {
         final PropertyTree properties = getPropertyTree( "date" );
         assertNotNull( properties.getInstant( "myDate" ) );
@@ -133,8 +121,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void binary()
-        throws Exception
+    void binary()
     {
         final ScriptValueTranslatorResult params = getCreateNodeHandlerParams( "binary" );
         final PropertyTree properties = params.getPropertyTree();
@@ -147,8 +134,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void integer()
-        throws Exception
+    void integer()
     {
         final PropertyTree properties = getPropertyTree( "integer" );
         assertNotNull( properties.getLong( "myInteger" ) );
@@ -156,8 +142,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void byteTest()
-        throws Exception
+    void byteTest()
     {
         final PropertyTree properties = getPropertyTree( "byte" );
         assertNotNull( properties.getLong( "myByte" ) );
@@ -165,8 +150,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void longTest()
-        throws Exception
+    void longTest()
     {
         final PropertyTree properties = getPropertyTree( "long" );
         assertNotNull( properties.getLong( "myLong" ) );
@@ -174,8 +158,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void doubleTest()
-        throws Exception
+    void doubleTest()
     {
         final PropertyTree properties = getPropertyTree( "double" );
         assertNotNull( properties.getDouble( "myDouble" ) );
@@ -183,8 +166,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void floatTest()
-        throws Exception
+    void floatTest()
     {
         final PropertyTree properties = getPropertyTree( "float" );
         assertNotNull( properties.getDouble( "myFloat" ) );
@@ -192,8 +174,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void numberTest()
-        throws Exception
+    void numberTest()
     {
         final PropertyTree properties = getPropertyTree( "number" );
         assertNotNull( properties.getDouble( "myNumber" ) );
@@ -201,8 +182,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void defaultValue()
-        throws Exception
+    void defaultValue()
     {
         final PropertyTree properties = getPropertyTree( "defaultValue" );
         assertNotNull( properties.getString( "myDefaultType" ) );
@@ -211,8 +191,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void arrayTest()
-        throws Exception
+    void arrayTest()
     {
         final PropertyTree properties = getPropertyTree( "array" );
         assertNotNull( properties.getLong( "myArray" ) );
@@ -222,8 +201,7 @@ public class ScriptValueTranslatorTest
     }
 
     @Test
-    public void mapTest()
-        throws Exception
+    void mapTest()
     {
         final PropertyTree properties = getPropertyTree( "map" );
         assertNotNull( properties.getSet( "myMap" ) );

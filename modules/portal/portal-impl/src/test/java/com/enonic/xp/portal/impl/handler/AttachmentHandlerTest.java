@@ -47,7 +47,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AttachmentHandlerTest
+class AttachmentHandlerTest
 {
     private AttachmentHandler handler;
 
@@ -77,7 +77,6 @@ public class AttachmentHandlerTest
     }
 
     private void setupMedia()
-        throws Exception
     {
         final Attachment attachment = Attachment.create().name( "logo.png" ).mimeType( "image/png" ).label( "small" ).build();
 

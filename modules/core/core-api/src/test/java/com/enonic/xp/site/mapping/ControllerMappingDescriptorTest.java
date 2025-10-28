@@ -15,12 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ControllerMappingDescriptorTest
+class ControllerMappingDescriptorTest
 {
 
     @Test
-    public void testCreateMappingController()
-        throws Exception
+    void testCreateMappingController()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
@@ -37,8 +36,7 @@ public class ControllerMappingDescriptorTest
     }
 
     @Test
-    public void testCreateMappingFilter()
-        throws Exception
+    void testCreateMappingFilter()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             filter( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/myfilter.js" ) ).
@@ -57,8 +55,7 @@ public class ControllerMappingDescriptorTest
     }
 
     @Test
-    public void testCreateFilterOrController()
-        throws Exception
+    void testCreateFilterOrController()
     {
         assertThrows(IllegalArgumentException.class, () ->  ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
@@ -71,8 +68,7 @@ public class ControllerMappingDescriptorTest
     }
 
     @Test
-    public void testToString()
-        throws Exception
+    void testToString()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
@@ -89,8 +85,7 @@ public class ControllerMappingDescriptorTest
     }
 
     @Test
-    public void testCopyOf()
-        throws Exception
+    void testCopyOf()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
@@ -105,8 +100,7 @@ public class ControllerMappingDescriptorTest
     }
 
     @Test
-    public void testEquals()
-        throws Exception
+    void testEquals()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).
@@ -126,8 +120,7 @@ public class ControllerMappingDescriptorTest
     }
 
     @Test
-    public void testCompare()
-        throws Exception
+    void testCompare()
     {
         final ControllerMappingDescriptor descriptor = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).

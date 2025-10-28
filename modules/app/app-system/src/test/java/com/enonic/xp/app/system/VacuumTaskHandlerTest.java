@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class VacuumTaskHandlerTest
+class VacuumTaskHandlerTest
     extends ScriptTestSupport
 {
     @Captor
@@ -58,8 +58,7 @@ public class VacuumTaskHandlerTest
     }
 
     @Test
-    public void vacuum()
-        throws Exception
+    void vacuum()
     {
         final TaskId taskId = TaskId.from( "task" );
 
@@ -83,8 +82,7 @@ public class VacuumTaskHandlerTest
     }
 
     @Test
-    public void vacuumDefaultParams()
-        throws Exception
+    void vacuumDefaultParams()
     {
         final TaskId taskId = TaskId.from( "task" );
 

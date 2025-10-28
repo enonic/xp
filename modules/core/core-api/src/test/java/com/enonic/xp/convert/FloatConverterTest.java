@@ -1,6 +1,6 @@
 package com.enonic.xp.convert;
 
-public class FloatConverterTest
+class FloatConverterTest
     extends NumberConverterTest<Float>
 {
     public FloatConverterTest()

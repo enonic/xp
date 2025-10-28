@@ -7,12 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-public class InstructionParserTest
+class InstructionParserTest
 {
 
     @Test
-    public void parseInstruction()
-        throws Exception
+    void parseInstruction()
     {
         final Instruction instruction =
             new InstructionParser().parse( "MACRO attrib1=\"value1\" attrib2=\"escaped \\\\ \\\"string\\\" \"" );
@@ -23,8 +22,7 @@ public class InstructionParserTest
     }
 
     @Test
-    public void parseNoAttributes()
-        throws Exception
+    void parseNoAttributes()
     {
         final Instruction instruction = new InstructionParser().parse( "MACRO" );
         assertEquals( "MACRO", instruction.getId() );

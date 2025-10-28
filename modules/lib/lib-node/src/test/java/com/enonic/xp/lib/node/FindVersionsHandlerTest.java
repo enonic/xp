@@ -8,22 +8,22 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.NodeVersionQueryResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindVersionsHandlerTest
+class FindVersionsHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testFindVersionsHandler()
+    void testFindVersionsHandler()
     {
         final NodeVersionMetadata newNodeVersionMeta = NodeVersionMetadata.create().
             nodeId( NodeId.from( "nodeId1" ) ).

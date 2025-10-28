@@ -17,11 +17,11 @@ import com.enonic.xp.security.acl.AccessControlList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-public class DuplicateNodeHandlerTest
+class DuplicateNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final PropertyTree dataTree = new PropertyTree();
         final PropertySet data = dataTree.newSet();
@@ -54,7 +54,7 @@ public class DuplicateNodeHandlerTest
     }
 
     @Test
-    public void testInvalidParams()
+    void testInvalidParams()
     {
         runFunction( "/test/DuplicateNodeHandlerTest.js", "testInvalidParams" );
     }

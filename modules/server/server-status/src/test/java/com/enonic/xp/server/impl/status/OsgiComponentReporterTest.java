@@ -13,7 +13,7 @@ import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class OsgiComponentReporterTest
+class OsgiComponentReporterTest
     extends BaseOsgiReporterTest<OsgiComponentReporter>
 {
     public OsgiComponentReporterTest()
@@ -23,7 +23,6 @@ public class OsgiComponentReporterTest
 
     @Override
     protected OsgiComponentReporter newReporter()
-        throws Exception
     {
         final ComponentDescriptionDTO comp1 = newComponent( "comp1" );
         final ComponentDescriptionDTO comp2 = newComponent( "comp2" );
@@ -62,7 +61,7 @@ public class OsgiComponentReporterTest
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();

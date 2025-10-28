@@ -123,7 +123,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class DynamicSchemaServiceImplTest
+class DynamicSchemaServiceImplTest
     extends AbstractElasticsearchIntegrationTest
 {
     NodeServiceImpl nodeService;
@@ -154,7 +154,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @BeforeEach
-    public void initService()
+    void initService()
         throws Exception
     {
         deleteAllIndices();
@@ -280,7 +280,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createContentTypeSchema()
+    void createContentTypeSchema()
         throws Exception
     {
         final String resource = readResource( "_contentType.xml" );
@@ -325,7 +325,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateContentTypeSchema()
+    void updateContentTypeSchema()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
@@ -376,7 +376,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createMixinSchema()
+    void createMixinSchema()
         throws Exception
     {
         final String resource = readResource( "_mixin.xml" );
@@ -417,7 +417,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createMixinSchemaAsDevSchemaAdmin()
+    void createMixinSchemaAsDevSchemaAdmin()
         throws Exception
     {
         final String resource = readResource( "_mixin.xml" );
@@ -435,7 +435,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createMixinSchemaAsNonSchemaAdmin()
+    void createMixinSchemaAsNonSchemaAdmin()
         throws Exception
     {
         final String resource = readResource( "_mixin.xml" );
@@ -451,7 +451,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateMixinSchema()
+    void updateMixinSchema()
         throws Exception
     {
 
@@ -501,7 +501,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateMixinSchemaAsSchemaAdmin()
+    void updateMixinSchemaAsSchemaAdmin()
         throws Exception
     {
 
@@ -528,7 +528,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateMixinSchemaAsNonSchemaAdmin()
+    void updateMixinSchemaAsNonSchemaAdmin()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
@@ -553,7 +553,7 @@ public class DynamicSchemaServiceImplTest
 
 
     @Test
-    public void createXDataSchema()
+    void createXDataSchema()
         throws Exception
     {
         final String resource = readResource( "_xdata.xml" );
@@ -593,7 +593,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateXDataSchema()
+    void updateXDataSchema()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
@@ -641,7 +641,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPartComponent()
+    void createPartComponent()
         throws Exception
     {
         final String resource = readResource( "_part.xml" );
@@ -687,7 +687,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updatePartComponent()
+    void updatePartComponent()
         throws Exception
     {
 
@@ -741,7 +741,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createLayoutComponent()
+    void createLayoutComponent()
         throws Exception
     {
         final String resource = readResource( "_layout.xml" );
@@ -785,7 +785,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateLayoutComponent()
+    void updateLayoutComponent()
         throws Exception
     {
         final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
@@ -837,7 +837,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPageComponent()
+    void createPageComponent()
         throws Exception
     {
         final String resource = readResource( "_page.xml" );
@@ -881,7 +881,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updatePageComponent()
+    void updatePageComponent()
         throws Exception
     {
         final CreateDynamicComponentParams createParams = CreateDynamicComponentParams.create()
@@ -933,7 +933,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createSite()
+    void createSite()
         throws Exception
     {
         final String resource = readResource( "_site.xml" );
@@ -964,8 +964,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void getSiteNonExistedApp()
-        throws Exception
+    void getSiteNonExistedApp()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "non-app" );
 
@@ -973,7 +972,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateSite()
+    void updateSite()
         throws Exception
     {
         final String resource = readResource( "_site.xml" );
@@ -1004,7 +1003,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateNotCreatedSite()
+    void updateNotCreatedSite()
         throws Exception
     {
         final String resource = readResource( "_site.xml" );
@@ -1032,8 +1031,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteSite()
-        throws Exception
+    void deleteSite()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1062,7 +1060,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createStyles()
+    void createStyles()
         throws Exception
     {
         final String resource = readResource( "_styles.xml" );
@@ -1092,7 +1090,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateStyles()
+    void updateStyles()
         throws Exception
     {
         final String resource = readResource( "_styles.xml" );
@@ -1122,8 +1120,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteStyles()
-        throws Exception
+    void deleteStyles()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1141,8 +1138,7 @@ public class DynamicSchemaServiceImplTest
 
 
     @Test
-    public void listPartComponents()
-        throws Exception
+    void listPartComponents()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1186,8 +1182,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listContentTypes()
-        throws Exception
+    void listContentTypes()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1238,8 +1233,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listMixins()
-        throws Exception
+    void listMixins()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1283,8 +1277,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listMixinsAsSchemaAdmin()
-        throws Exception
+    void listMixinsAsSchemaAdmin()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1331,8 +1324,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listMixinsAsNonSchemaAdmin()
-        throws Exception
+    void listMixinsAsNonSchemaAdmin()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1368,8 +1360,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listXDataTypes()
-        throws Exception
+    void listXDataTypes()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1413,8 +1404,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteContentTypeComponent()
-        throws Exception
+    void deleteContentTypeComponent()
     {
         DynamicSchemaResult<ContentType> contentType = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
@@ -1447,8 +1437,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteContentTypeComponentAsSchemaAdmin()
-        throws Exception
+    void deleteContentTypeComponentAsSchemaAdmin()
     {
         DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
@@ -1467,8 +1456,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteContentTypeComponentAsNonSchemaAdmin()
-        throws Exception
+    void deleteContentTypeComponentAsNonSchemaAdmin()
     {
         DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
@@ -1487,8 +1475,7 @@ public class DynamicSchemaServiceImplTest
 
 
     @Test
-    public void deletePartComponent()
-        throws Exception
+    void deletePartComponent()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1516,8 +1503,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createContentTypeSchemaInvalid()
-        throws Exception
+    void createContentTypeSchemaInvalid()
     {
         final String resource = "<content-type xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></content-type>";
 
@@ -1534,8 +1520,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createMixinSchemaInvalid()
-        throws Exception
+    void createMixinSchemaInvalid()
     {
         final String resource = "<mixin xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></mixin>";
 
@@ -1552,8 +1537,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createXDataSchemaInvalid()
-        throws Exception
+    void createXDataSchemaInvalid()
     {
         final String resource = "<x-data xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></x-data>";
 
@@ -1570,8 +1554,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPartInvalid()
-        throws Exception
+    void createPartInvalid()
     {
         final String resource = "<part xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></part>";
 
@@ -1588,8 +1571,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createLayoutInvalid()
-        throws Exception
+    void createLayoutInvalid()
     {
         final String resource = "<layout xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></layout>";
 
@@ -1606,8 +1588,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPageInvalid()
-        throws Exception
+    void createPageInvalid()
     {
         final String resource = "<page xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></page>";
 
@@ -1624,8 +1605,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createStylesInvalid()
-        throws Exception
+    void createStylesInvalid()
     {
         final String resource = "<styles xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></styles>";
 
@@ -1639,8 +1619,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createSiteInvalid()
-        throws Exception
+    void createSiteInvalid()
     {
         final String resource = "<site xmlns=\"urn:enonic:xp:model:1.0\"><invalid-tag/></site>";
 

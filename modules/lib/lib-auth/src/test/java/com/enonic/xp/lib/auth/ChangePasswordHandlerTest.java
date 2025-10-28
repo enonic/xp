@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class ChangePasswordHandlerTest
+class ChangePasswordHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -35,7 +35,7 @@ public class ChangePasswordHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
@@ -47,7 +47,7 @@ public class ChangePasswordHandlerTest
     }
 
     @Test
-    public void testChangePassword()
+    void testChangePassword()
     {
         runFunction( "/test/changePassword-test.js", "changePassword" );
 

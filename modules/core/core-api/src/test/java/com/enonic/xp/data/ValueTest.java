@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ValueTest
+class ValueTest
 {
     @Test
-    public void tostring()
+    void tostring()
     {
         assertEquals( "abc", ValueFactory.newString( "abc" ).toString() );
         assertEquals( "<xml></xml>", ValueFactory.newXml( "<xml></xml>" ).toString() );
@@ -35,7 +35,7 @@ public class ValueTest
     }
 
     @Test
-    public void tostring_PropertySet()
+    void tostring_PropertySet()
     {
         PropertyTree tree = new PropertyTree();
         tree.addSet( "myEmptySet" );
@@ -47,7 +47,7 @@ public class ValueTest
     }
 
     @Test
-    public void checkValueType()
+    void checkValueType()
     {
         assertTrue( ValueFactory.newString( "string" ).isString() );
         assertTrue( ValueFactory.newLocalDate( LocalDate.now() ).isDateType() );
@@ -59,7 +59,7 @@ public class ValueTest
     }
 
     @Test
-    public void check_conversion_returns_null_when_supposed_to()
+    void check_conversion_returns_null_when_supposed_to()
     {
         Value value = ValueFactory.newString( null );
         assertNull( value.asLong() );
@@ -78,7 +78,7 @@ public class ValueTest
     }
 
     @Test
-    public void check_conversion_throws_exception_when_supposed_to()
+    void check_conversion_throws_exception_when_supposed_to()
     {
         final ValueTypeException ex = assertThrows(ValueTypeException.class, () -> {
             Value value = ValueFactory.newString( "asda" );
@@ -87,7 +87,7 @@ public class ValueTest
     }
 
     @Test
-    public void copy()
+    void copy()
     {
         Value stringValue = ValueFactory.newString( "string" );
         Value binaryReferenceValue = ValueFactory.newBinaryReference( BinaryReference.from( "binary" ) );

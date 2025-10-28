@@ -4,12 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HtmlSanitizerTest
+class HtmlSanitizerTest
 {
 
     @Test
-    public void testSanitizeImg()
-        throws Exception
+    void testSanitizeImg()
     {
         final String html = "<img srcset='srcSetValue' alt='altValue' custom='customValue' src='sourceValue' id='idValue'/>";
         final String sanitized = InternalHtmlSanitizer.richText().sanitize( html );
@@ -18,8 +17,7 @@ public class HtmlSanitizerTest
     }
 
     @Test
-    public void testSanitizeImgWithoutRequiredSrc()
-        throws Exception
+    void testSanitizeImgWithoutRequiredSrc()
     {
         final String html = "<img srcset='srcSetValue' alt='altValue' custom='customValue' id='idValue'/>";
         final String sanitized = InternalHtmlSanitizer.richText().sanitize( html );
@@ -28,8 +26,7 @@ public class HtmlSanitizerTest
     }
 
     @Test
-    public void testTableWithDataCkeAttribute()
-        throws Exception
+    void testTableWithDataCkeAttribute()
     {
         final String html = "<td data-widget='altValue'></td>";
         final String sanitized = InternalHtmlSanitizer.richText().sanitize( html );
@@ -38,8 +35,7 @@ public class HtmlSanitizerTest
     }
 
     @Test
-    public void testStyles()
-        throws Exception
+    void testStyles()
     {
         final String html = "<div style='background-color:powderblue;invalid-style:value;'></div>";
         final String sanitized = InternalHtmlSanitizer.richText().sanitize( html );
@@ -48,8 +44,7 @@ public class HtmlSanitizerTest
     }
 
     @Test
-    public void testUrlProtocols()
-        throws Exception
+    void testUrlProtocols()
     {
         String sanitized =
             InternalHtmlSanitizer.richText().sanitize( "<p><a href=\"content://197eeb9b-fd85-4799-92c2-ea6d86103c8d\">hrthrt</a></p>" );

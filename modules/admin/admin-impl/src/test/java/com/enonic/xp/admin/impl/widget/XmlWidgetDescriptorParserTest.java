@@ -14,7 +14,7 @@ import com.enonic.xp.xml.parser.XmlModelParserTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlWidgetDescriptorParserTest
+class XmlWidgetDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlWidgetDescriptorParser parser;
@@ -22,7 +22,7 @@ public class XmlWidgetDescriptorParserTest
     private WidgetDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlWidgetDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -33,7 +33,7 @@ public class XmlWidgetDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -41,7 +41,7 @@ public class XmlWidgetDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -49,7 +49,6 @@ public class XmlWidgetDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final WidgetDescriptor result = this.builder.build();
         assertEquals( "myapplication:mywidget", result.getKey().toString() );

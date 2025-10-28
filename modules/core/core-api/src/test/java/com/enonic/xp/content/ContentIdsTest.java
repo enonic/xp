@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentIdsTest
+class ContentIdsTest
 {
 
     @Test
-    public void fromStringArray()
+    void fromStringArray()
     {
         ContentIds contentIds = ContentIds.from( "aaa", "bbb", "ccc" );
         assertEquals( 3, contentIds.getSize() );
@@ -20,7 +20,7 @@ public class ContentIdsTest
     }
 
     @Test
-    public void tostring()
+    void tostring()
     {
         ContentIds contentIds = ContentIds.from( "aaa", "bbb", "ccc" );
         assertEquals( "[aaa, bbb, ccc]", contentIds.toString() );

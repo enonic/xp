@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JsObjectConverterTest
+class JsObjectConverterTest
 {
     private JsObjectConverter instance;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         final ScriptEngine engine = NashornHelper.getScriptEngine( getClass().getClassLoader() );
 
@@ -26,7 +26,7 @@ public class JsObjectConverterTest
     }
 
     @Test
-    public void testToJs()
+    void testToJs()
     {
         final String[] values = {"value1", "value2", "value3"};
 
@@ -37,7 +37,7 @@ public class JsObjectConverterTest
     }
 
     @Test
-    public void testToJs_Primitives()
+    void testToJs_Primitives()
     {
         final int[] values = {1, 2, 3};
 

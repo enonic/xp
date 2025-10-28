@@ -17,7 +17,7 @@ class GetNodeByIdAndVersionIdCommandTest
 {
 
     @Test
-    public void testExecute_RootNode()
+    void testExecute_RootNode()
     {
         // Step 1: Try to find ROOT node
         final Node rootNode = GetNodeByIdCommand.create().
@@ -45,7 +45,7 @@ class GetNodeByIdAndVersionIdCommandTest
     }
 
     @Test
-    public void testExecute_NonRootNode()
+    void testExecute_NonRootNode()
     {
         final CreateNodeParams createNodeParams = CreateNodeParams.create().
             name( "child-node" ).

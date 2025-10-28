@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ApiHandlerTest
+class ApiHandlerTest
 {
     private ApiHandler handler;
 
@@ -45,7 +45,7 @@ public class ApiHandlerTest
     private ApiConfig apiConfig;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.applicationService = mock( ApplicationService.class );
         this.apiDescriptorService = mock( ApiDescriptorService.class );
@@ -57,13 +57,13 @@ public class ApiHandlerTest
     }
 
     @Test
-    public void testOrder()
+    void testOrder()
     {
         assertEquals( -49, this.handler.getOrder() );
     }
 
     @Test
-    public void testCanHandle()
+    void testCanHandle()
     {
         WebRequest webRequest = mock( WebRequest.class );
 
@@ -106,7 +106,7 @@ public class ApiHandlerTest
     }
 
     @Test
-    public void testDoHandle()
+    void testDoHandle()
         throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );

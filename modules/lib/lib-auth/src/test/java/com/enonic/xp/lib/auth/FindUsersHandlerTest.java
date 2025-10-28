@@ -8,7 +8,7 @@ import com.enonic.xp.security.UserQuery;
 import com.enonic.xp.security.UserQueryResult;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class FindUsersHandlerTest
+class FindUsersHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -23,7 +23,7 @@ public class FindUsersHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
 
         final UserQueryResult result = UserQueryResult.create().

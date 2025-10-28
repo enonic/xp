@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SiteDescriptorTest
+class SiteDescriptorTest
 {
     @Test
-    public void create_empty_site_descriptor()
+    void create_empty_site_descriptor()
     {
         //Builds an empty SiteDescriptor
         SiteDescriptor siteDescriptor = SiteDescriptor.create().build();
@@ -25,7 +25,7 @@ public class SiteDescriptorTest
     }
 
     @Test
-    public void create_site_descriptor()
+    void create_site_descriptor()
     {
         //Builds a Form
         final FormItem formItem = Input.create().

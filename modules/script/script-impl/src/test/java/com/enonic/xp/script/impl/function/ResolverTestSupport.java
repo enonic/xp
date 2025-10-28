@@ -21,8 +21,7 @@ public class ResolverTestSupport
     protected ResourceService resourceService;
 
     @BeforeEach
-    public final void setup()
-        throws Exception
+    final void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( this.resourceService.getResource( Mockito.any() ) ).then( this::loadResource );

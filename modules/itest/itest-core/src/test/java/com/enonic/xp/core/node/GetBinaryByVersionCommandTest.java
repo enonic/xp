@@ -15,18 +15,17 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GetBinaryByVersionCommandTest
+class GetBinaryByVersionCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference imageRef = BinaryReference.from( "myImage" );

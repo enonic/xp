@@ -11,11 +11,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeEditTest
+class NodeEditTest
 {
     @Test
-    public void edit_nothing()
-        throws Exception
+    void edit_nothing()
     {
         final Node node = createNode();
 
@@ -25,8 +24,7 @@ public class NodeEditTest
     }
 
     @Test
-    public void edit_name()
-        throws Exception
+    void edit_name()
     {
         final Node node = createNode();
 
@@ -40,8 +38,7 @@ public class NodeEditTest
     }
 
     @Test
-    public void edit_index_config()
-        throws Exception
+    void edit_index_config()
     {
         final Node node = createNode();
 

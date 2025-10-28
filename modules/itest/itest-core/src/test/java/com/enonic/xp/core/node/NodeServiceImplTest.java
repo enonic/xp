@@ -90,8 +90,7 @@ class NodeServiceImplTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
 
@@ -108,8 +107,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void get_by_id()
-        throws Exception
+    void get_by_id()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -119,15 +117,13 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void get_by_id_non_existing()
-        throws Exception
+    void get_by_id_non_existing()
     {
         assertThrows( NodeNotFoundException.class, () -> this.nodeService.getById( NodeId.from( "a" ) ) );
     }
 
     @Test
-    public void get_by_id_repo_non_existing()
-        throws Exception
+    void get_by_id_repo_non_existing()
     {
         assertThrows( RepositoryNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() )
             .repositoryId( "missing-repo" )
@@ -136,8 +132,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void get_by_id_branch_non_existing()
-        throws Exception
+    void get_by_id_branch_non_existing()
     {
         assertThrows( BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() )
             .branch( "missing-branch" )
@@ -167,8 +162,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void create()
-        throws Exception
+    void create()
     {
 
         final ChildOrder childOrder = ChildOrder.create()
@@ -190,7 +184,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void test_duplicate_binary()
+    void test_duplicate_binary()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef1 = BinaryReference.from( "binary" );
@@ -212,7 +206,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void test_duplicate_with_children()
+    void test_duplicate_with_children()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -247,7 +241,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void test_duplicate_without_children()
+    void test_duplicate_without_children()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -269,7 +263,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void testDuplicateWithCustomParams()
+    void testDuplicateWithCustomParams()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -302,7 +296,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void test_get_binary()
+    void test_get_binary()
         throws IOException
     {
 
@@ -325,7 +319,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void test_commit()
+    void test_commit()
     {
         //Create and update node
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
@@ -385,7 +379,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void testGetByIdAndVersionId()
+    void testGetByIdAndVersionId()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -395,7 +389,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void testSort()
+    void testSort()
     {
         final Node parent = createNode(
             CreateNodeParams.create().name( "my-parent" ).parent( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build() );
@@ -573,7 +567,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void testPatchWithEventMetadata()
+    void testPatchWithEventMetadata()
     {
         final Node nodeToPatch = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node-1" ).build() );
 
@@ -599,7 +593,7 @@ class NodeServiceImplTest
     }
 
     @Test
-    public void testFindByQuery()
+    void testFindByQuery()
     {
         final Node node = this.nodeService.create(
             CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).data( new PropertyTree() ).build() );

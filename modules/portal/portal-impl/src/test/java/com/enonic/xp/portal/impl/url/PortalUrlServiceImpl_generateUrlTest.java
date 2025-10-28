@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_generateUrlTest
+class PortalUrlServiceImpl_generateUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
-    public void createUrl()
+    void createUrl()
     {
         final GenerateUrlParams params = new GenerateUrlParams().url( "/admin" ).param( "a", 3 );
 
@@ -26,7 +26,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     }
 
     @Test
-    public void createUrlPathSegments()
+    void createUrlPathSegments()
     {
         final GenerateUrlParams params =
             new GenerateUrlParams().pathSegments( List.of( "admin", "site", "preview", "norskprøve" ) ).param( "a", 3 );
@@ -36,7 +36,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     }
 
     @Test
-    public void createUrlPathWithPathSegments()
+    void createUrlPathWithPathSegments()
     {
         final GenerateUrlParams params =
             new GenerateUrlParams().url( "/admin" ).pathSegments( List.of( "admin", "site", "preview", "mysite" ) );
@@ -46,7 +46,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     }
 
     @Test
-    public void createUrl_absolute()
+    void createUrl_absolute()
     {
         final GenerateUrlParams params = new GenerateUrlParams().type( UrlTypeConstants.ABSOLUTE ).url( "/admin" ).param( "a", 3 );
 
@@ -59,7 +59,7 @@ public class PortalUrlServiceImpl_generateUrlTest
     }
 
     @Test
-    public void createUrl_withVirtualHost()
+    void createUrl_withVirtualHost()
     {
         final GenerateUrlParams params = new GenerateUrlParams().type( UrlTypeConstants.ABSOLUTE ).url( "/admin" ).param( "a", 3 );
 

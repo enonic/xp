@@ -8,11 +8,11 @@ import com.enonic.xp.web.HttpStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ControllerScriptImpl_noResultTest
+class ControllerScriptImpl_noResultTest
     extends AbstractControllerTest
 {
     @Test
-    public void nullResult()
+    void nullResult()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
 
@@ -22,7 +22,7 @@ public class ControllerScriptImpl_noResultTest
     }
 
     @Test
-    public void emptyResult()
+    void emptyResult()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.getParams().put( "mode", "empty" );
@@ -33,7 +33,7 @@ public class ControllerScriptImpl_noResultTest
     }
 
     @Test
-    public void onlyBody()
+    void onlyBody()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.getParams().put( "mode", "body" );
@@ -44,7 +44,7 @@ public class ControllerScriptImpl_noResultTest
     }
 
     @Test
-    public void onlyStatus()
+    void onlyStatus()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.getParams().put( "mode", "status" );

@@ -66,13 +66,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ContentServiceImplTest_update
+class ContentServiceImplTest_update
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void update_content_modified_time_updated()
-        throws Exception
+    void update_content_modified_time_updated()
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -102,8 +101,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_content_image()
-        throws Exception
+    void update_content_image()
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
         xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
@@ -140,8 +138,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_content_data()
-        throws Exception
+    void update_content_data()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "testString", "value" );
@@ -174,8 +171,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_incorrect_content_data()
-        throws Exception
+    void update_incorrect_content_data()
     {
 
         //Mocks the content service to return our content type
@@ -308,8 +304,7 @@ public class ContentServiceImplTest_update
 
 
     @Test
-    public void update_with_metadata()
-        throws Exception
+    void update_with_metadata()
     {
         final Project project = projectService.create( CreateProjectParams.create()
                                                            .name( ProjectName.from( "project" ) )
@@ -364,7 +359,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_content_with_thumbnail_keep_on_update()
+    void update_content_with_thumbnail_keep_on_update()
         throws Exception
     {
         final ByteSource thumbnail = loadImage( "cat-small.jpg" );
@@ -412,7 +407,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_thumbnail()
+    void update_thumbnail()
         throws Exception
     {
         final ByteSource thumbnail = loadImage( "cat-small.jpg" );
@@ -510,8 +505,7 @@ public class ContentServiceImplTest_update
         assertEquals( thumbnail.size(), updatedContentThumbnail.getSize() );
     }
     @Test
-    public void update_publish_info()
-        throws Exception
+    void update_publish_info()
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -543,8 +537,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void update_workflow_info()
-        throws Exception
+    void update_workflow_info()
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -575,7 +568,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void audit_data()
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -614,7 +607,7 @@ public class ContentServiceImplTest_update
     }
 
     @Test
-    public void audit_data_disabled()
+    void audit_data_disabled()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 

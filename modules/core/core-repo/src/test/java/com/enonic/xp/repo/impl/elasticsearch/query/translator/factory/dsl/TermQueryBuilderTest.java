@@ -7,68 +7,66 @@ import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TermQueryBuilderTest
+class TermQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void simple()
+    void simple()
         throws Exception
     {
         test( "simple" );
     }
 
     @Test
-    public void number()
+    void number()
         throws Exception
     {
         test( "number" );
     }
 
     @Test
-    public void test_boolean()
+    void test_boolean()
         throws Exception
     {
         test( "boolean" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );
     }
 
     @Test
-    public void empty_value()
+    void empty_value()
         throws Exception
     {
         test( "empty_value" );
     }
 
     @Test
-    public void null_value()
+    void null_value()
         throws Exception
     {
         test( "null_value" );
     }
 
     @Test
-    public void datetime_as_number()
+    void datetime_as_number()
         throws Exception
     {
         test( "datetime_as_number" );
     }
 
     @Test
-    public void invalid_datetime()
-        throws Exception
+    void invalid_datetime()
     {
         assertThrows( RuntimeException.class, () -> test( "invalid_datetime" ) );
     }
 
     @Test
-    public void geo_point()
-        throws Exception
+    void geo_point()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "geo_point" ) );
     }

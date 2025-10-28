@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NodeIndexDocumentFactoryTest
+class NodeIndexDocumentFactoryTest
 {
 
     @Test
@@ -35,7 +35,7 @@ public class NodeIndexDocumentFactoryTest
     }
 
     @Test
-    public void validate_given_id_then_ok()
+    void validate_given_id_then_ok()
     {
         Node node = Node.create().
             id( NodeId.from( "abc" ) ).
@@ -48,8 +48,7 @@ public class NodeIndexDocumentFactoryTest
     }
 
     @Test
-    public void index_node_document_created()
-        throws Exception
+    void index_node_document_created()
     {
         Node node = Node.create().id( NodeId.from( "abc" ) ).build();
 
@@ -61,8 +60,7 @@ public class NodeIndexDocumentFactoryTest
     }
 
     @Test
-    public void set_analyzer()
-        throws Exception
+    void set_analyzer()
     {
         final String myAnalyzerName = "myAnalyzer";
 
@@ -82,8 +80,7 @@ public class NodeIndexDocumentFactoryTest
     }
 
     @Test
-    public void node_index_document_meta_data_values()
-        throws Exception
+    void node_index_document_meta_data_values()
     {
         final String myAnalyzerName = "myAnalyzer";
 

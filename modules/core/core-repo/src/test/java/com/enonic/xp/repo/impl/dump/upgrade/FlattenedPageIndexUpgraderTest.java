@@ -15,20 +15,20 @@ import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageIndexUpgrader;
 import com.enonic.xp.repo.impl.node.json.IndexConfigDocumentJson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FlattenedPageIndexUpgraderTest
+class FlattenedPageIndexUpgraderTest
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     @Test
-    public void testPageFlattened()
+    void testPageFlattened()
         throws Exception
     {
         test( "page-components", "old-page-components-index", "new-page-components-index" );

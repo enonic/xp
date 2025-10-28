@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class NumericRangeBucketTest
+class NumericRangeBucketTest
 {
     @Test
-    public void builder()
+    void builder()
     {
         NumericRangeBucket.Builder builder = NumericRangeBucket.create();
 

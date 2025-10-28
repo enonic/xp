@@ -15,7 +15,7 @@ class ContentAuditLogFilterServiceImplTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         final ContentConfig config = mock( ContentConfig.class, invocation -> "" );
         Assertions.assertFalse( new ContentAuditLogFilterServiceImpl( config ).accept( "system.content.any" ) );

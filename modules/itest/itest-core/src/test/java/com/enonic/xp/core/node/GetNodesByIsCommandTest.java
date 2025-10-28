@@ -19,19 +19,17 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GetNodesByIsCommandTest
+class GetNodesByIsCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_by_id()
-        throws Exception
+    void get_by_id()
     {
         createNode( "1", true );
         createNode( "2", true );
@@ -48,8 +46,7 @@ public class GetNodesByIsCommandTest
     }
 
     @Test
-    public void get_by_id_no_access()
-        throws Exception
+    void get_by_id_no_access()
     {
         createNode( "1", true );
         createNode( "2", true );

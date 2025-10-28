@@ -8,7 +8,7 @@ import com.enonic.xp.status.BaseReporterTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MetricsReporterTest
+class MetricsReporterTest
     extends BaseReporterTest<MetricsReporter>
 {
     public MetricsReporterTest()
@@ -18,13 +18,12 @@ public class MetricsReporterTest
 
     @Override
     protected MetricsReporter newReporter()
-        throws Exception
     {
         return new MetricsReporter();
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         assertThat(textReport()).endsWith( "# EOF\n" );

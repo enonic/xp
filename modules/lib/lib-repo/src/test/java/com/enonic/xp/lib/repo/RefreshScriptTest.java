@@ -15,7 +15,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class RefreshScriptTest
+class RefreshScriptTest
     extends ScriptTestSupport
 {
     private NodeService nodeService;
@@ -30,7 +30,7 @@ public class RefreshScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/repo/refresh.js" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
@@ -39,40 +39,35 @@ public class RefreshScriptTest
     }
 
     @Test
-    public void testRefreshDefault()
-        throws Exception
+    void testRefreshDefault()
     {
         runFunction( "/test/refresh-test.js", "refreshDefault" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
     }
 
     @Test
-    public void testRefreshAll()
-        throws Exception
+    void testRefreshAll()
     {
         runFunction( "/test/refresh-test.js", "refreshAll" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.ALL );
     }
 
     @Test
-    public void testRefreshSearch()
-        throws Exception
+    void testRefreshSearch()
     {
         runFunction( "/test/refresh-test.js", "refreshSearch" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.SEARCH );
     }
 
     @Test
-    public void testRefreshStorage()
-        throws Exception
+    void testRefreshStorage()
     {
         runFunction( "/test/refresh-test.js", "refreshStorage" );
         verify( this.nodeService, times( 1 ) ).refresh( RefreshMode.STORAGE );
     }
 
     @Test
-    public void testRefreshInvalidMode()
-        throws Exception
+    void testRefreshInvalidMode()
     {
         try
         {

@@ -9,12 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileBlobStoreConfigImplTest
+class FileBlobStoreConfigImplTest
 {
 
     @Test
-    public void default_values()
-        throws Exception
+    void default_values()
     {
         final FileBlobStoreConfigImpl config = new FileBlobStoreConfigImpl();
         config.activate( new HashMap<>() );
@@ -26,8 +25,7 @@ public class FileBlobStoreConfigImplTest
 
 
     @Test
-    public void trim_space()
-        throws Exception
+    void trim_space()
     {
         final HashMap<String, String> values = new HashMap<>();
         values.put( "readThrough.enabled", "true " );

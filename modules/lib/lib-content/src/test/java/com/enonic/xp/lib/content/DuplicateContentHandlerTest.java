@@ -8,11 +8,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 
-public class DuplicateContentHandlerTest
+class DuplicateContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         mockVariant();
 
@@ -20,7 +20,7 @@ public class DuplicateContentHandlerTest
     }
 
     @Test
-    public void testDuplicate()
+    void testDuplicate()
     {
         final Content content = Content.create( TestDataFixtures.newExampleContent() ).variantOf( ContentId.from( "9876543210" ) ).build();
 
@@ -35,7 +35,7 @@ public class DuplicateContentHandlerTest
     }
 
     @Test
-    public void testDuplicateAsVariant()
+    void testDuplicateAsVariant()
     {
         mockVariant();
 

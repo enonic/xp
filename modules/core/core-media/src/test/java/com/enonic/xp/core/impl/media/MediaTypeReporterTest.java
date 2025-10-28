@@ -11,26 +11,26 @@ import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MediaTypeReporterTest
+class MediaTypeReporterTest
 {
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
     private MediaTypeReporter reporter;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.reporter = new MediaTypeReporter();
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "mediaTypes", this.reporter.getName() );
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         assertJson( "report.json" );

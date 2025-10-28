@@ -6,13 +6,11 @@ import org.mockito.Mockito;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.UpdateContentParams;
 
-public class RemoveAttachmentHandlerTest
+class RemoveAttachmentHandlerTest
     extends BaseContentHandlerTest
-
 {
-
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -22,8 +20,7 @@ public class RemoveAttachmentHandlerTest
     }
 
     @Test
-    public void removeAttachmentSingle()
-        throws Exception
+    void removeAttachmentSingle()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -32,8 +29,7 @@ public class RemoveAttachmentHandlerTest
     }
 
     @Test
-    public void removeAttachmentMulti()
-        throws Exception
+    void removeAttachmentMulti()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );

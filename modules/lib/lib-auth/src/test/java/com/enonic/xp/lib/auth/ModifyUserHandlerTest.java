@@ -16,7 +16,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ModifyUserHandlerTest
+class ModifyUserHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -31,7 +31,7 @@ public class ModifyUserHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.<Optional<? extends Principal>>when( securityService.getUser( Mockito.any() ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestUser() ) );
@@ -43,7 +43,7 @@ public class ModifyUserHandlerTest
     }
 
     @Test
-    public void testModifyUser()
+    void testModifyUser()
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getUser( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(

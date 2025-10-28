@@ -4,23 +4,22 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.core.internal.json.JsonHelper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.core.internal.json.JsonHelper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class PermissionsFactoryTest
+class PermissionsFactoryTest
 {
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
         final AccessControlList acl = create( "{}" );
 
@@ -31,8 +30,7 @@ public class PermissionsFactoryTest
     }
 
     @Test
-    public void full()
-        throws Exception
+    void full()
     {
         final AccessControlList acl = create( " { \"_permissions\": [\n" +
                                                   "        {\n" +

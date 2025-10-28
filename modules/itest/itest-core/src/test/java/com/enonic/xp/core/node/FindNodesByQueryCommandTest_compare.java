@@ -21,19 +21,17 @@ import com.enonic.xp.query.expr.ValueExpr;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_compare
+class FindNodesByQueryCommandTest_compare
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void compare_gt()
-        throws Exception
+    void compare_gt()
     {
         final PropertyTree data = new PropertyTree();
         data.setDouble( "my-value", 5.5 );
@@ -65,8 +63,7 @@ public class FindNodesByQueryCommandTest_compare
     }
 
     @Test
-    public void compare_eq()
-        throws Exception
+    void compare_eq()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -95,8 +92,7 @@ public class FindNodesByQueryCommandTest_compare
     }
 
     @Test
-    public void compare_eq_numeric()
-        throws Exception
+    void compare_eq_numeric()
     {
         final PropertyTree data = new PropertyTree();
         data.addDouble( "myDouble", 2.0 );
@@ -129,8 +125,7 @@ public class FindNodesByQueryCommandTest_compare
 
 
     @Test
-    public void compare_exists()
-        throws Exception
+    void compare_exists()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myCategory", "article" );

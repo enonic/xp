@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class MediaUploaderTypeTest
+class MediaUploaderTypeTest
     extends BaseInputTypeTest
 {
     public MediaUploaderTypeTest()
@@ -20,19 +20,19 @@ public class MediaUploaderTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "MediaUploader", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "MediaUploader", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
         final InputTypeConfig config = InputTypeConfig.create().build();
@@ -43,7 +43,7 @@ public class MediaUploaderTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( referenceProperty( "test" ), config );

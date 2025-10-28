@@ -11,13 +11,12 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NotQueryBuilderTest
+class NotQueryBuilderTest
     extends BaseTestBuilderFactory
 {
 
     @Test
-    public void negate_term()
-        throws Exception
+    void negate_term()
     {
         final String expected = load( "not_term.json" );
 

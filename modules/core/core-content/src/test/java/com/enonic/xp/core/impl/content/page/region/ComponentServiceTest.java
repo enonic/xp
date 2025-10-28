@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ComponentServiceTest
+class ComponentServiceTest
     extends AbstractDescriptorServiceTest
 {
     protected ComponentServiceImpl service;
@@ -35,8 +35,7 @@ public class ComponentServiceTest
     }
 
     @Test
-    public void testGetPartByKey()
-        throws Exception
+    void testGetPartByKey()
     {
         final Component part1App1 = this.service.getByKey( DescriptorKey.from( "myapp1:mypart" ) );
         final Component part1App2 = this.service.getByKey( DescriptorKey.from( "myapp2:mypart" ) );
@@ -49,8 +48,7 @@ public class ComponentServiceTest
     }
 
     @Test
-    public void testGetLayoutByKey()
-        throws Exception
+    void testGetLayoutByKey()
     {
         final Component layout1App1 = this.service.getByKey( DescriptorKey.from( "myapp1:mylayout" ) );
         final Component layout1App2 = this.service.getByKey( DescriptorKey.from( "myapp2:mylayout" ) );
@@ -63,16 +61,14 @@ public class ComponentServiceTest
     }
 
     @Test
-    public void testGetByKeyMissingComponent()
-        throws Exception
+    void testGetByKeyMissingComponent()
     {
         final Component missingComponent = this.service.getByKey( DescriptorKey.from( "myapp1:missingComponent" ) );
         assertNull( missingComponent );
     }
 
     @Test
-    public void testGetByKeyMissingApp()
-        throws Exception
+    void testGetByKeyMissingApp()
     {
         final Component missingComponent = this.service.getByKey( DescriptorKey.from( "missingApp:missingComponent" ) );
         assertNull( missingComponent );

@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class InitializerTest
+class InitializerTest
 {
     @Test
-    public void testNonMaster()
+    void testNonMaster()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
 
@@ -30,7 +30,7 @@ public class InitializerTest
     }
 
     @Test
-    public void testMaster()
+    void testMaster()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
         final TestInitializer initializer = TestInitializer.create().
@@ -45,7 +45,7 @@ public class InitializerTest
     }
 
     @Test
-    public void testNonMasterInitialized()
+    void testNonMasterInitialized()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
         final TestInitializer initializer = TestInitializer.create().
@@ -60,7 +60,7 @@ public class InitializerTest
     }
 
     @Test
-    public void testMasterInitialized()
+    void testMasterInitialized()
     {
         final Runnable doInitalization = Mockito.mock( Runnable.class );
         final TestInitializer initializer = TestInitializer.create().

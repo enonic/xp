@@ -38,13 +38,12 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 import com.enonic.xp.testing.serializer.JsonMapGenerator;
 
-public class QueryContentHandlerTest
+class QueryContentHandlerTest
     extends BaseContentHandlerTest
 {
 
     @Test
-    public void testExecute()
-        throws Exception
+    void testExecute()
     {
         FindContentIdsByQueryResult queryResult = FindContentIdsByQueryResult.create()
             .contents( ContentIds.from( "contentId" ) )
@@ -87,46 +86,42 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         setupQuery( 2, true, true );
         runScript( "/lib/xp/examples/content/query.js" );
     }
 
     @Test
-    public void filterArray()
+    void filterArray()
     {
         setupQuery( 2, false, false );
         runFunction( "/test/QueryContentHandlerTest_filter_array.js", "query" );
     }
 
     @Test
-    public void query()
-        throws Exception
+    void query()
     {
         setupQuery( 3, true, false );
         runFunction( "/test/QueryContentHandlerTest.js", "query" );
     }
 
     @Test
-    public void dslQuery()
-        throws Exception
+    void dslQuery()
     {
         setupQuery( 3, true, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "query" );
     }
 
     @Test
-    public void dslQueryInvalid()
-        throws Exception
+    void dslQueryInvalid()
     {
         setupQuery( 3, true, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "invalid" );
     }
 
     @Test
-    public void dslQueryEmpty()
-        throws Exception
+    void dslQueryEmpty()
     {
         Mockito.when( this.contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn(
             FindContentIdsByQueryResult.create().contents( ContentIds.empty() ).aggregations( Aggregations.empty() ).build() );
@@ -134,32 +129,28 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void dslSortSingle()
-        throws Exception
+    void dslSortSingle()
     {
         setupQuery( 2, false, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "sortSingle" );
     }
 
     @Test
-    public void dslSortMultiple()
-        throws Exception
+    void dslSortMultiple()
     {
         setupQuery( 2, false, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "sortMultiple" );
     }
 
     @Test
-    public void dslSortEmpty()
-        throws Exception
+    void dslSortEmpty()
     {
         setupQuery( 2, false, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "sortEmpty" );
     }
 
     @Test
-    public void dslSortInvalid()
-        throws Exception
+    void dslSortInvalid()
     {
         setupQuery( 2, false, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_sort.js", "invalid" );
@@ -226,8 +217,7 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void queryEmpty()
-        throws Exception
+    void queryEmpty()
     {
         final FindContentIdsByQueryResult findResult = FindContentIdsByQueryResult.create().
             totalHits( 0 ).
@@ -242,15 +232,14 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void dslQueryExistsDslExpr()
-        throws Exception
+    void dslQueryExistsDslExpr()
     {
         setupQuery( 3, false, false );
         runFunction( "/test/QueryContentHandlerTest_dsl_query.js", "queryExistsDslExpr" );
     }
 
     @Test
-    public void testMinAggregation()
+    void testMinAggregation()
     {
         final SingleValueMetricAggregation minAgg = SingleValueMetricAggregation.create( "minPrice" ).value( 10.0 ).build();
         setUpForMetricsAggregations( minAgg );
@@ -258,7 +247,7 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void testMaxAggregation()
+    void testMaxAggregation()
     {
         final SingleValueMetricAggregation maxAgg = SingleValueMetricAggregation.create( "maxPrice" ).value( 50.0 ).build();
         setUpForMetricsAggregations( maxAgg );
@@ -266,7 +255,7 @@ public class QueryContentHandlerTest
     }
 
     @Test
-    public void testValueCountAggregation()
+    void testValueCountAggregation()
     {
         final SingleValueMetricAggregation countAgg = SingleValueMetricAggregation.create( "countProductsWithPrice" ).value( 5 ).build();
         setUpForMetricsAggregations( countAgg );

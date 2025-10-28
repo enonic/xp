@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MixinsTest
+class MixinsTest
 {
     @Test
-    public void test_immutable_mixins()
+    void test_immutable_mixins()
     {
         MixinName mixinName = MixinName.from( "myapplication:my1" );
         Mixin mixin = Mixin.create().name( mixinName ).build();
@@ -46,7 +46,7 @@ public class MixinsTest
     }
 
     @Test
-    public void add_multiple()
+    void add_multiple()
     {
         Mixin mixin1 = Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build();
         Mixin mixin2 = Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build();
@@ -59,7 +59,7 @@ public class MixinsTest
     }
 
     @Test
-    public void from()
+    void from()
     {
         Mixins mixins = Mixins.from( Mixin.create().name( MixinName.from( "myapplication:my1" ) ).build(),
                                      Mixin.create().name( MixinName.from( "myapplication:my2" ) ).build() );

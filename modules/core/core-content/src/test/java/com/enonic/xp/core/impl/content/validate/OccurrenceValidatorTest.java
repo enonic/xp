@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OccurrenceValidatorTest
+class OccurrenceValidatorTest
 {
     private ValidationErrors validate( final PropertyTree content, final ContentType contentType )
     {
@@ -40,7 +40,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_two_data_when_validate_then_MaximumOccurrencesValidationError()
+    void given_input_with_maxOccur1_with_two_data_when_validate_then_MaximumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -61,7 +61,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur2_with_three_data_when_validate_then_MaximumOccurrencesValidationError()
+    void given_input_with_maxOccur2_with_three_data_when_validate_then_MaximumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -83,7 +83,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_input_with_data_when_validate_then_hasErrors_returns_false()
+    void given_required_input_with_data_when_validate_then_hasErrors_returns_false()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -99,7 +99,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_input_with_no_data_when_validate_then_hasErrors_returns_true()
+    void given_required_input_with_no_data_when_validate_then_hasErrors_returns_true()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -114,7 +114,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_input_with_no_data_when_validate_then_validation_error_propertyPath_correct()
+    void given_required_input_with_no_data_when_validate_then_validation_error_propertyPath_correct()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -132,7 +132,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur2_with_one_data_when_validate_then_MinimumOccurrencesValidationError()
+    void given_input_with_minOccur2_with_one_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -152,7 +152,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur3_with_two_data_when_validate_then_MinimumOccurrencesValidationError()
+    void given_input_with_minOccur3_with_two_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -173,7 +173,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_field_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -196,7 +196,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_input_with_no_data_within_layout_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -242,7 +242,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_set_with_no_data_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_set_with_no_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -264,7 +264,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_set_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_set_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -290,7 +290,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_input_at_top_and_inside_formItemSet_and_formItemSet_have_other_unrequired_data_when_validate_then_two_errors_are_found()
+    void given_required_input_at_top_and_inside_formItemSet_and_formItemSet_have_other_unrequired_data_when_validate_then_two_errors_are_found()
     {
         Input myInput =
             Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
@@ -320,7 +320,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void data_for_input_is_not_required_if_parent_data_set_does_not_exist()
+    void data_for_input_is_not_required_if_parent_data_set_does_not_exist()
     {
         Input myInput =
             Input.create().name( "myRequiredInput" ).label( "Input" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build();
@@ -336,7 +336,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_set_with_no_data_and_other_set_with_data_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_set_with_no_data_and_other_set_with_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         FormItemSet personalia = FormItemSet.create()
             .name( "personalia" )
@@ -373,7 +373,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_two_nonnull_data_when_validate_then_MaximumOccurrencesValidationError()
+    void given_input_with_maxOccur1_with_two_nonnull_data_when_validate_then_MaximumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -391,7 +391,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_three_null_data_when_validate_then_hasErrors_returns_false()
+    void given_input_with_maxOccur1_with_three_null_data_when_validate_then_hasErrors_returns_false()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -410,7 +410,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_maxOccur1_with_one_null_and_one_nonnull_value_when_validate_then_hasErrors_returns_false()
+    void given_input_with_maxOccur1_with_one_null_and_one_nonnull_value_when_validate_then_hasErrors_returns_false()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -428,7 +428,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_two_null_values_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    void given_input_with_minOccur1_with_two_null_values_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -447,7 +447,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    void given_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -465,7 +465,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_with_two_nonnull_values_when_validate_then_hasErrors_returns_false()
+    void given_input_with_minOccur1_with_two_nonnull_values_when_validate_then_hasErrors_returns_false()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -483,7 +483,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_input_with_minOccur1_and_maxOccur2_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    void given_input_with_minOccur1_and_maxOccur2_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -501,7 +501,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_formitemset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    void given_formitemset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
     {
         FormItemSet crimes = FormItemSet.create()
             .name( "crimes" )
@@ -528,7 +528,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_formitemset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false()
+    void given_formitemset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false()
     {
         FormItemSet crimes = FormItemSet.create()
             .name( "crimes" )
@@ -561,7 +561,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_formoptionset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
+    void given_formoptionset_with_input_with_minOccur1_with_one_null_value_when_validate_then_hasErrors_returns_MinimumOccurrencesValidationError()
     {
         FormOptionSet.Builder crimes = FormOptionSet.create().occurrences( Occurrences.create( 1, 0 ) ).name( "crimes" );
 
@@ -592,7 +592,7 @@ public class OccurrenceValidatorTest
 
 
     @Test
-    public void given_formoptionset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false()
+    void given_formoptionset_with_two_inputs_with_minOccur_with_data_when_validate_then_hasErrors_returns_false()
     {
         FormOptionSet.Builder crimes = FormOptionSet.create().occurrences( Occurrences.create( 1, 0 ) ).name( "crimes" );
 
@@ -654,7 +654,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_optionset_with_no_data_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_optionset_with_no_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         FormOptionSet.Builder myOptionSet = FormOptionSet.create().occurrences( Occurrences.create( 1, 0 ) ).name( "myOptionSet" );
 
@@ -679,7 +679,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_optionset_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_optionset_with_no_data_within_layout_when_validate_then_MinimumOccurrencesValidationError()
     {
         FormOptionSet.Builder myOptionSet = FormOptionSet.create().occurrences( Occurrences.create( 1, 0 ) ).name( "myOptionSet" );
 
@@ -703,7 +703,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_input_at_top_and_inside_formOptionSet_and_formOptionSet_have_other_unrequired_data_when_validate_then_two_errors_are_found()
+    void given_required_input_at_top_and_inside_formOptionSet_and_formOptionSet_have_other_unrequired_data_when_validate_then_two_errors_are_found()
     {
         FormOptionSet.Builder myOptionSet = FormOptionSet.create().occurrences( Occurrences.create( 1, 0 ) ).name( "myOptionSet" );
 
@@ -740,7 +740,7 @@ public class OccurrenceValidatorTest
 
 
     @Test
-    public void data_for_input_is_not_required_if_parent_optionset_does_not_exist()
+    void data_for_input_is_not_required_if_parent_optionset_does_not_exist()
     {
         FormOptionSet.Builder myOptionSet = FormOptionSet.create().required( false ).name( "myOptionSet" );
 
@@ -764,7 +764,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_required_optionset_with_no_data_and_other_optionset_with_data_when_validate_then_MinimumOccurrencesValidationError()
+    void given_required_optionset_with_no_data_and_other_optionset_with_data_when_validate_then_MinimumOccurrencesValidationError()
     {
         FormOptionSetOption option1 = FormOptionSetOption.create()
             .name( "option1" )
@@ -810,7 +810,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_default_selection_passes_multiselection_check()
+    void given_optionset_with_default_selection_passes_multiselection_check()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -824,7 +824,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_and_empty_selection_array_fails_multiselection_check()
+    void given_optionset_with_required_selection_and_empty_selection_array_fails_multiselection_check()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -843,7 +843,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_selection_array_hast_too_many_selected_options()
+    void given_optionset_with_required_selection_selection_array_hast_too_many_selected_options()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -864,7 +864,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_selection_array_hast_too_few_selected_options()
+    void given_optionset_with_required_selection_selection_array_hast_too_few_selected_options()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -883,7 +883,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_and_missing_selection_array_has_too_many_default_options()
+    void given_optionset_with_required_selection_and_missing_selection_array_has_too_many_default_options()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -900,7 +900,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void given_optionset_with_required_selection_and_missing_selection_array_has_too_little_default_options()
+    void given_optionset_with_required_selection_and_missing_selection_array_has_too_little_default_options()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -941,7 +941,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void testOptionSetWithDefaultValue()
+    void testOptionSetWithDefaultValue()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -985,7 +985,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void testOptionSetWithUnlimitedNumberAllowedSelections()
+    void testOptionSetWithUnlimitedNumberAllowedSelections()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )
@@ -1010,7 +1010,7 @@ public class OccurrenceValidatorTest
     }
 
     @Test
-    public void testOptionSetWithUnlimitedNumberAllowedSelectionsAndDefaultValues()
+    void testOptionSetWithUnlimitedNumberAllowedSelectionsAndDefaultValues()
     {
         final ContentType contentType = ContentType.create()
             .name( "myapplication:my_type" )

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class SiteConfiguratorTypeTest
+class SiteConfiguratorTypeTest
     extends BaseInputTypeTest
 {
     public SiteConfiguratorTypeTest()
@@ -21,19 +21,19 @@ public class SiteConfiguratorTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "SiteConfigurator", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "SiteConfigurator", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
         final InputTypeConfig config = InputTypeConfig.create().build();
@@ -49,7 +49,7 @@ public class SiteConfiguratorTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( stringProperty( "test" ), config );

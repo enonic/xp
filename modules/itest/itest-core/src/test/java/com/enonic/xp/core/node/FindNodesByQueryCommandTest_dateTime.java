@@ -17,19 +17,17 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
-public class FindNodesByQueryCommandTest_dateTime
+class FindNodesByQueryCommandTest_dateTime
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void instant_compare_query()
-        throws Exception
+    void instant_compare_query()
     {
         createNodeWithInstant( Instant.parse( "2015-02-26T12:00:00Z" ), "node1", NodePath.ROOT );
         createNodeWithInstant( Instant.parse( "2015-02-26T13:00:00Z" ), "node2", NodePath.ROOT );
@@ -43,8 +41,7 @@ public class FindNodesByQueryCommandTest_dateTime
     }
 
     @Test
-    public void dateTime()
-        throws Exception
+    void dateTime()
     {
         createNodeWithInstant( convertToInstant( "2015-02-26T12:00:00+01:00" ), "node1", NodePath.ROOT );
         createNodeWithInstant( convertToInstant( "2015-02-26T13:00:00-01:00" ), "node2", NodePath.ROOT );
@@ -63,8 +60,7 @@ public class FindNodesByQueryCommandTest_dateTime
     }
 
     @Test
-    public void localDate()
-        throws Exception
+    void localDate()
     {
         createNodeWithLocalDate( LocalDate.parse( "2015-01-26" ), "node1", NodePath.ROOT );
         createNodeWithLocalDate( LocalDate.parse( "2015-02-26" ), "node2", NodePath.ROOT );
@@ -77,8 +73,7 @@ public class FindNodesByQueryCommandTest_dateTime
     }
 
     @Test
-    public void localDateTime()
-        throws Exception
+    void localDateTime()
     {
         createNodeWithLocalDateTime( LocalDateTime.parse( "2015-01-26T10:00:00" ), "node1", NodePath.ROOT );
         createNodeWithLocalDateTime( LocalDateTime.parse( "2015-01-27T10:00:00" ), "node2", NodePath.ROOT );
@@ -92,8 +87,7 @@ public class FindNodesByQueryCommandTest_dateTime
     }
 
     @Test
-    public void localTime()
-        throws Exception
+    void localTime()
     {
         createNodeWithLocalTime( LocalTime.of( 9, 36 ), "node1", NodePath.ROOT );
         createNodeWithLocalTime( LocalTime.of( 9, 36, 0 ), "node2", NodePath.ROOT );
@@ -119,8 +113,7 @@ public class FindNodesByQueryCommandTest_dateTime
     }
 
     @Test
-    public void with_milliseconds()
-        throws Exception
+    void with_milliseconds()
     {
         createNodeWithInstant( Instant.parse( "2015-02-26T12:00:00Z" ), "node1", NodePath.ROOT );
         createNodeWithInstant( Instant.parse( "2015-02-26T12:00:00.001Z" ), "node2", NodePath.ROOT );

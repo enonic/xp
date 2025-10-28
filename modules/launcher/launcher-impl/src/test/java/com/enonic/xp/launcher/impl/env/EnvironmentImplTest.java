@@ -12,13 +12,13 @@ import static com.enonic.xp.launcher.impl.SharedConstants.XP_INSTALL_DIR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class EnvironmentImplTest
+class EnvironmentImplTest
 {
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void testGetAsMap()
+    void testGetAsMap()
         throws Exception
     {
         final EnvironmentImpl env = new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "home" ) ),
@@ -30,7 +30,7 @@ public class EnvironmentImplTest
     }
 
     @Test
-    public void testValidate_noInstallDir()
+    void testValidate_noInstallDir()
     {
         assertThrows( NullPointerException.class,
                       () -> new EnvironmentImpl( null, Files.createDirectory( this.temporaryFolder.resolve( "home" ) ) ) );
@@ -38,14 +38,14 @@ public class EnvironmentImplTest
     }
 
     @Test
-    public void testValidate_noHomeDir()
+    void testValidate_noHomeDir()
     {
         assertThrows( NullPointerException.class,
                       () -> new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "install" ) ), null ) );
     }
 
     @Test
-    public void testGetHomeDir()
+    void testGetHomeDir()
         throws Exception
     {
         final EnvironmentImpl env = new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "install" ) ),
@@ -54,7 +54,7 @@ public class EnvironmentImplTest
     }
 
     @Test
-    public void testGetInstallDir()
+    void testGetInstallDir()
         throws Exception
     {
         final EnvironmentImpl env = new EnvironmentImpl( Files.createDirectory( this.temporaryFolder.resolve( "install" ) ),

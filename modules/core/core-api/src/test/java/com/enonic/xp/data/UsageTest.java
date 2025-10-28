@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class UsageTest
+class UsageTest
 {
     @Test
-    public void setting_property()
+    void setting_property()
     {
         PropertyTree tree = new PropertyTree();
 
@@ -24,7 +24,7 @@ public class UsageTest
     }
 
     @Test
-    public void adding_property()
+    void adding_property()
     {
         PropertyTree tree = new PropertyTree();
 
@@ -35,7 +35,7 @@ public class UsageTest
     }
 
     @Test
-    public void getting_value()
+    void getting_value()
     {
         PropertyTree tree = new PropertyTree();
         tree.addString( "myProp", "a" );
@@ -49,7 +49,7 @@ public class UsageTest
     }
 
     @Test
-    public void getting_set()
+    void getting_set()
     {
         PropertyTree tree = new PropertyTree();
         PropertySet set = tree.newSet();
@@ -64,7 +64,7 @@ public class UsageTest
     }
 
     @Test
-    public void getting_sets()
+    void getting_sets()
     {
         PropertyTree tree = new PropertyTree();
         PropertySet set1 = tree.newSet();

@@ -4,32 +4,28 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CharacterCheckerTest
+class CharacterCheckerTest
 {
     @Test
-    public void testLessThanSign()
-        throws Exception
+    void testLessThanSign()
     {
         assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "myID<do", "id" ));
     }
 
     @Test
-    public void testGreaterThanSign()
-        throws Exception
+    void testGreaterThanSign()
     {
         assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "lookAtMyMoreThanSign>", "errorMessage" ));
     }
 
     @Test
-    public void testDoubleQuoteSign()
-        throws Exception
+    void testDoubleQuoteSign()
     {
         assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "Quoting makes\"your text look smarter", "errorMessage" ));
     }
 
     @Test
-    public void testSingleQuoteSign()
-        throws Exception
+    void testSingleQuoteSign()
     {
         assertThrows(IllegalArgumentException.class, () -> CharacterChecker.check( "Lone quote looks ' like a typo ", "errorMessage" ));
     }

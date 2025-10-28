@@ -23,7 +23,7 @@ import com.enonic.xp.site.SiteService;
 import static com.enonic.xp.content.ContentPropertyNames.SITECONFIG;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SiteConfigProcessorTest
+class SiteConfigProcessorTest
 {
     private SiteService siteService;
 
@@ -32,8 +32,7 @@ public class SiteConfigProcessorTest
     private ApplicationKey applicationKey2;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.siteService = Mockito.mock( SiteService.class );
         this.applicationKey1 = ApplicationKey.from( "applicationKey1" );
@@ -41,16 +40,14 @@ public class SiteConfigProcessorTest
     }
 
     @Test
-    public void test_empty_site_config()
-        throws Exception
+    void test_empty_site_config()
     {
         final PatternIndexConfigDocument result = processConfigs( SiteConfigs.create().build(), Form.empty(), null );
         assertEquals( 0, result.getPathIndexConfigs().size() );
     }
 
     @Test
-    public void test_site_config_with_html_area()
-        throws Exception
+    void test_site_config_with_html_area()
     {
         final Form form = Form.create().
             addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).
@@ -68,8 +65,7 @@ public class SiteConfigProcessorTest
     }
 
     @Test
-    public void test_multiple_site_configs_with_html_areas()
-        throws Exception
+    void test_multiple_site_configs_with_html_areas()
     {
         final Form form1 = Form.create().
             addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).
@@ -96,8 +92,7 @@ public class SiteConfigProcessorTest
     }
 
     @Test
-    public void test_multiple_site_configs_with_same_path()
-        throws Exception
+    void test_multiple_site_configs_with_same_path()
     {
         final Form form1 = Form.create().
             addFormItem( Input.create().name( "text1" ).label( "text1" ).inputType( InputTypeName.HTML_AREA ).build() ).

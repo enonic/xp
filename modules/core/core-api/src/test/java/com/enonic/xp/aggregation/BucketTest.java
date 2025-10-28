@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class BucketTest
+class BucketTest
 {
 
     @Test
-    public void builder()
+    void builder()
     {
         Bucket.Builder builder = Bucket.create();
 

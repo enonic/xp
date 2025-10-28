@@ -17,18 +17,18 @@ import com.enonic.xp.resource.ResourceNotFoundException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JsonExceptionMapperTest
+class JsonExceptionMapperTest
 {
     private JsonExceptionMapper mapper;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.mapper = new JsonExceptionMapper();
     }
 
     @Test
-    public void testShouldLogAsError()
+    void testShouldLogAsError()
     {
         assertEquals( true, JsonExceptionMapper.shouldLogAsError( 500 ) );
         assertEquals( true, JsonExceptionMapper.shouldLogAsError( 400 ) );
@@ -36,7 +36,7 @@ public class JsonExceptionMapperTest
     }
 
     @Test
-    public void testLogIfNeeded()
+    void testLogIfNeeded()
     {
         final IOException cause = new IOException();
 
@@ -48,7 +48,7 @@ public class JsonExceptionMapperTest
     }
 
     @Test
-    public void testCreateErrorJson()
+    void testCreateErrorJson()
     {
         final IOException cause = new IOException();
         final ObjectNode json = JsonExceptionMapper.createErrorJson( cause, 500 );
@@ -56,35 +56,35 @@ public class JsonExceptionMapperTest
     }
 
     @Test
-    public void testToResponse_WebApplicationException()
+    void testToResponse_WebApplicationException()
     {
         final Response res = this.mapper.toResponse( new WebApplicationException( 401 ) );
         assertEquals( 401, res.getStatus() );
     }
 
     @Test
-    public void testToResponse_NotFoundException()
+    void testToResponse_NotFoundException()
     {
         final Response res = this.mapper.toResponse( new ResourceNotFoundException( ResourceKey.from( "app:/a/b/c" ) ) );
         assertEquals( 404, res.getStatus() );
     }
 
     @Test
-    public void testToResponse_IllegalArgumentException()
+    void testToResponse_IllegalArgumentException()
     {
         final Response res = this.mapper.toResponse( new IllegalArgumentException() );
         assertEquals( 400, res.getStatus() );
     }
 
     @Test
-    public void testToResponse_PushContentException()
+    void testToResponse_PushContentException()
     {
         final Response res = this.mapper.toResponse( new PushContentException( "test" ) );
         assertEquals( 400, res.getStatus() );
     }
 
     @Test
-    public void testToResponse_general()
+    void testToResponse_general()
     {
         final Response res = this.mapper.toResponse( new IOException() );
         assertEquals( 500, res.getStatus() );

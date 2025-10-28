@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class CreateScheduledJobParamsTest
+class CreateScheduledJobParamsTest
 {
 
     @Test
-    public void testName()
+    void testName()
     {
         assertThrows( NullPointerException.class, () -> CreateScheduledJobParams.create().build() );
 
@@ -35,7 +35,7 @@ public class CreateScheduledJobParamsTest
     }
 
     @Test
-    public void testEmptyBuilder()
+    void testEmptyBuilder()
     {
         final CreateScheduledJobParams params = CreateScheduledJobParams.create().
             name( ScheduledJobName.from( "name" ) ).
@@ -53,7 +53,7 @@ public class CreateScheduledJobParamsTest
     }
 
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
 

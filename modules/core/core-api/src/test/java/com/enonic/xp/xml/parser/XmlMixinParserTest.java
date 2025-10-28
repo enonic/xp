@@ -9,7 +9,7 @@ import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XmlMixinParserTest
+class XmlMixinParserTest
     extends XmlModelParserTest
 {
     private XmlMixinParser parser;
@@ -17,7 +17,7 @@ public class XmlMixinParserTest
     private Mixin.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlMixinParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -28,7 +28,7 @@ public class XmlMixinParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -36,7 +36,7 @@ public class XmlMixinParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -44,7 +44,6 @@ public class XmlMixinParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final Mixin result = this.builder.build();
         assertEquals( "myapplication:mymixin", result.getName().toString() );

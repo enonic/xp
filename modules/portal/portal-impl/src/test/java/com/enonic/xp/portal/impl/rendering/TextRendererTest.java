@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class TextRendererTest
+class TextRendererTest
 {
     private PortalRequest portalRequest;
 
@@ -36,7 +36,7 @@ public class TextRendererTest
     private PortalUrlService service;
 
     @BeforeEach
-    public void before()
+    void before()
     {
         portalRequest = new PortalRequest();
         portalResponse = PortalResponse.create().build();
@@ -45,7 +45,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void textComponentWithNoText()
+    void textComponentWithNoText()
     {
         // setup
         textComponent = TextComponent.create().build();
@@ -59,7 +59,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void textComponentWithNoTextAndRenderModeEdit()
+    void textComponentWithNoTextAndRenderModeEdit()
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
@@ -73,7 +73,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void textComponentWithNoTextAndRenderModePreview()
+    void textComponentWithNoTextAndRenderModePreview()
     {
         // setup
         portalRequest.setMode( RenderMode.PREVIEW );
@@ -88,7 +88,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void textComponentWithNoTextAndRenderModeInline()
+    void textComponentWithNoTextAndRenderModeInline()
     {
         // setup
         portalRequest.setMode( RenderMode.INLINE );
@@ -104,7 +104,7 @@ public class TextRendererTest
 
 
     @Test
-    public void textComponentWithSomeTextAndRenderModePreview()
+    void textComponentWithSomeTextAndRenderModePreview()
     {
         // setup
         String text = "<h2>hello</h2><p>How are you?</p>";
@@ -119,7 +119,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void textComponentRendererRemovesEmptyFigCaptionTags()
+    void textComponentRendererRemovesEmptyFigCaptionTags()
     {
         // setup
         String text = "<figure><img src=\"src\" />\n" + "<figcaption style=\"text-align: left;\"></figcaption>\n" + "</figure>";
@@ -134,7 +134,7 @@ public class TextRendererTest
     }
 
     @Test
-    public void textComponentWithSomeTextAndRenderModeEdit()
+    void textComponentWithSomeTextAndRenderModeEdit()
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );

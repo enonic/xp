@@ -39,15 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class ImageContentProcessorTest
+class ImageContentProcessorTest
 {
     private ImageContentProcessor imageContentProcessor;
 
     private ContentService contentService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
         final XDataService xDataService = Mockito.mock( XDataService.class );
@@ -56,14 +55,14 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testSupports()
+    void testSupports()
     {
         assertTrue( imageContentProcessor.supports( ContentTypeName.imageMedia() ) );
         assertFalse( imageContentProcessor.supports( ContentTypeName.media() ) );
     }
 
     @Test
-    public void testProcessCreate()
+    void testProcessCreate()
     {
         final CreateAttachments createAttachments = createAttachments();
         final CreateContentParams params = createContentParams( createAttachments );
@@ -77,7 +76,7 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testProcessCreateWithGeoData()
+    void testProcessCreateWithGeoData()
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
@@ -89,7 +88,7 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testProcessCreateWithExtraData()
+    void testProcessCreateWithExtraData()
     {
         final CreateContentParams params = createContentParams( createAttachments() );
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
@@ -102,7 +101,7 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testProcessUpdate()
+    void testProcessUpdate()
         throws IOException
     {
         when( contentService.getBinary( Mockito.any(), Mockito.any() ) ).thenReturn( this.loadImage( "cat-small.jpg" ) );
@@ -131,7 +130,7 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testProcessUpdateWithCorruptedImage()
+    void testProcessUpdateWithCorruptedImage()
         throws IOException
     {
         ByteSource byteSource = Mockito.mock( ByteSource.class );
@@ -157,7 +156,7 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testProcessUpdateWithMediaInfo()
+    void testProcessUpdateWithMediaInfo()
     {
         final Content content = Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).build();
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content ).
@@ -174,7 +173,7 @@ public class ImageContentProcessorTest
     }
 
     @Test
-    public void testProcessUpdateWithMediaInfoOverwritten()
+    void testProcessUpdateWithMediaInfoOverwritten()
     {
         final Content content = Content.create().name( "myContentName" ).parentPath( ContentPath.ROOT ).data( new PropertyTree() ).build();
         final ProcessUpdateParams processUpdateParams = ProcessUpdateParams.create().content( content )

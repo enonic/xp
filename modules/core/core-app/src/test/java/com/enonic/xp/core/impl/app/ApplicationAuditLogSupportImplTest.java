@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class ApplicationAuditLogSupportImplTest
+class ApplicationAuditLogSupportImplTest
 {
     private ApplicationAuditLogSupportImpl instance;
 
     private AuditLogService auditLogService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.auditLogService = mock( AuditLogService.class );
 
@@ -34,7 +34,7 @@ public class ApplicationAuditLogSupportImplTest
     }
 
     @Test
-    public void testStartApplication()
+    void testStartApplication()
     {
         instance.startApplication( ApplicationKey.from( "com.enonic.app.testApp" ) );
 
@@ -47,7 +47,7 @@ public class ApplicationAuditLogSupportImplTest
     }
 
     @Test
-    public void stopApplication()
+    void stopApplication()
     {
         instance.stopApplication( ApplicationKey.from( "com.enonic.app.testApp" ) );
 
@@ -60,7 +60,7 @@ public class ApplicationAuditLogSupportImplTest
     }
 
     @Test
-    public void installApplication_byURL()
+    void installApplication_byURL()
         throws MalformedURLException
     {
         instance.installApplication( ApplicationKey.from( "com.enonic.app.testApp" ), new URL(
@@ -77,7 +77,7 @@ public class ApplicationAuditLogSupportImplTest
     }
 
     @Test
-    public void installApplication()
+    void installApplication()
     {
         instance.installApplication( ApplicationKey.from( "com.enonic.app.testApp" ) );
 
@@ -90,7 +90,7 @@ public class ApplicationAuditLogSupportImplTest
     }
 
     @Test
-    public void uninstallApplication()
+    void uninstallApplication()
     {
         instance.uninstallApplication( ApplicationKey.from( "com.enonic.app.testApp" ) );
 

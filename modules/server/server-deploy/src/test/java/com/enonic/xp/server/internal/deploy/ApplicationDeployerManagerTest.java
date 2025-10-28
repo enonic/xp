@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class ApplicationDeployerManagerTest
+class ApplicationDeployerManagerTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -31,7 +31,7 @@ public class ApplicationDeployerManagerTest
     ApplicationService applicationService;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         applicationService = mock( ApplicationService.class );
@@ -45,7 +45,7 @@ public class ApplicationDeployerManagerTest
     }
 
     @Test
-    public void test_activate()
+    void test_activate()
         throws Exception
     {
         deployDirectoryWatcher.setApplicationService( applicationService );

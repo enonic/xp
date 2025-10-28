@@ -9,7 +9,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XmlXDataParserTest
+class XmlXDataParserTest
     extends XmlModelParserTest
 {
     private XmlXDataParser parser;
@@ -17,7 +17,7 @@ public class XmlXDataParserTest
     private XData.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlXDataParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -28,7 +28,7 @@ public class XmlXDataParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -36,7 +36,7 @@ public class XmlXDataParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -44,7 +44,6 @@ public class XmlXDataParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final XData result = this.builder.build();
         assertEquals( "myapplication:mymixin", result.getName().toString() );

@@ -9,10 +9,10 @@ import com.enonic.xp.page.PageTemplateKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ComponentsTest
+class ComponentsTest
 {
     @Test
-    public void page()
+    void page()
     {
         PropertyTree pageConfig = new PropertyTree();
         pageConfig.addLong( "pause", 200L );
@@ -26,7 +26,7 @@ public class ComponentsTest
     }
 
     @Test
-    public void part()
+    void part()
     {
         PropertyTree partConfig = new PropertyTree();
         partConfig.addLong( "width", 150L );
@@ -42,7 +42,7 @@ public class ComponentsTest
     }
 
     @Test
-    public void layout()
+    void layout()
     {
         PropertyTree layoutConfig = new PropertyTree();
         layoutConfig.addLong( "columns", 2L );

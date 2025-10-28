@@ -46,7 +46,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageRegionsConfigProcessorTest
+class PageRegionsConfigProcessorTest
 {
     private PartDescriptorService partDescriptorService;
 
@@ -57,8 +57,7 @@ public class PageRegionsConfigProcessorTest
     private Form configFormWithTextInput;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
@@ -74,16 +73,14 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_size()
-        throws Exception
+    void test_size()
     {
         final PatternIndexConfigDocument result = processPage( Page.create().regions( Regions.create().build() ).build(), null, null );
         assertEquals( 5, result.getPathIndexConfigs().size() );
     }
 
     @Test
-    public void test_text_component()
-        throws Exception
+    void test_text_component()
     {
         final PatternIndexConfigDocument result = processPage( Page.create().regions( Regions.create().build() ).build(), null, null );
 
@@ -98,8 +95,7 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_part_component()
-        throws Exception
+    void test_part_component()
     {
         final DescriptorKey partDescriptorKey = DescriptorKey.from( "part1AppKey:name" );
         final String htmlarea = "htmlarea";
@@ -120,8 +116,7 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_layout_component()
-        throws Exception
+    void test_layout_component()
     {
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutAppKey:name" );
         final String htmlarea = "htmlarea";
@@ -147,8 +142,7 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_part_inside_layout_component()
-        throws Exception
+    void test_part_inside_layout_component()
     {
         final DescriptorKey layoutKey = DescriptorKey.from( "app:layoutAppKey" );
         final DescriptorKey partKey = DescriptorKey.from( "app:partAppKey" );
@@ -182,8 +176,7 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_fragment_component()
-        throws Exception
+    void test_fragment_component()
     {
         final Page page = Page.create().regions( Regions.create()
                           .add( Region.create()
@@ -204,8 +197,7 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_fragment_page()
-        throws Exception
+    void test_fragment_page()
     {
         final DescriptorKey layoutKey = DescriptorKey.from( "app:layoutAppKey" );
         final DescriptorKey partKey = DescriptorKey.from( "app:partAppKey" );
@@ -238,8 +230,7 @@ public class PageRegionsConfigProcessorTest
     }
 
     @Test
-    public void test_complex_component_config()
-        throws Exception
+    void test_complex_component_config()
     {
         final PropertyTree config = new PropertyTree();
         final PropertySet items = config.addSet( "items" );

@@ -7,7 +7,7 @@ import org.osgi.service.component.ComponentContext;
 
 import com.enonic.xp.event.Event;
 
-public class RestoreInitializedListenerTest
+class RestoreInitializedListenerTest
 {
     private RestoreInitializedListener listener;
 
@@ -16,7 +16,6 @@ public class RestoreInitializedListenerTest
 
     @BeforeEach
     protected void setUpNode()
-        throws Exception
     {
         componentContext = Mockito.mock( ComponentContext.class );
         listener = new RestoreInitializedListener( componentContext );
@@ -24,8 +23,7 @@ public class RestoreInitializedListenerTest
     }
 
     @Test
-    public void testOnRestoreInitEvent()
-        throws InterruptedException
+    void testOnRestoreInitEvent()
     {
         listener.onEvent( Event.create( "repository.restoreInitialized" ).
             distributed( true ).
@@ -39,8 +37,7 @@ public class RestoreInitializedListenerTest
     }
 
     @Test
-    public void testOnRestoredEvent()
-        throws InterruptedException
+    void testOnRestoredEvent()
     {
         listener.onEvent( Event.create( "repository.restored" ).
             distributed( true ).

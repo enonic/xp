@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-public class DeleteRepositoryHandlerTest
+class DeleteRepositoryHandlerTest
     extends ScriptTestSupport
 {
     @Override
@@ -24,8 +24,7 @@ public class DeleteRepositoryHandlerTest
     }
 
     @Test
-    public void protected_system_repo()
-        throws Exception
+    void protected_system_repo()
     {
         final DeleteRepositoryHandler handler = new DeleteRepositoryHandler();
         handler.setRepositoryId( "system-repo" );
@@ -33,8 +32,7 @@ public class DeleteRepositoryHandlerTest
     }
 
     @Test
-    public void protected_cms_repo()
-        throws Exception
+    void protected_cms_repo()
     {
         final DeleteRepositoryHandler handler = new DeleteRepositoryHandler();
         handler.initialize( newBeanContext( ResourceKey.from( "myapp:/test" ) ) );

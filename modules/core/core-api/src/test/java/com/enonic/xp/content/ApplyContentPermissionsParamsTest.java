@@ -8,10 +8,10 @@ import com.enonic.xp.security.acl.AccessControlList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ApplyContentPermissionsParamsTest
+class ApplyContentPermissionsParamsTest
 {
     @Test
-    public void testCreate()
+    void testCreate()
     {
         final ApplyContentPermissionsParams params = ApplyContentPermissionsParams.create()
             .contentId( ContentId.from( "id1" ) )

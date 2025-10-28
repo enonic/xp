@@ -30,20 +30,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MoveNodeCommandTest
+class MoveNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
 
     @Test
-    public void timestamp_updated()
-        throws Exception
+    void timestamp_updated()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
@@ -66,8 +64,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void new_name_only()
-        throws Exception
+    void new_name_only()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
@@ -90,8 +87,7 @@ public class MoveNodeCommandTest
 
 
     @Test
-    public void move_to_child_as_self_not_allowed()
-        throws Exception
+    void move_to_child_as_self_not_allowed()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
@@ -108,8 +104,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_to_child_of_own_child_not_allowed()
-        throws Exception
+    void move_to_child_of_own_child_not_allowed()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
@@ -130,8 +125,7 @@ public class MoveNodeCommandTest
 
 
     @Test
-    public void move_node_already_exists()
-        throws Exception
+    void move_node_already_exists()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
@@ -153,8 +147,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_to_new_parent()
-        throws Exception
+    void move_to_new_parent()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
@@ -178,8 +171,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_with_children()
-        throws Exception
+    void move_with_children()
     {
         final Node parent = createNode( CreateNodeParams.create()
                                             .name( "parent" )
@@ -243,8 +235,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_with_processed_data()
-        throws Exception
+    void move_with_processed_data()
     {
         final Node parent = createNode( CreateNodeParams.create()
                                             .name( "parent" )
@@ -304,8 +295,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_without_permissions()
-        throws Exception
+    void move_without_permissions()
     {
         final Node cannonMoveNode = createNode( CreateNodeParams.create()
                                                     .name( "mynode" )
@@ -369,7 +359,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_with_hidden_node()
+    void move_with_hidden_node()
     {
         final Node nodeToMove = createNode( CreateNodeParams.create()
                                                 .name( "mynode2" )
@@ -420,7 +410,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void move_to_manually_ordered_parent()
+    void move_to_manually_ordered_parent()
     {
         final Node originalRoot = createNode( NodePath.ROOT, "a1" );
         final Node a1_1 = createNode( originalRoot.path(), "a1_1" );
@@ -440,8 +430,7 @@ public class MoveNodeCommandTest
     }
 
     @Test
-    public void cannot_move_root_node()
-        throws Exception
+    void cannot_move_root_node()
     {
         assertThrows( OperationNotPermittedException.class, () -> doMoveNode( new NodePath( "/fisk" ), Node.ROOT_UUID ) );
     }

@@ -8,10 +8,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class NameTest
+class NameTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -43,43 +43,37 @@ public class NameTest
     }
 
     @Test
-    public void valid()
-        throws Exception
+    void valid()
     {
         create( "test" );
     }
 
     @Test
-    public void valid_norwegian_chars()
-        throws Exception
+    void valid_norwegian_chars()
     {
         create( "test åæø" );
     }
 
     @Test
-    public void valid_spanish_chars()
-        throws Exception
+    void valid_spanish_chars()
     {
         create( "test ÑñçÇàèìòùáéíóú" );
     }
 
     @Test
-    public void linebreak()
-        throws Exception
+    void linebreak()
     {
         assertThrows(IllegalArgumentException.class, () -> create( "Hepp\nHapp" ));
     }
 
     @Test
-    public void tab()
-        throws Exception
+    void tab()
     {
         assertThrows(IllegalArgumentException.class, () -> create( "Hepp\tHapp" ));
     }
 
     @Test
-    public void chinese()
-        throws Exception
+    void chinese()
     {
         final String chineseName = "\u306d\u304e\u30de\u30e8\u713c\u304d";
 
@@ -87,14 +81,13 @@ public class NameTest
     }
 
     @Test
-    public void testCyrillic()
+    void testCyrillic()
     {
         create( "Норвегия" );
     }
 
     @Test
-    public void controlCharacters()
-        throws Exception
+    void controlCharacters()
     {
         char[] control =
             {'\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007', '\u0008', '\u0009', '\u000b', '\u000c',
@@ -119,36 +112,31 @@ public class NameTest
     }
 
     @Test
-    public void valid_special_characters()
-        throws Exception
+    void valid_special_characters()
     {
         create( "test åæø" );
     }
 
     @Test
-    public void colon_is_valid()
-        throws Exception
+    void colon_is_valid()
     {
         create( "test:tast" );
     }
 
     @Test
-    public void additional_allowed_is_valid()
-        throws Exception
+    void additional_allowed_is_valid()
     {
         create( "^:;#$%&(),@[]!{}=_.-" );
     }
 
     @Test
-    public void slash_not_valid()
-        throws Exception
+    void slash_not_valid()
     {
         assertThrows(IllegalArgumentException.class, () -> create( "test/me" ));
     }
 
     @Test
-    public void backslash_not_valid()
-        throws Exception
+    void backslash_not_valid()
     {
         assertThrows(IllegalArgumentException.class, () -> create( "test\\me" ));
     }

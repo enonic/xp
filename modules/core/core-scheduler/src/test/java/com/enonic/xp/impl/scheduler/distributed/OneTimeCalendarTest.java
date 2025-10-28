@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class OneTimeCalendarTest
+class OneTimeCalendarTest
 {
 
     @Test
-    public void createWrongValue()
+    void createWrongValue()
     {
         assertThrows( NullPointerException.class, () -> OneTimeCalendarImpl.create().
             value( null ).
@@ -28,7 +28,7 @@ public class OneTimeCalendarTest
     }
 
     @Test
-    public void create()
+    void create()
     {
         final Instant now = Instant.now();
 
@@ -45,8 +45,7 @@ public class OneTimeCalendarTest
     }
 
     @Test
-    public void calendarSerialized()
-        throws Exception
+    void calendarSerialized()
     {
 
         final OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create().

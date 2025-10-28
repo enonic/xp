@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MixinServiceImplTest
+class MixinServiceImplTest
     extends AbstractSchemaTest
 {
     protected MixinServiceImpl service;
@@ -37,7 +37,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final Mixins types1 = this.service.getAll();
         assertNotNull( types1 );
@@ -52,7 +52,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testApplications()
+    void testApplications()
     {
         initializeApps();
 
@@ -73,7 +73,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_input()
+    void testInlineFormItems_input()
     {
         initializeApps();
 
@@ -92,7 +92,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_formItemSet()
+    void testInlineFormItems_formItemSet()
     {
         initializeApps();
 
@@ -110,7 +110,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_two_formItemSets_with_changed_names()
+    void testInlineFormItems_two_formItemSets_with_changed_names()
     {
         initializeApps();
 
@@ -136,7 +136,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_layout()
+    void testInlineFormItems_layout()
     {
         initializeApps();
 
@@ -149,7 +149,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testInlineMixinsWithCycles()
+    void testInlineMixinsWithCycles()
     {
         initializeApps();
 
@@ -164,7 +164,7 @@ public class MixinServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_formOptionSet()
+    void testInlineFormItems_formOptionSet()
     {
         initializeApps();
 

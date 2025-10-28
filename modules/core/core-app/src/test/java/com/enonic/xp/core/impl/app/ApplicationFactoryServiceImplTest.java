@@ -42,7 +42,7 @@ class ApplicationFactoryServiceImplTest
     private AppConfig appConfig;
 
     @BeforeEach
-    public void init()
+    void init()
     {
         appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( appConfig.virtual_enabled() ).thenReturn( true );
@@ -129,7 +129,6 @@ class ApplicationFactoryServiceImplTest
 
     @Test
     void findDisabledVirtualApplication()
-        throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
@@ -147,7 +146,6 @@ class ApplicationFactoryServiceImplTest
 
     @Test
     void findVirtualApplication()
-        throws Exception
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();

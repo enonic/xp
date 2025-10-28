@@ -8,23 +8,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FilterExprTest
+class FilterExprTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         assertEquals( "", parseAndSerialize( "" ) );
     }
 
     @Test
-    public void testNoArgs()
+    void testNoArgs()
     {
         assertEquals( "some()", parseAndSerialize( "some" ) );
         assertEquals( "some()", parseAndSerialize( "some()" ) );
     }
 
     @Test
-    public void testOneArg()
+    void testOneArg()
     {
         assertEquals( "some(1)", parseAndSerialize( "some(1)" ) );
         assertEquals( "some(-1)", parseAndSerialize( "some(-1)" ) );
@@ -38,7 +38,7 @@ public class FilterExprTest
     }
 
     @Test
-    public void testMultiArgs()
+    void testMultiArgs()
     {
         assertEquals( "some(1,2)", parseAndSerialize( "some(1,2)" ) );
         assertEquals( "some(1,2,3)", parseAndSerialize( "some(1, 2, 3)" ) );
@@ -47,7 +47,7 @@ public class FilterExprTest
     }
 
     @Test
-    public void testMultiExpr()
+    void testMultiExpr()
     {
         assertEquals( "aa();bb();cc()", parseAndSerialize( "aa;bb();cc" ) );
         assertEquals( "aa(1);bb(2);cc(3)", parseAndSerialize( "aa(1);bb(2);cc(3)" ) );

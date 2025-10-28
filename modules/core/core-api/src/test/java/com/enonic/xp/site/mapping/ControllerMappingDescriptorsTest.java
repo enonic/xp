@@ -10,19 +10,17 @@ import com.enonic.xp.resource.ResourceKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ControllerMappingDescriptorsTest
+class ControllerMappingDescriptorsTest
 {
 
     @Test
-    public void testEmpty()
-        throws Exception
+    void testEmpty()
     {
         assertTrue( ControllerMappingDescriptors.empty().isEmpty() );
     }
 
     @Test
-    public void testFrom()
-        throws Exception
+    void testFrom()
     {
         final ControllerMappingDescriptor descriptor1 = ControllerMappingDescriptor.create().
             controller( ResourceKey.from( ApplicationKey.from( "com.enonic.test.app" ), "/site/controllers/mycontroller.js" ) ).

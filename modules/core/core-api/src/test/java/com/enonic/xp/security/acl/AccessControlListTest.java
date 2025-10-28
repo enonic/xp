@@ -7,11 +7,11 @@ import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AccessControlListTest
+class AccessControlListTest
 {
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         final AccessControlEntry entry1 = AccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).

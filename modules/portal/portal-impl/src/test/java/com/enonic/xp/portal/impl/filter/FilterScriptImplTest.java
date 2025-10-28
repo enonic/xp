@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
-public class FilterScriptImplTest
+class FilterScriptImplTest
 {
     private FilterScriptFactoryImpl factory;
 
@@ -52,8 +52,7 @@ public class FilterScriptImplTest
     }
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();
@@ -92,7 +91,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         execute( "myapplication:/filter/simple.js", null );
@@ -100,7 +99,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testNextFilter()
+    void testNextFilter()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -125,7 +124,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testNoFilterFunction()
+    void testNoFilterFunction()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -144,7 +143,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testExecErrorHandling()
+    void testExecErrorHandling()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -159,7 +158,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testDuplicatedNextCall()
+    void testDuplicatedNextCall()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -179,7 +178,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testResourceException()
+    void testResourceException()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -191,7 +190,7 @@ public class FilterScriptImplTest
     }
 
     @Test
-    public void testHandleException()
+    void testHandleException()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );

@@ -31,19 +31,17 @@ import com.enonic.xp.util.BinaryReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeExportIntegrationTest
+class NodeExportIntegrationTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void single_node()
-        throws Exception
+    void single_node()
     {
         final Node myNode = createNode( NodePath.ROOT, "myNode" );
 
@@ -54,8 +52,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void single_node_with_binary()
-        throws Exception
+    void single_node_with_binary()
     {
         final BinaryReference binaryRef = BinaryReference.from( "myFile" );
         final PropertyTree data = new PropertyTree();
@@ -77,8 +74,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void single_node_multiple_versions()
-        throws Exception
+    void single_node_multiple_versions()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         final Node updatedNode = updateNode( UpdateNodeParams.create().
@@ -117,8 +113,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void single_node_with_binary_changed()
-        throws Exception
+    void single_node_with_binary_changed()
     {
         final BinaryReference binaryRef = BinaryReference.from( "myFile" );
         final BinaryReference binaryRefUpdated = BinaryReference.from( "myOtherFile" );
@@ -150,8 +145,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void one_node_file()
-        throws Exception
+    void one_node_file()
     {
         createNode( NodePath.ROOT, "mynode" );
 
@@ -170,8 +164,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void children_nodes()
-        throws Exception
+    void children_nodes()
     {
         final Node root = createNode( NodePath.ROOT, "mynode" );
         final Node child1 = createNode( root.path(), "child1" );
@@ -212,7 +205,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void writerOrderList()
+    void writerOrderList()
     {
         final Node root =
             Node.create().name( NodeName.from( "root" ) ).parentPath( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build();
@@ -242,8 +235,7 @@ public class NodeExportIntegrationTest
 
 
     @Test
-    public void export_from_child_of_child()
-        throws Exception
+    void export_from_child_of_child()
     {
         final Node root = createNode( NodePath.ROOT, "mynode" );
         final Node child1 = createNode( root.path(), "child1" );
@@ -267,8 +259,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void include_export_root_and_nested_children()
-        throws Exception
+    void include_export_root_and_nested_children()
     {
         final Node root = createNode( NodePath.ROOT, "mynode" );
         final Node child1 = createNode( root.path(), "child1" );
@@ -295,8 +286,7 @@ public class NodeExportIntegrationTest
 
     @Disabled("Wait with this until decided how to handle versions. Only in dump, or in export too?")
     @Test
-    public void create_binary_files()
-        throws Exception
+    void create_binary_files()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef1 = BinaryReference.from( "image1.jpg" );
@@ -330,8 +320,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void export_properties()
-        throws Exception
+    void export_properties()
     {
         NodeExporter.create().
             nodeService( this.nodeService ).
@@ -356,8 +345,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void one_node_error()
-        throws Exception
+    void one_node_error()
     {
         createNode( NodePath.ROOT, "mynode" );
         refresh();
@@ -379,7 +367,7 @@ public class NodeExportIntegrationTest
     }
 
     @Test
-    public void testRootNotFound()
+    void testRootNotFound()
     {
         final NodeExportResult result = NodeExporter.create().
             nodeService( this.nodeService ).

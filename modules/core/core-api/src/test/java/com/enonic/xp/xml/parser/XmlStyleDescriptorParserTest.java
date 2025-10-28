@@ -9,7 +9,7 @@ import com.enonic.xp.style.StyleDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XmlStyleDescriptorParserTest
+class XmlStyleDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlStyleDescriptorParser parser;
@@ -17,7 +17,7 @@ public class XmlStyleDescriptorParserTest
     private StyleDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlStyleDescriptorParser();
         final ApplicationKey app = ApplicationKey.from( "myapplication" );
@@ -29,7 +29,7 @@ public class XmlStyleDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );

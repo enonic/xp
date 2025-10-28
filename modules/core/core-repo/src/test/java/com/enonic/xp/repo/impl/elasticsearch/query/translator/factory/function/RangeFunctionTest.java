@@ -9,13 +9,12 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RangeFunctionTest
+class RangeFunctionTest
     extends BaseTestBuilderFactory
 {
 
     @Test
-    public void instant_range_no_includes()
-        throws Exception
+    void instant_range_no_includes()
     {
         final String expected = load( "range_instant_no_include.json" );
 
@@ -27,8 +26,7 @@ public class RangeFunctionTest
     }
 
     @Test
-    public void instant_range_includes()
-        throws Exception
+    void instant_range_includes()
     {
         final String expected = load( "range_instant_includes.json" );
 
@@ -40,8 +38,7 @@ public class RangeFunctionTest
     }
 
     @Test
-    public void instant_string_range_includes()
-        throws Exception
+    void instant_string_range_includes()
     {
         final String expected = load( "range_instant_includes.json" );
 
@@ -53,8 +50,7 @@ public class RangeFunctionTest
     }
 
     @Test
-    public void string_range_includes()
-        throws Exception
+    void string_range_includes()
     {
         final String expected = load( "range_string_includes.json" );
 
@@ -66,8 +62,7 @@ public class RangeFunctionTest
     }
 
     @Test
-    public void numeric_range_includes()
-        throws Exception
+    void numeric_range_includes()
     {
         final String expected = load( "range_numeric_includes.json" );
 

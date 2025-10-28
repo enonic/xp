@@ -18,7 +18,7 @@ import com.enonic.xp.web.HttpMethod;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-public class PortalRequestAdapterTest
+class PortalRequestAdapterTest
 {
 
     private PortalRequestAdapter portalRequestAdapter;
@@ -26,14 +26,14 @@ public class PortalRequestAdapterTest
     private HttpServletRequest mockHttpServletRequest;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         portalRequestAdapter = new PortalRequestAdapter();
         mockHttpServletRequest = Mockito.mock( HttpServletRequest.class );
     }
 
     @Test
-    public void adaptTest()
+    void adaptTest()
     {
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
         when( mockHttpServletRequest.getLocales() ).thenReturn( Collections.enumeration( Collections.singleton( Locale.US ) ) );
@@ -73,7 +73,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptSiteLogin()
+    void adaptSiteLogin()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/site/test/draft/_/idprovider/system/login" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
@@ -86,7 +86,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptAdminUriTest()
+    void adaptAdminUriTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/site/admin/test/draft" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
@@ -99,7 +99,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptAdminToolUriTest()
+    void adaptAdminToolUriTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
@@ -112,7 +112,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptAdminToolIdProviderUriTest()
+    void adaptAdminToolIdProviderUriTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/_/idprovider/system/login" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
@@ -125,7 +125,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptAdminToolUriWithDescriptorTest()
+    void adaptAdminToolUriWithDescriptorTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/admin/app/tool" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
@@ -138,7 +138,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptWebAppUriTest()
+    void adaptWebAppUriTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/webapp/app/anything" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );
@@ -151,7 +151,7 @@ public class PortalRequestAdapterTest
     }
 
     @Test
-    public void adaptNonSiteTest()
+    void adaptNonSiteTest()
     {
         when( mockHttpServletRequest.getRequestURI() ).thenReturn( "/test" );
         when( mockHttpServletRequest.getMethod() ).thenReturn( "GET" );

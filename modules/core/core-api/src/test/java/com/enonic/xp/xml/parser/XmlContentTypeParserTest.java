@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XmlContentTypeParserTest
+class XmlContentTypeParserTest
     extends XmlModelParserTest
 {
     private XmlContentTypeParser parser;
@@ -32,7 +32,7 @@ public class XmlContentTypeParserTest
     private ContentType.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlContentTypeParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -43,7 +43,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -51,7 +51,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -59,7 +59,6 @@ public class XmlContentTypeParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final ContentType result = this.builder.build();
         assertEquals( "myapplication:mytype", result.getName().toString() );
@@ -97,7 +96,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testOptionSetParse()
+    void testOptionSetParse()
         throws Exception
     {
         parse( this.parser, "-optionSet.xml" );
@@ -105,7 +104,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testOptionSetParse_noNs()
+    void testOptionSetParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, "-optionSet.xml" );
@@ -113,7 +112,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testI18nParse()
+    void testI18nParse()
         throws Exception
     {
         parse( this.parser, "-i18n.xml" );
@@ -126,7 +125,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testI18n_formInput()
+    void testI18n_formInput()
         throws Exception
     {
         parse( this.parser, "-i18n.xml" );
@@ -140,7 +139,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testI18n_optionSet()
+    void testI18n_optionSet()
         throws Exception
     {
         parse( this.parser, "-i18n.xml" );
@@ -166,7 +165,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testI18n_fieldSet()
+    void testI18n_fieldSet()
         throws Exception
     {
         parse( this.parser, "-i18n.xml" );
@@ -192,7 +191,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testI18n_itemSet()
+    void testI18n_itemSet()
         throws Exception
     {
         parse( this.parser, "-i18n.xml" );
@@ -211,7 +210,7 @@ public class XmlContentTypeParserTest
     }
 
     @Test
-    public void testI18nParseOmittingElementValue()
+    void testI18nParseOmittingElementValue()
         throws Exception
     {
         parse( this.parser, "-i18n-only-attribute.xml" );
@@ -294,7 +293,6 @@ public class XmlContentTypeParserTest
     }
 
     private void assertOptionSetResult()
-        throws Exception
     {
         final ContentType result = this.builder.build();
         assertEquals( "myapplication:mytype", result.getName().toString() );

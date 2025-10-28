@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ContextAccessorTest
+class ContextAccessorTest
 {
     @Test
-    public void testCurrent()
+    void testCurrent()
     {
         ContextAccessor.INSTANCE.remove();
         assertNotNull( ContextAccessor.current() );

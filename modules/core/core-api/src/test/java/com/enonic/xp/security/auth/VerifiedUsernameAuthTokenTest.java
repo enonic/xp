@@ -7,10 +7,10 @@ import com.enonic.xp.security.IdProviderKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class VerifiedUsernameAuthTokenTest
+class VerifiedUsernameAuthTokenTest
 {
     @Test
-    public void userName()
+    void userName()
     {
         final VerifiedUsernameAuthToken token = new VerifiedUsernameAuthToken();
         token.setUsername( "user" );
@@ -20,7 +20,7 @@ public class VerifiedUsernameAuthTokenTest
     }
 
     @Test
-    public void userNameWithIdProvider()
+    void userNameWithIdProvider()
     {
         final UsernamePasswordAuthToken token = new UsernamePasswordAuthToken();
         token.setUsername( "store\\user" );

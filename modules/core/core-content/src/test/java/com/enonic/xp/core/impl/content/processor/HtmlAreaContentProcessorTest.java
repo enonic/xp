@@ -59,7 +59,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class HtmlAreaContentProcessorTest
+class HtmlAreaContentProcessorTest
 {
     private HtmlAreaContentProcessor htmlAreaContentProcessor;
 
@@ -78,7 +78,7 @@ public class HtmlAreaContentProcessorTest
     private ContentTypeName contentTypeName;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
 
         this.siteService = Mockito.mock( SiteService.class );
@@ -112,7 +112,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void empty_data()
+    void empty_data()
     {
         final ProcessUpdateParams params = ProcessUpdateParams.create()
             .content( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).build() )
@@ -124,7 +124,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void content_data()
+    void content_data()
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -139,7 +139,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void content_deep_data()
+    void content_deep_data()
     {
 
         final ContentTypeName deepTypeName = ContentTypeName.from( "deepContentType" );
@@ -195,7 +195,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void site_config_data()
+    void site_config_data()
     {
         when( siteService.getDescriptor( ApplicationKey.SYSTEM ) )
             .thenReturn( SiteDescriptor.create()
@@ -233,7 +233,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void extra_data()
+    void extra_data()
     {
         final XDataName xDataName = XDataName.from( "xDataName" );
 
@@ -267,7 +267,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void page_config_data()
+    void page_config_data()
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( "<img src =\"source\" data-src=\"image://image-id\" src=\"image/123\"/>" ) );
@@ -301,7 +301,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void component_config_data()
+    void component_config_data()
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\" src=\"image/123\"/>" ) );
@@ -345,7 +345,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void inner_component_data()
+    void inner_component_data()
     {
         final PropertyTree data1 = new PropertyTree();
         data1.addProperty( "htmlData",
@@ -408,7 +408,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void text_component_value()
+    void text_component_value()
     {
         final TextComponent textComponent = TextComponent.create().text( "<img data-src=\"image://image-id\" src=\"image/123\"/>" ).build();
 
@@ -451,7 +451,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void text_component_sanitized()
+    void text_component_sanitized()
     {
         final TextComponent textComponent = TextComponent.create().text( "<img data-src=\"image://image-id\"/>" ).build();
 
@@ -497,7 +497,7 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void component_config_sanitized_enabled()
+    void component_config_sanitized_enabled()
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( "<img data-src=\"image://image-id\" />" ) );
@@ -551,13 +551,13 @@ public class HtmlAreaContentProcessorTest
     }
 
     @Test
-    public void supports()
+    void supports()
     {
         assertTrue( htmlAreaContentProcessor.supports( contentTypeName  ) );
     }
 
     @Test
-    public void create()
+    void create()
     {
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(

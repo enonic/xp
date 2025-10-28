@@ -13,7 +13,7 @@ import com.enonic.xp.region.RegionDescriptors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XmlPageDescriptorParserTest
+class XmlPageDescriptorParserTest
     extends XmlModelParserTest
 {
     private XmlPageDescriptorParser parser;
@@ -21,7 +21,7 @@ public class XmlPageDescriptorParserTest
     private PageDescriptor.Builder builder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.parser = new XmlPageDescriptorParser();
         this.parser.currentApplication( ApplicationKey.from( "myapplication" ) );
@@ -32,7 +32,7 @@ public class XmlPageDescriptorParserTest
     }
 
     @Test
-    public void testParse()
+    void testParse()
         throws Exception
     {
         parse( this.parser, ".xml" );
@@ -40,7 +40,7 @@ public class XmlPageDescriptorParserTest
     }
 
     @Test
-    public void testParse_noNs()
+    void testParse_noNs()
         throws Exception
     {
         parseRemoveNs( this.parser, ".xml" );
@@ -48,7 +48,6 @@ public class XmlPageDescriptorParserTest
     }
 
     private void assertResult()
-        throws Exception
     {
         final PageDescriptor result = this.builder.build();
         assertEquals( "myapplication:mypage", result.getKey().toString() );

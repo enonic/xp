@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ResourceKeyTest
+class ResourceKeyTest
 {
     @Test
-    public void fromUri()
+    void fromUri()
     {
         fromUri( "myapplication-1.0.0:", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
         fromUri( "myapplication-1.0.0:/", "myapplication-1.0.0:/", "myapplication-1.0.0", "/", "", null, true );
@@ -41,7 +41,7 @@ public class ResourceKeyTest
     }
 
     @Test
-    public void fromApplicationAndPath()
+    void fromApplicationAndPath()
     {
         fromApplicationAndPath( "", "myapplication-1.0.0:/", "/", null, true );
         fromApplicationAndPath( "/", "myapplication-1.0.0:/", "/", null, true );
@@ -67,13 +67,13 @@ public class ResourceKeyTest
     }
 
     @Test
-    public void invalidUri()
+    void invalidUri()
     {
         assertThrows( IllegalArgumentException.class, () -> ResourceKey.from( "test" ) );
     }
 
     @Test
-    public void testResolve()
+    void testResolve()
     {
         testResolve( "myapplication-1.0.0:/", "", "myapplication-1.0.0:/" );
         testResolve( "myapplication-1.0.0:/", ".", "myapplication-1.0.0:/" );

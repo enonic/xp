@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TagTypeTest
+class TagTypeTest
     extends BaseInputTypeTest
 {
     public TagTypeTest()
@@ -20,19 +20,19 @@ public class TagTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "Tag", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "Tag", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         final Value value = this.type.createValue( ValueFactory.newString( "test" ), config );
@@ -42,14 +42,14 @@ public class TagTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         this.type.validate( stringProperty( "test" ), config );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final InputTypeConfig config = InputTypeConfig.create().build();
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );

@@ -6,11 +6,10 @@ import com.enonic.xp.data.PropertyPath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PatternBasedIndexConfigDocumentOldShitTest
+class PatternBasedIndexConfigDocumentOldShitTest
 {
     @Test
-    public void test_best_matching_pattern_used()
-        throws Exception
+    void test_best_matching_pattern_used()
     {
         final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
             add( PropertyPath.from( "data" ), IndexConfig.BY_TYPE ).

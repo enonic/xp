@@ -18,7 +18,7 @@ import com.enonic.xp.web.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ImageRendererTest
+class ImageRendererTest
     extends AbstractPortalUrlServiceImplTest
 {
     private ImageComponent imageComponent;
@@ -34,13 +34,13 @@ public class ImageRendererTest
     }
 
     @BeforeEach
-    public void before()
+    void before()
     {
         portalRequest.setMode( RenderMode.LIVE );
     }
 
     @Test
-    public void imageComponentWithNoImage()
+    void imageComponentWithNoImage()
     {
         // setup
         imageComponent = ImageComponent.create().build();
@@ -55,7 +55,7 @@ public class ImageRendererTest
     }
 
     @Test
-    public void imageComponentWithImage()
+    void imageComponentWithImage()
     {
         String expected =
             "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/_/media:image/myproject:draft/123456:b12b4c973748042e3b3a7e4798344289/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
@@ -64,7 +64,7 @@ public class ImageRendererTest
     }
 
     @Test
-    public void imageComponentWithImageAndAltFieldSet()
+    void imageComponentWithImageAndAltFieldSet()
     {
         final Content content = createContent();
         content.getData().setString( "altText", "alternative" );
@@ -93,7 +93,7 @@ public class ImageRendererTest
 
 
     @Test
-    public void imageComponentRenderModeEdit()
+    void imageComponentRenderModeEdit()
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
@@ -110,7 +110,7 @@ public class ImageRendererTest
     }
 
     @Test
-    public void imageComponentMissingImageModeLive()
+    void imageComponentMissingImageModeLive()
     {
         // setup
         this.portalRequest.setContent( createContent() );
@@ -131,7 +131,7 @@ public class ImageRendererTest
     }
 
     @Test
-    public void imageComponentMissingImageModeEdit()
+    void imageComponentMissingImageModeEdit()
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
@@ -157,7 +157,7 @@ public class ImageRendererTest
     }
 
     @Test
-    public void testRenderImageComponentWithReadPermission()
+    void testRenderImageComponentWithReadPermission()
     {
         // simulate case when a user does not have a permission on read
         Mockito.when( contentService.getById( Mockito.any( ContentId.class ) ) ).thenThrow( ContentNotFoundException.class );

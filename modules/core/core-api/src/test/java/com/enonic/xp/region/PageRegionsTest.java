@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PageRegionsTest
+class PageRegionsTest
 {
     @Test
-    public void iterator()
+    void iterator()
     {
         final Regions regions = Regions.create().
             add( Region.create().name( "a-region" ).build() ).
@@ -39,7 +39,7 @@ public class PageRegionsTest
     }
 
     @Test
-    public void getRegion()
+    void getRegion()
     {
         final Regions regions = Regions.create().
             add( Region.create().name( "a-region" ).build() ).
@@ -54,7 +54,7 @@ public class PageRegionsTest
     }
 
     @Test
-    public void componentPaths_one_level()
+    void componentPaths_one_level()
     {
         final Regions regions = Regions.create().
             add( Region.create().name( "a-region" ).
@@ -81,7 +81,7 @@ public class PageRegionsTest
     }
 
     @Test
-    public void componentPaths_two_levels()
+    void componentPaths_two_levels()
     {
         final Regions regions = Regions.create().
             add( Region.create().name( "region-level-1" ).
@@ -107,7 +107,7 @@ public class PageRegionsTest
     }
 
     @Test
-    public void getComponent()
+    void getComponent()
     {
         final Regions regions = Regions.create().
             add( Region.create().
@@ -128,7 +128,7 @@ public class PageRegionsTest
     }
 
     @Test
-    public void getComponent_throws_exception()
+    void getComponent_throws_exception()
     {
         final Regions regions = Regions.create().
             add( Region.create().

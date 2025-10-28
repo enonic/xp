@@ -10,7 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RepoConfigurationTest
+class RepoConfigurationTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -18,7 +18,7 @@ public class RepoConfigurationTest
     private Map<String, String> map;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.map = new HashMap<>();
         System.setProperty( "xp.home", this.temporaryFolder.toFile().getAbsolutePath() );
@@ -30,7 +30,7 @@ public class RepoConfigurationTest
     }
 
     @Test
-    public void testSnapshotsDir()
+    void testSnapshotsDir()
     {
         this.map.put( "snapshots.dir", "a/b" );
 

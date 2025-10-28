@@ -21,11 +21,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GetDynamicComponentHandlerTest
+class GetDynamicComponentHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testPart()
+    void testPart()
     {
         when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
@@ -58,7 +58,7 @@ public class GetDynamicComponentHandlerTest
     }
 
     @Test
-    public void testLayout()
+    void testLayout()
     {
         when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
@@ -92,7 +92,7 @@ public class GetDynamicComponentHandlerTest
     }
 
     @Test
-    public void testPage()
+    void testPage()
     {
         when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
@@ -127,7 +127,7 @@ public class GetDynamicComponentHandlerTest
 
 
     @Test
-    public void testInvalidSchemaType()
+    void testInvalidSchemaType()
     {
         runFunction( "/test/GetDynamicComponentHandlerTest.js", "getInvalidComponentType" );
     }

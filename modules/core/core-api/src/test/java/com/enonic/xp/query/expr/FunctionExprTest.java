@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class FunctionExprTest
+class FunctionExprTest
 {
     @Test
-    public void testExpression()
+    void testExpression()
     {
         final ValueExpr arg = ValueExpr.string( "arg1" );
         final FunctionExpr expr = new FunctionExpr( "name", List.of( arg ) );
