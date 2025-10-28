@@ -520,9 +520,8 @@ class NodeServiceImplTest
 
         List<Event> publishedEvents = captor.getAllValues();
 
-        assertEquals( 1,
+        assertEquals( 2,
                       publishedEvents.stream().filter( event -> event.getType().equals( NodeEvents.NODE_PERMISSIONS_UPDATED ) ).count() );
-        assertEquals( 1, publishedEvents.stream().filter( event -> event.getType().equals( NodeEvents.NODE_PUSHED_EVENT ) ).count() );
     }
 
     @Test

@@ -701,18 +701,11 @@ public class NodeServiceImpl
                 .stream() )
             .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue ) );
 
-        for ( Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : resultsByNodeId.entrySet() )
+        for ( final Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : resultsByNodeId.entrySet() )
         {
             final List<ApplyNodePermissionsResult.BranchResult> branchResults = entry.getValue();
 
-            final ApplyNodePermissionsResult.BranchResult mainBranchResult = branchResults.stream()
-                .filter( br -> ContextAccessor.current().getBranch().equals( br.branch() ) )
-                .findFirst()
-                .orElse( null );
-
-            final NodeVersionId mainBranchVersion = mainBranchResult != null ? mainBranchResult.nodeVersionId() : null;
-
-            for ( ApplyNodePermissionsResult.BranchResult br : branchResults )
+            for ( final ApplyNodePermissionsResult.BranchResult br : branchResults )
             {
                 if ( br.nodeVersionId() == null )
                 {
@@ -722,19 +715,8 @@ public class NodeServiceImpl
                 final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build();
 
                 context.runWith( () -> {
-                    final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-
-                    if ( ( mainBranchResult != null && mainBranchResult.branch().equals( br.branch() ) ) ||
-                        !br.nodeVersionId().equals( mainBranchVersion ) )
-                    {
-                        eventPublisher.publish( NodeEvents.permissionsUpdated( entry.getKey(), internalContext ) );
-                    }
-                    else
-                    {
-                        final Node persistedNode = nodeStorageService.get( entry.getKey(), internalContext );
-                        eventPublisher.publish(
-                            NodeEvents.pushed( Node.create( persistedNode ).permissions( br.permissions() ).build(), internalContext ) );
-                    }
+                    eventPublisher.publish(
+                        NodeEvents.permissionsUpdated( entry.getKey(), InternalContext.from( ContextAccessor.current() ) ) );
                 } );
             }
         }

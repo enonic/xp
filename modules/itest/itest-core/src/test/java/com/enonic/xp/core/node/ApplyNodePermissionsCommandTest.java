@@ -103,10 +103,10 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 3, result.getResults().size() );
 
-        assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
-                      result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
-        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
-                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                      result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
+        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
 
         assertEquals( 1, result.getResults().get( grandChildNode.id() ).size() );
     }
@@ -140,8 +140,8 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 2, result.getResults().size() );
 
-        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
-                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
 
         assertEquals( 1, result.getResults().get( grandChildNode.id() ).size() );
     }
@@ -180,10 +180,10 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 2, result.getResults().size() );
 
-        assertNotEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
-                         result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
-        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
-                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
+        assertNotEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                         result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
+        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
     }
 
     @Test
@@ -219,10 +219,10 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 2, result.getResults().size() );
 
-        assertNotEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
-                         result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
-        assertNotEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
-                         result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
+        assertNotEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                         result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
+        assertNotEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                         result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
     }
 
     @Test
@@ -255,10 +255,10 @@ public class ApplyNodePermissionsCommandTest
 
         assertEquals( 2, result.getResults().size() );
 
-        assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ),
-                      result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ) );
-        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ),
-                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ) );
+        assertEquals( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                      result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
+        assertEquals( result.getResult( childNode.id(), ContentConstants.BRANCH_DRAFT ).nodeVersionId(),
+                      result.getResult( childNode.id(), ContentConstants.BRANCH_MASTER ).nodeVersionId() );
     }
 
     @Test
@@ -318,7 +318,7 @@ public class ApplyNodePermissionsCommandTest
         verify( listener, times( 1 ) ).notEnoughRights( 1 );
 
         assertEquals( 1, result.getResults().size() );
-        assertNull( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ) );
+        assertNull( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).permissions() );
     }
 
     @Test

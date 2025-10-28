@@ -2,7 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -33,15 +32,13 @@ public final class ApplyNodePermissionsResult
         return results;
     }
 
-    public AccessControlList getResult( final NodeId nodeId, final Branch branch )
+    public BranchResult getResult( final NodeId nodeId, final Branch branch )
     {
         final List<BranchResult> results = this.results.get( nodeId );
 
         return results != null ? this.results.get( nodeId )
             .stream()
             .filter( br -> br.branch.equals( branch ) )
-            .map( BranchResult::permissions )
-            .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
     }
