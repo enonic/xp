@@ -23,7 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class WebappResourceTest
+class WebappResourceTest
 {
     private WebappResource resource;
 
@@ -34,7 +34,7 @@ public class WebappResourceTest
     private ResourceService resourceService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         resource = new WebappResource( applicationService, resourceService );
     }

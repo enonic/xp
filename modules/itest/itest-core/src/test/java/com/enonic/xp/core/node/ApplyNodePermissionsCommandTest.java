@@ -54,28 +54,25 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-public class ApplyNodePermissionsCommandTest
+class ApplyNodePermissionsCommandTest
     extends AbstractNodeTest
 {
     private static final IdProviderKey USK = IdProviderKey.system();
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void testApplyPermissionsWithOverwrite()
-        throws Exception
+    void testApplyPermissionsWithOverwrite()
     {
         runAs( PrincipalKey.ofAnonymous(), this::applyPermissionsWithOverwrite );
     }
 
     @Test
     void with_children()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
         final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
@@ -113,7 +110,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void only_children()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
         final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
@@ -148,7 +144,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void modified()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
         final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
@@ -188,7 +183,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void switched()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
         final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
@@ -227,7 +221,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void from_master_to_draft()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
         final Node childNode = createNode( CreateNodeParams.create().name( "my-node1" ).parent( createdNode.path() ).build() );
@@ -263,7 +256,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void node_not_exist()
-        throws Exception
     {
         assertThrows( NodeNotFoundException.class, () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                                            .nodeId( NodeId.from( "id12" ) )
@@ -283,7 +275,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void has_no_write_permissions()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create()
                                                  .name( "my-node" )
@@ -323,7 +314,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void add_and_remove()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -363,7 +353,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void add_to_existing()
-        throws Exception
     {
         final PrincipalKey principal = PrincipalKey.from( "user:my-provider:my-user" );
 
@@ -410,7 +399,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void remove_all_on_empty()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -444,7 +432,6 @@ public class ApplyNodePermissionsCommandTest
 
     @Test
     void set_empty_permissions()
-        throws Exception
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 

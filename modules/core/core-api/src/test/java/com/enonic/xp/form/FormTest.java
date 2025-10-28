@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class FormTest
+class FormTest
 {
 
     @Test
-    public void duplicatedItemNames()
+    void duplicatedItemNames()
     {
         assertThrows( IllegalArgumentException.class, () -> Form.create().
             addFormItem( Input.create().name( "myInput" ).label( "my input" ).inputType( InputTypeName.TEXT_LINE ).build() ).
@@ -23,7 +23,7 @@ public class FormTest
     }
 
     @Test
-    public void duplicatedItemInFieldSet()
+    void duplicatedItemInFieldSet()
     {
         final FieldSet fieldSet1 = FieldSet.create().
             label( "fieldset1" ).
@@ -51,7 +51,7 @@ public class FormTest
     }
 
     @Test
-    public void duplicatedItemInItemSet()
+    void duplicatedItemInItemSet()
     {
         try
         {
@@ -89,7 +89,7 @@ public class FormTest
     }
 
     @Test
-    public void formOptionSetWithoutDuplicates()
+    void formOptionSetWithoutDuplicates()
     {
         FormOptionSet formOptionSet1 = FormOptionSet.create().
             name( "formOptionSet1" ).
@@ -127,7 +127,7 @@ public class FormTest
     }
 
     @Test
-    public void formOptionSetWithDuplicates()
+    void formOptionSetWithDuplicates()
     {
         try
         {

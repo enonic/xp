@@ -11,11 +11,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QueryBuilderFactoryTest
+class QueryBuilderFactoryTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void createQuery()
+    void createQuery()
         throws Exception
     {
         createQuery( "not( myField > 1) ", "not_range.json" );
@@ -24,7 +24,6 @@ public class QueryBuilderFactoryTest
     }
 
     private void createQuery( final String query, final String fileContainingExpectedJson )
-        throws Exception
     {
         final String expected = load( fileContainingExpectedJson );
 
@@ -42,8 +41,7 @@ public class QueryBuilderFactoryTest
     }
 
     @Test
-    public void createQueryWithFilter()
-        throws Exception
+    void createQueryWithFilter()
     {
         final String expected = load( "query_with_queryfilter.json" );
 

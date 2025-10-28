@@ -22,12 +22,11 @@ import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CompareNodeCommandTest
+class CompareNodeCommandTest
     extends AbstractNodeTest
 {
     @Test
-    public void status_new()
-        throws Exception
+    void status_new()
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
@@ -42,8 +41,7 @@ public class CompareNodeCommandTest
     }
 
     @Test
-    public void status_new_target()
-        throws Exception
+    void status_new_target()
     {
         ctxOther().callWith( this::createDefaultRootNode );
 
@@ -58,8 +56,7 @@ public class CompareNodeCommandTest
     }
 
     @Test
-    public void status_capital_node_id()
-        throws Exception
+    void status_capital_node_id()
     {
         ctxOther().callWith( this::createDefaultRootNode );
 
@@ -75,8 +72,7 @@ public class CompareNodeCommandTest
     }
 
     @Test
-    public void status_deleted_stage_yields_new_in_target()
-        throws Exception
+    void status_deleted_stage_yields_new_in_target()
     {
         ctxOther().callWith( this::createDefaultRootNode );
 
@@ -106,8 +102,7 @@ public class CompareNodeCommandTest
 
 
     @Test
-    public void status_equal()
-        throws Exception
+    void status_equal()
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
@@ -124,8 +119,7 @@ public class CompareNodeCommandTest
     }
 
     @Test
-    public void status_newer()
-        throws Exception
+    void status_newer()
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
@@ -146,8 +140,7 @@ public class CompareNodeCommandTest
     }
 
     @Test
-    public void status_older()
-        throws Exception
+    void status_older()
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 
@@ -169,8 +162,7 @@ public class CompareNodeCommandTest
 
 
     @Test
-    public void status_moved_source()
-        throws Exception
+    void status_moved_source()
     {
         ctxDefault().callWith( this::createDefaultRootNode );
 

@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VersionInfoTest
+class VersionInfoTest
 {
     @Test
-    public void testDefault()
+    void testDefault()
     {
         VersionInfo.setDefault();
         final VersionInfo info = VersionInfo.get();
@@ -21,7 +21,7 @@ public class VersionInfoTest
     }
 
     @Test
-    public void testSnapshot()
+    void testSnapshot()
     {
         VersionInfo.set( "1.1.1-SNAPSHOT" );
         final VersionInfo info = VersionInfo.get();
@@ -31,7 +31,7 @@ public class VersionInfoTest
     }
 
     @Test
-    public void testRelease()
+    void testRelease()
     {
         VersionInfo.set( "1.1.1" );
         final VersionInfo info = VersionInfo.get();

@@ -29,7 +29,7 @@ class MultiApplicationUrlResolverTest
     private MultiApplicationUrlResolver resolver;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.resolver = new MultiApplicationUrlResolver( this.delegate1, this.delegate2 );
     }
@@ -50,7 +50,6 @@ class MultiApplicationUrlResolverTest
 
     @Test
     void testFindResource()
-        throws Exception
     {
         final Resource expected1 = mock( Resource.class );
         when( this.delegate1.findResource( "a/b.txt" ) ).thenReturn( expected1 );

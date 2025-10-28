@@ -5,12 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DateTimeHelperTest
+class DateTimeHelperTest
 {
 
     @Test
-    public void supported_iso_datetime_formats()
-        throws Exception
+    void supported_iso_datetime_formats()
     {
         assertNotNull( DateTimeHelper.parseIsoDateTime( "2016-10-05T10:00:00Z" ) );
         assertNotNull( DateTimeHelper.parseIsoDateTime( "2016-10-05T10:00:00+01:00" ) );
@@ -19,8 +18,7 @@ public class DateTimeHelperTest
     }
 
     @Test
-    public void empty_iso_datetime_formats()
-        throws Exception
+    void empty_iso_datetime_formats()
     {
         assertNull( DateTimeHelper.parseIsoDateTime( "" ) );
         assertNull( DateTimeHelper.parseIsoDateTime( null ) );

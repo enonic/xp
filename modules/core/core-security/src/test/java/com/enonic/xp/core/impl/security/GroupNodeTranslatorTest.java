@@ -17,11 +17,10 @@ import com.enonic.xp.security.PrincipalType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GroupNodeTranslatorTest
+class GroupNodeTranslatorTest
 {
     @Test
-    public void toCreateNode()
-        throws Exception
+    void toCreateNode()
     {
         final Group group = Group.create().
             displayName( "My Group" ).
@@ -45,8 +44,7 @@ public class GroupNodeTranslatorTest
 
 
     @Test
-    public void toGroup()
-        throws Exception
+    void toGroup()
     {
         final PrincipalKey groupKey = PrincipalKey.ofGroup( IdProviderKey.system(), "group-a" );
 

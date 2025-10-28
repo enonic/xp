@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HtmlSanitizerImplTest
+class HtmlSanitizerImplTest
 {
 
     @Test
-    public void testSanitizeHtmlOnClick()
+    void testSanitizeHtmlOnClick()
         throws Exception
     {
         final String html = readHtml( "a_onclick" );
@@ -23,7 +23,7 @@ public class HtmlSanitizerImplTest
     }
 
     @Test
-    public void testSanitizeHtmlScriptTags()
+    void testSanitizeHtmlScriptTags()
         throws Exception
     {
         final String html = readHtml( "scripts" );
@@ -35,7 +35,7 @@ public class HtmlSanitizerImplTest
     }
 
     @Test
-    public void testSanitizeHtmlImgOnMouseOver()
+    void testSanitizeHtmlImgOnMouseOver()
         throws Exception
     {
         final String html = readHtml( "img_mouseover" );

@@ -9,7 +9,7 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import com.enonic.xp.repo.impl.vacuum.VacuumTask;
 
 
-public class NodeBlobVacuumTaskTest
+class NodeBlobVacuumTaskTest
     extends AbstractBlobVacuumTaskTest
 {
     @Override

@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ServiceUrlParamsTest
+class ServiceUrlParamsTest
 {
     @Test
-    public void testApplication()
+    void testApplication()
     {
         final ServiceUrlParams params = new ServiceUrlParams();
         assertNull( params.getApplication() );
@@ -21,7 +21,7 @@ public class ServiceUrlParamsTest
     }
 
     @Test
-    public void testService()
+    void testService()
     {
         final ServiceUrlParams params = new ServiceUrlParams();
         assertNull( params.getService() );
@@ -34,7 +34,7 @@ public class ServiceUrlParamsTest
     }
 
     @Test
-    public void testSetAsMap()
+    void testSetAsMap()
     {
         final ServiceUrlParams params = new ServiceUrlParams();
         params.service( "myservice" );

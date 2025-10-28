@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class CachedBlobStoreTest
+class CachedBlobStoreTest
 {
     private BlobStore blobStore;
 
@@ -28,7 +28,7 @@ public class CachedBlobStoreTest
     private final Segment segment = Segment.from( "test", "blob" );
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.blobStore = Mockito.mock( BlobStore.class );
         this.cachedBlobStore = CachedBlobStore.create().
@@ -48,7 +48,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void getSmallRecord()
+    void getSmallRecord()
     {
         final BlobRecord record = newRecord();
         assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );
@@ -65,7 +65,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void addSmallRecord()
+    void addSmallRecord()
     {
         final BlobRecord record = newRecord();
         final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
@@ -82,7 +82,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void addLargeRecord()
+    void addLargeRecord()
         throws Exception
     {
         final BlobRecord record = newLargeRecord();
@@ -100,8 +100,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void removeRecord()
-        throws Exception
+    void removeRecord()
     {
         final BlobRecord record = newRecord();
         final ByteSource byteSource = ByteSource.wrap( "0123".getBytes() );
@@ -116,8 +115,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void invalidate()
-        throws Exception
+    void invalidate()
     {
         final BlobRecord record = newRecord();
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
@@ -134,8 +132,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void lastModified()
-        throws Exception
+    void lastModified()
     {
         final BlobRecord record = newRecord();
         Mockito.when( this.blobStore.getRecord( segment, record.getKey() ) ).thenReturn( record );
@@ -150,7 +147,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void listSegments()
+    void listSegments()
     {
         Mockito.when( this.blobStore.listSegments() ).thenAnswer( invocation -> Stream.of( segment ) );
         assertEquals( 1, cachedBlobStore.listSegments().count() );
@@ -158,7 +155,7 @@ public class CachedBlobStoreTest
     }
 
     @Test
-    public void deleteSegment()
+    void deleteSegment()
     {
         final BlobRecord record = newRecord();
         assertNull( this.cachedBlobStore.getRecord( segment, record.getKey() ) );

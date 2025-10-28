@@ -8,11 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodesTest
+class NodesTest
 {
     @Test
-    public void preserves_order_set()
-        throws Exception
+    void preserves_order_set()
     {
         final Set<Node> nodeSet = new LinkedHashSet<>();
 
@@ -34,8 +33,7 @@ public class NodesTest
     }
 
     @Test
-    public void preserves_order_arguments()
-        throws Exception
+    void preserves_order_arguments()
     {
         final Node node1 = Node.create( NodeId.from( "z" ) ).build();
         final Node node2 = Node.create( NodeId.from( "y" ) ).build();
@@ -51,8 +49,7 @@ public class NodesTest
     }
 
     @Test
-    public void preserves_order_builder()
-        throws Exception
+    void preserves_order_builder()
     {
         final Node node1 = Node.create( NodeId.from( "z" ) ).build();
         final Node node2 = Node.create( NodeId.from( "y" ) ).build();

@@ -76,7 +76,7 @@ class PushNodeHandlerTest
     }
 
     @Test
-    public void testExampleWithChildren()
+    void testExampleWithChildren()
     {
         when( nodeService.resolveSyncWork( Mockito.isA( SyncWorkResolverParams.class ) ) ).
             thenReturn( ResolveSyncWorkResult.create().

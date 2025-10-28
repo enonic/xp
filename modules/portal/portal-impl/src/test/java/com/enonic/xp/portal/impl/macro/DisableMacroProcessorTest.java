@@ -8,11 +8,11 @@ import com.enonic.xp.portal.macro.MacroProcessor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DisableMacroProcessorTest
+class DisableMacroProcessorTest
 {
 
     @Test
-    public void testProcess()
+    void testProcess()
     {
         final MacroProcessor processor = new DisableMacroProcessor();
 

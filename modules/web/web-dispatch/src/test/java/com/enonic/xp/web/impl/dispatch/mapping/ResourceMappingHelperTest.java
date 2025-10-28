@@ -1,23 +1,21 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
-import java.io.IOException;
 import java.util.ArrayList;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.Servlet;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebInitParam;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.dispatch.FilterMapping;
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ResourceMappingHelperTest
+class ResourceMappingHelperTest
 {
     @Order(10)
     @WebServlet(name = "test", value = "/", urlPatterns = "/*", initParams = @WebInitParam(name = "a", value = "1"))
@@ -46,14 +44,12 @@ public class ResourceMappingHelperTest
     {
         @Override
         public void init( final FilterConfig config )
-            throws ServletException
         {
             // Do nothing
         }
 
         @Override
         public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
-            throws IOException, ServletException
         {
             // Do nothing
         }
@@ -70,34 +66,34 @@ public class ResourceMappingHelperTest
     private Servlet mockServlet;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.mockFilter = Mockito.mock( Filter.class );
         this.mockServlet = Mockito.mock( Servlet.class );
     }
 
     @Test
-    public void testFilter_none()
+    void testFilter_none()
     {
         final FilterMapping mapping = ResourceMappingHelper.filter( this.mockFilter, new ArrayList<>() );
         assertNull( mapping );
     }
 
     @Test
-    public void testNew()
+    void testNew()
     {
         new ResourceMappingHelper();
     }
 
     @Test
-    public void testServlet_none()
+    void testServlet_none()
     {
         final ServletMapping mapping = ResourceMappingHelper.servlet( this.mockServlet, new ArrayList<>() );
         assertNull( mapping );
     }
 
     @Test
-    public void testConfigureOrder_null()
+    void testConfigureOrder_null()
     {
         final MappingBuilder builder = MappingBuilder.newBuilder();
 
@@ -112,7 +108,7 @@ public class ResourceMappingHelperTest
     }
 
     @Test
-    public void testConfigure_servlet()
+    void testConfigure_servlet()
     {
         final MyServlet servlet = new MyServlet();
         final ServletMapping mapping = ResourceMappingHelper.servlet( servlet, new ArrayList<>() );
@@ -124,7 +120,7 @@ public class ResourceMappingHelperTest
     }
 
     @Test
-    public void testConfigure_filter()
+    void testConfigure_filter()
     {
         final MyFilter filter = new MyFilter();
         final FilterMapping mapping = ResourceMappingHelper.filter( filter, new ArrayList<>() );

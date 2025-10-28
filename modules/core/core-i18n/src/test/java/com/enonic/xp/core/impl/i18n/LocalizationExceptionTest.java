@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class LocalizationExceptionTest
+class LocalizationExceptionTest
 {
     @Test
-    public void testException()
+    void testException()
     {
         final IOException cause = new IOException();
         final LocalizationException ex = new LocalizationException( "test", cause );

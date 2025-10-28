@@ -14,19 +14,17 @@ import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.node.ResolveSyncWorkCommand;
 
 @Disabled("Performance test is only for manual run")
-public class ResolveSyncWorkPerformanceTest
+class ResolveSyncWorkPerformanceTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void testReferencePerformance()
-        throws Exception
+    void testReferencePerformance()
     {
         final Node rootNode = createNodeSkipVerification( CreateNodeParams.create().name( "rootNode" ).parent( NodePath.ROOT ).build() );
 

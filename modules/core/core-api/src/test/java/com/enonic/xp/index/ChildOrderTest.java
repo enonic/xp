@@ -9,12 +9,11 @@ import com.enonic.xp.query.expr.OrderExpr;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ChildOrderTest
+class ChildOrderTest
 {
 
     @Test
-    public void manual_order_asc()
-        throws Exception
+    void manual_order_asc()
     {
         assertTrue( ChildOrder.manualOrder().isManualOrder() );
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
@@ -26,8 +25,7 @@ public class ChildOrderTest
     }
 
     @Test
-    public void manual_order_desc()
-        throws Exception
+    void manual_order_desc()
     {
         assertTrue( ChildOrder.manualOrder().isManualOrder() );
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );
@@ -39,8 +37,7 @@ public class ChildOrderTest
     }
 
     @Test
-    public void manual_order_ignorecase()
-        throws Exception
+    void manual_order_ignorecase()
     {
         assertTrue( ChildOrder.manualOrder().isManualOrder() );
         assertFalse( ChildOrder.defaultOrder().isManualOrder() );

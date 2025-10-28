@@ -23,12 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class LoadNodeCommandTest
+class LoadNodeCommandTest
     extends AbstractNodeTest
 {
     @Test
-    public void load_node()
-        throws Exception
+    void load_node()
     {
         final Node node = Node.create().
             id( NodeId.from( "myNodeId" ) ).
@@ -62,8 +61,7 @@ public class LoadNodeCommandTest
     }
 
     @Test
-    public void node_already_exists_in_path()
-        throws Exception
+    void node_already_exists_in_path()
     {
         final Node originalNode = createNode( NodePath.ROOT, "fisk" );
         nodeService.refresh( RefreshMode.ALL );
@@ -90,8 +88,7 @@ public class LoadNodeCommandTest
     }
 
     @Test
-    public void parent_does_not_exist()
-        throws Exception
+    void parent_does_not_exist()
     {
         final LoadNodeParams loadParams = LoadNodeParams.create().
             node( Node.create().

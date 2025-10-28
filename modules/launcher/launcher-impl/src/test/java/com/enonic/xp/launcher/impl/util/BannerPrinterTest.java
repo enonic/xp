@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import com.enonic.xp.launcher.VersionInfo;
 import com.enonic.xp.launcher.impl.env.Environment;
 
-public class BannerPrinterTest
+class BannerPrinterTest
 {
     @Test
-    public void printBanner()
+    void printBanner()
     {
         final Environment env = Mockito.mock( Environment.class );
         final VersionInfo info = VersionInfo.get();

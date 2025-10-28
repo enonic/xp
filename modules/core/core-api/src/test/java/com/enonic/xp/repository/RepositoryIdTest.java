@@ -7,19 +7,17 @@ import com.enonic.xp.node.NodeName;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RepositoryIdTest
+class RepositoryIdTest
 {
     @Test
-    public void builtin()
-        throws Exception
+    void builtin()
     {
         RepositoryId.from( "com.enonic.cms.default" );
         RepositoryId.from( "system-repo" );
     }
 
     @Test
-    public void validNodeIdNodeName()
-        throws Exception
+    void validNodeIdNodeName()
     {
         final String allowedCharacters = "az09-:_.";
         NodeId.from( allowedCharacters );
@@ -28,29 +26,25 @@ public class RepositoryIdTest
     }
 
     @Test
-    public void firstCharacterUnderscoreCheck()
-        throws Exception
+    void firstCharacterUnderscoreCheck()
     {
         assertThrows(IllegalArgumentException.class, () -> RepositoryId.from( "_abc" ));
     }
 
     @Test
-    public void firstCharacterPointCheck()
-        throws Exception
+    void firstCharacterPointCheck()
     {
         assertThrows(IllegalArgumentException.class, () -> RepositoryId.from( ".abc" ));
     }
 
     @Test
-    public void emptyCheck()
-        throws Exception
+    void emptyCheck()
     {
         assertThrows(IllegalArgumentException.class, () -> RepositoryId.from( "" ));
     }
 
     @Test
-    public void nullCheck()
-        throws Exception
+    void nullCheck()
     {
         assertThrows(NullPointerException.class, () -> RepositoryId.from( null ));
     }

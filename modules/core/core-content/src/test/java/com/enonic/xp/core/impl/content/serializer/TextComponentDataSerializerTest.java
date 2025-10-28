@@ -11,10 +11,10 @@ import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer
 import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer.TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TextComponentDataSerializerTest
+class TextComponentDataSerializerTest
 {
     @Test
-    public void toData()
+    void toData()
     {
         // setup
         final String text = "some text";
@@ -31,7 +31,7 @@ public class TextComponentDataSerializerTest
     }
 
     @Test
-    public void fromData()
+    void fromData()
     {
         // setup
         final String text = "some text";

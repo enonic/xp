@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class QueryExprTest
+class QueryExprTest
 {
     @Test
-    public void empty_query()
+    void empty_query()
     {
         final QueryExpr expr = new QueryExpr( null, null );
 
@@ -21,7 +21,7 @@ public class QueryExprTest
     }
 
     @Test
-    public void full_query()
+    void full_query()
     {
         final CompareExpr constraint = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
         final List<OrderExpr> orderList = List.of( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) );
@@ -33,7 +33,7 @@ public class QueryExprTest
     }
 
     @Test
-    public void only_constraint_in_query()
+    void only_constraint_in_query()
     {
         final CompareExpr constraint = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
         final QueryExpr expr = new QueryExpr( constraint, null );
@@ -44,7 +44,7 @@ public class QueryExprTest
     }
 
     @Test
-    public void only_order_in_query()
+    void only_order_in_query()
     {
         final List<OrderExpr> orderList = List.of( new FieldOrderExpr( FieldExpr.from( "a" ), OrderExpr.Direction.DESC ) );
         final QueryExpr expr1 = new QueryExpr( null, orderList );

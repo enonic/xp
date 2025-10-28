@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.security.PrincipalKey;
 
-public class CommitNodeHandlerTest
+class CommitNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     private void mock()
@@ -33,7 +33,7 @@ public class CommitNodeHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mock();
 

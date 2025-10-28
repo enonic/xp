@@ -2,12 +2,11 @@ package com.enonic.xp.script.impl;
 
 import org.junit.jupiter.api.Test;
 
-public class GlobalScopeTest
+class GlobalScopeTest
     extends AbstractScriptTest
 {
     @Test
-    public void testScope()
-        throws Exception
+    void testScope()
     {
         runTestScript( "global/main.js" );
     }

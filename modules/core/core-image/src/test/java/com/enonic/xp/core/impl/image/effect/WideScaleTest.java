@@ -13,11 +13,11 @@ import com.enonic.xp.image.FocalPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WideScaleTest
+class WideScaleTest
     extends BaseImageFilterTest
 {
     @Test
-    public void testDownscale()
+    void testDownscale()
     {
         BufferedImage scaled = scale( 100, 10 );
         assertEquals( 100, scaled.getWidth() );
@@ -25,7 +25,7 @@ public class WideScaleTest
     }
 
     @Test
-    public void testUpscale()
+    void testUpscale()
     {
         BufferedImage scaled = scale( 600, 100 );
         assertEquals( 600, scaled.getWidth() );
@@ -33,7 +33,7 @@ public class WideScaleTest
     }
 
     @Test
-    public void testHeightTooBig()
+    void testHeightTooBig()
     {
         BufferedImage scaled = scale( 100, 800 );
         assertEquals( 100, scaled.getWidth() );

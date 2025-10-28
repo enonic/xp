@@ -6,26 +6,24 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentPathTest
+class ContentPathTest
 {
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( ContentPath.class ).withNonnullFields( "elements" ).verify();
     }
 
     @Test
-    public void test_toString()
-        throws Exception
+    void test_toString()
     {
         assertEquals( "/parent/child", ContentPath.from( "/parent/child" ).toString() );
         assertEquals( "/", ContentPath.create().build().toString() );
     }
 
     @Test
-    public void getParentPath()
-        throws Exception
+    void getParentPath()
     {
         assertEquals( ContentPath.from( "/" ), ContentPath.from( "/first" ).getParentPath() );
         assertEquals( ContentPath.from( "/first" ), ContentPath.from( "/first/second" ).getParentPath() );
@@ -33,15 +31,13 @@ public class ContentPathTest
     }
 
     @Test
-    public void getParentPath_root()
-        throws Exception
+    void getParentPath_root()
     {
         assertEquals( null, ContentPath.from( "/" ).getParentPath() );
     }
 
     @Test
-    public void getAncestorPath()
-        throws Exception
+    void getAncestorPath()
     {
         assertEquals( ContentPath.from( "/a/b" ), ContentPath.from( "/a/b/c" ).getAncestorPath( 1 ) );
         assertEquals( ContentPath.from( "/a" ), ContentPath.from( "/a/b/c" ).getAncestorPath( 2 ) );
@@ -50,32 +46,28 @@ public class ContentPathTest
     }
 
     @Test
-    public void isRoot()
-        throws Exception
+    void isRoot()
     {
         assertEquals( true, ContentPath.ROOT.isRoot() );
         assertEquals( true, ContentPath.from( "/" ).isRoot() );
     }
 
     @Test
-    public void toString_when_isRoot()
-        throws Exception
+    void toString_when_isRoot()
     {
         assertEquals( "/", ContentPath.ROOT.toString() );
         assertEquals( "/", ContentPath.from( "/" ).toString() );
     }
 
     @Test
-    public void from()
-        throws Exception
+    void from()
     {
         assertEquals( ContentPath.from( "a" ), ContentPath.from( "/a" ) );
         assertEquals( ContentPath.from( "a/b" ), ContentPath.from( "/a/b" ) );
     }
 
     @Test
-    public void isChildOf()
-        throws Exception
+    void isChildOf()
     {
         assertEquals( true, ContentPath.from( "parent/child" ).isChildOf( ContentPath.from( "parent" ) ) );
         assertEquals( false, ContentPath.from( "parent/child" ).isChildOf( ContentPath.from( "otherParent" ) ) );
@@ -87,8 +79,7 @@ public class ContentPathTest
 
 
     @Test
-    public void getName()
-        throws Exception
+    void getName()
     {
         assertEquals( ContentName.from( "parent" ), ContentPath.from( "/parent" ).getName() );
         assertEquals( ContentName.from( "child" ), ContentPath.from( "/parent/child" ).getName() );

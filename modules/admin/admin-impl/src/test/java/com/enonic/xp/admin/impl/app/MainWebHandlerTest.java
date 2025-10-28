@@ -14,18 +14,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MainWebHandlerTest
+class MainWebHandlerTest
 {
     private MainWebHandler handler;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.handler = new MainWebHandler();
     }
 
     @Test
-    public void testRedirect()
+    void testRedirect()
         throws Exception
     {
         final WebRequest request = new WebRequest();

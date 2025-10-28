@@ -21,20 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ApplicationFactoryTest
+class ApplicationFactoryTest
     extends BundleBasedTest
 {
     private NodeService nodeService;
 
     @BeforeEach
-    public void init()
+    void init()
     {
         nodeService = Mockito.mock( NodeService.class );
     }
 
     @Test
-    public void create_app()
-        throws Exception
+    void create_app()
     {
         final Bundle bundle = deploy( "app1", true, false );
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
@@ -45,8 +44,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_prod_without_virtual_apps()
-        throws Exception
+    void createUrlResolver_prod_without_virtual_apps()
     {
         final Bundle bundle = deploy( "app1", true, false );
 
@@ -60,8 +58,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_dev_with_source()
-        throws Exception
+    void createUrlResolver_dev_with_source()
     {
         final Bundle bundle = deploy( "app1", true, true );
 
@@ -76,8 +73,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_dev_virtual_not_override()
-        throws Exception
+    void createUrlResolver_dev_virtual_not_override()
     {
         final Bundle bundle = deploy( "app1", true, true );
 
@@ -91,8 +87,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_prod_virtual_not_override()
-        throws Exception
+    void createUrlResolver_prod_virtual_not_override()
     {
         final Bundle bundle = deploy( "app1", true, true );
 
@@ -106,8 +101,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_dev_with_source_without_virtual_apps()
-        throws Exception
+    void createUrlResolver_dev_with_source_without_virtual_apps()
     {
         final Bundle bundle = deploy( "app1", true, true );
 
@@ -121,8 +115,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_dev_no_source()
-        throws Exception
+    void createUrlResolver_dev_no_source()
     {
         final Bundle bundle = deploy( "app1", true, false );
 
@@ -137,8 +130,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolver_dev_no_source_no_virtual_apps()
-        throws Exception
+    void createUrlResolver_dev_no_source_no_virtual_apps()
     {
         final Bundle bundle = deploy( "app1", true, false );
 
@@ -152,8 +144,7 @@ public class ApplicationFactoryTest
     }
 
     @Test
-    public void createUrlResolverByName()
-        throws Exception
+    void createUrlResolverByName()
     {
         final Bundle bundle = deploy( "app1", true, true );
 
@@ -169,7 +160,6 @@ public class ApplicationFactoryTest
     }
 
     private Bundle deploy( final String name, final boolean isApp, final boolean hasSourcePath )
-        throws Exception
     {
         if ( hasSourcePath )
         {

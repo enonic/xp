@@ -16,7 +16,7 @@ import com.enonic.xp.support.ResourceTestHelper;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ApplicationDescriptorServiceImplTest
+class ApplicationDescriptorServiceImplTest
 {
 
     private static final String EXISTING_APP_BUNDLE_SYMBOLIC_NAME = "existing-site-bundle";
@@ -34,8 +34,7 @@ public class ApplicationDescriptorServiceImplTest
     private ComponentContext componentContext;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         resourceTestHelper = new ResourceTestHelper( this );
 
@@ -61,7 +60,7 @@ public class ApplicationDescriptorServiceImplTest
 
 
     @Test
-    public void test_start()
+    void test_start()
     {
         appDescriptorService.start( componentContext );
 
@@ -70,8 +69,7 @@ public class ApplicationDescriptorServiceImplTest
     }
 
     @Test
-    public void test_bundle_lifecycle()
-        throws Exception
+    void test_bundle_lifecycle()
     {
         Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( BUNDLE_SYMBOLIC_NAME );

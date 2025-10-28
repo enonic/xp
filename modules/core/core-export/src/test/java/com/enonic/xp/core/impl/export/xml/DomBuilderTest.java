@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DomBuilderTest
+class DomBuilderTest
 {
     @Test
-    public void buildDocument()
+    void buildDocument()
     {
         final DomBuilder builder = DomBuilder.create( "items" );
         builder.start( "item" ).attribute( "id", "1" ).attribute( "show", "false" ).end();
@@ -21,7 +21,7 @@ public class DomBuilderTest
     }
 
     @Test
-    public void buildDocument_withNs()
+    void buildDocument_withNs()
     {
         final DomBuilder builder = DomBuilder.create( "myns", "items" );
         builder.start( "item" ).attribute( "id", "1" ).attribute( "show", "false" ).end();

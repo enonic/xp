@@ -8,89 +8,86 @@ import com.enonic.xp.data.PropertyTree;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class InQueryBuilderTest
+class InQueryBuilderTest
     extends QueryBuilderTest
 {
 
     @Test
-    public void null_value()
-        throws Exception
+    void null_value()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "null_value" ) );
     }
 
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "empty" ) );
     }
 
     @Test
-    public void one()
+    void one()
         throws Exception
     {
         test( "one" );
     }
 
     @Test
-    public void multiple()
+    void multiple()
         throws Exception
     {
         test( "multiple" );
     }
 
     @Test
-    public void with_geopoint()
-        throws Exception
+    void with_geopoint()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "with_geopoint" ) );
     }
 
     @Test
-    public void with_number()
+    void with_number()
         throws Exception
     {
         test( "with_number" );
     }
 
     @Test
-    public void with_dateTime()
+    void with_dateTime()
         throws Exception
     {
         test( "with_dateTime" );
     }
 
     @Test
-    public void with_date()
+    void with_date()
         throws Exception
     {
         test( "with_date" );
     }
 
     @Test
-    public void with_localDateTime()
+    void with_localDateTime()
         throws Exception
     {
         test( "with_localDateTime" );
     }
 
     @Test
-    public void with_mixed_date()
+    void with_mixed_date()
         throws Exception
     {
         test( "with_mixed_date" );
     }
 
     @Test
-    public void with_time()
+    void with_time()
         throws Exception
     {
         test( "with_time" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RenameContentParamsTest
+class RenameContentParamsTest
 {
 
     private final ContentId contentId = ContentId.from( "a" );
@@ -12,7 +12,7 @@ public class RenameContentParamsTest
     private final ContentName contentName = ContentName.from( "name" );
 
     @Test
-    public void testValidateWithNullId()
+    void testValidateWithNullId()
     {
         assertThrows(NullPointerException.class, () ->  RenameContentParams.create().
             contentId( null ).
@@ -21,7 +21,7 @@ public class RenameContentParamsTest
     }
 
     @Test
-    public void testValidateWithNullName()
+    void testValidateWithNullName()
     {
         assertThrows(NullPointerException.class, () ->  RenameContentParams.create().
             contentId( contentId ).

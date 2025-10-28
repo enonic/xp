@@ -12,14 +12,14 @@ import com.enonic.xp.script.impl.util.JavascriptHelper;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GraalScriptMapGeneratorTest
+class GraalScriptMapGeneratorTest
 {
     private Context context;
 
     private JavascriptHelper<Value> javascriptHelper;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.context =new GraalJSContextFactory().create();
 
@@ -28,13 +28,13 @@ public class GraalScriptMapGeneratorTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         this.context.close();
     }
 
     @Test
-    public void testScriptMapGenerator()
+    void testScriptMapGenerator()
     {
         Value value = context.eval( "js", "var array = [1, 2, 3]; array;" );
 

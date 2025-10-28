@@ -12,14 +12,14 @@ import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.web.HttpMethod;
 
-public class MacroContextMapperTest
+class MacroContextMapperTest
 {
     private final MapSerializableAssert assertHelper = new MapSerializableAssert( MacroContextMapperTest.class );
 
     private MacroContext macroContext;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( HttpMethod.GET );

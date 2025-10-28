@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HistogramAggregationQueryTest
+class HistogramAggregationQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final HistogramAggregationQuery query = HistogramAggregationQuery.create( "histogram" ).
             extendedBoundMax( 100 ).

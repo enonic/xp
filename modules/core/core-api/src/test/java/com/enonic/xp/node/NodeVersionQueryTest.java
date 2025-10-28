@@ -8,12 +8,11 @@ import com.enonic.xp.query.expr.OrderExpr;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NodeVersionQueryTest
+class NodeVersionQueryTest
 {
 
     @Test
-    public void defaultOrderExpr()
-        throws Exception
+    void defaultOrderExpr()
     {
 
         final NodeVersionQuery query = NodeVersionQuery.create().

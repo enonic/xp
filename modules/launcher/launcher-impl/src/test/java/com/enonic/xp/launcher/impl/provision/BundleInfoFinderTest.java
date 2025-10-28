@@ -10,7 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BundleInfoFinderTest
+class BundleInfoFinderTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -20,7 +20,7 @@ public class BundleInfoFinderTest
     private Path systemDir;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         this.systemDir = Files.createDirectory( this.temporaryFolder.resolve( "system" ) );
@@ -28,7 +28,7 @@ public class BundleInfoFinderTest
     }
 
     @Test
-    public void findNone()
+    void findNone()
         throws Exception
     {
         final List<BundleInfo> bundles = this.finder.find();
@@ -36,7 +36,7 @@ public class BundleInfoFinderTest
     }
 
     @Test
-    public void findBundles()
+    void findBundles()
         throws Exception
     {
         newFile( "05", "guava-18.0.jar" );

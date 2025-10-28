@@ -10,17 +10,17 @@ import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DescriptorKeysTest
+class DescriptorKeysTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final DescriptorKeys keys = DescriptorKeys.empty();
         assertEquals( "[]", keys.toString() );
     }
 
     @Test
-    public void testFrom_array()
+    void testFrom_array()
     {
         final DescriptorKey key1 = DescriptorKey.from( "app1:abc" );
         final DescriptorKey key2 = DescriptorKey.from( "app2:abc" );
@@ -30,7 +30,7 @@ public class DescriptorKeysTest
     }
 
     @Test
-    public void testFrom_iterable()
+    void testFrom_iterable()
     {
         final DescriptorKey key1 = DescriptorKey.from( "app1:abc" );
         final DescriptorKey key2 = DescriptorKey.from( "app2:abc" );
@@ -40,7 +40,7 @@ public class DescriptorKeysTest
     }
 
     @Test
-    public void testFilter()
+    void testFilter()
     {
         final DescriptorKey key1 = DescriptorKey.from( "app1:abc" );
         final DescriptorKey key2 = DescriptorKey.from( "app2:abc" );
@@ -52,7 +52,7 @@ public class DescriptorKeysTest
     }
 
     @Test
-    public void testConcat()
+    void testConcat()
     {
         final DescriptorKey key1 = DescriptorKey.from( "app1:abc" );
         final DescriptorKey key2 = DescriptorKey.from( "app2:abc" );

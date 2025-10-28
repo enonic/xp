@@ -16,14 +16,14 @@ import com.enonic.xp.web.HttpStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PortalErrorMapperTest
+class PortalErrorMapperTest
 {
     private PortalError error;
 
     private final MapSerializableAssert assertHelper = new MapSerializableAssert( PortalErrorMapperTest.class );
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         final PortalRequest portalRequest = new PortalRequest();
         portalRequest.setMethod( HttpMethod.GET );
@@ -65,8 +65,7 @@ public class PortalErrorMapperTest
     }
 
     @Test
-    public void testSimple()
-        throws Exception
+    void testSimple()
     {
         final PortalErrorMapper value = new PortalErrorMapper( this.error );
         assertHelper.assertJson( "error-simple.json", value );

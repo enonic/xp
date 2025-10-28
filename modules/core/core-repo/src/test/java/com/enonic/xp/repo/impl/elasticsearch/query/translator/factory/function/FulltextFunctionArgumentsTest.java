@@ -11,10 +11,10 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FulltextFunctionArgumentsTest
+class FulltextFunctionArgumentsTest
 {
     @Test
-    public void fullText3Arguments()
+    void fullText3Arguments()
     {
         final List<ValueExpr> arguments =
             List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "and" ) );
@@ -27,7 +27,7 @@ public class FulltextFunctionArgumentsTest
     }
 
     @Test
-    public void fullText2Arguments()
+    void fullText2Arguments()
     {
         final List<ValueExpr> arguments = List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ) );
 
@@ -40,7 +40,7 @@ public class FulltextFunctionArgumentsTest
     }
 
     @Test
-    public void fullText1Argument()
+    void fullText1Argument()
     {
         final List<ValueExpr> arguments = List.of( ValueExpr.string( "myField" ) );
 
@@ -51,7 +51,7 @@ public class FulltextFunctionArgumentsTest
     }
 
     @Test
-    public void analyzer()
+    void analyzer()
     {
         final List<ValueExpr> arguments =
             List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "OR" ),
@@ -67,7 +67,7 @@ public class FulltextFunctionArgumentsTest
 
 
     @Test
-    public void fullIllegalOperatorArgument()
+    void fullIllegalOperatorArgument()
     {
         final List<ValueExpr> arguments =
             List.of( ValueExpr.string( "myField" ), ValueExpr.string( "SearchString" ), ValueExpr.string( "dummy" ) );

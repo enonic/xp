@@ -13,12 +13,11 @@ import com.enonic.xp.util.GeoPoint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class UpdateNodeExecutorTest
+class UpdateNodeExecutorTest
 {
 
     @Test
-    public void update_user_properties()
-        throws Exception
+    void update_user_properties()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "notChanged", "originalValue" );
@@ -48,8 +47,7 @@ public class UpdateNodeExecutorTest
     }
 
     @Test
-    public void update_child_order()
-        throws Exception
+    void update_child_order()
     {
         final Node originalNode = Node.create().name( "myNode" ).childOrder( ChildOrder.manualOrder() ).parentPath( NodePath.ROOT ).build();
 
@@ -64,8 +62,7 @@ public class UpdateNodeExecutorTest
     }
 
     @Test
-    public void remove_not_in_new_tree()
-        throws Exception
+    void remove_not_in_new_tree()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "toBeRemoved", "removeMe" );

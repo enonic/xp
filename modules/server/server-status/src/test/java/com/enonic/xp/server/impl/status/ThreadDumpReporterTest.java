@@ -8,7 +8,7 @@ import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ThreadDumpReporterTest
+class ThreadDumpReporterTest
     extends BaseReporterTest<ThreadDumpReporter>
 {
     public ThreadDumpReporterTest()
@@ -23,7 +23,7 @@ public class ThreadDumpReporterTest
     }
 
     @Test
-    public void testThreadDump()
+    void testThreadDump()
         throws Exception
     {
         assertNotNull( textReport() );

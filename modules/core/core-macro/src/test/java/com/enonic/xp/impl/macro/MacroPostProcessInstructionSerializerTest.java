@@ -6,11 +6,11 @@ import com.enonic.xp.macro.Macro;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MacroPostProcessInstructionSerializerTest
+class MacroPostProcessInstructionSerializerTest
 {
 
     @Test
-    public void testSerialize()
+    void testSerialize()
     {
         final MacroPostProcessInstructionSerializer serializer = new MacroPostProcessInstructionSerializer();
 
@@ -46,7 +46,7 @@ public class MacroPostProcessInstructionSerializerTest
     }
 
     @Test
-    public void testSerializeMultiValue()
+    void testSerializeMultiValue()
     {
         final MacroPostProcessInstructionSerializer serializer = new MacroPostProcessInstructionSerializer();
 

@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class StatsAggregationTest
+class StatsAggregationTest
 {
     private static final double DELTA = 1e-14;
 
     @Test
-    public void builder()
+    void builder()
     {
         StatsAggregation.Builder builder = StatsAggregation.create( "aaa" );
 

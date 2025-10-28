@@ -23,19 +23,17 @@ import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DateRangeAggregationTest
+class DateRangeAggregationTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void ranges()
-        throws Exception
+    void ranges()
     {
         createNode( Instant.parse( "2014-12-10T10:00:00Z" ), "n1", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T10:30:00Z" ), "n2", NodePath.ROOT );
@@ -76,8 +74,7 @@ public class DateRangeAggregationTest
     }
 
     @Test
-    public void ranges_with_date_math()
-        throws Exception
+    void ranges_with_date_math()
     {
         final Instant now = Instant.now();
 
@@ -120,8 +117,7 @@ public class DateRangeAggregationTest
     }
 
     @Test
-    public void ranges_with_date_math_date()
-        throws Exception
+    void ranges_with_date_math_date()
     {
         final Instant anchor = Instant.parse( "2014-12-10T10:00:00Z" );
 

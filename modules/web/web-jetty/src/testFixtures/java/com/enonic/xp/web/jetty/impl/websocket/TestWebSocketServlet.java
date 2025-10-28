@@ -2,7 +2,6 @@ package com.enonic.xp.web.jetty.impl.websocket;
 
 import java.io.IOException;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,7 @@ public class TestWebSocketServlet
 
     @Override
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
-        throws ServletException, IOException
+        throws IOException
     {
         if ( !this.service.isUpgradeRequest( req, res ) )
         {

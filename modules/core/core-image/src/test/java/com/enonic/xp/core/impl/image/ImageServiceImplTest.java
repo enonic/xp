@@ -103,7 +103,7 @@ class ImageServiceImplTest
     }
 
     @Test
-    public void readImage_jpeg_progressive_default()
+    void readImage_jpeg_progressive_default()
         throws IOException
     {
         mockOriginalImage( "original.png" );
@@ -136,7 +136,7 @@ class ImageServiceImplTest
     }
 
     @Test
-    public void readImage_with_cache()
+    void readImage_with_cache()
         throws IOException
     {
         mockOriginalImage( "effect/transparent.png" );
@@ -168,7 +168,7 @@ class ImageServiceImplTest
     }
 
     @Test
-    public void readImage_filter_on_jpeg()
+    void readImage_filter_on_jpeg()
     {
         mockOriginalImage( "effect/source.jpg" );
 
@@ -184,7 +184,7 @@ class ImageServiceImplTest
     }
 
     @Test
-    public void readImage_cmyk()
+    void readImage_cmyk()
     {
         mockOriginalImage( "effect/cmyk.jpg" );
 

@@ -746,7 +746,6 @@ class ProjectServiceImplTest
 
     @Test
     void get_icon()
-        throws Exception
     {
         final Project project = doCreateProjectAsAdmin( ProjectName.from( "test-project" ) );
 

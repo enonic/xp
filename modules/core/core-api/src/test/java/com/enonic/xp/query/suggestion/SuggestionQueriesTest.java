@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SuggestionQueriesTest
+class SuggestionQueriesTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final TermSuggestionQuery query = TermSuggestionQuery.create( "queryName" ).
             field( "category" ).
@@ -40,7 +40,7 @@ public class SuggestionQueriesTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final SuggestionQueries queries = SuggestionQueries.empty();
 

@@ -9,11 +9,11 @@ import com.enonic.xp.script.impl.AbstractScriptTest;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class NewBeanScriptTest
+class NewBeanScriptTest
     extends AbstractScriptTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/bean/simple-test.js" );
         final ScriptExports exports = runTestScript( script );

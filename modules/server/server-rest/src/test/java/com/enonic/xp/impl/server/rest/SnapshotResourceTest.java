@@ -23,13 +23,13 @@ import com.enonic.xp.snapshot.SnapshotService;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 
-public class SnapshotResourceTest
+class SnapshotResourceTest
     extends JaxRsResourceTestSupport
 {
     private SnapshotService snapshotService;
 
     @Test
-    public void snapshot()
+    void snapshot()
         throws Exception
     {
 
@@ -52,7 +52,7 @@ public class SnapshotResourceTest
     }
 
     @Test
-    public void restore()
+    void restore()
         throws Exception
     {
         final RestoreResult restoreResult = RestoreResult.create()
@@ -74,7 +74,7 @@ public class SnapshotResourceTest
     }
 
     @Test
-    public void restore_with_deletion()
+    void restore_with_deletion()
         throws Exception
     {
         final RestoreResult restoreResult = RestoreResult.create()
@@ -99,7 +99,7 @@ public class SnapshotResourceTest
     }
 
     @Test
-    public void restore_latest()
+    void restore_latest()
         throws Exception
     {
         final RestoreResult restoreResult = RestoreResult.create()
@@ -121,7 +121,7 @@ public class SnapshotResourceTest
     }
 
     @Test
-    public void delete()
+    void delete()
         throws Exception
     {
         final DeleteSnapshotsResult deleteResult = DeleteSnapshotsResult.create().add( "snapshot1" ).build();
@@ -137,7 +137,7 @@ public class SnapshotResourceTest
     }
 
     @Test
-    public void list()
+    void list()
         throws Exception
     {
         final SnapshotResult snapshotResult1 = SnapshotResult.create()

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class IdentityHandlerTest
+class IdentityHandlerTest
 {
     IdentityHandler handler;
 
@@ -83,7 +83,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
@@ -100,7 +100,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testNotValidUrlPattern()
+    void testNotValidUrlPattern()
         throws Exception
     {
         this.request.setEndpointPath( "/_/idprovider/" );
@@ -118,7 +118,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandle()
+    void testHandle()
         throws Exception
     {
         final WebResponse portalResponse = this.handler.handle( this.request, PortalResponse.create().build() );
@@ -128,7 +128,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandle_redirect()
+    void testHandle_redirect()
         throws Exception
     {
         this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
@@ -143,7 +143,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandle_redirect_invalid()
+    void testHandle_redirect_invalid()
         throws Exception
     {
         this.request.setEndpointPath( "/_/idprovider/myidprovider/login" );
@@ -158,7 +158,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandleWithVirtualHostNotEnabled()
+    void testHandleWithVirtualHostNotEnabled()
         throws Exception
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
@@ -179,7 +179,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandleWithVirtualHostEnabled()
+    void testHandleWithVirtualHostEnabled()
         throws Exception
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
@@ -196,7 +196,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandleWithEmptyVirtualHostIdProviderConfig()
+    void testHandleWithEmptyVirtualHostIdProviderConfig()
         throws Exception
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
@@ -213,7 +213,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testHandleMethodNotAllowed()
+    void testHandleMethodNotAllowed()
     {
         this.request.setMethod( HttpMethod.CONNECT );
 
@@ -223,7 +223,7 @@ public class IdentityHandlerTest
     }
 
     @Test
-    public void testContextPathConfiguration()
+    void testContextPathConfiguration()
         throws Exception
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();

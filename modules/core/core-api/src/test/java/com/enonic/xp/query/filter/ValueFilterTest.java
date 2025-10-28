@@ -6,12 +6,11 @@ import com.enonic.xp.data.ValueFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ValueFilterTest
+class ValueFilterTest
 {
 
     @Test
-    public void multiple_values()
-        throws Exception
+    void multiple_values()
     {
         String[] strings = new String[]{"one", "two", "three"};
 
@@ -27,7 +26,7 @@ public class ValueFilterTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         String[] strings = new String[]{"one", "two", "three"};
 

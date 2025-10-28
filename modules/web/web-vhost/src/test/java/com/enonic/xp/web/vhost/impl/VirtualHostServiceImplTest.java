@@ -3,7 +3,6 @@ package com.enonic.xp.web.vhost.impl;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -23,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VirtualHostServiceImplTest
+class VirtualHostServiceImplTest
 {
     @Test
-    public void testNoConfig()
+    void testNoConfig()
     {
         final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( Map.of() );
 
@@ -38,7 +37,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testLoadedConfig_none()
+    void testLoadedConfig_none()
         throws Exception
     {
         final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "none" ) );
@@ -51,7 +50,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testLoadedConfig_simple()
+    void testLoadedConfig_simple()
         throws Exception
     {
         final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "simple" ) );
@@ -67,7 +66,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testLoadedConfig_disable()
+    void testLoadedConfig_disable()
         throws Exception
     {
         final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "disable" ) );
@@ -76,7 +75,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testLoadedConfig_complete()
+    void testLoadedConfig_complete()
         throws Exception
     {
         final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( loadConfig( "complete" ) );
@@ -100,7 +99,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testEnabled()
+    void testEnabled()
     {
         final VirtualHostServiceImpl virtualHostService = new VirtualHostServiceImpl( Collections.singletonMap( "enabled", "true" ) );
 
@@ -108,7 +107,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testGetVirtualHosts()
+    void testGetVirtualHosts()
     {
         final Map<String, String> configurationMap = new HashMap<>();
 
@@ -128,7 +127,7 @@ public class VirtualHostServiceImplTest
     }
 
     @Test
-    public void testOrder()
+    void testOrder()
     {
         final Map<String, String> configurationMap = new HashMap<>();
 

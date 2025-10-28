@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LayoutDescriptorsTest
+class LayoutDescriptorsTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         assertTrue( LayoutDescriptors.empty().isEmpty() );
     }

@@ -15,7 +15,7 @@ import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class IsRunningHandlerTest
+class IsRunningHandlerTest
     extends ScriptTestSupport
 {
     private TaskService taskService;
@@ -30,7 +30,7 @@ public class IsRunningHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final TaskInfo taskInfo = TaskInfo.create().
             state( TaskState.RUNNING ).
@@ -47,8 +47,7 @@ public class IsRunningHandlerTest
     }
 
     @Test
-    public void testIsRunningFalse()
-        throws Exception
+    void testIsRunningFalse()
     {
         Mockito.when( this.taskService.getRunningTasks() ).thenReturn( new ArrayList<>() );
 

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UrlResourceTest
+class UrlResourceTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -32,7 +32,7 @@ public class UrlResourceTest
     }
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         applicationsDir = Files.createDirectory( this.temporaryFolder.resolve( "applications" ) );
@@ -41,7 +41,7 @@ public class UrlResourceTest
     }
 
     @Test
-    public void testGetResource()
+    void testGetResource()
         throws Exception
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/a/b.txt" );
@@ -64,7 +64,7 @@ public class UrlResourceTest
     }
 
     @Test
-    public void testGetResource_notFound()
+    void testGetResource_notFound()
         throws MalformedURLException
     {
         final ResourceKey key = ResourceKey.from( "myapplication:/not/exists.txt" );

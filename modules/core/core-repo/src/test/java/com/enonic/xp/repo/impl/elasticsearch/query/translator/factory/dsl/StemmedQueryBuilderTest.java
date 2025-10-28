@@ -7,47 +7,46 @@ import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class StemmedQueryBuilderTest
+class StemmedQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void simple()
+    void simple()
         throws Exception
     {
         test( "simple" );
     }
 
     @Test
-    public void multiple_fields()
+    void multiple_fields()
         throws Exception
     {
         test( "multiple_fields" );
     }
 
     @Test
-    public void operator()
+    void operator()
         throws Exception
     {
         test( "operator" );
     }
 
     @Test
-    public void weighted()
+    void weighted()
         throws Exception
     {
         test( "weighted" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );
     }
 
     @Test
-    public void invalid_language()
-        throws Exception
+    void invalid_language()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_language" ) );
     }

@@ -19,13 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SetRootPermissionsCommandTest
+class SetRootPermissionsCommandTest
     extends AbstractNodeTest
 {
 
     @Test
-    public void test_update_permissions()
-        throws Exception
+    void test_update_permissions()
     {
         assertNotNull( getNode( Node.ROOT_UUID ) );
         assertNull( anonymousContext().callWith( () -> getNode( Node.ROOT_UUID ) ) );
@@ -47,8 +46,7 @@ public class SetRootPermissionsCommandTest
     }
 
     @Test
-    public void update_without_permission()
-        throws Exception
+    void update_without_permission()
     {
         assertThrows(NodeAccessException.class, () -> anonymousContext().callWith( () -> SetRootPermissionsCommand.create().
             indexServiceInternal( this.indexServiceInternal ).

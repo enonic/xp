@@ -14,20 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ConfigPathsTest
+class ConfigPathsTest
 {
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void testCurrent()
+    void testCurrent()
     {
         final ConfigPaths paths = ConfigPaths.get();
         assertNotNull( paths );
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final ConfigPaths paths = create( "" );
         assertEquals( 0, Lists.newArrayList( paths ).size() );
@@ -35,7 +35,7 @@ public class ConfigPathsTest
     }
 
     @Test
-    public void testSingle()
+    void testSingle()
         throws Exception
     {
         final ConfigPaths paths = create( this.temporaryFolder.toFile().getAbsolutePath() );
@@ -47,7 +47,7 @@ public class ConfigPathsTest
     }
 
     @Test
-    public void testMultiple()
+    void testMultiple()
         throws Exception
     {
         final Path dir1 = Files.createDirectory( this.temporaryFolder.resolve( "dir1" ) );

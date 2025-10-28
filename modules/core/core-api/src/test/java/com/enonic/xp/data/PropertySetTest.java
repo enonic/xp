@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PropertySetTest
+class PropertySetTest
 {
     @Test
-    public void setProperty_given_unsuccessive_index_then_IndexOutOfBoundsException_is_thrown()
+    void setProperty_given_unsuccessive_index_then_IndexOutOfBoundsException_is_thrown()
     {
         PropertySet set = new PropertyTree().newSet();
 
@@ -24,7 +24,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void setString_creates_Property()
+    void setString_creates_Property()
     {
         PropertySet set = new PropertyTree().newSet();
 
@@ -38,7 +38,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void setPropertySet()
+    void setPropertySet()
     {
         final PropertyTree tree = new PropertyTree();
         PropertySet set = tree.newSet();
@@ -78,7 +78,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void getString()
+    void getString()
     {
         PropertySet set = new PropertyTree().newSet();
         set.setString( "myProp", 0, "myValue" );
@@ -88,7 +88,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void addLongs()
+    void addLongs()
     {
         PropertySet set = new PropertyTree().newSet();
         Property[] properties = set.addLongs( "longs", 1L, 2L, 3L );
@@ -99,7 +99,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void removeProperties()
+    void removeProperties()
     {
         final PropertyTree tree = new PropertyTree();
         PropertySet set = tree.newSet();
@@ -111,7 +111,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void setting_with_same_index_twice_overwrites()
+    void setting_with_same_index_twice_overwrites()
     {
         PropertySet set = new PropertyTree().newSet();
         set.setString( "a", "1" );
@@ -142,7 +142,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void when_copy_then_values_within_copied_set_equals()
+    void when_copy_then_values_within_copied_set_equals()
     {
         PropertyTree sourceTree = new PropertyTree();
         PropertySet setSource = sourceTree.addSet( "setSource" );
@@ -157,7 +157,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void attaching_detached_PropertySet()
+    void attaching_detached_PropertySet()
     {
         PropertySet set = new PropertySet(null , 0);
         Property aProperty = set.addString( "myString", "a" );
@@ -181,7 +181,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void toMap()
+    void toMap()
     {
         PropertySet set = new PropertyTree().newSet();
 
@@ -194,7 +194,7 @@ public class PropertySetTest
     }
 
     @Test
-    public void replace_value_with_different_type()
+    void replace_value_with_different_type()
     {
         PropertySet set = new PropertyTree().newSet();
 

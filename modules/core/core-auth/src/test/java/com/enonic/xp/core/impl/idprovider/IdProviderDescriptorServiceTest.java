@@ -13,7 +13,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IdProviderDescriptorServiceTest
+class IdProviderDescriptorServiceTest
     extends ApplicationTestSupport
 {
 
@@ -21,7 +21,6 @@ public class IdProviderDescriptorServiceTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         addApplication( "myapp1", "/apps/myapp1" );
         this.service = new IdProviderDescriptorServiceImpl();
@@ -29,8 +28,7 @@ public class IdProviderDescriptorServiceTest
     }
 
     @Test
-    public void testGetDescriptor()
-        throws Exception
+    void testGetDescriptor()
     {
         final IdProviderDescriptor idProviderDescriptor = this.service.getDescriptor( ApplicationKey.from( "myapp1" ) );
 

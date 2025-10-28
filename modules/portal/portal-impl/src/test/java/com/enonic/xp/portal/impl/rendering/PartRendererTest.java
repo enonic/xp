@@ -9,8 +9,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PartRendererTest
+class PartRendererTest
 {
     private PortalRequest portalRequest;
 
@@ -55,7 +55,7 @@ public class PartRendererTest
     }
 
     @BeforeEach
-    public void before()
+    void before()
     {
         partDescriptorService = mock( PartDescriptorService.class );
         controllerScriptFactory = mock( ControllerScriptFactory.class );
@@ -71,7 +71,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void emptyComponentEditMode()
+    void emptyComponentEditMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.EDIT );
@@ -80,7 +80,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void emptyComponentPreviewMode()
+    void emptyComponentPreviewMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.PREVIEW );
@@ -89,7 +89,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void emptyComponentInlineMode()
+    void emptyComponentInlineMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.INLINE );
@@ -98,7 +98,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void emptyComponentLiveMode()
+    void emptyComponentLiveMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.LIVE );
@@ -107,14 +107,14 @@ public class PartRendererTest
     }
 
     @Test
-    public void emptyComponentNoMode()
+    void emptyComponentNoMode()
     {
         String response = this.configureEmptyComponent( RenderMode.ADMIN );
         String result = "<div data-portal-component-type=\"part\"></div>";
         assertEquals( result, response );    }
 
     @Test
-    public void errorComponentPlaceHolderEditMode()
+    void errorComponentPlaceHolderEditMode()
     {
         // setup
         final PartDescriptor partDescriptor = PartDescriptor.create()
@@ -139,7 +139,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void htmlResponseComponentEditMode()
+    void htmlResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )
@@ -178,7 +178,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void htmlResponseComponentEditModeNoMethodToHandleReq()
+    void htmlResponseComponentEditModeNoMethodToHandleReq()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )
@@ -214,7 +214,7 @@ public class PartRendererTest
     }
 
     @Test
-    public void nullResponseComponentEditMode()
+    void nullResponseComponentEditMode()
     {
         final PartDescriptor partDescriptor = PartDescriptor.create()
             .displayName( "My part component" )

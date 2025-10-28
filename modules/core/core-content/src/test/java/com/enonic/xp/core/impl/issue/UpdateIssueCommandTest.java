@@ -29,14 +29,13 @@ import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class UpdateIssueCommandTest
+class UpdateIssueCommandTest
 {
 
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
         Mockito.when( this.nodeService.update( Mockito.any( UpdateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceUpdate );
@@ -44,7 +43,7 @@ public class UpdateIssueCommandTest
     }
 
     @Test
-    public void update()
+    void update()
     {
         final UpdateIssueParams params = makeUpdateIssueParams();
         final UpdateIssueCommand command = updateIssueCommand( params );
@@ -71,7 +70,6 @@ public class UpdateIssueCommandTest
     }
 
     private Node mockNodeServiceUpdate( final InvocationOnMock invocation )
-        throws Throwable
     {
         UpdateNodeParams params = (UpdateNodeParams) invocation.getArguments()[0];
 
@@ -79,7 +77,6 @@ public class UpdateIssueCommandTest
     }
 
     private Node mockNodeServiceGet( final InvocationOnMock invocation )
-        throws Throwable
     {
         NodeId nodeId = (NodeId) invocation.getArguments()[0];
 

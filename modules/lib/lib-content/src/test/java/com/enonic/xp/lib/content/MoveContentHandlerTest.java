@@ -20,12 +20,12 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.mockito.Mockito.when;
 
 @Disabled
-public class MoveContentHandlerTest
+class MoveContentHandlerTest
     extends BaseContentHandlerTest
 {
 
     @Test
-    public void testExample()
+    void testExample()
     {
         // example 1
         final Content sourceContent = mockContent( "/my-site/my-content-name" );
@@ -45,8 +45,7 @@ public class MoveContentHandlerTest
     }
 
     @Test
-    public void moveSameParentPath()
-        throws Exception
+    void moveSameParentPath()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );

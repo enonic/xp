@@ -10,7 +10,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.eq;
 
-public class AddMembersHandlerTest
+class AddMembersHandlerTest
     extends ScriptTestSupport
 {
     private static final PrincipalKey USER = PrincipalKey.from( "user:mystore:user1" );
@@ -31,7 +31,7 @@ public class AddMembersHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         runScript( "/lib/xp/examples/auth/addMembers.js" );
 
@@ -40,7 +40,7 @@ public class AddMembersHandlerTest
     }
 
     @Test
-    public void testAddUserAndGroupMembersToRole()
+    void testAddUserAndGroupMembersToRole()
     {
         runFunction( "/test/addMembers-test.js", "addUserAndGroupMembersToRole" );
 
@@ -49,21 +49,21 @@ public class AddMembersHandlerTest
     }
 
     @Test
-    public void testAddGroupMemberToRole()
+    void testAddGroupMemberToRole()
     {
         runFunction( "/test/addMembers-test.js", "addGroupMemberToRole" );
         Mockito.verify( this.securityService ).addRelationship( eq( PrincipalRelationship.from( ROLE ).to( GROUP ) ) );
     }
 
     @Test
-    public void testAddMembersEmptyListPassed()
+    void testAddMembersEmptyListPassed()
     {
         runFunction( "/test/addMembers-test.js", "addMembersEmptyList" );
         Mockito.verify( this.securityService, Mockito.times( 0 ) ).addRelationship( Mockito.any() );
     }
 
     @Test
-    public void testAddMembersWithoutKey()
+    void testAddMembersWithoutKey()
     {
         runFunction( "/test/addMembers-test.js", "addMembersWithoutKey" );
     }

@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RegionDescriptorsTest
+class RegionDescriptorsTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final RegionDescriptors regionDescriptors = RegionDescriptors.create().
             add( RegionDescriptor.create().name( "regionDescriptor1" ).build() ).

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-public class TaskResourceTest
+class TaskResourceTest
     extends JaxRsResourceTestSupport
 {
     private TaskService taskService;
@@ -39,7 +39,7 @@ public class TaskResourceTest
     }
 
     @Test
-    public void getTask()
+    void getTask()
         throws Exception
     {
         final TaskId taskId = TaskId.from( "123" );
@@ -62,8 +62,7 @@ public class TaskResourceTest
     }
 
     @Test
-    public void getTaskNotFound()
-        throws Exception
+    void getTaskNotFound()
     {
         final WebApplicationException ex = assertThrows(WebApplicationException.class, () -> {
             taskResource.getTask( "123" );

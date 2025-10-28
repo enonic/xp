@@ -14,25 +14,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ServletRequestUrlHelperTest
+class ServletRequestUrlHelperTest
 {
     private HttpServletRequest req;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.req = mock( HttpServletRequest.class );
     }
 
     @Test
-    public void createUri()
+    void createUri()
     {
         final String uri4 = ServletRequestUrlHelper.createUri( req, "/a/b" );
         assertEquals( "/a/b", uri4 );
     }
 
     @Test
-    public void createUriWithHost_http_port_80()
+    void createUriWithHost_http_port_80()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -42,7 +42,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createUriWithHost_https_port_443()
+    void createUriWithHost_https_port_443()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "https" );
@@ -53,7 +53,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createUriWithHost_http_port_8080()
+    void createUriWithHost_http_port_8080()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -63,7 +63,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createUri_no_vhost()
+    void createUri_no_vhost()
     {
         VirtualHostHelper.setVirtualHost( this.req, null );
 
@@ -72,7 +72,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void rewriteUri_vhost()
+    void rewriteUri_vhost()
     {
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
@@ -96,7 +96,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void contentDispositionAttachment_filename_with_comma()
+    void contentDispositionAttachment_filename_with_comma()
     {
         final String fileName = "Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf";
         assertEquals( "attachment; filename=\"Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf\"; " +
@@ -105,7 +105,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createWsUriWithHost_http_port_8080()
+    void createWsUriWithHost_http_port_8080()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "ws" );
@@ -116,7 +116,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createWsUriWithHost_http_port_80()
+    void createWsUriWithHost_http_port_80()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "ws" );
@@ -127,7 +127,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createWssUriWithHost_https_port_8080()
+    void createWssUriWithHost_https_port_8080()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "wss" );
@@ -138,7 +138,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void createWssUriWithHost_https_port_443()
+    void createWssUriWithHost_https_port_443()
     {
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "wss" );
@@ -149,7 +149,7 @@ public class ServletRequestUrlHelperTest
     }
 
     @Test
-    public void rewriteUri_vhost_outOfScope()
+    void rewriteUri_vhost_outOfScope()
     {
         final VirtualHost vhost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );

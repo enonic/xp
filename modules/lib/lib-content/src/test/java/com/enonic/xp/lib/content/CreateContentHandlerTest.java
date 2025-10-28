@@ -30,7 +30,7 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class CreateContentHandlerTest
+class CreateContentHandlerTest
     extends BaseContentHandlerTest
 {
     private void mockCreateContent()
@@ -101,35 +101,35 @@ public class CreateContentHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockCreateContent();
         runScript( "/lib/xp/examples/content/create.js" );
     }
 
     @Test
-    public void createContent()
+    void createContent()
     {
         mockCreateContent();
         runFunction( "/test/CreateContentHandlerTest.js", "createContent" );
     }
 
     @Test
-    public void createContentWithChildOrder()
+    void createContentWithChildOrder()
     {
         mockCreateContent();
         runFunction( "/test/CreateContentHandlerTest.js", "createContentWithChildOrder" );
     }
 
     @Test
-    public void createContentWithPage()
+    void createContentWithPage()
     {
         mockCreateContent();
         runFunction( "/test/CreateContentHandlerTest.js", "createContentWithPage" );
     }
 
     @Test
-    public void createContentAlreadyExists()
+    void createContentAlreadyExists()
     {
         final Exception alreadyExistException =
             new ContentAlreadyExistsException( ContentPath.from( "/a/b/mycontent" ), RepositoryId.from( "some.repo" ),
@@ -144,7 +144,7 @@ public class CreateContentHandlerTest
     }
 
     @Test
-    public void createContentAutoGenerateName()
+    void createContentAutoGenerateName()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
@@ -157,7 +157,7 @@ public class CreateContentHandlerTest
     }
 
     @Test
-    public void createContentAutoGenerateNameWithExistingName()
+    void createContentAutoGenerateNameWithExistingName()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );
@@ -174,7 +174,7 @@ public class CreateContentHandlerTest
     }
 
     @Test
-    public void createContentWithWorkflow()
+    void createContentWithWorkflow()
     {
         when( this.contentService.create( any( CreateContentParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateContentParams) mock.getArguments()[0] ) );

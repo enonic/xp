@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class TaskDescriptorTest
+class TaskDescriptorTest
 {
     @Test
-    public void testDescriptor()
+    void testDescriptor()
     {
         final DescriptorKey key = DescriptorKey.from( ApplicationKey.SYSTEM, "test" );
         final Form form = Form.empty();
@@ -30,7 +30,7 @@ public class TaskDescriptorTest
     }
 
     @Test
-    public void testDescriptorWithoutConfig()
+    void testDescriptorWithoutConfig()
     {
         final DescriptorKey key = DescriptorKey.from( ApplicationKey.SYSTEM, "test" );
 

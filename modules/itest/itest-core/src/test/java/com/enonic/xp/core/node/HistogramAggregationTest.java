@@ -19,19 +19,17 @@ import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HistogramAggregationTest
+class HistogramAggregationTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void intervals()
-        throws Exception
+    void intervals()
     {
         createNode( 10d, "n1", NodePath.ROOT );
         createNode( 20d, "n2", NodePath.ROOT );
@@ -70,8 +68,7 @@ public class HistogramAggregationTest
     }
 
     @Test
-    public void order()
-        throws Exception
+    void order()
     {
         createNode( 1d, "n1", NodePath.ROOT );
         createNode( 2d, "n2", NodePath.ROOT );

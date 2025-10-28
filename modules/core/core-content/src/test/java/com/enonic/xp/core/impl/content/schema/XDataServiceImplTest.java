@@ -13,7 +13,7 @@ import com.enonic.xp.schema.xdata.XDatas;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class XDataServiceImplTest
+class XDataServiceImplTest
     extends ApplicationTestSupport
 {
     protected XDataServiceImpl service;
@@ -22,14 +22,13 @@ public class XDataServiceImplTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         this.service = new XDataServiceImpl( this.applicationService, this.resourceService );
         this.contentTypeService = new ContentTypeServiceImpl( this.resourceService, this.applicationService, null );
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final XDatas types1 = this.service.getAll();
         assertNotNull( types1 );
@@ -44,7 +43,7 @@ public class XDataServiceImplTest
     }
 
     @Test
-    public void testSystemXDatas()
+    void testSystemXDatas()
     {
         XDatas xDatas = service.getAll();
         assertNotNull( xDatas );
@@ -65,7 +64,7 @@ public class XDataServiceImplTest
     }
 
     @Test
-    public void testGetByNames()
+    void testGetByNames()
     {
         XDatas xDatas = service.getByNames( XDataNames.from( MediaInfo.GPS_INFO_METADATA_NAME ) );
         assertEquals( 1, xDatas.getSize() );
@@ -79,7 +78,7 @@ public class XDataServiceImplTest
     }
 
     @Test
-    public void testApplications()
+    void testApplications()
     {
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );

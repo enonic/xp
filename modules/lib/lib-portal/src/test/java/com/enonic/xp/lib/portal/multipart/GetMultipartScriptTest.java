@@ -14,7 +14,7 @@ import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
 import com.enonic.xp.web.multipart.MultipartService;
 
-public class GetMultipartScriptTest
+class GetMultipartScriptTest
     extends ScriptTestSupport
 {
     private MultipartService multipartService;
@@ -101,112 +101,112 @@ public class GetMultipartScriptTest
     }
 
     @Test
-    public void getForm()
+    void getForm()
     {
         createForm();
         runFunction( "/test/multipart-test.js", "getForm" );
     }
 
     @Test
-    public void getFormWithDuplicates()
+    void getFormWithDuplicates()
     {
         createFormWithDuplicates();
         runFunction( "/test/multipart-test.js", "getFormWithDuplicates" );
     }
 
     @Test
-    public void getForm_empty()
+    void getForm_empty()
     {
         createEmptyForm();
         runFunction( "/test/multipart-test.js", "getForm_empty" );
     }
 
     @Test
-    public void getBytes()
+    void getBytes()
     {
         createForm();
         runFunction( "/test/multipart-test.js", "getBytes" );
     }
 
     @Test
-    public void getBytesMultiple()
+    void getBytesMultiple()
     {
         createFormWithDuplicates();
         runFunction( "/test/multipart-test.js", "getBytesMultiple" );
     }
 
     @Test
-    public void getBytes_notFound()
+    void getBytes_notFound()
     {
         createEmptyForm();
         runFunction( "/test/multipart-test.js", "getBytes_notFound" );
     }
 
     @Test
-    public void getItem()
+    void getItem()
     {
         createForm();
         runFunction( "/test/multipart-test.js", "getItem" );
     }
 
     @Test
-    public void getItemMultiple()
+    void getItemMultiple()
     {
         createFormWithDuplicates();
         runFunction( "/test/multipart-test.js", "getItemMultiple" );
     }
 
     @Test
-    public void getItem_notFound()
+    void getItem_notFound()
     {
         createEmptyForm();
         runFunction( "/test/multipart-test.js", "getItem_notFound" );
     }
 
     @Test
-    public void getText()
+    void getText()
     {
         createTextForm();
         runFunction( "/test/multipart-test.js", "getText" );
     }
 
     @Test
-    public void getTextMultiple()
+    void getTextMultiple()
     {
         createFormWithDuplicates();
         runFunction( "/test/multipart-test.js", "getTextMultiple" );
     }
 
     @Test
-    public void getText_notFound()
+    void getText_notFound()
     {
         createForm();
         runFunction( "/test/multipart-test.js", "getText_notFound" );
     }
 
     @Test
-    public void testExample_getMultipartForm()
+    void testExample_getMultipartForm()
     {
         createFormExample();
         runScript( "/lib/xp/examples/portal/getMultipartForm.js" );
     }
 
     @Test
-    public void testExample_getMultipartItem()
+    void testExample_getMultipartItem()
     {
         createForm();
         runScript( "/lib/xp/examples/portal/getMultipartItem.js" );
     }
 
     @Test
-    public void testExample_getMultipartStream()
+    void testExample_getMultipartStream()
     {
         createFormExample();
         runScript( "/lib/xp/examples/portal/getMultipartStream.js" );
     }
 
     @Test
-    public void testExample_getMultipartText()
+    void testExample_getMultipartText()
     {
         createTextForm();
         runScript( "/lib/xp/examples/portal/getMultipartText.js" );

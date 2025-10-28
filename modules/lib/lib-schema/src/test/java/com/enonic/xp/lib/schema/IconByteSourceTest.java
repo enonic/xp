@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.schema;
 
-import java.io.IOException;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
@@ -13,10 +12,10 @@ import com.enonic.xp.lib.schema.mapper.IconByteSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class IconByteSourceTest
+class IconByteSourceTest
 {
     @Test
-    public void testIcon()
+    void testIcon()
         throws Exception
     {
         final byte[] iconSource = new byte[]{0, 1};
@@ -36,7 +35,6 @@ public class IconByteSourceTest
         {
             @Override
             public boolean processBytes( final byte[] buf, final int off, final int len )
-                throws IOException
             {
                 assertEquals( 0, buf[0] );
                 assertEquals( 1, buf[1] );

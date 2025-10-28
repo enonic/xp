@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class NotExprTest
+class NotExprTest
 {
     @Test
-    public void testExpression()
+    void testExpression()
     {
         final CompareExpr inner = CompareExpr.eq( FieldExpr.from( "a" ), ValueExpr.number( 2 ) );
         final NotExpr expr = new NotExpr( inner );

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class InternalContextTest
+class InternalContextTest
 {
     @Test
     void equalsContract()

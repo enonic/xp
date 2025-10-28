@@ -14,14 +14,14 @@ import com.enonic.xp.script.serializer.MapSerializable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GraalObjectConverterTest
+class GraalObjectConverterTest
 {
     private Context context;
 
     private ObjectConverter instance;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.context = new GraalJSContextFactory().create();
 
@@ -30,13 +30,13 @@ public class GraalObjectConverterTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         this.context.close();
     }
 
     @Test
-    public void testToJs()
+    void testToJs()
     {
         final String[] values = {"value1", "value2", "value3"};
 
@@ -48,7 +48,7 @@ public class GraalObjectConverterTest
     }
 
     @Test
-    public void testToJs_Primitives()
+    void testToJs_Primitives()
     {
         final int[] values = {1, 2, 3};
 
@@ -59,7 +59,7 @@ public class GraalObjectConverterTest
     }
 
     @Test
-    public void testToJS_MapSerializable()
+    void testToJS_MapSerializable()
     {
         Object result = instance.toJs( new SimpleMapSerializer() );
         Value bindings = this.context.getBindings( "js" );

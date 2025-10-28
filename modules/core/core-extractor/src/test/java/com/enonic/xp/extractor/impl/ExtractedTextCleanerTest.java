@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ExtractedTextCleanerTest
+class ExtractedTextCleanerTest
 {
     @Test
-    public void strip_consecutive_linebreaks_and_whitespaces()
+    void strip_consecutive_linebreaks_and_whitespaces()
         throws Exception
     {
         final String toBeCleaned;
@@ -28,7 +28,7 @@ public class ExtractedTextCleanerTest
     }
 
     @Test
-    public void strip_consecutive_linebreaks_and_whitespaces_2()
+    void strip_consecutive_linebreaks_and_whitespaces_2()
         throws Exception
     {
         final String toBeCleaned;
@@ -48,8 +48,7 @@ public class ExtractedTextCleanerTest
     }
 
     @Test
-    public void strip_control_characters()
-        throws Exception
+    void strip_control_characters()
     {
 
         final String nastyString =

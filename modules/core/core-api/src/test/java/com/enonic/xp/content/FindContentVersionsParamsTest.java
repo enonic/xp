@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindContentVersionsParamsTest
+class FindContentVersionsParamsTest
 {
     @Test
-    public void testEquals()
-        throws Exception
+    void testEquals()
     {
         final ContentId contentId = ContentId.from( "a" );
 

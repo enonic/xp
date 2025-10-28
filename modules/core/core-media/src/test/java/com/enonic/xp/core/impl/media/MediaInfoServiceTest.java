@@ -17,12 +17,12 @@ import com.enonic.xp.media.MediaInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MediaInfoServiceTest
+class MediaInfoServiceTest
 {
     private MediaInfoServiceImpl service;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.service = new MediaInfoServiceImpl(source ->
                                                 {
@@ -39,7 +39,7 @@ public class MediaInfoServiceTest
     }
 
     @Test
-    public void createImmutableTextLine_generation()
+    void createImmutableTextLine_generation()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "NikonD100.jpg" ) );
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
@@ -53,14 +53,14 @@ public class MediaInfoServiceTest
     }
 
     @Test
-    public void multiple_colorSpace_entries()
+    void multiple_colorSpace_entries()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-colorSpace-entries.jpg" ) );
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );
     }
 
     @Test
-    public void multiple_FNumber_entries()
+    void multiple_FNumber_entries()
     {
         final ByteSource byteSource = Resources.asByteSource( getClass().getResource( "Multiple-FNumber-entries.JPG" ) );
         final MediaInfo mediaInfo = this.service.parseMediaInfo( byteSource );

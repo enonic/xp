@@ -10,16 +10,16 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AdminToolDescriptorsTest
+class AdminToolDescriptorsTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         assertTrue( AdminToolDescriptors.empty().isEmpty() );
     }
 
     @Test
-    public void from()
+    void from()
     {
         final AdminToolDescriptor adminToolDescriptor1 = AdminToolDescriptor.create().
             displayName( "My admin tool" ).

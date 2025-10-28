@@ -6,10 +6,10 @@ import com.enonic.xp.repo.impl.SearchSource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ESSourceFactoryTest
+class ESSourceFactoryTest
 {
     @Test
-    public void unknown_impl()
+    void unknown_impl()
         throws Exception
     {
 

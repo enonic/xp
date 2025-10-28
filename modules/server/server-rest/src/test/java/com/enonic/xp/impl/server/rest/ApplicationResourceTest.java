@@ -29,7 +29,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ApplicationResourceTest
+class ApplicationResourceTest
     extends JaxRsResourceTestSupport
 {
     private ApplicationService applicationService;
@@ -46,7 +46,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install()
+    void install()
     {
         ApplicationResource resource = getResourceInstance();
 
@@ -73,7 +73,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install_exception()
+    void install_exception()
     {
         ApplicationResource resource = getResourceInstance();
 
@@ -98,8 +98,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install_missing_file_item()
-        throws Exception
+    void install_missing_file_item()
     {
         ApplicationResource resource = getResourceInstance();
 
@@ -112,7 +111,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install_url()
+    void install_url()
         throws Exception
     {
         Application application = createApplication();
@@ -129,7 +128,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install_url_not_allowed_protocol()
+    void install_url_not_allowed_protocol()
         throws Exception
     {
         Application application = createApplication( "ftp://enonic.jar" );
@@ -145,7 +144,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install_url_process_error()
+    void install_url_process_error()
         throws Exception
     {
         Application application = createApplication();
@@ -162,7 +161,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void install_invalid_url()
+    void install_invalid_url()
         throws Exception
     {
         Application application = createApplication( "invalid url" );
@@ -175,7 +174,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void test_start_application()
+    void test_start_application()
         throws Exception
     {
         final Application application = createApplication();
@@ -190,7 +189,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void test_stop_application()
+    void test_stop_application()
         throws Exception
     {
         final Application application = createApplication();
@@ -205,7 +204,7 @@ public class ApplicationResourceTest
     }
 
     @Test
-    public void test_uninstall_application()
+    void test_uninstall_application()
         throws Exception
     {
         final Application application = createApplication();

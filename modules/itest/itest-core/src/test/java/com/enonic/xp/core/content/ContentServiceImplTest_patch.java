@@ -25,13 +25,12 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContentServiceImplTest_patch
+class ContentServiceImplTest_patch
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void patch_content_modified_time_not_changed()
-        throws Exception
+    void patch_content_modified_time_not_changed()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -57,8 +56,7 @@ public class ContentServiceImplTest_patch
     }
 
     @Test
-    public void patch_content_without_admin_permissions()
-        throws Exception
+    void patch_content_without_admin_permissions()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -82,8 +80,7 @@ public class ContentServiceImplTest_patch
     }
 
     @Test
-    public void patch_content_attachments()
-        throws Exception
+    void patch_content_attachments()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -169,8 +166,7 @@ public class ContentServiceImplTest_patch
     }
 
     @Test
-    public void patch_content_thumbnail()
-        throws Exception
+    void patch_content_thumbnail()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )

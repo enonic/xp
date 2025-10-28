@@ -2,7 +2,7 @@ package com.enonic.xp.testing.usage;
 
 import com.enonic.xp.testing.ScriptRunnerSupport;
 
-public class MockScriptTest
+class MockScriptTest
     extends ScriptRunnerSupport
 {
     @Override

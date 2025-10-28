@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ReadyProbeServletTest
+class ReadyProbeServletTest
 {
     private static final List<String> TRACKED_SERVICE_NAMES =
         List.of( "com.enonic.xp.export.ExportService", "com.enonic.xp.scheduler.SchedulerService",
@@ -47,14 +47,14 @@ public class ReadyProbeServletTest
     private BundleContext bundleContext;
 
     @BeforeEach
-    public void activate()
+    void activate()
         throws Exception
     {
         when( res.getWriter() ).thenReturn( printWriter );
     }
 
     @Test
-    public void testReady()
+    void testReady()
         throws Exception
     {
         for ( String s : TRACKED_SERVICE_NAMES )
@@ -77,7 +77,7 @@ public class ReadyProbeServletTest
     }
 
     @Test
-    public void testNotReady()
+    void testNotReady()
         throws Exception
     {
         final ReadyProbeServlet servlet = new ReadyProbeServlet( bundleContext );

@@ -17,7 +17,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class ConnectNodeTest
+class ConnectNodeTest
     extends BaseNodeHandlerTest
 {
     private void mockCreateNode()
@@ -30,7 +30,7 @@ public class ConnectNodeTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         mockCreateNode();
 

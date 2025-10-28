@@ -12,7 +12,7 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ContributionInjectionTest
+class ContributionInjectionTest
 {
     private ContributionInjection injection;
 
@@ -21,7 +21,7 @@ public class ContributionInjectionTest
     private PortalResponse.Builder responseBuilder;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.injection = new ContributionInjection();
         this.request = new PortalRequest();
@@ -34,7 +34,7 @@ public class ContributionInjectionTest
     }
 
     @Test
-    public void testInject()
+    void testInject()
     {
         this.responseBuilder.contribution( HtmlTag.BODY_END, "1" );
         this.responseBuilder.contribution( HtmlTag.BODY_END, "2" );
@@ -46,7 +46,7 @@ public class ContributionInjectionTest
     }
 
     @Test
-    public void testInject_noContributions()
+    void testInject_noContributions()
     {
         final List<String> result = doInject( HtmlTag.BODY_END );
         assertNotNull( result );

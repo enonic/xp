@@ -18,12 +18,11 @@ import com.enonic.xp.repo.impl.node.PushNodesCommand;
 import com.enonic.xp.repo.impl.node.ResolveSyncWorkCommand;
 
 @Disabled("Performance test is only for manual run")
-public class PushNodesCommandPerformanceTest
+class PushNodesCommandPerformanceTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }

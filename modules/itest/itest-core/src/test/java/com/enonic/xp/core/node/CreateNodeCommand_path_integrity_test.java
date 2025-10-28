@@ -21,18 +21,17 @@ import com.enonic.xp.repo.impl.node.CreateNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateNodeCommand_path_integrity_test
+class CreateNodeCommand_path_integrity_test
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void create()
+    void create()
     {
         final int concurrentAttempts = 5;
         final AtomicInteger exceptionCounter = new AtomicInteger();

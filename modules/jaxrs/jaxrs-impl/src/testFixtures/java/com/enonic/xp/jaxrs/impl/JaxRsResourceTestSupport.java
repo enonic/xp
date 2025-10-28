@@ -53,8 +53,7 @@ public abstract class JaxRsResourceTestSupport
     }
 
     @BeforeEach
-    public final void setUp()
-        throws Exception
+    final void setUp()
     {
         this.multipartService = Mockito.mock( MultipartService.class );
 
@@ -71,7 +70,7 @@ public abstract class JaxRsResourceTestSupport
     }
 
     @AfterEach
-    public final void destroy()
+    final void destroy()
     {
         final LocalScope localScope = ContextAccessor.current().getLocalScope();
 

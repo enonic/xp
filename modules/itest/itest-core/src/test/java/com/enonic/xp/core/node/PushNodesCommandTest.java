@@ -99,8 +99,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_child_missing_permission()
-        throws Exception
+    void push_child_missing_permission()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -125,8 +124,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_fail_if_node_already_exists()
-        throws Exception
+    void push_fail_if_node_already_exists()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).name( "my-node" ).build() );
@@ -142,8 +140,7 @@ class PushNodesCommandTest
 
 
     @Test
-    public void push_rename_push_test()
-        throws Exception
+    void push_rename_push_test()
     {
         PushNodesResult result;
 
@@ -171,8 +168,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_child_fail_if_parent_does_not_exists()
-        throws Exception
+    void push_child_fail_if_parent_does_not_exists()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).name( "my-node" ).build() );
@@ -186,8 +182,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void ensure_order_for_publish_with_children()
-        throws Exception
+    void ensure_order_for_publish_with_children()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -228,8 +223,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void moved_nodes_yields_reindex_of_children()
-        throws Exception
+    void moved_nodes_yields_reindex_of_children()
     {
         final Node node1 =
             createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "node1" ).setNodeId( NodeId.from( "node1" ) ).build() );
@@ -270,8 +264,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_rename_push()
-        throws Exception
+    void push_rename_push()
     {
         final Node parent = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -326,8 +319,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void rename_to_name_already_there_but_renamed_in_same_push()
-        throws Exception
+    void rename_to_name_already_there_but_renamed_in_same_push()
     {
         final Node a = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "a" ).setNodeId( NodeId.from( "a" ) ).build() );
 
@@ -347,8 +339,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_after_rename()
-        throws Exception
+    void push_after_rename()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -405,8 +396,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_after_update()
-        throws Exception
+    void push_after_update()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -427,8 +417,7 @@ class PushNodesCommandTest
     }
 
     @Test
-    public void push_with_capital_node_id()
-        throws Exception
+    void push_with_capital_node_id()
     {
         final Node node = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).name( "my-node" ).setNodeId( NodeId.from( "MyNodeId" ) ).build() );

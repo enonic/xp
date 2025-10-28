@@ -7,10 +7,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentNameTest
+class ContentNameTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -42,7 +42,7 @@ public class ContentNameTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         final ContentName name = ContentName.from( "mycontent" );
         assertEquals( false, name.isUnnamed() );
@@ -51,7 +51,7 @@ public class ContentNameTest
     }
 
     @Test
-    public void testUnnamed()
+    void testUnnamed()
     {
         final ContentName name = ContentName.from( "__unnamed__" );
         assertEquals( true, name.isUnnamed() );
@@ -60,7 +60,7 @@ public class ContentNameTest
     }
 
     @Test
-    public void testUnnamedWithUniqueness()
+    void testUnnamedWithUniqueness()
     {
         final ContentName name = ContentName.from( "__unnamed__123" );
         assertEquals( true, name.isUnnamed() );
@@ -69,7 +69,7 @@ public class ContentNameTest
     }
 
     @Test
-    public void testNewUniqueUnnamed()
+    void testNewUniqueUnnamed()
     {
         final ContentName name = ContentName.uniqueUnnamed();
         assertEquals( true, name.isUnnamed() );

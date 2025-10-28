@@ -50,7 +50,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ImageMediaHandlerTest
+class ImageMediaHandlerTest
 {
     private ImageMediaHandler handler;
 

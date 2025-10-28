@@ -16,20 +16,18 @@ import com.enonic.xp.node.Nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindIssuesCommandTest
+class FindIssuesCommandTest
 {
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
     }
 
     @Test
-    public void testFindIssues()
-        throws Exception
+    void testFindIssues()
     {
         final IssueQuery issueQuery = IssueQuery.create().from( 0 ).size( 20 ).status( IssueStatus.OPEN ).build();
         final FindIssuesCommand command = createCommand( issueQuery );
@@ -49,8 +47,7 @@ public class FindIssuesCommandTest
     }
 
     @Test
-    public void testFindIssuesByItems()
-        throws Exception
+    void testFindIssuesByItems()
     {
         final IssueQuery issueQuery =
             IssueQuery.create().from( 0 ).size( 20 ).status( IssueStatus.OPEN ).items( ContentIds.from( "content-id" ) ).build();

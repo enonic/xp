@@ -8,11 +8,11 @@ import com.enonic.xp.core.impl.image.ImageFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SepiaFilterTest
+class SepiaFilterTest
     extends BaseImageFilterTest
 {
     @Test
-    public void testOpaqueImage()
+    void testOpaqueImage()
     {
         ImageFunction function = newFilters().sepia( 20 );
 
@@ -28,7 +28,7 @@ public class SepiaFilterTest
     }
 
     @Test
-    public void testImageWithTransparentAreas()
+    void testImageWithTransparentAreas()
     {
         ImageFunction filter = newFilters().sepia( 20 );
 

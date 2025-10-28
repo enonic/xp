@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.io.TempDir;
 
-public class BaseDumpReaderTest
+class BaseDumpReaderTest
 {
 
     @TempDir

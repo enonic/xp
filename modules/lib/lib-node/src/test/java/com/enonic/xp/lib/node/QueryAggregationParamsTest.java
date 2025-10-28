@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class QueryAggregationParamsTest
+class QueryAggregationParamsTest
 {
     @Test
-    public void testMetricAggregations()
+    void testMetricAggregations()
     {
         final Map<String, Object> aggregations = new HashMap<>();
         aggregations.put( "maxPrice", createMetricAggregationAsMap( "max", "fieldName1" ) );
@@ -50,7 +50,7 @@ public class QueryAggregationParamsTest
     }
 
     @Test
-    public void testTermsAggregation()
+    void testTermsAggregation()
     {
         final Map<String, Object> termsAggregation = new HashMap<>();
 
@@ -75,7 +75,7 @@ public class QueryAggregationParamsTest
     }
 
     @Test
-    public void testTermsAggregationWithoutMinDocCount()
+    void testTermsAggregationWithoutMinDocCount()
     {
         final Map<String, Object> termsAggregation = new HashMap<>();
 

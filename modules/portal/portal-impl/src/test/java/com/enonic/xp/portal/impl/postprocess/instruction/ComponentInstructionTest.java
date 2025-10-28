@@ -34,7 +34,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ComponentInstructionTest
+class ComponentInstructionTest
 {
 
     private RendererDelegate rendererDelegate;
@@ -45,7 +45,6 @@ public class ComponentInstructionTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.rendererDelegate = mock( RendererDelegate.class );
         this.componentService = mock( ComponentService.class );
@@ -56,8 +55,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testInstructionWithPart()
-        throws Exception
+    void testInstructionWithPart()
     {
         returnOnRender( "<b>part content</b>" );
 
@@ -71,7 +69,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testLayoutNoServiceReturnsSameObject()
+    void testLayoutNoServiceReturnsSameObject()
     {
         final LayoutComponent layoutComponent =
             LayoutComponent.create().descriptor( DescriptorKey.from( "myapplication:layout" ) ).build();
@@ -80,7 +78,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testEmptyLayout()
+    void testEmptyLayout()
     {
         testLayoutIsReturned(LayoutComponent.create().build());
     }
@@ -101,7 +99,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testFragmentContentNotLayoutThrowsException()
+    void testFragmentContentNotLayoutThrowsException()
     {
         final PortalRequest portalRequest = new PortalRequest();
 
@@ -112,7 +110,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testFragmentContentThrowsWhenComponentNotFound()
+    void testFragmentContentThrowsWhenComponentNotFound()
     {
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapplication:layout" );
         final Regions regions =
@@ -127,7 +125,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testFragmentContent()
+    void testFragmentContent()
     {
         final ArgumentCaptor<Component> captor = ArgumentCaptor.forClass( Component.class );
         returnOnRender( "render result", captor.capture() );
@@ -148,8 +146,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testInstructionRenderByName()
-        throws Exception
+    void testInstructionRenderByName()
     {
         returnOnRender( "<b>part content</b>" );
 
@@ -166,7 +163,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testInstructionRenderFragment()
+    void testInstructionRenderFragment()
     {
         returnOnRender( "<b>part content</b>" );
 
@@ -183,7 +180,7 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testInstructionRenderFragmentWithLayout()
+    void testInstructionRenderFragmentWithLayout()
     {
         returnOnRender( "<b>part content</b>" );
 
@@ -207,35 +204,35 @@ public class ComponentInstructionTest
     }
 
     @Test
-    public void testFragmentInstructionWithoutRequestContentReturnsNull()
+    void testFragmentInstructionWithoutRequestContentReturnsNull()
     {
         final PortalResponse response = instruction.evaluate( new PortalRequest(), "COMPONENT fragment" );
         assertNull( response );
     }
 
     @Test
-    public void testWrongInstruction()
+    void testWrongInstruction()
     {
         final PortalResponse response = instruction.evaluate( new PortalRequest(), "WRONG module:myPartComponent" );
         assertNull( response );
     }
 
     @Test
-    public void testWrongInstructionLength()
+    void testWrongInstructionLength()
     {
         final PortalResponse response = instruction.evaluate( new PortalRequest(), "COMPONENT module:myPartComponent tooLong" );
         assertNull( response );
     }
 
     @Test
-    public void testNoContentInRequestReturnsNull()
+    void testNoContentInRequestReturnsNull()
     {
         final PortalResponse response = instruction.evaluate( new PortalRequest(), "COMPONENT r1/0" );
         assertNull( response );
     }
 
     @Test
-    public void testComponentNotFoundThrows()
+    void testComponentNotFoundThrows()
     {
         final PortalRequest portalRequest = new PortalRequest();
         final Content content = createPage( "content-id", "content-name", "myapplication:content-type" );

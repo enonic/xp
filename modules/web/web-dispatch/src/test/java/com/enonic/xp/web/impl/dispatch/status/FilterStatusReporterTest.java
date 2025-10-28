@@ -1,7 +1,6 @@
 package com.enonic.xp.web.impl.dispatch.status;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import com.google.common.net.MediaType;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
@@ -30,7 +28,7 @@ class FilterStatusReporterTest
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final Filter filter1 = new MyFilter();
@@ -65,14 +63,12 @@ class FilterStatusReporterTest
     {
         @Override
         public void init( final FilterConfig config )
-            throws ServletException
         {
             // Do nothing
         }
 
         @Override
         public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
-            throws IOException, ServletException
         {
             // Do nothing
         }

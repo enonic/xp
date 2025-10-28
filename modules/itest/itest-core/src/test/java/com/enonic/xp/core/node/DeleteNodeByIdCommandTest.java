@@ -21,19 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DeleteNodeByIdCommandTest
+class DeleteNodeByIdCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void delete()
-        throws Exception
+    void delete()
     {
         final Node createdNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -46,8 +44,7 @@ public class DeleteNodeByIdCommandTest
     }
 
     @Test
-    public void delete_with_children()
-        throws Exception
+    void delete_with_children()
     {
         final Node parentNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
 
@@ -71,8 +68,7 @@ public class DeleteNodeByIdCommandTest
     }
 
     @Test
-    public void delete_with_children_other_on_level()
-        throws Exception
+    void delete_with_children_other_on_level()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -115,8 +111,7 @@ public class DeleteNodeByIdCommandTest
     }
 
     @Test
-    public void delete_with_children_require_permission()
-        throws Exception
+    void delete_with_children_require_permission()
     {
         final AccessControlList noDeletePermission = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -146,7 +141,7 @@ public class DeleteNodeByIdCommandTest
     }
 
     @Test
-    public void delete_with_capital_letter_in_id()
+    void delete_with_capital_letter_in_id()
     {
         final Node node = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "myNodeId" ) ).
@@ -168,8 +163,7 @@ public class DeleteNodeByIdCommandTest
     }
 
     @Test
-    public void cannot_delete_root_node()
-        throws Exception
+    void cannot_delete_root_node()
     {
         assertThrows(OperationNotPermittedException.class, () -> doDeleteNode( Node.ROOT_UUID ));
     }

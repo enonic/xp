@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IssueServiceImplTest_findIssues
+class IssueServiceImplTest_findIssues
     extends AbstractIssueServiceTest
 {
 
@@ -29,8 +29,7 @@ public class IssueServiceImplTest_findIssues
     }
 
     @Test
-    public void find()
-        throws Exception
+    void find()
     {
         IssueQuery query = IssueQuery.create().build();
 
@@ -41,8 +40,7 @@ public class IssueServiceImplTest_findIssues
     }
 
     @Test
-    public void findByContentId1()
-        throws Exception
+    void findByContentId1()
     {
         ContentId contentId = ContentId.from( "issue-item-1" );
 
@@ -59,8 +57,7 @@ public class IssueServiceImplTest_findIssues
     }
 
     @Test
-    public void findByContentId2()
-        throws Exception
+    void findByContentId2()
     {
         ContentId contentId = ContentId.from( "issue-item-2" );
 
@@ -77,8 +74,7 @@ public class IssueServiceImplTest_findIssues
     }
 
     @Test
-    public void findByContentId4()
-        throws Exception
+    void findByContentId4()
     {
         ContentId contentId = ContentId.from( "issue-item-4" );
 

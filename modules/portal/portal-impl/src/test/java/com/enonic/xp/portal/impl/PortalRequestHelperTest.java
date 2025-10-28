@@ -21,7 +21,7 @@ import com.enonic.xp.site.Site;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PortalRequestHelperTest
+class PortalRequestHelperTest
 {
     @Test
     void testGetSiteRelativePath()

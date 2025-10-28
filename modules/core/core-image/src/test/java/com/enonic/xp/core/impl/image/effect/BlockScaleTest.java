@@ -9,11 +9,11 @@ import com.enonic.xp.image.ImageHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BlockScaleTest
+class BlockScaleTest
     extends BaseImageFilterTest
 {
     @Test
-    public void w_upscale_h_downscale()
+    void w_upscale_h_downscale()
     {
         final BufferedImage original = ImageHelper.createImage( 300, 500, false );
 
@@ -23,7 +23,7 @@ public class BlockScaleTest
     }
 
     @Test
-    public void w_downscale_h_upscale()
+    void w_downscale_h_upscale()
     {
         final BufferedImage original = ImageHelper.createImage( 300, 500, false );
 
@@ -33,7 +33,7 @@ public class BlockScaleTest
     }
 
     @Test
-    public void wide_rectangle_upscale()
+    void wide_rectangle_upscale()
     {
         final BufferedImage original = ImageHelper.createImage( 400, 300, false );
 
@@ -43,7 +43,7 @@ public class BlockScaleTest
     }
 
     @Test
-    public void wide_rectangle_downscale()
+    void wide_rectangle_downscale()
     {
         final BufferedImage original = ImageHelper.createImage( 400, 300, false );
 
@@ -53,7 +53,7 @@ public class BlockScaleTest
     }
 
     @Test
-    public void tall_rectangle_upscale()
+    void tall_rectangle_upscale()
     {
         final BufferedImage original = ImageHelper.createImage( 300, 400, false );
 
@@ -63,7 +63,7 @@ public class BlockScaleTest
     }
 
     @Test
-    public void tall_rectangle_downscale()
+    void tall_rectangle_downscale()
     {
         final BufferedImage original = ImageHelper.createImage( 300, 400, false );
 
@@ -73,7 +73,7 @@ public class BlockScaleTest
     }
 
     @Test
-    public void upscale_square()
+    void upscale_square()
     {
         final BufferedImage original = ImageHelper.createImage( 400, 300, false );
         BufferedImage scaled = newScaleFunctions().block( FocalPoint.DEFAULT, 550, 550 ).apply( original );

@@ -7,10 +7,10 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FieldSetTest
+class FieldSetTest
 {
     @Test
-    public void given_input_in_FieldSet_when_getPath_name_of_FieldSet_is_not_in_path()
+    void given_input_in_FieldSet_when_getPath_name_of_FieldSet_is_not_in_path()
     {
         FieldSet myFieldSet = FieldSet.create().
             label( "My FieldSet" ).

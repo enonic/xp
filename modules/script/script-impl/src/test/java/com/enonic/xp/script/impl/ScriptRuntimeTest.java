@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ScriptRuntimeTest
+class ScriptRuntimeTest
     extends AbstractScriptTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/empty-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -30,7 +30,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testExecuteExported()
+    void testExecuteExported()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/export-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -41,7 +41,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testExecuteExported_objectArg()
+    void testExecuteExported_objectArg()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/export-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -53,7 +53,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testResolve()
+    void testResolve()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/resolve/resolve-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -62,7 +62,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testRequire()
+    void testRequire()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/site/require/require-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -70,7 +70,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testRequire_3rd()
+    void testRequire_3rd()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/site/require/3rd/require-3rd-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -78,7 +78,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testCompileError()
+    void testCompileError()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/error/error-test.js" );
 
@@ -95,7 +95,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testRuntimeError()
+    void testRuntimeError()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/error/error-in-export-test.js" );
         final ScriptExports exports = runTestScript( script );
@@ -115,7 +115,7 @@ public class ScriptRuntimeTest
     }
 
     @Test
-    public void testCache()
+    void testCache()
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/empty-test.js" );
 

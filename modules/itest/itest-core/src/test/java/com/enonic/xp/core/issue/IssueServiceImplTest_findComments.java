@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IssueServiceImplTest_findComments
+class IssueServiceImplTest_findComments
     extends AbstractIssueServiceTest
 {
     private Issue issue;
@@ -38,8 +38,7 @@ public class IssueServiceImplTest_findComments
     }
 
     @Test
-    public void comments_find()
-        throws Exception
+    void comments_find()
     {
         IssueCommentQuery query = IssueCommentQuery.create().
             issue( this.issue.getId() ).
@@ -52,8 +51,7 @@ public class IssueServiceImplTest_findComments
     }
 
     @Test
-    public void comments_findByUser()
-        throws Exception
+    void comments_findByUser()
     {
         IssueCommentQuery query = IssueCommentQuery.create().
             issue( this.issue.getId() ).

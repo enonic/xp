@@ -17,7 +17,7 @@ import com.enonic.xp.task.TaskService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class VacuumCommandTest
+class VacuumCommandTest
 {
     @Mock
     private TaskService taskService;
@@ -35,7 +35,7 @@ public class VacuumCommandTest
     }
 
     @Test
-    public void vacuum()
+    void vacuum()
     {
         final List<String> tasks = List.of( "BinaryBlobVacuumTask", "NodeBlobVacuumTask" );
         VacuumRequestJson params = new VacuumRequestJson( "PT1s", tasks );

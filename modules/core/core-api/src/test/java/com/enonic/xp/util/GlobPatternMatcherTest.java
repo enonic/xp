@@ -5,19 +5,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GlobPatternMatcherTest
+class GlobPatternMatcherTest
 {
     @Test
-    public void exact()
-        throws Exception
+    void exact()
     {
         assertTrue( GlobPatternMatcher.match( "e1.fisk", "e1.fisk", "." ) );
         assertTrue( GlobPatternMatcher.match( "e1/fisk", "e1/fisk", "/" ) );
     }
 
     @Test
-    public void exact_absolute()
-        throws Exception
+    void exact_absolute()
     {
         assertTrue( GlobPatternMatcher.match( "/e1.fisk", "/e1.fisk", "." ) );
         assertTrue( GlobPatternMatcher.match( "/e1/fisk", "/e1/fisk", "/" ) );
@@ -25,46 +23,40 @@ public class GlobPatternMatcherTest
 
 
     @Test
-    public void wildcard_last()
-        throws Exception
+    void wildcard_last()
     {
         assertTrue( GlobPatternMatcher.match( "e1.*", "e1.fisk", "." ) );
     }
 
     @Test
-    public void wildcard_between()
-        throws Exception
+    void wildcard_between()
     {
         assertTrue( GlobPatternMatcher.match( "e1.*.fisk", "e1.ost.fisk", "." ) );
     }
 
     @Test
-    public void wildcard_between_no_match_1()
-        throws Exception
+    void wildcard_between_no_match_1()
     {
         assertFalse( GlobPatternMatcher.match( "e1.*.fisk", "e1.ost.løk.fisk", "." ) );
         assertFalse( GlobPatternMatcher.match( "e1/*/fisk", "e1/ost/løk/fisk", "/" ) );
     }
 
     @Test
-    public void two_wildcard_match()
-        throws Exception
+    void two_wildcard_match()
     {
         assertTrue( GlobPatternMatcher.match( "e1.*.*.fisk", "e1.pølse.løk.fisk", "." ) );
         assertTrue( GlobPatternMatcher.match( "e1/*/*/fisk", "e1/pølse/løk/fisk", "/" ) );
     }
 
     @Test
-    public void two_wildcard_no_match()
-        throws Exception
+    void two_wildcard_no_match()
     {
         assertFalse( GlobPatternMatcher.match( "e1.*.*.fisk", "e1.ost.pølse.løk.fisk", "." ) );
         assertFalse( GlobPatternMatcher.match( "e1/*/*/fisk", "e1/ost/pølse/løk/fisk", "/" ) );
     }
 
     @Test
-    public void double_wildcard_match()
-        throws Exception
+    void double_wildcard_match()
     {
         assertTrue( GlobPatternMatcher.match( "e1.**.fisk", "e1.ost.pølse.løk.fisk", "." ) );
         assertTrue( GlobPatternMatcher.match( "e1/**/fisk", "e1/ost/pølse/løk/fisk", "/" ) );
@@ -72,31 +64,27 @@ public class GlobPatternMatcherTest
 
 
     @Test
-    public void double_wildcard_no_match()
-        throws Exception
+    void double_wildcard_no_match()
     {
         assertFalse( GlobPatternMatcher.match( "e1.**.fisk", "e1.ost.pølse.løk.fisk.ost", "." ) );
         assertFalse( GlobPatternMatcher.match( "e1/**/fisk", "e1/ost/pølse/løk/fisk/ost", "/" ) );
     }
 
     @Test
-    public void double_wildcard_singel_wildcard_combo()
-        throws Exception
+    void double_wildcard_singel_wildcard_combo()
     {
         assertTrue( GlobPatternMatcher.match( "e1.**.fisk.*", "e1.ost.pølse.løk.fisk.ost", "." ) );
     }
 
     @Test
-    public void double_wildcard_at_end()
-        throws Exception
+    void double_wildcard_at_end()
     {
         assertTrue( GlobPatternMatcher.match( "e1.fisk.**", "e1.fisk.ost.løk", "." ) );
     }
 
 
     @Test
-    public void testName()
-        throws Exception
+    void testName()
     {
         assertTrue( GlobPatternMatcher.match( "page.regions.**.text", "page.regions.main.components.regions.fisk.components.text", "." ) );
     }

@@ -15,14 +15,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WidgetIconResolverTest
+class WidgetIconResolverTest
 {
     private WidgetIconResolver instance;
 
     private ApplicationDescriptorService applicationDescriptorService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.applicationDescriptorService = mock( ApplicationDescriptorService.class );
         this.instance = new WidgetIconResolver( this.applicationDescriptorService );

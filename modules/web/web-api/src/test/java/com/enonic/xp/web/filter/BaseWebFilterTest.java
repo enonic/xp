@@ -8,7 +8,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class BaseWebFilterTest
+class BaseWebFilterTest
 {
     private BaseWebFilter newFilter()
     {
@@ -16,14 +16,13 @@ public class BaseWebFilterTest
         {
             @Override
             public void doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
-                throws Exception
             {
             }
         } );
     }
 
     @Test
-    public void testLifecycle()
+    void testLifecycle()
         throws Exception
     {
         final BaseWebFilter filter = newFilter();
@@ -32,7 +31,7 @@ public class BaseWebFilterTest
     }
 
     @Test
-    public void testFilter()
+    void testFilter()
         throws Exception
     {
         final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );

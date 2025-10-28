@@ -2,33 +2,29 @@ package com.enonic.xp.lib.project;
 
 import org.junit.jupiter.api.Test;
 
-public class GetProjectHandlerTest
+class GetProjectHandlerTest
     extends BaseProjectHandlerTest
 {
     @Test
-    public void getProject()
-        throws Exception
+    void getProject()
     {
         runFunction( "/test/GetProjectHandlerTest.js", "getProject" );
     }
 
     @Test
-    public void getProjectWithoutPermissions()
-        throws Exception
+    void getProjectWithoutPermissions()
     {
         runFunction( "/test/GetProjectHandlerTest.js", "getProjectWithoutPermissions" );
     }
 
     @Test
-    public void getProjectNull()
-        throws Exception
+    void getProjectNull()
     {
         runFunction( "/test/GetProjectHandlerTest.js", "getProjectNull" );
     }
 
     @Test
-    public void getProjectNotExist()
-        throws Exception
+    void getProjectNotExist()
     {
         runFunction( "/test/GetProjectHandlerTest.js", "getProjectNotExist" );
     }

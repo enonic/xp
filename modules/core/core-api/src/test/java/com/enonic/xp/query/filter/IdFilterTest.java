@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IdFilterTest
+class IdFilterTest
 {
 
     @Test
-    public void testBuildler()
+    void testBuildler()
     {
         final IdFilter filter = IdFilter.create().
             fieldName( "field1" ).
@@ -22,7 +22,7 @@ public class IdFilterTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final IdFilter filter = IdFilter.create().
             fieldName( "field1" ).

@@ -5,12 +5,12 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.content.Content;
 
-public class ContentExistsHandlerTest
+class ContentExistsHandlerTest
     extends BaseContentHandlerTest
 {
 
     @Test
-    public void testExistsById()
+    void testExistsById()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.contentExists( content.getId() ) ).thenReturn( true );
@@ -19,8 +19,7 @@ public class ContentExistsHandlerTest
     }
 
     @Test
-    public void testExistsByPath()
-        throws Exception
+    void testExistsByPath()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.contentExists( content.getPath() ) ).thenReturn( true );
@@ -29,8 +28,7 @@ public class ContentExistsHandlerTest
     }
 
     @Test
-    public void testEmptyKey()
-        throws Exception
+    void testEmptyKey()
     {
         final Content content = TestDataFixtures.newExampleContent();
 

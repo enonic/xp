@@ -43,14 +43,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ComponentHandlerTest
+class ComponentHandlerTest
     extends RenderBaseHandlerTest
 {
     private ComponentHandler handler;
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.handler = new ComponentHandler( this.contentService, this.rendererDelegate, this.pageTemplateService, this.postProcessor,
                                              this.pageDescriptorService, this.layoutDescriptorService );
@@ -63,7 +62,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
         setupSite();
@@ -85,7 +84,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testComponentFound()
+    void testComponentFound()
         throws Exception
     {
         setupSite();
@@ -112,7 +111,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void getComponentPageNotFound()
+    void getComponentPageNotFound()
     {
         setupContentWithoutPage();
 
@@ -127,7 +126,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void getComponentNotFound()
+    void getComponentNotFound()
     {
         setupSite();
         setupContent();
@@ -141,7 +140,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void getContentNotFound()
+    void getContentNotFound()
     {
         this.request.setEndpointPath( "/_/component/main-region/666" );
 
@@ -155,7 +154,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void getSiteNotFound()
+    void getSiteNotFound()
     {
         setupContent();
         this.request.setEndpointPath( "/_/component/main-region/666" );
@@ -171,7 +170,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderAdded()
+    void testHasContributionsHeaderAdded()
         throws Exception
     {
         setupSite();
@@ -197,7 +196,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderNotAddedInNonEditMode()
+    void testHasContributionsHeaderNotAddedInNonEditMode()
         throws Exception
     {
         setupSite();
@@ -222,7 +221,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testHasContributionsHeaderNotAddedInEditModeWithoutContributions()
+    void testHasContributionsHeaderNotAddedInEditModeWithoutContributions()
         throws Exception
     {
         setupSite();
@@ -246,7 +245,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testEmptyFragmentIsResolved()
+    void testEmptyFragmentIsResolved()
         throws Exception
     {
         setupSite();
@@ -267,7 +266,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testFragmentContentNotFound()
+    void testFragmentContentNotFound()
         throws Exception
     {
         setupSite();
@@ -290,7 +289,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testFragmentWithoutComponentsIsResolved()
+    void testFragmentWithoutComponentsIsResolved()
         throws Exception
     {
         setupSite();
@@ -314,7 +313,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testFragmentWithComponentsIsResolved()
+    void testFragmentWithComponentsIsResolved()
         throws Exception
     {
         setupSite();
@@ -338,7 +337,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testFragmentComponentAsTextComponent()
+    void testFragmentComponentAsTextComponent()
         throws Exception
     {
         final TextComponent textComponent = TextComponent.create().build();
@@ -349,7 +348,7 @@ public class ComponentHandlerTest
     }
 
     @Test
-    public void testFragmentComponentAsLayoutComponent()
+    void testFragmentComponentAsLayoutComponent()
         throws Exception
     {
         final Regions regions =

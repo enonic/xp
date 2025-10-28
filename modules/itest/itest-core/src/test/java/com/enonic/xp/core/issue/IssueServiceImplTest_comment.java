@@ -17,12 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class IssueServiceImplTest_comment
+class IssueServiceImplTest_comment
     extends AbstractIssueServiceTest
 {
     @Test
-    public void comment_issue()
-        throws Exception
+    void comment_issue()
     {
         Issue issue = this.createIssue( CreateIssueParams.create().title( "issue-1" ) );
 
@@ -48,8 +47,7 @@ public class IssueServiceImplTest_comment
     }
 
     @Test
-    public void comment_noIssue()
-        throws Exception
+    void comment_noIssue()
     {
         final Instant created = Instant.now().minus( 1, ChronoUnit.MINUTES );
         final PrincipalKey creator = PrincipalKey.from( "user:store:me" );

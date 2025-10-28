@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ImmutableFilesHelperTest
+class ImmutableFilesHelperTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -24,7 +24,7 @@ public class ImmutableFilesHelperTest
 
 
     @Test
-    public void test_computeIfAbsent()
+    void test_computeIfAbsent()
         throws Exception
     {
         supplierCall = 0;
@@ -56,7 +56,7 @@ public class ImmutableFilesHelperTest
     }
 
     @Test
-    public void test_incorrect_computeIfAbsent()
+    void test_incorrect_computeIfAbsent()
         throws Exception
     {
         Path path = temporaryFolder.resolve( "unknown_file.txt" );

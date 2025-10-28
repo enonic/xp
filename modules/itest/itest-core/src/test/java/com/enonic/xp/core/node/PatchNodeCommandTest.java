@@ -49,18 +49,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-public class PatchNodeCommandTest
+class PatchNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void timestamp_updated_when_modifying()
+    void timestamp_updated_when_modifying()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -178,7 +177,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_in_branches()
+    void modify_in_branches()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -199,7 +198,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_equal_versions()
+    void modify_equal_versions()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -219,7 +218,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_not_equal_versions()
+    void modify_not_equal_versions()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -243,7 +242,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_not_existing()
+    void modify_not_existing()
     {
         assertThrows( NodeNotFoundException.class, () -> nodeService.patch( PatchNodeParams.create()
                                                                                 .id( NodeId.from( "non-existing" ) )
@@ -257,7 +256,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_by_user_without_permissions_for_master()
+    void modify_by_user_without_permissions_for_master()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
@@ -306,7 +305,7 @@ public class PatchNodeCommandTest
     }
 
     @Test
-    public void modify_by_user_without_permissions()
+    void modify_by_user_without_permissions()
     {
         final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 

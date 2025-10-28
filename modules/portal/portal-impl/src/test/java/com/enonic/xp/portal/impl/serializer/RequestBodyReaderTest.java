@@ -19,18 +19,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RequestBodyReaderTest
+class RequestBodyReaderTest
 {
     private HttpServletRequest req;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.req = Mockito.mock( HttpServletRequest.class );
     }
 
     @Test
-    public void isText()
+    void isText()
     {
         assertTrue( RequestBodyReader.isText( MediaType.parse( "text/plain" ) ) );
         assertTrue( RequestBodyReader.isText( MediaType.parse( "text/xml;charset=UTF-8" ) ) );
@@ -48,13 +48,12 @@ public class RequestBodyReaderTest
     }
 
     private void setBytes( final String type, final byte[] bytes )
-        throws Exception
     {
         Mockito.when( this.req.getContentType() ).thenReturn( type );
     }
 
     @Test
-    public void readNonText()
+    void readNonText()
         throws Exception
     {
         setBytes( "application/octet-stream", new byte[0] );
@@ -64,7 +63,7 @@ public class RequestBodyReaderTest
     }
 
     @Test
-    public void readText()
+    void readText()
         throws Exception
     {
         setText( "text/plain", "Hello World" );

@@ -21,12 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class IssueServiceImplTest_create
+class IssueServiceImplTest_create
     extends AbstractIssueServiceTest
 {
     @Test
-    public void create_issue()
-        throws Exception
+    void create_issue()
     {
         final CreateIssueParams params = CreateIssueParams.create().
             title( "title" ).
@@ -50,8 +49,7 @@ public class IssueServiceImplTest_create
     }
 
     @Test
-    public void create_publish_request_issue()
-        throws Exception
+    void create_publish_request_issue()
     {
         Instant from = Instant.ofEpochSecond( 1561965725L );
         Instant to = Instant.ofEpochSecond( 1575184925L );
@@ -81,8 +79,7 @@ public class IssueServiceImplTest_create
     }
 
     @Test
-    public void create_publish_request_issue_without_schedule()
-        throws Exception
+    void create_publish_request_issue_without_schedule()
     {
         final CreatePublishRequestIssueParams params = CreatePublishRequestIssueParams.create().
             title( "title" ).

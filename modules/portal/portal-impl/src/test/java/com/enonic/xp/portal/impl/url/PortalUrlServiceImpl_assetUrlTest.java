@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_assetUrlTest
+class PortalUrlServiceImpl_assetUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
-    public void createUrl()
+    void createUrl()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
@@ -30,7 +30,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     }
 
     @Test
-    public void createUrlWithLongContentPath()
+    void createUrlWithLongContentPath()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
@@ -45,7 +45,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     }
 
     @Test
-    public void createUrl_withApplication()
+    void createUrl_withApplication()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "otherapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 2 ) );
@@ -57,7 +57,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     }
 
     @Test
-    public void createUrl_withVirtualHost()
+    void createUrl_withVirtualHost()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
@@ -107,7 +107,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     }
 
     @Test
-    public void createUrl_absolute()
+    void createUrl_absolute()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
@@ -123,7 +123,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     }
 
     @Test
-    public void createUrl_encodeChars()
+    void createUrl_encodeChars()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );
@@ -135,7 +135,7 @@ public class PortalUrlServiceImpl_assetUrlTest
     }
 
     @Test
-    public void createUrlOnVhostMapping()
+    void createUrlOnVhostMapping()
     {
         final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapplication" ), "META-INF/MANIFEST.MF" );
         when( this.resourceService.getResource( resourceKey ) ).thenReturn( MockResource.empty( resourceKey, 1 ) );

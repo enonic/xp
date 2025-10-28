@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class InterpolatorTest
 {
     @Test
-    public void recursive()
+    void recursive()
     {
         final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
@@ -23,7 +23,7 @@ class InterpolatorTest
     }
 
     @Test
-    public void escape()
+    void escape()
     {
         final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
@@ -36,7 +36,7 @@ class InterpolatorTest
     }
 
     @Test
-    public void recursive_2()
+    void recursive_2()
     {
         final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );
@@ -49,7 +49,7 @@ class InterpolatorTest
     }
 
     @Test
-    public void escape_2()
+    void escape_2()
     {
         final Map<String, String> model = new HashMap<>();
         model.put( "this", "This" );

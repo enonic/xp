@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BundleInfoTest
+class BundleInfoTest
 {
     @Test
-    public void testSimple()
+    void testSimple()
     {
         final BundleInfo info = new BundleInfo( new File( "my.jar" ), 10 );
         assertEquals( 10, info.getLevel() );
@@ -20,7 +20,7 @@ public class BundleInfoTest
     }
 
     @Test
-    public void testUri()
+    void testUri()
     {
         final File file = new File( "/some/location/my.jar" );
 
@@ -30,7 +30,7 @@ public class BundleInfoTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final BundleInfo info1 = new BundleInfo( new File( "my.jar" ), 10 );
         final BundleInfo info2 = new BundleInfo( new File( "my.jar" ), 10 );
@@ -44,7 +44,7 @@ public class BundleInfoTest
     }
 
     @Test
-    public void testCompareTo()
+    void testCompareTo()
     {
         final BundleInfo info1 = new BundleInfo( new File( "my.jar" ), 10 );
         final BundleInfo info2 = new BundleInfo( new File( "my.jar" ), 10 );

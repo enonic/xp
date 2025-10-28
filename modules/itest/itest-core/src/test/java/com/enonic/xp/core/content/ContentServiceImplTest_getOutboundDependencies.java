@@ -15,11 +15,11 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_getOutboundDependencies
+class ContentServiceImplTest_getOutboundDependencies
     extends AbstractContentServiceTest
 {
     @Test
-    public void testThatOutboundDependenciesContainsVariant()
+    void testThatOutboundDependenciesContainsVariant()
     {
         Content originalContent = this.contentService.create( CreateContentParams.create()
                                                                   .contentData( new PropertyTree() )

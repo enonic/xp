@@ -2,14 +2,14 @@ package com.enonic.xp.web.impl.dispatch;
 
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class DispatchServletImplTest
+class DispatchServletImplTest
 {
     private FilterPipeline filterPipeline;
 
@@ -28,7 +28,7 @@ public class DispatchServletImplTest
     private DispatchServletImpl servlet;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.filterPipeline = mock( FilterPipeline.class );
         this.servletPipeline = mock( ServletPipeline.class );
@@ -41,7 +41,7 @@ public class DispatchServletImplTest
     }
 
     @Test
-    public void testInit()
+    void testInit()
         throws Exception
     {
         final ServletContext context = mock( ServletContext.class );
@@ -55,8 +55,7 @@ public class DispatchServletImplTest
     }
 
     @Test
-    public void testDestroy()
-        throws Exception
+    void testDestroy()
     {
         this.servlet.destroy();
         verify( this.filterPipeline, times( 1 ) ).destroy();
@@ -64,7 +63,7 @@ public class DispatchServletImplTest
     }
 
     @Test
-    public void testService()
+    void testService()
         throws Exception
     {
         final HttpServletRequest req = mock( HttpServletRequest.class );

@@ -22,15 +22,14 @@ import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ClusterManagerReporterTest
+class ClusterManagerReporterTest
 {
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
     private ClusterManager clusterManager;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.clusterManager = Mockito.mock( ClusterManager.class );
 
@@ -48,7 +47,7 @@ public class ClusterManagerReporterTest
     }
 
     @Test
-    public void report()
+    void report()
         throws Exception
     {
         final ClusterManagerReporter reporter = new ClusterManagerReporter(this.clusterManager );

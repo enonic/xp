@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class DynamicConstraintExprTest
+class DynamicConstraintExprTest
 {
     @Test
-    public void testExpression()
+    void testExpression()
     {
         final FunctionExpr func = new FunctionExpr( "name", new ArrayList<>() );
         final DynamicConstraintExpr expr = new DynamicConstraintExpr( func );

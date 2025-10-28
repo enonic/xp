@@ -7,11 +7,11 @@ import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.NodeIds;
 
-public class FindChildrenNodeHandlerTest
+class FindChildrenNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         Mockito.when( this.nodeService.findByParent( Mockito.isA( FindNodesByParentParams.class ) ) ).
             thenReturn( FindNodesByParentResult.create().

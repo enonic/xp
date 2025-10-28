@@ -46,13 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-public class IdProviderControllerServiceImplTest
+class IdProviderControllerServiceImplTest
 {
     private IdProviderControllerServiceImpl idProviderControllerService;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         //Mocks the IdProviderDescriptorService
         final IdProviderDescriptorService idProviderDescriptorService = Mockito.mock( IdProviderDescriptorService.class );
@@ -126,7 +125,7 @@ public class IdProviderControllerServiceImplTest
     }
 
     @Test
-    public void executeMissingIdProvider()
+    void executeMissingIdProvider()
         throws IOException
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
@@ -139,7 +138,7 @@ public class IdProviderControllerServiceImplTest
     }
 
     @Test
-    public void executeMissingFunction()
+    void executeMissingFunction()
         throws IOException
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
@@ -152,7 +151,7 @@ public class IdProviderControllerServiceImplTest
     }
 
     @Test
-    public void executeIdProviderWithoutApplication()
+    void executeIdProviderWithoutApplication()
         throws IOException
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
@@ -165,7 +164,7 @@ public class IdProviderControllerServiceImplTest
     }
 
     @Test
-    public void execute()
+    void execute()
         throws IOException
     {
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
@@ -181,7 +180,7 @@ public class IdProviderControllerServiceImplTest
 
 
     @Test
-    public void executeWithoutVirtualHost()
+    void executeWithoutVirtualHost()
         throws IOException
     {
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
@@ -195,7 +194,7 @@ public class IdProviderControllerServiceImplTest
 
 
     @Test
-    public void executeWithVirtualHost()
+    void executeWithVirtualHost()
         throws IOException
     {
         final HttpServletRequest httpServletRequest = createHttpServletRequest();

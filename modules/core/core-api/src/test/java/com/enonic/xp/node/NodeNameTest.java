@@ -7,65 +7,58 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class NodeNameTest
+class NodeNameTest
 {
     @Test
-    public void testName()
-        throws Exception
+    void testName()
     {
         assertEquals( "name", NodeName.from( "name" ).toString() );
     }
 
     @Test
-    public void testBigName()
-        throws Exception
+    void testBigName()
     {
         NodeName.from( "Name" );
     }
 
     @Test
-    public void testAllowedSymbols()
-        throws Exception
+    void testAllowedSymbols()
     {
         assertEquals( "your_name.is-okay", NodeName.from( "your_name.is-okay" ).toString() );
     }
 
     @Test
-    public void testAsteriskName()
-        throws Exception
+    void testAsteriskName()
     {
         assertThrows(IllegalArgumentException.class, () -> NodeName.from( "name*value" ));
     }
 
     @Test
-    public void testUnderscoreOnlyNotAllowed()
-        throws Exception
+    void testUnderscoreOnlyNotAllowed()
     {
         assertThrows(IllegalArgumentException.class, () -> NodeName.from( "_" ));
     }
 
     @Test
-    public void slashNotAllowed()
+    void slashNotAllowed()
     {
         assertThrows(IllegalArgumentException.class, () -> NodeName.from( "some/name" ));
     }
 
     @Test
-    public void testNameCouldStartWithUnderscore()
-        throws Exception
+    void testNameCouldStartWithUnderscore()
     {
         NodeName.from( "_mystuff" );
     }
 
     @Test
-    public void start_with_number()
-        throws Exception
+    void start_with_number()
     {
         NodeName.from( "1myname" );
     }
 
     @Test
-    public void equals()
+    void equals()
     {
         final AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -97,7 +90,7 @@ public class NodeNameTest
     }
 
     @Test
-    public void testRoot()
+    void testRoot()
     {
         final NodeName name = NodeName.ROOT;
         assertEquals( true, name.isRoot() );
@@ -105,7 +98,7 @@ public class NodeNameTest
     }
 
     @Test
-    public void testNonRoot()
+    void testNonRoot()
     {
         final NodeName name = NodeName.from( "test" );
         assertEquals( false, name.isRoot() );

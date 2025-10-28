@@ -16,13 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_getByIds
+class ContentServiceImplTest_getByIds
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void test_pending_publish_draft()
-        throws Exception
+    void test_pending_publish_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -38,8 +37,7 @@ public class ContentServiceImplTest_getByIds
     }
 
     @Test
-    public void test_pending_publish_master()
-        throws Exception
+    void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
@@ -57,8 +55,7 @@ public class ContentServiceImplTest_getByIds
     }
 
     @Test
-    public void test_publish_expired_draft()
-        throws Exception
+    void test_publish_expired_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -73,8 +70,7 @@ public class ContentServiceImplTest_getByIds
     }
 
     @Test
-    public void test_publish_expired_master()
-        throws Exception
+    void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
@@ -93,8 +89,7 @@ public class ContentServiceImplTest_getByIds
     }
 
     @Test
-    public void test_published_draft()
-        throws Exception
+    void test_published_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -111,8 +106,7 @@ public class ContentServiceImplTest_getByIds
     }
 
     @Test
-    public void test_published_master()
-        throws Exception
+    void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );

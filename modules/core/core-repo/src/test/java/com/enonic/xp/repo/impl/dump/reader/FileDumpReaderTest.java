@@ -12,14 +12,14 @@ import com.enonic.xp.repository.RepositoryIds;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FileDumpReaderTest
+class FileDumpReaderTest
     extends BaseDumpReaderTest
 {
 
     private FileDumpReader fileDumpReader;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         this.dumpFolder = Files.createDirectory( temporaryFolder.resolve( "myDump" ) );
@@ -28,7 +28,7 @@ public class FileDumpReaderTest
     }
 
     @Test
-    public void repositories()
+    void repositories()
         throws Exception
     {
         final Path meta = createFolder( this.dumpFolder, "meta" );
@@ -40,7 +40,7 @@ public class FileDumpReaderTest
     }
 
     @Test
-    public void ignore_file_in_repo_dir()
+    void ignore_file_in_repo_dir()
         throws Exception
     {
         final Path meta = createFolder( this.dumpFolder, "meta" );
@@ -53,7 +53,7 @@ public class FileDumpReaderTest
     }
 
     @Test
-    public void branches()
+    void branches()
         throws Exception
     {
         final Path meta = createFolder( this.dumpFolder, "meta" );
@@ -66,7 +66,7 @@ public class FileDumpReaderTest
     }
 
     @Test
-    public void ignore_file_in_branch_folder()
+    void ignore_file_in_branch_folder()
         throws Exception
     {
         final Path meta = createFolder( this.dumpFolder, "meta" );
@@ -80,7 +80,7 @@ public class FileDumpReaderTest
     }
 
     @Test
-    public void hidden_folder()
+    void hidden_folder()
         throws Exception
     {
         final Path meta = createFolder( this.dumpFolder, "meta" );

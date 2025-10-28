@@ -12,18 +12,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ScriptValueTest
+class ScriptValueTest
     extends AbstractScriptTest
 {
     private ScriptValue evalValue( final String name )
-        throws Exception
     {
         final ScriptExports exports = runTestScript( "value/value-test.js" );
         return exports.executeMethod( name );
     }
 
     @Test
-    public void testUndefined()
+    void testUndefined()
         throws Exception
     {
         final ScriptValue obj = evalValue( "testUndefined" );
@@ -31,7 +30,7 @@ public class ScriptValueTest
     }
 
     @Test
-    public void testValue()
+    void testValue()
         throws Exception
     {
         final ScriptValue obj = evalValue( "testValue" );
@@ -52,7 +51,7 @@ public class ScriptValueTest
     }
 
     @Test
-    public void testArray()
+    void testArray()
         throws Exception
     {
         final ScriptValue obj = evalValue( "testArray" );
@@ -74,7 +73,7 @@ public class ScriptValueTest
     }
 
     @Test
-    public void testObject()
+    void testObject()
         throws Exception
     {
         final ScriptValue obj = evalValue( "testObject" );
@@ -96,7 +95,7 @@ public class ScriptValueTest
     }
 
     @Test
-    public void testFunction()
+    void testFunction()
         throws Exception
     {
         final ScriptValue obj = evalValue( "testFunction" );
@@ -117,7 +116,7 @@ public class ScriptValueTest
     }
 
     @Test
-    public void testFunction_error()
+    void testFunction_error()
         throws Exception
     {
         final ScriptValue obj = evalValue( "testFunctionError" );

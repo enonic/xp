@@ -73,7 +73,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-public class MappingHandlerTest
+class MappingHandlerTest
 {
     private MappingHandler handler;
 
@@ -97,7 +97,6 @@ public class MappingHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.request = new PortalRequest();
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
@@ -134,13 +133,13 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void testOrder()
+    void testOrder()
     {
         assertEquals( -10, this.handler.getOrder() );
     }
 
     @Test
-    public void methodNotAllowed()
+    void methodNotAllowed()
     {
         final PortalResponse response = PortalResponse.create().build();
         this.request.setBaseUri( "/site" );
@@ -151,7 +150,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void testNoMatch_no_site_based()
+    void testNoMatch_no_site_based()
         throws Exception
     {
         final WebHandlerChain chain = mock( WebHandlerChain.class );
@@ -165,7 +164,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void testNoMatch_no_site()
+    void testNoMatch_no_site()
         throws Exception
     {
         final WebHandlerChain chain = mock( WebHandlerChain.class );
@@ -178,7 +177,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void testNoMatch_endpointPath()
+    void testNoMatch_endpointPath()
         throws Exception
     {
         this.request.setEndpointPath( "something" );
@@ -191,7 +190,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void executeNothing()
+    void executeNothing()
         throws Exception
     {
         final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
@@ -213,7 +212,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void executeScript()
+    void executeScript()
         throws Exception
     {
         final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
@@ -234,7 +233,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void executeScriptFromProjectApp()
+    void executeScriptFromProjectApp()
         throws Exception
     {
         final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
@@ -261,7 +260,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void executeScriptFromSiteOverProject()
+    void executeScriptFromSiteOverProject()
         throws Exception
     {
         final Resource resource = mock( Resource.class );
@@ -300,7 +299,7 @@ public class MappingHandlerTest
     }
 
     @Test
-    public void executeFilter()
+    void executeFilter()
         throws Exception
     {
         final ResourceKey filter = ResourceKey.from( "demo:/services/test" );

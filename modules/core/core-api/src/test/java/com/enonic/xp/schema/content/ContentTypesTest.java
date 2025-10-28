@@ -13,7 +13,7 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentTypesTest
+class ContentTypesTest
 {
     private static final Form PAGE_TEMPLATE = Form.create().
         addFormItem( Input.create().
@@ -27,7 +27,7 @@ public class ContentTypesTest
         build();
 
     @Test
-    public void contentTypes()
+    void contentTypes()
     {
         ContentType.Builder builder =
             ContentType.
@@ -50,7 +50,7 @@ public class ContentTypesTest
     }
 
     @Test
-    public void from()
+    void from()
     {
         ContentTypes contentTypes =
             ContentTypes.from( ContentType.create().superType( ContentTypeName.structured() ).name( "myapplication:test1" ).build(),

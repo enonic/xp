@@ -11,11 +11,11 @@ import com.enonic.xp.portal.postprocess.HtmlTag;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class HtmlBlockParserTest
+class HtmlBlockParserTest
 {
 
     @Test
-    public void testParseMultipleInstructions()
+    void testParseMultipleInstructions()
         throws Exception
     {
         final String html = readResource( "htmlBlockMultipleInstructions.html" );
@@ -28,7 +28,7 @@ public class HtmlBlockParserTest
     }
 
     @Test
-    public void testParseEmpty()
+    void testParseEmpty()
         throws Exception
     {
         final String html = readResource( "htmlBlockEmpty.html" );
@@ -42,7 +42,7 @@ public class HtmlBlockParserTest
     }
 
     @Test
-    public void testParseSimple()
+    void testParseSimple()
         throws Exception
     {
         final String html = readResource( "htmlBlockSimple.html" );
@@ -61,7 +61,7 @@ public class HtmlBlockParserTest
     }
 
     @Test
-    public void testParseConsecutiveInstructions()
+    void testParseConsecutiveInstructions()
         throws Exception
     {
         final String html = readResource( "htmlBlockConsecutiveInstructions.html" );
@@ -82,7 +82,7 @@ public class HtmlBlockParserTest
     }
 
     @Test
-    public void testParseSingleTags()
+    void testParseSingleTags()
         throws Exception
     {
         final String html = readResource( "htmlBlockSingleElements.html" );
@@ -102,7 +102,7 @@ public class HtmlBlockParserTest
     }
 
     @Test
-    public void testParseComments()
+    void testParseComments()
         throws Exception
     {
         final String html = readResource( "htmlBlockComments.html" );
@@ -124,7 +124,7 @@ public class HtmlBlockParserTest
     }
 
     @Test
-    public void testParseInvalidHtml()
+    void testParseInvalidHtml()
         throws Exception
     {
         final String html = readResource( "htmlBlockInvalid.html" );

@@ -6,10 +6,10 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function.W
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WeightedNodeIndexPathTest
+class WeightedNodeIndexPathTest
 {
     @Test
-    public void createWeightedQueryFieldName()
+    void createWeightedQueryFieldName()
     {
         createWeightedQueryFieldName( "myField", "myField", null );
         createWeightedQueryFieldName( "myField^5", "myField", 5 );

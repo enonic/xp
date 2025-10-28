@@ -19,22 +19,21 @@ import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
-public class DataConfigProcessorTest
+class DataConfigProcessorTest
 {
     private ContentTypeService contentTypeService;
 
     private ContentTypeName contentTypeName;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.contentTypeName = ContentTypeName.folder();
     }
 
     @Test
-    public void test_data()
+    void test_data()
     {
         final PatternIndexConfigDocument result = processForm( Form.empty() );
 
@@ -44,7 +43,7 @@ public class DataConfigProcessorTest
     }
 
     @Test
-    public void test_data_form_with_html_area()
+    void test_data_form_with_html_area()
     {
         Input myTextLine = Input.create().
             name( "htmlArea" ).

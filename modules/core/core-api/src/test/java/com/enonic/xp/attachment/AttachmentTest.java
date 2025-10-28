@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AttachmentTest
+class AttachmentTest
 {
     @Test
-    public void getNameWithoutExtension()
+    void getNameWithoutExtension()
     {
         assertEquals( "MyImage", Attachment.create().
             mimeType( "image/jpeg" ).
@@ -25,7 +25,7 @@ public class AttachmentTest
     }
 
     @Test
-    public void getBinaryReference()
+    void getBinaryReference()
     {
         assertEquals( "MyImage.jpg", Attachment.create().
             mimeType( "image/jpeg" ).
@@ -39,7 +39,7 @@ public class AttachmentTest
     }
 
     @Test
-    public void getExtension()
+    void getExtension()
     {
         assertEquals( "jpg", Attachment.create().
             mimeType( "image/jpeg" ).
@@ -69,7 +69,7 @@ public class AttachmentTest
 
 
     @Test
-    public void serializeAttachment()
+    void serializeAttachment()
     {
         Attachment a1 = Attachment.create().
             mimeType( "image/jpeg" ).
@@ -83,7 +83,7 @@ public class AttachmentTest
     }
 
     @Test
-    public void compareAttachments()
+    void compareAttachments()
     {
         Attachment a1 = Attachment.create().
             mimeType( "image/jpeg" ).

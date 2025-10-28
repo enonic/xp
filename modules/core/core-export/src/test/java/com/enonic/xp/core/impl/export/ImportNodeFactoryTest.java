@@ -10,12 +10,11 @@ import com.enonic.xp.node.NodePath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ImportNodeFactoryTest
+class ImportNodeFactoryTest
 {
 
     @Test
-    public void testName()
-        throws Exception
+    void testName()
     {
 
         final Node serializedNode = Node.create().

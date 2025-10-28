@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class BucketAggregationTest
+class BucketAggregationTest
 {
 
     @Test
-    public void fromString()
+    void fromString()
     {
         final Buckets buckets = Buckets.create().add( Bucket.create().build() ).build();
         BucketAggregation.Builder builder = new BucketAggregation.Builder( "aaa" );

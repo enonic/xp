@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ValidationErrorTest
+class ValidationErrorTest
 {
     @Test
     void generalError()
@@ -128,7 +128,7 @@ public class ValidationErrorTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( ValidationError.class ).usingGetClass().withNonnullFields( "args" ).verify();
 

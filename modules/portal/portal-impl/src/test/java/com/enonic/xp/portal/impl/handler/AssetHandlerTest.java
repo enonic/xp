@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AssetHandlerTest
+class AssetHandlerTest
 {
     private AssetHandler handler;
 
@@ -51,7 +51,6 @@ public class AssetHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.request = new PortalRequest();
         this.resources = new HashMap<>();
@@ -76,7 +75,6 @@ public class AssetHandlerTest
     }
 
     private Resource addResource( final String key )
-        throws Exception
     {
         final ResourceKey resourceKey = ResourceKey.from( key );
 
@@ -95,7 +93,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );
@@ -109,7 +107,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testSiteResourceNotFound()
+    void testSiteResourceNotFound()
         throws Exception
     {
         addResource( "demo:/site/assets/css/main.css" );
@@ -121,7 +119,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testRootResourceFound()
+    void testRootResourceFound()
         throws Exception
     {
         final Resource resource = addResource( "demo:/assets/css/main.css" );
@@ -134,7 +132,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testResourceNotFound()
+    void testResourceNotFound()
         throws Exception
     {
         try
@@ -150,7 +148,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testNotValidUrlPattern()
+    void testNotValidUrlPattern()
         throws Exception
     {
         this.request.setEndpointPath( "/_/asset/" );
@@ -168,7 +166,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testCacheHeader_FingerprintDoesntMatch()
+    void testCacheHeader_FingerprintDoesntMatch()
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );
@@ -184,7 +182,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testCacheHeader()
+    void testCacheHeader()
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );
@@ -200,7 +198,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testAssetOnAdminContextPath()
+    void testAssetOnAdminContextPath()
         throws Exception
     {
         VirtualHost virtualHost = mock( VirtualHost.class );
@@ -216,7 +214,7 @@ public class AssetHandlerTest
     }
 
     @Test
-    public void testNoCacheHeader()
+    void testNoCacheHeader()
         throws Exception
     {
         addResource( "demo:/assets/css/main.css" );

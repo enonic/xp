@@ -22,11 +22,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GetDynamicSiteHandlerTest
+class GetDynamicSiteHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testSite()
+    void testSite()
     {
         when( dynamicSchemaService.getCmsDescriptor( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
@@ -57,7 +57,7 @@ public class GetDynamicSiteHandlerTest
 
 
     @Test
-    public void testNull()
+    void testNull()
     {
         runFunction( "/test/GetDynamicSiteHandlerTest.js", "getNull" );
     }

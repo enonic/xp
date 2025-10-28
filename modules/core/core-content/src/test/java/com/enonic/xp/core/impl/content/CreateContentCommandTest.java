@@ -63,7 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class CreateContentCommandTest
+class CreateContentCommandTest
 {
     private ContentTypeService contentTypeService;
 
@@ -84,8 +84,7 @@ public class CreateContentCommandTest
     private EventPublisher eventPublisher;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.cmsService = Mockito.mock( CmsService.class );
         this.nodeService = Mockito.mock( NodeService.class );
@@ -104,7 +103,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void contentTypeNull()
+    void contentTypeNull()
     {
         CreateContentCommand command = createContentCommand( createContentParams().build() );
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( null );
@@ -113,7 +112,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void badParentContentPath()
+    void badParentContentPath()
     {
         PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
@@ -135,7 +134,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void nameGeneratedFromDisplayName()
+    void nameGeneratedFromDisplayName()
     {
         final CreateContentParams params = createContentParams().build();
         final CreateContentCommand command = createContentCommand( params );
@@ -151,7 +150,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentInValidPageTemplate()
+    void createContentInValidPageTemplate()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer(
             a -> BuiltinContentTypesAccessor.getContentType( ( (GetContentTypeParams) a.getArgument( 0 ) ).getContentTypeName() ) );
@@ -175,7 +174,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContent_unknown_parent_content_type()
+    void createContent_unknown_parent_content_type()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer(
             a -> BuiltinContentTypesAccessor.getContentType( ( (GetContentTypeParams) a.getArgument( 0 ) ).getContentTypeName() ) );
@@ -198,7 +197,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentInInvalidPageTemplate()
+    void createContentInInvalidPageTemplate()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( ContentType.create()
                                                                                                           .superType(
@@ -224,7 +223,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentInTemplateFolder_fails()
+    void createContentInTemplateFolder_fails()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer(
             a -> BuiltinContentTypesAccessor.getContentType( ( (GetContentTypeParams) a.getArgument( 0 ) ).getContentTypeName() ) );
@@ -245,7 +244,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createFolderInPageTemplate_fails()
+    void createFolderInPageTemplate_fails()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer(
             a -> BuiltinContentTypesAccessor.getContentType( ( (GetContentTypeParams) a.getArgument( 0 ) ).getContentTypeName() ) );
@@ -266,7 +265,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentForDisallowedContentType_fails()
+    void createContentForDisallowedContentType_fails()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( ContentType.create()
                                                                                                           .superType(
@@ -290,7 +289,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void unnamedContent()
+    void unnamedContent()
     {
         final CreateContentParams params = createContentParams().name( (ContentName) null ).displayName( null ).build();
         final CreateContentCommand command = createContentCommand( params );
@@ -308,7 +307,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createPageTemplateInRoot_fails()
+    void createPageTemplateInRoot_fails()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer(
             a -> BuiltinContentTypesAccessor.getContentType( ( (GetContentTypeParams) a.getArgument( 0 ) ).getContentTypeName() ) );
@@ -329,7 +328,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createTemplateFolderInRoot_fails()
+    void createTemplateFolderInRoot_fails()
     {
         when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenAnswer(
             a -> BuiltinContentTypesAccessor.getContentType( ( (GetContentTypeParams) a.getArgument( 0 ) ).getContentTypeName() ) );
@@ -350,7 +349,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void namePresentAndUnchanged()
+    void namePresentAndUnchanged()
     {
         PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
@@ -375,7 +374,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createTemplateFolderOutsideSite()
+    void createTemplateFolderOutsideSite()
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.unstructured().toString() );
@@ -407,7 +406,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentWithDefaultLanguage()
+    void createContentWithDefaultLanguage()
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setSet( ContentPropertyNames.DATA, parentNodeData.newSet() );
@@ -441,7 +440,7 @@ public class CreateContentCommandTest
 
 
     @Test
-    public void createContentWithProjectLanguage()
+    void createContentWithProjectLanguage()
     {
 
         mockContentRootNode( "no" );
@@ -476,7 +475,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createTemplateFolderInsideSite()
+    void createTemplateFolderInsideSite()
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.site().toString() );
@@ -510,7 +509,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createPageTemplateUnderTemplateFolder()
+    void createPageTemplateUnderTemplateFolder()
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.templateFolder().toString() );
@@ -544,7 +543,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createPageTemplateNotUnderTemplateFolder()
+    void createPageTemplateNotUnderTemplateFolder()
     {
         final PropertyTree parentNodeData = new PropertyTree();
         parentNodeData.setString( ContentPropertyNames.TYPE, ContentTypeName.folder().toString() );
@@ -577,7 +576,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentWithSiteConfigs_success()
+    void createContentWithSiteConfigs_success()
     {
         mockContentRootNode( "en" );
 
@@ -626,7 +625,7 @@ public class CreateContentCommandTest
     }
 
     @Test
-    public void createContentWithSiteConfigs_shouldFailWithoutOwnerRole()
+    void createContentWithSiteConfigs_shouldFailWithoutOwnerRole()
     {
         mockContentRootNode( "en" );
 
@@ -696,7 +695,6 @@ public class CreateContentCommandTest
     }
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
-        throws Throwable
     {
         CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
 

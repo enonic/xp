@@ -14,11 +14,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateDynamicStylesHandlerTest
+class CreateDynamicStylesHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testStyles()
+    void testStyles()
     {
         when( dynamicSchemaService.createStyles( isA( CreateDynamicStylesParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicStylesParams stylesParams = params.getArgument( 0, CreateDynamicStylesParams.class );
@@ -38,7 +38,7 @@ public class CreateDynamicStylesHandlerTest
     }
 
     @Test
-    public void testInvalidStyles()
+    void testInvalidStyles()
     {
         runFunction( "/test/CreateDynamicStylesHandlerTest.js", "createInvalidStyles" );
     }

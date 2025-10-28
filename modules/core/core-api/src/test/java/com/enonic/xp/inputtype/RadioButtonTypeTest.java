@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RadioButtonTypeTest
+class RadioButtonTypeTest
     extends BaseInputTypeTest
 {
     public RadioButtonTypeTest()
@@ -21,19 +21,19 @@ public class RadioButtonTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "RadioButton", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "RadioButton", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final Value value = this.type.createValue( ValueFactory.newString( "one" ), GenericValue.object().build() );
 
@@ -42,21 +42,21 @@ public class RadioButtonTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         final GenericValue config = newValidConfig();
         this.type.validate( stringProperty( "one" ), config );
     }
 
     @Test
-    public void testValidate_invalid()
+    void testValidate_invalid()
     {
         final GenericValue config = newValidConfig();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( stringProperty( "unknown" ), config ) );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         final GenericValue config = GenericValue.object().build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), config ) );

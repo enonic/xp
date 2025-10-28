@@ -12,11 +12,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CompareExpressionBuilderTest
+class CompareExpressionBuilderTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void buildCompareExpr()
+    void buildCompareExpr()
         throws Exception
     {
         buildCompareExpr( "compare_eq_string.json", CompareExpr.eq( FieldExpr.from( "myField" ), ValueExpr.string( "myValue" ) ) );

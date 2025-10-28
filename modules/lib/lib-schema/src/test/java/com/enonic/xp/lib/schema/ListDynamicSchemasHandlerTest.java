@@ -19,11 +19,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ListDynamicSchemasHandlerTest
+class ListDynamicSchemasHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void listSchemas()
+    void listSchemas()
     {
         when( dynamicSchemaService.listContentSchemas( isA( ListDynamicContentSchemasParams.class ) ) ).thenAnswer( params -> {
             final ListDynamicContentSchemasParams schemasParams = params.getArgument( 0, ListDynamicContentSchemasParams.class );

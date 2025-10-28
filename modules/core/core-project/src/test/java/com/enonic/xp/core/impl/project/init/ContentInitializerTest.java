@@ -17,7 +17,7 @@ import com.enonic.xp.repository.RepositoryService;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ContentInitializerTest
+class ContentInitializerTest
 {
     @Mock
     private NodeService nodeService;
@@ -30,7 +30,7 @@ public class ContentInitializerTest
 
 
     @Test
-    public void testBranchNotFound()
+    void testBranchNotFound()
     {
         when( repositoryService.isInitialized( Mockito.any() ) ).thenReturn( true );
         when( nodeService.getByPath( Mockito.any() ) ).thenThrow( new BranchNotFoundException( Branch.from( "draft" ) ) );

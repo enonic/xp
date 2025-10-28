@@ -15,25 +15,25 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class EventMulticasterTest
+class EventMulticasterTest
 {
     private EventMulticaster multicaster;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.multicaster = new EventMulticaster();
     }
 
     @Test
-    public void testEventWithoutListeners()
+    void testEventWithoutListeners()
     {
         final Event event = Event.create( "test" ).build();
         this.multicaster.publish( event );
     }
 
     @Test
-    public void testPublishOneListener()
+    void testPublishOneListener()
     {
         final EventListener listener = mock( EventListener.class );
         this.multicaster.add( listener );
@@ -48,7 +48,7 @@ public class EventMulticasterTest
     }
 
     @Test
-    public void testPublishMultipleListeners()
+    void testPublishMultipleListeners()
     {
         final EventListener listener1 = mock( EventListener.class );
         this.multicaster.add( listener1 );
@@ -68,7 +68,7 @@ public class EventMulticasterTest
     }
 
     @Test
-    public void testPublishExceptionOnListener()
+    void testPublishExceptionOnListener()
     {
         final EventListener listener1 = mock( EventListener.class );
         this.multicaster.add( listener1 );
@@ -90,7 +90,7 @@ public class EventMulticasterTest
     }
 
     @Test
-    public void testListenerOrder()
+    void testListenerOrder()
     {
         final EventListener listener1 = mock( EventListener.class );
         when( listener1.getOrder() ).thenReturn( Integer.MIN_VALUE );

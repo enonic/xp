@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AttachmentUrlParamsTest
+class AttachmentUrlParamsTest
 {
     @Test
-    public void testId()
+    void testId()
     {
         final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getId() );
@@ -23,7 +23,7 @@ public class AttachmentUrlParamsTest
     }
 
     @Test
-    public void testPath()
+    void testPath()
     {
         final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getPath() );
@@ -36,7 +36,7 @@ public class AttachmentUrlParamsTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getName() );
@@ -49,7 +49,7 @@ public class AttachmentUrlParamsTest
     }
 
     @Test
-    public void testLabel()
+    void testLabel()
     {
         final AttachmentUrlParams params = new AttachmentUrlParams();
         assertNull( params.getLabel() );
@@ -62,7 +62,7 @@ public class AttachmentUrlParamsTest
     }
 
     @Test
-    public void testDownload()
+    void testDownload()
     {
         final AttachmentUrlParams params = new AttachmentUrlParams();
         assertFalse( params.isDownload() );
@@ -75,7 +75,7 @@ public class AttachmentUrlParamsTest
     }
 
     @Test
-    public void testSetAsMap()
+    void testSetAsMap()
     {
         final AttachmentUrlParams params = new AttachmentUrlParams();
         params.id( "123456" );

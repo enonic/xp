@@ -22,12 +22,11 @@ import static com.enonic.xp.core.impl.issue.IssueCommentPropertyNames.TEXT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IssueCommentNodeTranslatorTest
+class IssueCommentNodeTranslatorTest
 {
 
     @Test
-    public void testFromNodeNotResolvingChildren()
-        throws Exception
+    void testFromNodeNotResolvingChildren()
     {
         final Instant created = Instant.now().minus( 1, ChronoUnit.MINUTES );
         final Node node = createNode( created );

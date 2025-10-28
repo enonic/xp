@@ -6,11 +6,11 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetCurrentContentScriptTest
+class GetCurrentContentScriptTest
     extends ScriptTestSupport
 {
     @Test
-    public void currentContent()
+    void currentContent()
     {
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( content );
@@ -19,14 +19,14 @@ public class GetCurrentContentScriptTest
     }
 
     @Test
-    public void noCurrentContent()
+    void noCurrentContent()
     {
         this.portalRequest.setContent( null );
         runFunction( "/test/getCurrentContent-test.js", "noCurrentContent" );
     }
 
     @Test
-    public void currentContentByContentPath()
+    void currentContentByContentPath()
     {
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( null );
@@ -35,7 +35,7 @@ public class GetCurrentContentScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         this.portalRequest.setContent( content );

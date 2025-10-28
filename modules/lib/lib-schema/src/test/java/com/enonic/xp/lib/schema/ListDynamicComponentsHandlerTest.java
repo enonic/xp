@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
@@ -18,11 +18,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ListDynamicComponentsHandlerTest
+class ListDynamicComponentsHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testParts()
+    void testParts()
     {
         when( dynamicSchemaService.listComponents( isA( ListDynamicComponentsParams.class ) ) ).thenAnswer( params -> {
             final ListDynamicComponentsParams componentsParams = params.getArgument( 0, ListDynamicComponentsParams.class );

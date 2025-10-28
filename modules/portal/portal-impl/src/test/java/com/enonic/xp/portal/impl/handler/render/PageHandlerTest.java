@@ -41,14 +41,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class PageHandlerTest
+class PageHandlerTest
     extends RenderBaseHandlerTest
 {
     private PageHandler handler;
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.handler = new PageHandler();
         this.handler.setPageDescriptorService( this.pageDescriptorService );
@@ -65,19 +64,19 @@ public class PageHandlerTest
     }
 
     @Test
-    public void testOrder()
+    void testOrder()
     {
         assertEquals( 50, this.handler.getOrder() );
     }
 
     @Test
-    public void testMatch()
+    void testMatch()
     {
         assertTrue( this.handler.canHandle( this.request ) );
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
         setupSite();
@@ -99,7 +98,7 @@ public class PageHandlerTest
 
 
     @Test
-    public void getContentFound()
+    void getContentFound()
         throws Exception
     {
         setupSite();
@@ -122,7 +121,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentNotFound()
+    void getContentNotFound()
     {
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
         when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );
@@ -135,7 +134,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentExistsButNeedsAuthentication()
+    void getContentExistsButNeedsAuthentication()
     {
         final ContentPath path = ContentPath.from( "/site/somepath/content" );
 
@@ -162,7 +161,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentExistsButInsufficientRights()
+    void getContentExistsButInsufficientRights()
     {
         final AuthenticationInfo authenticationInfo = AuthenticationInfo.create().user( User.ANONYMOUS ).build();
         final Context authenticatedContext = ContextBuilder.from( ContextAccessor.current() ).authInfo( authenticationInfo ).build();
@@ -192,7 +191,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getSiteNotFound()
+    void getSiteNotFound()
     {
         setupContent();
 
@@ -208,7 +207,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentWithTemplateNotFound()
+    void getContentWithTemplateNotFound()
     {
         setupSite();
         setupContent();
@@ -224,7 +223,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void renderForNoPageDescriptor()
+    void renderForNoPageDescriptor()
         throws Exception
     {
         setupSite();
@@ -247,7 +246,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentShortcut()
+    void getContentShortcut()
         throws Exception
     {
         final PropertyTree rootDataSet = new PropertyTree();
@@ -278,7 +277,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void getContentShortcutWithParams()
+    void getContentShortcutWithParams()
         throws Exception
     {
         final PropertyTree rootDataSet = new PropertyTree();
@@ -320,7 +319,7 @@ public class PageHandlerTest
     }
 
     @Test
-    public void renderCustomizedTemplate()
+    void renderCustomizedTemplate()
         throws Exception
     {
         setupCustomizedTemplateContentAndSite();

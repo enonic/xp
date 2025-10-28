@@ -11,7 +11,7 @@ import com.enonic.xp.server.ServerInfo;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.status.BaseReporterTest;
 
-public class ServerReporterTest
+class ServerReporterTest
     extends BaseReporterTest<ServerReporter>
 {
     public ServerReporterTest()
@@ -38,7 +38,7 @@ public class ServerReporterTest
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();

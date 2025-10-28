@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 
-public class PropertyArrayTest
+class PropertyArrayTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -59,7 +59,7 @@ public class PropertyArrayTest
     }
 
     @Test
-    public void parent()
+    void parent()
     {
         PropertyTree tree = new PropertyTree();
         tree.addString( "myString", "a" );
@@ -77,7 +77,7 @@ public class PropertyArrayTest
     }
 
     @Test
-    public void given_existing_Property_at_index_0_when_setting_another_value_without_specifying_index_then_existing_is_overwritten()
+    void given_existing_Property_at_index_0_when_setting_another_value_without_specifying_index_then_existing_is_overwritten()
     {
         PropertyTree tree = new PropertyTree();
         tree.setString( "myString", "a" );

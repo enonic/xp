@@ -17,19 +17,17 @@ import com.enonic.xp.query.aggregation.DateHistogramAggregationQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DateHistogramAggregationsTest
+class DateHistogramAggregationsTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void intervals()
-        throws Exception
+    void intervals()
     {
         createNode( Instant.parse( "2014-12-10T10:00:00Z" ), "n1", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T10:30:00Z" ), "n2", NodePath.ROOT );
@@ -69,8 +67,7 @@ public class DateHistogramAggregationsTest
     }
 
     @Test
-    public void min_doc_count()
-        throws Exception
+    void min_doc_count()
     {
         // Create 5 nodes with two hours between
         createNode( Instant.parse( "2014-12-10T10:00:00Z" ), "n1", NodePath.ROOT );
@@ -106,8 +103,7 @@ public class DateHistogramAggregationsTest
 
 
     @Test
-    public void format()
-        throws Exception
+    void format()
     {
         // Create 5 nodes with two hours between
         createNode( Instant.parse( "2014-12-10T10:30:00Z" ), "n1", NodePath.ROOT );

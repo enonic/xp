@@ -10,7 +10,7 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class CreateRepositoryScriptTest
+class CreateRepositoryScriptTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
@@ -34,14 +34,14 @@ public class CreateRepositoryScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/repo/create.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 2 ) ).createRepository( Mockito.isA( CreateRepositoryParams.class ) );
     }
 
     @Test
-    public void testCreate_WithoutDenyPermissions()
+    void testCreate_WithoutDenyPermissions()
     {
         runScript( "/test/create-repo.js" );
     }

@@ -8,10 +8,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TextComponentTest
+class TextComponentTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -54,7 +54,7 @@ public class TextComponentTest
     }
 
     @Test
-    public void copy()
+    void copy()
     {
         final TextComponent source = TextComponent.create().text( "text" ).build();
 

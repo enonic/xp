@@ -9,10 +9,10 @@ import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DslOrderExprTest
+class DslOrderExprTest
 {
     @Test
-    public void testToString()
+    void testToString()
     {
         final PropertyTree expression1 = new PropertyTree();
         expression1.addString( "field", "myField" );
@@ -27,7 +27,7 @@ public class DslOrderExprTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         final PropertySet expression1 = new PropertyTree().newSet();
         expression1.addString( "field", "myField" );

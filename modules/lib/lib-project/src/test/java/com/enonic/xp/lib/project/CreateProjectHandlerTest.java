@@ -2,48 +2,42 @@ package com.enonic.xp.lib.project;
 
 import org.junit.jupiter.api.Test;
 
-public class CreateProjectHandlerTest
+class CreateProjectHandlerTest
     extends BaseProjectHandlerTest
 {
     @Test
-    public void createProject()
-        throws Exception
+    void createProject()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProject" );
     }
 
 
     @Test
-    public void createProjectWithOneParent()
-        throws Exception
+    void createProjectWithOneParent()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithOneParent" );
     }
 
     @Test
-    public void createProjectWithoutLanguage()
-        throws Exception
+    void createProjectWithoutLanguage()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithoutLanguage" );
     }
 
     @Test
-    public void createProjectWithoutPermissions()
-        throws Exception
+    void createProjectWithoutPermissions()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithoutPermissions" );
     }
 
     @Test
-    public void createProjectWithoutReadAccess()
-        throws Exception
+    void createProjectWithoutReadAccess()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithoutReadAccess" );
     }
 
     @Test
-    public void createProjectWithApplications()
-        throws Exception
+    void createProjectWithApplications()
     {
         runFunction( "/test/CreateProjectHandlerTest.js", "createProjectWithApplications" );
     }

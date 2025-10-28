@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class NodeEventsTest
 {
     @Test
-    public void testCreated()
+    void testCreated()
     {
         final Node created = createNode( "created", new NodePath( "/mynode1/child1" ), "id" );
 
@@ -37,7 +37,7 @@ class NodeEventsTest
     }
 
     @Test
-    public void testPushed()
+    void testPushed()
     {
         final Node pushed1 = createNode( "pushed1", new NodePath( "/mynode1/pushed1" ), "id1" );
         final Node pushed2 = createNode( "pushed2", new NodePath( "/mynode1/pushed2" ), "id2" );
@@ -66,7 +66,7 @@ class NodeEventsTest
     }
 
     @Test
-    public void testDeleted()
+    void testDeleted()
     {
         final Node deleted = createNode( "deleted", new NodePath( "/mynode1/child1" ), "myId" );
 
@@ -79,7 +79,7 @@ class NodeEventsTest
     }
 
     @Test
-    public void testDuplicated()
+    void testDuplicated()
     {
         final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myId" );
 
@@ -93,7 +93,7 @@ class NodeEventsTest
     }
 
     @Test
-    public void testUpdated()
+    void testUpdated()
     {
         final Node updated = createNode( "updated", new NodePath( "/mynode1/child1" ), "myId" );
 
@@ -107,7 +107,7 @@ class NodeEventsTest
     }
 
     @Test
-    public void testMoved()
+    void testMoved()
     {
         final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
         final Node targetNode = createNode( "after", new NodePath( "/mynode1" ), "myId" );
@@ -141,7 +141,7 @@ class NodeEventsTest
     }
 
     @Test
-    public void testSorted()
+    void testSorted()
     {
         final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myId" );
 

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CmsFormFragmentServiceImplTest
+class CmsFormFragmentServiceImplTest
     extends ApplicationTestSupport
 {
     protected CmsFormFragmentServiceImpl service;
@@ -30,14 +30,14 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final FormFragmentDescriptor fragmentDescriptor = service.getByName( FormFragmentName.from( "other:mytype" ) );
         assertNull( fragmentDescriptor );
     }
 
     @Test
-    public void testApplications()
+    void testApplications()
     {
         initializeApps();
 
@@ -46,7 +46,7 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_input()
+    void testInlineFormItems_input()
     {
         initializeApps();
 
@@ -65,7 +65,7 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_formItemSet()
+    void testInlineFormItems_formItemSet()
     {
         initializeApps();
 
@@ -83,7 +83,7 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_two_formItemSets_with_changed_names()
+    void testInlineFormItems_two_formItemSets_with_changed_names()
     {
         initializeApps();
 
@@ -111,7 +111,7 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_layout()
+    void testInlineFormItems_layout()
     {
         initializeApps();
 
@@ -124,7 +124,7 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testFormFragmentsWithCycles()
+    void testFormFragmentsWithCycles()
     {
         initializeApps();
 
@@ -139,7 +139,7 @@ public class CmsFormFragmentServiceImplTest
     }
 
     @Test
-    public void testInlineFormItems_formOptionSet()
+    void testInlineFormItems_formOptionSet()
     {
         initializeApps();
 

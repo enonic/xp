@@ -32,19 +32,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateNodeCommandTest
+class CreateNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void path_is_case_insensitive()
-        throws Exception
+    void path_is_case_insensitive()
     {
         createNode( CreateNodeParams.create().
             name( "myNode" ).
@@ -58,8 +56,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void parent_must_exist()
-        throws Exception
+    void parent_must_exist()
     {
         assertThrows(NodeNotFoundException.class, () -> createNode( CreateNodeParams.create().
             name( "myNode" ).
@@ -68,8 +65,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void case_insensitive_path()
-        throws Exception
+    void case_insensitive_path()
     {
         createNode( CreateNodeParams.create().
             name( "MyNode" ).
@@ -83,8 +79,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void timestamp_set()
-        throws Exception
+    void timestamp_set()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
@@ -99,8 +94,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void populate_manual_order_value_and_insert_first()
-        throws Exception
+    void populate_manual_order_value_and_insert_first()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "my-node" ) ).
@@ -135,8 +129,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void populate_manual_order_value_and_insert_last()
-        throws Exception
+    void populate_manual_order_value_and_insert_last()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             setNodeId( NodeId.from( "my-node" ) ).
@@ -174,8 +167,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void attach_binary()
-        throws Exception
+    void attach_binary()
     {
         PropertyTree data = new PropertyTree();
         data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
@@ -193,8 +185,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void attach_binaries()
-        throws Exception
+    void attach_binaries()
     {
         PropertyTree data = new PropertyTree();
         data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
@@ -214,8 +205,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void attached_binary_not_given()
-        throws Exception
+    void attached_binary_not_given()
     {
         PropertyTree data = new PropertyTree();
         data.setBinaryReference( "myCar", BinaryReference.from( "myImage" ) );
@@ -228,8 +218,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void norwegian_characters_in_name()
-        throws Exception
+    void norwegian_characters_in_name()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "parent with Æ ø Å å" ).
@@ -245,7 +234,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void node_with_reference()
+    void node_with_reference()
     {
         final Node referredNode = createNode( CreateNodeParams.create().
             name( "test2" ).
@@ -279,8 +268,7 @@ public class CreateNodeCommandTest
     }
 
     @Test
-    public void create_node_with_same_path_in_two_branches_then_delete()
-        throws Exception
+    void create_node_with_same_path_in_two_branches_then_delete()
     {
         final Node defaultNode = ctxDefault().callWith( () -> createNode( CreateNodeParams.create().
             name( "myNode" ).

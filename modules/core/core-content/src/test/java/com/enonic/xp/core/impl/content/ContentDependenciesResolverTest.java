@@ -34,7 +34,7 @@ import com.enonic.xp.util.Reference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentDependenciesResolverTest
+class ContentDependenciesResolverTest
 {
 
     private ContentService contentService;
@@ -44,8 +44,7 @@ public class ContentDependenciesResolverTest
     private ContentDependenciesResolver resolver;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
@@ -73,7 +72,7 @@ public class ContentDependenciesResolverTest
     }
 
     @Test
-    public void resolve_inbound_dependencies()
+    void resolve_inbound_dependencies()
     {
         final Content content = createContent( "folderRefContent1", new PropertyTree(), ContentTypeName.folder() );
 
@@ -108,7 +107,7 @@ public class ContentDependenciesResolverTest
     }
 
     @Test
-    public void resolve_outbound_dependencies()
+    void resolve_outbound_dependencies()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -148,7 +147,7 @@ public class ContentDependenciesResolverTest
     }
 
     @Test
-    public void resolve_outbound_with_missing_dependency()
+    void resolve_outbound_with_missing_dependency()
     {
         final PropertyTree data = new PropertyTree();
         final Content folderRefContent1 = createContent( "folderRefContent1", data, ContentTypeName.folder() );

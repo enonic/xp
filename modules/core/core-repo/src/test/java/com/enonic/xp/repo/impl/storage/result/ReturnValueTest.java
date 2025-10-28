@@ -9,11 +9,10 @@ import com.enonic.xp.repo.impl.ReturnValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ReturnValueTest
+class ReturnValueTest
 {
     @Test
-    public void addList()
-        throws Exception
+    void addList()
     {
         List<String> values = new ArrayList<>();
         values.add( "a" );

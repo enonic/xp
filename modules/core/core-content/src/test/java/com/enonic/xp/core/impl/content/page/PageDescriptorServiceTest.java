@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageDescriptorServiceTest
+class PageDescriptorServiceTest
     extends AbstractDescriptorServiceTest
 {
     protected PageDescriptorServiceImpl service;
@@ -29,7 +29,7 @@ public class PageDescriptorServiceTest
     }
 
     @Test
-    public void testGetByKey()
+    void testGetByKey()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mypage" );
         final PageDescriptor descriptor = this.service.getByKey( key );
@@ -39,8 +39,7 @@ public class PageDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplication()
-        throws Exception
+    void testGetByApplication()
     {
         final PageDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
@@ -49,8 +48,7 @@ public class PageDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplications()
-        throws Exception
+    void testGetByApplications()
     {
         final PageDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 

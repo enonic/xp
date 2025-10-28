@@ -5,46 +5,46 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.data.PropertyTree;
 
-public class NgramQueryBuilderTest
+class NgramQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void simple()
+    void simple()
         throws Exception
     {
         test( "simple" );
     }
 
     @Test
-    public void operator()
+    void operator()
         throws Exception
     {
         test( "operator" );
     }
 
     @Test
-    public void multiple_fields()
+    void multiple_fields()
         throws Exception
     {
         test( "multiple_fields" );
     }
 
     @Test
-    public void empty_query()
+    void empty_query()
         throws Exception
     {
         test( "empty_query" );
     }
 
     @Test
-    public void weighted()
+    void weighted()
         throws Exception
     {
         test( "weighted" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );

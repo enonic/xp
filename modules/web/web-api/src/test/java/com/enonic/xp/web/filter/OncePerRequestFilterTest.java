@@ -14,23 +14,21 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class OncePerRequestFilterTest
+class OncePerRequestFilterTest
 {
     private OncePerRequestFilter newFiler()
-        throws Exception
     {
         return Mockito.spy( new OncePerRequestFilter()
         {
             @Override
             protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
-                throws Exception
             {
             }
         } );
     }
 
     @Test
-    public void testHandleOnce()
+    void testHandleOnce()
         throws Exception
     {
         final OncePerRequestFilter filter = newFiler();
@@ -45,7 +43,7 @@ public class OncePerRequestFilterTest
     }
 
     @Test
-    public void testHandleTwice()
+    void testHandleTwice()
         throws Exception
     {
         final OncePerRequestFilter filter = newFiler();

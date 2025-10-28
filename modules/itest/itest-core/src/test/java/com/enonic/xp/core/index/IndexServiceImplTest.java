@@ -33,21 +33,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class IndexServiceImplTest
+class IndexServiceImplTest
     extends AbstractNodeTest
 {
     private Node rootNode;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.rootNode = this.createDefaultRootNode();
     }
 
     @Test
-    public void initialize()
-        throws Exception
+    void initialize()
     {
         final Node node =
             createNode( CreateNodeParams.create().name( "myNode" ).parent( NodePath.ROOT ).refresh( RefreshMode.ALL ).build() );
@@ -67,8 +65,7 @@ public class IndexServiceImplTest
     }
 
     @Test
-    public void not_initialize()
-        throws Exception
+    void not_initialize()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
@@ -89,8 +86,7 @@ public class IndexServiceImplTest
     }
 
     @Test
-    public void purge_then_reindex()
-        throws Exception
+    void purge_then_reindex()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
@@ -113,8 +109,7 @@ public class IndexServiceImplTest
     }
 
     @Test
-    public void reindex_other_branch()
-        throws Exception
+    void reindex_other_branch()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).
@@ -150,8 +145,7 @@ public class IndexServiceImplTest
     }
 
     @Test
-    public void reindex_cms_repo()
-        throws Exception
+    void reindex_cms_repo()
     {
 
         final Context cmsRepoContext =
@@ -182,8 +176,7 @@ public class IndexServiceImplTest
 
 
     @Test
-    public void reindex_system_repo()
-        throws Exception
+    void reindex_system_repo()
     {
 
         final Context systemRepoContext = ContextBuilder.from( ContextAccessor.current() ).
@@ -241,8 +234,7 @@ public class IndexServiceImplTest
 
 
     @Test
-    public void updateIndexSettings()
-        throws Exception
+    void updateIndexSettings()
     {
         final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
             repository( testRepoId ).
@@ -253,8 +245,7 @@ public class IndexServiceImplTest
     }
 
     @Test
-    public void getIndexSettings_empty()
-        throws Exception
+    void getIndexSettings_empty()
     {
         final Map<String, String> indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
 
@@ -262,8 +253,7 @@ public class IndexServiceImplTest
     }
 
     @Test
-    public void getIndexSettings()
-        throws Exception
+    void getIndexSettings()
     {
         this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
             repository( testRepoId ).

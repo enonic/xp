@@ -10,11 +10,10 @@ import com.enonic.xp.vfs.VirtualFiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeImportPathResolverTest
+class NodeImportPathResolverTest
 {
     @Test
-    public void resolve_into_folder()
-        throws Exception
+    void resolve_into_folder()
     {
 
         final NodePath resolvedPath =
@@ -26,8 +25,7 @@ public class NodeImportPathResolverTest
     }
 
     @Test
-    public void resolve_child_into_folder()
-        throws Exception
+    void resolve_child_into_folder()
     {
         final NodePath resolvedPath = NodeImportPathResolver.resolveNodeImportPath(
             VirtualFiles.from( Path.of( "/var", "folder", "myExport", "mynode", "mychild" ) ), //
@@ -39,8 +37,7 @@ public class NodeImportPathResolverTest
     }
 
     @Test
-    public void resolve_into_root()
-        throws Exception
+    void resolve_into_root()
     {
         final NodePath resolvedPath =
             NodeImportPathResolver.resolveNodeImportPath( VirtualFiles.from( Path.of( "/var", "folder", "myExport", "mynode" ) ), //

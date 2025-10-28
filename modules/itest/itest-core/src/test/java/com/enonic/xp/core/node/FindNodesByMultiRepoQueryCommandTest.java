@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class FindNodesByMultiRepoQueryCommandTest
+class FindNodesByMultiRepoQueryCommandTest
     extends AbstractNodeTest
 {
     private static final User REPO_USER_1 =
@@ -57,15 +57,13 @@ public class FindNodesByMultiRepoQueryCommandTest
     }
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void multi_repo_search()
-        throws Exception
+    void multi_repo_search()
     {
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
@@ -91,8 +89,7 @@ public class FindNodesByMultiRepoQueryCommandTest
     }
 
     @Test
-    public void multi_repo_search_different_branches()
-        throws Exception
+    void multi_repo_search_different_branches()
     {
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
@@ -126,8 +123,7 @@ public class FindNodesByMultiRepoQueryCommandTest
     }
 
     @Test
-    public void multi_repo_search_different_branches_same_repo()
-        throws Exception
+    void multi_repo_search_different_branches_same_repo()
     {
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
@@ -162,8 +158,7 @@ public class FindNodesByMultiRepoQueryCommandTest
     }
 
     @Test
-    public void no_access_in_one_repo()
-        throws Exception
+    void no_access_in_one_repo()
     {
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );
@@ -189,8 +184,7 @@ public class FindNodesByMultiRepoQueryCommandTest
     }
 
     @Test
-    public void no_access_in_one_repo_of_three()
-        throws Exception
+    void no_access_in_one_repo_of_three()
     {
         final Repository repo1 = createRepo( REPO_USER_1, "repo1" );
         final Repository repo2 = createRepo( REPO_USER_2, "repo2" );

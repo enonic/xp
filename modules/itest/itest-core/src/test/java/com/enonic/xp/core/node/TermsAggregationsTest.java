@@ -20,19 +20,17 @@ import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TermsAggregationsTest
+class TermsAggregationsTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void order_doccount_desc()
-        throws Exception
+    void order_doccount_desc()
     {
         create_c1_c2_c3_with_2_3_1_category_hits();
 
@@ -68,8 +66,7 @@ public class TermsAggregationsTest
     }
 
     @Test
-    public void order_doccount_asc()
-        throws Exception
+    void order_doccount_asc()
     {
         create_c1_c2_c3_with_2_3_1_category_hits();
 
@@ -106,8 +103,7 @@ public class TermsAggregationsTest
 
 
     @Test
-    public void size()
-        throws Exception
+    void size()
     {
         create_c1_c2_c3_with_2_3_1_category_hits();
 
@@ -140,8 +136,7 @@ public class TermsAggregationsTest
     }
 
     @Test
-    public void order_by_term()
-        throws Exception
+    void order_by_term()
     {
         create_c1_c2_c3_with_2_3_1_category_hits();
 
@@ -177,8 +172,7 @@ public class TermsAggregationsTest
     }
 
     @Test
-    public void nested_term_aggregation()
-        throws Exception
+    void nested_term_aggregation()
     {
         createNode( "c1", "d1", "node1", NodePath.ROOT );
         createNode( "c1", "d1", "node2", NodePath.ROOT );

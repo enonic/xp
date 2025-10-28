@@ -16,11 +16,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.admin.widget.WidgetDescriptor;
 import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.web.WebResponse;
 
@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GetListAllowedWidgetsHandlerTest
+class GetListAllowedWidgetsHandlerTest
 {
     private WidgetDescriptorService widgetDescriptorService;
 

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConfigLoaderTest
+class ConfigLoaderTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -26,7 +26,7 @@ public class ConfigLoaderTest
     private ConfigLoader configLoader;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         this.homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) );
@@ -54,7 +54,7 @@ public class ConfigLoaderTest
     }
 
     @Test
-    public void testDefaultConfig()
+    void testDefaultConfig()
         throws Exception
     {
         final ConfigProperties props = this.configLoader.load();
@@ -63,7 +63,7 @@ public class ConfigLoaderTest
     }
 
     @Test
-    public void testHomeConfig()
+    void testHomeConfig()
         throws Exception
     {
         setupHomeProperties();

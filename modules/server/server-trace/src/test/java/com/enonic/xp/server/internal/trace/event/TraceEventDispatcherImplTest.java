@@ -18,13 +18,13 @@ class TraceEventDispatcherImplTest
     private TraceEventDispatcherExecutorImpl executor;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         executor = new TraceEventDispatcherExecutorImpl();
     }
 
     @AfterEach
-    public void tearDown()
+    void tearDown()
     {
         executor.deactivate();
     }

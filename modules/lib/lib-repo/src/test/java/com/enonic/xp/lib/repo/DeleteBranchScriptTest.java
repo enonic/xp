@@ -7,7 +7,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class DeleteBranchScriptTest
+class DeleteBranchScriptTest
     extends ScriptTestSupport
 {
     private RepositoryService repositoryService;
@@ -23,7 +23,7 @@ public class DeleteBranchScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/repo/deleteBranch.js" );
         Mockito.verify( this.repositoryService, Mockito.times( 1 ) ).deleteBranch( Mockito.any() );

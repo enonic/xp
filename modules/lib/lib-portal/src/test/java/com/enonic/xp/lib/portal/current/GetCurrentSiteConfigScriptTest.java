@@ -3,21 +3,15 @@ package com.enonic.xp.lib.portal.current;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.lib.portal.TestDataFixtures;
-import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-import static org.mockito.Mockito.when;
-
-public class GetCurrentSiteConfigScriptTest
+class GetCurrentSiteConfigScriptTest
     extends ScriptTestSupport
 {
     @Test
-    public void currentSite()
+    void currentSite()
     {
         final Site site = TestDataFixtures.newSite().build();
         this.portalRequest.setSite( site );
@@ -26,21 +20,21 @@ public class GetCurrentSiteConfigScriptTest
     }
 
     @Test
-    public void noCurrentSite()
+    void noCurrentSite()
     {
         this.portalRequest.setSite( null );
         runFunction( "/test/getCurrentSiteConfig-test.js", "noCurrentSite" );
     }
 
     @Test
-    public void noCurrentApplication()
+    void noCurrentApplication()
     {
         this.portalRequest.setApplicationKey( null );
         runFunction( "/test/getCurrentSiteConfig-test.js", "noCurrentSite" );
     }
 
     @Test
-    public void currentSiteByContentPath()
+    void currentSiteByContentPath()
     {
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( null );
@@ -50,7 +44,7 @@ public class GetCurrentSiteConfigScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Site site = TestDataFixtures.newSite().build();
         this.portalRequest.setSite( site );
@@ -59,7 +53,7 @@ public class GetCurrentSiteConfigScriptTest
     }
 
     @Test
-    public void configFromProject()
+    void configFromProject()
     {
         this.portalRequest.setSite( null );
         this.portalRequest.setProject( TestDataFixtures.newDefaultProject().build() );

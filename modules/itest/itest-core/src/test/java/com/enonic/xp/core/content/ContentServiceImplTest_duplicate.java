@@ -40,13 +40,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
 
-public class ContentServiceImplTest_duplicate
+class ContentServiceImplTest_duplicate
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void root_content()
-        throws Exception
+    void root_content()
     {
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content duplicatedContent = doDuplicateContent( rootContent );
@@ -58,8 +57,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void deep_children()
-        throws Exception
+    void deep_children()
     {
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content childrenLevel1 = createContent( rootContent.getPath() );
@@ -73,8 +71,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void skip_children()
-        throws Exception
+    void skip_children()
     {
         final Content rootContent = createContent( ContentPath.ROOT );
         final Content childrenLevel1 = createContent( rootContent.getPath() );
@@ -91,8 +88,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void some_metadata_reset_on_duplicate()
-        throws Exception
+    void some_metadata_reset_on_duplicate()
     {
         final User otherUser = User.create().
             key( PrincipalKey.ofUser( IdProviderKey.system(), "fisk" ) ).
@@ -131,8 +127,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void data_removed_on_duplicate()
-        throws Exception
+    void data_removed_on_duplicate()
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -163,8 +158,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void workflow_info_changed()
-        throws Exception
+    void workflow_info_changed()
     {
         final CreateContentParams createContentParams = CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -202,7 +196,6 @@ public class ContentServiceImplTest_duplicate
 
     @Test
     void audit_data()
-        throws Exception
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 
@@ -224,7 +217,7 @@ public class ContentServiceImplTest_duplicate
     }
 
     @Test
-    public void testCreateVariant()
+    void testCreateVariant()
     {
         final CreateContentParams myContent = CreateContentParams.create()
             .contentData( new PropertyTree() )

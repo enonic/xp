@@ -33,13 +33,12 @@ import static org.mockito.Mockito.atMostOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ContentServiceImplTest_move
+class ContentServiceImplTest_move
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void move_to_folder_starting_with_same_name()
-        throws Exception
+    void move_to_folder_starting_with_same_name()
     {
 
         final Content site = createContent( ContentPath.ROOT, "site" );
@@ -62,8 +61,7 @@ public class ContentServiceImplTest_move
     }
 
     @Test
-    public void move_from_site_to_root()
-        throws Exception
+    void move_from_site_to_root()
     {
         final PropertyTree siteData = new PropertyTree();
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
@@ -83,8 +81,7 @@ public class ContentServiceImplTest_move
     }
 
     @Test
-    public void move_to_the_same_parent()
-        throws Exception
+    void move_to_the_same_parent()
     {
         final PropertyTree siteData = new PropertyTree();
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
@@ -100,7 +97,7 @@ public class ContentServiceImplTest_move
     }
 
     @Test
-    public void move_already_exists()
+    void move_already_exists()
     {
         final Content content = createContent( ContentPath.ROOT, "child", new PropertyTree(), ContentTypeName.site() );
         createContent( ContentPath.ROOT, "child-2", new PropertyTree(), ContentTypeName.site() );

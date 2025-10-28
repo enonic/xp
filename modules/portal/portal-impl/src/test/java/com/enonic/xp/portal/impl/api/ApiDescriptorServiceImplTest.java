@@ -12,7 +12,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ApiDescriptorServiceImplTest
+class ApiDescriptorServiceImplTest
     extends AbstractDescriptorServiceTest
 {
     private ApiDescriptorServiceImpl service;
@@ -27,7 +27,7 @@ public class ApiDescriptorServiceImplTest
     }
 
     @Test
-    public void testGetByApplication()
+    void testGetByApplication()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp1" );
         final ApiDescriptors descriptors = this.service.getByApplication( key );

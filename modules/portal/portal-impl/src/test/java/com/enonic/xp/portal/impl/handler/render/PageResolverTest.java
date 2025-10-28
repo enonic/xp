@@ -60,7 +60,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PageResolverTest
+class PageResolverTest
 {
     private PropertyTree configA;
 
@@ -82,7 +82,7 @@ public class PageResolverTest
     PageResolver pageResolver;
 
     @BeforeEach
-    public void before()
+    void before()
     {
         configA = new PropertyTree();
         configA.addString( "a", "1" );
@@ -102,7 +102,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void given_Content_without_Page_then_effective_Page_is_same_as_in_Template()
+    void given_Content_without_Page_then_effective_Page_is_same_as_in_Template()
     {
         // setup
         final Site site = createSite();
@@ -131,7 +131,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_without_Page_and_Template_withoutPage()
+    void content_without_Page_and_Template_withoutPage()
     {
         final Site site = createSite();
 
@@ -156,7 +156,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_without_Page_and_no_default_template()
+    void content_without_Page_and_no_default_template()
     {
         final Site site = createSite();
 
@@ -178,7 +178,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_with_Page_without_template_or_descriptor()
+    void content_with_Page_without_template_or_descriptor()
     {
         final Site site = createSite();
         final Page page = Page.create().build();
@@ -200,7 +200,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void given_Content_with_Page_without_regions_then_effective_Page_gets_regions_from_Template()
+    void given_Content_with_Page_without_regions_then_effective_Page_gets_regions_from_Template()
     {
         // setup
         final Site site = createSite();
@@ -241,7 +241,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_with_PageTemplate_that_has_no_controller()
+    void content_with_PageTemplate_that_has_no_controller()
     {
         final Site site = createSite();
 
@@ -267,7 +267,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void given_Content_with_Page_without_config_then_effective_Page_gets_config_from_Template()
+    void given_Content_with_Page_without_config_then_effective_Page_gets_config_from_Template()
     {
         // setup
         final Site site = createSite();
@@ -301,7 +301,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void page_with_own_descriptor()
+    void page_with_own_descriptor()
     {
         final Site site = createSite();
         final Page page = Page.create().descriptor( DescriptorKey.from( "myapp:my-descriptor" ) ).config( configB ).build();
@@ -324,7 +324,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void page_with_region_added_from_descriptor()
+    void page_with_region_added_from_descriptor()
     {
         final Site site = createSite();
 
@@ -368,7 +368,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_with_Page_but_template_was_deleted_fallback_to_default()
+    void content_with_Page_but_template_was_deleted_fallback_to_default()
     {
         final Site site = createSite();
 
@@ -403,7 +403,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_with_Page_but_template_was_deleted_fallback_to_default_not_found()
+    void content_with_Page_but_template_was_deleted_fallback_to_default_not_found()
     {
         final Site site = createSite();
 
@@ -429,7 +429,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_is_PageTemplate()
+    void content_is_PageTemplate()
     {
         final Site site = createSite();
 
@@ -455,7 +455,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void content_is_PageTemplate_withNoController()
+    void content_is_PageTemplate_withNoController()
     {
         final Site site = createSite();
 
@@ -477,7 +477,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void contentPageWithFragment()
+    void contentPageWithFragment()
     {
         final Site site = createSite();
         final Page page = Page.create().fragment( FragmentComponent.create().build() ).build();
@@ -499,7 +499,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void contentPageIsFragmentWithEmptyLayout()
+    void contentPageIsFragmentWithEmptyLayout()
     {
         final Site site = createSite();
         final LayoutComponent layoutComponent = LayoutComponent.create().build();
@@ -522,7 +522,7 @@ public class PageResolverTest
     }
 
     @Test
-    public void contentPageIsFragmentWithLayoutAndEmptyRegion()
+    void contentPageIsFragmentWithLayoutAndEmptyRegion()
     {
         final Site site = createSite();
         final DescriptorKey key = DescriptorKey.from( "someapp:sonelayout" );

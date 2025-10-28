@@ -47,22 +47,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class DuplicateNodeCommandTest
+class DuplicateNodeCommandTest
     extends AbstractNodeTest
 {
     @Mock(strictness = Mock.Strictness.LENIENT)
     private DuplicateNodeListener duplicateNodeListener;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void duplicate_single()
-        throws Exception
+    void duplicate_single()
     {
         final String nodeName = "my-node";
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( nodeName ).build() );
@@ -75,8 +73,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void duplicate_twice()
-        throws Exception
+    void duplicate_twice()
     {
         final String nodeName = "my-node";
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( nodeName ).build() );
@@ -89,8 +86,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void with_children()
-        throws Exception
+    void with_children()
     {
         final String nodeName = "my-node";
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( nodeName ).build() );
@@ -106,8 +102,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void references_outside_tree()
-        throws Exception
+    void references_outside_tree()
     {
         final Node node1 = createNode( CreateNodeParams.create()
                                            .parent( NodePath.ROOT )
@@ -128,8 +123,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void subchild_with_reference_within_tree()
-        throws Exception
+    void subchild_with_reference_within_tree()
     {
         final Node node1 = createNode( CreateNodeParams.create()
                                            .parent( NodePath.ROOT )
@@ -156,8 +150,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void child_in_other_branch_updated_reference()
-        throws Exception
+    void child_in_other_branch_updated_reference()
     {
         final Node node1 = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "node1" ).build() );
 
@@ -199,8 +192,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void relation_to_parent_updated_to_duplicated_parent()
-        throws Exception
+    void relation_to_parent_updated_to_duplicated_parent()
     {
         final Node node1 =
             createNode( CreateNodeParams.create().setNodeId( NodeId.from( "node1-id" ) ).parent( NodePath.ROOT ).name( "node1" ).build() );
@@ -218,8 +210,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void attachments_duplicated()
-        throws Exception
+    void attachments_duplicated()
     {
         final String nodeName = "my-node";
 
@@ -247,7 +238,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void manual_order_kept()
+    void manual_order_kept()
     {
         final Node parentNode =
             createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
@@ -284,8 +275,7 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void duplicate_with_capital_node_id()
-        throws Exception
+    void duplicate_with_capital_node_id()
     {
         final String nodeName = "my-node";
         final Node a =
@@ -299,15 +289,13 @@ public class DuplicateNodeCommandTest
     }
 
     @Test
-    public void cannot_duplicate_root_node()
-        throws Exception
+    void cannot_duplicate_root_node()
     {
         assertThrows( OperationNotPermittedException.class, () -> duplicateNode( getNode( Node.ROOT_UUID ) ) );
     }
 
     @Test
-    public void reference_to_child_in_other_parent_within_duplicate_root()
-        throws Exception
+    void reference_to_child_in_other_parent_within_duplicate_root()
     {
         final PropertyTree data = new PropertyTree();
         data.addReference( "refTo1_2_1", Reference.from( "a1_2_1" ) );

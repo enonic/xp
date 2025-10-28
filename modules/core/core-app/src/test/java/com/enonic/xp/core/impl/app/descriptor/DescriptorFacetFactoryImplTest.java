@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DescriptorFacetFactoryImplTest
+class DescriptorFacetFactoryImplTest
 {
     private ResourceService resourceService;
 
@@ -22,7 +22,7 @@ public class DescriptorFacetFactoryImplTest
     private DescriptorFacetFactoryImpl facetFactory;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.resourceService = Mockito.mock( ResourceService.class );
         this.applicationService = Mockito.mock( ApplicationService.class );
@@ -33,7 +33,7 @@ public class DescriptorFacetFactoryImplTest
     }
 
     @Test
-    public void testCreate()
+    void testCreate()
     {
         final DescriptorFacet<MyDescriptor> facet = this.facetFactory.create( this.descriptorLoader );
         assertNotNull( facet );

@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class SleepHandlerTest
+class SleepHandlerTest
     extends ScriptTestSupport
 {
 
@@ -16,14 +16,13 @@ public class SleepHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         runScript( "/lib/xp/examples/task/sleep.js" );
     }
 
     @Test
-    public void testSleep200()
-        throws Exception
+    void testSleep200()
     {
         runFunction( "/test/sleep-test.js", "sleep" );
     }

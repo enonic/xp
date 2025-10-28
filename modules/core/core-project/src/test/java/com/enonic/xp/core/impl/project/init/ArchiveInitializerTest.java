@@ -16,7 +16,7 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ArchiveInitializerTest
+class ArchiveInitializerTest
 {
     @Mock
     private NodeService nodeService;
@@ -26,7 +26,7 @@ public class ArchiveInitializerTest
 
 
     @Test
-    public void testBranchNotFound()
+    void testBranchNotFound()
     {
         when( nodeService.getByPath( Mockito.any() ) ).thenThrow( new BranchNotFoundException( Branch.from( "draft" ) ) );
 

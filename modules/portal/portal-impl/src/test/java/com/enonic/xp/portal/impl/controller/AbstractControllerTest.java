@@ -53,8 +53,7 @@ public abstract class AbstractControllerTest
     protected ResourceService resourceService;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();

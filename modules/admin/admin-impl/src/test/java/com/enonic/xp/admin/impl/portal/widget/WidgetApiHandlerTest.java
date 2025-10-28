@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WidgetApiHandlerTest
+class WidgetApiHandlerTest
 {
     private WidgetApiHandler handler;
 
@@ -41,7 +41,7 @@ public class WidgetApiHandlerTest
     private AdminToolDescriptorService adminToolDescriptorService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.controllerScriptFactory = mock( ControllerScriptFactory.class );
         this.widgetDescriptorService = mock( WidgetDescriptorService.class );

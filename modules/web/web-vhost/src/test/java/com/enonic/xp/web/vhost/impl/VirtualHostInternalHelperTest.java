@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class VirtualHostInternalHelperTest
+class VirtualHostInternalHelperTest
 {
     @Test
-    public void testGetFullTargetPath()
+    void testGetFullTargetPath()
     {
         final VirtualHostMapping virtualHostMapping =
             new VirtualHostMapping( "host", "foo.no", "/a", "/b/c", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -28,7 +28,7 @@ public class VirtualHostInternalHelperTest
     }
 
     @Test
-    public void testGetFullTargetPath_root_target()
+    void testGetFullTargetPath_root_target()
     {
         final VirtualHostMapping virtualHostMapping =
             new VirtualHostMapping( "host", "foo.no", "/a", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -42,7 +42,7 @@ public class VirtualHostInternalHelperTest
     }
 
     @Test
-    public void testGetFullTargetPath_source_equals_request()
+    void testGetFullTargetPath_source_equals_request()
     {
         final VirtualHostMapping virtualHostMapping =
             new VirtualHostMapping( "host", "foo.no", "/a", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -56,7 +56,7 @@ public class VirtualHostInternalHelperTest
     }
 
     @Test
-    public void testGetFullTargetPath_source_equals_request_2()
+    void testGetFullTargetPath_source_equals_request_2()
     {
         final VirtualHostMapping virtualHostMapping =
             new VirtualHostMapping( "host", "foo.no", "/a", "/foo/", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -70,7 +70,7 @@ public class VirtualHostInternalHelperTest
     }
 
     @Test
-    public void testGetFullTargetPathWithTrailingSlash()
+    void testGetFullTargetPathWithTrailingSlash()
     {
         final VirtualHostMapping virtualHostMapping =
             new VirtualHostMapping( "host", "foo.no", "/a", "/b/c", VirtualHostIdProvidersMapping.create().build(), 0 );

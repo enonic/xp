@@ -10,11 +10,11 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InputVisitorTest
+class InputVisitorTest
 {
 
     @Test
-    public void traverse()
+    void traverse()
         throws Exception
     {
         Input myTextLine = Input.create().

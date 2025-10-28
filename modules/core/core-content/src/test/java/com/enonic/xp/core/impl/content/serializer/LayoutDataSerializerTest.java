@@ -21,13 +21,13 @@ import static com.enonic.xp.core.impl.content.serializer.ComponentDataSerializer
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LayoutDataSerializerTest
+class LayoutDataSerializerTest
     extends AbstractDataSerializerTest
 {
     private LayoutComponentDataSerializer layoutDataSerializer;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         final RegionDataSerializer regionSerializer = new RegionDataSerializer( new ComponentDataSerializerProvider() );
 
@@ -35,28 +35,28 @@ public class LayoutDataSerializerTest
     }
 
     @Test
-    public void testLayoutWithTwoRegions()
+    void testLayoutWithTwoRegions()
     {
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
         genAndCheckLayout( layoutDescriptorKey, "left", "right" );
     }
 
     @Test
-    public void testLayoutWithRegionsWithSimilarNames()
+    void testLayoutWithRegionsWithSimilarNames()
     {
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
         genAndCheckLayout( layoutDescriptorKey, "left", "left2" );
     }
 
     @Test
-    public void testLayoutWithDescriptorServiceNotAvailable()
+    void testLayoutWithDescriptorServiceNotAvailable()
     {
         final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "layoutDescriptor:name" );
         genAndCheckLayout( layoutDescriptorKey, "up", "down" );
     }
 
     @Test
-    public void testNoComponents()
+    void testNoComponents()
     {
         final LayoutComponent parsedLayout = layoutDataSerializer.fromData( new PropertyTree().newSet() );
         assertTrue(parsedLayout.getRegions().isEmpty());

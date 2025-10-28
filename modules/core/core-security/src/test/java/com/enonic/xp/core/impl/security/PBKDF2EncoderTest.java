@@ -9,20 +9,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PBKDF2EncoderTest
+class PBKDF2EncoderTest
 {
     private PBKDF2Encoder encoder;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.encoder = new PBKDF2Encoder( new SecureRandom() );
     }
 
     @Test
-    public void encode_validate()
-        throws Exception
+    void encode_validate()
     {
         final String encodedPwd = encoder.encodePassword( "fiskepudding" );
 
@@ -33,15 +31,13 @@ public class PBKDF2EncoderTest
     }
 
     @Test
-    public void unknown_format()
-        throws Exception
+    void unknown_format()
     {
         assertThrows(IllegalArgumentException.class, () -> assertTrue( encoder.validate( "fiskepudding", this.encoder.getType() + ":fisk" ) ));
     }
 
     @Test
-    public void unknown_type()
-        throws Exception
+    void unknown_type()
     {
         assertThrows(IllegalArgumentException.class, () -> assertTrue( encoder.validate( "fiskepudding", "fisk" + ":ost:bolle" ) ));
     }

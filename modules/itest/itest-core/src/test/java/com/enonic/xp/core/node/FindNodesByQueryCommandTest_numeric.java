@@ -10,19 +10,17 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
-public class FindNodesByQueryCommandTest_numeric
+class FindNodesByQueryCommandTest_numeric
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void double_values()
-        throws Exception
+    void double_values()
     {
 
         createNodeWithDoubleValue( 1.0, "node1", NodePath.ROOT );
@@ -37,8 +35,7 @@ public class FindNodesByQueryCommandTest_numeric
     }
 
     @Test
-    public void double_values_in()
-        throws Exception
+    void double_values_in()
     {
 
         createNodeWithDoubleValue( 1.0, "node1", NodePath.ROOT );
@@ -51,8 +48,7 @@ public class FindNodesByQueryCommandTest_numeric
 
 
     @Test
-    public void long_values()
-        throws Exception
+    void long_values()
     {
 
         createNodeWithLongValue( 1L, "node1", NodePath.ROOT );

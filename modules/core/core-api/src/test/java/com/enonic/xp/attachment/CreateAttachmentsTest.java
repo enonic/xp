@@ -10,10 +10,10 @@ import com.google.common.io.ByteSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateAttachmentsTest
+class CreateAttachmentsTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         CreateAttachments attachments = CreateAttachments.empty();
 
@@ -21,7 +21,7 @@ public class CreateAttachmentsTest
     }
 
     @Test
-    public void fromBuilder()
+    void fromBuilder()
     {
         CreateAttachment a1 = CreateAttachment.create().
             mimeType( "image/jpeg" ).
@@ -51,7 +51,7 @@ public class CreateAttachmentsTest
     }
 
     @Test
-    public void fromIterable()
+    void fromIterable()
     {
         CreateAttachment a1 = CreateAttachment.create().
             mimeType( "image/jpeg" ).

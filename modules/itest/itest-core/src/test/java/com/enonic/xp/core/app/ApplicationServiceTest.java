@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-public class ApplicationServiceTest
+class ApplicationServiceTest
     extends AbstractNodeTest
 {
     @TempDir
@@ -102,7 +102,7 @@ public class ApplicationServiceTest
     }
 
     @Test
-    public void testUpdate()
+    void testUpdate()
     {
         String applicationName = "appName";
         adminContext().callWith( () -> {

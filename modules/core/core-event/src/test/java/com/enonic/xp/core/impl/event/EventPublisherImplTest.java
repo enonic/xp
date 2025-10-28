@@ -11,26 +11,25 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class EventPublisherImplTest
+class EventPublisherImplTest
 {
     private EventPublisherImpl publisher;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.publisher = new EventPublisherImpl( Runnable::run );
     }
 
     @Test
-    public void testPublish_noListener()
+    void testPublish_noListener()
     {
         final Event event = Event.create( "test" ).build();
         this.publisher.publish( event );
     }
 
     @Test
-    public void testPublish_withListener()
-        throws Exception
+    void testPublish_withListener()
     {
         final EventListener listener = mock( EventListener.class );
         this.publisher.addListener( listener );

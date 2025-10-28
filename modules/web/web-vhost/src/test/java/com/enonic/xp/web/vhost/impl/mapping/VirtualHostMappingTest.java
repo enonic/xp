@@ -7,26 +7,26 @@ import com.enonic.xp.security.IdProviderKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class VirtualHostMappingTest
+class VirtualHostMappingTest
 {
     private VirtualHostMapping virtualHostMapping;
 
     @Test
-    public void testName()
+    void testName()
     {
         this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "mymapping", this.virtualHostMapping.getName() );
     }
 
     @Test
-    public void testHost()
+    void testHost()
     {
         this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "foo.no", this.virtualHostMapping.getHost() );
     }
 
     @Test
-    public void testSource()
+    void testSource()
     {
         this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "/", this.virtualHostMapping.getSource() );
@@ -40,7 +40,7 @@ public class VirtualHostMappingTest
     }
 
     @Test
-    public void testTarget()
+    void testTarget()
     {
         this.virtualHostMapping = new VirtualHostMapping( "mymapping", "foo.no", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0 );
         assertEquals( "/", this.virtualHostMapping.getTarget() );
@@ -54,7 +54,7 @@ public class VirtualHostMappingTest
     }
 
     @Test
-    public void testIdProviderKey()
+    void testIdProviderKey()
     {
         assertThrows( NullPointerException.class,
                       () -> new VirtualHostMapping( "mymapping", "foo.no", "/", null, VirtualHostIdProvidersMapping.create().

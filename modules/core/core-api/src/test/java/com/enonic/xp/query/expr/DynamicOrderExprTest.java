@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class DynamicOrderExprTest
+class DynamicOrderExprTest
 {
     @Test
-    public void testExpression()
+    void testExpression()
     {
         final FunctionExpr func = FunctionExpr.from( "name", new ArrayList<>() );
         final DynamicOrderExpr expr = new DynamicOrderExpr( func, OrderExpr.Direction.DESC );
@@ -22,7 +22,7 @@ public class DynamicOrderExprTest
     }
 
     @Test
-    public void testExpressionWithoutDirection()
+    void testExpressionWithoutDirection()
     {
         final FunctionExpr func = FunctionExpr.from( "name", new ArrayList<>() );
         final DynamicOrderExpr expr = new DynamicOrderExpr( func, null );

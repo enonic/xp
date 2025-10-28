@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.servlet.http.Part;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.Lists;
+
+import jakarta.servlet.http.Part;
 
 import com.enonic.xp.web.multipart.MultipartItem;
 
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MultipartFormImplTest
+class MultipartFormImplTest
 {
     private MultipartFormImpl form;
 
@@ -30,7 +30,7 @@ public class MultipartFormImplTest
     private Part part2;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         this.part1 = Mockito.mock( Part.class );
@@ -54,7 +54,7 @@ public class MultipartFormImplTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final MultipartFormImpl emptyForm = new MultipartFormImpl( Collections.emptyList() );
 
@@ -65,7 +65,7 @@ public class MultipartFormImplTest
     }
 
     @Test
-    public void testIterate()
+    void testIterate()
     {
         final List<MultipartItem> items = Lists.newArrayList( this.form );
         assertEquals( 3, items.size() );
@@ -74,7 +74,7 @@ public class MultipartFormImplTest
     }
 
     @Test
-    public void testGet()
+    void testGet()
     {
         final MultipartItem item1 = this.form.get( "upload1" );
         assertNotNull( item1 );
@@ -89,7 +89,7 @@ public class MultipartFormImplTest
     }
 
     @Test
-    public void testGetWithIndex()
+    void testGetWithIndex()
     {
         final MultipartItem item1 = this.form.get( "upload1", 0 );
         assertNotNull( item1 );
@@ -106,8 +106,7 @@ public class MultipartFormImplTest
     }
 
     @Test
-    public void testGetAsString()
-        throws Exception
+    void testGetAsString()
     {
         assertEquals( "hello1", this.form.getAsString( "upload1" ) );
         assertEquals( "hello2", this.form.getAsString( "upload2" ) );
@@ -115,7 +114,7 @@ public class MultipartFormImplTest
     }
 
     @Test
-    public void testDelete()
+    void testDelete()
         throws Exception
     {
         this.form.delete();

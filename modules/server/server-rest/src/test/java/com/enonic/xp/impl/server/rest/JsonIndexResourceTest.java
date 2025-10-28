@@ -24,7 +24,7 @@ import com.enonic.xp.repository.RepositoryService;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 
-public class JsonIndexResourceTest
+class JsonIndexResourceTest
     extends JaxRsResourceTestSupport
 {
     private IndexService indexService;
@@ -32,7 +32,7 @@ public class JsonIndexResourceTest
     private RepositoryService repositoryService;
 
     @Test
-    public void reindex()
+    void reindex()
         throws Exception
     {
         final ReindexResult reindexResult = ReindexResult.create().
@@ -54,7 +54,7 @@ public class JsonIndexResourceTest
     }
 
     @Test
-    public void updateSettings()
+    void updateSettings()
         throws Exception
     {
         final UpdateIndexSettingsResult indexSettingsResult = UpdateIndexSettingsResult.create().

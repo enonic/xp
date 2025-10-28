@@ -21,12 +21,11 @@ import com.enonic.xp.portal.postprocess.PostProcessInstruction;
 import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PostProcessEvaluatorTest
+class PostProcessEvaluatorTest
 {
 
     @Test
-    public void testEvaluateSimpleHtml()
-        throws Exception
+    void testEvaluateSimpleHtml()
     {
         final PostProcessEvaluator evaluator = new PostProcessEvaluator();
         evaluator.injections = Collections.emptyList();
@@ -37,8 +36,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateContributions()
-        throws Exception
+    void testEvaluateContributions()
     {
         final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
@@ -65,8 +63,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateMultipleContributions()
-        throws Exception
+    void testEvaluateMultipleContributions()
     {
         final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
@@ -104,8 +101,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateDuplicatedContributions()
-        throws Exception
+    void testEvaluateDuplicatedContributions()
     {
         final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
@@ -143,8 +139,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateInstructionsAndContributions()
-        throws Exception
+    void testEvaluateInstructionsAndContributions()
     {
         final PostProcessInjection contributionsInjection = ( portalRequest, portalResponse, tag ) -> {
             switch ( tag )
@@ -172,8 +167,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateInstructions()
-        throws Exception
+    void testEvaluateInstructions()
     {
         final PostProcessInstruction uppercaseInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "UPPERCASE " ) )
@@ -203,8 +197,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateInstructionSetCookie()
-        throws Exception
+    void testEvaluateInstructionSetCookie()
     {
         final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "INSTRUCTION" ) )
@@ -227,8 +220,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateInstructionSetHeader()
-        throws Exception
+    void testEvaluateInstructionSetHeader()
     {
         final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "INSTRUCTION" ) )
@@ -250,8 +242,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateInstructionSetApplyFilters()
-        throws Exception
+    void testEvaluateInstructionSetApplyFilters()
     {
         final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "INSTRUCTION" ) )
@@ -272,8 +263,7 @@ public class PostProcessEvaluatorTest
     }
 
     @Test
-    public void testEvaluateInstructionSetContribution()
-        throws Exception
+    void testEvaluateInstructionSetContribution()
     {
         final PostProcessInstruction setCookieInstruction = ( portalRequest, instruction ) -> {
             if ( instruction.startsWith( "INSTRUCTION" ) )

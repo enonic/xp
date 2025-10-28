@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MainExecutorTest
+class MainExecutorTest
 {
     private MainExecutor executor;
 
@@ -28,13 +28,13 @@ public class MainExecutorTest
     private PortalScriptService scriptService;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.executor = new MainExecutor( this.scriptService );
     }
 
     @Test
-    public void mainJsMissing()
+    void mainJsMissing()
     {
         final Application app = mock( Application.class );
         when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
@@ -46,7 +46,7 @@ public class MainExecutorTest
     }
 
     @Test
-    public void mainJsError()
+    void mainJsError()
     {
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
         when( this.scriptService.hasScript( key ) ).thenReturn( true );
@@ -59,7 +59,7 @@ public class MainExecutorTest
     }
 
     @Test
-    public void mainJsExecute()
+    void mainJsExecute()
     {
         final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
         when( this.scriptService.hasScript( key ) ).thenReturn( true );

@@ -19,11 +19,10 @@ import com.enonic.xp.security.RoleKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MultiRepoSearchSourceAdaptorTest
+class MultiRepoSearchSourceAdaptorTest
 {
     @Test
-    public void single_repo()
-        throws Exception
+    void single_repo()
     {
         final ESSource source = MultiRepoSearchSourceAdaptor.adapt( MultiRepoSearchSource.create().
             add( SingleRepoSearchSource.create().
@@ -39,8 +38,7 @@ public class MultiRepoSearchSourceAdaptorTest
 
 
     @Test
-    public void su_user_yields_no_acl_filter()
-        throws Exception
+    void su_user_yields_no_acl_filter()
     {
         final ESSource source = MultiRepoSearchSourceAdaptor.adapt( MultiRepoSearchSource.create().
             add( SingleRepoSearchSource.create().
@@ -56,8 +54,7 @@ public class MultiRepoSearchSourceAdaptorTest
     }
 
     @Test
-    public void multiple_repos()
-        throws Exception
+    void multiple_repos()
     {
         final ESSource source = MultiRepoSearchSourceAdaptor.adapt( MultiRepoSearchSource.create().
             add( SingleRepoSearchSource.create().

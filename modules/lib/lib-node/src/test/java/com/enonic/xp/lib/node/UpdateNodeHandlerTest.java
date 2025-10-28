@@ -63,7 +63,6 @@ public class UpdateNodeHandlerTest
         {
             @Override
             public Node answer( InvocationOnMock invocation )
-                throws Throwable
             {
                 final UpdateNodeParams updateNodeParams = (UpdateNodeParams) invocation.getArguments()[0];
                 final EditableNode editableNode = new EditableNode( originalNode );
@@ -90,7 +89,7 @@ public class UpdateNodeHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "notChanged", "originalValue" );
@@ -130,7 +129,7 @@ public class UpdateNodeHandlerTest
     }
 
     @Test
-    public void keep_original_value_types_when_not_touched()
+    void keep_original_value_types_when_not_touched()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "myString", "originalValue" );

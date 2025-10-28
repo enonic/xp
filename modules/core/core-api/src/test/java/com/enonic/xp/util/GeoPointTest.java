@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class GeoPointTest
+class GeoPointTest
 {
     @Test
-    public void testFrom_valid()
+    void testFrom_valid()
     {
         final GeoPoint point = GeoPoint.from( "1.1,-2.2" );
         assertNotNull( point );
@@ -21,7 +21,7 @@ public class GeoPointTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final GeoPoint p1 = new GeoPoint( 1.1, 2.2 );
         final GeoPoint p2 = new GeoPoint( 1.1, 2.2 );
@@ -34,7 +34,7 @@ public class GeoPointTest
     }
 
     @Test
-    public void testHashCode()
+    void testHashCode()
     {
         final GeoPoint p1 = new GeoPoint( 1.1, 2.2 );
         final GeoPoint p2 = new GeoPoint( 1.1, 2.2 );
@@ -45,7 +45,7 @@ public class GeoPointTest
     }
 
     @Test
-    public void testFrom_notValid()
+    void testFrom_notValid()
     {
         testNotValidFrom( "1", "Value [1] is not a valid geo-point" );
         testNotValidFrom( "1,2,3", "Value [1,2,3] is not a valid geo-point" );

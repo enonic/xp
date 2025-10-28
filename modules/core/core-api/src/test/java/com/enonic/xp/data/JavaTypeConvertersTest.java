@@ -16,17 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JavaTypeConvertersTest
+class JavaTypeConvertersTest
 {
     @Test
-    public void isNumber()
+    void isNumber()
     {
         assertTrue( JavaTypeConverters.isNumber( "0" ) );
         assertFalse( JavaTypeConverters.isNumber( "test" ) );
     }
 
     @Test
-    public void convertToDouble()
+    void convertToDouble()
     {
         assertEquals( 1.5, JavaTypeConverters.DOUBLE.convertFrom( "1.5" ) );
         assertNull( JavaTypeConverters.DOUBLE.convertFrom( "test" ) );
@@ -34,7 +34,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToBoolean()
+    void convertToBoolean()
     {
         assertTrue( JavaTypeConverters.BOOLEAN.convertFrom( true ) );
         assertFalse( JavaTypeConverters.BOOLEAN.convertFrom( false ) );
@@ -44,7 +44,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToLong()
+    void convertToLong()
     {
         assertEquals( 1000, JavaTypeConverters.LONG.convertFrom( 1000 ) );
         assertEquals( 1001, JavaTypeConverters.LONG.convertFrom( "1001" ) );
@@ -54,7 +54,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToString()
+    void convertToString()
     {
         assertNotNull( JavaTypeConverters.STRING.convertFrom( "test convert" ) );
         assertEquals( "converting", JavaTypeConverters.STRING.convertFrom( "converting" ) );
@@ -64,14 +64,14 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToData()
+    void convertToData()
     {
         assertNull( JavaTypeConverters.DATA.convertFrom( "test convert" ) );
         assertNull( JavaTypeConverters.DATA.convertFrom( new Object() ) );
     }
 
     @Test
-    public void convertToContentId()
+    void convertToContentId()
     {
         ContentId contentId = ContentId.from( "id" );
         assertEquals( contentId, JavaTypeConverters.CONTENT_ID.convertFrom( contentId ) );
@@ -80,7 +80,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToInstant()
+    void convertToInstant()
     {
         assertEquals( Instant.class, JavaTypeConverters.DATE_TIME.convertFrom( LocalDate.now() ).getClass() );
         assertEquals( Instant.class, JavaTypeConverters.DATE_TIME.convertFrom( LocalTime.now() ).getClass() );
@@ -90,7 +90,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToLocalTime()
+    void convertToLocalTime()
     {
         assertEquals( LocalTime.class, JavaTypeConverters.LOCAL_TIME.convertFrom( LocalDate.now() ).getClass() );
         assertEquals( LocalTime.class, JavaTypeConverters.LOCAL_TIME.convertFrom( LocalTime.now() ).getClass() );
@@ -101,7 +101,7 @@ public class JavaTypeConvertersTest
 
 
     @Test
-    public void convertToLocalDateTime()
+    void convertToLocalDateTime()
     {
         assertEquals( LocalDateTime.class, JavaTypeConverters.LOCAL_DATE_TIME.convertFrom( LocalDate.now() ).getClass() );
         assertEquals( LocalDateTime.class, JavaTypeConverters.LOCAL_DATE_TIME.convertFrom( LocalTime.now() ).getClass() );
@@ -111,7 +111,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToLocalDate()
+    void convertToLocalDate()
     {
         assertEquals( LocalDate.class, JavaTypeConverters.LOCAL_DATE.convertFrom( LocalDate.now() ).getClass() );
         assertEquals( LocalDate.class, JavaTypeConverters.LOCAL_DATE.convertFrom( LocalDateTime.now() ).getClass() );
@@ -120,7 +120,7 @@ public class JavaTypeConvertersTest
     }
 
     @Test
-    public void convertToGeoPoint()
+    void convertToGeoPoint()
     {
         assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( GeoPoint.from( "22.22, 33.33" ) ).getClass() );
         assertEquals( GeoPoint.class, JavaTypeConverters.GEO_POINT.convertFrom( new GeoPoint( 2.2, 3.3 ) ).getClass() );

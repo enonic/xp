@@ -6,11 +6,11 @@ import static com.enonic.xp.audit.AuditLogTestBuilder.getBuilder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FindAuditLogResultTest
+class FindAuditLogResultTest
 {
 
     @Test
-    public void no_hits_provided()
+    void no_hits_provided()
     {
         assertThrows( NullPointerException.class, () -> {
             FindAuditLogResult.create().build();
@@ -18,7 +18,7 @@ public class FindAuditLogResultTest
     }
 
     @Test
-    public void empty_hits()
+    void empty_hits()
     {
         FindAuditLogResult result = FindAuditLogResult.create().
             hits( AuditLogs.empty() ).
@@ -28,7 +28,7 @@ public class FindAuditLogResultTest
     }
 
     @Test
-    public void some_hits()
+    void some_hits()
     {
         FindAuditLogResult result = FindAuditLogResult.create().
             hits( AuditLogs.from( getBuilder().id( AuditLogId.from( 1 ) ).build(), getBuilder().id( AuditLogId.from( 2 ) ).build() ) ).

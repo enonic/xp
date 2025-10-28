@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ConvertersTest
+class ConvertersTest
 {
     @Test
-    public void testConvert()
+    void testConvert()
     {
         final int value1 = Converters.convert( "123", Integer.class );
         assertEquals( 123, value1 );
@@ -22,13 +22,13 @@ public class ConvertersTest
     }
 
     @Test
-    public void testConvertError()
+    void testConvertError()
     {
         assertThrows(ConvertException.class, () -> Converters.convert( "abc", Integer.class ));
     }
 
     @Test
-    public void testConvertOrNull()
+    void testConvertOrNull()
     {
         final Integer value1 = Converters.convertOrNull( "123", Integer.class );
         assertEquals( 123, value1 );
@@ -38,7 +38,7 @@ public class ConvertersTest
     }
 
     @Test
-    public void testConvertOrDefault()
+    void testConvertOrDefault()
     {
         final int value1 = Converters.convertOrDefault( "123", Integer.class, 1 );
         assertEquals( 123, value1 );

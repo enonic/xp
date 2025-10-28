@@ -29,7 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RepositoryResourceTest
+class RepositoryResourceTest
     extends JaxRsResourceTestSupport
 {
     private TaskService taskService;
@@ -42,7 +42,7 @@ public class RepositoryResourceTest
     public Path temporaryFolder;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
@@ -63,7 +63,7 @@ public class RepositoryResourceTest
     }
 
     @Test
-    public void exportNodes()
+    void exportNodes()
         throws Exception
     {
         when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
@@ -84,7 +84,7 @@ public class RepositoryResourceTest
     }
 
     @Test
-    public void importNodes()
+    void importNodes()
         throws Exception
     {
         when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
@@ -105,7 +105,7 @@ public class RepositoryResourceTest
     }
 
     @Test
-    public void listRepositories()
+    void listRepositories()
     {
         Repositories.Builder builder = Repositories.create();
         for ( int i = 0; i < 5; i++ )

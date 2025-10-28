@@ -9,10 +9,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ImageComponentTest
+class ImageComponentTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {
@@ -69,7 +69,7 @@ public class ImageComponentTest
     }
 
     @Test
-    public void copy()
+    void copy()
     {
         final PropertyTree config1 = new PropertyTree();
         config1.addString( "some", "config" );

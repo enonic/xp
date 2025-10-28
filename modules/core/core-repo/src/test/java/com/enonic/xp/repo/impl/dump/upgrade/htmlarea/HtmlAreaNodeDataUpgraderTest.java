@@ -25,18 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HtmlAreaNodeDataUpgraderTest
+class HtmlAreaNodeDataUpgraderTest
 {
     private HtmlAreaNodeDataUpgrader htmlAreaNodeDataUpgrader;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.htmlAreaNodeDataUpgrader = new HtmlAreaNodeDataUpgrader();
     }
 
     @Test
-    public void testUpgrade_nonContent()
+    void testUpgrade_nonContent()
     {
         final NodeVersion nodeVersion = NodeVersion.create().build();
         final DumpUpgradeStepResult.Builder result = DumpUpgradeStepResult.create();
@@ -45,7 +45,7 @@ public class HtmlAreaNodeDataUpgraderTest
     }
 
     @Test
-    public void testUpgrade()
+    void testUpgrade()
         throws IOException
     {
         final PropertyTree data = new PropertyTree();

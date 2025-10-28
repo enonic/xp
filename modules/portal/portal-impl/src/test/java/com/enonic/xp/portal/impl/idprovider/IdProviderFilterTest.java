@@ -16,21 +16,21 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class IdProviderFilterTest
+class IdProviderFilterTest
 {
     private IdProviderFilter idProviderFilter;
 
     private IdProviderControllerService idProviderControllerService;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
         idProviderFilter = new IdProviderFilter( idProviderControllerService );
     }
 
     @Test
-    public void testExecuteUnauthenticated()
+    void testExecuteUnauthenticated()
         throws Exception
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
@@ -42,8 +42,7 @@ public class IdProviderFilterTest
     }
 
     @Test
-    public void testExecuteAuthenticated()
-        throws Exception
+    void testExecuteAuthenticated()
     {
         final User user = User.create().
             key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).

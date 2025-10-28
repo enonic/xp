@@ -6,23 +6,23 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FormItemPathTest
+class FormItemPathTest
 {
     @Test
-    public void tostring()
+    void tostring()
     {
         assertEquals( "car", FormItemPath.from( "car" ).toString() );
         assertEquals( "car.model", FormItemPath.from( "car.model" ).toString() );
     }
 
     @Test
-    public void new_given_existing_formItemPath_and_name()
+    void new_given_existing_formItemPath_and_name()
     {
         assertEquals( "car.model", FormItemPath.from( FormItemPath.from( "car" ), "model" ).toString() );
     }
 
     @Test
-    public void asNewWithoutFirstPathElement()
+    void asNewWithoutFirstPathElement()
     {
         assertEquals( "", FormItemPath.from( "first" ).asNewWithoutFirstPathElement().toString() );
         assertEquals( "second", FormItemPath.from( "first.second" ).asNewWithoutFirstPathElement().toString() );

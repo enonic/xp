@@ -8,11 +8,11 @@ import com.enonic.xp.core.impl.image.ImageFunction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RectBorderFilterTest
+class RectBorderFilterTest
     extends BaseImageFilterTest
 {
     @Test
-    public void testBorder()
+    void testBorder()
     {
         ImageFunction filter = newFilters().border( 10, 10 );
         BufferedImage result = filter.apply( getTransparent() );

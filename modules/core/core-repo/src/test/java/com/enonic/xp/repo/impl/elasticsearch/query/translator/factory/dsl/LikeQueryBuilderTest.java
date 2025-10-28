@@ -7,53 +7,51 @@ import com.enonic.xp.data.PropertyTree;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class LikeQueryBuilderTest
+class LikeQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void null_value()
-        throws Exception
+    void null_value()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "null_value" ) );
     }
 
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "empty" ) );
     }
 
     @Test
-    public void both()
+    void both()
         throws Exception
     {
         test( "both" );
     }
 
     @Test
-    public void inside()
+    void inside()
         throws Exception
     {
         test( "inside" );
     }
 
     @Test
-    public void left()
+    void left()
         throws Exception
     {
         test( "left" );
     }
 
     @Test
-    public void right()
+    void right()
         throws Exception
     {
         test( "right" );
     }
 
     @Test
-    public void boosted()
+    void boosted()
         throws Exception
     {
         test( "boosted" );

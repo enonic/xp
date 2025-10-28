@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SyncContentServiceImplTest
+class SyncContentServiceImplTest
     extends AbstractContentSynchronizerTest
 {
     private ParentContentSynchronizer synchronizer;
@@ -48,8 +48,7 @@ public class SyncContentServiceImplTest
     }
 
     @Test
-    public void testRestoreSort()
-        throws Exception
+    void testRestoreSort()
     {
         final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
@@ -78,8 +77,7 @@ public class SyncContentServiceImplTest
     }
 
     @Test
-    public void testWorkflowInfo()
-        throws Exception
+    void testWorkflowInfo()
     {
         final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
@@ -108,8 +106,7 @@ public class SyncContentServiceImplTest
     }
 
     @Test
-    public void resetWithRemovedSource()
-        throws Exception
+    void resetWithRemovedSource()
     {
         final Content source = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
@@ -134,8 +131,7 @@ public class SyncContentServiceImplTest
     }
 
     @Test
-    public void testSyncProject()
-        throws Exception
+    void testSyncProject()
     {
         final Content missedParent = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content missedChild = projectContext.callWith( () -> createContent( missedParent.getPath() ) );
@@ -156,8 +152,7 @@ public class SyncContentServiceImplTest
     }
 
     @Test
-    public void testSyncProjectFromTwoParents()
-        throws Exception
+    void testSyncProjectFromTwoParents()
     {
         final Content missedContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content missedContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT ) );
@@ -178,8 +173,7 @@ public class SyncContentServiceImplTest
     }
 
     @Test
-    public void testMoveArchiveAndResetFromTwoParents()
-        throws Exception
+    void testMoveArchiveAndResetFromTwoParents()
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT ) );

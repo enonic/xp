@@ -7,11 +7,10 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class NodeBuilderTest
+class NodeBuilderTest
 {
     @Test
-    public void build_given_no_properties_then_rootDataSet_not_null()
-        throws Exception
+    void build_given_no_properties_then_rootDataSet_not_null()
     {
         final Node myNode = Node.create().name( NodeName.from( "my-node" ) ).parentPath( NodePath.ROOT ).build();
         assertNotNull( myNode.data() );
@@ -19,7 +18,7 @@ public class NodeBuilderTest
 
 
     @Test
-    public void build_given_index_config()
+    void build_given_index_config()
     {
         final Node myNode = Node.create().
             indexConfigDocument( PatternIndexConfigDocument.create().
@@ -33,7 +32,7 @@ public class NodeBuilderTest
     }
 
     @Test
-    public void build_given_path()
+    void build_given_path()
     {
         final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).
@@ -44,8 +43,7 @@ public class NodeBuilderTest
     }
 
     @Test
-    public void build_given_all_builder_properties()
-        throws Exception
+    void build_given_all_builder_properties()
     {
         final Node myNode = Node.create().
             name( NodeName.from( "my-name" ) ).

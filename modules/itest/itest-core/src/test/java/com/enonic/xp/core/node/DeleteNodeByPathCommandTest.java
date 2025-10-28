@@ -11,19 +11,17 @@ import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DeleteNodeByPathCommandTest
+class DeleteNodeByPathCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void delete_by_path()
-        throws Exception
+    void delete_by_path()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).

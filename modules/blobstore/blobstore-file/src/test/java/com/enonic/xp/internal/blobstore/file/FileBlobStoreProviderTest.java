@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class FileBlobStoreProviderTest
+class FileBlobStoreProviderTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -24,7 +24,7 @@ public class FileBlobStoreProviderTest
     private FileBlobStoreConfig config;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.provider = new FileBlobStoreProvider();
         this.config = Mockito.mock( FileBlobStoreConfig.class );
@@ -33,21 +33,21 @@ public class FileBlobStoreProviderTest
     }
 
     @Test
-    public void testAccessors()
+    void testAccessors()
     {
         assertEquals( "file", this.provider.name() );
         assertSame( this.config, this.provider.config() );
     }
 
     @Test
-    public void get_valid()
+    void get_valid()
     {
         Mockito.when( this.config.isValid() ).thenReturn( true );
         assertNotNull( this.provider.get() );
     }
 
     @Test
-    public void get_notValid()
+    void get_notValid()
     {
         Mockito.when( this.config.isValid() ).thenReturn( false );
         assertNull( this.provider.get() );

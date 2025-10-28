@@ -66,8 +66,7 @@ class ContextBuilderTest
     }
 
     @Test
-    public void copyConstructWithOverwrite()
-        throws Exception
+    void copyConstructWithOverwrite()
     {
 
         final Context old = ContextBuilder.create().

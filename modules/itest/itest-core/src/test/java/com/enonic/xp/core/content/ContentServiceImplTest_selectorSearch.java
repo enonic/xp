@@ -15,13 +15,12 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 
-public class ContentServiceImplTest_selectorSearch
+class ContentServiceImplTest_selectorSearch
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void fulltext_order()
-        throws Exception
+    void fulltext_order()
     {
         final Content site1 = createContent( ContentPath.ROOT, "site1" );
 
@@ -43,8 +42,7 @@ public class ContentServiceImplTest_selectorSearch
 
     @Disabled // Implement path search match first
     @Test
-    public void same_site_first()
-        throws Exception
+    void same_site_first()
     {
         final Content site1 = createContent( ContentPath.ROOT, "site1" );
         final Content site2 = createContent( ContentPath.ROOT, "site2" );

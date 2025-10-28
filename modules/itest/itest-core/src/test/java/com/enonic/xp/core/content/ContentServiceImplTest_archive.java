@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_archive
+class ContentServiceImplTest_archive
     extends AbstractContentServiceTest
 {
     private TestListener listener;
@@ -52,8 +52,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_tree()
-        throws Exception
+    void archive_tree()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final Content child1 = createContent( parent.getPath(), "child1" );
@@ -86,8 +85,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_child()
-        throws Exception
+    void archive_child()
     {
         final Content parent = createContent( ContentPath.ROOT, "parent" );
         final Content child = createContent( parent.getPath(), "child" );
@@ -107,8 +105,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_the_same_name()
-        throws Exception
+    void archive_the_same_name()
     {
         final Content content1 = createContent( ContentPath.ROOT, "content" );
         this.contentService.archive( ArchiveContentParams.create().contentId( content1.getId() ).build() );
@@ -123,8 +120,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_inherited()
-        throws Exception
+    void archive_inherited()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
@@ -162,8 +158,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_already_archived()
-        throws Exception
+    void archive_already_archived()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
@@ -178,8 +173,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_with_long_name()
-        throws Exception
+    void archive_with_long_name()
     {
         final Content content = createContent( ContentPath.ROOT, "content-1234567890-1234567890-1234567890-1234567890-1234567890" );
         this.contentService.archive( ArchiveContentParams.create().contentId( content.getId() ).build() );
@@ -194,8 +188,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_published()
-        throws Exception
+    void archive_published()
     {
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
@@ -234,8 +227,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_without_patch_permission()
-        throws Exception
+    void archive_without_patch_permission()
     {
         final Content content = createContent( ContentPath.ROOT, "content", AccessControlList.create()
             .add( AccessControlEntry.create()
@@ -285,8 +277,7 @@ public class ContentServiceImplTest_archive
     }
 
     @Test
-    public void archive_with_message()
-        throws Exception
+    void archive_with_message()
     {
         final Content parent = createContent( ContentPath.ROOT, "archive" );
         final String archiveMessage = "Archive test message";

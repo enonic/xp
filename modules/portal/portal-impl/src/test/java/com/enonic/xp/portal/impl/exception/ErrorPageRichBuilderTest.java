@@ -11,19 +11,19 @@ import com.enonic.xp.resource.ResourceService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ErrorPageRichBuilderTest
+class ErrorPageRichBuilderTest
 {
     private ResourceService resourceService;
 
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         resourceService = Mockito.mock( ResourceService.class );
     }
 
     @Test
-    public void test_html_description()
+    void test_html_description()
         throws Exception
     {
 
@@ -43,7 +43,7 @@ public class ErrorPageRichBuilderTest
     }
 
     @Test
-    public void test_html_title()
+    void test_html_title()
         throws Exception
     {
 
@@ -63,7 +63,7 @@ public class ErrorPageRichBuilderTest
     }
 
     @Test
-    public void test_html_cause()
+    void test_html_cause()
         throws Exception
     {
 

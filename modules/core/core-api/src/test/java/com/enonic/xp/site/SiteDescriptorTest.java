@@ -6,10 +6,10 @@ import com.enonic.xp.app.ApplicationKey;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class SiteDescriptorTest
+class SiteDescriptorTest
 {
     @Test
-    public void create_empty_site_descriptor()
+    void create_empty_site_descriptor()
     {
         //Builds an empty SiteDescriptor
         SiteDescriptor siteDescriptor = SiteDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).build();

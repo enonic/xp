@@ -24,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IssueDataSerializerTest
+class IssueDataSerializerTest
 {
     @Test
-    public void testCreate()
+    void testCreate()
     {
         IssueDataSerializer issueDataSerializer = new IssueDataSerializer();
         CreateIssueParams params = CreateIssueParams.create().

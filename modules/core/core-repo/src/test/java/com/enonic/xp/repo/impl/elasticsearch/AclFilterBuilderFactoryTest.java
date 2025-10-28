@@ -14,11 +14,10 @@ import com.enonic.xp.security.User;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AclFilterBuilderFactoryTest
+class AclFilterBuilderFactoryTest
 {
     @Test
-    public void anonymous()
-        throws Exception
+    void anonymous()
     {
         final Filter filter = AclFilterBuilderFactory.create( PrincipalKeys.empty() );
 
@@ -28,8 +27,7 @@ public class AclFilterBuilderFactoryTest
     }
 
     @Test
-    public void testName()
-        throws Exception
+    void testName()
     {
         final Principals principals = Principals.from( User.create().
             email( "rmy@enonic.com" ).

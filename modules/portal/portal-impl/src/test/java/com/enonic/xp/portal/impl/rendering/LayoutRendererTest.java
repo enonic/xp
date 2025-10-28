@@ -9,8 +9,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LayoutRendererTest
+class LayoutRendererTest
 {
     private PortalRequest portalRequest;
 
@@ -57,7 +57,7 @@ public class LayoutRendererTest
     }
 
     @BeforeEach
-    public void before()
+    void before()
     {
         layoutDescriptorService = mock( LayoutDescriptorService.class );
         controllerScriptFactory = mock( ControllerScriptFactory.class );
@@ -73,7 +73,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void emptyComponentEditMode()
+    void emptyComponentEditMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.EDIT );
@@ -82,7 +82,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void emptyComponentPreviewMode()
+    void emptyComponentPreviewMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.PREVIEW );
@@ -91,7 +91,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void emptyComponentInlineMode()
+    void emptyComponentInlineMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.INLINE );
@@ -100,7 +100,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void emptyComponentLiveMode()
+    void emptyComponentLiveMode()
     {
         // verify
         String response = this.configureEmptyComponent( RenderMode.LIVE );
@@ -109,7 +109,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void emptyComponentNoMode()
+    void emptyComponentNoMode()
     {
         String response = this.configureEmptyComponent( RenderMode.ADMIN );
         String result = "<div data-portal-component-type=\"layout\"></div>";
@@ -117,7 +117,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void errorComponentPlaceHolderEditMode()
+    void errorComponentPlaceHolderEditMode()
     {
         // setup
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
@@ -149,7 +149,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void htmlResponseComponentEditMode()
+    void htmlResponseComponentEditMode()
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
             .displayName( "My layout component" )
@@ -194,7 +194,7 @@ public class LayoutRendererTest
     }
 
     @Test
-    public void nullResponseComponentEditMode()
+    void nullResponseComponentEditMode()
     {
         final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
             .displayName( "My layout component" )

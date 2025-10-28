@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DateTypeTest
+class DateTypeTest
     extends BaseInputTypeTest
 {
     public DateTypeTest()
@@ -21,19 +21,19 @@ public class DateTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "Date", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "Date", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02" ), GenericValue.object().build() );
 
@@ -42,13 +42,13 @@ public class DateTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         this.type.validate( localDateProperty(), GenericValue.object().build() );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
     }

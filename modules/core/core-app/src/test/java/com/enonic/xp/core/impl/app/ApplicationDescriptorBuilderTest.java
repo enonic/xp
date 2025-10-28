@@ -12,7 +12,7 @@ import com.enonic.xp.support.ResourceTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ApplicationDescriptorBuilderTest
+class ApplicationDescriptorBuilderTest
 {
     private ResourceTestHelper resourceTestHelper;
 
@@ -21,15 +21,13 @@ public class ApplicationDescriptorBuilderTest
     private static final String APP_ICON_FILENAME = "application.svg";
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         resourceTestHelper = new ResourceTestHelper( this );
     }
 
     @Test
-    public void buildApplicationDescriptor()
-        throws Exception
+    void buildApplicationDescriptor()
     {
         final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_FILENAME );
         Bundle bundle = Mockito.mock( Bundle.class );

@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -38,8 +38,7 @@ class BranchServiceImplTest
     private SearchDao searchDao;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         this.storageDao = Mockito.mock( StorageDao.class );
         this.searchDao = Mockito.mock( SearchDao.class );
@@ -48,8 +47,7 @@ class BranchServiceImplTest
     }
 
     @Test
-    public void path_fetched_from_cache_after_stored()
-        throws Exception
+    void path_fetched_from_cache_after_stored()
     {
         final InternalContext context = InternalContext.create().
             branch( Branch.from( "myBranch" ) ).

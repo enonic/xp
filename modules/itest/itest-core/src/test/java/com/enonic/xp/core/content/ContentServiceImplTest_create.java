@@ -62,13 +62,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ContentServiceImplTest_create
+class ContentServiceImplTest_create
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void create_content_generated_properties()
-        throws Exception
+    void create_content_generated_properties()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -101,8 +100,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_content_unnamed()
-        throws Exception
+    void create_content_unnamed()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -126,8 +124,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_attachments()
-        throws Exception
+    void create_with_attachments()
     {
         xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
         xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
@@ -154,8 +151,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_root_language()
-        throws Exception
+    void create_with_root_language()
     {
         final Content root = this.contentService.getByPath( ContentPath.ROOT );
         contentService.update( new UpdateContentParams().contentId( root.getId() ).editor( edit -> edit.language = Locale.ENGLISH ) );
@@ -175,8 +171,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_incorrect_content()
-        throws Exception
+    void create_incorrect_content()
     {
         final PropertyTree contentData = new PropertyTree();
         contentData.addString( "target", "aStringValue" );
@@ -194,8 +189,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_publish_info()
-        throws Exception
+    void create_with_publish_info()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -218,8 +212,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_workflow_info()
-        throws Exception
+    void create_with_workflow_info()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -244,8 +237,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_page()
-        throws Exception
+    void create_with_page()
     {
         final PropertyTree config = new PropertyTree();
         config.addString( "some", "line" );
@@ -284,8 +276,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_site_config()
-        throws Exception
+    void create_with_site_config()
     {
         final Form siteForm = Form.create()
             .addFormItem( Input.create().inputType( InputTypeName.TEXT_LINE ).name( "some" ).label( "label" ).build() )
@@ -314,8 +305,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_extra_data()
-        throws Exception
+    void create_with_extra_data()
     {
         final PropertyTree siteData = new PropertyTree();
 
@@ -387,8 +377,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_missing_required_extra_data()
-        throws Exception
+    void create_with_missing_required_extra_data()
     {
         final PropertyTree siteData = new PropertyTree();
 
@@ -438,8 +427,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_missing_required_x_data()
-        throws Exception
+    void create_with_missing_required_x_data()
     {
         final PropertyTree siteData = new PropertyTree();
 
@@ -484,8 +472,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_missing_optional_x_data()
-        throws Exception
+    void create_with_missing_optional_x_data()
     {
         final PropertyTree siteData = new PropertyTree();
 
@@ -532,8 +519,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void create_with_not_supported_extra_data()
-        throws Exception
+    void create_with_not_supported_extra_data()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -547,7 +533,7 @@ public class ContentServiceImplTest_create
     }
 
     @Test
-    public void audit_data()
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 

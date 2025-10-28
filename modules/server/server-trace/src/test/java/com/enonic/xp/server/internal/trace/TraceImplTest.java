@@ -15,21 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TraceImplTest
+class TraceImplTest
 {
     private TraceImpl trace;
 
     private TraceLocation location;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.location = Mockito.mock( TraceLocation.class );
         this.trace = new TraceImpl( "name", "parentId", this.location );
     }
 
     @Test
-    public void testGetters()
+    void testGetters()
     {
         assertNotNull( this.trace.getId() );
         assertEquals( "parentId", this.trace.getParentId() );
@@ -42,7 +42,7 @@ public class TraceImplTest
     }
 
     @Test
-    public void testStartEnd()
+    void testStartEnd()
     {
         this.trace.start();
         assertNotNull( this.trace.getStartTime() );

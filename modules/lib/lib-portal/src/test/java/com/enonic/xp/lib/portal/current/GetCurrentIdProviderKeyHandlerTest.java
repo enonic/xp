@@ -9,11 +9,11 @@ import com.enonic.xp.lib.portal.TestDataFixtures;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetCurrentIdProviderKeyHandlerTest
+class GetCurrentIdProviderKeyHandlerTest
     extends ScriptTestSupport
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final IdProvider idProvider = TestDataFixtures.newIdProvider();
         this.portalRequest.setIdProvider( idProvider );
@@ -22,7 +22,7 @@ public class GetCurrentIdProviderKeyHandlerTest
     }
 
     @Test
-    public void noIdProviderConfig()
+    void noIdProviderConfig()
     {
         this.portalRequest.setRawRequest( Mockito.mock( HttpServletRequest.class ) );
         this.portalRequest.setIdProvider( null );

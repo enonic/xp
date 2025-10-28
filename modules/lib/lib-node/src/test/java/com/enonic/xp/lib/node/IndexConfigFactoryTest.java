@@ -19,11 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IndexConfigFactoryTest
+class IndexConfigFactoryTest
 {
     @Test
-    public void default_with_alias()
-        throws Exception
+    void default_with_alias()
     {
         IndexConfigDocument minimal = create( "{\n" + " \"default\": \"minimal\"" + " }" );
 
@@ -35,8 +34,7 @@ public class IndexConfigFactoryTest
     }
 
     @Test
-    public void default_full()
-        throws Exception
+    void default_full()
     {
         IndexConfigDocument config = create(
             " {" + "\"default\": {\n" + "                \"decideByType\": true,\n" + "                \"enabled\": true,\n" +
@@ -56,8 +54,7 @@ public class IndexConfigFactoryTest
     }
 
     @Test
-    public void path_index_configs()
-        throws Exception
+    void path_index_configs()
     {
         final PatternIndexConfigDocument fullConfig = createFullConfig();
 
@@ -68,8 +65,7 @@ public class IndexConfigFactoryTest
     }
 
     @Test
-    public void indexProcessors()
-        throws Exception
+    void indexProcessors()
     {
         final List<IndexValueProcessor> processors =
             createFullConfig().getConfigForPath( IndexPath.from( "myHtmlField" ) ).getIndexValueProcessors();
@@ -78,8 +74,7 @@ public class IndexConfigFactoryTest
     }
 
     @Test
-    public void languages()
-        throws Exception
+    void languages()
     {
         final List<String> languages = createFullConfig().getConfigForPath( IndexPath.from( "myHtmlField" ) ).getLanguages();
         assertEquals( 2, languages.size() );
@@ -88,16 +83,14 @@ public class IndexConfigFactoryTest
     }
 
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
         IndexConfigDocument config = create( "{}" );
         assertEquals( IndexConfig.BY_TYPE, config.getConfigForPath( IndexPath.from( "my.random.path" ) ) );
     }
 
     @Test
-    public void unknown_alias()
-        throws Exception
+    void unknown_alias()
     {
         assertThrows(IllegalArgumentException.class, () -> create( "{ \"default\" : \"fisk\" }" ));
     }

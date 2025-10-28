@@ -24,19 +24,17 @@ import com.enonic.xp.repo.impl.node.NodeConstants;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_arrays
+class FindNodesByQueryCommandTest_arrays
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void nested_array_elements()
-        throws Exception
+    void nested_array_elements()
     {
         final PropertyTree data = new PropertyTree();
         final PropertySet cars = data.addSet( "cars" );

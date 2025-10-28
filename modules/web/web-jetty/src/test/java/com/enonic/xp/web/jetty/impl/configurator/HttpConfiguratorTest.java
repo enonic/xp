@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class HttpConfiguratorTest
+class HttpConfiguratorTest
     extends ConnectorConfiguratorTest
 {
     @Override
@@ -22,7 +22,7 @@ public class HttpConfiguratorTest
     }
 
     @Test
-    public void defaultConfig()
+    void defaultConfig()
     {
         configure();
 
@@ -46,7 +46,7 @@ public class HttpConfiguratorTest
     }
 
     @Test
-    public void notEnabled()
+    void notEnabled()
     {
         Mockito.when( this.config.http_enabled() ).thenReturn( false );
 
@@ -57,7 +57,7 @@ public class HttpConfiguratorTest
     }
 
     @Test
-    public void overrideConfig()
+    void overrideConfig()
     {
         Mockito.when( this.config.host() ).thenReturn( "localhost" );
         Mockito.when( this.config.timeout() ).thenReturn( 10 );

@@ -2,7 +2,6 @@ package com.enonic.xp.core.node;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,19 +34,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest
+class FindNodesByQueryCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_by_parent()
-        throws Exception
+    void get_by_parent()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -76,8 +73,7 @@ public class FindNodesByQueryCommandTest
     }
 
     @Test
-    public void aggregate()
-        throws Exception
+    void aggregate()
     {
         final Node node1 = createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -133,8 +129,7 @@ public class FindNodesByQueryCommandTest
     }
 
     @Test
-    public void query_number_different_field_name_case()
-        throws Exception
+    void query_number_different_field_name_case()
     {
         final PropertyTree data13 = new PropertyTree();
         data13.addLong( "myProperty", 10L );
@@ -183,8 +178,7 @@ public class FindNodesByQueryCommandTest
     }
 
     @Test
-    public void query_instant_different_field_name_case()
-        throws Exception
+    void query_instant_different_field_name_case()
     {
         final Instant BASE_INSTANT = Instant.parse( "2000-01-01T00:00:00.00Z" );
         final PropertyTree data13 = new PropertyTree();
@@ -230,8 +224,7 @@ public class FindNodesByQueryCommandTest
     }
 
     @Test
-    public void nested_paths()
-        throws Exception
+    void nested_paths()
     {
         final PropertyTree data = new PropertyTree();
 

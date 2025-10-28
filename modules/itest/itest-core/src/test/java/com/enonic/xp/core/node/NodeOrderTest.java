@@ -32,20 +32,18 @@ import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeOrderTest
+class NodeOrderTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void geo_distance_sorting()
-        throws Exception
+    void geo_distance_sorting()
     {
         final Node node1 = createNode( "node1", ValueFactory.newGeoPoint( GeoPoint.from( "80,80" ) ) );
         final Node node2 = createNode( "node2", ValueFactory.newGeoPoint( GeoPoint.from( "81,80" ) ) );
@@ -70,8 +68,7 @@ public class NodeOrderTest
     }
 
     @Test
-    public void score_sorting()
-        throws Exception
+    void score_sorting()
     {
         final Node node1 = createNode( "node1", ValueFactory.newString( "denne har en fisk" ) );
         final Node node2 = createNode( "node2", ValueFactory.newString( "denne har fisk og ost" ) );

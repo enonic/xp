@@ -4,16 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StringConverterTest
+class StringConverterTest
 {
     @Test
-    public void testSameType()
+    void testSameType()
     {
         assertEquals( "test", Converters.convert( "test", String.class ) );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "true", Converters.convert( true, String.class ) );
         assertEquals( "11", Converters.convert( 11, String.class ) );

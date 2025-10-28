@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BinaryReferenceTest
 {
     @Test
-    public void testCannotBeNullOrEmpty()
+    void testCannotBeNullOrEmpty()
     {
         assertAll( () -> assertThrows( IllegalArgumentException.class, () -> BinaryReference.from( null ) ),
                    () -> assertThrows( IllegalArgumentException.class, () -> BinaryReference.from( "" ) ) );
@@ -24,7 +24,7 @@ class BinaryReferenceTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( BinaryReference.class ).withNonnullFields( "value" ).verify();
     }

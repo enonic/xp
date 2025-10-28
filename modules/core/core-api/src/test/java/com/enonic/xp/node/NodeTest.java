@@ -16,12 +16,11 @@ import com.enonic.xp.support.AbstractEqualsTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class NodeTest
+class NodeTest
 {
 
     @Test
-    public void createRoot()
-        throws Exception
+    void createRoot()
     {
         final Node rootNode = Node.createRoot().
             childOrder( ChildOrder.create().
@@ -40,7 +39,7 @@ public class NodeTest
     }
 
     @Test
-    public void equals()
+    void equals()
     {
         NodeName name1 = NodeName.from( "name1" );
         NodeName name2 = NodeName.from( "name2" );
@@ -112,7 +111,7 @@ public class NodeTest
     }
 
     @Test
-    public void timestampWithNanoSecondPrecisionTruncatedToMillis()
+    void timestampWithNanoSecondPrecisionTruncatedToMillis()
     {
         Instant timestamp = Instant.parse( "2017-10-01T09:00:00.123456789Z" );
         PropertyTree data1 = new PropertyTree();
@@ -126,7 +125,7 @@ public class NodeTest
     }
 
     @Test
-    public void timestampWithMillisecondPrecision()
+    void timestampWithMillisecondPrecision()
     {
         Instant timestamp = Instant.parse( "2017-10-01T09:00:00.123Z" );
         PropertyTree data1 = new PropertyTree();

@@ -22,16 +22,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class EditableScheduledJobTest
+class EditableScheduledJobTest
 {
     @Test
-    public void testNull()
+    void testNull()
     {
         assertThrows( NullPointerException.class, () -> new EditableScheduledJob( null ) );
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final ScheduledJobName name = ScheduledJobName.from( "scheduledJobName" );
         final ScheduledJob source = ScheduledJob.create().
@@ -57,7 +57,7 @@ public class EditableScheduledJobTest
     }
 
     @Test
-    public void testNotChanged()
+    void testNotChanged()
     {
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "user" );
 
@@ -100,7 +100,7 @@ public class EditableScheduledJobTest
     }
 
     @Test
-    public void testChanged()
+    void testChanged()
     {
         final ScheduledJob source = ScheduledJob.create().
             name( ScheduledJobName.from( "name" ) ).

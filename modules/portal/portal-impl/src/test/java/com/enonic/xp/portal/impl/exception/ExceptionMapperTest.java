@@ -13,18 +13,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ExceptionMapperTest
+class ExceptionMapperTest
 {
     private ExceptionMapperImpl mapper;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.mapper = new ExceptionMapperImpl();
     }
 
     @Test
-    public void map_portalException()
+    void map_portalException()
     {
         final WebException result = this.mapper.map( new WebException( HttpStatus.NOT_FOUND, "Custom message" ) );
         assertNotNull( result );
@@ -33,7 +33,7 @@ public class ExceptionMapperTest
     }
 
     @Test
-    public void map_notFoundException()
+    void map_notFoundException()
     {
         final WebException result = this.mapper.map( new NotFoundException( "Custom message" )
         {
@@ -44,7 +44,7 @@ public class ExceptionMapperTest
     }
 
     @Test
-    public void map_illegalArgumentException()
+    void map_illegalArgumentException()
     {
         final WebException result = this.mapper.map( new IllegalArgumentException( "Custom message" ) );
         assertNotNull( result );
@@ -53,7 +53,7 @@ public class ExceptionMapperTest
     }
 
     @Test
-    public void map_otherException()
+    void map_otherException()
     {
         final WebException result = this.mapper.map( new RuntimeException( "Custom message" ) );
         assertNotNull( result );
@@ -62,7 +62,7 @@ public class ExceptionMapperTest
     }
 
     @Test
-    public void throwIfNeeded()
+    void throwIfNeeded()
     {
         assertThrowIfNeeded( HttpStatus.BAD_REQUEST );
         assertThrowIfNeeded( HttpStatus.INTERNAL_SERVER_ERROR );
@@ -86,7 +86,7 @@ public class ExceptionMapperTest
     }
 
     @Test
-    public void throwIfNeeded_notNeeded()
+    void throwIfNeeded_notNeeded()
     {
         final PortalResponse response = PortalResponse.create().
             status( HttpStatus.OK ).

@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ApiDispatcherTest
+class ApiDispatcherTest
 {
     private ApiDispatcher handler;
 
@@ -40,7 +40,7 @@ public class ApiDispatcherTest
     private ErrorHandler errorHandler;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         slashApiHandler = mock( SlashApiHandler.class );
         componentHandler = mock( ComponentHandler.class );
@@ -59,7 +59,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testCanHandle()
+    void testCanHandle()
     {
         WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getMethod() ).thenReturn( HttpMethod.GET );
@@ -119,7 +119,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testDoHandleFailed()
+    void testDoHandleFailed()
     {
         final WebRequest webRequest = mock( WebRequest.class );
         when( webRequest.getEndpointPath() ).thenReturn( null );
@@ -130,7 +130,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleImage()
+    void testHandleImage()
         throws Exception
     {
         final PortalRequest portalRequest = new PortalRequest();
@@ -147,7 +147,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleAttachment()
+    void testHandleAttachment()
         throws Exception
     {
         final PortalRequest portalRequest = new PortalRequest();
@@ -167,7 +167,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleService()
+    void testHandleService()
         throws Exception
     {
         final WebRequest webRequest = mock( WebRequest.class );
@@ -183,7 +183,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleAsset()
+    void testHandleAsset()
         throws Exception
     {
         final WebRequest webRequest = mock( WebRequest.class );
@@ -199,7 +199,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleError()
+    void testHandleError()
         throws Exception
     {
         final WebRequest webRequest = mock( WebRequest.class );
@@ -215,7 +215,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleIdProvider()
+    void testHandleIdProvider()
         throws Exception
     {
         final WebRequest webRequest = mock( WebRequest.class );
@@ -231,7 +231,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testHandleComponent()
+    void testHandleComponent()
         throws Exception
     {
         final PortalRequest portalRequest = new PortalRequest();
@@ -248,7 +248,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testSlashApi()
+    void testSlashApi()
         throws Exception
     {
         final WebRequest webRequest = mock( WebRequest.class );
@@ -271,7 +271,7 @@ public class ApiDispatcherTest
     }
 
     @Test
-    public void testLegacyHandler()
+    void testLegacyHandler()
         throws Exception
     {
         PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );

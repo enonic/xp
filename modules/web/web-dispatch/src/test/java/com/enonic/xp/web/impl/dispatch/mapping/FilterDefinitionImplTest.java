@@ -2,14 +2,14 @@ package com.enonic.xp.web.impl.dispatch.mapping;
 
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class FilterDefinitionImplTest
+class FilterDefinitionImplTest
     extends ResourceDefinitionImplTest<Filter, FilterDefinition>
 {
     @Override
@@ -38,7 +38,7 @@ public class FilterDefinitionImplTest
     }
 
     @Test
-    public void create_noAnnotations()
+    void create_noAnnotations()
     {
         assertNull( ResourceDefinitionFactory.create( this.resource, new ArrayList<>() ) );
     }
@@ -64,7 +64,7 @@ public class FilterDefinitionImplTest
     }
 
     @Test
-    public void doFilter()
+    void doFilter()
         throws Exception
     {
         final FilterDefinition def = newDefinition();

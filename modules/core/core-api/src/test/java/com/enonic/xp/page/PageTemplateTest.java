@@ -13,10 +13,10 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PageTemplateTest
+class PageTemplateTest
 {
     @Test
-    public void pageTemplate()
+    void pageTemplate()
     {
         final PropertyTree pageTemplateConfig = new PropertyTree();
         pageTemplateConfig.addLong( "pause", 10000L );

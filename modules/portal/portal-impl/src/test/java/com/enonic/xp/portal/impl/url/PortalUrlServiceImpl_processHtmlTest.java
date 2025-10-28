@@ -52,7 +52,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_processHtmlTest
+class PortalUrlServiceImpl_processHtmlTest
 {
     private ContentService contentService;
 
@@ -67,7 +67,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     PortalUrlGeneratorService portalUrlGeneratorService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.contentService = mock( ContentService.class );
         this.styleDescriptorService = mock( StyleDescriptorService.class );
@@ -94,7 +94,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         PortalRequestAccessor.remove();
     }
@@ -311,7 +311,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_single_content()
+    void process_single_content()
     {
         //Creates a content
         final Content content = ContentFixtures.newContent();
@@ -326,7 +326,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_single_image()
+    void process_single_image()
     {
         //Creates a content
         final Media media = ContentFixtures.newMedia();
@@ -343,7 +343,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_single_media()
+    void process_single_media()
     {
         //Creates a content with attachments
         final Attachment thumb = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).build();
@@ -405,7 +405,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_multiple_links()
+    void process_multiple_links()
     {
         //Creates a content with attachments
         final Attachment thumb = Attachment.create().label( "thumb" ).name( "a1.jpg" ).mimeType( "image/jpeg" ).build();
@@ -439,7 +439,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_unknown_content()
+    void process_unknown_content()
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
             final ContentId contentId = params.getArgument( 0 );
@@ -459,7 +459,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_unknown_media()
+    void process_unknown_media()
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
             final ContentId contentId = params.getArgument( 0 );
@@ -475,7 +475,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_unknown_image()
+    void process_unknown_image()
     {
         when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
             final ContentId contentId = params.getArgument( 0 );
@@ -495,7 +495,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_absolute()
+    void process_absolute()
     {
         //Creates a content
         final Content content = ContentFixtures.newContent();
@@ -516,7 +516,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_image_with_scale()
+    void process_image_with_scale()
     {
         //Creates a content
         final Media media = ContentFixtures.newMedia();
@@ -533,7 +533,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_html_with_macros()
+    void process_html_with_macros()
         throws IOException
     {
         assertProcessHtml( "html-with-macros-input.txt", "html-with-macros-output.txt" );
@@ -541,7 +541,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void process_image_with_styles()
+    void process_image_with_styles()
     {
         //Creates a content
         final Media media = ContentFixtures.newMedia();
@@ -591,7 +591,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void processHtml_image_imageWidths()
+    void processHtml_image_imageWidths()
     {
         //Creates a content
         final Media media = ContentFixtures.newMedia();
@@ -615,7 +615,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void processHtml_image_imageWidths_with_imageSizes()
+    void processHtml_image_imageWidths_with_imageSizes()
     {
         //Creates a content
         final Media media = ContentFixtures.newMedia();
@@ -641,7 +641,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void processHtml_content_queryParams()
+    void processHtml_content_queryParams()
     {
         final Attachment source = Attachment.create().label( "source" ).name( "source.jpg" ).mimeType( "image/jpeg" ).build();
 
@@ -703,7 +703,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void testProcessHtmlWithCustomProcessor()
+    void testProcessHtmlWithCustomProcessor()
     {
         final Content content = Content.create( ContentFixtures.newContent() ).build();
 
@@ -781,7 +781,7 @@ public class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    public void testCustomStyleDescriptorCallback()
+    void testCustomStyleDescriptorCallback()
     {
         final Media media = ContentFixtures.newMedia();
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );

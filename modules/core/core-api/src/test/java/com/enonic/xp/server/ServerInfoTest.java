@@ -11,13 +11,13 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ServerInfoTest
+class ServerInfoTest
 {
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void testInfo()
+    void testInfo()
         throws Exception
     {
         final File homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toFile();

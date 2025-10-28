@@ -1,6 +1,6 @@
 package com.enonic.xp.convert;
 
-public class IntegerConverterTest
+class IntegerConverterTest
     extends NumberConverterTest<Integer>
 {
     public IntegerConverterTest()

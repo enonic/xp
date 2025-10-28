@@ -27,22 +27,20 @@ import static com.enonic.xp.content.ContentPropertyNames.TYPE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BaseConfigProcessorTest
+class BaseConfigProcessorTest
 {
     final BaseConfigProcessor processor = new BaseConfigProcessor();
 
     private ContentTypeService contentTypeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
     }
 
     @Test
-    public void test_default_config()
-        throws Exception
+    void test_default_config()
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
 
@@ -52,8 +50,7 @@ public class BaseConfigProcessorTest
     }
 
     @Test
-    public void test_default_analyzer()
-        throws Exception
+    void test_default_analyzer()
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
 
@@ -63,8 +60,7 @@ public class BaseConfigProcessorTest
     }
 
     @Test
-    public void test_index_configs()
-        throws Exception
+    void test_index_configs()
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
 

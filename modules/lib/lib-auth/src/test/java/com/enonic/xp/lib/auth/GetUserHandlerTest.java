@@ -9,7 +9,7 @@ import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetUserHandlerTest
+class GetUserHandlerTest
     extends ScriptTestSupport
 {
     private Session session;
@@ -25,7 +25,7 @@ public class GetUserHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
@@ -36,7 +36,7 @@ public class GetUserHandlerTest
     }
 
     @Test
-    public void testGetUserAuthenticated()
+    void testGetUserAuthenticated()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
@@ -47,7 +47,7 @@ public class GetUserHandlerTest
     }
 
     @Test
-    public void testGetUserNotAuthenticated()
+    void testGetUserNotAuthenticated()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
         this.session.setAttribute( authInfo );

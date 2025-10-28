@@ -56,7 +56,7 @@ class SchedulerExecutorServiceImplTest
     private ClusterConfig clusterConfig;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         localScheduler = new LocalSystemScheduler();
 
@@ -66,7 +66,6 @@ class SchedulerExecutorServiceImplTest
 
     @Test
     void localSchedule()
-        throws Exception
     {
         setLocal();
 
@@ -83,7 +82,6 @@ class SchedulerExecutorServiceImplTest
 
     @Test
     void localAlreadyScheduled()
-        throws Exception
     {
         setLocal();
 
@@ -95,7 +93,7 @@ class SchedulerExecutorServiceImplTest
     }
 
     @Test
-    public void localAtFixedRate()
+    void localAtFixedRate()
         throws Exception
     {
         setLocal();
@@ -122,8 +120,7 @@ class SchedulerExecutorServiceImplTest
     }
 
     @Test
-    public void localDeactivate()
-        throws Exception
+    void localDeactivate()
     {
         setLocal();
 
@@ -134,8 +131,7 @@ class SchedulerExecutorServiceImplTest
     }
 
     @Test
-    public void localExceptionDoesNotFailExecutor()
-        throws Exception
+    void localExceptionDoesNotFailExecutor()
     {
         setLocal();
 
@@ -181,7 +177,7 @@ class SchedulerExecutorServiceImplTest
     }
 
     @Test
-    public void clusterDispose()
+    void clusterDispose()
         throws Exception
     {
         setCluster( 0 );
@@ -205,7 +201,7 @@ class SchedulerExecutorServiceImplTest
 
 
     @Test
-    public void clusterUnset()
+    void clusterUnset()
         throws Exception
     {
         setCluster( 0 );
@@ -217,7 +213,7 @@ class SchedulerExecutorServiceImplTest
     }
 
     @Test
-    public void clusterTimeout()
+    void clusterTimeout()
         throws Exception
     {
         setCluster( 6000 );
@@ -235,7 +231,6 @@ class SchedulerExecutorServiceImplTest
     }
 
     private void setCluster( final long timeout )
-        throws Exception
     {
         when( clusterConfig.isEnabled() ).thenReturn( true );
         service = new SchedulerExecutorServiceImpl( localScheduler, clusterConfig );

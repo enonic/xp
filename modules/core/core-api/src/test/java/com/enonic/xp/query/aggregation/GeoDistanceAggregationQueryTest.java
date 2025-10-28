@@ -6,10 +6,10 @@ import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GeoDistanceAggregationQueryTest
+class GeoDistanceAggregationQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final GeoDistanceAggregationQuery query = GeoDistanceAggregationQuery.create( "geo" ).
             unit( "inch" ).

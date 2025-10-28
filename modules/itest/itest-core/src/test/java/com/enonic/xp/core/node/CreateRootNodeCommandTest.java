@@ -13,13 +13,12 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CreateRootNodeCommandTest
+class CreateRootNodeCommandTest
     extends AbstractNodeTest
 {
 
     @Test
-    public void create()
-        throws Exception
+    void create()
     {
         final Node rootNode = CreateRootNodeCommand.create().
             params( CreateRootNodeParams.create().

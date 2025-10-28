@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ScriptEventListenerImplTest
+class ScriptEventListenerImplTest
 {
     private Object event;
 
     private ScriptEventListener listener;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.event = null;
         final Consumer<Object> consumer = o -> event = o;
@@ -35,13 +35,13 @@ public class ScriptEventListenerImplTest
     }
 
     @Test
-    public void testAccessors()
+    void testAccessors()
     {
         assertEquals( "foo.bar", this.listener.getApplication().toString() );
     }
 
     @Test
-    public void notLocalOrigin()
+    void notLocalOrigin()
     {
         final Event event = Event.create( "application" ).localOrigin( false ).build();
         this.listener.onEvent( event );
@@ -50,7 +50,7 @@ public class ScriptEventListenerImplTest
     }
 
     @Test
-    public void noMatch()
+    void noMatch()
     {
         final Event event = Event.create( "other" ).localOrigin( true ).build();
         this.listener.onEvent( event );
@@ -59,7 +59,7 @@ public class ScriptEventListenerImplTest
     }
 
     @Test
-    public void testEvent()
+    void testEvent()
     {
         final Event event = Event.create( "application" ).localOrigin( true ).value( "a", 1 ).build();
         this.listener.onEvent( event );
@@ -69,7 +69,7 @@ public class ScriptEventListenerImplTest
     }
 
     @Test
-    public void testException()
+    void testException()
     {
         final Consumer<Object> consumer = o -> {
             throw new RuntimeException();

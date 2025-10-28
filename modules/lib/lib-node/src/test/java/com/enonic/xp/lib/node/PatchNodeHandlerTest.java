@@ -37,14 +37,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 
-public class PatchNodeHandlerTest
+class PatchNodeHandlerTest
     extends BaseNodeHandlerTest
 {
     @Captor
     private ArgumentCaptor<PatchNodeParams> patchCaptor;
 
     @Test
-    public void nodeNotFound()
+    void nodeNotFound()
     {
         when( nodeService.patch( isA( PatchNodeParams.class ) ) )
             .thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_MASTER, mock( Node.class ) ).build() );
@@ -53,7 +53,7 @@ public class PatchNodeHandlerTest
     }
 
     @Test
-    public void testExample1()
+    void testExample1()
     {
         final PropertyTree data = new PropertyTree();
         data.setString( "notChanged", "originalValue" );

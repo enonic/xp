@@ -13,7 +13,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TaskProgressHandlerTest
+class TaskProgressHandlerTest
     extends ScriptTestSupport
 {
     private MockTaskService taskService;
@@ -28,7 +28,7 @@ public class TaskProgressHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
 
@@ -44,8 +44,7 @@ public class TaskProgressHandlerTest
     }
 
     @Test
-    public void testReportProgress()
-        throws Exception
+    void testReportProgress()
     {
         taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         runFunction( "/test/progress-test.js", "reportProgress" );
@@ -60,8 +59,7 @@ public class TaskProgressHandlerTest
     }
 
     @Test
-    public void testReportProgressOutsideTask()
-        throws Exception
+    void testReportProgressOutsideTask()
     {
         try
         {

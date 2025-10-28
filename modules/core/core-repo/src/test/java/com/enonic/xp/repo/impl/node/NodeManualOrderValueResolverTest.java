@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NodeManualOrderValueResolverTest
+class NodeManualOrderValueResolverTest
 {
     @Test
     void resolve()
-        throws Exception
     {
         double previousValue = NodeManualOrderValueResolver.first() + 1;
         final NodeManualOrderValueResolver resolver = new NodeManualOrderValueResolver();

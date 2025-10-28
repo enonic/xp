@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AttachmentsTest
+class AttachmentsTest
 {
     @Test
-    public void getByLabel()
+    void getByLabel()
     {
         Attachment a1 = Attachment.create().
             mimeType( "image/jpeg" ).
@@ -39,7 +39,7 @@ public class AttachmentsTest
     }
 
     @Test
-    public void getByName()
+    void getByName()
     {
         Attachment a1 = Attachment.create().
             mimeType( "image/jpeg" ).
@@ -65,7 +65,7 @@ public class AttachmentsTest
     }
 
     @Test
-    public void fromBuilder()
+    void fromBuilder()
     {
 
         Attachment a1 = Attachment.create().
@@ -95,7 +95,7 @@ public class AttachmentsTest
     }
 
     @Test
-    public void fromEmpty()
+    void fromEmpty()
     {
         Attachments attachments = Attachments.empty();
 
@@ -103,7 +103,7 @@ public class AttachmentsTest
     }
 
     @Test
-    public void testByLabelForAttachmentWithoutLabel()
+    void testByLabelForAttachmentWithoutLabel()
     {
         assertNull( Attachments.create()
                         .add( Attachment.create().mimeType( "image/gif" ).name( "image1.gif" ).build() )

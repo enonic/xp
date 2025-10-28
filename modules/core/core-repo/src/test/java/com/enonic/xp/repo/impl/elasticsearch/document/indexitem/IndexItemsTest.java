@@ -14,11 +14,10 @@ import com.enonic.xp.repo.impl.index.IndexValueType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IndexItemsTest
+class IndexItemsTest
 {
     @Test
-    public void single_string()
-        throws Exception
+    void single_string()
     {
         final IndexItems indexItems = IndexItems.create().
             add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
@@ -36,8 +35,7 @@ public class IndexItemsTest
     }
 
     @Test
-    public void multiple_strings()
-        throws Exception
+    void multiple_strings()
     {
         final IndexItems indexItems = IndexItems.create().
             add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
@@ -57,8 +55,7 @@ public class IndexItemsTest
 
 
     @Test
-    public void single_orderby_value()
-        throws Exception
+    void single_orderby_value()
     {
         final IndexItems indexItems = IndexItems.create().
             add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).

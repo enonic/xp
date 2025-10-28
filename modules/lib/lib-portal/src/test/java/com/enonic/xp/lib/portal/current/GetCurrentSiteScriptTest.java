@@ -11,11 +11,11 @@ import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetCurrentSiteScriptTest
+class GetCurrentSiteScriptTest
     extends ScriptTestSupport
 {
     @Test
-    public void currentSite()
+    void currentSite()
     {
         final Site site = TestDataFixtures.newSite().build();
         this.portalRequest.setSite( site );
@@ -24,14 +24,14 @@ public class GetCurrentSiteScriptTest
     }
 
     @Test
-    public void noCurrentSite()
+    void noCurrentSite()
     {
         this.portalRequest.setSite( null );
         runFunction( "/test/getCurrentSite-test.js", "noCurrentSite" );
     }
 
     @Test
-    public void insufficientRights()
+    void insufficientRights()
     {
         final Site site = TestDataFixtures.newSite().permissions(
             AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allow( Permission.READ ).build() ) ).build();
@@ -41,7 +41,7 @@ public class GetCurrentSiteScriptTest
     }
 
     @Test
-    public void currentSiteByContentPath()
+    void currentSiteByContentPath()
     {
         final Content content = TestDataFixtures.newContent();
         this.portalRequest.setContent( null );
@@ -51,7 +51,7 @@ public class GetCurrentSiteScriptTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final Site site = TestDataFixtures.newSite().build();
         this.portalRequest.setSite( site );

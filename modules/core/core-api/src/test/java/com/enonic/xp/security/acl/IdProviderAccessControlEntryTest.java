@@ -7,11 +7,11 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class IdProviderAccessControlEntryTest
+class IdProviderAccessControlEntryTest
 {
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final IdProviderAccessControlEntry usace = IdProviderAccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).
@@ -37,7 +37,7 @@ public class IdProviderAccessControlEntryTest
     }
 
     @Test
-    public void testNotEquals() {
+    void testNotEquals() {
 
         final IdProviderAccessControlEntry usace = IdProviderAccessControlEntry.create().
             principal( PrincipalKey.ofAnonymous() ).

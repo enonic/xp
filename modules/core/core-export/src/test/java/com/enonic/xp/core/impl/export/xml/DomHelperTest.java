@@ -13,22 +13,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DomHelperTest
+class DomHelperTest
 {
     @Test
-    public void newDocumentBuilder()
+    void newDocumentBuilder()
     {
         assertNotNull( DomHelper.newDocumentBuilder() );
     }
 
     @Test
-    public void newDocument()
+    void newDocument()
     {
         assertNotNull( DomHelper.newDocument() );
     }
 
     @Test
-    public void parseString()
+    void parseString()
         throws Exception
     {
         final String xml;
@@ -41,14 +41,14 @@ public class DomHelperTest
     }
 
     @Test
-    public void parseInputStream()
+    void parseInputStream()
     {
         final Document doc = parseDocument();
         assertNotNull( doc );
     }
 
     @Test
-    public void parseReader()
+    void parseReader()
         throws Exception
     {
         final String xml;
@@ -67,7 +67,7 @@ public class DomHelperTest
     }
 
     @Test
-    public void testChildElements()
+    void testChildElements()
     {
         final Document doc = parseDocument();
         assertNotNull( doc );
@@ -81,7 +81,7 @@ public class DomHelperTest
     }
 
     @Test
-    public void testChildElementByTagName()
+    void testChildElementByTagName()
     {
         final Document doc = parseDocument();
         assertNotNull( doc );
@@ -97,7 +97,7 @@ public class DomHelperTest
     }
 
     @Test
-    public void testChildElementsByTagName()
+    void testChildElementsByTagName()
     {
         final Document doc = parseDocument();
         assertNotNull( doc );
@@ -111,7 +111,7 @@ public class DomHelperTest
     }
 
     @Test
-    public void testChildElementValueByTagName()
+    void testChildElementValueByTagName()
     {
         final Document doc = parseDocument();
         assertNotNull( doc );

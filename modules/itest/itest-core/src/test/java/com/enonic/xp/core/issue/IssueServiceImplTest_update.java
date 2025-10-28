@@ -25,13 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class IssueServiceImplTest_update
+class IssueServiceImplTest_update
     extends AbstractIssueServiceTest
 {
 
     @Test
-    public void update()
-        throws Exception
+    void update()
     {
         final Instant createdTime = Instant.now();
         final Issue issue = this.createIssue( createdTime );
@@ -66,8 +65,7 @@ public class IssueServiceImplTest_update
     }
 
     @Test
-    public void update_publish_request_issue()
-        throws Exception
+    void update_publish_request_issue()
     {
         Instant from = Instant.ofEpochSecond( 1561965725L );
         Instant to = Instant.ofEpochSecond( 1575184925L );
@@ -120,8 +118,7 @@ public class IssueServiceImplTest_update
     }
 
     @Test
-    public void update_publish_request_issue_without_schedule()
-        throws Exception
+    void update_publish_request_issue_without_schedule()
     {
 
         final PublishRequestIssue issue = (PublishRequestIssue) this.issueService.create( CreatePublishRequestIssueParams.create().
@@ -163,8 +160,7 @@ public class IssueServiceImplTest_update
     }
 
     @Test
-    public void nothing_updated()
-        throws Exception
+    void nothing_updated()
     {
         final Instant createdTime = Instant.now();
         final Issue issue = this.createIssue( createdTime );
@@ -184,8 +180,7 @@ public class IssueServiceImplTest_update
     }
 
     @Test
-    public void test_name_does_not_get_updated()
-        throws Exception
+    void test_name_does_not_get_updated()
     {
         final Instant createdTime = Instant.now();
         final Issue issue = this.createIssue( createdTime );

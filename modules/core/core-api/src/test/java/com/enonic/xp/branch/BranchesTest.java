@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BranchesTest
+class BranchesTest
 {
 
     @Test
-    public void fromArray()
+    void fromArray()
     {
         Branches branches = Branches.from( Branch.from( "aaa" ), Branch.from( "bbb" ), Branch.from( "ccc" ) );
         assertEquals( 3, branches.getSize() );
@@ -22,7 +22,7 @@ public class BranchesTest
     }
 
     @Test
-    public void fromCollection()
+    void fromCollection()
     {
         ArrayList<Branch> list = new ArrayList();
         list.add( Branch.from( "aaa" ) );
@@ -37,7 +37,7 @@ public class BranchesTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         Branches branches = Branches.empty();
         assertEquals( 0, branches.getSize() );

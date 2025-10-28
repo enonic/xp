@@ -9,12 +9,11 @@ import com.enonic.xp.security.PrincipalKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class BranchAclEntryTest
+class BranchAclEntryTest
 {
 
     @Test
-    public void equals()
-        throws Exception
+    void equals()
     {
 
         final Branch branch = Branch.from( "fisk" );
@@ -26,8 +25,7 @@ public class BranchAclEntryTest
     }
 
     @Test
-    public void not_equals()
-        throws Exception
+    void not_equals()
     {
 
         final Branch branch = Branch.from( "fisk" );

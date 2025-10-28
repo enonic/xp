@@ -15,13 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HttpThreadPoolStatusReporterTest
+class HttpThreadPoolStatusReporterTest
 {
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
     @Test
-    public void getName()
-        throws Exception
+    void getName()
     {
         final Server server = mock( Server.class );
         when( server.getThreadPool() ).thenReturn( new ThreadPoolImpl( 8, 2, false ) );
@@ -30,7 +29,7 @@ public class HttpThreadPoolStatusReporterTest
     }
 
     @Test
-    public void getReport()
+    void getReport()
         throws Exception
     {
         final Server server = mock( Server.class );
@@ -70,7 +69,6 @@ public class HttpThreadPoolStatusReporterTest
 
         @Override
         public void join()
-            throws InterruptedException
         {
         }
 

@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClassLoaderApplicationUrlResolverTest
+class ClassLoaderApplicationUrlResolverTest
 {
     private ClassLoaderApplicationUrlResolver resolver;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         URL[] resourcesPath = {Path.of( "src/test/resources" ).toUri().toURL()};
@@ -30,7 +30,7 @@ public class ClassLoaderApplicationUrlResolverTest
     }
 
     @Test
-    public void testFindFiles()
+    void testFindFiles()
     {
         final Set<String> files = this.resolver.findFiles();
         assertFalse( files.isEmpty() );
@@ -38,7 +38,7 @@ public class ClassLoaderApplicationUrlResolverTest
     }
 
     @Test
-    public void testFindUrl()
+    void testFindUrl()
     {
         final Resource resource1 = this.resolver.findResource( "/myapp/site/site.yml" );
         assertNotNull( resource1 );

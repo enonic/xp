@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class HandlerHelperTest
+class HandlerHelperTest
 {
     @Test
-    public void testFindPreRestPath()
+    void testFindPreRestPath()
     {
         final WebRequest req = mock( WebRequest.class );
         when( req.getRawPath() ).thenReturn( "/prePath/_/app/path" );
@@ -37,7 +37,7 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testFindRestPath()
+    void testFindRestPath()
     {
         final WebRequest req = mock( WebRequest.class );
         when( req.getEndpointPath() ).thenReturn( "app" );
@@ -47,7 +47,7 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testGetParameter()
+    void testGetParameter()
     {
         final WebRequest req = new WebRequest();
         req.getParams().put( "k", "v" );
@@ -56,7 +56,7 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testGetParameterEmpty()
+    void testGetParameterEmpty()
     {
         final WebRequest req = new WebRequest();
 
@@ -64,7 +64,7 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testHandleDefaultOptions()
+    void testHandleDefaultOptions()
     {
         PortalResponse portalResponse =
             HandlerHelper.handleDefaultOptions( EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS ) );
@@ -74,7 +74,7 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testGetBodyLength()
+    void testGetBodyLength()
         throws Exception
     {
         Resource resource = mock( Resource.class );
@@ -99,7 +99,7 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testGetSize()
+    void testGetSize()
     {
         WebResponse webResponse = WebResponse.create().header( HttpHeaders.CONTENT_LENGTH, "100" ).build();
 
@@ -110,40 +110,40 @@ public class HandlerHelperTest
     }
 
     @Test
-    public void testInvalidProjectName()
+    void testInvalidProjectName()
     {
         final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveProjectName( "#!@$" ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testProjectName()
+    void testProjectName()
     {
         assertEquals( ProjectName.from( "name" ), HandlerHelper.resolveProjectName( "name" ) );
     }
 
     @Test
-    public void testInvalidBranchName()
+    void testInvalidBranchName()
     {
         final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveBranch( "#!@$" ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testBranchName()
+    void testBranchName()
     {
         assertEquals( Branch.from( "name" ), HandlerHelper.resolveBranch( "name" ) );
     }
 
     @Test
-    public void testInvalidApplicationKey()
+    void testInvalidApplicationKey()
     {
         final WebException ex = assertThrows( WebException.class, () -> HandlerHelper.resolveApplicationKey( "<>" ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
     }
 
     @Test
-    public void testApplicationName()
+    void testApplicationName()
     {
         assertEquals( ApplicationKey.from( "name" ), HandlerHelper.resolveApplicationKey( "name" ) );
     }

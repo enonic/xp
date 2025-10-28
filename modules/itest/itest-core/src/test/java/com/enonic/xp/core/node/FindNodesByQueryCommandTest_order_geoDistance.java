@@ -16,7 +16,7 @@ import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodesByQueryCommandTest_order_geoDistance
+class FindNodesByQueryCommandTest_order_geoDistance
     extends AbstractNodeTest
 {
     private static final GeoPoint OSLO = GeoPoint.from( "59.9127300,10.7460900" );
@@ -37,15 +37,13 @@ public class FindNodesByQueryCommandTest_order_geoDistance
 
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void order_by_geoDistance()
-        throws Exception
+    void order_by_geoDistance()
     {
         createGeoLocations();
 
@@ -56,8 +54,7 @@ public class FindNodesByQueryCommandTest_order_geoDistance
     }
 
     @Test
-    public void order_by_odd_geopoint()
-        throws Exception
+    void order_by_odd_geopoint()
     {
         createGeoLocations();
 

@@ -9,11 +9,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NGramFunctionTest
+class NGramFunctionTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void two_arguments()
+    void two_arguments()
         throws Exception
     {
         final String expected = load( "ngram_two_arguments.json" );
@@ -26,8 +26,7 @@ public class NGramFunctionTest
 
 
     @Test
-    public void override_operator()
-        throws Exception
+    void override_operator()
     {
         final String expected = load( "ngram_override_operator.json" );
 
@@ -39,8 +38,7 @@ public class NGramFunctionTest
     }
 
     @Test
-    public void set_analyzer()
-        throws Exception
+    void set_analyzer()
     {
         final String expected = load( "ngram_set_analyzer.json" );
 

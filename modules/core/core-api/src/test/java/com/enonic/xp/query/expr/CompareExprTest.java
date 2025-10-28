@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CompareExprTest
+class CompareExprTest
 {
     @Test
-    public void eq_compare()
+    void eq_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.number( 2 );
@@ -29,7 +29,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void neq_compare()
+    void neq_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.number( 2 );
@@ -45,7 +45,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void gt_compare()
+    void gt_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.number( 2 );
@@ -61,7 +61,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void gte_compare()
+    void gte_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.number( 2 );
@@ -77,7 +77,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void lt_compare()
+    void lt_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.number( 2 );
@@ -93,7 +93,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void lte_compare()
+    void lte_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.number( 2 );
@@ -109,7 +109,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void like_compare()
+    void like_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.string( "2" );
@@ -125,7 +125,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void not_like_compare()
+    void not_like_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final ValueExpr value = ValueExpr.string( "2" );
@@ -141,7 +141,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void in_compare()
+    void in_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final List<ValueExpr> values = List.of( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );
@@ -157,7 +157,7 @@ public class CompareExprTest
     }
 
     @Test
-    public void not_in_compare()
+    void not_in_compare()
     {
         final FieldExpr field = FieldExpr.from( "a" );
         final List<ValueExpr> values = List.of( ValueExpr.string( "1" ), ValueExpr.string( "2" ) );

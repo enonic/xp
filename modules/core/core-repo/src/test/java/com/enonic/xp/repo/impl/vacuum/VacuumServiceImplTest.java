@@ -21,11 +21,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class VacuumServiceImplTest
+class VacuumServiceImplTest
 {
 
     @Test
-    public void runTasks()
+    void runTasks()
         throws Exception
     {
         final SnapshotService snapshotService = mock( SnapshotService.class );
@@ -85,7 +85,7 @@ public class VacuumServiceImplTest
     }
 
     @Test
-    public void runTasksWithDeletingSnapshots()
+    void runTasksWithDeletingSnapshots()
     {
         final SnapshotService snapshotService = mock( SnapshotService.class );
         when( snapshotService.delete( any( DeleteSnapshotParams.class ) ) ).thenReturn( DeleteSnapshotsResult.create().build() );
@@ -107,7 +107,7 @@ public class VacuumServiceImplTest
     }
 
     @Test
-    public void runTasksWithDeletingSnapshotsFailed()
+    void runTasksWithDeletingSnapshotsFailed()
     {
         final SnapshotService snapshotService = mock( SnapshotService.class );
 

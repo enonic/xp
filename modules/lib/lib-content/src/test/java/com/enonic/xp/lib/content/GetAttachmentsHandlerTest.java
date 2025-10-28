@@ -8,11 +8,11 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 
-public class GetAttachmentsHandlerTest
+class GetAttachmentsHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -21,8 +21,7 @@ public class GetAttachmentsHandlerTest
     }
 
     @Test
-    public void getById()
-        throws Exception
+    void getById()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -31,8 +30,7 @@ public class GetAttachmentsHandlerTest
     }
 
     @Test
-    public void getByPath()
-        throws Exception
+    void getByPath()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -41,8 +39,7 @@ public class GetAttachmentsHandlerTest
     }
 
     @Test
-    public void getById_notFound()
-        throws Exception
+    void getById_notFound()
     {
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( Mockito.any() ) )
@@ -52,8 +49,7 @@ public class GetAttachmentsHandlerTest
     }
 
     @Test
-    public void getByPath_notFound()
-        throws Exception
+    void getByPath_notFound()
     {
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) ).thenThrow( ContentNotFoundException.class );

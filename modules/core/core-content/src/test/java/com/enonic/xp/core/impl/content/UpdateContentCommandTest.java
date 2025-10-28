@@ -79,7 +79,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class UpdateContentCommandTest
+class UpdateContentCommandTest
 {
     private static final Instant CREATED_TIME = LocalDateTime.of( 2013, 1, 1, 12, 0, 0 ).toInstant( ZoneOffset.UTC );
 
@@ -108,7 +108,7 @@ public class UpdateContentCommandTest
     private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpeg" ).build();
 
     @BeforeEach
-    public void init()
+    void init()
     {
         when( siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
         when( xDataMappingService.getXDataMappingOptions( any(), any() ) ).thenReturn( XDataOptions.empty() );

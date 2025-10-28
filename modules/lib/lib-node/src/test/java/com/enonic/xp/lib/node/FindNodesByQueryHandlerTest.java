@@ -19,11 +19,11 @@ import com.enonic.xp.suggester.TermSuggestion;
 import com.enonic.xp.suggester.TermSuggestionEntry;
 import com.enonic.xp.suggester.TermSuggestionOption;
 
-public class FindNodesByQueryHandlerTest
+class FindNodesByQueryHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final BucketAggregation duration = Aggregation.bucketAggregation( "duration" ).
             buckets( Buckets.create().
@@ -121,7 +121,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void testExample2()
+    void testExample2()
     {
         Mockito.when( this.nodeService.findByQuery( Mockito.isA( NodeQuery.class ) ) )
             .thenReturn( FindNodesByQueryResult.create()
@@ -136,7 +136,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void testDslExample()
+    void testDslExample()
     {
         Mockito.doReturn( FindNodesByQueryResult.create()
                               .totalHits( 12902 )
@@ -150,7 +150,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void testSortDslExample()
+    void testSortDslExample()
     {
         Mockito.doReturn( FindNodesByQueryResult.create()
                               .totalHits( 12902 )
@@ -164,8 +164,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void dslSortWithArray()
-        throws Exception
+    void dslSortWithArray()
     {
         Mockito.doReturn( FindNodesByQueryResult.create()
                               .totalHits( 12902 )
@@ -179,8 +178,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void dslFilterInQuery()
-        throws Exception
+    void dslFilterInQuery()
     {
         Mockito.doReturn( FindNodesByQueryResult.create()
                               .totalHits( 12902 )
@@ -194,7 +192,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void dslQueryDslExistsExpr()
+    void dslQueryDslExistsExpr()
     {
         Mockito.doReturn( FindNodesByQueryResult.create()
                               .totalHits( 12902 )
@@ -208,22 +206,19 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void dslSortInvalid()
-        throws Exception
+    void dslSortInvalid()
     {
         runFunction( "/test/FindNodesByQueryHandlerTest.js", "sortInvalid" );
     }
 
     @Test
-    public void dslQueryInvalid()
-        throws Exception
+    void dslQueryInvalid()
     {
         runFunction( "/test/FindNodesByQueryHandlerTest.js", "invalid" );
     }
 
     @Test
-    public void dslQueryEmpty()
-        throws Exception
+    void dslQueryEmpty()
     {
         Mockito.doReturn( FindNodesByQueryResult.create().build() )
             .when( this.nodeService )
@@ -232,8 +227,7 @@ public class FindNodesByQueryHandlerTest
     }
 
     @Test
-    public void dslQueryNull()
-        throws Exception
+    void dslQueryNull()
     {
         Mockito.doReturn( FindNodesByQueryResult.create().build() )
             .when( this.nodeService )

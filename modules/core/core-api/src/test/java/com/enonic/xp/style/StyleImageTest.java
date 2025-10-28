@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class StyleImageTest
+class StyleImageTest
 {
     @Test
-    public void testCreate()
+    void testCreate()
     {
         ImageStyle styleImage = ImageStyle.create().
             name( "editor-style-cinema" ).
@@ -26,7 +26,7 @@ public class StyleImageTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         ImageStyle styleImage = ImageStyle.create().
             name( "editor-style-cinema" ).

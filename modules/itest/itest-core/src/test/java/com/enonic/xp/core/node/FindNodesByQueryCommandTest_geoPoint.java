@@ -11,7 +11,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.GeoPoint;
 
-public class FindNodesByQueryCommandTest_geoPoint
+class FindNodesByQueryCommandTest_geoPoint
     extends AbstractNodeTest
 {
     private static final GeoPoint OSLO = GeoPoint.from( "59.9127300,10.7460900" );
@@ -29,15 +29,13 @@ public class FindNodesByQueryCommandTest_geoPoint
     private static final GeoPoint TRONDHEIM = GeoPoint.from( "63.4304900,10.3950600" );
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void string_value_equals()
-        throws Exception
+    void string_value_equals()
     {
         createGeoLocationNodes();
 
@@ -57,8 +55,7 @@ public class FindNodesByQueryCommandTest_geoPoint
     }
 
     @Test
-    public void string_value_in()
-        throws Exception
+    void string_value_in()
     {
         createGeoLocationNodes();
         queryAndAssert( "myLocation IN ('" + FREDRIKSTAD + "','" + OSLO + "')", 2 );

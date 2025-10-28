@@ -16,20 +16,20 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContentNodeTranslatorTest
+class ContentNodeTranslatorTest
 {
     public static final NodeId ID_1 = NodeId.from( "id1" );
 
     private ContentNodeTranslator contentNodeTranslator;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.contentNodeTranslator = new ContentNodeTranslator();
     }
 
     @Test
-    public void testNodeOutsideOfContentRoot()
+    void testNodeOutsideOfContentRoot()
     {
         assertThrows( ContentNotFoundException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ) ) );
         assertThrows( ContentNotFoundException.class,
@@ -37,7 +37,7 @@ public class ContentNodeTranslatorTest
     }
 
     @Test
-    public void testNodeOutsideOfContentRootAllowed()
+    void testNodeOutsideOfContentRootAllowed()
     {
         final Content content = this.contentNodeTranslator.fromNodeWithAnyRootPath( createNode( NodePath.ROOT ) );
         assertEquals( ContentPath.ROOT, content.getPath() );

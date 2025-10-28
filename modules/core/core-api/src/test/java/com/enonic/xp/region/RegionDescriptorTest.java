@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
-public class RegionDescriptorTest
+class RegionDescriptorTest
 {
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {

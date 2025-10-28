@@ -15,7 +15,7 @@ import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JaxRsServletTest
+class JaxRsServletTest
     extends JettyTestSupport
 {
     private JaxRsServlet servlet;
@@ -40,7 +40,7 @@ public class JaxRsServletTest
     }
 
     @Test
-    public void testNoResources()
+    void testNoResources()
         throws Exception
     {
         assertNotFound();
@@ -71,7 +71,7 @@ public class JaxRsServletTest
     }
 
     @Test
-    public void testResource()
+    void testResource()
         throws Exception
     {
         final TestResource resource = new TestResource();

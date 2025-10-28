@@ -9,14 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class LocalScopeImplTest
+class LocalScopeImplTest
 {
     private static final class SampleValue
     {
     }
 
     @Test
-    public void testAttributeByKey()
+    void testAttributeByKey()
     {
         final LocalScopeImpl context = new LocalScopeImpl();
 
@@ -33,7 +33,7 @@ public class LocalScopeImplTest
     }
 
     @Test
-    public void testAttributeByType()
+    void testAttributeByType()
     {
         final LocalScopeImpl context = new LocalScopeImpl();
 
@@ -51,7 +51,7 @@ public class LocalScopeImplTest
     }
 
     @Test
-    public void testAttributeByKey_session()
+    void testAttributeByKey_session()
     {
         final Session session = new SessionMock();
         session.setAttribute( "key1", "value1" );
@@ -65,7 +65,7 @@ public class LocalScopeImplTest
     }
 
     @Test
-    public void testAttributeByType_session()
+    void testAttributeByType_session()
     {
         final SampleValue value = new SampleValue();
         final Session session = new SessionMock();

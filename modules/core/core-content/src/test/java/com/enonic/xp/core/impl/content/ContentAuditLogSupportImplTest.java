@@ -41,7 +41,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentAuditLogSupportImplTest
+class ContentAuditLogSupportImplTest
 {
 
     private ExecutorService executor;
@@ -51,7 +51,7 @@ public class ContentAuditLogSupportImplTest
     private AuditLogService auditLogService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         // mock
         final ContentConfig config = Mockito.mock( ContentConfig.class );
@@ -67,7 +67,7 @@ public class ContentAuditLogSupportImplTest
     }
 
     @Test
-    public void testCreateContent()
+    void testCreateContent()
         throws Exception
     {
         final PropertyTree propertyTree = createTestPropertyTree();
@@ -91,7 +91,7 @@ public class ContentAuditLogSupportImplTest
     }
 
     @Test
-    public void testUpdateContent()
+    void testUpdateContent()
         throws Exception
     {
         final UpdateContentParams params = new UpdateContentParams().requireValid( true )
@@ -111,7 +111,7 @@ public class ContentAuditLogSupportImplTest
     }
 
     @Test
-    public void testPatchContent()
+    void testPatchContent()
         throws Exception
     {
         final PatchContentParams params = PatchContentParams.create()

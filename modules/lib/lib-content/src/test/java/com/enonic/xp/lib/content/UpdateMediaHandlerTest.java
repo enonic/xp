@@ -16,11 +16,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.security.PrincipalKey;
 
-public class UpdateMediaHandlerTest
+class UpdateMediaHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = Content.create()
             .id( ContentId.from( "123456" ) )
@@ -51,27 +51,27 @@ public class UpdateMediaHandlerTest
     }
 
     @Test
-    public void testUpdateMediaValidate()
+    void testUpdateMediaValidate()
     {
         runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaValidate" );
     }
 
     @Test
-    public void testUpdateMediaContentNotFoundById()
+    void testUpdateMediaContentNotFoundById()
     {
         Mockito.when( this.contentService.getById( Mockito.any( ContentId.class ) ) ).thenReturn( null );
         runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundById" );
     }
 
     @Test
-    public void testUpdateMediaContentNotFoundByPath()
+    void testUpdateMediaContentNotFoundByPath()
     {
         Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenReturn( null );
         runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaContentNotFoundByPath" );
     }
 
     @Test
-    public void testUpdateMediaThrowContentNotFound()
+    void testUpdateMediaThrowContentNotFound()
     {
         Mockito.when( this.contentService.getByPath( Mockito.any( ContentPath.class ) ) ).thenThrow( ContentNotFoundException.class );
         runFunction( "/test/UpdateMediaHandlerTest.js", "updateMediaThrowContentNotFound" );

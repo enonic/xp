@@ -11,13 +11,13 @@ import com.enonic.xp.repository.RepositoryService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class AuditLogRepoInitializerTest
+class AuditLogRepoInitializerTest
 {
     AuditLogServiceImpl auditLogService;
 
 
     @Test
-    public void do_initialize()
+    void do_initialize()
     {
         RepositoryService repositoryService = Mockito.mock( RepositoryService.class );
         IndexService indexService = Mockito.mock( IndexService.class );

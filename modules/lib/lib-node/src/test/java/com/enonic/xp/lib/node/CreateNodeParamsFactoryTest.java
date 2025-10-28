@@ -17,27 +17,24 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.PARENT_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CreateNodeParamsFactoryTest
+class CreateNodeParamsFactoryTest
 {
     @Test
-    public void nodeName()
-        throws Exception
+    void nodeName()
     {
         final CreateNodeParams createNodeParams = createWithStringProperty( NODE_NAME, "myNode" );
         assertEquals( NodeName.from( "myNode" ), createNodeParams.getName() );
     }
 
     @Test
-    public void parent_path()
-        throws Exception
+    void parent_path()
     {
         final CreateNodeParams createNodeParams = createWithStringProperty( PARENT_PATH, "/my/node/path" );
         assertEquals( "/my/node/path", createNodeParams.getParent().toString() );
     }
 
     @Test
-    public void manual_order_value()
-        throws Exception
+    void manual_order_value()
     {
         final PropertyTree properties = new PropertyTree();
         properties.setLong( MANUAL_ORDER_VALUE, 3L );
@@ -46,16 +43,14 @@ public class CreateNodeParamsFactoryTest
     }
 
     @Test
-    public void child_order()
-        throws Exception
+    void child_order()
     {
         final CreateNodeParams createNodeParams = createWithStringProperty( CHILD_ORDER, "_ts DESC" );
         assertEquals( ChildOrder.from( "_ts DESC" ), createNodeParams.getChildOrder() );
     }
 
     @Test
-    public void nodeType()
-        throws Exception
+    void nodeType()
     {
         final CreateNodeParams createNodeParams = createWithStringProperty( NODE_TYPE, "myNodeType" );
         assertEquals( NodeType.from( "myNodeType" ), createNodeParams.getNodeType() );

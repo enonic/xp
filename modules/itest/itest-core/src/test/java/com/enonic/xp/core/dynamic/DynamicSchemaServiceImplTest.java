@@ -124,7 +124,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class DynamicSchemaServiceImplTest
+class DynamicSchemaServiceImplTest
     extends AbstractElasticsearchIntegrationTest
 {
     NodeServiceImpl nodeService;
@@ -155,7 +155,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @BeforeEach
-    public void initService()
+    void initService()
         throws Exception
     {
         deleteAllIndices();
@@ -277,7 +277,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createContentTypeSchema()
+    void createContentTypeSchema()
         throws Exception
     {
         final String resource = readResource( "_contentType.yml" );
@@ -322,7 +322,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateContentTypeSchema()
+    void updateContentTypeSchema()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams = CreateDynamicContentSchemaParams.create()
@@ -373,7 +373,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createFormFragmentSchema()
+    void createFormFragmentSchema()
         throws Exception
     {
         final String resource = readResource( "_formFragment.yml" );
@@ -414,7 +414,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createFormFragmentSchemaAsDevSchemaAdmin()
+    void createFormFragmentSchemaAsDevSchemaAdmin()
         throws Exception
     {
         final String resource = readResource( "_formFragment.yml" );
@@ -432,7 +432,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createFormFragmentSchemaAsNonSchemaAdmin()
+    void createFormFragmentSchemaAsNonSchemaAdmin()
         throws Exception
     {
         final String resource = readResource( "_formFragment.yml" );
@@ -448,7 +448,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateFormFragmentSchema()
+    void updateFormFragmentSchema()
         throws Exception
     {
 
@@ -501,7 +501,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateFormFragmentSchemaAsSchemaAdmin()
+    void updateFormFragmentSchemaAsSchemaAdmin()
         throws Exception
     {
 
@@ -531,7 +531,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateFormFragmentSchemaAsNonSchemaAdmin()
+    void updateFormFragmentSchemaAsNonSchemaAdmin()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams =
@@ -559,7 +559,7 @@ public class DynamicSchemaServiceImplTest
 
 
     @Test
-    public void createXDataSchema()
+    void createXDataSchema()
         throws Exception
     {
         final String resource = readResource( "_xdata.yml" );
@@ -599,7 +599,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateXDataSchema()
+    void updateXDataSchema()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams =
@@ -651,7 +651,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPartComponent()
+    void createPartComponent()
         throws Exception
     {
         final String resource = readResource( "_part.yml" );
@@ -697,7 +697,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updatePartComponent()
+    void updatePartComponent()
         throws Exception
     {
 
@@ -755,7 +755,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createLayoutComponent()
+    void createLayoutComponent()
         throws Exception
     {
         final String resource = readResource( "_layout.yml" );
@@ -799,7 +799,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateLayoutComponent()
+    void updateLayoutComponent()
         throws Exception
     {
         final CreateDynamicComponentParams params =
@@ -856,7 +856,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPageComponent()
+    void createPageComponent()
         throws Exception
     {
         final String resource = readResource( "_page.yml" );
@@ -900,7 +900,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updatePageComponent()
+    void updatePageComponent()
         throws Exception
     {
         final CreateDynamicComponentParams createParams =
@@ -957,7 +957,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createSite()
+    void createSite()
         throws Exception
     {
         final String resource = readResource( "_cms.yml" );
@@ -988,8 +988,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void getSiteNonExistedApp()
-        throws Exception
+    void getSiteNonExistedApp()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "non-app" );
 
@@ -997,7 +996,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateSite()
+    void updateSite()
         throws Exception
     {
         final String resource = readResource( "_cms.yml" );
@@ -1028,7 +1027,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateNotCreatedSite()
+    void updateNotCreatedSite()
         throws Exception
     {
         final String resource = readResource( "_cms.yml" );
@@ -1056,8 +1055,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteCms()
-        throws Exception
+    void deleteCms()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1083,7 +1081,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createStyles()
+    void createStyles()
         throws Exception
     {
         final String resource = readResource( "_styles.yml" );
@@ -1113,7 +1111,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void updateStyles()
+    void updateStyles()
         throws Exception
     {
         final String resource = readResource( "_styles.yml" );
@@ -1143,8 +1141,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteStyles()
-        throws Exception
+    void deleteStyles()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1162,8 +1159,7 @@ public class DynamicSchemaServiceImplTest
 
 
     @Test
-    public void listPartComponents()
-        throws Exception
+    void listPartComponents()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1207,8 +1203,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listContentTypes()
-        throws Exception
+    void listContentTypes()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1259,8 +1254,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listFormFragments()
-        throws Exception
+    void listFormFragments()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1304,8 +1298,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listFormFragmentsAsSchemaAdmin()
-        throws Exception
+    void listFormFragmentsAsSchemaAdmin()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1352,8 +1345,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listFormFragmentsAsNonSchemaAdmin()
-        throws Exception
+    void listFormFragmentsAsNonSchemaAdmin()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1389,8 +1381,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void listXDataTypes()
-        throws Exception
+    void listXDataTypes()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1434,8 +1425,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteContentTypeComponent()
-        throws Exception
+    void deleteContentTypeComponent()
     {
         DynamicSchemaResult<ContentType> contentType = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
@@ -1468,8 +1458,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteContentTypeComponentAsSchemaAdmin()
-        throws Exception
+    void deleteContentTypeComponentAsSchemaAdmin()
     {
         DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
@@ -1488,8 +1477,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void deleteContentTypeComponentAsNonSchemaAdmin()
-        throws Exception
+    void deleteContentTypeComponentAsNonSchemaAdmin()
     {
         DynamicSchemaResult<ContentType> contentType = createSchemaAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
@@ -1508,8 +1496,7 @@ public class DynamicSchemaServiceImplTest
 
 
     @Test
-    public void deletePartComponent()
-        throws Exception
+    void deletePartComponent()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1537,8 +1524,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createContentTypeSchemaInvalid()
-        throws Exception
+    void createContentTypeSchemaInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 
@@ -1570,8 +1556,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createXDataSchemaInvalid()
-        throws Exception
+    void createXDataSchemaInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 
@@ -1586,8 +1571,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPartInvalid()
-        throws Exception
+    void createPartInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 
@@ -1602,8 +1586,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createLayoutInvalid()
-        throws Exception
+    void createLayoutInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 
@@ -1618,8 +1601,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createPageInvalid()
-        throws Exception
+    void createPageInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 
@@ -1634,8 +1616,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createStylesInvalid()
-        throws Exception
+    void createStylesInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 
@@ -1646,7 +1627,7 @@ public class DynamicSchemaServiceImplTest
     }
 
     @Test
-    public void createSiteInvalid()
+    void createSiteInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 

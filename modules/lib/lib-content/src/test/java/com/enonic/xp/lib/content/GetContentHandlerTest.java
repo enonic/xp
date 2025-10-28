@@ -12,11 +12,11 @@ import com.enonic.xp.script.ScriptValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GetContentHandlerTest
+class GetContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         Mockito.when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -28,8 +28,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getById()
-        throws Exception
+    void getById()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -38,8 +37,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getByIdWithPageAsFragment()
-        throws Exception
+    void getByIdWithPageAsFragment()
     {
         final Content content = TestDataFixtures.newContentWithPageAsFragment();
         Mockito.when( this.contentService.getById( content.getId() ) ).thenReturn( content );
@@ -48,8 +46,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getByPath()
-        throws Exception
+    void getByPath()
     {
         final Content content = TestDataFixtures.newContent();
         Mockito.when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -58,8 +55,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getById_notFound()
-        throws Exception
+    void getById_notFound()
     {
         final ContentId id = ContentId.from( "123456" );
         Mockito.when( this.contentService.getById( Mockito.any() ) )
@@ -70,8 +66,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getByPath_notFound()
-        throws Exception
+    void getByPath_notFound()
     {
         final ContentPath path = ContentPath.from( "/a/b/mycontent" );
         Mockito.when( this.contentService.getByPath( path ) )
@@ -81,7 +76,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getByIdAndVersionId()
+    void getByIdAndVersionId()
     {
         final Content content = TestDataFixtures.newExampleContent();
 
@@ -93,7 +88,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getByIdAndVersionId_NotFound()
+    void getByIdAndVersionId_NotFound()
     {
         final ContentId contentId = ContentId.from( "mycontentId" );
         final ContentVersionId versionId = ContentVersionId.from( "versionId" );
@@ -104,7 +99,7 @@ public class GetContentHandlerTest
     }
 
     @Test
-    public void getByIdInLayer()
+    void getByIdInLayer()
     {
         final Content content = TestDataFixtures.newExampleLayerContentBuilder().build();
 

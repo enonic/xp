@@ -20,7 +20,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 
-public class I18NScriptTest
+class I18NScriptTest
     extends ScriptRunnerSupport
 {
     @Override

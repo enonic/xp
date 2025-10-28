@@ -21,19 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class GetNodeByPathCommandTest
+class GetNodeByPathCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_root()
-        throws Exception
+    void get_root()
     {
         final Context systemContext = ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
@@ -46,8 +44,7 @@ public class GetNodeByPathCommandTest
     }
 
     @Test
-    public void get_by_path()
-        throws Exception
+    void get_by_path()
     {
         final String nodeName = "my-node";
         final Node createdNode = createNode( CreateNodeParams.create().
@@ -61,8 +58,7 @@ public class GetNodeByPathCommandTest
     }
 
     @Test
-    public void get_by_path_no_access()
-        throws Exception
+    void get_by_path_no_access()
     {
         final String nodeName = "my-node";
 
@@ -85,8 +81,7 @@ public class GetNodeByPathCommandTest
     }
 
     @Test
-    public void get_by_path_fetch_correct()
-        throws Exception
+    void get_by_path_fetch_correct()
     {
         final Node createdNode1 = createNode( CreateNodeParams.create().
             parent( NodePath.ROOT ).
@@ -106,8 +101,7 @@ public class GetNodeByPathCommandTest
     }
 
     @Test
-    public void get_by_path_not_found()
-        throws Exception
+    void get_by_path_not_found()
     {
         final Node fetchedNode = doGetNodeByPath( new NodePath( "/dummy" ) );
         assertNull( fetchedNode );

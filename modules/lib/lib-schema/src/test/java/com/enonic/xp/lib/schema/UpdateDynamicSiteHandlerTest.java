@@ -14,11 +14,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class UpdateDynamicSiteHandlerTest
+class UpdateDynamicSiteHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testSite()
+    void testSite()
     {
         when( dynamicSchemaService.updateCms( isA( UpdateDynamicCmsParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicCmsParams siteParams = params.getArgument( 0, UpdateDynamicCmsParams.class );
@@ -38,7 +38,7 @@ public class UpdateDynamicSiteHandlerTest
     }
 
     @Test
-    public void testInvalidSite()
+    void testInvalidSite()
     {
         runFunction( "/test/UpdateDynamicSiteHandlerTest.js", "updateInvalidSite" );
     }

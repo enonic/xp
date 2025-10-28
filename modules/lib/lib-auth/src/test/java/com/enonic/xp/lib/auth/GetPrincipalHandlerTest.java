@@ -10,7 +10,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetPrincipalHandlerTest
+class GetPrincipalHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -25,7 +25,7 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
@@ -34,7 +34,7 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
-    public void testGetUserPrincipal()
+    void testGetUserPrincipal()
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:userId" ) ) ).thenReturn(
@@ -44,7 +44,7 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
-    public void testGetRolePrincipal()
+    void testGetRolePrincipal()
     {
         Mockito.<Optional<? extends Principal>>when( securityService.getPrincipal( PrincipalKey.from( "role:roleId" ) ) ).thenReturn(
             Optional.of( TestDataFixtures.getTestRole() ) );
@@ -53,7 +53,7 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
-    public void testGetGroupPrincipal()
+    void testGetGroupPrincipal()
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "group:myGroupStore:groupId" ) ) ).thenReturn(
@@ -63,7 +63,7 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
-    public void testGetNonExistingPrincipal()
+    void testGetNonExistingPrincipal()
     {
         Mockito.<Optional<? extends Principal>>when(
             securityService.getPrincipal( PrincipalKey.from( "user:myIdProvider:XXX" ) ) ).thenReturn( Optional.ofNullable( null ) );
@@ -72,7 +72,7 @@ public class GetPrincipalHandlerTest
     }
 
     @Test
-    public void testGetPrincipalWithoutKey()
+    void testGetPrincipalWithoutKey()
     {
         runFunction( "/test/getPrincipal-test.js", "getPrincipalWithoutKey" );
     }

@@ -16,14 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class JaxRsServiceImplTest
+class JaxRsServiceImplTest
 {
     private BundleContext context;
 
     private JaxRsServiceImpl service;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.context = Mockito.mock( BundleContext.class );
         this.service = new JaxRsServiceImpl( this.context, "test", "/*", null );
@@ -42,7 +42,7 @@ public class JaxRsServiceImplTest
     }
 
     @Test
-    public void testInitDestroy()
+    void testInitDestroy()
     {
         final ServiceRegistration<ServletMapping> reg = mockRegistration();
         Mockito.when( this.context.registerService( Mockito.eq( ServletMapping.class ), Mockito.any( ServletMapping.class ),
@@ -55,7 +55,7 @@ public class JaxRsServiceImplTest
     }
 
     @Test
-    public void testAddRemoveService()
+    void testAddRemoveService()
     {
         final ServiceReference<JaxRsComponent> ref = mockReference();
         Mockito.when( ref.getProperty( "group" ) ).thenReturn( "test" );
@@ -71,7 +71,7 @@ public class JaxRsServiceImplTest
     }
 
     @Test
-    public void testModifiedService()
+    void testModifiedService()
     {
         final ServiceReference<JaxRsComponent> ref = mockReference();
         final JaxRsComponent component = Mockito.mock( JaxRsComponent.class );
@@ -80,7 +80,7 @@ public class JaxRsServiceImplTest
     }
 
     @Test
-    public void testAddingService_not_in_group()
+    void testAddingService_not_in_group()
     {
         final ServiceReference<JaxRsComponent> ref = mockReference();
         Mockito.when( ref.getProperty( "group" ) ).thenReturn( "other" );

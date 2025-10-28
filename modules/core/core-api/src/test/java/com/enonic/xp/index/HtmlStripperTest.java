@@ -19,7 +19,7 @@ class HtmlStripperTest
     private HtmlStripper htmlStripper;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.htmlStripper = new HtmlStripper();
     }

@@ -11,11 +11,11 @@ import com.enonic.xp.icon.Icon;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class GetApplicationDescriptorHandlerTest
+class GetApplicationDescriptorHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
 
         when( applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
@@ -32,7 +32,7 @@ public class GetApplicationDescriptorHandlerTest
     }
 
     @Test
-    public void testWithoutIcon()
+    void testWithoutIcon()
     {
 
         when( applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
@@ -45,7 +45,7 @@ public class GetApplicationDescriptorHandlerTest
     }
 
     @Test
-    public void testMissing()
+    void testMissing()
     {
 
         when( applicationDescriptorService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );

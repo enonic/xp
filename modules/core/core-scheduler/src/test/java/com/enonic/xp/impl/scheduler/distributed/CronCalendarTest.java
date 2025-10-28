@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-public class CronCalendarTest
+class CronCalendarTest
 {
 
     @Test
-    public void createWrongValue()
+    void createWrongValue()
     {
         assertThrows( IllegalArgumentException.class, () -> CronCalendarImpl.create().
             value( "wrong value" ).
@@ -31,7 +31,7 @@ public class CronCalendarTest
     }
 
     @Test
-    public void testIsCronValue()
+    void testIsCronValue()
     {
         assertTrue( CronCalendarImpl.isCronValue( "* * * * *" ) );
         assertTrue( CronCalendarImpl.isCronValue( "1-59/2 * * * *" ) );
@@ -45,7 +45,7 @@ public class CronCalendarTest
     }
 
     @Test
-    public void create()
+    void create()
     {
         final CronCalendarImpl calendar = CronCalendarImpl.create().
             value( "* * * * *" ).
@@ -58,8 +58,7 @@ public class CronCalendarTest
     }
 
     @Test
-    public void calendarSerialized()
-        throws Exception
+    void calendarSerialized()
     {
 
         final CronCalendarImpl calendar = CronCalendarImpl.create().

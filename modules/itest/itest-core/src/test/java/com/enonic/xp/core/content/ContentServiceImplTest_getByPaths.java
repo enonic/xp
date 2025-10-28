@@ -16,13 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_getByPaths
+class ContentServiceImplTest_getByPaths
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
 
         final Contents contents = this.contentService.getByPaths( ContentPaths.empty() );
@@ -32,8 +31,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void one()
-        throws Exception
+    void one()
     {
 
         final Content content = createContent( ContentPath.ROOT );
@@ -45,8 +43,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void multiple()
-        throws Exception
+    void multiple()
     {
 
         final Content content1 = createContent( ContentPath.ROOT );
@@ -61,8 +58,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void invalid_path()
-        throws Exception
+    void invalid_path()
     {
 
         final Contents contents = this.contentService.getByPaths( ContentPaths.from( "/test_invalid_path" ) );
@@ -72,8 +68,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void invalid_and_valid_path()
-        throws Exception
+    void invalid_and_valid_path()
     {
 
         final Content content1 = createContent( ContentPath.ROOT );
@@ -86,8 +81,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_pending_publish_draft()
-        throws Exception
+    void test_pending_publish_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -103,8 +97,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_pending_publish_master()
-        throws Exception
+    void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
@@ -121,8 +114,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_publish_expired_draft()
-        throws Exception
+    void test_publish_expired_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -139,8 +131,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_publish_expired_master()
-        throws Exception
+    void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
@@ -158,8 +149,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_published_draft()
-        throws Exception
+    void test_published_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
         final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
@@ -176,8 +166,7 @@ public class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    public void test_published_master()
-        throws Exception
+    void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );

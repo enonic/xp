@@ -16,19 +16,17 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodesByQueryCommandTest_like
+class FindNodesByQueryCommandTest_like
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void like_queries()
-        throws Exception
+    void like_queries()
     {
         setupData();
 
@@ -39,8 +37,7 @@ public class FindNodesByQueryCommandTest_like
     }
 
     @Test
-    public void like_quals_full_value()
-        throws Exception
+    void like_quals_full_value()
     {
         setupData();
 
@@ -48,8 +45,7 @@ public class FindNodesByQueryCommandTest_like
     }
 
     @Test
-    public void with_wildcards()
-        throws Exception
+    void with_wildcards()
     {
         setupData();
 

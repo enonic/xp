@@ -22,19 +22,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UpdateNodeCommandTest
+class UpdateNodeCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void add_new_binary()
-        throws Exception
+    void add_new_binary()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -64,7 +62,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void update_existing_binary()
+    void update_existing_binary()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
@@ -117,8 +115,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void keep_existing_binaries()
-        throws Exception
+    void keep_existing_binaries()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -146,8 +143,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void keep_existing_binaries_also_when_new_property_but_equal_BinaryReference()
-        throws Exception
+    void keep_existing_binaries_also_when_new_property_but_equal_BinaryReference()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -176,8 +172,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void try_add_new_without_source()
-        throws Exception
+    void try_add_new_without_source()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -204,8 +199,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void try_setting_new_binary_into_existing_property()
-        throws Exception
+    void try_setting_new_binary_into_existing_property()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -232,8 +226,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void unreferred_binary_attachment_ignored()
-        throws Exception
+    void unreferred_binary_attachment_ignored()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -263,8 +256,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void new_binary_ref_to_already_attached_binary()
-        throws Exception
+    void new_binary_ref_to_already_attached_binary()
     {
         final PropertyTree data = new PropertyTree();
         final BinaryReference binaryRef = BinaryReference.from( "my-car.jpg" );
@@ -293,7 +285,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void timestamp_updated_when_updating()
+    void timestamp_updated_when_updating()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -325,7 +317,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void update_by_path()
+    void update_by_path()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -348,8 +340,7 @@ public class UpdateNodeCommandTest
     }
 
     @Test
-    public void unchanged_node_not_updated()
-        throws Exception
+    void unchanged_node_not_updated()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "myNode" ).

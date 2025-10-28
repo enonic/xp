@@ -23,7 +23,7 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodesByQueryCommandTest_order
+class FindNodesByQueryCommandTest_order
     extends AbstractNodeTest
 {
 
@@ -40,8 +40,7 @@ public class FindNodesByQueryCommandTest_order
     private static final String ORDER_ASC = "ASC";
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
         this.nodeInitializing();
@@ -56,7 +55,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByLongSorting()
+    void testByLongSorting()
     {
         String[] orders = {FIELD_LONG + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
@@ -69,7 +68,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByStringSorting()
+    void testByStringSorting()
     {
         String[] orders = {FIELD_STRING + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
@@ -82,7 +81,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByBooleanSorting()
+    void testByBooleanSorting()
     {
         String[] orders = {FIELD_BOOL + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
@@ -94,7 +93,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByLongAndBooleanSorting()
+    void testByLongAndBooleanSorting()
     {
         String[] orders = {FIELD_LONG + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
@@ -106,7 +105,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByStringAndLongSorting()
+    void testByStringAndLongSorting()
     {
         String[] orders = {FIELD_STRING + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
@@ -119,7 +118,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByLongAndStringSorting()
+    void testByLongAndStringSorting()
     {
         String[] orders = {FIELD_LONG + " " + ORDER_ASC, FIELD_STRING + " " + ORDER_DESC};
         FindNodesByQueryResult result = sort( orders );
@@ -131,7 +130,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByLongAndStringAndBooleanSorting()
+    void testByLongAndStringAndBooleanSorting()
     {
         String[] orders = {FIELD_LONG + " " + ORDER_DESC, FIELD_STRING + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );
@@ -143,7 +142,7 @@ public class FindNodesByQueryCommandTest_order
     }
 
     @Test
-    public void testByStringAndBooleanAndLongSorting()
+    void testByStringAndBooleanAndLongSorting()
     {
         String[] orders = {FIELD_STRING + " " + ORDER_DESC, FIELD_BOOL + " " + ORDER_DESC, FIELD_LONG + " " + ORDER_ASC};
         FindNodesByQueryResult result = sort( orders );

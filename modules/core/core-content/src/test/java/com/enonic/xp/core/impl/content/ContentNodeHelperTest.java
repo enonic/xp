@@ -14,32 +14,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentNodeHelperTest
+class ContentNodeHelperTest
 {
 
     @Test
-    public void translateNodePathToContentPath()
+    void translateNodePathToContentPath()
     {
         assertEquals( ContentPath.from( "/site/myContent" ),
                       ContentNodeHelper.translateNodePathToContentPath( new NodePath( "/content/site/myContent" ) ) );
     }
 
     @Test
-    public void translateNodePathToContentPath_root_throws()
+    void translateNodePathToContentPath_root_throws()
     {
         assertThrows( IllegalArgumentException.class,
                       () ->ContentNodeHelper.translateNodePathToContentPath( NodePath.ROOT ) );
     }
 
     @Test
-    public void translateNodePathToContentPath_archive()
+    void translateNodePathToContentPath_archive()
     {
         assertEquals( ContentPath.from( "/site/myContent" ),
                       ContentNodeHelper.translateNodePathToContentPath( new NodePath( "/archive/site/myContent" ) ) );
     }
 
     @Test
-    public void translateContentParentToNodeParentPath()
+    void translateContentParentToNodeParentPath()
     {
         final NodePath nodePath = ContentNodeHelper.translateContentPathToNodePath( ContentPath.from( "/site/myContent" ) );
 
@@ -47,7 +47,7 @@ public class ContentNodeHelperTest
     }
 
     @Test
-    public void translateContentPathsToNodePaths()
+    void translateContentPathsToNodePaths()
     {
         final ContentPaths contentPaths = ContentPaths.create().
             add( ContentPath.from( "/site/myContent" ) ).
@@ -59,7 +59,7 @@ public class ContentNodeHelperTest
     }
 
     @Test
-    public void translateNodePathsToContentPaths()
+    void translateNodePathsToContentPaths()
     {
         final NodePaths nodePaths = NodePaths.from( "/content/site/myContent", "/content/folder/other/content" );
         final ContentPaths contentPaths = ContentNodeHelper.translateNodePathsToContentPaths( nodePaths );
@@ -68,7 +68,7 @@ public class ContentNodeHelperTest
     }
 
     @Test
-    public void toNodeIds()
+    void toNodeIds()
     {
         final ContentIds contentIds = ContentIds.from( "e1f57280-d672-4cd8-b674-98e26e5b69ae", "45d67001-7f2b-4093-99ae-639be9fdd1f6" );
         final NodeIds nodeIds = ContentNodeHelper.toNodeIds( contentIds );
@@ -77,7 +77,7 @@ public class ContentNodeHelperTest
     }
 
     @Test
-    public void toContentIds()
+    void toContentIds()
     {
         final NodeIds nodeIds = NodeIds.from( "e1f57280-d672-4cd8-b674-98e26e5b69ae", "45d67001-7f2b-4093-99ae-639be9fdd1f6" );
         final ContentIds contentIds = ContentNodeHelper.toContentIds( nodeIds );

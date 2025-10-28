@@ -16,18 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CalendarServiceImplTest
+class CalendarServiceImplTest
 {
     private CalendarServiceImpl calendarService;
 
     @BeforeEach
-    public void initialize()
+    void initialize()
     {
         calendarService = new CalendarServiceImpl();
     }
 
     @Test
-    public void cron()
+    void cron()
     {
         final CronCalendar calendar = calendarService.cron( "* * * * *", TimeZone.getTimeZone( "GMT+5:30" ) );
 
@@ -38,20 +38,20 @@ public class CalendarServiceImplTest
     }
 
     @Test
-    public void cronInvalid()
+    void cronInvalid()
     {
         assertThrows( IllegalArgumentException.class, () -> calendarService.cron( "wrong value", TimeZone.getTimeZone( "GMT+5:30" ) ) );
     }
 
     @Test
-    public void cronNull()
+    void cronNull()
     {
         assertThrows( NullPointerException.class, () -> calendarService.cron( null, TimeZone.getTimeZone( "GMT+5:30" ) ) );
         assertThrows( NullPointerException.class, () -> calendarService.cron( "* * * * *", null ) );
     }
 
     @Test
-    public void oneTime()
+    void oneTime()
     {
         final OneTimeCalendar calendar = calendarService.oneTime( Instant.parse( "2014-09-25T10:00:00.00Z" ) );
         final Instant now = Instant.now();
@@ -61,13 +61,13 @@ public class CalendarServiceImplTest
     }
 
     @Test
-    public void oneTimeInvalid()
+    void oneTimeInvalid()
     {
         assertThrows( DateTimeParseException.class, () -> calendarService.oneTime( Instant.parse( "wrong value" ) ) );
     }
 
     @Test
-    public void oneTimeNull()
+    void oneTimeNull()
     {
         assertThrows( NullPointerException.class, () -> calendarService.oneTime( null ) );
     }

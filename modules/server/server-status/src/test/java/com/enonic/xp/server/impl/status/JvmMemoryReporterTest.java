@@ -9,7 +9,7 @@ import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JvmMemoryReporterTest
+class JvmMemoryReporterTest
     extends BaseReporterTest<JvmMemoryReporter>
 {
     public JvmMemoryReporterTest()
@@ -19,13 +19,12 @@ public class JvmMemoryReporterTest
 
     @Override
     protected JvmMemoryReporter newReporter()
-        throws Exception
     {
         return new JvmMemoryReporter();
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();

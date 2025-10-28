@@ -6,10 +6,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class SessionKeyTest
+class SessionKeyTest
 {
     @Test
-    public void testFrom()
+    void testFrom()
     {
         final SessionKey key1 = SessionKey.from( "1" );
         final SessionKey key2 = SessionKey.from( "2" );
@@ -18,7 +18,7 @@ public class SessionKeyTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( SessionKey.class ).withNonnullFields( "value" ).verify();
     }

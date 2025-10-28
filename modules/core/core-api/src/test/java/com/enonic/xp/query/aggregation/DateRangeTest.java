@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DateRangeTest
+class DateRangeTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final Instant now = Instant.now();
         final String from = "2015-04-03T07:16:31.876Z";

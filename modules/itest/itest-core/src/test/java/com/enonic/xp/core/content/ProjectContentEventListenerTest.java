@@ -92,7 +92,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class ProjectContentEventListenerTest
+class ProjectContentEventListenerTest
     extends AbstractContentSynchronizerTest
 {
     private SyncContentServiceImpl syncContentService;
@@ -108,7 +108,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testCreatedDiffParentsSameName()
+    void testCreatedDiffParentsSameName()
     {
         final Content firstContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content secondContent = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
@@ -124,7 +124,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testCreated()
+    void testCreated()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -145,7 +145,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testSyncCreateWithExistedLocalName()
+    void testSyncCreateWithExistedLocalName()
     {
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
@@ -160,7 +160,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testSyncDuplicateWithExistedLocalName()
+    void testSyncDuplicateWithExistedLocalName()
     {
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy" ) );
         layerContext.callWith( () -> createContent( ContentPath.ROOT, "localName-copy-1" ) );
@@ -185,7 +185,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testDuplicateInherited()
+    void testDuplicateInherited()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localName" ) );
 
@@ -204,7 +204,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testDuplicateInheritedWithChildren()
+    void testDuplicateInheritedWithChildren()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "localContent" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "localChild1" ) );
@@ -232,8 +232,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void syncPatchedFields()
-        throws InterruptedException
+    void syncPatchedFields()
     {
         final Content parentContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
         final Content sourceContent = projectContext.callWith( () -> createContent( parentContent.getPath(), "name" ) );
@@ -295,8 +294,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void syncPatchedSkipSync()
-        throws InterruptedException
+    void syncPatchedSkipSync()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "parent" ) );
 
@@ -319,8 +317,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void syncPatchedCreateAttachments()
-        throws InterruptedException
+    void syncPatchedCreateAttachments()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
@@ -377,8 +374,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void syncPatchedRemoveAttachments()
-        throws InterruptedException
+    void syncPatchedRemoveAttachments()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
@@ -484,7 +480,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testUpdatedWithExtradata()
+    void testUpdatedWithExtradata()
     {
         final ApplicationKey myApp = ApplicationKey.from( "myApp" );
         final XDataName xDataName = XDataName.from( myApp, "xData" );
@@ -533,7 +529,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testUpdatedInSecondParent()
+    void testUpdatedInSecondParent()
     {
         projectContext.callWith( () -> createContent( ContentPath.ROOT, "name1" ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "name2" ) );
@@ -557,7 +553,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testUpdatedFromReadyToInProgress()
+    void testUpdatedFromReadyToInProgress()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -586,7 +582,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testUpdatedLocally()
+    void testUpdatedLocally()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -610,7 +606,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testMoved()
+    void testMoved()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
@@ -631,7 +627,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testMovedToContentFromOtherProjectAndRemove()
+    void testMovedToContentFromOtherProjectAndRemove()
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -659,7 +655,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testMovedLocally()
+    void testMovedLocally()
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -685,7 +681,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testMovedToExistedPath()
+    void testMovedToExistedPath()
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceContent2 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -705,7 +701,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testArchived()
+    void testArchived()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
@@ -724,7 +720,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testMovedArchivedAndRestored()
+    void testMovedArchivedAndRestored()
     {
         final Content sourceContent1 = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         final Content sourceContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT, "content2" ) );
@@ -755,7 +751,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testArchivedNotInherited()
+    void testArchivedNotInherited()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -776,7 +772,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testArchivedAndRestoreAlreadyArchived()
+    void testArchivedAndRestoreAlreadyArchived()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -800,7 +796,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testArchivePublishedInLayer()
+    void testArchivePublishedInLayer()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -828,7 +824,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testArchiveAndCreateChild()
+    void testArchiveAndCreateChild()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -853,7 +849,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testRestored()
+    void testRestored()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child" ) );
@@ -884,7 +880,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testSorted()
+    void testSorted()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -907,7 +903,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testSortedLocally()
+    void testSortedLocally()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -932,7 +928,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testManualOrderUpdated()
+    void testManualOrderUpdated()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -975,7 +971,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testManualOrderLocally()
+    void testManualOrderLocally()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -1024,7 +1020,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testRenamed()
+    void testRenamed()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -1067,7 +1063,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testRenameToExisted()
+    void testRenameToExisted()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -1087,7 +1083,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testDeleted()
+    void testDeleted()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -1108,7 +1104,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testDeletedInherited()
+    void testDeletedInherited()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
         final Content sourceChild1 = projectContext.callWith( () -> createContent( sourceContent.getPath(), "child1" ) );
@@ -1128,7 +1124,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void testDeletedAndRestoredFromTheCorrectParent()
+    void testDeletedAndRestoredFromTheCorrectParent()
     {
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content" ) );
 
@@ -1164,7 +1160,7 @@ public class ProjectContentEventListenerTest
     }
 
     @Test
-    public void repoIsNotProject()
+    void repoIsNotProject()
     {
         eventPublisher.publish( Event.create( "node.created" )
                                     .value( "nodes", List.of( ImmutableMap.builder()

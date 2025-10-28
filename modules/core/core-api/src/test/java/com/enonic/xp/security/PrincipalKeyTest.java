@@ -13,11 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PrincipalKeyTest
+class PrincipalKeyTest
 {
     @Test
-    public void testPrincipalUser()
-        throws Exception
+    void testPrincipalUser()
     {
         final IdProviderKey idProvider = IdProviderKey.from( "myIdProvider" );
         final PrincipalKey user = PrincipalKey.ofUser( idProvider, "userId" );
@@ -33,8 +32,7 @@ public class PrincipalKeyTest
     }
 
     @Test
-    public void testPrincipalGroup()
-        throws Exception
+    void testPrincipalGroup()
     {
         final IdProviderKey idProvider = IdProviderKey.from( "myIdProvider" );
         final PrincipalKey group = PrincipalKey.ofGroup( idProvider, "groupid" );
@@ -50,8 +48,7 @@ public class PrincipalKeyTest
     }
 
     @Test
-    public void testPrincipalRole()
-        throws Exception
+    void testPrincipalRole()
     {
         final PrincipalKey role = PrincipalKey.ofRole( "roleid" );
 
@@ -66,8 +63,7 @@ public class PrincipalKeyTest
     }
 
     @Test
-    public void testPrincipalAnonymous()
-        throws Exception
+    void testPrincipalAnonymous()
     {
         final PrincipalKey anonymous = PrincipalKey.ofAnonymous();
 
@@ -83,8 +79,7 @@ public class PrincipalKeyTest
     }
 
     @Test
-    public void testIdentityFrom()
-        throws Exception
+    void testIdentityFrom()
     {
         final PrincipalKey anonymous = PrincipalKey.from( "user:system:anonymous" );
         final PrincipalKey user = PrincipalKey.from( "user:myIdProvider:myUser" );
@@ -99,8 +94,7 @@ public class PrincipalKeyTest
     }
 
     @Test
-    public void testToPath()
-        throws Exception
+    void testToPath()
     {
         final PrincipalKey anonymous = PrincipalKey.from( "user:system:anonymous" );
         final PrincipalKey user = PrincipalKey.from( "user:myIdProvider:myUser" );
@@ -114,43 +108,37 @@ public class PrincipalKeyTest
     }
 
     @Test
-    public void testInvalidIdentityKey()
-        throws Exception
+    void testInvalidIdentityKey()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:myUser" ));
     }
 
     @Test
-    public void testInvalidIdentityType()
-        throws Exception
+    void testInvalidIdentityType()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "anonymous:myIdProvider:anonymous" ));
     }
 
     @Test
-    public void testInvalidCharactersInKey1()
-        throws Exception
+    void testInvalidCharactersInKey1()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my<User" ));
     }
 
     @Test
-    public void testInvalidCharactersInKey2()
-        throws Exception
+    void testInvalidCharactersInKey2()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my>User" ));
     }
 
     @Test
-    public void testInvalidCharactersInKey3()
-        throws Exception
+    void testInvalidCharactersInKey3()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my\"User" ));
     }
 
     @Test
-    public void testInvalidCharactersInKey4()
-        throws Exception
+    void testInvalidCharactersInKey4()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalKey.from( "user:my'<User" ));
     }

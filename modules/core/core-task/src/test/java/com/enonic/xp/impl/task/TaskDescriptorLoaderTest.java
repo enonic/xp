@@ -14,7 +14,7 @@ import com.enonic.xp.task.TaskDescriptor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TaskDescriptorLoaderTest
+class TaskDescriptorLoaderTest
     extends ApplicationTestSupport
 {
     private TaskDescriptorLoader loader;
@@ -28,20 +28,20 @@ public class TaskDescriptorLoaderTest
     }
 
     @Test
-    public void testGetType()
+    void testGetType()
     {
         assertEquals( TaskDescriptor.class, this.loader.getType() );
     }
 
     @Test
-    public void testPostProcess()
+    void testPostProcess()
     {
         final TaskDescriptor descriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapp:a" ) ).build();
         assertEquals( descriptor.getKey(), this.loader.postProcess( descriptor ).getKey() );
     }
 
     @Test
-    public void testCreateDefault()
+    void testCreateDefault()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:task1" );
         final TaskDescriptor descriptor = this.loader.createDefault( key );
@@ -51,7 +51,7 @@ public class TaskDescriptorLoaderTest
     }
 
     @Test
-    public void testFind()
+    void testFind()
     {
         final DescriptorKeys keys = this.loader.find( ApplicationKey.from( "myapp1" ) );
         assertEquals( 2, keys.getSize() );
@@ -60,7 +60,7 @@ public class TaskDescriptorLoaderTest
     }
 
     @Test
-    public void testLoad()
+    void testLoad()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:task1" );
 

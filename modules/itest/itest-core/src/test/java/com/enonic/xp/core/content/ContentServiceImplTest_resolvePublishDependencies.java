@@ -20,14 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentServiceImplTest_resolvePublishDependencies
+class ContentServiceImplTest_resolvePublishDependencies
     extends AbstractContentServiceTest
 {
     private Content content1, content2, child1, child2;
 
     @Test
-    public void resolve_single()
-        throws Exception
+    void resolve_single()
     {
         final CreateContentParams createContentParams = CreateContentParams.create()
             .contentData( new PropertyTree() )
@@ -49,8 +48,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
     }
 
     @Test
-    public void resolve_children_excluded()
-        throws Exception
+    void resolve_children_excluded()
     {
         initContent();
 
@@ -65,8 +63,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
     }
 
     @Test
-    public void resolve_archived_dependency()
-        throws Exception
+    void resolve_archived_dependency()
     {
         initContent();
 
@@ -84,8 +81,7 @@ public class ContentServiceImplTest_resolvePublishDependencies
 
     @Disabled("This test is not correct; it should not be allowed to exclude parent if new")
     @Test
-    public void resolve_children_in_the_middle_excluded()
-        throws Exception
+    void resolve_children_in_the_middle_excluded()
     {
         initContent();
 

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class IdProviderResourceTest
+class IdProviderResourceTest
 {
     private IdProviderResource resource;
 
@@ -37,13 +37,13 @@ public class IdProviderResourceTest
     private SecurityService securityService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         resource = new IdProviderResource( securityService );
     }
 
     @Test
-    public void testList()
+    void testList()
     {
         final IdProviderConfig config1 = mockIdProviderConfig( "app1" );
         final IdProviderConfig config2 = mockIdProviderConfig( "app2" );

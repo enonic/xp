@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BlobKeyTest
+class BlobKeyTest
 {
     @Test
-    public void fromString()
+    void fromString()
     {
         final BlobKey key = BlobKey.from( "123" );
         assertNotNull( key );
@@ -19,7 +19,7 @@ public class BlobKeyTest
     }
 
     @Test
-    public void fromByteSource()
+    void fromByteSource()
     {
         final ByteSource source = ByteSource.wrap( new byte[]{(byte) 1, (byte) 2, (byte) 3} );
 
@@ -29,7 +29,7 @@ public class BlobKeyTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final BlobKey key1 = BlobKey.from( "0001" );
         final BlobKey key2 = BlobKey.from( "0001" );

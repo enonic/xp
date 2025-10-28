@@ -8,7 +8,7 @@ import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DeadlockReporterTest
+class DeadlockReporterTest
     extends BaseReporterTest<DeadlockReporter>
 {
     public DeadlockReporterTest()
@@ -23,7 +23,7 @@ public class DeadlockReporterTest
     }
 
     @Test
-    public void testThreadDump()
+    void testThreadDump()
         throws Exception
     {
         assertNotNull( textReport() );

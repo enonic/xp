@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ErrorHandlerTest
+class ErrorHandlerTest
 {
     private ErrorHandler handler;
 
@@ -22,7 +22,6 @@ public class ErrorHandlerTest
 
     @BeforeEach
     public final void setup()
-        throws Exception
     {
         this.request = new PortalRequest();
         this.handler = new ErrorHandler();
@@ -32,7 +31,7 @@ public class ErrorHandlerTest
     }
 
     @Test
-    public void testOptions()
+    void testOptions()
         throws Exception
     {
         this.request.setEndpointPath( "/_/error/401" );
@@ -45,7 +44,7 @@ public class ErrorHandlerTest
     }
 
     @Test
-    public void testNoCode()
+    void testNoCode()
         throws Exception
     {
         this.request.setEndpointPath( "/_/error/other" );
@@ -63,7 +62,7 @@ public class ErrorHandlerTest
     }
 
     @Test
-    public void testNoMessage()
+    void testNoMessage()
         throws Exception
     {
         this.request.setEndpointPath( "/_/error/401" );
@@ -81,7 +80,7 @@ public class ErrorHandlerTest
     }
 
     @Test
-    public void testWithMessage()
+    void testWithMessage()
         throws Exception
     {
         this.request.setEndpointPath( "/_/error/401" );

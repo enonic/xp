@@ -2,12 +2,12 @@ package com.enonic.xp.web.impl.multipart;
 
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.Part;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartService;
@@ -15,23 +15,21 @@ import com.enonic.xp.web.multipart.MultipartService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MultipartServiceImplTest
+class MultipartServiceImplTest
 {
     private MultipartService service;
 
     private HttpServletRequest req;
 
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         this.req = Mockito.mock( HttpServletRequest.class );
         this.service = new MultipartServiceImpl();
     }
 
     @Test
-    public void testParse_multipart()
-        throws Exception
+    void testParse_multipart()
     {
         Mockito.when( this.req.getContentType() ).thenReturn( "text/plain" );
 
@@ -42,7 +40,7 @@ public class MultipartServiceImplTest
     }
 
     @Test
-    public void testParse_noMultipart()
+    void testParse_noMultipart()
         throws Exception
     {
         final Part part = Mockito.mock( Part.class );

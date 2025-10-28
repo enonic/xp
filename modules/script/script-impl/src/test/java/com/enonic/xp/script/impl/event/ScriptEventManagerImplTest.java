@@ -21,12 +21,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ScriptEventManagerImplTest
+class ScriptEventManagerImplTest
 {
     private ScriptEventManagerImpl manager;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
         when( scriptAsyncService.getAsyncExecutor( any() ) ).thenReturn( Runnable::run );
@@ -42,7 +42,7 @@ public class ScriptEventManagerImplTest
     }
 
     @Test
-    public void testIterable()
+    void testIterable()
     {
         final ScriptEventListener listener = newListener( "foo.bar" );
         this.manager.add( listener );
@@ -52,7 +52,7 @@ public class ScriptEventManagerImplTest
     }
 
     @Test
-    public void testInvalidate()
+    void testInvalidate()
     {
         final ScriptEventListener listener1 = newListener( "foo.bar" );
         final ScriptEventListener listener2 = newListener( "foo.other" );
@@ -69,7 +69,7 @@ public class ScriptEventManagerImplTest
     }
 
     @Test
-    public void testOnEvent()
+    void testOnEvent()
     {
         final ScriptEventListener listener1 = newListener( "foo.bar" );
         final ScriptEventListener listener2 = newListener( "foo.other" );
@@ -84,7 +84,7 @@ public class ScriptEventManagerImplTest
     }
 
     @Test
-    public void testRejectedExecution()
+    void testRejectedExecution()
     {
         final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
 
@@ -109,7 +109,7 @@ public class ScriptEventManagerImplTest
 
 
     @Test
-    public void testDeactivate()
+    void testDeactivate()
     {
         final ScriptEventListener listener1 = newListener( "foo.bar" );
         this.manager.add( listener1 );

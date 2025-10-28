@@ -67,7 +67,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SlashApiHandlerTest
+class SlashApiHandlerTest
 {
     private SlashApiHandler handler;
 

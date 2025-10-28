@@ -8,11 +8,11 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_serviceUrlTest
+class PortalUrlServiceImpl_serviceUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test
-    public void createUrl()
+    void createUrl()
     {
         final ServiceUrlParams params = new ServiceUrlParams().service( "myservice" ).param( "a", 3 );
 
@@ -21,7 +21,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
     }
 
     @Test
-    public void createUrl_withoutContentPath()
+    void createUrl_withoutContentPath()
     {
         final ServiceUrlParams params = new ServiceUrlParams().service( "myservice" ).param( "a", 3 );
 
@@ -30,7 +30,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
     }
 
     @Test
-    public void createUrl_withApplication()
+    void createUrl_withApplication()
     {
         final ServiceUrlParams params = new ServiceUrlParams().service( "myservice" ).application( "otherapplication" );
 
@@ -39,7 +39,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
     }
 
     @Test
-    public void createUrl_absolute()
+    void createUrl_absolute()
     {
         final ServiceUrlParams params = new ServiceUrlParams().type( UrlTypeConstants.ABSOLUTE ).service( "myservice" ).param( "a", 3 );
 
@@ -52,7 +52,7 @@ public class PortalUrlServiceImpl_serviceUrlTest
     }
 
     @Test
-    public void createUrl_websocket()
+    void createUrl_websocket()
     {
         final ServiceUrlParams params = new ServiceUrlParams().type( UrlTypeConstants.WEBSOCKET ).service( "myservice" ).param( "a", 3 );
 

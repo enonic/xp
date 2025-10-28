@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CmsServiceImplTest
+class CmsServiceImplTest
     extends ApplicationTestSupport
 {
     protected CmsFormFragmentService formFragmentService;
@@ -40,7 +40,7 @@ public class CmsServiceImplTest
     }
 
     @Test
-    public void testGetDescriptor()
+    void testGetDescriptor()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
         final CmsDescriptor descriptor = this.service.getDescriptor( applicationKey );
@@ -50,7 +50,7 @@ public class CmsServiceImplTest
     }
 
     @Test
-    public void testGetPortalDescriptor()
+    void testGetPortalDescriptor()
     {
         final ApplicationKey applicationKey = ApplicationKey.PORTAL;
         final CmsDescriptor descriptor = this.service.getDescriptor( applicationKey );
@@ -69,7 +69,7 @@ public class CmsServiceImplTest
     }
 
     @Test
-    public void testGetDescriptorForUnknownApplication()
+    void testGetDescriptorForUnknownApplication()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "unknown" );
         final CmsDescriptor descriptor = this.service.getDescriptor( applicationKey );

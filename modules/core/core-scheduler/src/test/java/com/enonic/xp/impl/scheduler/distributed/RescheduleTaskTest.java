@@ -26,13 +26,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.osgi.OsgiSupportMock;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class RescheduleTaskTest
+class RescheduleTaskTest
 {
     @Mock(stubOnly = true)
     ServiceReference<TaskService> taskReference;
@@ -90,7 +90,7 @@ public class RescheduleTaskTest
     private BundleContext bundleContext;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         RescheduleTask.clock = Clock.fixed( Instant.now(), ZoneOffset.UTC );
@@ -117,7 +117,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void submitOldOneTimeTask()
+    void submitOldOneTimeTask()
     {
         mockJobs();
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
@@ -133,7 +133,7 @@ public class RescheduleTaskTest
 
 
     @Test
-    public void submitInOrder()
+    void submitInOrder()
     {
         final Instant now = RescheduleTask.clock.instant();
 
@@ -160,7 +160,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void jobSubmitFailedButRetried()
+    void jobSubmitFailedButRetried()
     {
         final Instant now = RescheduleTask.clock.instant();
 
@@ -200,7 +200,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void jobSubmitFailedWithError()
+    void jobSubmitFailedWithError()
     {
         final Instant now = RescheduleTask.clock.instant();
         ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
@@ -224,7 +224,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void retryFailedMultipleTimes()
+    void retryFailedMultipleTimes()
     {
         final Instant now = Instant.now();
         ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ) );
@@ -245,7 +245,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void submitJobAsUser()
+    void submitJobAsUser()
     {
         final Instant now = Instant.now();
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.createDefault(), "my-user" );
@@ -267,7 +267,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void submitCronJob()
+    void submitCronJob()
     {
         ScheduledJob job1 = mockCronJob( "job1", "* * * * *", Instant.parse( "2021-02-26T10:44:33.170079900Z" ) );
         ScheduledJob job2 = mockCronJob( "job2", "* * * * *", Instant.now() );
@@ -287,7 +287,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void jobWasRemoved()
+    void jobWasRemoved()
     {
         final Instant plus = null;
 
@@ -309,8 +309,7 @@ public class RescheduleTaskTest
     }
 
     @Test
-    public void jobWasModified()
-        throws InterruptedException
+    void jobWasModified()
     {
         final Instant plus = null;
 
@@ -335,13 +334,13 @@ public class RescheduleTaskTest
 
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "rescheduleTask", new RescheduleTask().getName() );
     }
 
     @Test
-    public void serviceIsDown()
+    void serviceIsDown()
         throws Exception
     {
         when( bundleContext.getServiceReferences( SchedulerService.class, null ) ).thenReturn( List.of() );

@@ -42,7 +42,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_attachmentUrlTest
+class PortalUrlServiceImpl_attachmentUrlTest
 {
     private ContentService contentService;
 
@@ -55,7 +55,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     private HttpServletRequest req;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.contentService = mock( ContentService.class );
 
@@ -74,7 +74,7 @@ public class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         PortalRequestAccessor.remove();
     }

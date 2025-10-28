@@ -35,12 +35,12 @@ import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeVersionJsonDumpSerializerTest
+class NodeVersionJsonDumpSerializerTest
 {
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     @Test
-    public void serialize_deserialize()
+    void serialize_deserialize()
         throws Exception
     {
         PropertyTree nodeData = new PropertyTree();

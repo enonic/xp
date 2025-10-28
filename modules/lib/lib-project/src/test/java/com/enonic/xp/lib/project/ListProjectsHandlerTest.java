@@ -11,7 +11,7 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.acl.AccessControlList;
 
-public class ListProjectsHandlerTest
+class ListProjectsHandlerTest
     extends BaseProjectHandlerTest
 {
     @Override
@@ -29,8 +29,7 @@ public class ListProjectsHandlerTest
     }
 
     @Test
-    public void listProjects()
-        throws Exception
+    void listProjects()
     {
         runFunction( "/test/ListProjectsHandlerTest.js", "listProjects" );
     }

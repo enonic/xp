@@ -1,6 +1,6 @@
 package com.enonic.xp.convert;
 
-public class ByteConverterTest
+class ByteConverterTest
     extends NumberConverterTest<Byte>
 {
     public ByteConverterTest()

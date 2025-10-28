@@ -11,19 +11,18 @@ import com.enonic.xp.node.NodePath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ReindexLoadTest
+class ReindexLoadTest
     extends AbstractNodeTest
 
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         createDefaultRootNode();
     }
 
     @Test
-    public void load()
+    void load()
     {
         final int loadSize = 10_100;
         for ( int i = 0; i < loadSize; i++ )

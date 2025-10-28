@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContextMapperTest
+class ContextMapperTest
 {
     @Test
-    public void test()
+    void test()
     {
         User user = User.create().
             login( PrincipalKey.ofSuperUser().getId() ).

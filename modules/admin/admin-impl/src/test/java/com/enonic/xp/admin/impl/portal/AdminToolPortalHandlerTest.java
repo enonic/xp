@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AdminToolPortalHandlerTest
+class AdminToolPortalHandlerTest
 {
     private WebRequest request;
 
@@ -33,7 +33,7 @@ public class AdminToolPortalHandlerTest
     private WebHandlerChain chain;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         final ExceptionMapper exceptionMapper = mock( ExceptionMapper.class );

@@ -6,10 +6,10 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class TraceEventTest
+class TraceEventTest
 {
     @Test
-    public void startEvent()
+    void startEvent()
     {
         final Trace trace = Mockito.mock( Trace.class );
 
@@ -20,7 +20,7 @@ public class TraceEventTest
     }
 
     @Test
-    public void endEvent()
+    void endEvent()
     {
         final Trace trace = Mockito.mock( Trace.class );
 

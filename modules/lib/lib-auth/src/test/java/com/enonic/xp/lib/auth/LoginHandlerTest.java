@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class LoginHandlerTest
+class LoginHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -40,13 +40,13 @@ public class LoginHandlerTest
     }
 
     @AfterEach
-    public void removeNoSessionAuthInfo()
+    void removeNoSessionAuthInfo()
     {
         ContextAccessor.current().getLocalScope().removeAttribute( AuthenticationInfo.class );
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
@@ -60,7 +60,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginSuccess()
+    void testLoginSuccess()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
@@ -75,7 +75,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginWithSkipAuth()
+    void testLoginWithSkipAuth()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
@@ -90,7 +90,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginWithScopeNONE()
+    void testLoginWithScopeNONE()
     {
         ContextAccessor.current().getLocalScope().setSession( null );
 
@@ -111,7 +111,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginSuccessNoSession()
+    void testLoginSuccessNoSession()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
@@ -128,7 +128,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginNoIdProviders()
+    void testLoginNoIdProviders()
     {
         final IdProviders idProviders =
             IdProviders.from( IdProvider.create().displayName( "system" ).key( IdProviderKey.from( "system" ) ).build() );
@@ -146,7 +146,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginMultipleIdProvider()
+    void testLoginMultipleIdProvider()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
@@ -160,7 +160,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testInvalidLogin()
+    void testInvalidLogin()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.unAuthenticated();
 
@@ -174,7 +174,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testLoginUnspecifiedIdProvider()
+    void testLoginUnspecifiedIdProvider()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 
@@ -194,7 +194,7 @@ public class LoginHandlerTest
     }
 
     @Test
-    public void testSessionInvalidatedOnLogin()
+    void testSessionInvalidatedOnLogin()
     {
         final AuthenticationInfo authInfo = TestDataFixtures.createAuthenticationInfo();
 

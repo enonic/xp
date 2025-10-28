@@ -12,24 +12,24 @@ import com.enonic.xp.inputtype.InputTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MacroDescriptorTest
+class MacroDescriptorTest
 {
     @Test
-    public void testToDescriptorResourceKey()
+    void testToDescriptorResourceKey()
     {
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().key( MacroKey.from( "my-app:macro1" ) ).build();
         assertEquals( "my-app:/cms/macros/macro1/macro1.yml", macroDescriptor.toDescriptorResourceKey().toString() );
     }
 
     @Test
-    public void testToControllerResourceKey()
+    void testToControllerResourceKey()
     {
         final MacroDescriptor macroDescriptor = MacroDescriptor.create().key( MacroKey.from( "my-app:macro1" ) ).build();
         assertEquals( "my-app:/cms/macros/macro1/macro1.js", macroDescriptor.toControllerResourceKey().toString() );
     }
 
     @Test
-    public void testCreateWithKey()
+    void testCreateWithKey()
     {
         final MacroDescriptor macroDescriptor1 = MacroDescriptor.create().key( "my-app:macro1" ).build();
         assertEquals( "my-app:/cms/macros/macro1/macro1.js", macroDescriptor1.toControllerResourceKey().toString() );
@@ -40,7 +40,7 @@ public class MacroDescriptorTest
 
 
     @Test
-    public void testCreate()
+    void testCreate()
     {
         FieldSet body = FieldSet.create().
             label( "Body" ).

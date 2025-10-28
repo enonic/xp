@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateLastRunCommandTest
+class UpdateLastRunCommandTest
 {
     @Mock
     private NodeService nodeService;
@@ -36,14 +36,13 @@ public class UpdateLastRunCommandTest
     private ArgumentCaptor<UpdateNodeParams> captor;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
 
     }
 
     @Test
-    public void testCreateJob()
-        throws Exception
+    void testCreateJob()
     {
         final TaskId lastTaskId = TaskId.from( "task-id" );
         final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );

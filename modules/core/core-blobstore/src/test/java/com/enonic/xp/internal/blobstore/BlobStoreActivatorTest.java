@@ -7,10 +7,10 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.blob.ProviderConfig;
 import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 
-public class BlobStoreActivatorTest
+class BlobStoreActivatorTest
 {
     @Test
-    public void activate()
+    void activate()
         throws Exception
     {
         final BlobStoreConfig blobStoreConfig = Mockito.mock( BlobStoreConfig.class );

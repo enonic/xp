@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class OSGICheckTest
+class OSGICheckTest
 {
     @Mock
     private BundleContext bundleContext;
@@ -31,7 +31,7 @@ public class OSGICheckTest
     }
 
     @Test
-    public void testNotReady()
+    void testNotReady()
     {
         final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.READY_SERVICE_NAMES );
         final StateCheckResult result = healthCheck.check();
@@ -55,7 +55,7 @@ public class OSGICheckTest
     }
 
     @Test
-    public void testNotAlive()
+    void testNotAlive()
     {
         final OSGIStateCheck healthCheck = new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES );
         final StateCheckResult result = healthCheck.check();
@@ -66,7 +66,7 @@ public class OSGICheckTest
     }
 
     @Test
-    public void testReady()
+    void testReady()
         throws Exception
     {
         for ( String s : OSGIStateChecks.READY_SERVICE_NAMES )
@@ -84,7 +84,7 @@ public class OSGICheckTest
     }
 
     @Test
-    public void testAlive()
+    void testAlive()
         throws Exception
     {
         for ( String s : OSGIStateChecks.LIVE_SERVICE_NAMES )

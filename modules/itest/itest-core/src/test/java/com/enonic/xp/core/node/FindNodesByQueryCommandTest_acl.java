@@ -30,19 +30,17 @@ import com.enonic.xp.security.acl.Permission;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesByQueryCommandTest_acl
+class FindNodesByQueryCommandTest_acl
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void get_by_parent_filter_acl()
-        throws Exception
+    void get_by_parent_filter_acl()
     {
         final Node parentNode = createNode( CreateNodeParams.create().
             name( "my-node-1" ).
@@ -72,8 +70,7 @@ public class FindNodesByQueryCommandTest_acl
 
 
     @Test
-    public void fulltext_with_acl()
-        throws Exception
+    void fulltext_with_acl()
     {
         final Node node = createNode( CreateNodeParams.create().
             name( "node_with_access" ).

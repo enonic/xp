@@ -84,7 +84,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
-public class SecurityServiceImplTest
+class SecurityServiceImplTest
     extends AbstractElasticsearchIntegrationTest
 {
     private static final IdProviderKey SYSTEM = IdProviderKey.system();
@@ -97,7 +97,6 @@ public class SecurityServiceImplTest
 
     @BeforeEach
     void setUp()
-        throws Exception
     {
         deleteAllIndices();
         final MemoryBlobStore blobStore = new MemoryBlobStore();
@@ -170,8 +169,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateUser()
-        throws Exception
+    void testCreateUser()
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
@@ -210,8 +208,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateUserThrowsExceptionWhenNameIsOccupied()
-        throws Exception
+    void testCreateUserThrowsExceptionWhenNameIsOccupied()
     {
         assertThrows( PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
@@ -229,7 +226,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateUserDuplicatedEmail()
+    void testCreateUserDuplicatedEmail()
     {
         try
         {
@@ -264,8 +261,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateUser()
-        throws Exception
+    void testUpdateUser()
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -292,7 +288,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateUserDuplicatedEmail()
+    void testUpdateUserDuplicatedEmail()
     {
         try
         {
@@ -330,7 +326,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateUserDuplicatedEmailWithEditor()
+    void testUpdateUserDuplicatedEmailWithEditor()
     {
         try
         {
@@ -369,8 +365,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateGroup()
-        throws Exception
+    void testCreateGroup()
     {
         runAsAdmin( () -> {
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
@@ -399,8 +394,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateGroupThrowsExceptionWhenNameIsOccupied()
-        throws Exception
+    void testCreateGroupThrowsExceptionWhenNameIsOccupied()
     {
         assertThrows( PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey groupKey1 = PrincipalKey.ofGroup( SYSTEM, "Group-a" );
@@ -413,8 +407,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateGroup()
-        throws Exception
+    void testUpdateGroup()
     {
         runAsAdmin( () -> {
             final CreateGroupParams createGroup =
@@ -435,8 +428,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateRole()
-        throws Exception
+    void testCreateRole()
     {
         runAsAdmin( () -> {
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
@@ -465,8 +457,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateRoleThrowsExceptionWhenNameIsOccupied()
-        throws Exception
+    void testCreateRoleThrowsExceptionWhenNameIsOccupied()
     {
         assertThrows( PrincipalAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey roleKey1 = PrincipalKey.ofRole( "Role-a" );
@@ -479,8 +470,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateRole()
-        throws Exception
+    void testUpdateRole()
     {
         runAsAdmin( () -> {
             final CreateRoleParams createRole =
@@ -501,8 +491,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testDeleteNonExistPrincipal()
-        throws Exception
+    void testDeleteNonExistPrincipal()
     {
         runAsAdmin( () -> {
             assertThrows( PrincipalNotFoundException.class,
@@ -511,8 +500,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testDeletePrincipalWithoutPermissions()
-        throws Exception
+    void testDeletePrincipalWithoutPermissions()
     {
         final CreateUserParams createUser = CreateUserParams.create()
             .userKey( PrincipalKey.ofUser( SYSTEM, "User1" ) )
@@ -529,8 +517,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testAddRelationship()
-        throws Exception
+    void testAddRelationship()
     {
         runAsAdmin( () -> {
             // set up
@@ -569,8 +556,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testRemoveRelationship()
-        throws Exception
+    void testRemoveRelationship()
     {
         runAsAdmin( () -> {
             // set up
@@ -609,8 +595,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testRemoveAllRelationships()
-        throws Exception
+    void testRemoveAllRelationships()
     {
         runAsAdmin( () -> {
             // set up
@@ -648,8 +633,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testRemoveSuFromAdmin()
-        throws Exception
+    void testRemoveSuFromAdmin()
     {
         runAsAdmin( () -> {
             assertThrows( IllegalArgumentException.class, () -> securityService.removeRelationship(
@@ -658,8 +642,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testDeleteAdminRole()
-        throws Exception
+    void testDeleteAdminRole()
     {
         runAsAdmin( () -> {
             assertThrows( IllegalArgumentException.class, () -> securityService.deletePrincipal( RoleKeys.ADMIN ) );
@@ -667,8 +650,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testDeleteSu()
-        throws Exception
+    void testDeleteSu()
     {
         runAsAdmin( () -> {
             assertThrows( IllegalArgumentException.class, () -> securityService.deletePrincipal( PrincipalKey.ofSuperUser() ) );
@@ -677,8 +659,7 @@ public class SecurityServiceImplTest
 
 
     @Test
-    public void testAuthenticateByEmailPwd()
-        throws Exception
+    void testAuthenticateByEmailPwd()
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -703,8 +684,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testAuthenticateByEmailPwdWrongPwd()
-        throws Exception
+    void testAuthenticateByEmailPwdWrongPwd()
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -728,8 +708,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testAuthenticateByUsernamePwd()
-        throws Exception
+    void testAuthenticateByUsernamePwd()
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -754,8 +733,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testAuthenticateByEmail()
-        throws Exception
+    void testAuthenticateByEmail()
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -779,8 +757,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testAuthenticateByUsername()
-        throws Exception
+    void testAuthenticateByUsername()
     {
         runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -804,8 +781,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testAuthenticateUnsupportedToken()
-        throws Exception
+    void testAuthenticateUnsupportedToken()
     {
         assertThrows( AuthenticationException.class, () -> runAsAdmin( () -> {
             final CreateUserParams createUser = CreateUserParams.create()
@@ -826,8 +802,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testGetUserMemberships()
-        throws Exception
+    void testGetUserMemberships()
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
@@ -860,8 +835,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testGetAllMemberships()
-        throws Exception
+    void testGetAllMemberships()
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "user1" );
@@ -901,8 +875,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateIdProvider()
-        throws Exception
+    void testCreateIdProvider()
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
@@ -974,8 +947,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testCreateIdProviderThrowsExceptionWhenNameIsOccupied()
-        throws Exception
+    void testCreateIdProviderThrowsExceptionWhenNameIsOccupied()
     {
         assertThrows( IdProviderAlreadyExistsException.class, () -> runAsAdmin( () -> {
             final PrincipalKey userKey = PrincipalKey.ofUser( SYSTEM, "User1" );
@@ -997,8 +969,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateIdProvider()
-        throws Exception
+    void testUpdateIdProvider()
     {
         runAsAdmin( () -> {
             // setup
@@ -1054,8 +1025,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testUpdateIdProviderWithEditor()
-        throws Exception
+    void testUpdateIdProviderWithEditor()
     {
         runAsAdmin( () -> {
             // setup
@@ -1083,8 +1053,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void setPassword()
-        throws Exception
+    void setPassword()
     {
         runAsAdmin( () -> {
             final PrincipalKey userKey1 = PrincipalKey.ofUser( SYSTEM, "User1" );
@@ -1138,8 +1107,7 @@ public class SecurityServiceImplTest
     }
 
     @Test
-    public void testQuery()
-        throws Exception
+    void testQuery()
     {
 
         runAsAdmin( () -> {

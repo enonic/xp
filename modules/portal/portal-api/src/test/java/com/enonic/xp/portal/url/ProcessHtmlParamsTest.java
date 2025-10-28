@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ProcessHtmlParamsTest
+class ProcessHtmlParamsTest
 {
     @Test
-    public void testValue()
+    void testValue()
     {
         final ProcessHtmlParams params = new ProcessHtmlParams();
         assertNull( params.getValue() );
@@ -23,7 +23,7 @@ public class ProcessHtmlParamsTest
     }
 
     @Test
-    public void testSetAsMap()
+    void testSetAsMap()
     {
         final ProcessHtmlParams params = new ProcessHtmlParams();
         params.value( "<html/>" );

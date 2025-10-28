@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
-public class GetChildContentHandlerTest
+class GetChildContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Contents contents = TestDataFixtures.newContents( 2 );
 
@@ -29,7 +29,7 @@ public class GetChildContentHandlerTest
     }
 
     @Test
-    public void getChildrenById()
+    void getChildrenById()
     {
         final Contents contents = TestDataFixtures.newContents( 3 );
 
@@ -41,7 +41,7 @@ public class GetChildContentHandlerTest
     }
 
     @Test
-    public void getChildrenByPath()
+    void getChildrenByPath()
     {
         final Contents contents = TestDataFixtures.newContents( 3 );
 
@@ -53,7 +53,7 @@ public class GetChildContentHandlerTest
     }
 
     @Test
-    public void getChildrenById_notFound()
+    void getChildrenById_notFound()
     {
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().contents( Contents.empty() ).build();
@@ -63,7 +63,7 @@ public class GetChildContentHandlerTest
     }
 
     @Test
-    public void getChildrenByPath_notFound()
+    void getChildrenByPath_notFound()
     {
         final FindContentByParentResult findResult =
             FindContentByParentResult.create().contents( Contents.empty() ).build();
@@ -73,7 +73,7 @@ public class GetChildContentHandlerTest
     }
 
     @Test
-    public void getChildrenByPath_allParameters()
+    void getChildrenByPath_allParameters()
     {
         final Contents contents = TestDataFixtures.newContents( 3 );
 

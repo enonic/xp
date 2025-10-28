@@ -49,7 +49,7 @@ class ImportHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
             mock( Application.class ) );

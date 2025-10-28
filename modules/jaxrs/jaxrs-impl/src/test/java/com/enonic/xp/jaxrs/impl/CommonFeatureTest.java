@@ -7,10 +7,10 @@ import jakarta.ws.rs.core.FeatureContext;
 
 import com.enonic.xp.web.multipart.MultipartService;
 
-public class CommonFeatureTest
+class CommonFeatureTest
 {
     @Test
-    public void testConfigure()
+    void testConfigure()
     {
         final MultipartService multipartService = Mockito.mock( MultipartService.class );
         final CommonFeature feature = new CommonFeature( multipartService );

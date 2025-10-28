@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.testing.helper.JsonAssert;
 
-public class PrincipalMapperTest
+class PrincipalMapperTest
 {
     @Test
-    public void testUserSerialized()
+    void testUserSerialized()
         throws Exception
     {
         final PrincipalMapper principalMapper = new PrincipalMapper( TestDataFixtures.getTestUser() );
@@ -15,7 +15,7 @@ public class PrincipalMapperTest
     }
 
     @Test
-    public void testGroupSerialized()
+    void testGroupSerialized()
         throws Exception
     {
         final PrincipalMapper principalMapper = new PrincipalMapper( TestDataFixtures.getTestGroup() );
@@ -23,7 +23,7 @@ public class PrincipalMapperTest
     }
 
     @Test
-    public void testRoleSerialized()
+    void testRoleSerialized()
         throws Exception
     {
         final PrincipalMapper principalMapper = new PrincipalMapper( TestDataFixtures.getTestRole() );

@@ -25,11 +25,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateDynamicContentSchemaHandlerTest
+class CreateDynamicContentSchemaHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testContentType()
+    void testContentType()
     {
         when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
@@ -60,7 +60,7 @@ public class CreateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testFormFragment()
+    void testFormFragment()
     {
         when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
@@ -83,7 +83,7 @@ public class CreateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testXData()
+    void testXData()
     {
         when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
@@ -106,13 +106,13 @@ public class CreateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    public void testInvalidContentSchemaType()
+    void testInvalidContentSchemaType()
     {
         runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchemaType" );
     }
 
     @Test
-    public void testInvalidContentSchema()
+    void testInvalidContentSchema()
     {
         runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchema" );
     }

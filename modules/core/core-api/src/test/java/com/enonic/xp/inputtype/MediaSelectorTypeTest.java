@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MediaSelectorTypeTest
+class MediaSelectorTypeTest
     extends BaseInputTypeTest
 {
     public MediaSelectorTypeTest()
@@ -21,19 +21,19 @@ public class MediaSelectorTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "MediaSelector", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "MediaSelector", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.object().build() );
 
@@ -42,13 +42,13 @@ public class MediaSelectorTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         this.type.validate( referenceProperty( "name" ), GenericValue.object().build() );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ));
     }

@@ -16,13 +16,12 @@ import com.enonic.xp.security.PrincipalKeys;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IssueServiceImplTest_getIssue
+class IssueServiceImplTest_getIssue
     extends AbstractIssueServiceTest
 {
 
     @Test
-    public void get_issue()
-        throws Exception
+    void get_issue()
     {
         final IssueId issueId = this.createIssue( CreateIssueParams.create().
             title( "title" ).

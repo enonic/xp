@@ -24,19 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UpdateIssueCommentCommandTest
+class UpdateIssueCommentCommandTest
 {
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
     }
 
     @Test
-    public void update()
+    void update()
     {
         final Node issueNode =
             Node.create().name( "parent-issue" ).parentPath( NodePath.ROOT ).id( NodeId.from( UUID.randomUUID() ) ).build();
@@ -68,7 +67,7 @@ public class UpdateIssueCommentCommandTest
     }
 
     @Test
-    public void updateCommentNotExists()
+    void updateCommentNotExists()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().
             comment( NodeId.from( UUID.randomUUID() ) ).
@@ -84,7 +83,7 @@ public class UpdateIssueCommentCommandTest
     }
 
     @Test
-    public void updateNoText()
+    void updateNoText()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().comment( NodeId.from( UUID.randomUUID() ) ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );
@@ -92,7 +91,7 @@ public class UpdateIssueCommentCommandTest
     }
 
     @Test
-    public void updateNoCommentId()
+    void updateNoCommentId()
     {
         final UpdateIssueCommentParams params = UpdateIssueCommentParams.create().text( "text" ).build();
         final UpdateIssueCommentCommand command = updateIssueCommentCommand( params );

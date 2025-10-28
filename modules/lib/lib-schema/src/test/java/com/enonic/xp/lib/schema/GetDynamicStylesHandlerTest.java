@@ -18,11 +18,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GetDynamicStylesHandlerTest
+class GetDynamicStylesHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testStyles()
+    void testStyles()
     {
         when( dynamicSchemaService.getStyles( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
@@ -52,7 +52,7 @@ public class GetDynamicStylesHandlerTest
 
 
     @Test
-    public void testNull()
+    void testNull()
     {
         runFunction( "/test/GetDynamicStylesHandlerTest.js", "getNull" );
     }

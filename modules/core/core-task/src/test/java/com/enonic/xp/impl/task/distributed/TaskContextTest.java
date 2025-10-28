@@ -9,11 +9,11 @@ import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TaskContextTest
+class TaskContextTest
 {
 
     @Test
-    public void serializable()
+    void serializable()
     {
         final TaskContext info = TaskContext.create()
             .setRepo( RepositoryId.from( "test" ) )

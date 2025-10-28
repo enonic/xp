@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class FileBlobRecordTest
+class FileBlobRecordTest
 {
     @TempDir
     public Path temporaryFolder;
 
     @Test
-    public void testAccessors()
+    void testAccessors()
         throws Exception
     {
         final BlobKey key = BlobKey.from( "test" );
@@ -31,7 +31,7 @@ public class FileBlobRecordTest
     }
 
     @Test
-    public void lastModified()
+    void lastModified()
         throws Exception
     {
         final BlobKey key = BlobKey.from( "test" );

@@ -23,7 +23,7 @@ import com.enonic.xp.util.Reference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentOutboundDependenciesIdsResolverTest
+class ContentOutboundDependenciesIdsResolverTest
 {
 
     private ContentService contentService;
@@ -31,8 +31,7 @@ public class ContentOutboundDependenciesIdsResolverTest
     private ContentOutboundDependenciesIdsResolver resolver;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
         this.resolver = new ContentOutboundDependenciesIdsResolver( contentService );
@@ -63,8 +62,7 @@ public class ContentOutboundDependenciesIdsResolverTest
     }
 
     @Test
-    public void resolve_outbound_dependencies()
-        throws Exception
+    void resolve_outbound_dependencies()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -95,8 +93,7 @@ public class ContentOutboundDependenciesIdsResolverTest
     }
 
     @Test
-    public void resolve_outbound_with_missing_dependency()
-        throws Exception
+    void resolve_outbound_with_missing_dependency()
     {
         final PropertyTree data = new PropertyTree();
         final Content folderRefContent1 = createContent( "folderRefContent1", data, ContentTypeName.folder() );
@@ -118,8 +115,7 @@ public class ContentOutboundDependenciesIdsResolverTest
     }
 
     @Test
-    public void resolve_outbound_from_xdata()
-        throws Exception
+    void resolve_outbound_from_xdata()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -150,8 +146,7 @@ public class ContentOutboundDependenciesIdsResolverTest
     }
 
     @Test
-    public void resolve_content_processed_ids()
-        throws Exception
+    void resolve_content_processed_ids()
     {
         final ContentId ref = ContentId.from( "ref1" );
         final Content content =

@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetProfileHandlerTest
+class GetProfileHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -23,7 +23,7 @@ public class GetProfileHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser() ) );
@@ -32,7 +32,7 @@ public class GetProfileHandlerTest
     }
 
     @Test
-    public void testNoProfile()
+    void testNoProfile()
     {
         Mockito.when( securityService.getUser( Mockito.any() ) ).
             thenReturn( Optional.of( TestDataFixtures.getTestUser2() ) );

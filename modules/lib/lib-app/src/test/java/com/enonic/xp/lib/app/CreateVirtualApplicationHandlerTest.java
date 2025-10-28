@@ -17,11 +17,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateVirtualApplicationHandlerTest
+class CreateVirtualApplicationHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
 
         when( applicationService.createVirtualApplication( isA( CreateVirtualApplicationParams.class ) ) ).thenAnswer( params -> {

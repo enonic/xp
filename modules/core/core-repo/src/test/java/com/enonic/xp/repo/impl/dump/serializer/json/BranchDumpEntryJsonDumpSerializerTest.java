@@ -7,23 +7,22 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BranchDumpEntryJsonDumpSerializerTest
+class BranchDumpEntryJsonDumpSerializerTest
 {
     private final JsonDumpSerializer serializer = new JsonDumpSerializer();
 
     @Test
-    public void equals()
-        throws Exception
+    void equals()
     {
         final BranchDumpEntry branchDumpEntry = BranchDumpEntry.create().
             meta( VersionMeta.create().

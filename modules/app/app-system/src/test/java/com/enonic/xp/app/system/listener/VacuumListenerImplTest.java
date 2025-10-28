@@ -12,7 +12,7 @@ import com.enonic.xp.task.ProgressReporter;
 import static org.mockito.ArgumentMatchers.anyInt;
 
 @ExtendWith(MockitoExtension.class)
-public class VacuumListenerImplTest
+class VacuumListenerImplTest
 {
     @Mock
     private ProgressReporter progressReporter;
@@ -20,15 +20,13 @@ public class VacuumListenerImplTest
     private VacuumListenerImpl vacuumListener;
 
     @BeforeEach
-    public void initialize()
-        throws Exception
+    void initialize()
     {
         vacuumListener = new VacuumListenerImpl( progressReporter );
     }
 
     @Test
-    public void taskBegin()
-        throws Exception
+    void taskBegin()
     {
         vacuumListener.vacuumBegin( 10 );
         vacuumListener.taskBegin( "taskName1", 5L );
@@ -44,16 +42,14 @@ public class VacuumListenerImplTest
     }
 
     @Test
-    public void stepBegin()
-        throws Exception
+    void stepBegin()
     {
         vacuumListener.stepBegin( "stepName", 10L );
         Mockito.verify( progressReporter, Mockito.never() ).progress( anyInt(), anyInt() );
     }
 
     @Test
-    public void processed()
-        throws Exception
+    void processed()
     {
         vacuumListener.processed( 10L );
         Mockito.verify( progressReporter, Mockito.never() ).progress( anyInt(), anyInt() );

@@ -123,7 +123,7 @@ class ResourceServiceImplTest
     }
 
     @Test
-    public void testProcessResource()
+    void testProcessResource()
         throws Exception
     {
         newFile( "a.txt" );
@@ -147,7 +147,7 @@ class ResourceServiceImplTest
     }
 
     @Test
-    public void testProcessResourceWithParticularResolver()
+    void testProcessResourceWithParticularResolver()
         throws Exception
     {
         newFile( "a.txt" );
@@ -183,7 +183,7 @@ class ResourceServiceImplTest
     }
 
     @Test
-    public void testProcessProjectResource()
+    void testProcessProjectResource()
         throws Exception
     {
         final ProjectName projectName = ProjectName.from( "my-project" );

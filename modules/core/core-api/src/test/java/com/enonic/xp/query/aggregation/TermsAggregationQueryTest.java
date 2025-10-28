@@ -6,10 +6,10 @@ import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TermsAggregationQueryTest
+class TermsAggregationQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final TermsAggregationQuery query = TermsAggregationQuery.create( "category" ).
             fieldName( "category" ).

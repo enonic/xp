@@ -12,7 +12,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class GetMembersHandlerTest
+class GetMembersHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -27,7 +27,7 @@ public class GetMembersHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final Group group = TestDataFixtures.getTestGroup();
         final User user1 = TestDataFixtures.getTestUser();
@@ -45,7 +45,7 @@ public class GetMembersHandlerTest
     }
 
     @Test
-    public void testGetMembers()
+    void testGetMembers()
     {
         final Group group = TestDataFixtures.getTestGroup();
         final User user1 = TestDataFixtures.getTestUser();
@@ -63,7 +63,7 @@ public class GetMembersHandlerTest
     }
 
     @Test
-    public void testGetNoMembers()
+    void testGetNoMembers()
     {
         final Group group = TestDataFixtures.getTestGroup();
 
@@ -76,7 +76,7 @@ public class GetMembersHandlerTest
     }
 
     @Test
-    public void testGetMembersWithoutKey()
+    void testGetMembersWithoutKey()
     {
         runFunction( "/test/getMembers-test.js", "getMembersWithoutKey" );
     }

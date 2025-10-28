@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WebDispatcherServletTest
+class WebDispatcherServletTest
     extends JettyTestSupport
 {
     private WebDispatcherServlet servlet;
@@ -30,7 +30,6 @@ public class WebDispatcherServletTest
 
     @Override
     protected void configure()
-        throws Exception
     {
         this.handler = new TestWebHandler();
 
@@ -49,7 +48,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testSimpleGet()
+    void testSimpleGet()
         throws Exception
     {
         this.handler.response = WebResponse.create().
@@ -80,7 +79,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testResponseHeaders()
+    void testResponseHeaders()
         throws Exception
     {
         this.handler.response = WebResponse.create().
@@ -98,7 +97,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testRequestHeaders()
+    void testRequestHeaders()
         throws Exception
     {
         final HttpRequest request = newRequest( "/site/master/a/b" ).
@@ -115,7 +114,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testReadCookies()
+    void testReadCookies()
         throws Exception
     {
         final HttpRequest request = newRequest( "/site/master/a/b" ).
@@ -133,7 +132,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testParameters()
+    void testParameters()
         throws Exception
     {
         final HttpRequest request = newRequest( "/site/master/a/b?a=1&b=2&b=3&b=3" ).
@@ -150,7 +149,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testPost_formEncoded()
+    void testPost_formEncoded()
         throws Exception
     {
         HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( Map.of( "search", "Jurassic Park", "expand", "true" ).
@@ -174,7 +173,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testPost_plainText()
+    void testPost_plainText()
         throws Exception
     {
         HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( "Hello World" );
@@ -195,7 +194,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testPost_json()
+    void testPost_json()
         throws Exception
     {
         HttpRequest.BodyPublisher formBody = HttpRequest.BodyPublishers.ofString( "{}" );
@@ -216,7 +215,7 @@ public class WebDispatcherServletTest
     }
 
     @Test
-    public void testRemoveHandler()
+    void testRemoveHandler()
         throws Exception
     {
         this.servlet.removeWebHandler( this.handler );

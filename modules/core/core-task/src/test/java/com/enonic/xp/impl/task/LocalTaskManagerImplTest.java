@@ -35,7 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LocalTaskManagerImplTest
+class LocalTaskManagerImplTest
 {
     private static final TaskContext TEST_TASK_CONTEXT = TaskContext.create()
         .setBranch( Branch.from( "master" ) )
@@ -50,7 +50,7 @@ public class LocalTaskManagerImplTest
     private TaskManagerCleanupSchedulerMock cleanupScheduler;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         LocalTaskManagerImpl.clock = Clock.fixed( Instant.ofEpochSecond( 0 ), ZoneOffset.UTC );
 
@@ -73,7 +73,7 @@ public class LocalTaskManagerImplTest
     }
 
     @Test
-    public void submitTask()
+    void submitTask()
     {
         final RunnableTask runnableTask = ( id, progressReporter ) -> {
             for ( int i = 0; i < 5; i++ )
@@ -109,7 +109,7 @@ public class LocalTaskManagerImplTest
     }
 
     @Test
-    public void submitTaskWithError()
+    void submitTaskWithError()
     {
         final RunnableTask runnableTask = ( id, progressReporter ) -> {
             throw new RuntimeException( "Some error" );
@@ -132,7 +132,7 @@ public class LocalTaskManagerImplTest
     }
 
     @Test
-    public void testRemoveExpiredTasks()
+    void testRemoveExpiredTasks()
         throws InterruptedException
     {
         LocalTaskManagerImpl.clock = Clock.fixed( Instant.ofEpochSecond( 0 ), ZoneId.systemDefault() );

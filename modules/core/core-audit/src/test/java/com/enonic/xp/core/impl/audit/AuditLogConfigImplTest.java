@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuditLogConfigImplTest
+class AuditLogConfigImplTest
 {
     @Test
-    public void configDefault()
+    void configDefault()
     {
         final AuditLogConfigImpl auditLogConfig = new AuditLogConfigImpl();
 
@@ -26,7 +26,7 @@ public class AuditLogConfigImplTest
     }
 
     @Test
-    public void configCustom()
+    void configCustom()
     {
         final AuditLogConfigImpl auditLogConfig = new AuditLogConfigImpl();
 
@@ -39,7 +39,7 @@ public class AuditLogConfigImplTest
     }
 
     @Test
-    public void configInvalid()
+    void configInvalid()
     {
         final AuditLogConfigImpl auditLogConfig = new AuditLogConfigImpl();
 

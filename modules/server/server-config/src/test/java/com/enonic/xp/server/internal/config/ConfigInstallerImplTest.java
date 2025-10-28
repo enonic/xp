@@ -15,7 +15,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import com.enonic.xp.core.internal.Dictionaries;
 
 
-public class ConfigInstallerImplTest
+class ConfigInstallerImplTest
 {
     @TempDir
     public Path temporaryFolder;
@@ -25,7 +25,7 @@ public class ConfigInstallerImplTest
     private ConfigurationAdmin configurationAdmin;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         final BundleContext context = Mockito.mock( BundleContext.class );
         this.configurationAdmin = Mockito.mock( ConfigurationAdmin.class );
@@ -44,7 +44,7 @@ public class ConfigInstallerImplTest
     }
 
     @Test
-    public void updateConfig_empty()
+    void updateConfig_empty()
         throws Exception
     {
         final Configuration config = mockGetConfiguration();
@@ -55,7 +55,7 @@ public class ConfigInstallerImplTest
     }
 
     @Test
-    public void updateConfig_changed()
+    void updateConfig_changed()
         throws Exception
     {
         final Configuration config = mockGetConfiguration();
@@ -67,7 +67,7 @@ public class ConfigInstallerImplTest
     }
 
     @Test
-    public void updateConfig_unchanged()
+    void updateConfig_unchanged()
         throws Exception
     {
         final Configuration config = mockGetConfiguration();
@@ -79,7 +79,7 @@ public class ConfigInstallerImplTest
     }
 
     @Test
-    public void deleteConfig_new()
+    void deleteConfig_new()
         throws Exception
     {
         final Configuration config = mockGetConfiguration();
@@ -88,7 +88,7 @@ public class ConfigInstallerImplTest
     }
 
     @Test
-    public void deleteConfig_existing()
+    void deleteConfig_existing()
         throws Exception
     {
         final Configuration config = Mockito.mock( Configuration.class );

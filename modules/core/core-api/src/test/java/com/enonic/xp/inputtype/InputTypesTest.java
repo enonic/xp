@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class InputTypesTest
+class InputTypesTest
 {
     private final InputTypes types;
 
@@ -18,13 +18,13 @@ public class InputTypesTest
     }
 
     @Test
-    public void countBuiltinTypes()
+    void countBuiltinTypes()
     {
         assertEquals( 23, StreamSupport.stream( this.types.spliterator(), false ).count() );
     }
 
     @Test
-    public void resolveType()
+    void resolveType()
     {
         final InputType type = this.types.resolve( InputTypeName.TEXT_LINE );
         assertNotNull( type );
@@ -32,7 +32,7 @@ public class InputTypesTest
     }
 
     @Test
-    public void resolveType_ignoreCase()
+    void resolveType_ignoreCase()
     {
         final InputType type = this.types.resolve( InputTypeName.from( "textline" ) );
         assertNotNull( type );
@@ -40,7 +40,7 @@ public class InputTypesTest
     }
 
     @Test
-    public void resolveType_unknown()
+    void resolveType_unknown()
     {
         assertThrows( InputTypeNotFoundException.class, () -> this.types.resolve( InputTypeName.from( "unknown" ) ) );
     }

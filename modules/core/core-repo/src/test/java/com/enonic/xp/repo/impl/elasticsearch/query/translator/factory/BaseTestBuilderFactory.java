@@ -47,7 +47,6 @@ public abstract class BaseTestBuilderFactory
     }
 
     protected final String load( final String name )
-        throws Exception
     {
         try (InputStream stream = getClass().getResourceAsStream( name ))
         {

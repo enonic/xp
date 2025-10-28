@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ControllerScriptImpl_requestTest
+class ControllerScriptImpl_requestTest
     extends AbstractControllerTest
 {
     @Test
-    public void testSimple()
+    void testSimple()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setPort( 80 );
@@ -28,7 +28,7 @@ public class ControllerScriptImpl_requestTest
     }
 
     @Test
-    public void testAll()
+    void testAll()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
@@ -52,8 +52,7 @@ public class ControllerScriptImpl_requestTest
     }
 
     @Test
-    public void testCookiesParsedFromResponse()
-        throws Exception
+    void testCookiesParsedFromResponse()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setScheme( "http" );
@@ -82,8 +81,7 @@ public class ControllerScriptImpl_requestTest
     }
 
     @Test
-    public void testHead()
-        throws Exception
+    void testHead()
     {
         this.portalRequest.setMethod( HttpMethod.HEAD );
         execute( "myapplication:/controller/request.js" );
@@ -91,8 +89,7 @@ public class ControllerScriptImpl_requestTest
     }
 
     @Test
-    public void testAllMethod()
-        throws Exception
+    void testAllMethod()
     {
         this.portalRequest.setMethod( HttpMethod.GET );
         execute( "myapplication:/controller/allHandler.js" );

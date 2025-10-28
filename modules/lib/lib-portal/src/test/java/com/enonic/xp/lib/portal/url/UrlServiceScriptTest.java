@@ -11,7 +11,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UrlServiceScriptTest
+class UrlServiceScriptTest
     extends ScriptTestSupport
 {
     @Override
@@ -23,7 +23,6 @@ public class UrlServiceScriptTest
     }
 
     private Object urlAnswer( final InvocationOnMock invocation )
-        throws Exception
     {
         return invocation.getArguments()[0].toString();
     }
@@ -36,175 +35,175 @@ public class UrlServiceScriptTest
     }
 
     @Test
-    public void assertUrlTest()
+    void assertUrlTest()
     {
         assertTrue( execute( "assetUrlTest" ) );
     }
 
     @Test
-    public void assertUrlTest_unknownProperty()
+    void assertUrlTest_unknownProperty()
     {
         assertTrue( execute( "assetUrlTest_unknownProperty" ) );
     }
 
     @Test
-    public void assertUrlTest_invalidProperty()
+    void assertUrlTest_invalidProperty()
     {
         assertTrue( execute( "assetUrlTest_invalidProperty" ) );
     }
 
     @Test
-    public void attachmentUrlTest()
+    void attachmentUrlTest()
     {
         assertTrue( execute( "attachmentUrlTest" ) );
     }
 
     @Test
-    public void attachmentUrlTest_unknownProperty()
+    void attachmentUrlTest_unknownProperty()
     {
         assertTrue( execute( "attachmentUrlTest_unknownProperty" ) );
     }
 
     @Test
-    public void componentUrlTest()
+    void componentUrlTest()
     {
         assertTrue( execute( "componentUrlTest" ) );
     }
 
     @Test
-    public void componentUrlTest_unknownProperty()
+    void componentUrlTest_unknownProperty()
     {
         assertTrue( execute( "componentUrlTest_unknownProperty" ) );
     }
 
     @Test
-    public void imageUrlTest()
+    void imageUrlTest()
     {
         assertTrue( execute( "imageUrlTest" ) );
     }
 
     @Test
-    public void imageUrlTest_unknownProperty()
+    void imageUrlTest_unknownProperty()
     {
         assertTrue( execute( "imageUrlTest_unknownProperty" ) );
     }
 
     @Test
-    public void pageUrlTest()
+    void pageUrlTest()
     {
         assertTrue( execute( "pageUrlTest" ) );
     }
 
     @Test
-    public void pageUrlTest_unknownProperty()
+    void pageUrlTest_unknownProperty()
     {
         assertTrue( execute( "pageUrlTest_unknownProperty" ) );
     }
 
     @Test
-    public void serviceUrlTest()
+    void serviceUrlTest()
     {
         assertTrue( execute( "serviceUrlTest" ) );
     }
 
     @Test
-    public void serviceUrlWebSocketTest()
+    void serviceUrlWebSocketTest()
     {
         assertTrue( execute( "serviceUrlWebSocketTest" ) );
     }
 
     @Test
-    public void serviceUrlTest_unknownProperty()
+    void serviceUrlTest_unknownProperty()
     {
         assertTrue( execute( "serviceUrlTest_unknownProperty" ) );
     }
 
     @Test
-    public void processHtmlTest()
+    void processHtmlTest()
     {
         assertTrue( execute( "processHtmlTest" ) );
     }
 
     @Test
-    public void processHtmlTest_ignoreUnknownProperty()
+    void processHtmlTest_ignoreUnknownProperty()
     {
         assertTrue( execute( "processHtmlTest_ignoreUnknownProperty" ) );
     }
 
     @Test
-    public void processHtmlTest_imageUrlProcessing()
+    void processHtmlTest_imageUrlProcessing()
     {
         assertTrue( execute( "processHtmlImageUrlProcessingTest" ) );
     }
 
     @Test
-    public void imagePlaceholderTest()
+    void imagePlaceholderTest()
     {
         assertTrue( execute( "imagePlaceholderTest" ) );
     }
 
     @Test
-    public void testExample_assetUrl()
+    void testExample_assetUrl()
     {
         runScript( "/lib/xp/examples/portal/assetUrl.js" );
     }
 
     @Test
-    public void testExample_imageUrl()
+    void testExample_imageUrl()
     {
         runScript( "/lib/xp/examples/portal/imageUrl.js" );
     }
 
     @Test
-    public void testExample_componentUrl()
+    void testExample_componentUrl()
     {
         runScript( "/lib/xp/examples/portal/componentUrl.js" );
     }
 
     @Test
-    public void testExample_attachmentUrl()
+    void testExample_attachmentUrl()
     {
         runScript( "/lib/xp/examples/portal/attachmentUrl.js" );
     }
 
     @Test
-    public void testExample_pageUrl()
+    void testExample_pageUrl()
     {
         runScript( "/lib/xp/examples/portal/pageUrl.js" );
     }
 
     @Test
-    public void testExample_serviceUrl()
+    void testExample_serviceUrl()
     {
         runScript( "/lib/xp/examples/portal/serviceUrl.js" );
     }
 
     @Test
-    public void testExample_generateUrl()
+    void testExample_generateUrl()
     {
         runScript( "/lib/xp/examples/portal/url.js" );
     }
 
     @Test
-    public void testExample_processHtml()
+    void testExample_processHtml()
     {
         runScript( "/lib/xp/examples/portal/processHtml.js" );
     }
 
     @Test
-    public void testExample_imagePlaceholder()
+    void testExample_imagePlaceholder()
     {
         runScript( "/lib/xp/examples/portal/imagePlaceholder.js" );
     }
 
     @Test
-    public void testExample_apiUrl()
+    void testExample_apiUrl()
     {
         runScript( "/lib/xp/examples/portal/apiUrl.js" );
     }
 
     @Test
-    public void testExample_baseUrl()
+    void testExample_baseUrl()
     {
         runScript( "/lib/xp/examples/portal/baseUrl.js" );
     }

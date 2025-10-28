@@ -18,19 +18,19 @@ public abstract class NumberConverterTest<T extends Number>
     }
 
     @Test
-    public void testFromString()
+    void testFromString()
     {
         assertEquals( this.num, Converters.convert( this.num.toString(), this.type ) );
     }
 
     @Test
-    public void testParseError()
+    void testParseError()
     {
         assertThrows(ConvertException.class, () -> Converters.convert( "abc", this.type ) );
     }
 
     @Test
-    public void testFromNumber()
+    void testFromNumber()
     {
         assertEquals( this.num, Converters.convert( (byte) 11, this.type ) );
         assertEquals( this.num, Converters.convert( (short) 11, this.type ) );

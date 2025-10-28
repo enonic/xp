@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HighlightedPropertiesFactoryTest
+class HighlightedPropertiesFactoryTest
 {
     @Test
-    public void create()
+    void create()
     {
         final HighlightField highlightField1 =
             new HighlightField( "name1", new Text[]{new Text( "fragment1_1" ), new Text( "fragment1_2" )} );
@@ -42,7 +42,7 @@ public class HighlightedPropertiesFactoryTest
     }
 
     @Test
-    public void create_null()
+    void create_null()
     {
         final HighlightedProperties highlightedProperties = HighlightedPropertiesFactory.create( null );
         assertNull( highlightedProperties );

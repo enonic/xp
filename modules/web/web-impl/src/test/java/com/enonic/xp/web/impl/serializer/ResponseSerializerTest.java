@@ -5,14 +5,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.Resources;
 import com.google.common.net.MediaType;
+
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.UrlResource;
@@ -30,10 +30,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class ResponseSerializerTest
+class ResponseSerializerTest
 {
     @Test
-    public void serializeBodyString()
+    void serializeBodyString()
         throws Exception
     {
         final WebRequest req = new WebRequest();
@@ -64,7 +64,7 @@ public class ResponseSerializerTest
     }
 
     @Test
-    public void serializeBodyBytes()
+    void serializeBodyBytes()
         throws Exception
     {
         final WebRequest req = new WebRequest();
@@ -93,7 +93,7 @@ public class ResponseSerializerTest
     }
 
     @Test
-    public void serializeBodyByteSource()
+    void serializeBodyByteSource()
         throws Exception
     {
         final WebRequest req = new WebRequest();
@@ -121,7 +121,7 @@ public class ResponseSerializerTest
     }
 
     @Test
-    public void serializeBodyResource()
+    void serializeBodyResource()
         throws Exception
     {
         final ResourceKey resourceKey = ResourceKey.from( "myapp:/cms/test/view/body_file.txt" );
@@ -152,7 +152,7 @@ public class ResponseSerializerTest
     }
 
     @Test
-    public void serializeBodyJsonMap()
+    void serializeBodyJsonMap()
         throws Exception
     {
         final Map<String, Object> jsonObject = new HashMap<>();
@@ -186,7 +186,7 @@ public class ResponseSerializerTest
     }
 
     @Test
-    public void serializeHeadRequest()
+    void serializeHeadRequest()
         throws Exception
     {
         final WebRequest req = new WebRequest();
@@ -214,7 +214,7 @@ public class ResponseSerializerTest
     }
 
     @Test
-    public void serializeRequestCommitted()
+    void serializeRequestCommitted()
         throws Exception
     {
         final WebRequest req = new WebRequest();

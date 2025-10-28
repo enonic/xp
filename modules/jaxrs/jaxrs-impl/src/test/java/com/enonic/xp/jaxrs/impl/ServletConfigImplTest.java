@@ -12,30 +12,30 @@ import jakarta.servlet.ServletContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ServletConfigImplTest
+class ServletConfigImplTest
 {
     private ServletConfigImpl context;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.context = new ServletConfigImpl( "test", Mockito.mock( ServletContext.class ) );
     }
 
     @Test
-    public void getServletName()
+    void getServletName()
     {
         assertEquals( "test", this.context.getServletName() );
     }
 
     @Test
-    public void getServletContext()
+    void getServletContext()
     {
         assertNotNull( this.context.getServletContext() );
     }
 
     @Test
-    public void testInitParams()
+    void testInitParams()
     {
         final List<String> params1 = Collections.list( this.context.getInitParameterNames() );
         assertEquals( "[]", params1.toString() );

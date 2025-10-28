@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class DateRangeAggregationQueryTest
+class DateRangeAggregationQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final Instant past = LocalDateTime.of( 1975, 8, 1, 12, 4 ).toInstant( ZoneOffset.UTC );
         final Instant future = LocalDateTime.of( 2055, 1, 1, 12, 0 ).toInstant( ZoneOffset.UTC );

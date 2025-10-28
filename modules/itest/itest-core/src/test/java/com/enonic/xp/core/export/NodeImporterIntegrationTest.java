@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NodeImporterIntegrationTest
+class NodeImporterIntegrationTest
     extends AbstractNodeTest
 {
 
     @BeforeEach
-    public void setUp()
+    void setUp()
         throws Exception
     {
         Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", NodeExportPathResolver.SYSTEM_FOLDER_NAME ) );
@@ -46,7 +46,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_node()
+    void import_node()
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", "mynode", "_" ) );
@@ -66,7 +66,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_node_with_timestamp()
+    void import_node_with_timestamp()
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", "mynode", "_" ) );
@@ -86,7 +86,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_node_with_id()
+    void import_node_with_id()
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", "mynode", "_" ) );
@@ -109,7 +109,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_update_node()
+    void import_update_node()
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", "mynode", "_" ) );
@@ -141,7 +141,7 @@ public class NodeImporterIntegrationTest
 
 
     @Test
-    public void import_nodes()
+    void import_nodes()
         throws Exception
     {
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode" ), false );
@@ -173,7 +173,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_nodes_into_child()
+    void import_nodes_into_child()
         throws Exception
     {
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode" ), false );
@@ -207,7 +207,7 @@ public class NodeImporterIntegrationTest
 
 
     @Test
-    public void import_node_non_existing_parent()
+    void import_node_non_existing_parent()
     {
         final NodePath importRoot = new NodePath( "/non-existing-node" );
 
@@ -220,7 +220,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void expect_order_file_if_manual()
+    void expect_order_file_if_manual()
         throws Exception
     {
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode", "_" ), false );
@@ -238,7 +238,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void continue_on_error()
+    void continue_on_error()
         throws Exception
     {
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode" ), false );
@@ -260,7 +260,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_nodes_ordered()
+    void import_nodes_ordered()
         throws Exception
     {
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode" ), true );
@@ -301,7 +301,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void ordered_not_in_list_not_imported()
+    void ordered_not_in_list_not_imported()
         throws Exception
     {
         createNodeXmlFile( resolveInTemporaryFolder( "myExport", "mynode" ), true );
@@ -331,7 +331,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_with_binaries_missing_file()
+    void import_with_binaries_missing_file()
         throws Exception
     {
         createNodeXmlFileWithBinaries( resolveInTemporaryFolder( "myExport", "mynode" ) );
@@ -349,7 +349,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_with_binary()
+    void import_with_binary()
         throws Exception
     {
         createNodeXmlFileWithBinaries( resolveInTemporaryFolder( "myExport", "mynode" ) );
@@ -372,7 +372,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_special_characters()
+    void import_special_characters()
         throws Exception
     {
         final String myChildName = "my child with spaces";
@@ -405,7 +405,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_node_with_xslt()
+    void import_node_with_xslt()
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories( temporaryFolder.resolve( "myExport" ).resolve( "mynode" ).resolve( "_" ) );
@@ -431,7 +431,7 @@ public class NodeImporterIntegrationTest
     }
 
     @Test
-    public void import_node_without_permission_import()
+    void import_node_without_permission_import()
         throws Exception
     {
         final Path nodeFileDir = Files.createDirectories( resolveInTemporaryFolder( "myExport", "mynode", "_" ) );

@@ -20,18 +20,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ElasticHighlightQueryBuilderFactoryTest
+class ElasticHighlightQueryBuilderFactoryTest
 {
     private ElasticHighlightQueryBuilderFactory highlightQueryBuilderFactory;
 
     @BeforeEach
-    public void init()
+    void init()
     {
         highlightQueryBuilderFactory = new ElasticHighlightQueryBuilderFactory();
     }
 
     @Test
-    public void create()
+    void create()
     {
         final HighlightQuery query = HighlightQuery.create().
             property( HighlightQueryProperty.create( "propertyToHighlight" ).build() ).
@@ -48,7 +48,7 @@ public class ElasticHighlightQueryBuilderFactoryTest
     }
 
     @Test
-    public void create_with_settings()
+    void create_with_settings()
     {
         final HighlightQuery query = HighlightQuery.create().
             property( HighlightQueryProperty.create( "propertyToHighlight" ).build() ).
@@ -81,7 +81,7 @@ public class ElasticHighlightQueryBuilderFactoryTest
     }
 
     @Test
-    public void create_null()
+    void create_null()
     {
         final ElasticHighlightQuery elasticHighlightQuery = highlightQueryBuilderFactory.create( null );
         assertEquals( ElasticHighlightQuery.empty(), elasticHighlightQuery );

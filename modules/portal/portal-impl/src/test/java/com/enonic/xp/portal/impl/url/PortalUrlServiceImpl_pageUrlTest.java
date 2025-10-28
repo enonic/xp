@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PortalUrlServiceImpl_pageUrlTest
+class PortalUrlServiceImpl_pageUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
     @Test

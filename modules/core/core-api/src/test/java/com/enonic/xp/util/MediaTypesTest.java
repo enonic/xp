@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MediaTypesTest
+class MediaTypesTest
 {
     @Test
-    public void testExtension()
+    void testExtension()
     {
         final MediaTypes mediaTypes = MediaTypes.instance();
 
@@ -41,7 +41,7 @@ public class MediaTypesTest
     }
 
     @Test
-    public void testFileName()
+    void testFileName()
     {
         final MediaTypes mediaTypes = MediaTypes.instance();
 
@@ -53,7 +53,7 @@ public class MediaTypesTest
     }
 
     @Test
-    public void testProviders()
+    void testProviders()
     {
         final MediaType unknown = MediaType.parse( "other/unknown" );
 

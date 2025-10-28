@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TaskInfoTest
+class TaskInfoTest
 {
     @Test
-    public void testAccessors()
+    void testAccessors()
     {
         final TaskId id = TaskId.from( "123" );
         final TaskProgress progress = TaskProgress.EMPTY;
@@ -48,7 +48,7 @@ public class TaskInfoTest
     }
 
     @Test
-    public void testState()
+    void testState()
     {
         final TaskInfo info1 = TaskInfo.create()
             .id( TaskId.from( "123" ) )
@@ -70,7 +70,7 @@ public class TaskInfoTest
     }
 
     @Test
-    public void testCopy()
+    void testCopy()
     {
         final TaskInfo i1 = TaskInfo.create()
             .id( TaskId.from( "123" ) )
@@ -84,13 +84,13 @@ public class TaskInfoTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( TaskInfo.class ).verify();
     }
 
     @Test
-    public void serializable()
+    void serializable()
     {
         final TaskInfo info = TaskInfo.create()
             .id( TaskId.from( "123" ) )
@@ -105,7 +105,7 @@ public class TaskInfoTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final TaskInfo i = TaskInfo.create()
             .id( TaskId.from( "123" ) )

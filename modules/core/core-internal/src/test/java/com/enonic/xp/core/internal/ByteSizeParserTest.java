@@ -5,28 +5,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ByteSizeParserTest
+class ByteSizeParserTest
 {
     private final long factor = 1024L;
 
 
     @Test
-    public void invalid()
-        throws Exception
+    void invalid()
     {
         assertThrows(IllegalArgumentException.class, () -> assertTrue( ByteSizeParser.parse( "1xp" ) == 1 ));
     }
 
     @Test
-    public void invalid2()
-        throws Exception
+    void invalid2()
     {
         assertThrows(IllegalArgumentException.class, () -> assertTrue( ByteSizeParser.parse( "mb" ) == 1 ));
     }
 
     @Test
-    public void bytes()
-        throws Exception
+    void bytes()
     {
         assertTrue( ByteSizeParser.parse( "1b" ) == 1 );
         assertTrue( ByteSizeParser.parse( "2053b" ) == 2053 );
@@ -34,8 +31,7 @@ public class ByteSizeParserTest
     }
 
     @Test
-    public void kilobytes()
-        throws Exception
+    void kilobytes()
     {
         assertTrue( ByteSizeParser.parse( "1kb" ) == factor );
         assertTrue( ByteSizeParser.parse( "2kb" ) == 2 * factor );
@@ -43,8 +39,7 @@ public class ByteSizeParserTest
     }
 
     @Test
-    public void megabytes()
-        throws Exception
+    void megabytes()
     {
         assertTrue( ByteSizeParser.parse( "1mb" ) == factor * factor );
         assertTrue( ByteSizeParser.parse( "1m" ) == factor * factor );
@@ -53,8 +48,7 @@ public class ByteSizeParserTest
     }
 
     @Test
-    public void gigabytes()
-        throws Exception
+    void gigabytes()
     {
         assertTrue( ByteSizeParser.parse( "1gb" ) == factor * factor * factor );
         assertTrue( ByteSizeParser.parse( "1g" ) == factor * factor * factor );
@@ -63,8 +57,7 @@ public class ByteSizeParserTest
     }
 
     @Test
-    public void terrabytes()
-        throws Exception
+    void terrabytes()
     {
         assertTrue( ByteSizeParser.parse( "1tb" ) == factor * factor * factor * factor );
         assertTrue( ByteSizeParser.parse( "1t" ) == factor * factor * factor * factor );

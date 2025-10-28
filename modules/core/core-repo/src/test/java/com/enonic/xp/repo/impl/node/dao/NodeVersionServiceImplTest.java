@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobRecord;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.content.ContentConstants;
@@ -33,6 +32,7 @@ import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repository.RepositoryId;
@@ -59,8 +59,7 @@ class NodeVersionServiceImplTest
     }
 
     @Test
-    public void store()
-        throws Exception
+    void store()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myName", "myValue" );
@@ -148,8 +147,7 @@ class NodeVersionServiceImplTest
     }
 
     @Test
-    public void getVersions()
-        throws Exception
+    void getVersions()
     {
         final PropertyTree data1 = new PropertyTree();
         data1.addString( "myName", "myValue1" );
@@ -192,7 +190,7 @@ class NodeVersionServiceImplTest
     }
 
     @Test
-    public void getVersionCorrupted()
+    void getVersionCorrupted()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();
@@ -222,7 +220,7 @@ class NodeVersionServiceImplTest
     }
 
     @Test
-    public void avoidCachingVersionCorrupted()
+    void avoidCachingVersionCorrupted()
         throws Exception
     {
         final PropertyTree data = new PropertyTree();

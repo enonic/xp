@@ -22,19 +22,17 @@ import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StatsAggregationTest
+class StatsAggregationTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void terms_stats_aggregation()
-        throws Exception
+    void terms_stats_aggregation()
     {
         createNode( "c1", 2.0, "n1", NodePath.ROOT );
         createNode( "c1", 4.0, "n2", NodePath.ROOT );

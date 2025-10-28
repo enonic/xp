@@ -25,14 +25,14 @@ public final class ImageFilterBuilderImplTest
     private BufferedImage source;
 
     @BeforeEach
-    public final void setUp()
+    void setUp()
         throws Exception
     {
         source = ImageIO.read( getClass().getResourceAsStream( "effect/source.jpg" ) );
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final BufferedImage source = mock( BufferedImage.class );
 
@@ -44,7 +44,7 @@ public final class ImageFilterBuilderImplTest
     }
 
     @Test
-    public void testInvalidQuery()
+    void testInvalidQuery()
     {
         final ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
         imageFilterBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
@@ -53,7 +53,7 @@ public final class ImageFilterBuilderImplTest
     }
 
     @Test
-    public void testValidQuery()
+    void testValidQuery()
     {
         final ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
         imageFilterBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
@@ -64,7 +64,7 @@ public final class ImageFilterBuilderImplTest
     }
 
     @Test
-    public void testTooManyFilters()
+    void testTooManyFilters()
     {
         final ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
         imageFilterBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );

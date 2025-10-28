@@ -7,11 +7,11 @@ import com.enonic.xp.app.ApplicationKey;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class DeleteVirtualApplicationHandlerTest
+class DeleteVirtualApplicationHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         when( applicationService.deleteVirtualApplication( isA( ApplicationKey.class ) ) ).thenReturn( true );
 

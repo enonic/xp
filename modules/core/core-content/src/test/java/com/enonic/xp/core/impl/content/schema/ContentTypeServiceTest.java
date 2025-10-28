@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ContentTypeServiceTest
+class ContentTypeServiceTest
     extends ApplicationTestSupport
 {
     protected ContentTypeServiceImpl service;
@@ -27,14 +27,13 @@ public class ContentTypeServiceTest
 
     @Override
     protected void initialize()
-        throws Exception
     {
         this.formFragmentService = Mockito.mock( CmsFormFragmentService.class );
         this.service = new ContentTypeServiceImpl( this.resourceService, this.applicationService, this.formFragmentService );
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final ContentTypes types1 = this.service.getAll();
         assertNotNull( types1 );
@@ -49,8 +48,7 @@ public class ContentTypeServiceTest
     }
 
     @Test
-    public void testApplications()
-        throws Exception
+    void testApplications()
     {
         addApplication( "myapp1", "/apps/myapp1" );
         addApplication( "myapp2", "/apps/myapp2" );
@@ -72,7 +70,7 @@ public class ContentTypeServiceTest
     }
 
     @Test
-    public void testSystemApplication()
+    void testSystemApplication()
     {
         ContentTypes contentTypes = this.service.getAll();
         assertNotNull( contentTypes );
@@ -98,7 +96,7 @@ public class ContentTypeServiceTest
     }
 
     @Test
-    public void getMimeTypes()
+    void getMimeTypes()
     {
         final Collection<String> audioMimeTypes = this.service.getMimeTypes( ContentTypeNames.from( ContentTypeName.audioMedia() ) );
         assertEquals( 12, audioMimeTypes.size() );

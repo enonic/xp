@@ -18,20 +18,18 @@ import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FindNodePathsByQueryTest
+class FindNodePathsByQueryTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
 
     @Test
-    public void empty()
-        throws Exception
+    void empty()
     {
         setupData();
 
@@ -39,8 +37,7 @@ public class FindNodePathsByQueryTest
     }
 
     @Test
-    public void single()
-        throws Exception
+    void single()
     {
         setupData();
 
@@ -48,8 +45,7 @@ public class FindNodePathsByQueryTest
     }
 
     @Test
-    public void multiple()
-        throws Exception
+    void multiple()
     {
         setupData();
 

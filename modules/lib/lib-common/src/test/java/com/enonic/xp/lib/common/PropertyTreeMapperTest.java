@@ -9,11 +9,10 @@ import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.testing.helper.JsonAssert;
 import com.enonic.xp.util.GeoPoint;
 
-public class PropertyTreeMapperTest
+class PropertyTreeMapperTest
 {
     @Test
-    public void numbers()
-        throws Exception
+    void numbers()
     {
         final PropertyTree properties = new PropertyTree();
         properties.addDouble( "myDouble", 2.0 );
@@ -23,8 +22,7 @@ public class PropertyTreeMapperTest
     }
 
     @Test
-    public void array()
-        throws Exception
+    void array()
     {
         final PropertyTree properties = new PropertyTree();
         properties.addStrings( "myValues", "value1", "value2", "value3" );
@@ -33,8 +31,7 @@ public class PropertyTreeMapperTest
     }
 
     @Test
-    public void map()
-        throws Exception
+    void map()
     {
         final PropertyTree properties = new PropertyTree();
         final PropertySet mySet = properties.addSet( "mySet" );
@@ -45,8 +42,7 @@ public class PropertyTreeMapperTest
     }
 
     @Test
-    public void map_in_map()
-        throws Exception
+    void map_in_map()
     {
         final PropertyTree properties = new PropertyTree();
         final PropertySet mySet = properties.addSet( "mySet" );
@@ -58,8 +54,7 @@ public class PropertyTreeMapperTest
     }
 
     @Test
-    public void list_of_maps()
-        throws Exception
+    void list_of_maps()
     {
         final PropertyTree properties = new PropertyTree();
         final PropertySet subSet1 = properties.newSet();
@@ -74,8 +69,7 @@ public class PropertyTreeMapperTest
     }
 
     @Test
-    public void raw_values()
-        throws Exception
+    void raw_values()
     {
         final PropertyTree properties = new PropertyTree();
         final GeoPoint geoPointValue = GeoPoint.from( "80,80" );
@@ -88,8 +82,7 @@ public class PropertyTreeMapperTest
     }
 
     @Test
-    public void string()
-        throws Exception
+    void string()
     {
         final PropertyTree properties = new PropertyTree();
         properties.setString( "displayName", "This is brand new node" );

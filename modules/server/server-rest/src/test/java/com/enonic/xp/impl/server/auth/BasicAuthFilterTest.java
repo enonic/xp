@@ -29,7 +29,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BasicAuthFilterTest
+class BasicAuthFilterTest
 {
     private BasicAuthFilter filter;
 
@@ -42,7 +42,7 @@ public class BasicAuthFilterTest
     private SecurityService securityService;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
         this.request = Mockito.mock( HttpServletRequest.class );
@@ -59,7 +59,7 @@ public class BasicAuthFilterTest
     }
 
     @AfterEach
-    public void tearDown()
+    void tearDown()
     {
         ContextAccessor.current().getLocalScope().setSession( null );
     }
@@ -108,7 +108,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void noHeader()
+    void noHeader()
         throws Exception
     {
         doFilter();
@@ -117,7 +117,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_wrongFormat()
+    void header_wrongFormat()
         throws Exception
     {
         setAuthHeader( "some-value" );
@@ -127,7 +127,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_noCredentials()
+    void header_noCredentials()
         throws Exception
     {
         setAuthHeader( "BASIC" );
@@ -137,7 +137,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_noPassword()
+    void header_noPassword()
         throws Exception
     {
         setAuthHeader( "BASIC " + base64( "user" ) );
@@ -147,7 +147,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_defaultIdProvider_noAccess()
+    void header_defaultIdProvider_noAccess()
         throws Exception
     {
         wrongAuthentication();
@@ -158,7 +158,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_defaultIdProvider_authenticated()
+    void header_defaultIdProvider_authenticated()
         throws Exception
     {
         rightAuthentication();
@@ -169,7 +169,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void header_defaultIdProvider_authenticated_colon_allowed()
+    void header_defaultIdProvider_authenticated_colon_allowed()
         throws Exception
     {
         rightAuthentication();
@@ -180,7 +180,7 @@ public class BasicAuthFilterTest
     }
 
     @Test
-    public void preAuthenticated()
+    void preAuthenticated()
         throws Exception
     {
         setAuthHeader( "BASIC " + base64( "user:password" ) );

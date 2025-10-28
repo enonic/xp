@@ -5,11 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class ListScheduledJobsHandlerTest
+class ListScheduledJobsHandlerTest
     extends BaseScheduledJobHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         mockOneTimeCalendar();
         mockCronCalendar();
@@ -19,8 +19,7 @@ public class ListScheduledJobsHandlerTest
 
 
     @Test
-    public void listJobs()
-        throws Exception
+    void listJobs()
     {
         mockOneTimeCalendar();
         mockCronCalendar();

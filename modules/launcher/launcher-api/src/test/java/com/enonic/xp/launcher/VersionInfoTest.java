@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class VersionInfoTest
+class VersionInfoTest
 {
     @Test
-    public void testGetInfo()
+    void testGetInfo()
     {
         final VersionInfo info = VersionInfo.get();
         assertNotNull( info );
@@ -22,7 +22,7 @@ public class VersionInfoTest
     }
 
     @Test
-    public void testInfoProperties()
+    void testInfoProperties()
     {
         final Properties props = new Properties();
         props.setProperty( "xp.build.branch", "master" );

@@ -17,7 +17,7 @@ import static com.enonic.xp.security.acl.Permission.READ;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NodePermissionsResolverTest
+class NodePermissionsResolverTest
 {
 
     private static final IdProviderKey ID_PROVIDER_KEY = IdProviderKey.from( "us" );
@@ -29,8 +29,7 @@ public class NodePermissionsResolverTest
     private static final PrincipalKey ROLE_C = PrincipalKey.ofRole( "roleC" );
 
     @Test
-    public void hasPermissionEmptyACL()
-        throws Exception
+    void hasPermissionEmptyACL()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().
             user( User.ANONYMOUS ).
@@ -50,8 +49,7 @@ public class NodePermissionsResolverTest
     }
 
     @Test
-    public void hasPermissionAll()
-        throws Exception
+    void hasPermissionAll()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().
             user( User.create().key( USER_A ).login( "usera" ).build() ).
@@ -71,8 +69,7 @@ public class NodePermissionsResolverTest
     }
 
     @Test
-    public void hasPermissionSome()
-        throws Exception
+    void hasPermissionSome()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().
             user( User.create().key( USER_A ).login( "usera" ).build() ).
@@ -92,8 +89,7 @@ public class NodePermissionsResolverTest
     }
 
     @Test
-    public void system_admin_has_permission()
-        throws Exception
+    void system_admin_has_permission()
     {
 
         final AuthenticationInfo authInfo = AuthenticationInfo.create().

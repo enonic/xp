@@ -3,17 +3,16 @@ package com.enonic.xp.portal;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.web.HttpMethod;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PortalRequestTest
+class PortalRequestTest
 {
     @Test
-    public void setMethod()
+    void setMethod()
     {
         final PortalRequest request = new PortalRequest();
         assertNull( request.getMethod() );
@@ -23,7 +22,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setScheme()
+    void setScheme()
     {
         final PortalRequest request = new PortalRequest();
         assertEquals( null, request.getScheme() );
@@ -33,7 +32,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setHost()
+    void setHost()
     {
         final PortalRequest request = new PortalRequest();
         assertEquals( null, request.getHost() );
@@ -43,7 +42,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setPort()
+    void setPort()
     {
         final PortalRequest request = new PortalRequest();
 
@@ -52,7 +51,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setPath()
+    void setPath()
     {
         final PortalRequest request = new PortalRequest();
         assertEquals( null, request.getPath() );
@@ -62,7 +61,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setRawPath()
+    void setRawPath()
     {
         final PortalRequest request = new PortalRequest();
         assertEquals( null, request.getRawPath() );
@@ -72,7 +71,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setUrl()
+    void setUrl()
     {
         final PortalRequest request = new PortalRequest();
         assertEquals( null, request.getUrl() );
@@ -82,7 +81,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setMode()
+    void setMode()
     {
         final PortalRequest request = new PortalRequest();
         assertEquals( RenderMode.LIVE, request.getMode() );
@@ -92,8 +91,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setBranch()
-        throws Exception
+    void setBranch()
     {
         final PortalRequest request = new PortalRequest();
         assertNull( request.getBranch() );
@@ -103,7 +101,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void addParam()
+    void addParam()
     {
         final PortalRequest request = new PortalRequest();
         assertNotNull( request.getParams() );
@@ -114,8 +112,7 @@ public class PortalRequestTest
     }
 
     @Test
-    public void setRemoteAddress()
-        throws Exception
+    void setRemoteAddress()
     {
         final PortalRequest request = new PortalRequest();
         assertNull( request.getRemoteAddress() );

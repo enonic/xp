@@ -30,19 +30,17 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContentMappingConstraintTest
+class ContentMappingConstraintTest
 {
 
     @Test
-    public void testInvalidExpression()
-        throws Exception
+    void testInvalidExpression()
     {
         assertThrows(IllegalArgumentException.class, () -> ContentMappingConstraint.parse( "_path='/'" ));
     }
 
     @Test
-    public void testMatchesPath()
-        throws Exception
+    void testMatchesPath()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "_path:'/a/b/mycontent'" ).matches( content ) );
@@ -53,8 +51,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesId()
-        throws Exception
+    void testMatchesId()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "_id:'123456'" ).matches( content ) );
@@ -63,8 +60,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesName()
-        throws Exception
+    void testMatchesName()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "_name:'mycontent'" ).matches( content ) );
@@ -73,8 +69,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesDisplayName()
-        throws Exception
+    void testMatchesDisplayName()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "displayName:'My Content'" ).matches( content ) );
@@ -83,8 +78,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesType()
-        throws Exception
+    void testMatchesType()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "type:'com.enonic.test.app:mytype'" ).matches( content ) );
@@ -93,8 +87,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesLanguage()
-        throws Exception
+    void testMatchesLanguage()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "language:'fr'" ).matches( content ) );
@@ -102,8 +95,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesValid()
-        throws Exception
+    void testMatchesValid()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "valid:true" ).matches( content ) );
@@ -111,8 +103,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testEquals()
-        throws Exception
+    void testEquals()
     {
         final ContentMappingConstraint constr1 = ContentMappingConstraint.parse( "_id:'123457'" );
         final ContentMappingConstraint constr2 = ContentMappingConstraint.parse( "_id:'123457'" );
@@ -122,8 +113,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testHashCode()
-        throws Exception
+    void testHashCode()
     {
         final ContentMappingConstraint constr1 = ContentMappingConstraint.parse( "_id:'123457'" );
         final ContentMappingConstraint constr2 = ContentMappingConstraint.parse( "_id:'123457'" );
@@ -133,16 +123,14 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testToString()
-        throws Exception
+    void testToString()
     {
         final ContentMappingConstraint constr1 = ContentMappingConstraint.parse( "_id:'123457'" );
         assertEquals( "_id:'123457'", constr1.toString() );
     }
 
     @Test
-    public void testMatchesDataPropertyBoolean()
-        throws Exception
+    void testMatchesDataPropertyBoolean()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "data.c.h:true" ).matches( content ) );
@@ -150,8 +138,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesDataPropertyString()
-        throws Exception
+    void testMatchesDataPropertyString()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "data.c.g:'test'" ).matches( content ) );
@@ -160,8 +147,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesDataPropertyLong()
-        throws Exception
+    void testMatchesDataPropertyLong()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "data.c.i:42" ).matches( content ) );
@@ -169,8 +155,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesDataPropertyDouble()
-        throws Exception
+    void testMatchesDataPropertyDouble()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "data.c.j:99" ).matches( content ) );
@@ -178,8 +163,7 @@ public class ContentMappingConstraintTest
     }
 
     @Test
-    public void testMatchesXDataPropertyString()
-        throws Exception
+    void testMatchesXDataPropertyString()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "x.myapplication.myschema.a:1" ).matches( content ) );

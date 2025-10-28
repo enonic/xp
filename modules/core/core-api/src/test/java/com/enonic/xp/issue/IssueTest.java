@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IssueTest
+class IssueTest
 {
 
     @Test
-    public void testDefaultValuesSet()
+    void testDefaultValuesSet()
     {
         Issue issue = Issue.create().
             title( "my issue" ).
@@ -23,7 +23,7 @@ public class IssueTest
     }
 
     @Test
-    public void testIdsNotEqual()
+    void testIdsNotEqual()
     {
         Issue issue1 = Issue.create().
             title( "my issue" ).

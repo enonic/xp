@@ -9,11 +9,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XmlDateTimeConverterTest
+class XmlDateTimeConverterTest
 {
     @Test
-    public void parseInstant()
-        throws Exception
+    void parseInstant()
     {
         final Instant value1 = XmlDateTimeConverter.parseInstant( "2012-11-12T22:11:00.000Z" );
         assertEquals( "2012-11-12T22:11:00.000Z", XmlDateTimeConverter.format( value1 ) );
@@ -23,8 +22,7 @@ public class XmlDateTimeConverterTest
     }
 
     @Test
-    public void parseLocalDateTime()
-        throws Exception
+    void parseLocalDateTime()
     {
         final LocalDateTime value1 = XmlDateTimeConverter.parseLocalDateTime( "2012-11-12T22:11:00.000Z" );
         assertEquals( "2012-11-12T22:11:00.000Z", XmlDateTimeConverter.format( value1 ) );
@@ -34,8 +32,7 @@ public class XmlDateTimeConverterTest
     }
 
     @Test
-    public void parseLocalDate()
-        throws Exception
+    void parseLocalDate()
     {
         final LocalDate value1 = XmlDateTimeConverter.parseLocalDate( "2012-11-12Z" );
         assertEquals( "2012-11-12Z", XmlDateTimeConverter.format( value1 ) );
@@ -45,8 +42,7 @@ public class XmlDateTimeConverterTest
     }
 
     @Test
-    public void parseLocalTime()
-        throws Exception
+    void parseLocalTime()
     {
         final LocalTime value1 = XmlDateTimeConverter.parseLocalTime( "22:11:00.000Z" );
         assertEquals( "22:11:00.000Z", XmlDateTimeConverter.format( value1 ) );

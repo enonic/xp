@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NumericRangeAggregationQueryTest
+class NumericRangeAggregationQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final NumericRange numericRange1 = NumericRange.create().key( "key" ).from( 0.0 ).to( 1.0 ).build();
         final NumericRange numericRange2 = NumericRange.create().key( "key2" ).from( 20.0 ).to( 31.0 ).build();

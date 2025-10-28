@@ -5,7 +5,7 @@ import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.handler.WebHandler;
 import com.enonic.xp.web.handler.WebHandlerChain;
 
-public class TestWebHandler
+class TestWebHandler
     implements WebHandler
 {
     protected WebResponse response;

@@ -15,8 +15,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PageRendererTest
+class PageRendererTest
 {
     private PortalRequest portalRequest;
 
@@ -57,7 +57,7 @@ public class PageRendererTest
     PostProcessorImpl postProcessor;
 
     @BeforeEach
-    public void before()
+    void before()
     {
 
         final PostProcessorImpl processorImpl = new PostProcessorImpl();
@@ -80,7 +80,7 @@ public class PageRendererTest
     }
 
     @Test
-    public void descriptor_without_controller()
+    void descriptor_without_controller()
     {
         // setup
         content = createContent( "aaa", "my_content", "myapplication:my_type" );
@@ -102,7 +102,7 @@ public class PageRendererTest
     }
 
     @Test
-    public void descriptor_with_controller()
+    void descriptor_with_controller()
     {
         content = createContent( "aaa", "my_content", "myapplication:my_type" );
         this.portalRequest.setContent( this.content );
@@ -127,7 +127,7 @@ public class PageRendererTest
     }
 
     @Test
-    public void contentWithRenderModeEdit()
+    void contentWithRenderModeEdit()
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );
@@ -147,7 +147,7 @@ public class PageRendererTest
     }
 
     @Test
-    public void contentWithRenderModeNotEdit()
+    void contentWithRenderModeNotEdit()
     {
         // setup
         portalRequest.setMode( RenderMode.LIVE );
@@ -163,7 +163,7 @@ public class PageRendererTest
     }
 
     @Test
-    public void defaultFragmentRendering()
+    void defaultFragmentRendering()
     {
         // setup
         portalRequest.setMode( RenderMode.EDIT );

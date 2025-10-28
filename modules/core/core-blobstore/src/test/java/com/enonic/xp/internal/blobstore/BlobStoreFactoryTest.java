@@ -13,11 +13,10 @@ import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BlobStoreFactoryTest
+class BlobStoreFactoryTest
 {
     @Test
-    public void no_cache_no_provider()
-        throws Exception
+    void no_cache_no_provider()
     {
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
@@ -39,15 +38,13 @@ public class BlobStoreFactoryTest
     }
 
     @Test
-    public void with_provider()
-        throws Exception
+    void with_provider()
     {
         doTestProviderStore( false );
     }
 
     @Test
-    public void provider_and_cache()
-        throws Exception
+    void provider_and_cache()
     {
         doTestProviderStore( true );
     }

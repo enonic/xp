@@ -7,7 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.portal.owasp.HtmlSanitizer;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class SanitizeHtmlHandlerTest
+class SanitizeHtmlHandlerTest
     extends ScriptTestSupport
 {
     private HtmlSanitizer htmlSanitizer;
@@ -23,8 +23,7 @@ public class SanitizeHtmlHandlerTest
     }
 
     @Test
-    public void testSanitizeHtml()
-        throws Exception
+    void testSanitizeHtml()
     {
         final String cleanHtml = "<p><a href=\"http://example.com/\">Link</a></p>";
         Mockito.when( this.htmlSanitizer.sanitizeHtml( ArgumentMatchers.anyString() ) ).thenReturn( cleanHtml );
@@ -32,7 +31,7 @@ public class SanitizeHtmlHandlerTest
     }
 
     @Test
-    public void testExample_SanitizeHtml()
+    void testExample_SanitizeHtml()
     {
         final String cleanHtml = "<p><a href=\"http://example.com/\">Link</a></p>";
         Mockito.when( this.htmlSanitizer.sanitizeHtml( ArgumentMatchers.anyString() ) ).thenReturn( cleanHtml );

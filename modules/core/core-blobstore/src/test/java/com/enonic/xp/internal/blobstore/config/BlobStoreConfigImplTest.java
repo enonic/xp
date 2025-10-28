@@ -9,12 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BlobStoreConfigImplTest
+class BlobStoreConfigImplTest
 {
 
     @Test
-    public void default_values()
-        throws Exception
+    void default_values()
     {
         final BlobStoreConfigImpl blobStoreConfig = new BlobStoreConfigImpl();
         blobStoreConfig.activate( new HashMap<>() );
@@ -27,8 +26,7 @@ public class BlobStoreConfigImplTest
 
 
     @Test
-    public void trim_whitespaces()
-        throws Exception
+    void trim_whitespaces()
     {
         final HashMap<String, String> valueMap = new HashMap<>();
         valueMap.put( "cache.enabled", "    false     " );

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class BeanContextImplTest
+class BeanContextImplTest
 {
     private BeanContextImpl context;
 
@@ -28,7 +28,7 @@ public class BeanContextImplTest
     private ScriptExecutor executor;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.resourceKey = ResourceKey.from( "myapp:/a/b" );
         this.serviceRegistry = Mockito.mock( ServiceRegistry.class );
@@ -42,26 +42,26 @@ public class BeanContextImplTest
     }
 
     @Test
-    public void getResourceKey()
+    void getResourceKey()
     {
         assertEquals( this.resourceKey, this.context.getResourceKey() );
     }
 
     @Test
-    public void getApplicationKey()
+    void getApplicationKey()
     {
         assertEquals( this.resourceKey.getApplicationKey(), this.context.getApplicationKey() );
     }
 
     @Test
-    public void getService()
+    void getService()
     {
         final ServiceRef ref = mockServiceRef( this.serviceRegistry, String.class );
         assertSame( ref, this.context.getService( String.class ) );
     }
 
     @Test
-    public void getBinding()
+    void getBinding()
     {
         final Supplier<String> binding = () -> "hello";
 

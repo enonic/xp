@@ -24,14 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CreateIssueCommentCommandTest
+class CreateIssueCommentCommandTest
 {
 
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
 
@@ -39,7 +38,7 @@ public class CreateIssueCommentCommandTest
     }
 
     @Test
-    public void create()
+    void create()
     {
         final Node issueNode = Node.create().name( "parent-issue" ).build();
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
@@ -65,7 +64,7 @@ public class CreateIssueCommentCommandTest
     }
 
     @Test
-    public void createIssueNotExists()
+    void createIssueNotExists()
     {
         final PrincipalKey creator = PrincipalKey.from( "user:store:one" );
 
@@ -86,7 +85,7 @@ public class CreateIssueCommentCommandTest
     }
 
     @Test
-    public void testNoText()
+    void testNoText()
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().issue( IssueId.create() ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
@@ -94,7 +93,7 @@ public class CreateIssueCommentCommandTest
     }
 
     @Test
-    public void testNoIssueId()
+    void testNoIssueId()
     {
         final CreateIssueCommentParams params = CreateIssueCommentParams.create().text( "text" ).build();
         final CreateIssueCommentCommand command = createIssueCommentCommand( params );
@@ -110,7 +109,6 @@ public class CreateIssueCommentCommandTest
     }
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
-        throws Throwable
     {
         CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
 

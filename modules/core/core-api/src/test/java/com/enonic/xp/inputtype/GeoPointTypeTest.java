@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class GeoPointTypeTest
+class GeoPointTypeTest
     extends BaseInputTypeTest
 {
     public GeoPointTypeTest()
@@ -21,19 +21,19 @@ public class GeoPointTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "GeoPoint", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "GeoPoint", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final Value value = this.type.createValue( ValueFactory.newString( "1,2" ), GenericValue.object().build() );
 
@@ -42,13 +42,13 @@ public class GeoPointTypeTest
     }
 
     @Test
-    public void testValidate()
+    void testValidate()
     {
         this.type.validate( geoPointProperty( "1,2" ), GenericValue.object().build() );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ));
     }

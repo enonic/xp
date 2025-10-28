@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DistanceRangeTest
+class DistanceRangeTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final DistanceRange distanceRange = DistanceRange.create().key( "key" ).from( 0.0 ).to( 1.0 ).build();
 

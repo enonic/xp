@@ -8,10 +8,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ApplicationKeyTest
+class ApplicationKeyTest
 {
     @Test
-    public void testCreate()
+    void testCreate()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
@@ -19,7 +19,7 @@ public class ApplicationKeyTest
     }
 
     @Test
-    public void testEquals()
+    void testEquals()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
@@ -28,13 +28,13 @@ public class ApplicationKeyTest
     }
 
     @Test
-    public void testFromApplicationKey()
+    void testFromApplicationKey()
     {
         assertEquals( "myapplication", ApplicationKey.from( "myapplication" ).getName() );
     }
 
     @Test
-    public void testParseApplicationVersion()
+    void testParseApplicationVersion()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
@@ -42,7 +42,7 @@ public class ApplicationKeyTest
     }
 
     @Test
-    public void fromBundle()
+    void fromBundle()
     {
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( "myapplication" );

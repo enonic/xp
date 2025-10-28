@@ -8,97 +8,93 @@ import com.enonic.xp.data.PropertyTree;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class BooleanQueryBuilderTest
+class BooleanQueryBuilderTest
     extends QueryBuilderTest
 {
     @Test
-    public void must()
+    void must()
         throws Exception
     {
         test( "must" );
     }
 
     @Test
-    public void mustNot()
+    void mustNot()
         throws Exception
     {
         test( "mustNot" );
     }
 
     @Test
-    public void mustNotArray()
+    void mustNotArray()
         throws Exception
     {
         test( "mustNot_array" );
     }
 
     @Test
-    public void should()
+    void should()
         throws Exception
     {
         test( "should" );
     }
 
     @Test
-    public void filter()
+    void filter()
         throws Exception
     {
         test( "filter" );
     }
 
     @Test
-    public void multiple()
+    void multiple()
         throws Exception
     {
         test( "multiple" );
     }
 
     @Test
-    public void inner()
+    void inner()
         throws Exception
     {
         test( "inner" );
     }
 
     @Test
-    public void inherited()
+    void inherited()
         throws Exception
     {
         test( "inherited" );
     }
 
     @Test
-    public void inner_boosted_boolean()
+    void inner_boosted_boolean()
         throws Exception
     {
         test( "inner_boosted_boolean" );
     }
 
     @Test
-    public void invalid_param()
-        throws Exception
+    void invalid_param()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_param" ) );
     }
 
     @Test
-    public void invalid_property_type()
-        throws Exception
+    void invalid_property_type()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_property_type" ) );
     }
 
 
     @Test
-    public void invalid_inner_param()
-        throws Exception
+    void invalid_inner_param()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_inner_param" ) );
     }
 
     @Test
-    public void invalid_numeric_property()
-        throws Exception
+    void invalid_numeric_property()
     {
         assertThrows( IllegalArgumentException.class, () -> test( "invalid_numeric_property" ) );
     }

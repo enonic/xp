@@ -15,7 +15,7 @@ import com.enonic.xp.testing.ScriptRunnerSupport;
 
 import static org.mockito.ArgumentMatchers.any;
 
-public class GetSupportedLocalesScriptTest
+class GetSupportedLocalesScriptTest
     extends ScriptRunnerSupport
 {
     @Override

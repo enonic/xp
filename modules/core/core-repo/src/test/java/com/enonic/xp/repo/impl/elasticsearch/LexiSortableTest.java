@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LexiSortableTest
+class LexiSortableTest
 {
     @Test
-    public void toLexiSortable_long()
+    void toLexiSortable_long()
     {
         final String s1 = LexiSortable.toLexiSortable( 0L );
         final String s2 = LexiSortable.toLexiSortable( -1111L );
@@ -25,7 +25,7 @@ public class LexiSortableTest
     }
 
     @Test
-    public void toLexiSortable_double()
+    void toLexiSortable_double()
     {
         final String s1 = LexiSortable.toLexiSortable( 0.0d );
         final String s2 = LexiSortable.toLexiSortable( -0.00001d );

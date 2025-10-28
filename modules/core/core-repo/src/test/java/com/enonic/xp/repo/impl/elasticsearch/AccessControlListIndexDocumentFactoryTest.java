@@ -12,11 +12,10 @@ import com.enonic.xp.security.acl.Permission;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AccessControlListIndexDocumentFactoryTest
+class AccessControlListIndexDocumentFactoryTest
 {
     @Test
-    public void single_user()
-        throws Exception
+    void single_user()
     {
 
         final AccessControlList acl = AccessControlList.create().
@@ -32,8 +31,7 @@ public class AccessControlListIndexDocumentFactoryTest
     }
 
     @Test
-    public void multiple_user()
-        throws Exception
+    void multiple_user()
     {
         final AccessControlList acl = AccessControlList.create().
             add( AccessControlEntry.create().
@@ -61,8 +59,7 @@ public class AccessControlListIndexDocumentFactoryTest
     }
 
     @Test
-    public void single_user_all_permissions()
-        throws Exception
+    void single_user_all_permissions()
     {
         final AccessControlList acl = AccessControlList.create().
             add( AccessControlEntry.create().

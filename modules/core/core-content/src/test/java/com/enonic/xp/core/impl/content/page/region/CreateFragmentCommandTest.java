@@ -15,8 +15,8 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.CreateFragmentParams;
 import com.enonic.xp.region.ImageComponent;
@@ -33,7 +33,7 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class CreateFragmentCommandTest
+class CreateFragmentCommandTest
 {
     private ContentService contentService;
 
@@ -42,8 +42,7 @@ public class CreateFragmentCommandTest
     private LayoutDescriptorService layoutDescriptorService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
@@ -51,64 +50,64 @@ public class CreateFragmentCommandTest
     }
 
     @Test
-    public void partComponentName_emptyDisplayName()
+    void partComponentName_emptyDisplayName()
     {
         assertEquals( "Part", testPartComponentName( "" ) );
     }
 
     @Test
-    public void partComponentName_nullDisplayName()
+    void partComponentName_nullDisplayName()
     {
         assertEquals( "Part", testPartComponentName( null ) );
     }
 
     @Test
-    public void partComponentName()
+    void partComponentName()
     {
         assertEquals( "Part Descriptor Name", testPartComponentName( "Part Descriptor Name" ) );
     }
 
     @Test
-    public void layoutComponentName_emptyDisplayName()
+    void layoutComponentName_emptyDisplayName()
     {
         assertEquals( "Layout", testLayoutComponentName( "" ) );
 
     }
 
     @Test
-    public void layoutComponentName_nullDisplayName()
+    void layoutComponentName_nullDisplayName()
     {
         assertEquals( "Layout", testLayoutComponentName( null ) );
     }
 
     @Test
-    public void layoutComponentName()
+    void layoutComponentName()
     {
         assertEquals( "Layout Descriptor Name", testLayoutComponentName( "Layout Descriptor Name" ) );
     }
 
 
     @Test
-    public void textComponentName_nullValue()
+    void textComponentName_nullValue()
     {
         assertEquals( "Text", testTextComponentName( null ) );
     }
 
     @Test
-    public void textComponentName_emptyValue()
+    void textComponentName_emptyValue()
     {
         assertEquals( "Text", testTextComponentName( "" ) );
 
     }
 
     @Test
-    public void textComponentName()
+    void textComponentName()
     {
         assertEquals( "My Text Component", testTextComponentName( "My Text Component" ) );
     }
 
     @Test
-    public void imageComponentName_contentNotFound()
+    void imageComponentName_contentNotFound()
     {
         Mockito.when( contentService.getById( Mockito.isA( ContentId.class ) ) ).thenThrow( ContentNotFoundException.class );
 
@@ -116,19 +115,19 @@ public class CreateFragmentCommandTest
     }
 
     @Test
-    public void imageComponentName_nullDisplayName()
+    void imageComponentName_nullDisplayName()
     {
         assertEquals( "Image", testImageComponentName( null, true ) );
     }
 
     @Test
-    public void imageComponentName_emptyDisplayName()
+    void imageComponentName_emptyDisplayName()
     {
         assertEquals( "", testImageComponentName( "", true ) );
     }
 
     @Test
-    public void imageComponentName()
+    void imageComponentName()
     {
         assertEquals( "Image Display Name", testImageComponentName( "Image Display Name", true ) );
     }

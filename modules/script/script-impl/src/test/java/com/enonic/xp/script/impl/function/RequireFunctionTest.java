@@ -5,12 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.script.impl.AbstractScriptTest;
 
-public class RequireFunctionTest
+class RequireFunctionTest
     extends AbstractScriptTest
 {
     @Test
-    public void testDefaultResourceExecuted()
-        throws Exception
+    void testDefaultResourceExecuted()
     {
         runTestScript( "site/function/default.js" );//index.js supposed to be run
     }

@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ExportHandlerTest
+class ExportHandlerTest
     extends ScriptTestSupport
 {
     @TempDir
@@ -41,7 +41,7 @@ public class ExportHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final NodeExportResult result = NodeExportResult.create()
             .addNodePath( new NodePath( "/content" ) )

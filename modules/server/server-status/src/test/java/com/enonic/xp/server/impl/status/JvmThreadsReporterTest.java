@@ -9,7 +9,7 @@ import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JvmThreadsReporterTest
+class JvmThreadsReporterTest
     extends BaseReporterTest<JvmThreadsReporter>
 {
     public JvmThreadsReporterTest()
@@ -19,13 +19,12 @@ public class JvmThreadsReporterTest
 
     @Override
     protected JvmThreadsReporter newReporter()
-        throws Exception
     {
         return new JvmThreadsReporter();
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();

@@ -11,19 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class EndpointHandlerTest
+class EndpointHandlerTest
 {
     private EndpointHandler endpointHandler;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         endpointHandler = new EndpointHandler( "endpoint" )
         {
             @Override
             protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse,
                                             final WebHandlerChain webHandlerChain )
-                throws Exception
             {
                 return null;
             }
@@ -31,7 +30,7 @@ public class EndpointHandlerTest
     }
 
     @Test
-    public void testCanHandle()
+    void testCanHandle()
     {
         final WebRequest webRequest = new WebRequest();
         webRequest.setEndpointPath( "/_/endpoint/a/b" );
@@ -47,7 +46,7 @@ public class EndpointHandlerTest
     }
 
     @Test
-    public void testFindRestPath()
+    void testFindRestPath()
     {
         final WebRequest webRequest = new WebRequest();
         webRequest.setEndpointPath( "/_/endpoint/a/b" );
@@ -59,7 +58,7 @@ public class EndpointHandlerTest
     }
 
     @Test
-    public void testPreRestPath()
+    void testPreRestPath()
     {
         final WebRequest webRequest = new WebRequest();
         webRequest.setEndpointPath( "/_/endpoint/a/b" );

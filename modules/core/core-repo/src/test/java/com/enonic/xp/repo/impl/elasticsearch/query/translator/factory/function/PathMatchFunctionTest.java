@@ -9,13 +9,12 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PathMatchFunctionTest
+class PathMatchFunctionTest
     extends BaseTestBuilderFactory
 {
 
     @Test
-    public void two_arguments()
-        throws Exception
+    void two_arguments()
     {
         final String expected = load( "pathMatch.json" );
 
@@ -27,8 +26,7 @@ public class PathMatchFunctionTest
     }
 
     @Test
-    public void with_minimum_should_match()
-        throws Exception
+    void with_minimum_should_match()
     {
         final String expected = load( "pathMatch_minimum_match.json" );
 

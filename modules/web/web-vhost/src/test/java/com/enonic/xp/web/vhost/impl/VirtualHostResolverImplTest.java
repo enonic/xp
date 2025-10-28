@@ -23,20 +23,20 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class VirtualHostResolverImplTest
+class VirtualHostResolverImplTest
 {
     private VirtualHostMapping virtualHostMapping;
 
     private VirtualHostService virtualHostService;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.virtualHostService = mock( VirtualHostService.class );
     }
 
     @Test
-    public void testMatches_wrongHost()
+    void testMatches_wrongHost()
     {
         this.virtualHostMapping =
             new VirtualHostMapping( "mymapping", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -52,7 +52,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testMatches_wrongSource()
+    void testMatches_wrongSource()
     {
         this.virtualHostMapping =
             new VirtualHostMapping( "mymapping", "foo.no", "/b", "/a", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -68,7 +68,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testMatches_host()
+    void testMatches_host()
     {
         this.virtualHostMapping =
             new VirtualHostMapping( "mymapping", "foo.no", "/", "/a", VirtualHostIdProvidersMapping.create().build(), 0 );
@@ -84,7 +84,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolve()
+    void testResolve()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
 
@@ -105,7 +105,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolve_notFound()
+    void testResolve_notFound()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolve_multipleHosts()
+    void testResolve_multipleHosts()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "subdomain.com", "/source", "/other/a", 1 ) );
@@ -158,7 +158,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void test_matchesVHostWithLongestSourceAndEqualHosts()
+    void test_matchesVHostWithLongestSourceAndEqualHosts()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "no.domain.com", "/source", "/other/a", 0 ) );
@@ -180,7 +180,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolve_multipleHosts_sortedBySource_reversed()
+    void testResolve_multipleHosts_sortedBySource_reversed()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "no.domain.com", "/source", "/other/a", 1 ) );
@@ -203,7 +203,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testMatchesHostInLowerCase()
+    void testMatchesHostInLowerCase()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "doMain.com", "/source", "/other/a", 1 ) );
@@ -224,7 +224,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolve_multipleHosts_sortedBySource_natural()
+    void testResolve_multipleHosts_sortedBySource_natural()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "no.domain.com", "/", "/other/a", 1 ) );
@@ -247,7 +247,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolve_NotMatched()
+    void testResolve_NotMatched()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "domain.com", "/source", "/other/a", 1 ) );
@@ -263,7 +263,7 @@ public class VirtualHostResolverImplTest
     }
 
     @Test
-    public void testResolveVirtualHostWithContextConfig()
+    void testResolveVirtualHostWithContextConfig()
     {
         final List<VirtualHost> virtualHosts = new ArrayList<>();
         virtualHosts.add( createVirtualHostMapping( "a", "domain.com", "/source", "/other/a", 1, Map.of( "k1", "v1", "k2", "v2" ) ) );

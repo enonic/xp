@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class AggregationTest
+class AggregationTest
 {
     private static final ArrayList<Aggregation> list = new ArrayList();
 
@@ -23,7 +23,7 @@ public class AggregationTest
     }
 
     @Test
-    public void addAggregations()
+    void addAggregations()
     {
         final BucketAggregation.Builder builder = Aggregation.bucketAggregation( "xxx" );
 
@@ -40,7 +40,7 @@ public class AggregationTest
     }
 
     @Test
-    public void addSubAggregation()
+    void addSubAggregation()
     {
         final BucketAggregation.Builder builder = Aggregation.bucketAggregation( "xxx" );
 

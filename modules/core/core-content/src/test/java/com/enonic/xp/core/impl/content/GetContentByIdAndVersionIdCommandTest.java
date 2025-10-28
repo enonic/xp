@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class GetContentByIdAndVersionIdCommandTest
+class GetContentByIdAndVersionIdCommandTest
 {
 
     private final ContentId contentId = ContentId.from( "contentId" );
@@ -45,7 +45,7 @@ public class GetContentByIdAndVersionIdCommandTest
     private EventPublisher eventPublisher;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         nodeService = Mockito.mock( NodeService.class );
         translator = Mockito.mock( ContentNodeTranslator.class );
@@ -54,7 +54,7 @@ public class GetContentByIdAndVersionIdCommandTest
     }
 
     @Test
-    public void testExecute()
+    void testExecute()
     {
         final PropertyTree contentData = new PropertyTree();
         contentData.addString( "property", "value" );
@@ -79,7 +79,7 @@ public class GetContentByIdAndVersionIdCommandTest
     }
 
     @Test
-    public void testExecute_NodeNotFound()
+    void testExecute_NodeNotFound()
     {
         when( nodeService.getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) ) ).thenThrow( NodeNotFoundException.class );
 
@@ -91,7 +91,7 @@ public class GetContentByIdAndVersionIdCommandTest
     }
 
     @Test
-    public void testExecute_ContentNotFound()
+    void testExecute_ContentNotFound()
     {
         when( nodeService.getByIdAndVersionId( any( NodeId.class ), any( NodeVersionId.class ) ) ).thenReturn( node );
         when( translator.fromNodeWithAnyRootPath( any( Node.class ) ) ).thenThrow( ContentNotFoundException.class );

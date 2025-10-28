@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 
-public class AuditLogResourceTest
+class AuditLogResourceTest
     extends JaxRsResourceTestSupport
 {
     @TempDir
@@ -31,7 +31,7 @@ public class AuditLogResourceTest
     private AuditLogResource resource;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws Exception
     {
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
@@ -39,8 +39,7 @@ public class AuditLogResourceTest
     }
 
     @Test
-    public void cleanUpAuditLog()
-        throws Exception
+    void cleanUpAuditLog()
     {
         Mockito.when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
 

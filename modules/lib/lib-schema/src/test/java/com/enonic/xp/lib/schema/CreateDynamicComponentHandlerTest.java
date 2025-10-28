@@ -19,11 +19,11 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CreateDynamicComponentHandlerTest
+class CreateDynamicComponentHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testPart()
+    void testPart()
     {
         when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
@@ -46,7 +46,7 @@ public class CreateDynamicComponentHandlerTest
     }
 
     @Test
-    public void testLayout()
+    void testLayout()
     {
         when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
@@ -69,7 +69,7 @@ public class CreateDynamicComponentHandlerTest
     }
 
     @Test
-    public void testPage()
+    void testPage()
     {
         when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
@@ -93,13 +93,13 @@ public class CreateDynamicComponentHandlerTest
 
 
     @Test
-    public void testInvalidSchemaType()
+    void testInvalidSchemaType()
     {
         runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createInvalidComponentType" );
     }
 
     @Test
-    public void testInvalidSchema()
+    void testInvalidSchema()
     {
         runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createInvalidComponent" );
     }

@@ -20,11 +20,10 @@ import com.enonic.xp.inputtype.InputTypes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class InputValidationVisitorTest
+class InputValidationVisitorTest
 {
     @Test
-    public void validateInputTypeInvalid()
-        throws Exception
+    void validateInputTypeInvalid()
     {
         Input myTextLine =
             Input.create().name( "myTextLine" ).inputType( InputTypeName.TEXT_LINE ).label( "My text line" ).required( true ).build();
@@ -38,8 +37,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void validateInputTypeValid()
-        throws Exception
+    void validateInputTypeValid()
     {
         Input myTextLine =
             Input.create().name( "myTextLine" ).inputType( InputTypeName.TEXT_LINE ).label( "My text line" ).required( true ).build();
@@ -53,8 +51,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void validateItemSetInvalid()
-        throws Exception
+    void validateItemSetInvalid()
     {
         FormItemSet myFormItemSet = FormItemSet.create()
             .name( "myFormItemSet" )
@@ -73,8 +70,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void validateItemSetValid()
-        throws Exception
+    void validateItemSetValid()
     {
         FormItemSet myFormItemSet = FormItemSet.create()
             .name( "myFormItemSet" )
@@ -93,8 +89,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void validateOptionSetInvalid()
-        throws Exception
+    void validateOptionSetInvalid()
     {
         FormOptionSet formOptionSet = FormOptionSet.create()
             .name( "myOptionSet" )
@@ -132,8 +127,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void validateOptionSetValid()
-        throws Exception
+    void validateOptionSetValid()
     {
         FormOptionSet formOptionSet = FormOptionSet.create()
             .name( "myOptionSet" )
@@ -171,7 +165,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void testInputTextLineWithInfiniteOccurrences()
+    void testInputTextLineWithInfiniteOccurrences()
     {
         FormItemSet myFormItemSet = FormItemSet.create()
             .name( "myFormItemSet" )
@@ -208,7 +202,7 @@ public class InputValidationVisitorTest
     }
 
     @Test
-    public void testOptionSetOccurrences()
+    void testOptionSetOccurrences()
     {
         final Form form = Form.create()
             .addFormItem( FormOptionSet.create()

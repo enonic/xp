@@ -8,7 +8,7 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class IsMasterHandlerTest
+class IsMasterHandlerTest
     extends ScriptTestSupport
 {
     private IndexService indexService;
@@ -25,7 +25,7 @@ public class IsMasterHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.when( this.indexService.isMaster() ).thenReturn( true );
 

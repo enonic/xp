@@ -17,7 +17,7 @@ import com.enonic.xp.security.User;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class IssueServiceImplTest_deleteComment
+class IssueServiceImplTest_deleteComment
     extends AbstractIssueServiceTest
 {
     private Issue issue;
@@ -33,8 +33,7 @@ public class IssueServiceImplTest_deleteComment
     }
 
     @Test
-    public void comments_delete()
-        throws Exception
+    void comments_delete()
     {
         DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
             comment( this.comment.getId() ).
@@ -47,8 +46,7 @@ public class IssueServiceImplTest_deleteComment
     }
 
     @Test
-    public void comments_deleteNotExisting()
-        throws Exception
+    void comments_deleteNotExisting()
     {
         DeleteIssueCommentParams params = DeleteIssueCommentParams.create().
             comment( NodeId.from( UUID.randomUUID() ) ).

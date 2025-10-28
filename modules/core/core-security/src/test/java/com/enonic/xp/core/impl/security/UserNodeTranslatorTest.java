@@ -17,11 +17,10 @@ import com.enonic.xp.security.User;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class UserNodeTranslatorTest
+class UserNodeTranslatorTest
 {
     @Test
-    public void toCreateNode()
-        throws Exception
+    void toCreateNode()
     {
         final User user = User.create().
             displayName( "displayname" ).
@@ -46,8 +45,7 @@ public class UserNodeTranslatorTest
 
 
     @Test
-    public void toUser()
-        throws Exception
+    void toUser()
     {
         final PrincipalKey userKey = PrincipalKey.ofUser( IdProviderKey.system(), "i-am-a-user" );
 

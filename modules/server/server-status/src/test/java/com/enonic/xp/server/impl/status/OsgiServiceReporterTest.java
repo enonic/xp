@@ -9,7 +9,7 @@ import org.osgi.framework.ServiceReference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class OsgiServiceReporterTest
+class OsgiServiceReporterTest
     extends BaseOsgiReporterTest<OsgiServiceReporter>
 {
     public OsgiServiceReporterTest()
@@ -41,7 +41,7 @@ public class OsgiServiceReporterTest
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();

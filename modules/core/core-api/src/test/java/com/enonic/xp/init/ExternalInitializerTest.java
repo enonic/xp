@@ -7,10 +7,10 @@ import com.enonic.xp.index.IndexService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ExternalInitializerTest
+class ExternalInitializerTest
 {
     @Test
-    public void testIsMaster()
+    void testIsMaster()
     {
         final IndexService indexService = Mockito.mock( IndexService.class );
         final ExternalInitializer initializer = createExternalInitializer( indexService );

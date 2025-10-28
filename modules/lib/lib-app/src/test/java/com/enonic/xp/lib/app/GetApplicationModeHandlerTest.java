@@ -8,11 +8,11 @@ import com.enonic.xp.app.ApplicationMode;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class GetApplicationModeHandlerTest
+class GetApplicationModeHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
 
         when( applicationService.getApplicationMode( isA( ApplicationKey.class ) ) ).thenReturn( ApplicationMode.AUGMENTED );

@@ -11,7 +11,7 @@ import org.osgi.framework.BundleContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ConfigInterpolatorTest
+class ConfigInterpolatorTest
 {
     private Configuration newConfig()
     {
@@ -49,7 +49,7 @@ public class ConfigInterpolatorTest
     }
 
     @Test
-    public void empty()
+    void empty()
     {
         final ConfigInterpolator interpolator = new ConfigInterpolator();
         final Configuration config = interpolator.interpolate( newConfig() );
@@ -65,7 +65,7 @@ public class ConfigInterpolatorTest
     }
 
     @Test
-    public void environment()
+    void environment()
     {
         final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.environment( newEnvironment() );
@@ -84,7 +84,7 @@ public class ConfigInterpolatorTest
     }
 
     @Test
-    public void systemProperties()
+    void systemProperties()
     {
         final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.systemProperties( newSystemProperties() );
@@ -101,7 +101,7 @@ public class ConfigInterpolatorTest
     }
 
     @Test
-    public void bundleContext()
+    void bundleContext()
     {
         final ConfigInterpolator interpolator = new ConfigInterpolator();
         interpolator.bundleContext( newBundleContext() );

@@ -9,11 +9,11 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public class GetPermissionsHandlerTest
+class GetPermissionsHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final AccessControlList acl = AccessControlList.create().
             add( AccessControlEntry.create().principal( PrincipalKey.ofAnonymous() ).allow( Permission.READ ).build() ).

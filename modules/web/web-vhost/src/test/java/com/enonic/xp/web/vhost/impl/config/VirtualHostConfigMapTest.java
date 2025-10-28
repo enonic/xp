@@ -16,18 +16,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class VirtualHostConfigMapTest
+class VirtualHostConfigMapTest
 {
     private Map<String, String> map;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         map = new HashMap<>();
     }
 
     @Test
-    public void testEmptyMap()
+    void testEmptyMap()
     {
         final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
 
@@ -36,14 +36,14 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testEnabled()
+    void testEnabled()
     {
         map.put( "enabled", "true" );
         assertTrue( new VirtualHostConfigMap( map ).isEnabled() );
     }
 
     @Test
-    public void testDisabled()
+    void testDisabled()
     {
         map.put( "enabled", "false" );
         assertFalse( new VirtualHostConfigMap( map ).isEnabled() );
@@ -51,7 +51,7 @@ public class VirtualHostConfigMapTest
 
 
     @Test
-    public void testDefaultVirtualHostConfig()
+    void testDefaultVirtualHostConfig()
     {
         map.put( "mapping.myapp.host", "" );
 
@@ -67,7 +67,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testGetSource()
+    void testGetSource()
     {
         map.put( "mapping.myapp.source", "/" );
         VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
@@ -102,7 +102,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testGetTarget()
+    void testGetTarget()
     {
         map.put( "mapping.myapp.target", "/" );
         VirtualHostConfigMap virtualHostConfig = new VirtualHostConfigMap( map );
@@ -136,7 +136,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testHostOrder()
+    void testHostOrder()
     {
         map.put( "mapping.myapp1.order", "3" );
         map.put( "mapping.myapp2.order", "1" );
@@ -149,7 +149,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testSourceOrder()
+    void testSourceOrder()
     {
         map.put( "mapping.myapp1.source", "/a" );
         map.put( "mapping.myapp2.source", "/a/b/c" );
@@ -162,7 +162,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testDefaultIdProvider()
+    void testDefaultIdProvider()
     {
         map.put( "mapping.myapp1.idProvider.system", "default" );
         map.put( "mapping.myapp1.idProvider.myProvider", "enabled" );
@@ -176,7 +176,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void test()
+    void test()
     {
         map.put( "mapping.myapp1.host", "example.com" );
         map.put( "mapping.myapp1.source", "/" );
@@ -202,7 +202,7 @@ public class VirtualHostConfigMapTest
     }
 
     @Test
-    public void testContextConfig()
+    void testContextConfig()
     {
         map.put( "mapping.name.context.propertyName", "propertyValue" );
 

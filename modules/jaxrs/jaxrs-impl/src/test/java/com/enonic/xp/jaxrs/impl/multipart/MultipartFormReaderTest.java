@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MultipartFormReaderTest
+class MultipartFormReaderTest
 {
     private MultipartService service;
 
@@ -26,7 +26,7 @@ public class MultipartFormReaderTest
     private HttpServletRequest request;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.request = Mockito.mock( HttpServletRequest.class );
 
@@ -37,8 +37,7 @@ public class MultipartFormReaderTest
     }
 
     @Test
-    public void testIsReadable()
-        throws Exception
+    void testIsReadable()
     {
         assertFalse( isReadable( String.class, MediaType.TEXT_PLAIN_TYPE ) );
         assertFalse( isReadable( String.class, MediaType.MULTIPART_FORM_DATA_TYPE ) );
@@ -46,7 +45,7 @@ public class MultipartFormReaderTest
     }
 
     @Test
-    public void testReadFrom()
+    void testReadFrom()
         throws Exception
     {
         final InputStream in = Mockito.mock( InputStream.class );

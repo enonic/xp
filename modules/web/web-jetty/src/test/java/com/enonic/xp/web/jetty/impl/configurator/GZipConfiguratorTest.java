@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-public class GZipConfiguratorTest
+class GZipConfiguratorTest
     extends JettyConfiguratorTest<ServletContextHandler>
 {
     @Override
@@ -28,7 +28,7 @@ public class GZipConfiguratorTest
     }
 
     @Test
-    public void testConfigure()
+    void testConfigure()
     {
         when( this.config.gzip_enabled() ).thenReturn( true );
 
@@ -43,7 +43,7 @@ public class GZipConfiguratorTest
     }
 
     @Test
-    public void testConfigure_disabled()
+    void testConfigure_disabled()
     {
         when( this.config.gzip_enabled() ).thenReturn( false );
 
@@ -53,7 +53,7 @@ public class GZipConfiguratorTest
     }
 
     @Test
-    public void testConfigure_override()
+    void testConfigure_override()
     {
         when( this.config.gzip_enabled() ).thenReturn( true );
         when( this.config.gzip_minSize() ).thenReturn( 100 );

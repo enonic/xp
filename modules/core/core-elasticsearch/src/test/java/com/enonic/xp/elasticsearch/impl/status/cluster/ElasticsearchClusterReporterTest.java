@@ -26,7 +26,7 @@ import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ElasticsearchClusterReporterTest
+class ElasticsearchClusterReporterTest
 {
     JsonTestHelper jsonTestHelper = new JsonTestHelper( this );
 
@@ -42,8 +42,7 @@ public class ElasticsearchClusterReporterTest
 
     @SuppressWarnings("unchecked")
     @BeforeEach
-    public void setup()
-        throws Exception
+    void setup()
     {
         final ClusterAdminClient clusterAdminClient = Mockito.mock( ClusterAdminClient.class );
         this.clusterStateInfo = Mockito.mock( ActionFuture.class );
@@ -80,14 +79,13 @@ public class ElasticsearchClusterReporterTest
     }
 
     @Test
-    public void assertName()
-        throws Exception
+    void assertName()
     {
         assertEquals( "cluster.elasticsearch", reporter.getName() );
     }
 
     @Test
-    public void cluster_with_one_node()
+    void cluster_with_one_node()
         throws Exception
     {
         final DiscoveryNode node1 =
@@ -106,7 +104,7 @@ public class ElasticsearchClusterReporterTest
     }
 
     @Test
-    public void testClusterState_Exception()
+    void testClusterState_Exception()
         throws Exception
     {
         Mockito.when( clusterStateInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster state exception" ) );
@@ -115,7 +113,7 @@ public class ElasticsearchClusterReporterTest
     }
 
     @Test
-    public void testClusterHealth_Exception()
+    void testClusterHealth_Exception()
         throws Exception
     {
         Mockito.when( clusterHealthInfo.actionGet() ).thenThrow( new ElasticsearchException( "cluster health info exception" ) );

@@ -44,7 +44,7 @@ public class PatchContentHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -59,7 +59,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchSiteConfig()
+    void patchSiteConfig()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -92,7 +92,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchSiteSingleDescriptor()
+    void patchSiteSingleDescriptor()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -119,8 +119,7 @@ public class PatchContentHandlerTest
 
 
     @Test
-    public void patchById()
-        throws Exception
+    void patchById()
     {
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
@@ -137,8 +136,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchByPath()
-        throws Exception
+    void patchByPath()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -155,8 +153,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchNotMappedXDataFieldName()
-        throws Exception
+    void patchNotMappedXDataFieldName()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -173,14 +170,13 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchNotFound()
-        throws Exception
+    void patchNotFound()
     {
         runFunction( "/test/PatchContentHandlerTest.js", "patch_notFound" );
     }
 
     @Test
-    public void patchWorkflowInfo()
+    void patchWorkflowInfo()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -197,8 +193,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchPageAllComponents()
-        throws Exception
+    void patchPageAllComponents()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -215,8 +210,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchValidationErrors()
-        throws Exception
+    void patchValidationErrors()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -237,8 +231,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchWithSkipSync()
-        throws Exception
+    void patchWithSkipSync()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -263,7 +256,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchAttachments()
+    void patchAttachments()
         throws Exception
     {
         final Content content = Content.create( TestDataFixtures.newSmallContent() )
@@ -316,8 +309,7 @@ public class PatchContentHandlerTest
     }
 
     @Test
-    public void patchAttachmentsNonExistingAttachment()
-        throws Exception
+    void patchAttachmentsNonExistingAttachment()
     {
         final Content contentWithoutAttachments = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(

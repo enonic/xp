@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class FieldOrderExprTest
+class FieldOrderExprTest
 {
     @Test
-    public void testExpression()
+    void testExpression()
     {
         final FieldExpr field = FieldExpr.from( "name" );
         final FieldOrderExpr expr = new FieldOrderExpr( field, OrderExpr.Direction.DESC );
@@ -22,7 +22,7 @@ public class FieldOrderExprTest
     }
 
     @Test
-    public void testExpressionWithoutDirection()
+    void testExpressionWithoutDirection()
     {
         final FieldExpr field = FieldExpr.from( "name" );
         final FieldOrderExpr expr = new FieldOrderExpr( field, null );
@@ -33,7 +33,7 @@ public class FieldOrderExprTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( FieldOrderExpr.class ).withRedefinedSuperclass().withNonnullFields( "field" ).verify();
     }

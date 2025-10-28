@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DateTimeTypeTest
+class DateTimeTypeTest
     extends BaseInputTypeTest
 {
     public DateTimeTypeTest()
@@ -21,19 +21,19 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testName()
+    void testName()
     {
         assertEquals( "DateTime", this.type.getName().toString() );
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         assertEquals( "DateTime", this.type.toString() );
     }
 
     @Test
-    public void testCreateProperty()
+    void testCreateProperty()
     {
         final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00" ), GenericValue.object().build() );
 
@@ -42,19 +42,19 @@ public class DateTimeTypeTest
     }
 
     @Test
-    public void testValidate_dateTime()
+    void testValidate_dateTime()
     {
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( dateTimeProperty(), GenericValue.object().build() ) );
     }
 
     @Test
-    public void testValidate_localDateTime()
+    void testValidate_localDateTime()
     {
         this.type.validate( localDateTimeProperty(), GenericValue.object().build() );
     }
 
     @Test
-    public void testValidate_invalidType()
+    void testValidate_invalidType()
     {
         assertThrows( InputTypeValidationException.class,
                       () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );

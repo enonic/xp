@@ -10,11 +10,11 @@ import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repository.RepositoryId;
 
-public class FindNodesByMultiRepoQueryHandlerTest
+class FindNodesByMultiRepoQueryHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         Mockito.when( this.nodeService.findByQuery( Mockito.isA( MultiRepoNodeQuery.class ) ) ).
             thenReturn( FindNodesByMultiRepoQueryResult.create().

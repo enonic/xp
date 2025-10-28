@@ -32,7 +32,7 @@ public final class ImageScaleFunctionBuilderImplTest
     }
 
     @Test
-    public void testEmptyParam()
+    void testEmptyParam()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
         functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
@@ -47,7 +47,7 @@ public final class ImageScaleFunctionBuilderImplTest
 
 
     @Test
-    public void testWidthParam()
+    void testWidthParam()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
         functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
@@ -62,7 +62,7 @@ public final class ImageScaleFunctionBuilderImplTest
     }
 
     @Test
-    public void testHeightParam()
+    void testHeightParam()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
         functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
@@ -77,7 +77,7 @@ public final class ImageScaleFunctionBuilderImplTest
     }
 
     @Test
-    public void unknownScaleFunction()
+    void unknownScaleFunction()
     {
         final ImageScaleFunctionBuilderImpl functionBuilder = new ImageScaleFunctionBuilderImpl();
         functionBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );

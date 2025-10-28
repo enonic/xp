@@ -16,11 +16,11 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
-public class ApplyPermissionsHandlerTest
+class ApplyPermissionsHandlerTest
     extends BaseNodeHandlerTest
 {
     @Test
-    public void example()
+    void example()
     {
         final AccessControlList acl =
             AccessControlList.create().add( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ).build();

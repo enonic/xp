@@ -2,40 +2,35 @@ package com.enonic.xp.lib.project;
 
 import org.junit.jupiter.api.Test;
 
-public class ModifyProjectHandlerTest
+class ModifyProjectHandlerTest
     extends BaseProjectHandlerTest
 {
     @Test
-    public void modifyProject()
-        throws Exception
+    void modifyProject()
     {
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyProject" );
     }
 
     @Test
-    public void modifyProjectDescription()
-        throws Exception
+    void modifyProjectDescription()
     {
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyDescription" );
     }
 
     @Test
-    public void modifyProjectDisplayName()
-        throws Exception
+    void modifyProjectDisplayName()
     {
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyDisplayName" );
     }
 
     @Test
-    public void modifyProjectLanguage()
-        throws Exception
+    void modifyProjectLanguage()
     {
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyLanguage" );
     }
 
     @Test
-    public void modifyProjectApplications()
-        throws Exception
+    void modifyProjectApplications()
     {
         runFunction( "/test/ModifyProjectHandlerTest.js", "modifyApplications" );
     }

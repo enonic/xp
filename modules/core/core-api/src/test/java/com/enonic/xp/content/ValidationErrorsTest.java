@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ValidationErrorsTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         final ValidationErrors errors = ValidationErrors.create().build();
         assertFalse( errors.hasErrors() );
     }
 
     @Test
-    public void not_empty()
+    void not_empty()
     {
         final ValidationErrors errors = ValidationErrors.create()
             .add( ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "SOME_CODE" ) ).build() )
@@ -31,7 +31,7 @@ class ValidationErrorsTest
     }
 
     @Test
-    public void stream()
+    void stream()
     {
         final ValidationError error1 =
             ValidationError.generalError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "SOME_CODE" ) ).build();
@@ -47,7 +47,7 @@ class ValidationErrorsTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( ValidationErrors.class ).withNonnullFields( "errors" ).verify();
     }

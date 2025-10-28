@@ -25,12 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ApplyPermissionsHandlerTest
+class ApplyPermissionsHandlerTest
     extends BaseContentHandlerTest
 {
-
     @Test
-    public void testExample()
+    void testExample()
     {
         final Content content = TestDataFixtures.newExampleContent();
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -48,8 +47,7 @@ public class ApplyPermissionsHandlerTest
     }
 
     @Test
-    public void testMissingPrincipals()
-        throws Exception
+    void testMissingPrincipals()
     {
         final Content content = TestDataFixtures.newExampleContent();
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -66,8 +64,7 @@ public class ApplyPermissionsHandlerTest
     }
 
     @Test
-    public void testContentNotFoundByPath()
-        throws Exception
+    void testContentNotFoundByPath()
     {
         when( this.contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
@@ -82,8 +79,7 @@ public class ApplyPermissionsHandlerTest
     }
 
     @Test
-    public void testContentNotFoundById()
-        throws Exception
+    void testContentNotFoundById()
     {
         when( this.contentService.getByPath( Mockito.any() ) ).thenThrow( ContentNotFoundException.class );
 
@@ -98,8 +94,7 @@ public class ApplyPermissionsHandlerTest
     }
 
     @Test
-    public void testPermissionParamsNonCompatible()
-        throws Exception
+    void testPermissionParamsNonCompatible()
     {
         final Content content = TestDataFixtures.newExampleContent();
         when( this.contentService.getByPath( Mockito.any() ) ).thenReturn( content );
@@ -115,8 +110,7 @@ public class ApplyPermissionsHandlerTest
     }
 
     @Test
-    public void testPermissionsAddAndRemove()
-        throws Exception
+    void testPermissionsAddAndRemove()
     {
         final ArgumentCaptor<ApplyContentPermissionsParams> paramsCaptor = ArgumentCaptor.forClass( ApplyContentPermissionsParams.class );
 
@@ -160,8 +154,7 @@ public class ApplyPermissionsHandlerTest
     }
 
     @Test
-    public void testTreeScope()
-        throws Exception
+    void testTreeScope()
     {
         final ArgumentCaptor<ApplyContentPermissionsParams> paramsCaptor = ArgumentCaptor.forClass( ApplyContentPermissionsParams.class );
 

@@ -4,21 +4,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.ServletContext;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.google.common.collect.ImmutableMap;
 
+import jakarta.servlet.ServletContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ResourceConfigTest
+class ResourceConfigTest
 {
     @Test
-    public void testGetters()
+    void testGetters()
     {
         final ServletContext context = Mockito.mock( ServletContext.class );
         final Map<String, String> initParams = new ImmutableMap.Builder<String, String>().

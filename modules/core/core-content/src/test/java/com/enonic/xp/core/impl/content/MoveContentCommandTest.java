@@ -28,7 +28,7 @@ import com.enonic.xp.site.Site;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MoveContentCommandTest
+class MoveContentCommandTest
 {
     private final ContentTypeService contentTypeService = Mockito.mock( ContentTypeService.class );
 
@@ -39,8 +39,7 @@ public class MoveContentCommandTest
     private final EventPublisher eventPublisher = Mockito.mock( EventPublisher.class );
 
     @Test
-    public void move_non_existing_content()
-        throws Exception
+    void move_non_existing_content()
     {
         PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
@@ -66,8 +65,7 @@ public class MoveContentCommandTest
     }
 
     @Test
-    public void move_fragment_to_the_same_site()
-        throws Exception
+    void move_fragment_to_the_same_site()
     {
         final PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );
@@ -118,8 +116,7 @@ public class MoveContentCommandTest
     }
 
     @Test
-    public void move_to_the_same_parent()
-        throws Exception
+    void move_to_the_same_parent()
     {
         final PropertyTree existingContentData = new PropertyTree();
         existingContentData.addString( "myData", "aaa" );

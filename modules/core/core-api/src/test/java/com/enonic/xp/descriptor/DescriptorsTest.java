@@ -4,11 +4,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.app.ApplicationKey;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DescriptorsTest
+class DescriptorsTest
 {
     private static final class MyDescriptor
         extends Descriptor
@@ -26,14 +24,14 @@ public class DescriptorsTest
     }
 
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final Descriptors list = Descriptors.empty();
         assertEquals( "[]", list.toString() );
     }
 
     @Test
-    public void testFrom_array()
+    void testFrom_array()
     {
         final MyDescriptor desc1 = new MyDescriptor( "app1:abc" );
         final MyDescriptor desc2 = new MyDescriptor( "app2:abc" );
@@ -43,7 +41,7 @@ public class DescriptorsTest
     }
 
     @Test
-    public void testFrom_iterable()
+    void testFrom_iterable()
     {
         final MyDescriptor desc1 = new MyDescriptor( "app1:abc" );
         final MyDescriptor desc2 = new MyDescriptor( "app2:abc" );

@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class FormItemSetTest
+class FormItemSetTest
 {
     @Test
-    public void getInput()
+    void getInput()
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create()
@@ -32,7 +32,7 @@ public class FormItemSetTest
     }
 
     @Test
-    public void getFormFragment()
+    void getFormFragment()
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create()
@@ -50,7 +50,7 @@ public class FormItemSetTest
 
 
     @Test
-    public void getFormItemSet()
+    void getFormItemSet()
     {
         // setup
         FormItemSet myInnermostSet = FormItemSet.create().name( "myInnermostSet" ).label( "Label" ).multiple( true ).build();
@@ -68,7 +68,7 @@ public class FormItemSetTest
     }
 
     @Test
-    public void given_FormItemSet_with_child_Input_when_getInput_with_name_of_child_then_child_is_returned()
+    void given_FormItemSet_with_child_Input_when_getInput_with_name_of_child_then_child_is_returned()
     {
         // exercise
         FormItemSet parent = FormItemSet.create().name( "parent" ).label( "Parent" )
@@ -80,7 +80,7 @@ public class FormItemSetTest
     }
 
     @Test
-    public void toFormItemSet_given_FormItem_of_type_FormItemSet_then_FormItemSet_is_returned()
+    void toFormItemSet_given_FormItem_of_type_FormItemSet_then_FormItemSet_is_returned()
     {
         // setup
         FormItem formItem = FormItemSet.create().name( "myFieldSet" ).label( "My label" ).build();
@@ -93,7 +93,7 @@ public class FormItemSetTest
     }
 
     @Test
-    public void toFormItemSet_given_FormItem_of_type_Input_then_exception_is_thrown()
+    void toFormItemSet_given_FormItem_of_type_Input_then_exception_is_thrown()
     {
         // setup
         FormItem formItem =
@@ -113,7 +113,7 @@ public class FormItemSetTest
     }
 
     @Test
-    public void copy()
+    void copy()
     {
         // setup
         FormItemSet formItemSet = FormItemSet.create().name( "myFormItemSet" ).label( "Label" ).multiple( true )

@@ -36,7 +36,7 @@ class ElasticsearchClusterTest
     ClusterAdminClient clusterAdminClient;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.activator = new ElasticsearchCluster( clusterAdminClient );
     }

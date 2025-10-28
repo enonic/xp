@@ -14,14 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BundleApplicationUrlResolverTest
+class BundleApplicationUrlResolverTest
     extends BundleBasedTest
 {
     private BundleApplicationUrlResolver resolver;
 
     @Test
-    public void testFindFiles()
-        throws Exception
+    void testFindFiles()
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", true );
         builder.addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );
@@ -36,7 +35,7 @@ public class BundleApplicationUrlResolverTest
     }
 
     @Test
-    public void testFindUrl()
+    void testFindUrl()
     {
         final TinyBundle builder = newBundle( "foo.bar.bundle", true );
         builder.addResource( "dummy.txt", getClass().getResource( "/myapp/dummy.txt" ) );

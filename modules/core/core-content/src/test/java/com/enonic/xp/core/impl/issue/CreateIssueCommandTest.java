@@ -23,14 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CreateIssueCommandTest
+class CreateIssueCommandTest
 {
 
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
 
@@ -38,7 +37,7 @@ public class CreateIssueCommandTest
     }
 
     @Test
-    public void create()
+    void create()
     {
         final CreateIssueParams params = createIssueParams().build();
         final CreateIssueCommand command = createIssueCommand( params );
@@ -54,7 +53,7 @@ public class CreateIssueCommandTest
     }
 
     @Test
-    public void testNoTitle()
+    void testNoTitle()
     {
         final CreateIssueParams params = CreateIssueParams.create().build();
         final CreateIssueCommand command = createIssueCommand( params );
@@ -77,7 +76,6 @@ public class CreateIssueCommandTest
     }
 
     private Node mockNodeServiceCreate( final InvocationOnMock invocation )
-        throws Throwable
     {
         CreateNodeParams params = (CreateNodeParams) invocation.getArguments()[0];
 

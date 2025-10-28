@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RequestLogConfiguratorTest
+class RequestLogConfiguratorTest
     extends JettyConfiguratorTest<Server>
 {
     private Server server;
@@ -43,7 +43,7 @@ public class RequestLogConfiguratorTest
     }
 
     @Test
-    public void testConfigure()
+    void testConfigure()
     {
         Mockito.when( this.config.log_enabled() ).thenReturn( true );
 
@@ -58,14 +58,14 @@ public class RequestLogConfiguratorTest
     }
 
     @Test
-    public void testConfigure_disabled()
+    void testConfigure_disabled()
     {
         configure();
         assertNull( getRequestLog() );
     }
 
     @Test
-    public void testConfigure_override()
+    void testConfigure_override()
     {
         Mockito.when( this.config.log_enabled() ).thenReturn( true );
         Mockito.when( this.config.log_append() ).thenReturn( false );

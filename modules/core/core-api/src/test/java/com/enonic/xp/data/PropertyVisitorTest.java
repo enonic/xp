@@ -11,10 +11,10 @@ import com.enonic.xp.util.Reference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PropertyVisitorTest
+class PropertyVisitorTest
 {
     @Test
-    public void traverse_visitPropertiesWithSet()
+    void traverse_visitPropertiesWithSet()
     {
         final List<Property> hits = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class PropertyVisitorTest
     }
 
     @Test
-    public void traverse()
+    void traverse()
     {
         final List<Property> hits = new ArrayList<>();
 
@@ -77,7 +77,7 @@ public class PropertyVisitorTest
     }
 
     @Test
-    public void traverse_with_restriction_on_ValueType()
+    void traverse_with_restriction_on_ValueType()
     {
         final List<Property> hits = new ArrayList<>();
 
@@ -109,7 +109,7 @@ public class PropertyVisitorTest
     }
 
     @Test
-    public void traverse_with_restriction_on_ValueType_Reference()
+    void traverse_with_restriction_on_ValueType_Reference()
     {
         final List<Property> hits = new ArrayList<>();
 
@@ -144,7 +144,7 @@ public class PropertyVisitorTest
 
 
     @Test
-    public void traverse_with_restriction_on_ValueType_Link()
+    void traverse_with_restriction_on_ValueType_Link()
     {
         final List<Property> hits = new ArrayList<>();
 

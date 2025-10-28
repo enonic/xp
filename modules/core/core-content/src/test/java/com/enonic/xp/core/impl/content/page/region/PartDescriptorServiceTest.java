@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PartDescriptorServiceTest
+class PartDescriptorServiceTest
     extends AbstractDescriptorServiceTest
 {
     protected PartDescriptorServiceImpl service;
@@ -30,8 +30,7 @@ public class PartDescriptorServiceTest
     }
 
     @Test
-    public void testGetByKey()
-        throws Exception
+    void testGetByKey()
     {
         final DescriptorKey key = DescriptorKey.from( "myapp1:mypart" );
         final PartDescriptor descriptor = this.service.getByKey( key );
@@ -41,8 +40,7 @@ public class PartDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplication()
-        throws Exception
+    void testGetByApplication()
     {
         final PartDescriptors result = this.service.getByApplication( ApplicationKey.from( "myapp1" ) );
 
@@ -51,8 +49,7 @@ public class PartDescriptorServiceTest
     }
 
     @Test
-    public void testGetByApplications()
-        throws Exception
+    void testGetByApplications()
     {
         final PartDescriptors result = this.service.getByApplications( ApplicationKeys.from( "myapp1", "myapp2" ) );
 

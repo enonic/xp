@@ -23,7 +23,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
-public class FindContentIdsByQueryCommandTest
+class FindContentIdsByQueryCommandTest
 {
 
     private NodeService nodeService;
@@ -35,7 +35,7 @@ public class FindContentIdsByQueryCommandTest
     private EventPublisher eventPublisher;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         nodeService = Mockito.mock( NodeService.class );
         translator = Mockito.mock( ContentNodeTranslator.class );
@@ -44,7 +44,7 @@ public class FindContentIdsByQueryCommandTest
     }
 
     @Test
-    public void test()
+    void test()
     {
         FindNodesByQueryResult nodesByQueryResult = FindNodesByQueryResult.create().
             addNodeHit( NodeHit.create().

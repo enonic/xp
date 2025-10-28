@@ -22,12 +22,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FindNodesDependenciesCommandTest
+class FindNodesDependenciesCommandTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
@@ -53,8 +52,7 @@ public class FindNodesDependenciesCommandTest
     }
 
     @Test
-    public void several_layers_of_dependencies_stopped_by_status()
-        throws Exception
+    void several_layers_of_dependencies_stopped_by_status()
     {
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
@@ -86,8 +84,7 @@ public class FindNodesDependenciesCommandTest
     }
 
     @Test
-    public void looping_dependencies()
-        throws Exception
+    void looping_dependencies()
     {
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );
@@ -107,8 +104,7 @@ public class FindNodesDependenciesCommandTest
     }
 
     @Test
-    public void exclude_dependencies()
-        throws Exception
+    void exclude_dependencies()
     {
         final Node node1 = createNodeWithReference( "n1", NodePath.ROOT, "n1_1", "n1_2" );
         final Node node1_1 = createNodeWithReference( "n1_1", node1.path(), "n1_1_1" );

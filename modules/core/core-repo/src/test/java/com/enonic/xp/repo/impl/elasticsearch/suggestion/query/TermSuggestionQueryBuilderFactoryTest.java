@@ -10,18 +10,18 @@ import com.enonic.xp.repo.impl.elasticsearch.suggistion.query.TermSuggestionQuer
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TermSuggestionQueryBuilderFactoryTest
+class TermSuggestionQueryBuilderFactoryTest
 {
     private TermSuggestionQueryBuilderFactory termSuggestionQueryBuilderFactory;
 
     @BeforeEach
-    public void init()
+    void init()
     {
         termSuggestionQueryBuilderFactory = new TermSuggestionQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE );
     }
 
     @Test
-    public void create()
+    void create()
     {
         final TermSuggestionQuery query = TermSuggestionQuery.create( "queryName" ).
             field( "category" ).

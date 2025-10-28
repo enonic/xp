@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(MockitoExtension.class)
-public class ImportContentFactoryTest
+class ImportContentFactoryTest
 {
     private ImportContentParams params;
 
@@ -39,8 +39,7 @@ public class ImportContentFactoryTest
     private Content content;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         Mockito.when( content.getType() ).thenReturn( ContentTypeName.from( "base:folder" ) );
         Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentId" ) );
@@ -54,8 +53,7 @@ public class ImportContentFactoryTest
     }
 
     @Test
-    public void replaceOriginProject()
-        throws Exception
+    void replaceOriginProject()
     {
 
         Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
@@ -77,8 +75,7 @@ public class ImportContentFactoryTest
     }
 
     @Test
-    public void removeOriginProject()
-        throws Exception
+    void removeOriginProject()
     {
         Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 
@@ -92,8 +89,7 @@ public class ImportContentFactoryTest
     }
 
     @Test
-    public void removePublishInfo()
-        throws Exception
+    void removePublishInfo()
     {
         Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 

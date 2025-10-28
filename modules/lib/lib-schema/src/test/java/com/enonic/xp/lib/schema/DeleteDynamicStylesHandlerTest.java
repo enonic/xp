@@ -8,11 +8,11 @@ import com.enonic.xp.app.ApplicationKey;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 
-public class DeleteDynamicStylesHandlerTest
+class DeleteDynamicStylesHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
-    public void testStyles()
+    void testStyles()
     {
         when( dynamicSchemaService.deleteStyles( isA( ApplicationKey.class ) ) ).thenReturn( true );
 
@@ -21,7 +21,7 @@ public class DeleteDynamicStylesHandlerTest
 
 
     @Test
-    public void testInvalidSchemaType()
+    void testInvalidSchemaType()
     {
         runFunction( "/test/DeleteDynamicStylesHandlerTest.js", "deleteNull" );
     }

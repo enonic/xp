@@ -7,7 +7,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PrincipalRelationshipTest
+class PrincipalRelationshipTest
 {
     private static final PrincipalKey USER = PrincipalKey.ofUser( IdProviderKey.system(), "user" );
 
@@ -22,16 +22,14 @@ public class PrincipalRelationshipTest
     private static final PrincipalKey ROLE_2 = PrincipalKey.ofRole( "role2" );
 
     @Test
-    public void testFromToSamePrincipal()
-        throws Exception
+    void testFromToSamePrincipal()
     {
         assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( GROUP ).to( GROUP )) ;
     }
 
     // from Role
     @Test
-    public void testFromRoleToUser()
-        throws Exception
+    void testFromRoleToUser()
     {
         PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( USER );
         assertEquals( ROLE, rel.getFrom() );
@@ -40,8 +38,7 @@ public class PrincipalRelationshipTest
     }
 
     @Test
-    public void testFromRoleToGroup()
-        throws Exception
+    void testFromRoleToGroup()
     {
         PrincipalRelationship rel = PrincipalRelationship.from( ROLE ).to( GROUP );
         assertEquals( ROLE, rel.getFrom() );
@@ -50,16 +47,14 @@ public class PrincipalRelationshipTest
     }
 
     @Test
-    public void testFromRoleToRole()
-        throws Exception
+    void testFromRoleToRole()
     {
         assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( ROLE ).to( ROLE_2 ));
     }
 
     // from Group
     @Test
-    public void testFromGroupToUser()
-        throws Exception
+    void testFromGroupToUser()
     {
         PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( USER );
         assertEquals( GROUP, rel.getFrom() );
@@ -68,8 +63,7 @@ public class PrincipalRelationshipTest
     }
 
     @Test
-    public void testFromGroupToGroup()
-        throws Exception
+    void testFromGroupToGroup()
     {
         PrincipalRelationship rel = PrincipalRelationship.from( GROUP ).to( GROUP_2 );
         assertEquals( GROUP, rel.getFrom() );
@@ -78,30 +72,26 @@ public class PrincipalRelationshipTest
     }
 
     @Test
-    public void testFromGroupToRole()
-        throws Exception
+    void testFromGroupToRole()
     {
         assertThrows(IllegalArgumentException.class, () -> PrincipalRelationship.from( GROUP ).to( ROLE ));
     }
 
     // from User
     @Test
-    public void testFromUserToUser()
-        throws Exception
+    void testFromUserToUser()
     {
         assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( USER ).to( USER_2 ));
     }
 
     @Test
-    public void testFromUserToGroup()
-        throws Exception
+    void testFromUserToGroup()
     {
         assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( USER ).to( GROUP ) );
     }
 
     @Test
-    public void testFromUserToRole()
-        throws Exception
+    void testFromUserToRole()
     {
         assertThrows(IllegalArgumentException.class, () ->  PrincipalRelationship.from( USER ).to( ROLE ));
     }

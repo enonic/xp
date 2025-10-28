@@ -8,10 +8,10 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class ImageFunctionChainTest
+class ImageFunctionChainTest
 {
     @Test
-    public void testEmpty()
+    void testEmpty()
     {
         final BufferedImage source = Mockito.mock( BufferedImage.class );
 
@@ -20,7 +20,7 @@ public class ImageFunctionChainTest
     }
 
     @Test
-    public void testList()
+    void testList()
     {
         final BufferedImage source = Mockito.mock( BufferedImage.class );
         final BufferedImage target = Mockito.mock( BufferedImage.class );

@@ -2,26 +2,23 @@ package com.enonic.xp.lib.project;
 
 import org.junit.jupiter.api.Test;
 
-public class DeleteProjectHandlerTest
+class DeleteProjectHandlerTest
     extends BaseProjectHandlerTest
 {
     @Test
-    public void deleteProject()
-        throws Exception
+    void deleteProject()
     {
         runFunction( "/test/DeleteProjectHandlerTest.js", "deleteProject" );
     }
 
     @Test
-    public void deleteNonExistProject()
-        throws Exception
+    void deleteNonExistProject()
     {
         runFunction( "/test/DeleteProjectHandlerTest.js", "deleteNotExistProject" );
     }
 
     @Test
-    public void deleteProjectNull()
-        throws Exception
+    void deleteProjectNull()
     {
         runFunction( "/test/DeleteProjectHandlerTest.js", "deleteProjectNull" );
     }

@@ -25,7 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class VirtualHostFilterTest
+class VirtualHostFilterTest
 {
     private VirtualHostService virtualHostService;
 
@@ -38,7 +38,7 @@ public class VirtualHostFilterTest
     private FilterChain chain;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.req = mock( HttpServletRequest.class );
         this.res = mock( HttpServletResponse.class );
@@ -51,7 +51,7 @@ public class VirtualHostFilterTest
     }
 
     @Test
-    public void testNotEnabled_localhostVhostUsed()
+    void testNotEnabled_localhostVhostUsed()
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( false );
@@ -65,7 +65,7 @@ public class VirtualHostFilterTest
     }
 
     @Test
-    public void testManagementPort_localhostVhostUsed()
+    void testManagementPort_localhostVhostUsed()
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
@@ -79,7 +79,7 @@ public class VirtualHostFilterTest
     }
 
     @Test
-    public void testNoMapping()
+    void testNoMapping()
         throws Exception
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
@@ -95,7 +95,7 @@ public class VirtualHostFilterTest
     }
 
     @Test
-    public void testMapping_notFound()
+    void testMapping_notFound()
         throws Exception
     {
         addMapping();
@@ -114,7 +114,7 @@ public class VirtualHostFilterTest
     }
 
     @Test
-    public void testMapping_found()
+    void testMapping_found()
         throws Exception
     {
         addMapping();

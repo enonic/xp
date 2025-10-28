@@ -29,7 +29,7 @@ public class CreateMediaHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
@@ -38,8 +38,7 @@ public class CreateMediaHandlerTest
     }
 
     @Test
-    public void createMedia()
-        throws Exception
+    void createMedia()
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
@@ -54,8 +53,7 @@ public class CreateMediaHandlerTest
     }
 
     @Test
-    public void createMediaWithFocalPoints()
-        throws Exception
+    void createMediaWithFocalPoints()
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer(
             mock -> createContent( (CreateMediaParams) mock.getArguments()[0] ) );
@@ -70,7 +68,7 @@ public class CreateMediaHandlerTest
     }
 
     @Test
-    public void createMediaAsPDFDocument()
+    void createMediaAsPDFDocument()
     {
         Mockito.when( this.contentService.create( Mockito.any( CreateMediaParams.class ) ) ).thenAnswer( mock -> {
             final CreateMediaParams params = (CreateMediaParams) mock.getArguments()[0];
@@ -117,8 +115,7 @@ public class CreateMediaHandlerTest
     }
 
     @Test
-    public void createMediaAutoGenerateNameWithExistingName()
-        throws Exception
+    void createMediaAutoGenerateNameWithExistingName()
     {
         final ContentAlreadyExistsException exception =
             new ContentAlreadyExistsException( ContentPath.from( "/a/b/my-content.jpg" ), RepositoryId.from( "some.repo" ),

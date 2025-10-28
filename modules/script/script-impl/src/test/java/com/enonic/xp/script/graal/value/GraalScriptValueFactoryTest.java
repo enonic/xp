@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GraalScriptValueFactoryTest
+class GraalScriptValueFactoryTest
 {
     private Context context;
 
     private ScriptValueFactory<Value> factory;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         final GraalScriptValueFactory factory = new GraalScriptValueFactory( new GraalJSContextFactory(), new GraalJavascriptHelperFactory() );
         this.factory = factory;
@@ -35,13 +35,13 @@ public class GraalScriptValueFactoryTest
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         context.close();
     }
 
     @Test
-    public void test()
+    void test()
     {
         ScriptValue value = factory.newValue( "2" );
         assertNotNull( value );
@@ -61,7 +61,7 @@ public class GraalScriptValueFactoryTest
     }
 
     @Test
-    public void test_newValue_function()
+    void test_newValue_function()
     {
         Value funcValue = context.eval( "js", "var func = function() { return 1; }; func;" );
         ScriptValue funcScriptValue = factory.newValue( funcValue );
@@ -74,7 +74,7 @@ public class GraalScriptValueFactoryTest
     }
 
     @Test
-    public void test_newValue_array_toList()
+    void test_newValue_array_toList()
     {
         final Object obj = context.eval( "js", "var result = ['1', null, 2, {'key': 'value'}, [42]]; result;" );
         final ScriptValue value = this.factory.newValue( obj );
@@ -93,7 +93,7 @@ public class GraalScriptValueFactoryTest
     }
 
     @Test
-    public void test_newValue_object()
+    void test_newValue_object()
     {
         final Object obj = context.eval( "js", "var result = {'a':1, 'b':2, 'c': false, 'd': 2.1}; result;" );
         final ScriptValue value = this.factory.newValue( obj );

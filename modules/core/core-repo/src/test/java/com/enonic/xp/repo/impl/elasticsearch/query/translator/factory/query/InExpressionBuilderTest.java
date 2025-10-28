@@ -13,12 +13,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.SearchQue
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InExpressionBuilderTest
+class InExpressionBuilderTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void compareInString()
-        throws Exception
+    void compareInString()
     {
         final String expected = load( "compare_in_string.json" );
 

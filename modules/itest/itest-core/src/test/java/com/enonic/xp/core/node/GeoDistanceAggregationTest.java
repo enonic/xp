@@ -24,7 +24,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GeoDistanceAggregationTest
+class GeoDistanceAggregationTest
     extends AbstractNodeTest
 {
     private static final GeoPoint OSLO = GeoPoint.from( "59.9127300 ,10.7460900" );
@@ -42,15 +42,13 @@ public class GeoDistanceAggregationTest
     private static final GeoPoint TRONDHEIM = GeoPoint.from( "63.4304900,10.3950600" );
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.createDefaultRootNode();
     }
 
     @Test
-    public void ranges()
-        throws Exception
+    void ranges()
     {
         createNode( OSLO, "oslo", NodePath.ROOT );
         createNode( BERLIN, "berlin", NodePath.ROOT );

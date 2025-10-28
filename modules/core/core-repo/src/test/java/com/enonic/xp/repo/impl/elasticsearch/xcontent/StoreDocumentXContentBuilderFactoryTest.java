@@ -12,11 +12,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
 
-public class StoreDocumentXContentBuilderFactoryTest
+class StoreDocumentXContentBuilderFactoryTest
 {
 
     @Test
-    public void testName()
+    void testName()
         throws Exception
     {
         final IndexItems indexItems = IndexItems.create().

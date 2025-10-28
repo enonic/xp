@@ -26,13 +26,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
 
-public class ContentServiceImplTest_delete
+class ContentServiceImplTest_delete
     extends AbstractContentServiceTest
 {
 
     @Test
-    public void create_delete_content()
-        throws Exception
+    void create_delete_content()
     {
         //Creates a content
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -62,8 +61,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void create_delete_content_with_children()
-        throws Exception
+    void create_delete_content_with_children()
     {
         //Creates a content with children
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -119,8 +117,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void create_delete_published_content()
-        throws Exception
+    void create_delete_published_content()
     {
         final Content content = this.contentService.create( CreateContentParams.create().
             contentData( new PropertyTree() ).
@@ -149,8 +146,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void create_delete_published_content_with_children()
-        throws Exception
+    void create_delete_published_content_with_children()
     {
 
         //Creates a content with children
@@ -207,8 +203,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void delete_published_content_with_child_moved_in()
-        throws Exception
+    void delete_published_content_with_child_moved_in()
     {
         //Creates a content with children
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -258,8 +253,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void delete_published_content_with_child_moved_out()
-        throws Exception
+    void delete_published_content_with_child_moved_out()
     {
         //Creates a content with children
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -307,8 +301,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void publish_pending_content_with_child_moved_inside_the_tree()
-        throws Exception
+    void publish_pending_content_with_child_moved_inside_the_tree()
     {
         //Creates a content with children
         final CreateContentParams createContentParams = CreateContentParams.create().
@@ -391,8 +384,7 @@ public class ContentServiceImplTest_delete
 
 
     @Test
-    public void move_to_folder_starting_with_same_name_and_delete()
-        throws Exception
+    void move_to_folder_starting_with_same_name_and_delete()
     {
 
         final Content site = createContent( ContentPath.ROOT, "site" );
@@ -419,7 +411,7 @@ public class ContentServiceImplTest_delete
     }
 
     @Test
-    public void audit_data()
+    void audit_data()
     {
         final ArgumentCaptor<LogAuditLogParams> captor = ArgumentCaptor.forClass( LogAuditLogParams.class );
 

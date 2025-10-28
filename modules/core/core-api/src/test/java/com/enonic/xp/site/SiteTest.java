@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SiteTest
+class SiteTest
 {
 
     @Test
-    public void description()
+    void description()
     {
         Site site = Site.create().
             description( "This is my site" ).
@@ -28,7 +28,7 @@ public class SiteTest
     }
 
     @Test
-    public void siteEquals()
+    void siteEquals()
     {
         Site site = Site.create().
             description( "This is my site" ).
@@ -46,7 +46,7 @@ public class SiteTest
     }
 
     @Test
-    public void builder()
+    void builder()
     {
         final PropertyTree siteData = new PropertyTree();
 
@@ -68,7 +68,7 @@ public class SiteTest
     }
 
     @Test
-    public void siteConfigs()
+    void siteConfigs()
     {
         final PropertyTree siteData = new PropertyTree();
 
@@ -96,7 +96,7 @@ public class SiteTest
     }
 
     @Test
-    public void siteConfigEquals()
+    void siteConfigEquals()
     {
         SiteConfig siteConfig = SiteConfig.create().
             application( ApplicationKey.from( "myapplication" ) ).

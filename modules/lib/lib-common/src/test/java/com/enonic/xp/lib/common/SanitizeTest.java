@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class SanitizeTest
+class SanitizeTest
     extends ScriptTestSupport
 {
 
@@ -16,7 +16,7 @@ public class SanitizeTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         runScript( "/lib/xp/examples/common/sanitize.js" );
     }

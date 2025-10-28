@@ -27,14 +27,13 @@ import static com.enonic.xp.issue.IssuePropertyNames.TITLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class GetIssueCommandTest
+class GetIssueCommandTest
 {
 
     private NodeService nodeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.nodeService = Mockito.mock( NodeService.class );
 
@@ -42,7 +41,7 @@ public class GetIssueCommandTest
     }
 
     @Test
-    public void getById()
+    void getById()
     {
         final GetIssueByIdCommand command = getIssueCommand( IssueId.create() );
         final IssueName issueName = IssueName.from( NamePrettyfier.create( "title" ) );
@@ -63,7 +62,6 @@ public class GetIssueCommandTest
     }
 
     private Node mockNodeServiceGet( final InvocationOnMock invocation )
-        throws Throwable
     {
         NodeId nodeId = (NodeId) invocation.getArguments()[0];
 

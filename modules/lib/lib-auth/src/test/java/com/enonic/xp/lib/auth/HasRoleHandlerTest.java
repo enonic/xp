@@ -10,7 +10,7 @@ import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
-public class HasRoleHandlerTest
+class HasRoleHandlerTest
     extends ScriptTestSupport
 {
     private Session session;
@@ -25,7 +25,7 @@ public class HasRoleHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals(
             PrincipalKey.ofRole( "system.admin.login" ) ).build();
@@ -36,7 +36,7 @@ public class HasRoleHandlerTest
     }
 
     @Test
-    public void testHasRoleById()
+    void testHasRoleById()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
@@ -47,7 +47,7 @@ public class HasRoleHandlerTest
     }
 
     @Test
-    public void testHasRoleByKey()
+    void testHasRoleByKey()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( PrincipalKey.ofRole( "my-role" ) ).build();
@@ -58,7 +58,7 @@ public class HasRoleHandlerTest
     }
 
     @Test
-    public void testDoesNotHaveRole()
+    void testDoesNotHaveRole()
     {
         final AuthenticationInfo authInfo =
             AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();

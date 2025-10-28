@@ -7,10 +7,10 @@ import com.enonic.xp.support.AbstractEqualsTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NodeIdsTest
+class NodeIdsTest
 {
     @Test
-    public void from_multiple_strings()
+    void from_multiple_strings()
     {
 
         assertEquals( "[aaa]", NodeIds.from( "aaa" ).toString() );
@@ -19,7 +19,7 @@ public class NodeIdsTest
     }
 
     @Test
-    public void equals()
+    void equals()
     {
         AbstractEqualsTest equalsTest = new AbstractEqualsTest()
         {

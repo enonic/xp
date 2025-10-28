@@ -9,10 +9,10 @@ import com.google.common.collect.ImmutableSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AbstractImmutableEntitySetTest
+class AbstractImmutableEntitySetTest
 {
     @Test
-    public void getSet_iterator_of_returned_set_iterates_over_items_in_inserted_order()
+    void getSet_iterator_of_returned_set_iterates_over_items_in_inserted_order()
     {
         // setup
         MySet mySet = new MySet( ImmutableSet.of( "a", "b", "c" ) );
@@ -26,13 +26,13 @@ public class AbstractImmutableEntitySetTest
     }
 
     @Test
-    public void isNotEmpty()
+    void isNotEmpty()
     {
         assertEquals( true, new MySet( ImmutableSet.of( "a", "b", "c" ) ).isNotEmpty() );
     }
 
     @Test
-    public void isEmpty()
+    void isEmpty()
     {
         assertEquals( false, new MySet( ImmutableSet.of( "a", "b", "c" ) ).isEmpty() );
     }

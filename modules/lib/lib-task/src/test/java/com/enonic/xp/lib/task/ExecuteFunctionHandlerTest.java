@@ -12,7 +12,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
-public class ExecuteFunctionHandlerTest
+class ExecuteFunctionHandlerTest
     extends ScriptTestSupport
 {
     private TaskService taskService;
@@ -27,7 +27,7 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
-    public void testExample()
+    void testExample()
     {
         final TaskId taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         Mockito.when( this.taskService.submitLocalTask( any() ) ).thenReturn( taskId );
@@ -36,8 +36,7 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
-    public void testExecuteFunction()
-        throws Exception
+    void testExecuteFunction()
     {
         Mockito.when( this.taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "123" ) );
 
@@ -45,8 +44,7 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
-    public void testExecuteFunctionThrowingError()
-        throws Exception
+    void testExecuteFunctionThrowingError()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );

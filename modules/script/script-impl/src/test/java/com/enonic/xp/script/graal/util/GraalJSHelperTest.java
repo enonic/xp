@@ -16,21 +16,21 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GraalJSHelperTest
+class GraalJSHelperTest
 {
     private Context context;
 
     private JavascriptHelper javascriptHelper;
 
     @BeforeEach
-    public void setUp()
+    void setUp()
     {
         this.context = new GraalJSContextFactory().create();
         this.javascriptHelper = new GraalJavascriptHelperFactory().create( context );
     }
 
     @AfterEach
-    public void destroy()
+    void destroy()
     {
         this.context.close();
     }

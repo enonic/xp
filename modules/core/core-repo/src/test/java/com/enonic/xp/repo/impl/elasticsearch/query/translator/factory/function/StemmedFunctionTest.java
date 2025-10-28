@@ -9,12 +9,11 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.BaseTestBu
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StemmedFunctionTest
+class StemmedFunctionTest
     extends BaseTestBuilderFactory
 {
     @Test
-    public void test()
-        throws Exception
+    void test()
     {
         final String expected = load( "stemmed_function.json" );
 

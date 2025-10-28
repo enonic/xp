@@ -4,10 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TaskStateTest
+class TaskStateTest
 {
     @Test
-    public void testStates()
+    void testStates()
     {
         assertEquals( 4, TaskState.values().length );
     }

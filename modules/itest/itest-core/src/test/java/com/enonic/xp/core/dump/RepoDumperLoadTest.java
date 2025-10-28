@@ -14,19 +14,17 @@ import com.enonic.xp.repo.impl.node.NodeHelper;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class RepoDumperLoadTest
+class RepoDumperLoadTest
     extends AbstractNodeTest
 {
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         createDefaultRootNode();
     }
 
     @Test
-    public void load()
-        throws Exception
+    void load()
     {
         // create a batch of notes greater than elasticsearch can return in a single query
         final int amountOfNodesToLoad = 10_100;

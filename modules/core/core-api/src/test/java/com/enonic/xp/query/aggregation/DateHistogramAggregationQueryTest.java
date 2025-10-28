@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DateHistogramAggregationQueryTest
+class DateHistogramAggregationQueryTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final DateHistogramAggregationQuery query = DateHistogramAggregationQuery.create( "query" ).
             format( "format" ).

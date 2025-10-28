@@ -8,34 +8,34 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BranchTest
+class BranchTest
 {
     @Test
-    public void empty()
+    void empty()
     {
         assertThrows( IllegalArgumentException.class, () -> Branch.from( "" ) );
     }
 
     @Test
-    public void starts_with_dot()
+    void starts_with_dot()
     {
         assertThrows( IllegalArgumentException.class, () -> Branch.from( ".myBranch" ) );
     }
 
     @Test
-    public void allowed_characters()
+    void allowed_characters()
     {
         Branch.from( "my.branch-this:IS-my-branch" );
     }
 
     @Test
-    public void underscore_not_allowed()
+    void underscore_not_allowed()
     {
         assertThrows( IllegalArgumentException.class, () -> Branch.from( "my.branch-this:IS-my_branch" ) );
     }
 
     @Test
-    public void fromString()
+    void fromString()
     {
         Branch branch = Branch.from( "aaa" );
         assertEquals( "aaa", branch.getValue() );
@@ -44,7 +44,7 @@ public class BranchTest
     }
 
     @Test
-    public void fromBuilder()
+    void fromBuilder()
     {
         Branch.Builder builder = Branch.create();
         builder.value( "bbb" );
@@ -54,7 +54,7 @@ public class BranchTest
     }
 
     @Test
-    public void equalsContract()
+    void equalsContract()
     {
         EqualsVerifier.forClass( Branch.class ).withNonnullFields( "value" ).verify();
     }

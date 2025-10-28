@@ -8,7 +8,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CreateUserHandlerTest
+class CreateUserHandlerTest
     extends ScriptTestSupport
 {
     private SecurityService securityService;
@@ -23,14 +23,14 @@ public class CreateUserHandlerTest
     }
 
     @Test
-    public void testExamples()
+    void testExamples()
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
         runScript( "/lib/xp/examples/auth/createUser.js" );
     }
 
     @Test
-    public void testCreateUser()
+    void testCreateUser()
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUser() );
 
@@ -38,7 +38,7 @@ public class CreateUserHandlerTest
     }
 
     @Test
-    public void testCreateUserNoEmail()
+    void testCreateUserNoEmail()
     {
         Mockito.when( securityService.createUser( Mockito.any() ) ).thenReturn( TestDataFixtures.getTestUserWithoutEmail() );
 
@@ -46,7 +46,7 @@ public class CreateUserHandlerTest
     }
 
     @Test
-    public void testCreateUserWithMissingArg()
+    void testCreateUserWithMissingArg()
     {
         assertThrows( NullPointerException.class, () -> runFunction( "/test/createUser-test.js", "createUserWithMissingArg" ) );
     }

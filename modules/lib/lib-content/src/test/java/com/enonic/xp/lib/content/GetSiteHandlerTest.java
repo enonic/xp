@@ -11,7 +11,7 @@ class GetSiteHandlerTest
     extends BaseContentHandlerTest
 {
     @Test
-    public void testExample()
+    void testExample()
     {
         final Site site = TestDataFixtures.newSite();
         when( this.contentService.findNearestSiteByPath( Mockito.any() ) ).thenReturn( site );

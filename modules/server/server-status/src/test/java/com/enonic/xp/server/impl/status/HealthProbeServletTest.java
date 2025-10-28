@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class HealthProbeServletTest
+class HealthProbeServletTest
 {
     private static final List<String> TRACKED_SERVICE_NAMES =
         List.of( "org.elasticsearch.client.Client", "org.elasticsearch.client.AdminClient", "org.elasticsearch.client.ClusterAdminClient" );
@@ -42,14 +42,14 @@ public class HealthProbeServletTest
     private BundleContext bundleContext;
 
     @BeforeEach
-    public void activate()
+    void activate()
         throws Exception
     {
         when( res.getWriter() ).thenReturn( printWriter );
     }
 
     @Test
-    public void testHealthy()
+    void testHealthy()
         throws Exception
     {
         for ( String s : TRACKED_SERVICE_NAMES )
@@ -72,7 +72,7 @@ public class HealthProbeServletTest
     }
 
     @Test
-    public void testUnhealthy()
+    void testUnhealthy()
         throws Exception
     {
         final HealthProbeServlet servlet = new HealthProbeServlet( bundleContext );

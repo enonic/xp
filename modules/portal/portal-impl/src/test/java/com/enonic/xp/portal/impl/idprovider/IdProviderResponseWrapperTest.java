@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IdProviderResponseWrapperTest
+class IdProviderResponseWrapperTest
 {
 
     private IdProviderControllerService idProviderControllerService;
@@ -25,7 +25,7 @@ public class IdProviderResponseWrapperTest
     private IdProviderResponseWrapper idProviderResponseWrapper;
 
     @BeforeEach
-    public void setup()
+    void setup()
         throws IOException
     {
         this.idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
@@ -38,7 +38,7 @@ public class IdProviderResponseWrapperTest
     }
 
     @Test
-    public void testSetStatus()
+    void testSetStatus()
         throws IOException
     {
         idProviderResponseWrapper.setStatus( 404 );
@@ -50,7 +50,7 @@ public class IdProviderResponseWrapperTest
     }
 
     @Test
-    public void testSendError()
+    void testSendError()
         throws IOException
     {
         idProviderResponseWrapper.sendError( 404 );
@@ -62,7 +62,7 @@ public class IdProviderResponseWrapperTest
     }
 
     @Test
-    public void testSendErrorWithMessage()
+    void testSendErrorWithMessage()
         throws IOException
     {
         idProviderResponseWrapper.sendError( 404, "message" );
@@ -74,7 +74,7 @@ public class IdProviderResponseWrapperTest
     }
 
     @Test
-    public void testGetWriter()
+    void testGetWriter()
         throws IOException
     {
         assertNull( idProviderResponseWrapper.getWriter() );
@@ -83,7 +83,7 @@ public class IdProviderResponseWrapperTest
     }
 
     @Test
-    public void testGetOutputStream()
+    void testGetOutputStream()
         throws IOException
     {
         ServletOutputStream outputStream = idProviderResponseWrapper.getOutputStream();

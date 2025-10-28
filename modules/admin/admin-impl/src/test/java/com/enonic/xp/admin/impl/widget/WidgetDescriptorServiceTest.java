@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WidgetDescriptorServiceTest
+class WidgetDescriptorServiceTest
 {
     private DescriptorService descriptorService;
 
@@ -37,7 +37,7 @@ public class WidgetDescriptorServiceTest
     private WidgetDescriptor widgetDescriptor5;
 
     @BeforeEach
-    public void setup()
+    void setup()
     {
         this.descriptorService = Mockito.mock( DescriptorService.class );
 
@@ -77,8 +77,7 @@ public class WidgetDescriptorServiceTest
     }
 
     @Test
-    public void get_by_application()
-        throws Exception
+    void get_by_application()
     {
         final Descriptors<WidgetDescriptor> result = this.service.getByApplication( ApplicationKey.from( "app" ) );
 
@@ -88,8 +87,7 @@ public class WidgetDescriptorServiceTest
     }
 
     @Test
-    public void get_by_interfaces()
-        throws Exception
+    void get_by_interfaces()
     {
         final Descriptors<WidgetDescriptor> result = this.service.getByInterfaces( "com.enonic.xp.my-interface" );
         assertEquals( 4, result.getSize() );
@@ -100,8 +98,7 @@ public class WidgetDescriptorServiceTest
     }
 
     @Test
-    public void get_by_key()
-        throws Exception
+    void get_by_key()
     {
         final WidgetDescriptor allowedWidget = this.service.getByKey( DescriptorKey.from( "app:d" ) );
         assertSame( allowedWidget, widgetDescriptor4 );

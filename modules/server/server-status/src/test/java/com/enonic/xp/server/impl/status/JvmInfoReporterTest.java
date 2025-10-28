@@ -9,7 +9,7 @@ import com.enonic.xp.status.BaseReporterTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JvmInfoReporterTest
+class JvmInfoReporterTest
     extends BaseReporterTest<JvmInfoReporter>
 {
     public JvmInfoReporterTest()
@@ -19,13 +19,12 @@ public class JvmInfoReporterTest
 
     @Override
     protected JvmInfoReporter newReporter()
-        throws Exception
     {
         return new JvmInfoReporter();
     }
 
     @Test
-    public void testReport()
+    void testReport()
         throws Exception
     {
         final JsonNode json = jsonReport();

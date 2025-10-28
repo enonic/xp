@@ -10,7 +10,7 @@ import com.enonic.xp.support.JsonTestHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PropertySetJsonTest
+class PropertySetJsonTest
 {
     private final JsonTestHelper jsonTestHelper;
 
@@ -20,7 +20,7 @@ public class PropertySetJsonTest
     }
 
     @Test
-    public void deserialize_serialization_of_Property()
+    void deserialize_serialization_of_Property()
         throws IOException
     {
         PropertyTree tree = new PropertyTree();
@@ -44,7 +44,7 @@ public class PropertySetJsonTest
     }
 
     @Test
-    public void deserialize_serialization_of_DataSet()
+    void deserialize_serialization_of_DataSet()
         throws IOException
     {
         PropertyTree tree = new PropertyTree();

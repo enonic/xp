@@ -19,7 +19,7 @@ import com.enonic.xp.site.Site;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class GetNearestSiteCommandTest
+class GetNearestSiteCommandTest
 {
     private NodeService nodeService;
 
@@ -30,8 +30,7 @@ public class GetNearestSiteCommandTest
     private ContentTypeService contentTypeService;
 
     @BeforeEach
-    public void setUp()
-        throws Exception
+    void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.nodeService = Mockito.mock( NodeService.class );
@@ -40,8 +39,7 @@ public class GetNearestSiteCommandTest
     }
 
     @Test
-    public void get_nearest_site_content_is_site()
-        throws Exception
+    void get_nearest_site_content_is_site()
     {
         final Node node = Node.create().
             id( NodeId.from( "test" ) ).
@@ -60,8 +58,7 @@ public class GetNearestSiteCommandTest
     }
 
     @Test
-    public void get_nearest_site_parent_is_site()
-        throws Exception
+    void get_nearest_site_parent_is_site()
     {
         final ContentId contentId = ContentId.from( "aaa" );
 
@@ -90,8 +87,7 @@ public class GetNearestSiteCommandTest
     }
 
     @Test
-    public void get_nearest_site_parent_of_parent_is_site()
-        throws Exception
+    void get_nearest_site_parent_of_parent_is_site()
     {
         final Node node = Node.create().
             id( NodeId.from( "test" ) ).
@@ -126,8 +122,7 @@ public class GetNearestSiteCommandTest
     }
 
     @Test
-    public void get_nearest_site_no_nearest_site()
-        throws Exception
+    void get_nearest_site_no_nearest_site()
     {
         final Node node = Node.create().
             id( NodeId.from( "test" ) ).

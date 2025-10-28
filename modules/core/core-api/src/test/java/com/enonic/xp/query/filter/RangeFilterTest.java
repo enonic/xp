@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RangeFilterTest
+class RangeFilterTest
 {
     @Test
-    public void testBuilder()
+    void testBuilder()
     {
         final RangeFilter rangeFilter = RangeFilter.create()
             .from( ValueFactory.newDouble( 2.0 ) )
@@ -28,7 +28,7 @@ public class RangeFilterTest
     }
 
     @Test
-    public void testToString()
+    void testToString()
     {
         final RangeFilter filter = RangeFilter.create()
             .from( ValueFactory.newDouble( 2.0 ) )
@@ -41,7 +41,7 @@ public class RangeFilterTest
     }
 
     @Test
-    public void testEmptyFieldName()
+    void testEmptyFieldName()
     {
         assertThrows( NullPointerException.class, () -> RangeFilter.create()
             .from( ValueFactory.newDouble( 2.0 ) )
