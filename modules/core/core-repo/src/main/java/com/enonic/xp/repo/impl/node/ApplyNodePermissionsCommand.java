@@ -184,7 +184,8 @@ public class ApplyNodePermissionsCommand
             appliedVersions.put( node.getNodeVersionId(), updatedSourceNode.nodeVersionMetadata() );
         }
 
-        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.node() : null );
+        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.nodeVersionMetadata().getNodeVersionId() : null,
+                           updatedSourceNode != null ? updatedSourceNode.node().getPermissions() : null );
     }
 
     private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,

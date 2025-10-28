@@ -1,30 +1,30 @@
 package com.enonic.xp.lib.node.mapper;
 
 import com.enonic.xp.lib.node.NodePropertyConstants;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 
 final class PermissionsMapper
     implements MapSerializable
 {
-    private final Node node;
+    private final AccessControlList permissions;
 
-    PermissionsMapper( final Node node )
+    PermissionsMapper( final AccessControlList permissions )
     {
-        this.node = node;
+        this.permissions = permissions;
     }
 
     @Override
     public void serialize( final MapGenerator gen )
     {
-        if ( !node.getPermissions().isEmpty() )
+        if ( permissions != null && !permissions.isEmpty() )
         {
             gen.array( NodePropertyConstants.PERMISSIONS );
-            for ( AccessControlEntry accessControlEntry : node.getPermissions() )
+            for ( AccessControlEntry accessControlEntry : permissions )
             {
                 gen.map();
                 serialize( gen, accessControlEntry );
