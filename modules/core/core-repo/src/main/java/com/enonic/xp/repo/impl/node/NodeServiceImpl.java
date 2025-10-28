@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,7 +13,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -59,6 +57,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.node.Nodes;
@@ -692,11 +691,15 @@ public class NodeServiceImpl
             .execute();
 
         final Map<NodeId, List<ApplyNodePermissionsResult.BranchResult>> resultsByNodeId = result.getResults()
-            .values()
+            .entrySet()
             .stream()
-            .flatMap( Collection::stream )
-            .filter( br -> br.node() != null )
-            .collect( Collectors.groupingBy( br -> br.node().id() ) );
+            .flatMap( entry -> entry.getValue()
+                .stream()
+                .filter( br -> br.nodeVersionId() != null )
+                .collect( Collectors.groupingBy( br -> entry.getKey() ) )
+                .entrySet()
+                .stream() )
+            .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue ) );
 
         for ( Map.Entry<NodeId, List<ApplyNodePermissionsResult.BranchResult>> entry : resultsByNodeId.entrySet() )
         {
@@ -707,26 +710,30 @@ public class NodeServiceImpl
                 .findFirst()
                 .orElse( null );
 
-            final NodeVersionId mainBranchVersion = mainBranchResult != null ? mainBranchResult.node().getNodeVersionId() : null;
+            final NodeVersionId mainBranchVersion = mainBranchResult != null ? mainBranchResult.nodeVersionId() : null;
 
             for ( ApplyNodePermissionsResult.BranchResult br : branchResults )
             {
-                if ( br.node() == null )
+                if ( br.nodeVersionId() == null )
                 {
                     continue;
                 }
 
-                ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build().runWith( () -> {
+                final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build();
+
+                context.runWith( () -> {
                     final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
                     if ( ( mainBranchResult != null && mainBranchResult.branch().equals( br.branch() ) ) ||
-                        !br.node().getNodeVersionId().equals( mainBranchVersion ) )
+                        !br.nodeVersionId().equals( mainBranchVersion ) )
                     {
-                        eventPublisher.publish( NodeEvents.permissionsUpdated( br.node(), internalContext ) );
+                        eventPublisher.publish( NodeEvents.permissionsUpdated( entry.getKey(), internalContext ) );
                     }
                     else
                     {
-                        eventPublisher.publish( NodeEvents.pushed( br.node(), internalContext ) );
+                        final Node persistedNode = nodeStorageService.get( entry.getKey(), internalContext );
+                        eventPublisher.publish(
+                            NodeEvents.pushed( Node.create( persistedNode ).permissions( br.permissions() ).build(), internalContext ) );
                     }
                 } );
             }

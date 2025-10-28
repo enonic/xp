@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class ApplyNodePermissionsResult
@@ -32,18 +33,20 @@ public final class ApplyNodePermissionsResult
         return results;
     }
 
-    public Node getResult( final NodeId nodeId, final Branch branch )
+    public AccessControlList getResult( final NodeId nodeId, final Branch branch )
     {
         final List<BranchResult> results = this.results.get( nodeId );
 
         return results != null ? this.results.get( nodeId )
-            .stream().filter( br -> br.branch.equals( branch ) ).map( BranchResult::node )
+            .stream()
+            .filter( br -> br.branch.equals( branch ) )
+            .map( BranchResult::permissions )
             .filter( Objects::nonNull )
             .findAny()
             .orElse( null ) : null;
     }
 
-    public record BranchResult(Branch branch, Node node)
+    public record BranchResult(Branch branch, NodeVersionId nodeVersionId, AccessControlList permissions)
     {
 
     }
@@ -56,9 +59,9 @@ public final class ApplyNodePermissionsResult
         {
         }
 
-        public Builder addResult( NodeId nodeId, Branch branch, Node node )
+        public Builder addResult( NodeId nodeId, Branch branch, NodeVersionId nodeVersionId, AccessControlList permissions )
         {
-            results.put( nodeId, new BranchResult( branch, node ) );
+            results.put( nodeId, new BranchResult( branch, nodeVersionId, permissions ) );
             return this;
         }
 

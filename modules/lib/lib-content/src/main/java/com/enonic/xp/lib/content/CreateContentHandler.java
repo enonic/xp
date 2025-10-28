@@ -72,8 +72,9 @@ public final class CreateContentHandler
             displayName( this.displayName ).
             requireValid( this.requireValid ).
             type( contentTypeName ).
-            contentData( createPropertyTree( data, contentTypeName ) ).
-            extraDatas( createExtraDatas( x, contentTypeName ) ).page( createPage( page ) ).
+            contentData( createPropertyTree( data, contentTypeName ) ).extraDatas( createExtraDatas( x, contentTypeName ) )
+            .page( createPage( page ) )
+            .
             language( language != null ? Locale.forLanguageTag( language ) : null ).
             childOrder( childOrder != null ? ChildOrder.from( childOrder ) : null ).
             refresh( this.refresh ).

@@ -10,6 +10,7 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
@@ -37,11 +38,11 @@ public class ApplyPermissionsHandlerTest
         Mockito.when( this.nodeService.applyPermissions( Mockito.any() ) )
             .thenReturn( ApplyNodePermissionsResult.create()
                              .addResult( applyNodePermissionsParams.getNodeId(), ContextAccessor.current().getBranch(),
-                                         Node.create( applyNodePermissionsParams.getNodeId() ).build() )
-                             .addResult( applyNodePermissionsParams.getNodeId(), ContentConstants.BRANCH_MASTER,
-                                         Node.create( applyNodePermissionsParams.getNodeId() ).build() )
-                             .addResult( NodeId.from( "nodeId2" ), ContextAccessor.current().getBranch(),
-                                         Node.create( NodeId.from( "nodeId2" ) ).build() )
+                                         NodeVersionId.from( 1 ), AccessControlList.empty() )
+                             .addResult( applyNodePermissionsParams.getNodeId(), ContentConstants.BRANCH_MASTER, NodeVersionId.from( 2 ),
+                                         AccessControlList.empty() )
+                             .addResult( NodeId.from( "nodeId2" ), ContextAccessor.current().getBranch(), NodeVersionId.from( 3 ),
+                                         AccessControlList.empty() )
                              .build() );
 
         Mockito.when( this.nodeService.getByPath( Mockito.any() ) )
