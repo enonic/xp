@@ -24,8 +24,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
@@ -44,8 +44,8 @@ import com.enonic.xp.core.impl.content.ContentSyncEventType;
 import com.enonic.xp.core.impl.content.ContentSyncParams;
 import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.impl.content.SyncContentServiceImpl;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.content.schema.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
+import com.enonic.xp.core.impl.content.schema.MixinServiceImpl;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -59,7 +59,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReferences;
 
@@ -294,10 +294,10 @@ class ParentContentSynchronizerTest
     @Test
     void updateMediaChanged()
     {
-        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        xDataService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
+        contentService.setMixinService( xDataService );
+        contentService.setMixinMappingService( xDataMappingService );
 
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -341,7 +341,7 @@ class ParentContentSynchronizerTest
         projectContext.callWith( () -> contentService.patch( PatchContentParams.create().patcher( edit -> {
             edit.data.setValue( new PropertyTree() );
             edit.displayName.setValue( "newDisplayName" );
-            edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
+            edit.extraDatas.setValue( Mixins.create().add( createExtraData() ).build() );
             edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
             edit.language.setValue( Locale.forLanguageTag( "no" ) );
             edit.page.setValue( createPage() );
@@ -381,10 +381,10 @@ class ParentContentSynchronizerTest
     @Test
     void updateAttachmentsChanged()
     {
-        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        xDataService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
+        contentService.setMixinService( xDataService );
+        contentService.setMixinMappingService( xDataMappingService );
 
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         syncCreated( sourceContent.getId() );
@@ -1005,7 +1005,7 @@ class ParentContentSynchronizerTest
         return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
-    private ExtraData createExtraData()
+    private Mixin createExtraData()
     {
         final PropertyTree mediaData = new PropertyTree();
         mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L );
@@ -1013,7 +1013,7 @@ class ParentContentSynchronizerTest
         mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
         mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        return new ExtraData( XDataName.from( "myApp:xData" ), mediaData );
+        return new Mixin( MixinName.from( "myApp:xData" ), mediaData );
     }
 
     private Page createPage()

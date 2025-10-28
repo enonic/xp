@@ -11,51 +11,51 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataNames;
-import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.xdata.MixinNames;
+import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.xdata.MixinDescriptors;
 
 @Component(immediate = true)
-public final class XDataServiceImpl
-    implements XDataService
+public final class MixinServiceImpl
+    implements MixinService
 {
-    private final BuiltinXDataTypes builtInTypes;
+    private final BuiltinMixinTypes builtInTypes;
 
     private final ApplicationService applicationService;
 
-    private final XDataLoader xDataLoader;
+    private final MixinDescriptorLoader mixinLoader;
 
     @Activate
-    public XDataServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
+    public MixinServiceImpl( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
-        this.builtInTypes = new BuiltinXDataTypes();
+        this.builtInTypes = new BuiltinMixinTypes();
         this.applicationService = applicationService;
-        this.xDataLoader = new XDataLoader( resourceService );
+        this.mixinLoader = new MixinDescriptorLoader( resourceService );
     }
 
     @Override
-    public XData getByName( final XDataName name )
+    public MixinDescriptor getByName( final MixinName name )
     {
         if ( SchemaHelper.isSystem( name.getApplicationKey() ) )
         {
             return this.builtInTypes.getXData( name );
         }
 
-        return xDataLoader.get( name );
+        return mixinLoader.get( name );
     }
 
     @Override
-    public XDatas getByNames( final XDataNames names )
+    public MixinDescriptors getByNames( final MixinNames names )
     {
-        return names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( XDatas.collector() );
+        return names.stream().map( this::getByName ).filter( Objects::nonNull ).collect( MixinDescriptors.collector() );
     }
 
     @Override
-    public XDatas getAll()
+    public MixinDescriptors getAll()
     {
-        final XDatas.Builder builder = XDatas.create();
+        final MixinDescriptors.Builder builder = MixinDescriptors.create();
         builder.addAll( this.builtInTypes.getAll() );
 
         for ( final Application application : this.applicationService.getInstalledApplications() )
@@ -67,16 +67,16 @@ public final class XDataServiceImpl
     }
 
     @Override
-    public XDatas getByApplication( final ApplicationKey key )
+    public MixinDescriptors getByApplication( final ApplicationKey key )
     {
         if ( SchemaHelper.isSystem( key ) )
         {
             return this.builtInTypes.getAll()
                 .stream()
                 .filter( type -> type.getName().getApplicationKey().equals( key ) )
-                .collect( XDatas.collector() );
+                .collect( MixinDescriptors.collector() );
         }
 
-        return xDataLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect(  XDatas.collector() );
+        return mixinLoader.findNames( key ).stream().map( this::getByName ).filter( Objects::nonNull ).collect( MixinDescriptors.collector() );
     }
 }

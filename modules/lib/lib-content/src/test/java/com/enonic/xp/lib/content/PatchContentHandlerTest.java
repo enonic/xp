@@ -24,8 +24,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -346,14 +346,14 @@ public class PatchContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( eq( getContentType ) ) ).thenReturn( contentType );
 
-        final XData xData1 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
+        final MixinDescriptor xData1 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:myschema" ) )
             .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.DOUBLE ).build() )
             .build();
         when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
 
-        final XData xData2 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:other" ) )
+        final MixinDescriptor xData2 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:other" ) )
             .addFormItem( Input.create().label( "name" ).name( "name" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .build();
         when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );

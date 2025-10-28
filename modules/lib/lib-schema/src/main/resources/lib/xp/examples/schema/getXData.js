@@ -7,7 +7,7 @@ var assert = require('/lib/xp/testing');
 // Fetch virtual x-data type.
 var result = schemaLib.getSchema({
     name: 'myapp:mydata',
-    type: 'XDATA'
+    type: 'MIXIN'
 });
 
 log.info('Fetched x-data: ' + result.name);
@@ -21,7 +21,7 @@ assert.assertJsonEquals({
     displayNameI18nKey: 'media.cameraInfo.displayName',
     modifiedTime: '1970-01-06T03:07:14.242Z',
     resource: '<x-data><some-data></some-data></x-data>',
-    type: 'XDATA',
+    type: 'MIXIN',
     form: []
 }, result);
 

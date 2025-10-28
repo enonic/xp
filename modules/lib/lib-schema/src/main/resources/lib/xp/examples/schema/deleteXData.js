@@ -8,7 +8,7 @@ var assert = require('/lib/xp/testing');
 
 var params = {
     name: 'myapp:mydata',
-    type: 'XDATA'
+    type: 'MIXIN'
 };
 
 var result = schemaLib.deleteSchema(params);

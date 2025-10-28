@@ -5,28 +5,28 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.schema.BaseSchemaName;
 
 @PublicApi
-public final class XDataName
+public final class MixinName
     extends BaseSchemaName
-    implements Comparable<XDataName>
+    implements Comparable<MixinName>
 {
-    private XDataName( final String name )
+    private MixinName( final String name )
     {
         super( name );
     }
 
-    private XDataName( final ApplicationKey applicationKey, final String localName )
+    private MixinName( final ApplicationKey applicationKey, final String localName )
     {
         super( applicationKey, localName );
     }
 
-    public static XDataName from( final ApplicationKey applicationKey, final String localName )
+    public static MixinName from( final ApplicationKey applicationKey, final String localName )
     {
-        return new XDataName( applicationKey, localName );
+        return new MixinName( applicationKey, localName );
     }
 
-    public static XDataName from( final String xdataName )
+    public static MixinName from( final String value )
     {
-        return new XDataName( xdataName );
+        return new MixinName( value );
     }
 
     public String getApplicationPrefix()
@@ -35,7 +35,7 @@ public final class XDataName
     }
 
     @Override
-    public int compareTo( final XDataName that )
+    public int compareTo( final MixinName that )
     {
         return this.toString().compareTo( that.toString() );
     }

@@ -17,7 +17,7 @@ public final class CmsDescriptor
 
     private final Form form;
 
-    private final XDataMappings xDataMappings;
+    private final MixinMappings mixinMappings;
 
     private final Instant modifiedTime;
 
@@ -25,7 +25,7 @@ public final class CmsDescriptor
     {
         this.applicationKey = Objects.requireNonNull( builder.applicationKey );
         this.form = requireNonNullElse( builder.form, Form.empty() );
-        this.xDataMappings = requireNonNullElse( builder.xDataMappings, XDataMappings.empty() );
+        this.mixinMappings = requireNonNullElse( builder.mixinMappings, MixinMappings.empty() );
         this.modifiedTime = builder.modifiedTime;
     }
 
@@ -39,9 +39,9 @@ public final class CmsDescriptor
         return form;
     }
 
-    public XDataMappings getXDataMappings()
+    public MixinMappings getMixinMappings()
     {
-        return xDataMappings;
+        return mixinMappings;
     }
 
     public Instant getModifiedTime()
@@ -70,7 +70,7 @@ public final class CmsDescriptor
 
         private Form form;
 
-        private XDataMappings xDataMappings;
+        private MixinMappings mixinMappings;
 
         private Instant modifiedTime;
 
@@ -82,7 +82,7 @@ public final class CmsDescriptor
         {
             this.applicationKey = cmsDescriptor.applicationKey;
             this.form = cmsDescriptor.form != null ? Form.create( cmsDescriptor.form ).build() : Form.empty();
-            this.xDataMappings = cmsDescriptor.xDataMappings;
+            this.mixinMappings = cmsDescriptor.mixinMappings;
             this.modifiedTime = cmsDescriptor.modifiedTime;
         }
 
@@ -98,9 +98,9 @@ public final class CmsDescriptor
             return this;
         }
 
-        public Builder xDataMappings( final XDataMappings xDataMappings )
+        public Builder mixinMappings( final MixinMappings mixinMappings )
         {
-            this.xDataMappings = xDataMappings;
+            this.mixinMappings = mixinMappings;
             return this;
         }
 

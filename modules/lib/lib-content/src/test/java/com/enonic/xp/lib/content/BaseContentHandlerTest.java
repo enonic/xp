@@ -7,7 +7,7 @@ import com.enonic.xp.core.impl.PropertyTreeMarshallerServiceFactory;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
@@ -20,7 +20,7 @@ public abstract class BaseContentHandlerTest
 
     protected CmsFormFragmentService formFragmentService;
 
-    protected XDataService xDataService;
+    protected MixinService xDataService;
 
     protected CmsService cmsService;
 
@@ -35,13 +35,13 @@ public abstract class BaseContentHandlerTest
         this.contentService = Mockito.mock( ContentService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.formFragmentService = Mockito.mock( CmsFormFragmentService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.xDataService = Mockito.mock( MixinService.class );
         this.cmsService = Mockito.mock( CmsService.class );
         this.propertyTreeMarshallerService = PropertyTreeMarshallerServiceFactory.newInstance();
         addService( ContentService.class, this.contentService );
         addService( CmsFormFragmentService.class, this.formFragmentService );
         addService( ContentTypeService.class, this.contentTypeService );
-        addService( XDataService.class, this.xDataService );
+        addService( MixinService.class, this.xDataService );
         addService( CmsService.class, this.cmsService );
         addService( PropertyTreeMarshallerService.class, this.propertyTreeMarshallerService );
     }

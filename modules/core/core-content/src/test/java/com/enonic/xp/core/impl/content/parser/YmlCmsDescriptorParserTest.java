@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -40,16 +40,16 @@ public class YmlCmsDescriptorParserTest
         assertNotNull( form.getFormItem( FormItemPath.from( "backgroundColor" ) ) );
 
         // verify xData
-        final XDataMappings xDataMappings = siteDescriptor.getXDataMappings();
-        final Iterator<XDataMapping> xDataMappingIterator = xDataMappings.iterator();
+        final MixinMappings xDataMappings = siteDescriptor.getMixinMappings();
+        final Iterator<MixinMapping> xDataMappingIterator = xDataMappings.iterator();
 
-        final XDataMapping xDataMapping_1 = xDataMappingIterator.next();
-        assertEquals( XDataName.from( currentApplication, "all-except-folders" ), xDataMapping_1.getXDataName() );
+        final MixinMapping xDataMapping_1 = xDataMappingIterator.next();
+        assertEquals( MixinName.from( currentApplication, "all-except-folders" ), xDataMapping_1.getMixinName() );
         assertEquals( "^(?!base:folder$).*", xDataMapping_1.getAllowContentTypes() );
         assertTrue( xDataMapping_1.getOptional() );
 
-        final XDataMapping xDataMapping_2 = xDataMappingIterator.next();
-        assertEquals( XDataName.from( currentApplication, "folders-only" ), xDataMapping_2.getXDataName() );
+        final MixinMapping xDataMapping_2 = xDataMappingIterator.next();
+        assertEquals( MixinName.from( currentApplication, "folders-only" ), xDataMapping_2.getMixinName() );
         assertEquals( "base:folder", xDataMapping_2.getAllowContentTypes() );
         assertFalse( xDataMapping_2.getOptional() );
     }

@@ -100,7 +100,7 @@ public final class UpdateContentHandler
         final Object extraData = map.get( "x" );
         if ( extraData instanceof Map )
         {
-            target.extraDatas = createExtraDatas( (Map) extraData, existingContent.getType() );
+            target.extraDatas = createMixins( (Map) extraData, existingContent.getType() );
         }
 
         updatePage( target, map );

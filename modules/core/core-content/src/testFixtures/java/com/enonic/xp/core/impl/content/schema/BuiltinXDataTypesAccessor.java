@@ -1,16 +1,16 @@
 package com.enonic.xp.core.impl.content.schema;
 
-import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.schema.xdata.MixinDescriptors;
 
 public class BuiltinXDataTypesAccessor
 {
-    private static final BuiltinXDataTypes BUILTIN_XDATA_TYPES = new BuiltinXDataTypes();
+    private static final BuiltinMixinTypes BUILTIN_XDATA_TYPES = new BuiltinMixinTypes();
 
     private BuiltinXDataTypesAccessor()
     {
     }
 
-    public static XDatas getAll()
+    public static MixinDescriptors getAll()
     {
         return BUILTIN_XDATA_TYPES.getAll();
     }

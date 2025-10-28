@@ -11,8 +11,8 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.data.PropertySet;
@@ -43,16 +43,13 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.SiteConfigs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,7 +65,7 @@ class HtmlAreaContentProcessorTest
 
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService xDataService;
 
     private CmsService cmsService;
 
@@ -85,7 +82,7 @@ class HtmlAreaContentProcessorTest
     {
 
         this.cmsService = Mockito.mock( CmsService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.xDataService = Mockito.mock( MixinService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
@@ -239,9 +236,9 @@ class HtmlAreaContentProcessorTest
     @Test
     void extra_data()
     {
-        final XDataName xDataName = XDataName.from( "xDataName" );
+        final MixinName xDataName = MixinName.from( "xDataName" );
 
-        final XData xData = XData.create()
+        final MixinDescriptor xData = MixinDescriptor.create()
             .name( xDataName )
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
@@ -258,9 +255,9 @@ class HtmlAreaContentProcessorTest
                                 .type( ContentTypeName.site() )
                                 .parentPath( ContentPath.ROOT )
                                 .data( new PropertyTree() )
-                                .extraDatas( ExtraDatas.create()
+                                .extraDatas( Mixins.create()
                                                  .add(
-                                                     new ExtraData( XDataName.from( "xDataName" ), data ) )
+                                                     new Mixin( MixinName.from( "xDataName" ), data ) )
                                                  .build() )
                                 .build() )
             .build();
@@ -567,9 +564,9 @@ class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id1\" src=\"/admin/rest-v2/cs/cms/features/content/content/image/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b?ts=1438862613943&amp;size=679&amp;scaleWidth=true\"/>" ) );
 
-        final XDataName xDataName = XDataName.from( "xDataName" );
+        final MixinName xDataName = MixinName.from( "xDataName" );
 
-        final XData xData = XData.create()
+        final MixinDescriptor xData = MixinDescriptor.create()
             .name( xDataName )
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
@@ -583,7 +580,7 @@ class HtmlAreaContentProcessorTest
         final CreateContentParams createContentParams = CreateContentParams.create()
             .parent( ContentPath.ROOT )
             .contentData( data )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "xDataName" ), extraData ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "xDataName" ), extraData ) ).build() )
             .type( contentTypeName )
             .build();
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( createContentParams, null, ContentIds.empty() );

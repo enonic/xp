@@ -2,13 +2,13 @@ package com.enonic.xp.lib.schema.mapper;
 
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
 import com.enonic.xp.script.serializer.MapGenerator;
 
-public final class XDataMapper
-    extends SchemaMapper<XData>
+public final class MixinDescriptorMapper
+    extends SchemaMapper<MixinDescriptor>
 {
-    public XDataMapper( final DynamicSchemaResult<XData> schema )
+    public MixinDescriptorMapper( final DynamicSchemaResult<MixinDescriptor> schema )
     {
         super( schema );
     }
@@ -22,6 +22,6 @@ public final class XDataMapper
     @Override
     protected String getType()
     {
-        return DynamicContentSchemaType.XDATA.name();
+        return DynamicContentSchemaType.MIXIN.name();
     }
 }

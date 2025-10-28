@@ -29,8 +29,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DuplicateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.MoveContentParams;
@@ -69,13 +69,13 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_HEIGHT;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_IMAGE_WIDTH;
@@ -247,7 +247,7 @@ class ProjectContentEventListenerTest
                 contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
                     edit.data.setValue( new PropertyTree() );
                     edit.displayName.setValue( "newDisplayName" );
-                    edit.extraDatas.setValue( ExtraDatas.create().add( createExtraData() ).build() );
+                    edit.extraDatas.setValue( Mixins.create().add( createExtraData() ).build() );
                     edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
                     edit.language.setValue( Locale.forLanguageTag( "no" ) );
                     edit.page.setValue( createPage() );
@@ -483,7 +483,7 @@ class ProjectContentEventListenerTest
     void testUpdatedWithExtradata()
     {
         final ApplicationKey myApp = ApplicationKey.from( "myApp" );
-        final XDataName xDataName = XDataName.from( myApp, "xData" );
+        final MixinName xDataName = MixinName.from( myApp, "xData" );
 
         projectContext.runWith( () -> projectService.modify( ModifyProjectParams.create()
                                                                  .addSiteConfig( SiteConfig.create()
@@ -496,16 +496,16 @@ class ProjectContentEventListenerTest
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( myApp )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( xDataName )
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( xDataName )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( true )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final XData xData = XData.create().name( xDataName ).form( Form.create().build() ).build();
+        final MixinDescriptor xData = MixinDescriptor.create().name( xDataName ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
 
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
@@ -514,7 +514,7 @@ class ProjectContentEventListenerTest
             () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
-                edit.extraDatas = ExtraDatas.create().add( createExtraData() ).build();
+                edit.extraDatas = Mixins.create().add( createExtraData() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
@@ -538,7 +538,7 @@ class ProjectContentEventListenerTest
             () -> contentService.update( new UpdateContentParams().contentId( sourceContent2.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
-                edit.extraDatas = ExtraDatas.create().build();
+                edit.extraDatas = Mixins.create().build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
@@ -1174,7 +1174,7 @@ class ProjectContentEventListenerTest
         assertDoesNotThrow( this::handleEvents );
     }
 
-    private ExtraData createExtraData()
+    private Mixin createExtraData()
     {
         final PropertyTree mediaData = new PropertyTree();
         mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L );
@@ -1182,7 +1182,7 @@ class ProjectContentEventListenerTest
         mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
         mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        return new ExtraData( XDataName.from( "myApp:xData" ), mediaData );
+        return new Mixin( MixinName.from( "myApp:xData" ), mediaData );
     }
 
     private Page createPage()

@@ -6,12 +6,12 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.schema.BaseSchema;
 
-public final class XData
-    extends BaseSchema<XDataName>
+public final class MixinDescriptor
+    extends BaseSchema<MixinName>
 {
     private final Form form;
 
-    private XData( final Builder builder )
+    private MixinDescriptor( final Builder builder )
     {
         super( builder );
         this.form = builder.formBuilder.build();
@@ -27,9 +27,9 @@ public final class XData
         return new Builder();
     }
 
-    public static Builder create( final XData xData )
+    public static Builder create( final MixinDescriptor descriptor )
     {
-        return new Builder( xData );
+        return new Builder( descriptor );
     }
 
     @Override
@@ -47,8 +47,8 @@ public final class XData
         {
             return false;
         }
-        final XData xData = (XData) o;
-        return Objects.equals( form, xData.form );
+        final MixinDescriptor descriptor = (MixinDescriptor) o;
+        return Objects.equals( form, descriptor.form );
     }
 
     @Override
@@ -58,7 +58,7 @@ public final class XData
     }
 
     public static final class Builder
-        extends BaseSchema.Builder<Builder, XDataName>
+        extends BaseSchema.Builder<Builder, MixinName>
     {
         private Form.Builder formBuilder = Form.create();
 
@@ -67,10 +67,10 @@ public final class XData
             super();
         }
 
-        private Builder( final XData xData )
+        private Builder( final MixinDescriptor mixin )
         {
-            super( xData );
-            this.formBuilder = Form.create( xData.getForm() );
+            super( mixin );
+            this.formBuilder = Form.create( mixin.getForm() );
         }
 
         public Builder form( final Form value )
@@ -85,9 +85,9 @@ public final class XData
             return this;
         }
 
-        public XData build()
+        public MixinDescriptor build()
         {
-            return new XData( this );
+            return new MixinDescriptor( this );
         }
     }
 }

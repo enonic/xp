@@ -148,7 +148,7 @@ public final class PatchContentHandler
         parse( map, "modifiedTime", String.class, val -> target.modifiedTime.setValue( Instant.parse( val ) ) );
 
         parse( map, "data", Map.class, val -> target.data.setValue( createPropertyTree( val, target.type.originalValue ) ) );
-        parse( map, "x", Map.class, val -> target.extraDatas.setValue( createExtraDatas( val, target.type.originalValue ) ) );
+        parse( map, "x", Map.class, val -> target.extraDatas.setValue( createMixins( val, target.type.originalValue ) ) );
         parse( map, "publish", Map.class, val -> target.publishInfo.setValue( createContentPublishInfo( val ) ) );
         parse( map, "workflow", Map.class, val -> target.workflowInfo.setValue( createWorkflowInfo( val ) ) );
 

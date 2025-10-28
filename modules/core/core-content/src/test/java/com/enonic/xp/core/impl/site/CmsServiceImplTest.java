@@ -13,7 +13,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +45,7 @@ class CmsServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
         final CmsDescriptor descriptor = this.service.getDescriptor( applicationKey );
         assertEquals( 1, descriptor.getForm().size() );
-        assertEquals( 2, descriptor.getXDataMappings().getSize() );
+        assertEquals( 2, descriptor.getMixinMappings().getSize() );
         assertTrue( Instant.now().isAfter( descriptor.getModifiedTime() ) );
     }
 
@@ -62,7 +62,7 @@ class CmsServiceImplTest
             .containsExactly( InputTypeName.TEXT_LINE, "Base URL", "portal.baseUrl.label" );
 
         // XDataMappings checks
-        final XDataMappings xdataMappings = descriptor.getXDataMappings();
+        final MixinMappings xdataMappings = descriptor.getMixinMappings();
 
         assertThat( xdataMappings.getNames() ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
                                                                 MediaInfo.GPS_INFO_METADATA_NAME );

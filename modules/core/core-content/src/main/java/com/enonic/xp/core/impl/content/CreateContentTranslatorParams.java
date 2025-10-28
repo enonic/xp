@@ -10,7 +10,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
@@ -24,7 +24,7 @@ public class CreateContentTranslatorParams
 {
     private final PropertyTree data;
 
-    private final ExtraDatas extraDatas;
+    private final Mixins extraDatas;
 
     private final ContentTypeName type;
 
@@ -109,7 +109,7 @@ public class CreateContentTranslatorParams
         return data;
     }
 
-    public ExtraDatas getExtraDatas()
+    public Mixins getExtraDatas()
     {
         return extraDatas;
     }
@@ -218,7 +218,7 @@ public class CreateContentTranslatorParams
     {
         private PropertyTree data;
 
-        private ExtraDatas extraDatas;
+        private Mixins extraDatas;
 
         private ContentTypeName type;
 
@@ -261,7 +261,7 @@ public class CreateContentTranslatorParams
         private Builder( final CreateContentParams params )
         {
             this.data = params.getData();
-            this.extraDatas = params.getExtraDatas();
+            this.extraDatas = params.getMixins();
             this.type = params.getType();
             this.owner = params.getOwner();
             this.displayName = params.getDisplayName();
@@ -283,7 +283,7 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder extraDatas( final ExtraDatas extraDatas )
+        public Builder extraDatas( final Mixins extraDatas )
         {
             this.extraDatas = extraDatas;
             return this;
@@ -417,7 +417,7 @@ public class CreateContentTranslatorParams
             return displayName;
         }
 
-        public ExtraDatas getExtraDatas()
+        public Mixins getExtraDatas()
         {
             return extraDatas;
         }

@@ -17,8 +17,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_METADATA_NAME;
@@ -30,10 +30,10 @@ public class CmsServiceImpl
 {
     private static final CmsDescriptor PORTAL_CMS_DESCRIPTOR = CmsDescriptor.create()
         .applicationKey( ApplicationKey.PORTAL )
-        .xDataMappings( XDataMappings.create()
-                            .add( XDataMapping.create().xDataName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
-                            .add( XDataMapping.create().xDataName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
-                            .add( XDataMapping.create().xDataName( GPS_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+        .mixinMappings( MixinMappings.create()
+                            .add( MixinMapping.create().mixinName( IMAGE_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .add( MixinMapping.create().mixinName( CAMERA_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
+                            .add( MixinMapping.create().mixinName( GPS_INFO_METADATA_NAME ).allowContentTypes( "media:image" ).build() )
                             .build() )
         .form( Form.create()
                    .addFormItem( Input.create()

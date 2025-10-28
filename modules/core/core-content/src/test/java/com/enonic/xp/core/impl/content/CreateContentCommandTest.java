@@ -39,7 +39,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -52,8 +52,8 @@ import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.XDataMappingService;
-import com.enonic.xp.site.XDataOptions;
+import com.enonic.xp.site.MixinMappingService;
+import com.enonic.xp.site.MixinOptions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,7 +67,7 @@ class CreateContentCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
     private CmsService cmsService;
 
@@ -75,7 +75,7 @@ class CreateContentCommandTest
 
     private PageDescriptorService pageDescriptorService;
 
-    private XDataMappingService xDataMappingService;
+    private MixinMappingService mixinMappingService;
 
     private SiteConfigService siteConfigService;
 
@@ -90,14 +90,14 @@ class CreateContentCommandTest
         this.nodeService = Mockito.mock( NodeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataMappingService = Mockito.mock( XDataMappingService.class );
+        this.mixinMappingService = Mockito.mock( MixinMappingService.class );
         this.siteConfigService = Mockito.mock( SiteConfigService.class );
 
         this.translator = new ContentNodeTranslator();
 
-        when( this.xDataMappingService.getXDataMappingOptions( any(), any() ) ).thenReturn( XDataOptions.empty() );
+        when( this.mixinMappingService.getMixinMappingOptions( any(), any() ) ).thenReturn( MixinOptions.empty() );
         when( this.siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
         when( this.nodeService.create( any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
     }
@@ -686,10 +686,10 @@ class CreateContentCommandTest
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .mediaInfo( mediaInfo )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .cmsService( this.cmsService )
             .pageDescriptorService( this.pageDescriptorService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .build();
     }

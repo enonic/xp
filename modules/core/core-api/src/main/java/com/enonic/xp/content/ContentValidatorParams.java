@@ -16,7 +16,7 @@ public final class ContentValidatorParams
 
     private final PropertyTree data;
 
-    private final ExtraDatas extraDatas;
+    private final Mixins extraDatas;
 
     private final ContentName name;
 
@@ -28,7 +28,7 @@ public final class ContentValidatorParams
     {
         contentId = builder.contentId;
         data = builder.data;
-        extraDatas = Objects.requireNonNullElse( builder.extraDatas, ExtraDatas.empty() );
+        extraDatas = Objects.requireNonNullElse( builder.extraDatas, Mixins.empty() );
         contentType = builder.contentType;
         name = builder.name;
         displayName = builder.displayName;
@@ -60,7 +60,7 @@ public final class ContentValidatorParams
         return data;
     }
 
-    public ExtraDatas getExtraDatas()
+    public Mixins getExtraDatas()
     {
         return extraDatas;
     }
@@ -87,7 +87,7 @@ public final class ContentValidatorParams
 
         private PropertyTree data;
 
-        private ExtraDatas extraDatas;
+        private Mixins extraDatas;
 
         private CreateAttachments createAttachments;
 
@@ -125,7 +125,7 @@ public final class ContentValidatorParams
             return this;
         }
 
-        public Builder extraDatas( ExtraDatas extraDatas )
+        public Builder extraDatas( Mixins extraDatas )
         {
             this.extraDatas = extraDatas;
             return this;

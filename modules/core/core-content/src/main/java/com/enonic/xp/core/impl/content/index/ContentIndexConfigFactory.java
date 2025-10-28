@@ -4,16 +4,16 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.CmsConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.LanguageConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.MixinConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.PageRegionsConfigProcessor;
-import com.enonic.xp.core.impl.content.index.processor.CmsConfigProcessor;
-import com.enonic.xp.core.impl.content.index.processor.XDataConfigProcessor;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -24,8 +24,8 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.schema.xdata.MixinDescriptors;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigs;
@@ -42,7 +42,7 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
 
-        indexConfigProcessors.add( new XDataConfigProcessor( getXDatas( builder.xDataService, builder.extraDatas ) ) );
+        indexConfigProcessors.add( new MixinConfigProcessor( getMixinDescriptors( builder.mixinService, builder.extraDatas ) ) );
 
         indexConfigProcessors.add(
             new PageConfigProcessor( builder.page, getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
@@ -64,13 +64,13 @@ public class ContentIndexConfigFactory
         return contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ).getForm();
     }
 
-    private XDatas getXDatas( final XDataService xDataService, final ExtraDatas extraDatas )
+    private MixinDescriptors getMixinDescriptors( final MixinService mixinService, final Mixins mixins )
     {
-        if ( xDataService == null || extraDatas == null )
+        if ( mixinService == null || mixins == null )
         {
             return null;
         }
-        return xDataService.getByNames( extraDatas.getNames() );
+        return mixinService.getByNames( mixins.getNames() );
     }
 
     private Form getPageConfigForm( final PageDescriptorService pageDescriptorService, final Page page )
@@ -114,7 +114,7 @@ public class ContentIndexConfigFactory
     {
         private ContentTypeService contentTypeService;
 
-        private XDataService xDataService;
+        private MixinService mixinService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -130,7 +130,7 @@ public class ContentIndexConfigFactory
 
         private SiteConfigs siteConfigs;
 
-        private ExtraDatas extraDatas;
+        private Mixins extraDatas;
 
         private String language;
 
@@ -140,9 +140,9 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder xDataService( final XDataService value )
+        public Builder mixinService( final MixinService value )
         {
-            this.xDataService = value;
+            this.mixinService = value;
             return this;
         }
 
@@ -188,7 +188,7 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder extraDatas( final ExtraDatas value )
+        public Builder extraDatas( final Mixins value )
         {
             this.extraDatas = value;
             return this;

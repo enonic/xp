@@ -38,7 +38,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,7 +70,7 @@ class RenameContentCommandTest
 
     LayoutDescriptorService layoutDescriptorService;
 
-    XDataService xDataService;
+    MixinService mixinService;
 
     ContentDataSerializer contentDataSerializer;
 
@@ -82,7 +82,7 @@ class RenameContentCommandTest
         this.nodeService = mock( NodeService.class );
         this.eventPublisher = mock( EventPublisher.class );
         this.translator = mock( ContentNodeTranslator.class );
-        this.xDataService = mock( XDataService.class );
+        this.mixinService = mock( MixinService.class );
         this.pageDescriptorService = mock( PageDescriptorService.class );
         this.partDescriptorService = mock( PartDescriptorService.class );
         this.layoutDescriptorService = mock( LayoutDescriptorService.class );
@@ -172,7 +172,7 @@ class RenameContentCommandTest
             .nodeService( this.nodeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .contentValidators( List.of( new ContentNameValidator() ) )

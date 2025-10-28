@@ -16,7 +16,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
 import com.enonic.xp.security.User;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
@@ -110,12 +110,12 @@ class GetDynamicContentSchemaHandlerTest
         when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
-            if ( DynamicContentSchemaType.XDATA != schemaParams.getType() )
+            if ( DynamicContentSchemaType.MIXIN != schemaParams.getType() )
             {
                 throw new IllegalArgumentException( "invalid content schema type: " + schemaParams.getType() );
             }
 
-            final XData xData = XData.create()
+            final MixinDescriptor xData = MixinDescriptor.create()
                 .name( CAMERA_INFO_METADATA_NAME )
                 .displayName( "Photo Info" )
                 .displayNameI18nKey( "media.cameraInfo.displayName" )
@@ -125,7 +125,7 @@ class GetDynamicContentSchemaHandlerTest
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( "<x-data><some-data></some-data></x-data>" );
 
-            return new DynamicSchemaResult<XData>( xData, resource );
+            return new DynamicSchemaResult<MixinDescriptor>( xData, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getXData.js" );

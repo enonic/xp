@@ -24,7 +24,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
@@ -39,7 +39,7 @@ class ValidateContentDataCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService xDataService;
 
     private CmsService cmsService;
 
@@ -47,7 +47,7 @@ class ValidateContentDataCommandTest
     void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.xDataService = Mockito.mock( MixinService.class );
         this.cmsService = Mockito.mock( CmsService.class );
     }
 

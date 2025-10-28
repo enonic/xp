@@ -11,9 +11,9 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 
@@ -21,7 +21,7 @@ public final class PropertyTreeTranslator
 {
     private final ContentTypeService contentTypeService;
 
-    private final XDataService xDataService;
+    private final MixinService xDataService;
 
     private final CmsService cmsService;
 
@@ -29,7 +29,7 @@ public final class PropertyTreeTranslator
 
     private final Function<ContentTypeName, Boolean> strictValidationResolver;
 
-    public PropertyTreeTranslator( ContentTypeService contentTypeService, XDataService xDataService, CmsService cmsService,
+    public PropertyTreeTranslator( ContentTypeService contentTypeService, MixinService xDataService, CmsService cmsService,
                                    PropertyTreeMarshallerService marshaller, Function<ContentTypeName, Boolean> strictValidationResolver )
     {
         this.contentTypeService = contentTypeService;
@@ -54,9 +54,9 @@ public final class PropertyTreeTranslator
         return marshaller.marshal( map, contentType.getForm(), strictValidationResolver.apply( contentTypeName ) );
     }
 
-    public PropertyTree translate( Map<String, Object> map, XDataName xDataName, ContentTypeName contentTypeName )
+    public PropertyTree translate( Map<String, Object> map, MixinName xDataName, ContentTypeName contentTypeName )
     {
-        XData xData = xDataService.getByName( xDataName );
+        MixinDescriptor xData = xDataService.getByName( xDataName );
         if ( xData == null )
         {
             throw new IllegalArgumentException( "Unknown xData: " + xDataName );

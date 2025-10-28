@@ -18,10 +18,10 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 public class YmlCmsDescriptorParser
 {
@@ -31,8 +31,8 @@ public class YmlCmsDescriptorParser
     {
         PARSER.addMixIn( CmsDescriptor.Builder.class, CmsDescriptorBuilderMixIn.class );
 
-        PARSER.addMixIn( XDataMapping.class, CmsDescriptorBuilderMixIn.XDataMappingMixIn.class );
-        PARSER.addMixIn( XDataMapping.Builder.class, CmsDescriptorBuilderMixIn.XDataMappingMixIn.Builder.class );
+        PARSER.addMixIn( MixinMapping.class, CmsDescriptorBuilderMixIn.MixinMappingMixIn.class );
+        PARSER.addMixIn( MixinMapping.Builder.class, CmsDescriptorBuilderMixIn.MixinMappingMixIn.Builder.class );
     }
 
     public static CmsDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
@@ -49,8 +49,8 @@ public class YmlCmsDescriptorParser
         }
 
         @JsonProperty("x")
-        @JsonDeserialize(using = XDataMappingsDeserializer.class)
-        abstract CmsDescriptor.Builder xDataMappings( XDataMappings xDataMappings );
+        @JsonDeserialize(using = MixinMappingsDeserializer.class)
+        abstract CmsDescriptor.Builder mixinMappings( MixinMappings mixinMappings );
 
         @JsonProperty("form")
         abstract CmsDescriptor.Builder form( Form form );
@@ -59,51 +59,51 @@ public class YmlCmsDescriptorParser
         abstract CmsDescriptor.Builder applicationKey( ApplicationKey currentApplication );
 
 
-        @JsonDeserialize(builder = XDataMapping.Builder.class)
-        abstract static class XDataMappingMixIn
+        @JsonDeserialize(builder = MixinMapping.Builder.class)
+        abstract static class MixinMappingMixIn
         {
             @JsonCreator
-            static XDataMapping.Builder create()
+            static MixinMapping.Builder create()
             {
-                return XDataMapping.create();
+                return MixinMapping.create();
             }
 
             @JsonPOJOBuilder(withPrefix = "")
             abstract static class Builder
             {
                 @JsonProperty("name")
-                @JsonDeserialize(using = XDataNameDeserializer.class)
-                abstract XDataMapping.Builder xDataName( XDataName xDataName );
+                @JsonDeserialize(using = MixinNameDeserializer.class)
+                abstract MixinMapping.Builder mixinName( MixinName mixinName );
 
                 @JsonProperty("allowContentTypes")
-                abstract XDataMapping.Builder allowContentTypes( String allowContentTypes );
+                abstract MixinMapping.Builder allowContentTypes( String allowContentTypes );
 
                 @JsonProperty("optional")
-                abstract XDataMapping.Builder optional( Boolean optional );
+                abstract MixinMapping.Builder optional( Boolean optional );
             }
         }
     }
 
-    private static final class XDataMappingsDeserializer
-        extends JsonDeserializer<XDataMappings>
+    private static final class MixinMappingsDeserializer
+        extends JsonDeserializer<MixinMappings>
     {
         @Override
-        public XDataMappings deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
+        public MixinMappings deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
             throws IOException
         {
             final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
-            final List<XDataMapping> keys = mapper.readValue( jsonParser, new TypeReference<>()
+            final List<MixinMapping> keys = mapper.readValue( jsonParser, new TypeReference<>()
             {
             } );
-            return XDataMappings.from( keys );
+            return MixinMappings.from( keys );
         }
     }
 
-    private static final class XDataNameDeserializer
-        extends JsonDeserializer<XDataName>
+    private static final class MixinNameDeserializer
+        extends JsonDeserializer<MixinName>
     {
         @Override
-        public XDataName deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
+        public MixinName deserialize( final JsonParser jsonParser, final DeserializationContext ctxt )
             throws IOException
         {
             final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
@@ -112,12 +112,12 @@ public class YmlCmsDescriptorParser
             final String rawValue = node.asText();
             if ( rawValue.contains( ":" ) )
             {
-                return XDataName.from( rawValue );
+                return MixinName.from( rawValue );
             }
             else
             {
                 final ApplicationKey currentApplication = (ApplicationKey) ctxt.findInjectableValue( "currentApplication", null, null );
-                return XDataName.from( currentApplication, rawValue );
+                return MixinName.from( currentApplication, rawValue );
             }
         }
     }

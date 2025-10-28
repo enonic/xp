@@ -4,20 +4,20 @@ package com.enonic.xp.site;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 
 @PublicApi
-public final class XDataMapping
+public final class MixinMapping
 {
-    private final XDataName xDataName;
+    private final MixinName mixinName;
 
     private final String allowContentTypes;
 
     private final Boolean optional;
 
-    public XDataMapping( final Builder builder )
+    public MixinMapping( final Builder builder )
     {
-        this.xDataName = builder.xDataName;
+        this.mixinName = builder.mixinName;
         this.allowContentTypes = builder.allowContentTypes;
         this.optional = builder.optional;
     }
@@ -27,9 +27,9 @@ public final class XDataMapping
         return new Builder();
     }
 
-    public XDataName getXDataName()
+    public MixinName getMixinName()
     {
-        return xDataName;
+        return mixinName;
     }
 
     public String getAllowContentTypes()
@@ -53,8 +53,8 @@ public final class XDataMapping
         {
             return false;
         }
-        final XDataMapping that = (XDataMapping) o;
-        return Objects.equals( xDataName, that.xDataName ) && Objects.equals( allowContentTypes, that.allowContentTypes ) &&
+        final MixinMapping that = (MixinMapping) o;
+        return Objects.equals( mixinName, that.mixinName ) && Objects.equals( allowContentTypes, that.allowContentTypes ) &&
             Objects.equals( optional, that.optional );
     }
 
@@ -62,12 +62,12 @@ public final class XDataMapping
     public int hashCode()
     {
 
-        return Objects.hash( xDataName, allowContentTypes, optional );
+        return Objects.hash( mixinName, allowContentTypes, optional );
     }
 
     public static final class Builder
     {
-        private XDataName xDataName;
+        private MixinName mixinName;
 
         private String allowContentTypes;
 
@@ -77,9 +77,9 @@ public final class XDataMapping
         {
         }
 
-        public Builder xDataName( final XDataName xDataName )
+        public Builder mixinName( final MixinName mixinName )
         {
-            this.xDataName = xDataName;
+            this.mixinName = mixinName;
             return this;
         }
 
@@ -97,13 +97,13 @@ public final class XDataMapping
 
         private void validate()
         {
-            Objects.requireNonNull( xDataName, "xDataName is required" );
+            Objects.requireNonNull( mixinName, "mixinName is required" );
         }
 
-        public XDataMapping build()
+        public MixinMapping build()
         {
             validate();
-            return new XDataMapping( this );
+            return new MixinMapping( this );
         }
     }
 }

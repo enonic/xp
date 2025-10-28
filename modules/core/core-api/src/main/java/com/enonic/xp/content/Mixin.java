@@ -5,16 +5,16 @@ import java.util.Objects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 
 @PublicApi
-public final class ExtraData
+public final class Mixin
 {
-    private XDataName name;
+    private MixinName name;
 
     private PropertyTree data;
 
-    public ExtraData( final XDataName name, final PropertyTree data )
+    public Mixin( final MixinName name, final PropertyTree data )
     {
         this.name = Objects.requireNonNull( name, "name cannot be null" );
         this.data = Objects.requireNonNull( data, "data cannot be null" );
@@ -30,7 +30,7 @@ public final class ExtraData
         this.data = data;
     }
 
-    public XDataName getName()
+    public MixinName getName()
     {
         return name;
     }
@@ -45,14 +45,14 @@ public final class ExtraData
         return ApplicationKey.from( applicationPrefixName, "-" );
     }
 
-    public void setName( final XDataName name )
+    public void setName( final MixinName name )
     {
         this.name = name;
     }
 
-    public ExtraData copy()
+    public Mixin copy()
     {
-        return new ExtraData( name, data.copy() );
+        return new Mixin( name, data.copy() );
     }
 
     @Override
@@ -67,7 +67,7 @@ public final class ExtraData
             return false;
         }
 
-        final ExtraData extraData = (ExtraData) o;
+        final Mixin extraData = (Mixin) o;
 
         if ( !name.equals( extraData.name ) )
         {

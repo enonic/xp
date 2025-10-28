@@ -45,8 +45,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
@@ -336,8 +336,8 @@ public class DynamicSchemaServiceImpl
                 return ContentTypeName.from( applicationKey, name );
             case FORM_FRAGMENT:
                 return FormFragmentName.from( applicationKey, name );
-            case XDATA:
-                return XDataName.from( applicationKey, name );
+            case MIXIN:
+                return MixinName.from( applicationKey, name );
             default:
                 throw new IllegalArgumentException( "invalid schema type: " + type );
         }
@@ -396,7 +396,7 @@ public class DynamicSchemaServiceImpl
                 return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
             case FORM_FRAGMENT:
                 return VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME;
-            case XDATA:
+            case MIXIN:
                 return VirtualAppConstants.X_DATA_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic schema type: " + type );
@@ -464,9 +464,9 @@ public class DynamicSchemaServiceImpl
                 .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
                 .build();
         }
-        if ( baseSchema instanceof XData )
+        if ( baseSchema instanceof MixinDescriptor )
         {
-            return XData.create( (XData) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+            return MixinDescriptor.create( (MixinDescriptor) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
         }
 
         throw new IllegalArgumentException( "unknown type of BaseSchema: " + baseSchema.getName() );

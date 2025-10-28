@@ -16,8 +16,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.internal.processor.InternalHtmlSanitizer;
 import com.enonic.xp.data.Property;
@@ -42,12 +42,11 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
@@ -77,7 +76,7 @@ public class HtmlAreaContentProcessor
 
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService xDataService;
 
     private CmsService cmsService;
 
@@ -109,7 +108,7 @@ public class HtmlAreaContentProcessor
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( createContentParams.getType() ) );
 
         processContentData( createContentParams.getData(), contentType, processedIds );
-        processExtraData( createContentParams.getExtraDatas(), processedIds );
+        processExtraData( createContentParams.getMixins(), processedIds );
         processPageData( createContentParams.getPage(), processedIds );
         if ( createContentParams.getType().isSite() )
         {
@@ -127,7 +126,7 @@ public class HtmlAreaContentProcessor
         final ContentType contentType = contentTypeService.getByName( GetContentTypeParams.from( inputContent.getType() ) );
 
         processContentData( inputContent.getData(), contentType, processedIds );
-        processExtraData( inputContent.getAllExtraData(), processedIds );
+        processExtraData( inputContent.getAllMixins(), processedIds );
         final Page page = processPageData( inputContent.getPage(), processedIds );
 
         if ( inputContent.isSite() )
@@ -218,11 +217,11 @@ public class HtmlAreaContentProcessor
         return processedRegion.build();
     }
 
-    private void processExtraData( final ExtraDatas extraDatas, final ContentIds.Builder processedIds )
+    private void processExtraData( final Mixins extraDatas, final ContentIds.Builder processedIds )
     {
-        for ( ExtraData extraData : extraDatas )
+        for ( Mixin extraData : extraDatas )
         {
-            final XData xData = xDataService.getByName( extraData.getName() );
+            final MixinDescriptor xData = xDataService.getByName( extraData.getName() );
             if ( xData != null )
             {
                 processDataTree( getProperties( extraData.getData(), xData.getForm() ), processedIds );
@@ -334,7 +333,7 @@ public class HtmlAreaContentProcessor
     }
 
     @Reference
-    public void setXDataService( final XDataService xDataService )
+    public void setXDataService( final MixinService xDataService )
     {
         this.xDataService = xDataService;
     }

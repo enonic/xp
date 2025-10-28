@@ -58,15 +58,14 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.XDataMappingService;
-import com.enonic.xp.site.XDataOptions;
+import com.enonic.xp.site.MixinMappingService;
+import com.enonic.xp.site.MixinOptions;
 import com.enonic.xp.site.CmsService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -85,7 +84,7 @@ class UpdateContentCommandTest
 
     private final ContentTypeService contentTypeService = mock( ContentTypeService.class );
 
-    private final XDataService xDataService = mock( XDataService.class );
+    private final MixinService xDataService = mock( MixinService.class );
 
     private final CmsService cmsService = mock( CmsService.class );
 
@@ -97,7 +96,7 @@ class UpdateContentCommandTest
 
     private final LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
 
-    private final XDataMappingService xDataMappingService = mock( XDataMappingService.class );
+    private final MixinMappingService xDataMappingService = mock( MixinMappingService.class );
 
     private final SiteConfigService siteConfigService = mock( SiteConfigService.class );
 
@@ -111,7 +110,7 @@ class UpdateContentCommandTest
     void init()
     {
         when( siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
-        when( xDataMappingService.getXDataMappingOptions( any(), any() ) ).thenReturn( XDataOptions.empty() );
+        when( xDataMappingService.getMixinMappingOptions( any(), any() ) ).thenReturn( MixinOptions.empty() );
     }
 
     @Test
@@ -328,12 +327,12 @@ class UpdateContentCommandTest
             .translator( translator )
             .eventPublisher( eventPublisher )
             .mediaInfo( mediaInfo )
-            .xDataService( xDataService )
+            .mixinService( xDataService )
             .cmsService( cmsService )
             .pageDescriptorService( pageDescriptorService )
             .partDescriptorService( partDescriptorService )
             .layoutDescriptorService( layoutDescriptorService )
-            .xDataMappingService( xDataMappingService )
+            .mixinMappingService( xDataMappingService )
             .siteConfigService( siteConfigService )
             .build();
     }

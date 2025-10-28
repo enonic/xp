@@ -9,8 +9,8 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPublishInfo;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
@@ -76,7 +76,7 @@ public final class ContentMapper
         }
 
         serializeData( gen, value.getData() );
-        serializeExtraData( gen, value.getAllExtraData() );
+        serializeExtraData( gen, value.getAllMixins() );
         serializePage( gen, value.getPage() );
         serializeValidationErrors( gen, value.getValidationErrors() );
         serializeAttachments( gen, value.getAttachments() );
@@ -120,15 +120,15 @@ public final class ContentMapper
         gen.end();
     }
 
-    private void serializeExtraData( final MapGenerator gen, final ExtraDatas extraDatas )
+    private void serializeExtraData( final MapGenerator gen, final Mixins extraDatas )
     {
         gen.map( "x" );
 
         extraDatas.stream()
-            .collect( Collectors.groupingBy( ExtraData::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
+            .collect( Collectors.groupingBy( Mixin::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
             .forEach( ( appPrefix, appExtraDatas ) -> {
                 gen.map( appPrefix );
-                for ( final ExtraData extraData : appExtraDatas )
+                for ( final Mixin extraData : appExtraDatas )
                 {
                     gen.map( extraData.getName().getLocalName() );
                     new PropertyTreeMapper( extraData.getData() ).serialize( gen );

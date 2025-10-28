@@ -14,8 +14,8 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
@@ -36,7 +36,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 
@@ -183,15 +183,15 @@ class ContentDataSerializerTest
                                                                               .type( ContentTypeName.codeMedia() )
                                                                               .creator( PrincipalKey.ofAnonymous() )
                                                                               .childOrder( ChildOrder.defaultOrder() )
-                                                                              .extraDatas( ExtraDatas.create()
-                                                                                               .add( new ExtraData(
-                                                                                                   XDataName.from( ApplicationKey.SYSTEM,
+                                                                              .extraDatas( Mixins.create()
+                                                                                               .add( new Mixin(
+                                                                                                   MixinName.from( ApplicationKey.SYSTEM,
                                                                                                                    "myFragment" ),
                                                                                                    fragmentData ) )
                                                                                                .build() )
                                                                               .build() );
 
-        final PropertySet extraData = data.getSet( ContentPropertyNames.EXTRA_DATA );
+        final PropertySet extraData = data.getSet( ContentPropertyNames.MIXIN_DATA );
         assertNotNull( extraData );
         final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
@@ -215,15 +215,15 @@ class ContentDataSerializerTest
                                                                                      .name( "myContent" )
                                                                                      .parentPath( ContentPath.ROOT )
                                                                                      .creator( PrincipalKey.ofAnonymous() )
-                                                                                     .extraDatas( ExtraDatas.create()
-                                                                                                      .add( new ExtraData( XDataName.from(
+                                                                                     .extraDatas( Mixins.create()
+                                                                                                      .add( new Mixin( MixinName.from(
                                                                                                           ApplicationKey.SYSTEM,
                                                                                                           "myFragment" ), fragmentData ) )
                                                                                                       .build() )
                                                                                      .modifier( PrincipalKey.ofAnonymous() )
                                                                                      .build() );
 
-        final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.EXTRA_DATA );
+        final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.MIXIN_DATA );
         assertNotNull( extraData );
         final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );

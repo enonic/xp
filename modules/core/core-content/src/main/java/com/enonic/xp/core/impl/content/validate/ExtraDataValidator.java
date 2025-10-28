@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
-import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.xdata.MixinService;
 
 @Component
 public class ExtraDataValidator
@@ -21,10 +21,10 @@ public class ExtraDataValidator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ExtraDataValidator.class );
 
-    private final XDataService xDataService;
+    private final MixinService xDataService;
 
     @Activate
-    public ExtraDataValidator( @Reference final XDataService xDataService )
+    public ExtraDataValidator( @Reference final MixinService xDataService )
     {
         this.xDataService = xDataService;
     }
@@ -32,11 +32,11 @@ public class ExtraDataValidator
     @Override
     public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
     {
-        for ( final ExtraData extraData : params.getExtraDatas() )
+        for ( final Mixin extraData : params.getExtraDatas() )
         {
-            final XDataName name = extraData.getName();
+            final MixinName name = extraData.getName();
 
-            final XData xData = this.xDataService.getByName( name );
+            final MixinDescriptor xData = this.xDataService.getByName( name );
             if ( xData == null )
             {
                 LOG.warn( "XData not found: '{}'", name );

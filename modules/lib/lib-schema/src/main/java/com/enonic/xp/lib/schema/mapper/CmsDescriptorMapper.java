@@ -4,8 +4,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 public class CmsDescriptorMapper
     implements MapSerializable
@@ -28,19 +28,19 @@ public class CmsDescriptorMapper
         gen.value( "modifiedTime", descriptor.getModifiedTime() );
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
-        serializeXDataMappings( gen, descriptor.getXDataMappings() );
+        serializeXDataMappings( gen, descriptor.getMixinMappings() );
     }
 
-    private void serializeXDataMappings( final MapGenerator gen, final XDataMappings xDataMappings )
+    private void serializeXDataMappings( final MapGenerator gen, final MixinMappings xDataMappings )
     {
         if ( !xDataMappings.isEmpty() )
         {
             gen.array( "xDataMappings" );
-            for ( XDataMapping xDataMapping : xDataMappings )
+            for ( MixinMapping xDataMapping : xDataMappings )
             {
                 gen.map();
 
-                gen.value( "name", xDataMapping.getXDataName() );
+                gen.value( "name", xDataMapping.getMixinName() );
                 gen.value( "optional", xDataMapping.getOptional() );
                 gen.value( "allowContentTypes", xDataMapping.getAllowContentTypes() );
 

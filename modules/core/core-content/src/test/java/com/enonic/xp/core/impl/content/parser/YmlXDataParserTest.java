@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,15 +22,15 @@ public class YmlXDataParserTest
     void test()
         throws Exception
     {
-        final String yaml = readAsString( "/descriptors/x-data-descriptor.yml" );
+        final String yaml = readAsString( "/descriptors/mixin-descriptor.yml" );
 
         final ApplicationKey currentApplication = ApplicationKey.from( "myapp" );
 
-        final XData.Builder builder = YmlXDataParser.parse( yaml, currentApplication );
+        final MixinDescriptor.Builder builder = YmlMixinDescriptorParser.parse( yaml, currentApplication );
 
-        builder.name( XDataName.from( currentApplication, "my-x-data" ) );
+        builder.name( MixinName.from( currentApplication, "my-x-data" ) );
 
-        final XData descriptor = builder.build();
+        final MixinDescriptor descriptor = builder.build();
 
         assertEquals( currentApplication, descriptor.getName().getApplicationKey() );
         assertEquals( "my-x-data", descriptor.getName().getLocalName() );

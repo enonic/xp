@@ -17,7 +17,7 @@ form:
 // Create virtual xdata.
 var result = schemaLib.createSchema({
     name: 'myapp:mydata',
-    type: 'XDATA',
+    type: 'MIXIN',
     resource
 
 });
@@ -42,7 +42,7 @@ assert.assertJsonEquals({
               '  occurrences:\n' +
               '    min: 0\n' +
               '    max: 2',
-    type: 'XDATA',
+    type: 'MIXIN',
     form: [
         {
             'formItemType': 'Input',

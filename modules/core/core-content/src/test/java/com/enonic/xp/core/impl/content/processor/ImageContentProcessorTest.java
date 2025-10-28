@@ -20,15 +20,15 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.core.impl.content.schema.BuiltinXDataTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +49,7 @@ class ImageContentProcessorTest
     void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
-        final XDataService xDataService = Mockito.mock( XDataService.class );
+        final MixinService xDataService = Mockito.mock( MixinService.class );
         when( xDataService.getByNames( any() ) ).thenReturn( BuiltinXDataTypesAccessor.getAll() );
         this.imageContentProcessor = new ImageContentProcessor( contentService, xDataService );
     }
@@ -83,7 +83,7 @@ class ImageContentProcessorTest
             addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build(), ContentIds.empty() );
         final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-        final ExtraData geoExtraData = result.getCreateContentParams().getExtraDatas().getMetadata( MediaInfo.GPS_INFO_METADATA_NAME );
+        final Mixin geoExtraData = result.getCreateContentParams().getMixins().getMetadata( MediaInfo.GPS_INFO_METADATA_NAME );
         assertEquals( geoExtraData.getData().getGeoPoint( MediaInfo.GPS_INFO_GEO_POINT, 0 ), geoPoint );
     }
 
@@ -94,7 +94,7 @@ class ImageContentProcessorTest
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( params, MediaInfo.create().
             addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build(), ContentIds.empty() );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-        final ExtraDatas extraDatas = result.getCreateContentParams().getExtraDatas();
+        final Mixins extraDatas = result.getCreateContentParams().getMixins();
         assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
         assertEquals( "2", extraDatas.getMetadata( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
         assertEquals( 13, extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
@@ -114,7 +114,7 @@ class ImageContentProcessorTest
             .type( ContentTypeName.imageMedia() )
             .parentPath( ContentPath.ROOT )
             .data( data )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).build() )
+            .extraDatas( Mixins.create().add( new Mixin( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).build() )
             .attachments( Attachments.from( Attachment.create().mimeType( "image/jpeg" ).name( "MyImage.jpg" ).build() ) )
             .build();
 
@@ -122,7 +122,7 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final ExtraData extraData = result.getContent().getAllExtraData().getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        final Mixin extraData = result.getContent().getAllMixins().getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
         assertNotNull( extraData.getData().getLong( "pixelSize", 0 ) );
         assertNotNull( extraData.getData().getLong( "imageHeight", 0 ) );
         assertNotNull( extraData.getData().getLong( "imageWidth", 0 ) );
@@ -144,7 +144,7 @@ class ImageContentProcessorTest
             .type( ContentTypeName.imageMedia() )
             .parentPath( ContentPath.ROOT )
             .data( data )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).build() )
+            .extraDatas( Mixins.create().add( new Mixin( MediaInfo.IMAGE_INFO_METADATA_NAME, new PropertyTree() ) ).build() )
             .attachments( Attachments.from( Attachment.create().mimeType( "image/jpeg" ).name( "CorruptedImage.jpg" ).build() ) )
             .build();
 
@@ -152,7 +152,7 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        assertThat(result.getContent().getAllExtraData()).map( ExtraData::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        assertThat(result.getContent().getAllMixins()).map( Mixin::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
     }
 
     @Test
@@ -166,7 +166,7 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final ExtraDatas extraDatas = result.getContent().getAllExtraData();
+        final Mixins extraDatas = result.getContent().getAllMixins();
         assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
         assertEquals( "2", extraDatas.getMetadata( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
         assertEquals( 13, extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
@@ -186,7 +186,7 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final ExtraDatas extraDatas = result.getContent().getAllExtraData();
+        final Mixins extraDatas = result.getContent().getAllMixins();
         assertEquals( "2", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
     }
 

@@ -17,8 +17,8 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -33,7 +33,7 @@ import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.region.TextComponent;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -64,8 +64,8 @@ public final class TestDataFixtures
             from( Instant.parse( "2016-11-03T10:00:00Z" ) ).
             to( Instant.parse( "2016-11-23T10:00:00Z" ) ).
             build() );
-        builder.extraDatas( ExtraDatas.create()
-                                .add( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
+        builder.extraDatas( Mixins.create()
+                                .add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
                                 .build() );
         builder.page( newPage() );
         builder.attachments( newAttachments() );
@@ -134,7 +134,7 @@ public final class TestDataFixtures
                 from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
                 build() ).
-            extraDatas(  ExtraDatas.create().add( new ExtraData( XDataName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() ).
+            extraDatas( Mixins.create().add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() ).
             page( newPage() );
 
         return builder.build();

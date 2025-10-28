@@ -24,7 +24,7 @@ public class PatchableContent
 
     public PatchableField<PropertyTree> data;
 
-    public PatchableField<ExtraDatas> extraDatas;
+    public PatchableField<Mixins> extraDatas;
 
     public PatchableField<Page> page;
 
@@ -77,7 +77,7 @@ public class PatchableContent
         this.source = source;
         this.displayName = new PatchableField<>( source.getDisplayName() );
         this.data = new PatchableField<>( source.getData().copy() );
-        this.extraDatas = new PatchableField<>( source.getAllExtraData().copy() );
+        this.extraDatas = new PatchableField<>( source.getAllMixins().copy() );
         this.page = new PatchableField<>( source.getPage() != null ? source.getPage().copy() : null );
         this.valid = new PatchableField<>( source.isValid() );
         this.owner = new PatchableField<>( source.getOwner() );

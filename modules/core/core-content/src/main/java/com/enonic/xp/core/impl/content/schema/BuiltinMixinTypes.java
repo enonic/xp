@@ -10,9 +10,9 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinDescriptors;
+import com.enonic.xp.schema.xdata.MixinName;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
@@ -23,44 +23,44 @@ import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.IMAGE_INFO_PIXEL_SIZE;
 import static com.enonic.xp.media.MediaInfo.MEDIA_INFO_BYTE_SIZE;
 
-final class BuiltinXDataTypes
+final class BuiltinMixinTypes
 {
-    private static final String XDATA_FOLDER = "x-data";
+    private static final String MIXIN_FOLDER = "mixins";
 
-    private static final XData IMAGE_METADATA = XData.create().
-        name( IMAGE_INFO_METADATA_NAME ).
-        displayName( "Image Info" ).
-        displayNameI18nKey( "media.imageInfo.displayName" ).
-        form( createImageInfoXDataForm() ).
-        build();
+    private static final MixinDescriptor IMAGE_METADATA = MixinDescriptor.create()
+        .name( IMAGE_INFO_METADATA_NAME )
+        .displayName( "Image Info" )
+        .displayNameI18nKey( "media.imageInfo.displayName" )
+        .form( createImageInfoForm() )
+        .build();
 
-    private static final XData CAMERA_METADATA = XData.create().
-        name( CAMERA_INFO_METADATA_NAME ).
-        displayName( "Photo Info" ).
-        displayNameI18nKey( "media.cameraInfo.displayName" ).
-        form( createPhotoInfoXDataForm() ).
-        build();
+    private static final MixinDescriptor CAMERA_METADATA = MixinDescriptor.create()
+        .name( CAMERA_INFO_METADATA_NAME )
+        .displayName( "Photo Info" )
+        .displayNameI18nKey( "media.cameraInfo.displayName" )
+        .form( createPhotoInfoForm() )
+        .build();
 
-    private static final XData GPS_METADATA = XData.create().
-        name( GPS_INFO_METADATA_NAME ).
-        displayName( "Gps Info" ).
-        displayNameI18nKey( "base.gpsInfo.displayName" ).
-        form( createGpsInfoXDataForm() ).
-        build();
+    private static final MixinDescriptor GPS_METADATA = MixinDescriptor.create()
+        .name( GPS_INFO_METADATA_NAME )
+        .displayName( "Gps Info" )
+        .displayNameI18nKey( "base.gpsInfo.displayName" )
+        .form( createGpsInfoForm() )
+        .build();
 
-    private final XDatas xDatas;
+    private final MixinDescriptors mixins;
 
-    private final Map<XDataName, XData> map;
+    private final Map<MixinName, MixinDescriptor> map;
 
-    BuiltinXDataTypes()
+    BuiltinMixinTypes()
     {
-        this.xDatas = Stream.of( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA )
-            .map( xData -> XData.create( xData ).icon( loadSchemaIcon( XDATA_FOLDER, xData.getName().getLocalName() ) ).build() )
-            .collect( XDatas.collector() );
-        this.map = this.xDatas.stream().collect( Collectors.toUnmodifiableMap( XData::getName, Function.identity() ) );
+        this.mixins = Stream.of( IMAGE_METADATA, CAMERA_METADATA, GPS_METADATA )
+            .map( mixin -> MixinDescriptor.create( mixin ).icon( loadSchemaIcon( MIXIN_FOLDER, mixin.getName().getLocalName() ) ).build() )
+            .collect( MixinDescriptors.collector() );
+        this.map = this.mixins.stream().collect( Collectors.toUnmodifiableMap( MixinDescriptor::getName, Function.identity() ) );
     }
 
-    private static Form createImageInfoXDataForm()
+    private static Form createImageInfoForm()
     {
         final String i18n = "media.imageInfo";
         final Form.Builder form = Form.create();
@@ -78,29 +78,25 @@ final class BuiltinXDataTypes
 
     private static Input.Builder createTextLine( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" );
+        return Input.create().inputType( InputTypeName.TEXT_LINE ).label( label ).name( name ).labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Input.Builder createLong( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" );
+        return Input.create().inputType( InputTypeName.LONG ).label( label ).name( name ).labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Input.Builder createDate( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" );
+        return Input.create().inputType( InputTypeName.DATE_TIME ).label( label ).name( name ).labelI18nKey( i18n + "." + name + ".label" );
     }
 
     private static Input.Builder createGeoPoint( final String name, final String label, final String i18n )
     {
-        return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).
-            labelI18nKey( i18n + "." + name + ".label" );
+        return Input.create().inputType( InputTypeName.GEO_POINT ).label( label ).name( name ).labelI18nKey( i18n + "." + name + ".label" );
     }
 
-    private static Form createGpsInfoXDataForm()
+    private static Form createGpsInfoForm()
     {
         final String i18n = "base.gpsInfo";
         final Form.Builder form = Form.create();
@@ -111,7 +107,7 @@ final class BuiltinXDataTypes
         return form.build();
     }
 
-    private static Form createPhotoInfoXDataForm()
+    private static Form createPhotoInfoForm()
     {
         final String i18n = "media.cameraInfo";
         final Form.Builder form = Form.create();
@@ -138,14 +134,14 @@ final class BuiltinXDataTypes
         return form.build();
     }
 
-    public XDatas getAll()
+    public MixinDescriptors getAll()
     {
-        return this.xDatas;
+        return this.mixins;
     }
 
-    public XData getXData( final XDataName xDataName )
+    public MixinDescriptor getXData( final MixinName mixinName )
     {
-        return this.map.get( xDataName );
+        return this.map.get( mixinName );
     }
 
     private Icon loadSchemaIcon( final String metaInfFolderName, final String name )

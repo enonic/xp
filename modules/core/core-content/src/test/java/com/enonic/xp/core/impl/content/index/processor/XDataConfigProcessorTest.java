@@ -14,19 +14,19 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
-import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.schema.xdata.XDatas;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.xdata.MixinDescriptors;
 
-import static com.enonic.xp.content.ContentPropertyNames.EXTRA_DATA;
+import static com.enonic.xp.content.ContentPropertyNames.MIXIN_DATA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class XDataConfigProcessorTest
 {
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService xDataService;
 
     private ContentTypeName contentTypeName;
 
@@ -34,7 +34,7 @@ class XDataConfigProcessorTest
     void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.xDataService = Mockito.mock( MixinService.class );
         this.contentTypeName = ContentTypeName.folder();
     }
 
@@ -44,7 +44,7 @@ class XDataConfigProcessorTest
         final PatternIndexConfigDocument result = processForms( Form.empty() );
 
         assertEquals( 1, result.getPathIndexConfigs().size() );
-        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( IndexPath.from( EXTRA_DATA ) ) );
+        assertEquals( IndexConfig.BY_TYPE, result.getConfigForPath( IndexPath.from( MIXIN_DATA ) ) );
 
     }
 
@@ -65,28 +65,28 @@ class XDataConfigProcessorTest
 
         assertEquals( 2, result.getPathIndexConfigs().size() );
         assertEquals( "htmlStripper",
-                      result.getConfigForPath( IndexPath.from( EXTRA_DATA + ".appname.localname0.htmlarea" ) ).getIndexValueProcessors().get(
+                      result.getConfigForPath( IndexPath.from( MIXIN_DATA + ".appname.localname0.htmlarea" ) ).getIndexValueProcessors().get(
                           0 ).getName() );
 
     }
 
     private PatternIndexConfigDocument processForms( final Form... forms )
     {
-        final XDatas.Builder xDatasBuilder = XDatas.create();
+        final MixinDescriptors.Builder xDatasBuilder = MixinDescriptors.create();
 
         for ( int i = 0; i < forms.length; i++ )
         {
-            xDatasBuilder.add( XData.create().form( forms[i] ).name( XDataName.from( "appName:localName" + i ) ).build() );
+            xDatasBuilder.add( MixinDescriptor.create().form( forms[i] ).name( MixinName.from( "appName:localName" + i ) ).build() );
         }
 
-        final XDatas xDatas = xDatasBuilder.build();
+        final MixinDescriptors xDatas = xDatasBuilder.build();
 
         final ContentType contentType = ContentType.create().superType( ContentTypeName.folder() ).name( "contentType" ).build();
 
         Mockito.when( contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) ) ).thenReturn(
             contentType );
 
-        final XDataConfigProcessor configProcessor = new XDataConfigProcessor( xDatas );
+        final MixinConfigProcessor configProcessor = new MixinConfigProcessor( xDatas );
 
         return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
     }

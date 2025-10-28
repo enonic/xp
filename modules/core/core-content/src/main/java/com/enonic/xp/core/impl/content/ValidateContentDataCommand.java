@@ -8,7 +8,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
@@ -79,7 +79,7 @@ final class ValidateContentDataCommand
 
         private PropertyTree data;
 
-        private ExtraDatas extraDatas;
+        private Mixins extraDatas;
 
         private ContentName contentName;
 
@@ -127,7 +127,7 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder extraDatas( final ExtraDatas extraDatas )
+        public Builder extraDatas( final Mixins extraDatas )
         {
             this.extraDatas = extraDatas;
             return this;

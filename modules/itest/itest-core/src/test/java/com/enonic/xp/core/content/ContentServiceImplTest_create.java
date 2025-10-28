@@ -21,14 +21,14 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowCheckState;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.content.schema.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
+import com.enonic.xp.core.impl.content.schema.MixinServiceImpl;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -41,14 +41,14 @@ import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.xdata.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -126,10 +126,10 @@ class ContentServiceImplTest_create
     @Test
     void create_with_attachments()
     {
-        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        xDataService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
+        contentService.setMixinService( xDataService );
+        contentService.setMixinMappingService( xDataMappingService );
 
         final String name = "cat-small.jpg";
         final ByteSource image = loadImage( name );
@@ -329,21 +329,21 @@ class ContentServiceImplTest_create
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( XDataName.from(
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( MixinName.from(
                                                                                                               "app:xdata1" ) )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
-                                                                                                          .build(), XDataMapping.create()
-                                                                                                          .xDataName( XDataName.from(
+                                                                                                          .build(), MixinMapping.create()
+                                                                                                          .mixinName( MixinName.from(
                                                                                                               "app:xdata2" ) )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( true )
-                                                                                                          .build(), XDataMapping.create()
-                                                                                                          .xDataName( XDataName.from(
+                                                                                                          .build(), MixinMapping.create()
+                                                                                                          .mixinName( MixinName.from(
                                                                                                               "app:xdata3" ) )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
@@ -351,11 +351,11 @@ class ContentServiceImplTest_create
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final XData xData1 = XData.create().name( XDataName.from( "app:xdata1" ) ).form( Form.create().build() ).build();
+        final MixinDescriptor xData1 = MixinDescriptor.create().name( MixinName.from( "app:xdata1" ) ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData1.getName() ) ).thenReturn( xData1 );
-        final XData xData2 = XData.create().name( XDataName.from( "app:xdata2" ) ).form( Form.create().build() ).build();
+        final MixinDescriptor xData2 = MixinDescriptor.create().name( MixinName.from( "app:xdata2" ) ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData2.getName() ) ).thenReturn( xData2 );
-        final XData xData3 = XData.create().name( XDataName.from( "app:xdata3" ) ).form( Form.create().build() ).build();
+        final MixinDescriptor xData3 = MixinDescriptor.create().name( MixinName.from( "app:xdata3" ) ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData3.getName() ) ).thenReturn( xData3 );
 
         final Content storedContent = this.contentService.create( CreateContentParams.create()
@@ -363,15 +363,15 @@ class ContentServiceImplTest_create
                                                                       .displayName( "This is my content" )
                                                                       .parent( content.getPath() )
                                                                       .type( ContentTypeName.folder() )
-                                                                      .extraDatas( ExtraDatas.create()
-                                                                                       .add( new ExtraData( XDataName.from( "app:xdata1" ),
-                                                                                                            new PropertyTree() ) )
+                                                                      .mixins( Mixins.create()
+                                                                                       .add( new Mixin( MixinName.from( "app:xdata1" ),
+                                                                                                        new PropertyTree() ) )
                                                                                        .build() )
                                                                       .build() );
 
-        assertEquals( 2, storedContent.getAllExtraData().getNames().getSet().size() );
-        assertTrue( storedContent.getAllExtraData().getNames().contains( xData1.getName() ) );
-        assertTrue( storedContent.getAllExtraData().getNames().contains( xData3.getName() ) );
+        assertEquals( 2, storedContent.getAllMixins().getNames().getSet().size() );
+        assertTrue( storedContent.getAllMixins().getNames().contains( xData1.getName() ) );
+        assertTrue( storedContent.getAllMixins().getNames().contains( xData3.getName() ) );
 
 
     }
@@ -398,21 +398,21 @@ class ContentServiceImplTest_create
 
         final Content parent = this.contentService.create( createContentParams );
 
-        final XDataName xdata = XDataName.from( "app:xdata1" );
+        final MixinName xdata = MixinName.from( "app:xdata1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( xdata )
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( xdata )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final XData xData1 = XData.create().name( xdata ).form( Form.create().build() ).build();
+        final MixinDescriptor xData1 = MixinDescriptor.create().name( xdata ).form( Form.create().build() ).build();
         when( xDataService.getByName( xData1.getName() ) ).thenReturn( xData1 );
 
         final Content content = this.contentService.create( CreateContentParams.create()
@@ -422,8 +422,8 @@ class ContentServiceImplTest_create
                                                                 .type( ContentTypeName.folder() )
                                                                 .build() );
 
-        assertEquals( 1, content.getAllExtraData().getNames().getSet().size() );
-        assertEquals( new PropertyTree(), content.getAllExtraData().getMetadata( xdata ).getData() );
+        assertEquals( 1, content.getAllMixins().getNames().getSet().size() );
+        assertEquals( new PropertyTree(), content.getAllMixins().getMetadata( xdata ).getData() );
     }
 
     @Test
@@ -448,14 +448,14 @@ class ContentServiceImplTest_create
 
         final Content parent = this.contentService.create( createContentParams );
 
-        final XDataName xdata = XDataName.from( "app:xdata1" );
+        final MixinName xdata = MixinName.from( "app:xdata1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( xdata )
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( xdata )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
@@ -493,14 +493,14 @@ class ContentServiceImplTest_create
 
         final Content parent = this.contentService.create( createContentParams );
 
-        final XDataName xdata = XDataName.from( "app:xdata1" );
+        final MixinName xdata = MixinName.from( "app:xdata1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey(
                                                                                                       ApplicationKey.from( "app" ) )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( xdata )
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( xdata )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( true )
@@ -526,7 +526,7 @@ class ContentServiceImplTest_create
             .displayName( "This is my page" )
             .parent( ContentPath.ROOT )
             .type( ContentTypeName.folder() )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "app:xdata" ), new PropertyTree() ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "app:mixin" ), new PropertyTree() ) ).build() )
             .build();
 
         assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createContentParams ) );

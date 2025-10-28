@@ -34,7 +34,7 @@ import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
@@ -58,7 +58,7 @@ import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.xdata.MixinService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -101,7 +101,7 @@ public abstract class AbstractContentSynchronizerTest
 
     protected LayoutDescriptorService layoutDescriptorService;
 
-    protected XDataMappingServiceImpl xDataMappingService;
+    protected MixinMappingServiceImpl xDataMappingService;
 
     protected SiteConfigServiceImpl siteConfigService;
 
@@ -109,7 +109,7 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ResourceService resourceService;
 
-    protected XDataService xDataService;
+    protected MixinService xDataService;
 
     protected Context projectContext;
 
@@ -299,7 +299,7 @@ public abstract class AbstractContentSynchronizerTest
 
         mediaInfoService = new MediaInfoServiceImpl( extractor );
 
-        xDataService = mock( XDataService.class );
+        xDataService = mock( MixinService.class );
 
         CmsFormFragmentService formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
@@ -321,7 +321,7 @@ public abstract class AbstractContentSynchronizerTest
         final ContentAuditLogSupportImpl contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
-        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
+        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
@@ -332,8 +332,8 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        contentService.setMixinService( xDataService );
+        contentService.setMixinMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
     }
 
@@ -386,7 +386,7 @@ public abstract class AbstractContentSynchronizerTest
         assertEquals( sourceContent.getDisplayName(), targetContent.getDisplayName() );
         assertEquals( sourceContent.getData(), targetContent.getData() );
         assertEquals( sourceContent.getPath(), targetContent.getPath() );
-        assertEquals( sourceContent.getAllExtraData(), targetContent.getAllExtraData() );
+        assertEquals( sourceContent.getAllMixins(), targetContent.getAllMixins() );
         assertEquals( sourceContent.getAttachments(), targetContent.getAttachments() );
         assertEquals( sourceContent.getOwner(), targetContent.getOwner() );
         assertEquals( sourceContent.getLanguage(), targetContent.getLanguage() );

@@ -40,7 +40,7 @@ class ContentOutboundDependenciesIdsResolver
             new ContentDataSerializer().toPageData( content.getPage(), contentPageData );
         }
 
-        final Stream<Property> extraDataDependencies = content.hasExtraData() ? content.getAllExtraData().
+        final Stream<Property> extraDataDependencies = content.hasExtraData() ? content.getAllMixins().
             stream().
             flatMap( extraData -> extraData.getData().
                 getProperties( ValueTypes.REFERENCE ).

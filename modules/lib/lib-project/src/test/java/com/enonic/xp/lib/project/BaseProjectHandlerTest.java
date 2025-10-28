@@ -13,7 +13,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.EditableContent;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.PropertyTreeMarshallerService;
@@ -54,7 +54,7 @@ public abstract class BaseProjectHandlerTest
                               .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
                               .build() )
             .data( new PropertyTree() )
-            .extraDatas( ExtraDatas.empty() );
+            .extraDatas( Mixins.empty() );
 
         Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer( mock -> {

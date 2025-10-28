@@ -16,8 +16,8 @@ class XDataTest
         final Form.Builder formBuilder = Form.create();
         formBuilder.addFormItem( Input.create().name( "name" ).label( "Name" ).inputType( InputTypeName.TEXT_LINE ).build() );
 
-        XData xData1 = XData.create().name( XDataName.from( "myapplication:my1" ) ).form( formBuilder.build() ).build();
-        XData xData2 = XData.create( xData1 ).build();
+        MixinDescriptor xData1 = MixinDescriptor.create().name( MixinName.from( "myapplication:my1" ) ).form( formBuilder.build() ).build();
+        MixinDescriptor xData2 = MixinDescriptor.create( xData1 ).build();
         assertEquals( xData1.getForm(), xData2.getForm() );
     }
 
