@@ -89,7 +89,7 @@ public class YmlSiteDescriptorParserTest
         // verify mounted APIs
         final DescriptorKeys mountedApis = siteDescriptor.getApiMounts();
         final Iterator<DescriptorKey> mountedApiIterator = mountedApis.iterator();
-        assertEquals( DescriptorKey.from( "admin:widget" ), mountedApiIterator.next() );
+        assertEquals( DescriptorKey.from( "admin:extension" ), mountedApiIterator.next() );
         assertEquals( DescriptorKey.from( currentApplication, "content" ), mountedApiIterator.next() );
     }
 

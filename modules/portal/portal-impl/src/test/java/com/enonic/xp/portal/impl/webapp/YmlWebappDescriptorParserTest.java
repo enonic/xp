@@ -35,7 +35,7 @@ public class YmlWebappDescriptorParserTest
         final DescriptorKeys descriptorKeys = descriptor.getApiMounts();
         final Iterator<DescriptorKey> iterator = descriptorKeys.iterator();
 
-        assertEquals( DescriptorKey.from( "admin:widget" ), iterator.next() );
+        assertEquals( DescriptorKey.from( "admin:extension" ), iterator.next() );
         assertEquals( DescriptorKey.from( currentApplication, "content" ), iterator.next() );
     }
 

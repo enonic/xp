@@ -1,0 +1,6 @@
+displayName: "My Extension"
+description: "MyExtension description"
+allow:
+  - "role:system.user.admin"
+interfaces:
+  - "com.enonic.xp.my-interface"

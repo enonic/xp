@@ -7,7 +7,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
-import com.enonic.xp.admin.widget.WidgetDescriptorService;
+import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.i18n.LocaleService;
@@ -49,7 +49,7 @@ public class ApplicationDeployerManager
     }
 
     @Reference
-    public void setWidgetDescriptorService( final WidgetDescriptorService widgetDescriptorService )
+    public void setAdminExtensionDescriptorService( final AdminExtensionDescriptorService adminExtensionDescriptorService )
     {
         //Needed to ensure startup-order
     }

@@ -3,7 +3,7 @@ description: "Manage content and sites"
 allow:
   - "role:system.authenticated"
 apis:
-  - "admin:widget"
+  - "admin:extension"
   - "content"
 interfaces:
   - "contentstudio.menuitem"

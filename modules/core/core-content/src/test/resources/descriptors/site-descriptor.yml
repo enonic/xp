@@ -20,5 +20,5 @@ mappings:
     order: 10
 
 apis:
-  - "admin:widget"
+  - "admin:extension"
   - "content"
