@@ -29,11 +29,6 @@ public final class MixinName
         return new MixinName( value );
     }
 
-    public String getApplicationPrefix()
-    {
-        return this.getApplicationKey().toString().replace( '.', '-' );
-    }
-
     @Override
     public int compareTo( final MixinName that )
     {

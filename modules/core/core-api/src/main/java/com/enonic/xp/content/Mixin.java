@@ -35,11 +35,6 @@ public final class Mixin
         return name;
     }
 
-    public String getApplicationPrefix()
-    {
-        return name.getApplicationPrefix();
-    }
-
     public static ApplicationKey fromApplicationPrefix( final String applicationPrefixName )
     {
         return ApplicationKey.from( applicationPrefixName, "-" );

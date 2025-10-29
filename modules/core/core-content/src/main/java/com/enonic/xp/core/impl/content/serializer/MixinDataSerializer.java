@@ -17,8 +17,7 @@ final class MixinDataSerializer
         final PropertySet metaSet = parent.addSet( MIXINS );
         for ( final Mixin mixin : mixins )
         {
-
-            final String mixinApplicationPrefix = mixin.getApplicationPrefix();
+            final String mixinApplicationPrefix = getApplicationPrefix( mixin.getName() );
             PropertySet application = metaSet.getSet( mixinApplicationPrefix );
             if ( application == null )
             {
@@ -50,6 +49,11 @@ final class MixinDataSerializer
             return builder.build();
         }
         return null;
+    }
+
+    private String getApplicationPrefix( final MixinName mixinName )
+    {
+        return mixinName.getApplicationKey().toString().replace( '.', '-' );
     }
 
 }

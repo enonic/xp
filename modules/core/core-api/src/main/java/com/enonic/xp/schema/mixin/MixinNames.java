@@ -1,7 +1,5 @@
 package com.enonic.xp.schema.mixin;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -24,16 +22,6 @@ public final class MixinNames
     public static MixinNames empty()
     {
         return EMPTY;
-    }
-
-    public static MixinNames from( final String... mixinNames )
-    {
-        return from( Arrays.asList( mixinNames ) );
-    }
-
-    public static MixinNames from( final Collection<String> mixinNames )
-    {
-        return mixinNames.stream().map( MixinName::from ).collect( collector() );
     }
 
     public static MixinNames from( final MixinName... mixinNames )

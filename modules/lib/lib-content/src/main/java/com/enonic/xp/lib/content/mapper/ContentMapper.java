@@ -17,6 +17,7 @@ import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.page.Page;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.sortvalues.SortValuesProperty;
@@ -125,7 +126,7 @@ public final class ContentMapper
         gen.map( "x" );
 
         mixins.stream()
-            .collect( Collectors.groupingBy( Mixin::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
+            .collect( Collectors.groupingBy( this::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
             .forEach( ( appPrefix, appMixins ) -> {
                 gen.map( appPrefix );
                 for ( final Mixin mixin : appMixins )
@@ -178,6 +179,11 @@ public final class ContentMapper
             value.forEach( gen::value );
             gen.end();
         }
+    }
+
+    private String getApplicationPrefix( final Mixin mixin )
+    {
+        return mixin.getName().getApplicationKey().toString().replace( '.', '-' );
     }
 
     @Override
