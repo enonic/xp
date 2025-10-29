@@ -25,7 +25,6 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -50,7 +49,7 @@ public class ApplyNodePermissionsCommand
 
     private final ApplyNodePermissionsListener listener;
 
-    private final Map<NodeVersionId, NodeVersionMetadata> appliedVersions; // old version id -> new version metadata
+    private final Map<NodeVersionId, NodeVersionData> appliedVersions; // old version id -> new version data
 
     private final Branches branches;
 
@@ -181,14 +180,14 @@ public class ApplyNodePermissionsCommand
 
         if ( updatedSourceNode != null )
         {
-            appliedVersions.put( node.getNodeVersionId(), updatedSourceNode.nodeVersionMetadata() );
+            appliedVersions.put( node.getNodeVersionId(), updatedSourceNode );
         }
 
-        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.nodeVersionMetadata().getNodeVersionId() : null,
+        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.metadata().getNodeVersionId() : null,
                            updatedSourceNode != null ? updatedSourceNode.node().getPermissions() : null );
     }
 
-    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionMetadata updatedVersionMetadata,
+    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionData updatedVersionData,
                                                        final Branch branch, final AccessControlList permissions )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
@@ -204,21 +203,19 @@ public class ApplyNodePermissionsCommand
         }
 
         return NodeHelper.runAsAdmin( () -> {
-            if ( updatedVersionMetadata != null )
+            if ( updatedVersionData != null )
             {
                 this.nodeStorageService.push( List.of( NodeBranchEntry.create()
-                                                                                 .nodeVersionId( updatedVersionMetadata.getNodeVersionId() )
-                                                                                 .nodePath( updatedVersionMetadata.getNodePath() )
+                                                           .nodeVersionId( updatedVersionData.node().getNodeVersionId() )
+                                                           .nodePath( updatedVersionData.node().path() )
                                                                                  .nodeVersionKey(
-                                                                                     updatedVersionMetadata.getNodeVersionKey() )
-                                                                                 .nodeId( updatedVersionMetadata.getNodeId() )
-                                                                                 .timestamp( updatedVersionMetadata.getTimestamp() )
+                                                                                     updatedVersionData.metadata().getNodeVersionKey() )
+                                                           .nodeId( updatedVersionData.node().id() )
+                                                           .timestamp( updatedVersionData.metadata().getTimestamp() )
                                                                                  .build() ), branch, l -> {
                 }, targetContext );
 
-                return new NodeVersionData( nodeStorageService.get( updatedVersionMetadata.getNodeVersionId(),
-                                                                    InternalContext.from( ContextAccessor.current() ) ),
-                                            updatedVersionMetadata );
+                return updatedVersionData;
             }
             else
             {
