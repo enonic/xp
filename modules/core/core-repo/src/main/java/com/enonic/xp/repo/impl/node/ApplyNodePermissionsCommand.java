@@ -181,10 +181,10 @@ public class ApplyNodePermissionsCommand
 
         if ( updatedSourceNode != null )
         {
-            appliedVersions.put( node.getNodeVersionId(), updatedSourceNode.nodeVersionMetadata() );
+            appliedVersions.put( node.getNodeVersionId(), updatedSourceNode.metadata() );
         }
 
-        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.nodeVersionMetadata().getNodeVersionId() : null,
+        results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.metadata().getNodeVersionId() : null,
                            updatedSourceNode != null ? updatedSourceNode.node().getPermissions() : null );
     }
 
