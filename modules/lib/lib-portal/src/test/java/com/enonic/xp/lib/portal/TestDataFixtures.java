@@ -52,7 +52,7 @@ public final class TestDataFixtures
         builder.language( Locale.ENGLISH );
         builder.data( newPropertyTree() );
 
-        builder.extraDatas( Mixins.create()
+        builder.mixins( Mixins.create()
                                 .add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
                                 .build() );
         builder.page( newPage() );

@@ -54,7 +54,7 @@ public abstract class BaseProjectHandlerTest
                               .add( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() )
                               .build() )
             .data( new PropertyTree() )
-            .extraDatas( Mixins.empty() );
+            .mixins( Mixins.empty() );
 
         Mockito.when( contentService.getByPath( ContentPath.ROOT ) ).thenReturn( contentRoot.build() );
         Mockito.when( contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer( mock -> {

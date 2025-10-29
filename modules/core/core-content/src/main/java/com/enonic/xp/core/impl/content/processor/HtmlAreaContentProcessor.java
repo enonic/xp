@@ -219,12 +219,12 @@ public class HtmlAreaContentProcessor
 
     private void processMixins( final Mixins mixins, final ContentIds.Builder processedIds )
     {
-        for ( Mixin extraData : mixins )
+        for ( Mixin mixin : mixins )
         {
-            final MixinDescriptor descriptor = mixinService.getByName( extraData.getName() );
+            final MixinDescriptor descriptor = mixinService.getByName( mixin.getName() );
             if ( descriptor != null )
             {
-                processDataTree( getProperties( extraData.getData(), descriptor.getForm() ), processedIds );
+                processDataTree( getProperties( mixin.getData(), descriptor.getForm() ), processedIds );
             }
         }
     }

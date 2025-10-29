@@ -67,14 +67,14 @@ public final class Mixin
             return false;
         }
 
-        final Mixin extraData = (Mixin) o;
+        final Mixin mixin = (Mixin) o;
 
-        if ( !name.equals( extraData.name ) )
+        if ( !name.equals( mixin.name ) )
         {
             return false;
         }
 
-        return data.equals( extraData.data );
+        return data.equals( mixin.data );
     }
 
     @Override

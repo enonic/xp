@@ -195,7 +195,7 @@ final class UpdateContentCommand
         return ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
-            .extraDatas( editedContent.getMixins() )
+            .mixins( editedContent.getMixins() )
             .contentTypeName( editedContent.getType() )
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
@@ -262,9 +262,9 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
 
-        editableContent.extraDatas = mergeExtraData( original.getType(), editableContent.data,
-                                                     original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
-                                                     editableContent.extraDatas );
+        editableContent.mixins = mergeMixins( original.getType(), editableContent.data,
+                                              original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
+                                              editableContent.mixins );
 
         return Content.create( editableContent.build() ).build();
     }

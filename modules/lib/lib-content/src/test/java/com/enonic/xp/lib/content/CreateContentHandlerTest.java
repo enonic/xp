@@ -70,9 +70,9 @@ class CreateContentHandlerTest
 
         when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
-        final PropertyTree extraData = new PropertyTree();
-        extraData.addDouble( "a", 1.0 );
-        extraData.addBoolean( "b", true );
+        final PropertyTree mixinData = new PropertyTree();
+        mixinData.addDouble( "a", 1.0 );
+        mixinData.addBoolean( "b", true );
 
         final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
             .name( MixinName.from( "com.enonic.myapplication:myschema" ) )
@@ -205,7 +205,7 @@ class CreateContentHandlerTest
 
         if ( params.getMixins() != null )
         {
-            builder.extraDatas( Mixins.from( params.getMixins() ) );
+            builder.mixins( Mixins.from( params.getMixins() ) );
         }
 
         return builder.build();

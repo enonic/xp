@@ -76,7 +76,7 @@ public final class ContentMapper
         }
 
         serializeData( gen, value.getData() );
-        serializeExtraData( gen, value.getMixins() );
+        serializeMixins( gen, value.getMixins() );
         serializePage( gen, value.getPage() );
         serializeValidationErrors( gen, value.getValidationErrors() );
         serializeAttachments( gen, value.getAttachments() );
@@ -120,18 +120,18 @@ public final class ContentMapper
         gen.end();
     }
 
-    private void serializeExtraData( final MapGenerator gen, final Mixins extraDatas )
+    private void serializeMixins( final MapGenerator gen, final Mixins mixins )
     {
         gen.map( "x" );
 
-        extraDatas.stream()
+        mixins.stream()
             .collect( Collectors.groupingBy( Mixin::getApplicationPrefix, LinkedHashMap::new, Collectors.toList() ) )
-            .forEach( ( appPrefix, appExtraDatas ) -> {
+            .forEach( ( appPrefix, appMixins ) -> {
                 gen.map( appPrefix );
-                for ( final Mixin extraData : appExtraDatas )
+                for ( final Mixin mixin : appMixins )
                 {
-                    gen.map( extraData.getName().getLocalName() );
-                    new PropertyTreeMapper( extraData.getData() ).serialize( gen );
+                    gen.map( mixin.getName().getLocalName() );
+                    new PropertyTreeMapper( mixin.getData() ).serialize( gen );
                     gen.end();
                 }
                 gen.end();

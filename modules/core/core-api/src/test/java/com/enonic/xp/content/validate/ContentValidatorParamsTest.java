@@ -40,7 +40,7 @@ class ContentValidatorParamsTest
     }
 
     @Test
-    void extraDatas_null_safe()
+    void mixins_null_safe()
     {
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )

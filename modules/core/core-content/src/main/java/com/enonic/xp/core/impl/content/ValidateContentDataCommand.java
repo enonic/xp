@@ -37,7 +37,7 @@ final class ValidateContentDataCommand
             .name( builder.contentName )
             .displayName( builder.displayName )
             .data( builder.data )
-            .mixins( builder.extraDatas )
+            .mixins( builder.mixins )
             .createAttachments( builder.createAttachments );
         contentTypeName = builder.contentTypeName;
         resultBuilder = Objects.requireNonNullElseGet( builder.validationErrorsBuilder, ValidationErrors::create );
@@ -79,7 +79,7 @@ final class ValidateContentDataCommand
 
         private PropertyTree data;
 
-        private Mixins extraDatas;
+        private Mixins mixins;
 
         private ContentName contentName;
 
@@ -127,9 +127,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder extraDatas( final Mixins extraDatas )
+        public Builder mixins( final Mixins mixins )
         {
-            this.extraDatas = extraDatas;
+            this.mixins = mixins;
             return this;
         }
 

@@ -36,7 +36,7 @@ class ContentServiceImplTest_rename
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
         final RenameContentParams params =
             RenameContentParams.create().contentId( content.getId() ).newName( ContentName.from( "newName" ) ).build();
@@ -55,7 +55,7 @@ class ContentServiceImplTest_rename
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
         final RenameContentParams params =
             RenameContentParams.create().contentId( content.getId() ).newName( ContentName.from( "__unnamed__" ) ).build();
@@ -68,9 +68,9 @@ class ContentServiceImplTest_rename
     }
 
 
-    private Mixins createExtraDatas()
+    private Mixins createMixins()
     {
-        final MixinName mixinName = MixinName.from( "com.enonic.app.test:xdata1" );
+        final MixinName mixinName = MixinName.from( "com.enonic.app.test:mixin1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(

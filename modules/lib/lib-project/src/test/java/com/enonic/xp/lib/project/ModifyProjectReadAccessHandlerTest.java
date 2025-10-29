@@ -31,8 +31,7 @@ class ModifyProjectReadAccessHandlerTest
                 name( ContentName.from( "root" ) ).
                 parentPath( ContentPath.ROOT ).
                 permissions( AccessControlList.empty() ).
-                data( new PropertyTree() ).
-                extraDatas( Mixins.empty() ).permissions( params.getPermissions() ).build() );
+                data( new PropertyTree() ).mixins( Mixins.empty() ).permissions( params.getPermissions() ).build() );
 
             return null;
         } );

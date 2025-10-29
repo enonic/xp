@@ -247,7 +247,7 @@ class ProjectContentEventListenerTest
                 contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
                     edit.data.setValue( new PropertyTree() );
                     edit.displayName.setValue( "newDisplayName" );
-                    edit.extraDatas.setValue( Mixins.create().add( createMixin() ).build() );
+                    edit.mixins.setValue( Mixins.create().add( createMixin() ).build() );
                     edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
                     edit.language.setValue( Locale.forLanguageTag( "no" ) );
                     edit.page.setValue( createPage() );
@@ -480,7 +480,7 @@ class ProjectContentEventListenerTest
     }
 
     @Test
-    void testUpdatedWithExtradata()
+    void testUpdatedWithMixins()
     {
         final ApplicationKey myApp = ApplicationKey.from( "myApp" );
         final MixinName mixinName = MixinName.from( myApp, "mixinName" );
@@ -514,7 +514,7 @@ class ProjectContentEventListenerTest
             () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
-                edit.extraDatas = Mixins.create().add( createMixin() ).build();
+                edit.mixins = Mixins.create().add( createMixin() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
@@ -538,7 +538,7 @@ class ProjectContentEventListenerTest
             () -> contentService.update( new UpdateContentParams().contentId( sourceContent2.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
-                edit.extraDatas = Mixins.create().build();
+                edit.mixins = Mixins.create().build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );

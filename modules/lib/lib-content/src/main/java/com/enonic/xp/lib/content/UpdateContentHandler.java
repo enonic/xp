@@ -97,10 +97,10 @@ public final class UpdateContentHandler
             target.data = createPropertyTree( (Map) data, existingContent.getType() );
         }
 
-        final Object extraData = map.get( "x" );
-        if ( extraData instanceof Map )
+        final Object mixinData = map.get( "x" );
+        if ( mixinData instanceof Map )
         {
-            target.extraDatas = createMixins( (Map) extraData, existingContent.getType() );
+            target.mixins = createMixins( (Map) mixinData, existingContent.getType() );
         }
 
         updatePage( target, map );

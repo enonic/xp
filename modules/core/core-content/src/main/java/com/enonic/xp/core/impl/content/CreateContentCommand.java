@@ -75,8 +75,8 @@ final class CreateContentCommand
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
         validateContentType( contentType );
 
-        final Mixins mergedExtraData = mergeExtraData( params.getType(), params.getData(), params.getParent(), params.getMixins() );
-        params = CreateContentParams.create( this.params ).mixins( mergedExtraData ).build();
+        final Mixins mergedMixins = mergeMixins( params.getType(), params.getData(), params.getParent(), params.getMixins() );
+        params = CreateContentParams.create( this.params ).mixins( mergedMixins ).build();
 
         ProcessCreateResult processedParams = runContentProcessors( params );
 
@@ -288,7 +288,7 @@ final class CreateContentCommand
     {
         final ValidationErrors validationErrors = ValidateContentDataCommand.create()
             .data( builder.getData() )
-            .extraDatas( builder.getExtraDatas() )
+            .mixins( builder.getMixins() )
             .contentTypeName( builder.getType() )
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )

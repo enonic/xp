@@ -120,7 +120,7 @@ final class UpdatedEventSyncCommand
     {
         return PatchContentParams.create().contentId( source.getId() ).patcher( edit -> {
             edit.data.setValue( source.getData() );
-            edit.extraDatas.setValue( source.getMixins() );
+            edit.mixins.setValue( source.getMixins() );
             edit.displayName.setValue( source.getDisplayName() );
             edit.owner.setValue( source.getOwner() );
             edit.language.setValue( source.getLanguage() );

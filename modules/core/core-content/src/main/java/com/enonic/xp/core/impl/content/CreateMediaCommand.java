@@ -15,7 +15,6 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.MixinMappingService;
 
 final class CreateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand

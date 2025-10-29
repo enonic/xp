@@ -64,7 +64,7 @@ public final class TestDataFixtures
             from( Instant.parse( "2016-11-03T10:00:00Z" ) ).
             to( Instant.parse( "2016-11-23T10:00:00Z" ) ).
             build() );
-        builder.extraDatas( Mixins.create()
+        builder.mixins( Mixins.create()
                                 .add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
                                 .build() );
         builder.page( newPage() );
@@ -133,8 +133,7 @@ public final class TestDataFixtures
             publishInfo( ContentPublishInfo.create().
                 from( Instant.parse( "2016-11-02T10:36:00Z" ) ).
                 to( Instant.parse( "2016-11-22T10:36:00Z" ) ).
-                build() ).
-            extraDatas( Mixins.create().add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() ).
+                build() ).mixins( Mixins.create().add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) ).build() ).
             page( newPage() );
 
         return builder.build();

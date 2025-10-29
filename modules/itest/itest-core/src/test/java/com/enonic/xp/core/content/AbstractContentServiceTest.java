@@ -405,9 +405,9 @@ public abstract class AbstractContentServiceTest
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final Mixins extraDatas )
+                                     final Mixins mixins )
     {
-        return doCreateContent( parentPath, displayName, data, extraDatas, ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, data, mixins, ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final AccessControlList permissions )
@@ -422,9 +422,9 @@ public abstract class AbstractContentServiceTest
     }
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final Mixins extraDatas, ContentTypeName type )
+                                     final Mixins mixins, ContentTypeName type )
     {
-        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, extraDatas, type );
+        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, mixins, type );
         return doCreateContent( builder );
     }
 
@@ -443,13 +443,13 @@ public abstract class AbstractContentServiceTest
     }
 
     private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
-                                                              final PropertyTree data, final Mixins extraDatas, ContentTypeName type )
+                                                              final PropertyTree data, final Mixins mixins, ContentTypeName type )
     {
         return CreateContentParams.create()
             .displayName( displayName )
             .parent( parentPath )
             .contentData( data )
-            .mixins( extraDatas )
+            .mixins( mixins )
             .type( type );
     }
 

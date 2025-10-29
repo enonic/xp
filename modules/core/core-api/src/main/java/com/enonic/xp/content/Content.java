@@ -94,7 +94,7 @@ public class Content
         this.id = builder.id;
         this.data = builder.data;
         this.attachments = requireNonNullElse( builder.attachments, Attachments.empty() );
-        this.mixins = Objects.requireNonNull( builder.extraDatas );
+        this.mixins = Objects.requireNonNull( builder.mixins );
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.publishInfo = builder.publishInfo;
@@ -395,7 +395,7 @@ public class Content
 
         protected Attachments attachments;
 
-        protected Mixins extraDatas;
+        protected Mixins mixins;
 
         protected String displayName;
 
@@ -445,7 +445,7 @@ public class Content
         {
             this.type = ContentTypeName.unstructured();
             this.data = new PropertyTree();
-            this.extraDatas = Mixins.empty();
+            this.mixins = Mixins.empty();
             this.processedReferences = ContentIds.create();
         }
 
@@ -459,7 +459,7 @@ public class Content
             this.type = source.type;
             this.data = source.data.copy();
             this.attachments = source.attachments;
-            this.extraDatas = source.mixins.copy();
+            this.mixins = source.mixins.copy();
             this.displayName = source.displayName;
             this.owner = source.owner;
             this.createdTime = source.createdTime;
@@ -553,9 +553,9 @@ public class Content
             return (BUILDER) this;
         }
 
-        public BUILDER extraDatas( final Mixins extraDatas )
+        public BUILDER mixins( final Mixins mixins )
         {
-            this.extraDatas = extraDatas;
+            this.mixins = mixins;
             return (BUILDER) this;
         }
 

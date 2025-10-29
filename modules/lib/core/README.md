@@ -27,7 +27,7 @@ import type {Content} from '@enonic-types/core';
 
 `XpMixin` is an interface, that is added to the global scope, so it can be
 modified using the [declaration merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces).
-This allows you to set the shape of the XData in your project, simply by
+This allows you to set the shape of the Mixin in your project, simply by
 declaring the `XpMixin` like this:
 
 ```ts

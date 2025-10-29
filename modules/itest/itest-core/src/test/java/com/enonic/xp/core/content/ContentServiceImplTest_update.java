@@ -330,7 +330,7 @@ class ContentServiceImplTest_update
 
             when( this.formFragmentService.getByName( Mockito.isA( FormFragmentName.class ) ) ).thenReturn( descriptor );
 
-            final Mixins extraDatas = createMixins();
+            final Mixins mixins = createMixins();
 
             final CreateContentParams createContentParams = CreateContentParams.create()
                 .contentData( data )
@@ -338,7 +338,7 @@ class ContentServiceImplTest_update
                 .parent( ContentPath.ROOT )
                 .permissions( AccessControlList.empty() )
                 .type( ContentTypeName.folder() )
-                .mixins( extraDatas )
+                .mixins( mixins )
                 .build();
 
             final Content content = this.contentService.create( createContentParams );

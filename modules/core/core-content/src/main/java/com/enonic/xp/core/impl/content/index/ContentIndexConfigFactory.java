@@ -42,7 +42,7 @@ public class ContentIndexConfigFactory
 
         indexConfigProcessors.add( new DataConfigProcessor( getDataForm( builder.contentTypeService, builder.contentTypeName ) ) );
 
-        indexConfigProcessors.add( new MixinConfigProcessor( getMixinDescriptors( builder.mixinService, builder.extraDatas ) ) );
+        indexConfigProcessors.add( new MixinConfigProcessor( getMixinDescriptors( builder.mixinService, builder.mixins ) ) );
 
         indexConfigProcessors.add(
             new PageConfigProcessor( builder.page, getPageConfigForm( builder.pageDescriptorService, builder.page ) ) );
@@ -130,7 +130,7 @@ public class ContentIndexConfigFactory
 
         private SiteConfigs siteConfigs;
 
-        private Mixins extraDatas;
+        private Mixins mixins;
 
         private String language;
 
@@ -188,9 +188,9 @@ public class ContentIndexConfigFactory
             return this;
         }
 
-        public Builder extraDatas( final Mixins value )
+        public Builder mixins( final Mixins value )
         {
-            this.extraDatas = value;
+            this.mixins = value;
             return this;
         }
 

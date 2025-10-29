@@ -63,7 +63,7 @@ public class CreateNodeParamsFactory
     {
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
-        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.MIXINS ) );
+        final PropertySet mixinDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.MIXINS ) );
 
         final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
 
@@ -72,7 +72,7 @@ public class CreateNodeParamsFactory
 
         final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
-        final Mixins extraData = extraDataSet != null ? contentDataSerializer.fromExtraData( extraDataSet ) : null;
+        final Mixins mixins = mixinDataSet != null ? contentDataSerializer.fromMixinData( mixinDataSet ) : null;
 
         final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create()
             .contentTypeName( params.getType() )
@@ -89,9 +89,9 @@ public class CreateNodeParamsFactory
                 .layoutDescriptorService( layoutDescriptorService );
         }
 
-        if ( extraData != null )
+        if ( mixins != null )
         {
-            indexConfigFactoryBuilder.extraDatas( extraData );
+            indexConfigFactoryBuilder.mixins( mixins );
         }
 
         if ( !nullToEmpty( language ).isBlank() )

@@ -167,7 +167,7 @@ class ContentDataSerializerTest
     }
 
     @Test
-    void create_propertyTree_populated_with_extraData()
+    void create_propertyTree_populated_with_mixin()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -183,7 +183,7 @@ class ContentDataSerializerTest
                                                                               .type( ContentTypeName.codeMedia() )
                                                                               .creator( PrincipalKey.ofAnonymous() )
                                                                               .childOrder( ChildOrder.defaultOrder() )
-                                                                              .extraDatas( Mixins.create()
+                                                                              .mixins( Mixins.create()
                                                                                                .add( new Mixin(
                                                                                                    MixinName.from( ApplicationKey.SYSTEM,
                                                                                                                    "myFragment" ),
@@ -191,9 +191,9 @@ class ContentDataSerializerTest
                                                                                                .build() )
                                                                               .build() );
 
-        final PropertySet extraData = data.getSet( ContentPropertyNames.MIXINS );
-        assertNotNull( extraData );
-        final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
+        final PropertySet mixinsData = data.getSet( ContentPropertyNames.MIXINS );
+        assertNotNull( mixinsData );
+        final PropertySet systemAppData = mixinsData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
         final PropertySet myFragmentData = systemAppData.getSet( "myFragment" );
         assertNotNull( myFragmentData );
@@ -203,7 +203,7 @@ class ContentDataSerializerTest
 
 
     @Test
-    void update_propertyTree_populated_with_extraData()
+    void update_propertyTree_populated_with_mixins()
     {
         final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
@@ -215,7 +215,7 @@ class ContentDataSerializerTest
                                                                                      .name( "myContent" )
                                                                                      .parentPath( ContentPath.ROOT )
                                                                                      .creator( PrincipalKey.ofAnonymous() )
-                                                                                     .extraDatas( Mixins.create()
+                                                                                     .mixins( Mixins.create()
                                                                                                       .add( new Mixin( MixinName.from(
                                                                                                           ApplicationKey.SYSTEM,
                                                                                                           "myFragment" ), fragmentData ) )
@@ -223,9 +223,9 @@ class ContentDataSerializerTest
                                                                                      .modifier( PrincipalKey.ofAnonymous() )
                                                                                      .build() );
 
-        final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.MIXINS );
-        assertNotNull( extraData );
-        final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
+        final PropertySet mixinsData = updatedProperties.getSet( ContentPropertyNames.MIXINS );
+        assertNotNull( mixinsData );
+        final PropertySet systemAppData = mixinsData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
         final PropertySet myFragmentData = systemAppData.getSet( "myFragment" );
         assertNotNull( myFragmentData );

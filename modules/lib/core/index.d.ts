@@ -715,7 +715,7 @@ export interface PatchableContent<
 > {
     displayName: string;
     data: Type extends 'portal:fragment' ? Record<string, never> : Data;
-    x: XpMixin; // extraData
+    x: XpMixin; //
     page: Type extends 'portal:fragment' ? never : _Component;
     valid: boolean;
     owner: UserKey;

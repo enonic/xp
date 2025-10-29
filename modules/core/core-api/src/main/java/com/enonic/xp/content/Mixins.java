@@ -87,9 +87,9 @@ public final class Mixins
 
         public Builder addAll( final Iterable<Mixin> value )
         {
-            for ( Mixin extraData : value )
+            for ( Mixin mixin : value )
             {
-                map.put( extraData.getName(), extraData );
+                map.put( mixin.getName(), mixin );
             }
             return this;
         }

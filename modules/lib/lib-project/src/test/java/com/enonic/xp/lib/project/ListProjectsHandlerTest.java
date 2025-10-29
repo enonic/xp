@@ -24,8 +24,7 @@ class ListProjectsHandlerTest
             name( ContentName.from( "root" ) ).
             parentPath( ContentPath.ROOT ).
             permissions( AccessControlList.empty() ).
-            data( new PropertyTree() ).
-            extraDatas( Mixins.empty() ).build() );
+            data( new PropertyTree() ).mixins( Mixins.empty() ).build() );
     }
 
     @Test

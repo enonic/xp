@@ -341,7 +341,7 @@ class ParentContentSynchronizerTest
         projectContext.callWith( () -> contentService.patch( PatchContentParams.create().patcher( edit -> {
             edit.data.setValue( new PropertyTree() );
             edit.displayName.setValue( "newDisplayName" );
-            edit.extraDatas.setValue( Mixins.create().add( createExtraData() ).build() );
+            edit.mixins.setValue( Mixins.create().add( createMixin() ).build() );
             edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
             edit.language.setValue( Locale.forLanguageTag( "no" ) );
             edit.page.setValue( createPage() );
@@ -1005,7 +1005,7 @@ class ParentContentSynchronizerTest
         return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
     }
 
-    private Mixin createExtraData()
+    private Mixin createMixin()
     {
         final PropertyTree mediaData = new PropertyTree();
         mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L );
@@ -1013,7 +1013,7 @@ class ParentContentSynchronizerTest
         mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
         mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        return new Mixin( MixinName.from( "myApp:xData" ), mediaData );
+        return new Mixin( MixinName.from( "myApp:mixin" ), mediaData );
     }
 
     private Page createPage()

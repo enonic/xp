@@ -96,7 +96,7 @@ public class PatchNodeParamsFactory
             .contentTypeName( editedContent.getType() )
             .page( editedContent.getPage() )
             .siteConfigs( editedContent.isSite() ? SiteConfigsDataSerializer.fromData( editedContent.getData().getRoot() ) : null )
-            .extraDatas( editedContent.getMixins() )
+            .mixins( editedContent.getMixins() )
             .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
             .build();
 

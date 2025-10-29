@@ -251,7 +251,7 @@ class PageRendererTest
             .modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( contentTypeName ) )
-            .extraDatas( Mixins.create().add( new Mixin( MixinName.from( "myApplication:myField" ), metadata ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "myApplication:myField" ), metadata ) ).build() )
             .build();
     }
 
@@ -273,7 +273,7 @@ class PageRendererTest
             .modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.fragment() )
-            .extraDatas( Mixins.create().add( new Mixin( MixinName.from( "myApplication:myField" ), metadata ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "myApplication:myField" ), metadata ) ).build() )
             .build();
     }
 }

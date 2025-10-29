@@ -53,7 +53,7 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.extraDatas(
+        builder.mixins(
             Mixins.create().add( new Mixin( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) ).build() );
         builder.page( newPage() );
 
@@ -77,7 +77,7 @@ public final class ContentFixtures
         mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
         mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        final Mixin mediaExtraData = new Mixin( MediaInfo.IMAGE_INFO_METADATA_NAME, mediaData );
+        final Mixin mediaMixin = new Mixin( MediaInfo.IMAGE_INFO_METADATA_NAME, mediaData );
 
         final Media.Builder builder = Media.create();
         builder.id( ContentId.from( "123456" ) );
@@ -92,9 +92,9 @@ public final class ContentFixtures
         builder.attachments( Attachments.from( attachment ) );
         builder.data( data );
 
-        builder.extraDatas( Mixins.create()
+        builder.mixins( Mixins.create()
                                 .add( new Mixin( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) )
-                                .add( mediaExtraData )
+                                .add( mediaMixin )
                                 .build() );
         builder.page( newPage() );
 

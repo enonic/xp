@@ -96,7 +96,7 @@ class AbstractCreatingOrUpdatingContentCommand
         this.siteConfigService = builder.siteConfigService;
     }
 
-    Mixins mergeExtraData( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final Mixins extraDatas )
+    Mixins mergeMixins( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final Mixins mixins )
     {
         final Mixins.Builder result = Mixins.create();
         final ApplicationKeys.Builder applicationKeys = ApplicationKeys.create().add( ApplicationKey.PORTAL );
@@ -118,11 +118,11 @@ class AbstractCreatingOrUpdatingContentCommand
         final Set<MixinName> allowedMixinName =
             allowedMixins.stream().map( MixinOption::mixinDescriptor ).map( MixinDescriptor::getName ).collect( Collectors.toSet() );
 
-        for ( Mixin extraData : extraDatas )
+        for ( Mixin mixin : mixins )
         {
-            if ( !allowedMixinName.contains( extraData.getName() ) )
+            if ( !allowedMixinName.contains( mixin.getName() ) )
             {
-                throw new IllegalArgumentException( "Not allowed mixinName: " + extraData.getName() );
+                throw new IllegalArgumentException( "Not allowed mixinName: " + mixin.getName() );
             }
         }
 
@@ -130,7 +130,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             final boolean isOptional = mixinOption.optional();
             final MixinDescriptor mixinDescriptor = mixinOption.mixinDescriptor();
-            final Mixin mixin = extraDatas.getByName( mixinDescriptor.getName() );
+            final Mixin mixin = mixins.getByName( mixinDescriptor.getName() );
 
             if ( mixin == null )
             {

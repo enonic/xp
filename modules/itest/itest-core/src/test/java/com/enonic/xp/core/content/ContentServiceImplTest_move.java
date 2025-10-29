@@ -67,7 +67,7 @@ class ContentServiceImplTest_move
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
         final MoveContentParams params =
             MoveContentParams.create().contentId( content.getId() ).parentContentPath( ContentPath.ROOT ).build();
@@ -76,8 +76,7 @@ class ContentServiceImplTest_move
 
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
-        assertEquals( movedContent.getMixins().getSize(), 1 );
-
+        assertEquals( 1, movedContent.getMixins().getSize() );
     }
 
     @Test
@@ -87,7 +86,7 @@ class ContentServiceImplTest_move
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
         final MoveContentParams params =
             MoveContentParams.create().contentId( content.getId() ).parentContentPath( content.getParentPath() ).build();
@@ -136,9 +135,9 @@ class ContentServiceImplTest_move
             .isEqualTo( child1.getId().toString() );
     }
 
-    private Mixins createExtraDatas()
+    private Mixins createMixins()
     {
-        final MixinName mixinName = MixinName.from( "com.enonic.app.test:xdata1" );
+        final MixinName mixinName = MixinName.from( "com.enonic.app.test:mixin1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(

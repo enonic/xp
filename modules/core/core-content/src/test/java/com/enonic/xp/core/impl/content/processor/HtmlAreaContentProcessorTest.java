@@ -255,7 +255,7 @@ class HtmlAreaContentProcessorTest
                                 .type( ContentTypeName.site() )
                                 .parentPath( ContentPath.ROOT )
                                 .data( new PropertyTree() )
-                                .extraDatas( Mixins.create()
+                                .mixins( Mixins.create()
                                                  .add(
                                                      new Mixin( MixinName.from( "mixinName" ), data ) )
                                                  .build() )
@@ -571,8 +571,8 @@ class HtmlAreaContentProcessorTest
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
-        final PropertyTree extraData = new PropertyTree();
-        extraData.addProperty( "htmlData", ValueFactory.newString(
+        final PropertyTree mixinData = new PropertyTree();
+        mixinData.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\" src=\"/admin/rest-v2/cs/cms/features/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b\"/>" ) );
 
         when( mixinService.getByName( mixinName ) ).thenReturn( mixinDescriptor );
@@ -580,7 +580,7 @@ class HtmlAreaContentProcessorTest
         final CreateContentParams createContentParams = CreateContentParams.create()
             .parent( ContentPath.ROOT )
             .contentData( data )
-            .mixins( Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), extraData ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), mixinData ) ).build() )
             .type( contentTypeName )
             .build();
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( createContentParams, null, ContentIds.empty() );

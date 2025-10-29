@@ -42,8 +42,7 @@ class ContentOutboundDependenciesIdsResolverTest
         return this.createContent( id, data, contentTypeName, Mixins.empty() );
     }
 
-    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName,
-                                   final Mixins extraDatas )
+    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName, final Mixins mixins )
     {
         return Content.create().
             id( ContentId.from( id ) ).
@@ -53,8 +52,7 @@ class ContentOutboundDependenciesIdsResolverTest
             valid( true ).
             creator( PrincipalKey.from( "user:system:admin" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
-            language( Locale.ENGLISH ).
-            extraDatas( extraDatas ).
+            language( Locale.ENGLISH ).mixins( mixins ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).

@@ -242,7 +242,7 @@ public final class ImageContentProcessor
             }
         }
 
-        return new ProcessUpdateResult( Content.create( params.getContent() ).extraDatas( mixins ).build() );
+        return new ProcessUpdateResult( Content.create( params.getContent() ).mixins( mixins ).build() );
     }
 
     private Mixin updateImageMetadata( final Media media, final Mixin imageMetadata )
@@ -387,22 +387,22 @@ public final class ImageContentProcessor
         final Double geoLong = parseDouble( mediaItems.get( GEO_LONGITUDE ).stream().findFirst().orElse( null ) );
         if ( geoLat != null && geoLong != null )
         {
-            final Mixin geoInfoExtraData = getOrCreate( metadataMap, GPS_INFO_METADATA_NAME );
-            setGeoPointProperty(geoInfoExtraData.getData(), MediaInfo.GPS_INFO_GEO_POINT, geoLat, geoLong);
+            final Mixin geoInfoMixin = getOrCreate( metadataMap, GPS_INFO_METADATA_NAME );
+            setGeoPointProperty(geoInfoMixin.getData(), MediaInfo.GPS_INFO_GEO_POINT, geoLat, geoLong);
         }
 
-        final Mixin imageInfoExtraData = getOrCreate( metadataMap, IMAGE_INFO_METADATA_NAME );
-        final PropertyTree imageInfoExtraDataData = imageInfoExtraData.getData();
-        final Long imageHeight = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
-        final Long imageWidth = imageInfoExtraDataData.getLong( IMAGE_INFO_IMAGE_WIDTH );
+        final Mixin imageInfoMixin = getOrCreate( metadataMap, IMAGE_INFO_METADATA_NAME );
+        final PropertyTree imageInfoMixinData = imageInfoMixin.getData();
+        final Long imageHeight = imageInfoMixinData.getLong( IMAGE_INFO_IMAGE_HEIGHT );
+        final Long imageWidth = imageInfoMixinData.getLong( IMAGE_INFO_IMAGE_WIDTH );
         if ( imageHeight != null && imageWidth != null )
         {
-            setLongProperty( imageInfoExtraDataData, IMAGE_INFO_PIXEL_SIZE, imageHeight * imageWidth );
+            setLongProperty( imageInfoMixinData, IMAGE_INFO_PIXEL_SIZE, imageHeight * imageWidth );
         }
         final Collection<String> imageSize = mediaItems.get( "bytesize" );
         if ( !imageSize.isEmpty() )
         {
-            setLongProperty( imageInfoExtraDataData, MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
+            setLongProperty( imageInfoMixinData, MEDIA_INFO_BYTE_SIZE, Long.parseLong( imageSize.stream().findFirst().orElseThrow() ) );
         }
 
         return metadataMap.values().stream().collect( Mixins.collector() );

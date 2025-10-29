@@ -188,7 +188,7 @@ class ContentMappingConstraintTest
         builder.valid( true );
         builder.language( Locale.FRENCH );
 
-        builder.extraDatas(
+        builder.mixins(
             Mixins.create().add( new Mixin( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) ).build() );
         builder.page( newPage() );
 
