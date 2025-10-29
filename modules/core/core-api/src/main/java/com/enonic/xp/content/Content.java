@@ -241,12 +241,12 @@ public class Content
         return attachments;
     }
 
-    public boolean hasExtraData()
+    public boolean hasMixins()
     {
         return !this.mixins.isEmpty();
     }
 
-    public Mixins getAllMixins()
+    public Mixins getMixins()
     {
         return this.mixins;
     }

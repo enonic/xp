@@ -48,15 +48,15 @@ public final class MixinOptions
         {
         }
 
-        public Builder add( MixinOption xDataOption )
+        public Builder add( MixinOption mixinOption )
         {
-            builder.add( xDataOption );
+            builder.add( mixinOption );
             return this;
         }
 
-        public Builder addAll( Iterable<MixinOption> xDataOptions )
+        public Builder addAll( Iterable<MixinOption> mixinOptions )
         {
-            builder.addAll( xDataOptions );
+            builder.addAll( mixinOptions );
             return this;
         }
 

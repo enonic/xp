@@ -4,9 +4,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertySet;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 
-import static com.enonic.xp.content.ContentPropertyNames.MIXIN_DATA;
+import static com.enonic.xp.content.ContentPropertyNames.MIXINS;
 
 final class MixinDataSerializer
     extends AbstractDataSetSerializer<Mixins>
@@ -14,7 +14,7 @@ final class MixinDataSerializer
     @Override
     public void toData( final Mixins mixins, final PropertySet parent )
     {
-        final PropertySet metaSet = parent.addSet( MIXIN_DATA );
+        final PropertySet metaSet = parent.addSet( MIXINS );
         for ( final Mixin mixin : mixins )
         {
 

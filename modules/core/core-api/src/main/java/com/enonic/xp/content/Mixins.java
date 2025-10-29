@@ -8,8 +8,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinNames;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 @PublicApi
@@ -31,7 +31,7 @@ public final class Mixins
         return MixinNames.from( map.keySet() );
     }
 
-    public Mixin getMetadata( final MixinName name )
+    public Mixin getByName( final MixinName name )
     {
         return map.get( name );
     }
@@ -46,9 +46,9 @@ public final class Mixins
         return EMPTY;
     }
 
-    public static Mixins from( final Iterable<Mixin> extradatas )
+    public static Mixins from( final Iterable<Mixin> mixins )
     {
-        return extradatas instanceof Mixins e ? e : checkDistinct( ImmutableList.copyOf( extradatas ) );
+        return mixins instanceof Mixins e ? e : checkDistinct( ImmutableList.copyOf( mixins ) );
     }
 
     public static Collector<Mixin, ?, Mixins> collector()

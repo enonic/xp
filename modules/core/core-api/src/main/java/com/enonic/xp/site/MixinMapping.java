@@ -4,7 +4,7 @@ package com.enonic.xp.site;
 import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @PublicApi
 public final class MixinMapping

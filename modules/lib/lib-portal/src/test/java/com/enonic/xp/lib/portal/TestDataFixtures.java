@@ -22,7 +22,7 @@ import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;

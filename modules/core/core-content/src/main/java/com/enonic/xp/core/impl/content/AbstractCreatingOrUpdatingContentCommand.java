@@ -38,9 +38,9 @@ import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfig;
@@ -130,7 +130,7 @@ class AbstractCreatingOrUpdatingContentCommand
         {
             final boolean isOptional = mixinOption.optional();
             final MixinDescriptor mixinDescriptor = mixinOption.mixinDescriptor();
-            final Mixin mixin = extraDatas.getMetadata( mixinDescriptor.getName() );
+            final Mixin mixin = extraDatas.getByName( mixinDescriptor.getName() );
 
             if ( mixin == null )
             {

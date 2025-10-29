@@ -19,8 +19,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
@@ -76,7 +76,7 @@ class ContentServiceImplTest_move
 
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
-        assertEquals( movedContent.getAllMixins().getSize(), 1 );
+        assertEquals( movedContent.getMixins().getSize(), 1 );
 
     }
 
@@ -138,24 +138,24 @@ class ContentServiceImplTest_move
 
     private Mixins createExtraDatas()
     {
-        final MixinName xDataName = MixinName.from( "com.enonic.app.test:xdata1" );
+        final MixinName mixinName = MixinName.from( "com.enonic.app.test:xdata1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(
                                                                                                       "com.enonic.app.test" ) )
                                                                                                   .mixinMappings( MixinMappings.from(
                                                                                                       MixinMapping.create()
-                                                                                                          .mixinName( xDataName )
+                                                                                                          .mixinName( mixinName )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final MixinDescriptor xData = MixinDescriptor.create().name( xDataName ).form( Form.create().build() ).build();
-        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create().name( mixinName ).form( Form.create().build() ).build();
+        when( mixinService.getByName( mixinDescriptor.getName() ) ).thenReturn( mixinDescriptor );
 
-        return Mixins.create().add( new Mixin( xDataName, new PropertyTree() ) ).
+        return Mixins.create().add( new Mixin( mixinName, new PropertyTree() ) ).
             build();
     }
 

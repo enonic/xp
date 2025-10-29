@@ -17,7 +17,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.region.Component;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.util.BinaryReferences;
 
 public final class ContentDataDeserializer

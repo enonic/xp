@@ -76,7 +76,7 @@ public final class ContentMapper
         }
 
         serializeData( gen, value.getData() );
-        serializeExtraData( gen, value.getAllMixins() );
+        serializeExtraData( gen, value.getMixins() );
         serializePage( gen, value.getPage() );
         serializeValidationErrors( gen, value.getValidationErrors() );
         serializeAttachments( gen, value.getAttachments() );

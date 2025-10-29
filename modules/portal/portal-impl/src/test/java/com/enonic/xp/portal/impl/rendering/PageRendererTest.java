@@ -30,7 +30,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 import com.enonic.xp.web.HttpStatus;

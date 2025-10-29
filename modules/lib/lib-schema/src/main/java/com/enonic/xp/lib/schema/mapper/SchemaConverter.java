@@ -4,7 +4,7 @@ import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
 
 public class SchemaConverter
 {

@@ -37,7 +37,7 @@ final class ValidateContentDataCommand
             .name( builder.contentName )
             .displayName( builder.displayName )
             .data( builder.data )
-            .extraDatas( builder.extraDatas )
+            .mixins( builder.extraDatas )
             .createAttachments( builder.createAttachments );
         contentTypeName = builder.contentTypeName;
         resultBuilder = Objects.requireNonNullElseGet( builder.validationErrorsBuilder, ValidationErrors::create );

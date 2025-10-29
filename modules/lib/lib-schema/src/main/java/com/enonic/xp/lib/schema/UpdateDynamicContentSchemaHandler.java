@@ -9,7 +9,7 @@ import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 

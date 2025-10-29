@@ -15,7 +15,7 @@ import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @PublicApi
 public final class ContentMappingConstraint
@@ -38,7 +38,7 @@ public final class ContentMappingConstraint
 
     private static final String DATA_PROPERTY_PREFIX = "data.";
 
-    private static final String MIXIN_PROPERTY_PREFIX = "x.";
+    private static final String MIXINS_PROPERTY_PREFIX = "x.";
 
     private final String id;
 
@@ -93,9 +93,9 @@ public final class ContentMappingConstraint
             final Value propertyValue = convert( val, prop.getValue().getType() );
             return propertyValue != null && valueMatches( propertyValue.asString(), prop.getValue().asString() );
         }
-        else if ( this.id.startsWith( MIXIN_PROPERTY_PREFIX ) )
+        else if ( this.id.startsWith( MIXINS_PROPERTY_PREFIX ) )
         {
-            final String dataPath = id.substring( MIXIN_PROPERTY_PREFIX.length() );
+            final String dataPath = id.substring( MIXINS_PROPERTY_PREFIX.length() );
 
             final String appPrefix;
             final String mixinName;
@@ -116,7 +116,7 @@ public final class ContentMappingConstraint
                 propertyName = secondIndex == -1 ? "" : dataPath.substring( secondIndex + 1 );
             }
 
-            final PropertyTree mixin = getMixin( content.getAllMixins(), appPrefix, mixinName );
+            final PropertyTree mixin = getMixin( content.getMixins(), appPrefix, mixinName );
             if ( mixin == null )
             {
                 return false;
@@ -145,7 +145,7 @@ public final class ContentMappingConstraint
         {
             final ApplicationKey app = Mixin.fromApplicationPrefix( appPrefix );
             final MixinName mixinName = MixinName.from( app, name );
-            final Mixin mixin = mixins.getMetadata( mixinName );
+            final Mixin mixin = mixins.getByName( mixinName );
             if ( mixin == null )
             {
                 return null;

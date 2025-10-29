@@ -3,8 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `displayName: "Virtual X-data"
-description: "X-data description"
+let resource = `displayName: "Virtual Mixin"
+description: "Mixin description"
 form:
 - type: "TextLine"
   name: "label"
@@ -14,27 +14,27 @@ form:
     max: 2`;
 
 // BEGIN
-// Update virtual x-data.
-var result = schemaLib.updateSchema({
+// Create virtual mixin.
+var result = schemaLib.createSchema({
     name: 'myapp:mydata',
     type: 'MIXIN',
     resource
 
 });
 
-log.info('Updated x-data: ' + result.name);
+log.info('Created mixin: ' + result.name);
 
 // END
 
 
 assert.assertJsonEquals({
     name: 'myapp:mydata',
-    displayName: 'Virtual X-data',
-    description: 'X-data description',
+    displayName: 'Virtual Mixin',
+    description: 'Mixin description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'displayName: "Virtual X-data"\n' +
-              'description: "X-data description"\n' +
+    resource: 'displayName: "Virtual Mixin"\n' +
+              'description: "Mixin description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +
               '  name: "label"\n' +

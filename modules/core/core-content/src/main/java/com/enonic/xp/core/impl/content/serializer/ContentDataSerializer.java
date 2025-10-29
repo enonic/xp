@@ -35,7 +35,7 @@ import static com.enonic.xp.content.ContentPropertyNames.CREATED_TIME;
 import static com.enonic.xp.content.ContentPropertyNames.CREATOR;
 import static com.enonic.xp.content.ContentPropertyNames.DATA;
 import static com.enonic.xp.content.ContentPropertyNames.DISPLAY_NAME;
-import static com.enonic.xp.content.ContentPropertyNames.MIXIN_DATA;
+import static com.enonic.xp.content.ContentPropertyNames.MIXINS;
 import static com.enonic.xp.content.ContentPropertyNames.INHERIT;
 import static com.enonic.xp.content.ContentPropertyNames.LANGUAGE;
 import static com.enonic.xp.content.ContentPropertyNames.MODIFIED_TIME;
@@ -138,9 +138,9 @@ public final class ContentDataSerializer
         addMetadata( contentAsData, content );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
-        if ( content.hasExtraData() )
+        if ( content.hasMixins() )
         {
-            extraDataSerializer.toData( content.getAllMixins(), contentAsData );
+            extraDataSerializer.toData( content.getMixins(), contentAsData );
         }
 
         applyAttachmentsAsData( content, contentAsData );
@@ -307,7 +307,7 @@ public final class ContentDataSerializer
 
     private void extractExtradata( final PropertySet contentAsSet, final Content.Builder<?> builder )
     {
-        final Mixins extraData = extraDataSerializer.fromData( contentAsSet.getSet( MIXIN_DATA ) );
+        final Mixins extraData = extraDataSerializer.fromData( contentAsSet.getSet( MIXINS ) );
 
         if ( extraData != null && !extraData.isEmpty() )
         {

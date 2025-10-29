@@ -5,15 +5,15 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
 import com.enonic.xp.media.MediaInfo;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinNames;
-import com.enonic.xp.schema.xdata.MixinDescriptors;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinDescriptors;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class XDataServiceImplTest
+class MixinServiceImplTest
     extends ApplicationTestSupport
 {
     protected MixinServiceImpl service;
@@ -38,43 +38,43 @@ class XDataServiceImplTest
         assertNotNull( types2 );
         assertEquals( 0, types2.getSize() );
 
-        final MixinDescriptor xData = service.getByName( MixinName.from( "other:mytype" ) );
-        assertEquals( null, xData );
+        final MixinDescriptor mixinDescriptor = service.getByName( MixinName.from( "other:mytype" ) );
+        assertEquals( null, mixinDescriptor );
     }
 
     @Test
-    void testSystemXDatas()
+    void testSystemMixins()
     {
-        MixinDescriptors xDatas = service.getAll();
-        assertNotNull( xDatas );
-        assertEquals( 3, xDatas.getSize() );
+        MixinDescriptors mixins = service.getAll();
+        assertNotNull( mixins );
+        assertEquals( 3, mixins.getSize() );
 
-        xDatas = service.getByApplication( ApplicationKey.MEDIA_MOD );
-        assertNotNull( xDatas );
-        assertEquals( 2, xDatas.getSize() );
+        mixins = service.getByApplication( ApplicationKey.MEDIA_MOD );
+        assertNotNull( mixins );
+        assertEquals( 2, mixins.getSize() );
 
-        MixinDescriptor xData = service.getByName( MediaInfo.GPS_INFO_METADATA_NAME );
-        assertNotNull( xData );
+        MixinDescriptor mixinDescriptor = service.getByName( MediaInfo.GPS_INFO_METADATA_NAME );
+        assertNotNull( mixinDescriptor );
 
-        xData = service.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME );
-        assertNotNull( xData );
+        mixinDescriptor = service.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        assertNotNull( mixinDescriptor );
 
-        xData = service.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
-        assertNotNull( xData );
+        mixinDescriptor = service.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME );
+        assertNotNull( mixinDescriptor );
     }
 
     @Test
     void testGetByNames()
     {
-        MixinDescriptors xDatas = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME ) );
-        assertEquals( 1, xDatas.getSize() );
+        MixinDescriptors mixinDescriptors = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME ) );
+        assertEquals( 1, mixinDescriptors.getSize() );
 
-        xDatas = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME ) );
-        assertEquals( 2, xDatas.getSize() );
+        mixinDescriptors = service.getByNames( MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME ) );
+        assertEquals( 2, mixinDescriptors.getSize() );
 
-        xDatas = service.getByNames(
+        mixinDescriptors = service.getByNames(
             MixinNames.from( MediaInfo.GPS_INFO_METADATA_NAME, MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME ) );
-        assertEquals( 3, xDatas.getSize() );
+        assertEquals( 3, mixinDescriptors.getSize() );
     }
 
     @Test
@@ -95,7 +95,7 @@ class XDataServiceImplTest
         assertNotNull( types3 );
         assertEquals( 4, types3.getSize() );
 
-        final MixinDescriptor xData = service.getByName( MixinName.from( "myapp2:xdata1" ) );
-        assertNotNull( xData );
+        final MixinDescriptor mixinDescriptor = service.getByName( MixinName.from( "myapp2:mixin1" ) );
+        assertNotNull( mixinDescriptor );
     }
 }

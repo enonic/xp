@@ -105,8 +105,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -559,13 +559,13 @@ class DynamicSchemaServiceImplTest
 
 
     @Test
-    void createXDataSchema()
+    void createMixinSchema()
         throws Exception
     {
-        final String resource = readResource( "_xdata.yml" );
+        final String resource = readResource( "_mixin.yml" );
 
         CreateDynamicContentSchemaParams params = CreateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:myxdata" ) )
+            .name( MixinName.from( "myapp:mymixin" ) )
             .resource( resource )
             .type( DynamicContentSchemaType.MIXIN )
             .build();
@@ -573,40 +573,40 @@ class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) );
 
-        final MixinDescriptor xdata = (MixinDescriptor) result.getSchema();
+        final MixinDescriptor mixinDescriptor = (MixinDescriptor) result.getSchema();
 
-        createAdminContext().runWith( () -> assertThat( xdata ).usingRecursiveComparison()
+        createAdminContext().runWith( () -> assertThat( mixinDescriptor ).usingRecursiveComparison()
             .isEqualTo( dynamicSchemaService.getContentSchema( GetDynamicContentSchemaParams.create()
-                                                                   .name( MixinName.from( "myapp:myxdata" ) )
+                                                                   .name( MixinName.from( "myapp:mymixin" ) )
                                                                    .type( DynamicContentSchemaType.MIXIN )
                                                                    .build() ).getSchema() ) );
 
-        assertEquals( "myapp:myxdata", xdata.getName().toString() );
-        assertEquals( "Virtual X-data", xdata.getDisplayName() );
-        assertEquals( "X-data description", xdata.getDescription() );
-        assertEquals( 1, xdata.getForm().size() );
+        assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
+        assertEquals( "Virtual Mixin", mixinDescriptor.getDisplayName() );
+        assertEquals( "Mixin description", mixinDescriptor.getDescription() );
+        assertEquals( 1, mixinDescriptor.getForm().size() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/x-data/myxdata/myxdata.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/x-data/myxdata/myxdata.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
 
     @Test
-    void updateXDataSchema()
+    void updateMixinSchema()
         throws Exception
     {
         final CreateDynamicContentSchemaParams createParams =
             CreateDynamicContentSchemaParams.create()
-                .name( MixinName.from( "myapp:myxdata" ) )
+                .name( MixinName.from( "myapp:mymixin" ) )
                 .resource( """
-                               displayName: "Virtual X-data"
+                               displayName: "Virtual MIXIN"
                                form: [ ]
                                """ )
                 .type( DynamicContentSchemaType.MIXIN )
@@ -614,10 +614,10 @@ class DynamicSchemaServiceImplTest
 
         createAdminContext().runWith( () -> dynamicSchemaService.createContentSchema( createParams ) );
 
-        final String resource = readResource( "_xdata.yml" );
+        final String resource = readResource( "_mixin.yml" );
 
         final UpdateDynamicContentSchemaParams updateParams = UpdateDynamicContentSchemaParams.create()
-            .name( MixinName.from( "myapp:myxdata" ) )
+            .name( MixinName.from( "myapp:mymixin" ) )
             .resource( resource )
             .type( DynamicContentSchemaType.MIXIN )
             .build();
@@ -625,27 +625,27 @@ class DynamicSchemaServiceImplTest
         final DynamicSchemaResult<BaseSchema<?>> result =
             createAdminContext().callWith( () -> dynamicSchemaService.updateContentSchema( updateParams ) );
 
-        final MixinDescriptor xdata = (MixinDescriptor) result.getSchema();
+        final MixinDescriptor mixinDescriptor = (MixinDescriptor) result.getSchema();
 
-        createAdminContext().runWith( () -> assertThat( xdata ).usingRecursiveComparison()
+        createAdminContext().runWith( () -> assertThat( mixinDescriptor ).usingRecursiveComparison()
             .isEqualTo( dynamicSchemaService.getContentSchema( GetDynamicContentSchemaParams.create()
-                                                                   .name( MixinName.from( "myapp:myxdata" ) )
+                                                                   .name( MixinName.from( "myapp:mymixin" ) )
                                                                    .type( DynamicContentSchemaType.MIXIN )
                                                                    .build() ).getSchema() ) );
 
-        assertEquals( "myapp:myxdata", xdata.getName().toString() );
-        assertEquals( "Virtual X-data", xdata.getDisplayName() );
-        assertEquals( "X-data description", xdata.getDescription() );
-        assertEquals( 1, xdata.getForm().size() );
+        assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
+        assertEquals( "Virtual Mixin", mixinDescriptor.getDisplayName() );
+        assertEquals( "Mixin description", mixinDescriptor.getDescription() );
+        assertEquals( 1, mixinDescriptor.getForm().size() );
 
         assertEquals( "node", result.getResource().getResolverName() );
         assertTrue( result.getResource().exists() );
         assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
         assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/x-data/myxdata/myxdata.yml", result.getResource().getKey().toString() );
+        assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yml", result.getResource().getKey().toString() );
 
         final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/x-data/myxdata/myxdata.yml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1381,7 +1381,7 @@ class DynamicSchemaServiceImplTest
     }
 
     @Test
-    void listXDataTypes()
+    void listMixinsTypes()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
@@ -1390,29 +1390,29 @@ class DynamicSchemaServiceImplTest
 
         assertTrue( results.isEmpty() );
 
-        DynamicSchemaResult<MixinDescriptor> xdata1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<MixinDescriptor> mixin1 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "myapp:mytype1" ) )
-                .resource( readResource( "_xdata.yml" ) )
+                .resource( readResource( "_mixin.yml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
-        DynamicSchemaResult<MixinDescriptor> xdata2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<MixinDescriptor> mixin2 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "myapp:mytype2" ) )
-                .resource( readResource( "_xdata.yml" ) )
+                .resource( readResource( "_mixin.yml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
-        DynamicSchemaResult<MixinDescriptor> xdata3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
+        DynamicSchemaResult<MixinDescriptor> mixin3 = createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema(
             CreateDynamicContentSchemaParams.create()
                 .name( MixinName.from( "my-other-app:mytype" ) )
-                .resource( readResource( "_xdata.yml" ) )
+                .resource( readResource( "_mixin.yml" ) )
                 .type( DynamicContentSchemaType.MIXIN )
                 .build() ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas(
             ListDynamicContentSchemasParams.create().applicationKey( applicationKey ).type( DynamicContentSchemaType.MIXIN ).build() ) );
 
-        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( xdata1, xdata2 ) );
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin1, mixin2 ) );
 
         results = createAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                                                     .applicationKey( ApplicationKey.from(
@@ -1420,7 +1420,7 @@ class DynamicSchemaServiceImplTest
                                                                                                     .type( DynamicContentSchemaType.MIXIN )
                                                                                                     .build() ) );
 
-        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( xdata3 ) );
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( mixin3 ) );
 
     }
 
@@ -1556,7 +1556,7 @@ class DynamicSchemaServiceImplTest
     }
 
     @Test
-    void createXDataSchemaInvalid()
+    void createMixinSchemaInvalid()
     {
         final String resource = "unsupportedField: [ ]";
 

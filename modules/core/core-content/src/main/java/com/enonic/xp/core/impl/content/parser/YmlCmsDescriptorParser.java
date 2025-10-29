@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;

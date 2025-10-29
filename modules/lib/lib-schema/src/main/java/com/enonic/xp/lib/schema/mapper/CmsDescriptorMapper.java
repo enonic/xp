@@ -28,21 +28,21 @@ public class CmsDescriptorMapper
         gen.value( "modifiedTime", descriptor.getModifiedTime() );
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
-        serializeXDataMappings( gen, descriptor.getMixinMappings() );
+        serializeMixinMappings( gen, descriptor.getMixinMappings() );
     }
 
-    private void serializeXDataMappings( final MapGenerator gen, final MixinMappings xDataMappings )
+    private void serializeMixinMappings( final MapGenerator gen, final MixinMappings mixinMappings )
     {
-        if ( !xDataMappings.isEmpty() )
+        if ( !mixinMappings.isEmpty() )
         {
-            gen.array( "xDataMappings" );
-            for ( MixinMapping xDataMapping : xDataMappings )
+            gen.array( "mixinMappings" );
+            for ( MixinMapping mixinMapping : mixinMappings )
             {
                 gen.map();
 
-                gen.value( "name", xDataMapping.getMixinName() );
-                gen.value( "optional", xDataMapping.getOptional() );
-                gen.value( "allowContentTypes", xDataMapping.getAllowContentTypes() );
+                gen.value( "name", mixinMapping.getMixinName() );
+                gen.value( "optional", mixinMapping.getOptional() );
+                gen.value( "allowContentTypes", mixinMapping.getAllowContentTypes() );
 
                 gen.end();
 

@@ -9,14 +9,14 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class YmlXDataParserTest
+public class YmlMixinDescriptorParserTest
 {
     @Test
     void test()
@@ -28,15 +28,15 @@ public class YmlXDataParserTest
 
         final MixinDescriptor.Builder builder = YmlMixinDescriptorParser.parse( yaml, currentApplication );
 
-        builder.name( MixinName.from( currentApplication, "my-x-data" ) );
+        builder.name( MixinName.from( currentApplication, "my-mixin" ) );
 
         final MixinDescriptor descriptor = builder.build();
 
         assertEquals( currentApplication, descriptor.getName().getApplicationKey() );
-        assertEquals( "my-x-data", descriptor.getName().getLocalName() );
-        assertEquals( "DisplayName of the X-Data", descriptor.getDisplayName() );
+        assertEquals( "my-mixin", descriptor.getName().getLocalName() );
+        assertEquals( "DisplayName of the Mixin", descriptor.getDisplayName() );
         assertNull( descriptor.getDisplayNameI18nKey() );
-        assertEquals( "Description of the X-Data", descriptor.getDescription() );
+        assertEquals( "Description of the Mixin", descriptor.getDescription() );
         assertNull( descriptor.getDescriptionI18nKey() );
 
         // verify form
@@ -48,6 +48,6 @@ public class YmlXDataParserTest
     private String readAsString( final String name )
         throws Exception
     {
-        return Files.readString( Paths.get( YmlXDataParserTest.class.getResource( name ).toURI() ), StandardCharsets.UTF_8 );
+        return Files.readString( Paths.get( YmlMixinDescriptorParserTest.class.getResource( name ).toURI() ), StandardCharsets.UTF_8 );
     }
 }

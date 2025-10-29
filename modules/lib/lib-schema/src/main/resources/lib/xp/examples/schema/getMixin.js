@@ -4,13 +4,13 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual x-data type.
+// Fetch virtual mixin type.
 var result = schemaLib.getSchema({
     name: 'myapp:mydata',
     type: 'MIXIN'
 });
 
-log.info('Fetched x-data: ' + result.name);
+log.info('Fetched mixin: ' + result.name);
 
 // END
 

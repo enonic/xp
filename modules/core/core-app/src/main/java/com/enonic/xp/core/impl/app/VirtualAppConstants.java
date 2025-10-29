@@ -26,7 +26,7 @@ public final class VirtualAppConstants
 
     public static final String FORM_FRAGMENTS_ROOT_NAME = "form-fragments";
 
-    public static final String X_DATA_ROOT_NAME = "x-data";
+    public static final String MIXINS_ROOT_NAME = "mixins";
 
     public static final String STYLES_ROOT_NAME = "styles";
 

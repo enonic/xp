@@ -22,8 +22,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -53,7 +53,7 @@ final class DynamicResourceParser
             case FORM_FRAGMENT:
                 return parseFormFragmentDescriptor( (FormFragmentName) name, resource );
             case MIXIN:
-                return parseXDataDescriptor( (MixinName) name, resource );
+                return parseMixinDescriptor( (MixinName) name, resource );
             default:
                 throw new IllegalArgumentException( String.format( "unknown dynamic schema type: '%s'", type ) );
         }
@@ -106,7 +106,7 @@ final class DynamicResourceParser
         return YmlFormFragmentParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }
 
-    private MixinDescriptor parseXDataDescriptor( final MixinName name, final String resource )
+    private MixinDescriptor parseMixinDescriptor( final MixinName name, final String resource )
     {
         return YmlMixinDescriptorParser.parse( resource, name.getApplicationKey() ).name( name ).build();
     }

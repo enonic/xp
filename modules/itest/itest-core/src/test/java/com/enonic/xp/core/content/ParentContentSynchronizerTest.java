@@ -59,7 +59,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReferences;
 
@@ -294,10 +294,10 @@ class ParentContentSynchronizerTest
     @Test
     void updateMediaChanged()
     {
-        xDataService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
-        contentService.setMixinService( xDataService );
-        contentService.setMixinMappingService( xDataMappingService );
+        mixinService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
 
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
@@ -381,10 +381,10 @@ class ParentContentSynchronizerTest
     @Test
     void updateAttachmentsChanged()
     {
-        xDataService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
-        contentService.setMixinService( xDataService );
-        contentService.setMixinMappingService( xDataMappingService );
+        mixinService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
 
         final Content sourceContent = projectContext.callWith( () -> createMedia( "media", ContentPath.ROOT ) );
         syncCreated( sourceContent.getId() );

@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.xdata;
+package com.enonic.xp.schema.mixin;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;

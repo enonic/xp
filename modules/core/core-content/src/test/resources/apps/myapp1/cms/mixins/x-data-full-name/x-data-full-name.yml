@@ -1,4 +1,4 @@
-displayName: "X-Data Full Name"
+displayName: "Mixin Full Name"
 form:
 - type: "ItemSet"
   name: "name"

@@ -11,11 +11,11 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinNames;
-import com.enonic.xp.schema.xdata.MixinService;
-import com.enonic.xp.schema.xdata.MixinDescriptors;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.mixin.MixinDescriptors;
 
 @Component(immediate = true)
 public final class MixinServiceImpl
@@ -40,7 +40,7 @@ public final class MixinServiceImpl
     {
         if ( SchemaHelper.isSystem( name.getApplicationKey() ) )
         {
-            return this.builtInTypes.getXData( name );
+            return this.builtInTypes.getMixinDescriptor( name );
         }
 
         return mixinLoader.get( name );

@@ -61,10 +61,10 @@ class CmsServiceImplTest
         assertThat( baseUrl ).extracting( Input::getInputType, Input::getLabel, Input::getLabelI18nKey )
             .containsExactly( InputTypeName.TEXT_LINE, "Base URL", "portal.baseUrl.label" );
 
-        // XDataMappings checks
-        final MixinMappings xdataMappings = descriptor.getMixinMappings();
+        // MixinMappings checks
+        final MixinMappings mixinMappings = descriptor.getMixinMappings();
 
-        assertThat( xdataMappings.getNames() ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
+        assertThat( mixinMappings.getNames() ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME, MediaInfo.CAMERA_INFO_METADATA_NAME,
                                                                 MediaInfo.GPS_INFO_METADATA_NAME );
     }
 

@@ -1,4 +1,4 @@
-displayName: "X-Data Address"
+displayName: "Mixin Address"
 form:
 - type: "ItemSet"
   name: "address"

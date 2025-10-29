@@ -21,7 +21,7 @@ import com.enonic.xp.region.PartComponent;
 import com.enonic.xp.region.Region;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -163,7 +163,7 @@ class ContentMappingConstraintTest
     }
 
     @Test
-    void testMatchesXDataPropertyString()
+    void testMatchesMixinsPropertyString()
     {
         final Content content = newContent();
         assertTrue( ContentMappingConstraint.parse( "x.myapplication.myschema.a:1" ).matches( content ) );

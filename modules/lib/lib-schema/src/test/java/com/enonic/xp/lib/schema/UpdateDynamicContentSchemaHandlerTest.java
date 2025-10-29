@@ -14,8 +14,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -72,7 +72,7 @@ class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    void testXData()
+    void testMixin()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
@@ -91,7 +91,7 @@ class UpdateDynamicContentSchemaHandlerTest
             return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/updateXData.js" );
+        runScript( "/lib/xp/examples/schema/updateMixin.js" );
     }
 
     @Test

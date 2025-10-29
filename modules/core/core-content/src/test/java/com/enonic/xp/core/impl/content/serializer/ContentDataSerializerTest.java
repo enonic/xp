@@ -36,7 +36,7 @@ import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.BinaryReference;
 
@@ -191,7 +191,7 @@ class ContentDataSerializerTest
                                                                                                .build() )
                                                                               .build() );
 
-        final PropertySet extraData = data.getSet( ContentPropertyNames.MIXIN_DATA );
+        final PropertySet extraData = data.getSet( ContentPropertyNames.MIXINS );
         assertNotNull( extraData );
         final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );
@@ -223,7 +223,7 @@ class ContentDataSerializerTest
                                                                                      .modifier( PrincipalKey.ofAnonymous() )
                                                                                      .build() );
 
-        final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.MIXIN_DATA );
+        final PropertySet extraData = updatedProperties.getSet( ContentPropertyNames.MIXINS );
         assertNotNull( extraData );
         final PropertySet systemAppData = extraData.getSet( ApplicationKey.SYSTEM.getName() );
         assertNotNull( systemAppData );

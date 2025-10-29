@@ -13,7 +13,7 @@ import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,13 +30,13 @@ class ContentValidatorParamsTest
             .data( new PropertyTree() )
             .createAttachments(
                 CreateAttachments.create().add( CreateAttachment.create().name( "att" ).byteSource( ByteSource.empty() ).build() ).build() )
-            .extraDatas( Mixins.create().add( new Mixin( MixinName.from( "xd" ), new PropertyTree() ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "xd" ), new PropertyTree() ) ).build() )
             .build();
         assertEquals( params.getContentType().getName(), ContentTypeName.from( "ct" ) );
         assertEquals( params.getContentId(), ContentId.from( "ci" ) );
         assertNotNull( params.getData() );
         assertThat( params.getCreateAttachments() ).extracting( "name" ).containsExactly( "att" );
-        assertThat( params.getExtraDatas() ).extracting( "name" ).containsExactly( MixinName.from( "xd" ) );
+        assertThat( params.getMixins() ).extracting( "name" ).containsExactly( MixinName.from( "xd" ) );
     }
 
     @Test
@@ -45,7 +45,7 @@ class ContentValidatorParamsTest
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().name( "ct" ).superType( ContentTypeName.unstructured() ).build() )
             .build();
-        assertNotNull( params.getExtraDatas() );
+        assertNotNull( params.getMixins() );
     }
 
     @Test

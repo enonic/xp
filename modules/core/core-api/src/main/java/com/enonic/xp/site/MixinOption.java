@@ -1,6 +1,6 @@
 package com.enonic.xp.site;
 
-import com.enonic.xp.schema.xdata.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
 
 public record MixinOption(MixinDescriptor mixinDescriptor, boolean optional)
 {

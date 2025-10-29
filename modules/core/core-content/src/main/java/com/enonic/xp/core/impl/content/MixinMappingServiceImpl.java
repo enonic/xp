@@ -13,9 +13,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationWildcardMatcher;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.site.MixinMappings;
@@ -59,22 +59,22 @@ public final class MixinMappingServiceImpl
             .filter( Objects::nonNull )
             .forEach( siteDescriptor -> builder.addAll( siteDescriptor.getMixinMappings() ) );
 
-        return getXDatasByContentType( builder.build(), type );
+        return getMixinOptionsByContentType( builder.build(), type );
     }
 
-    private MixinOptions getXDatasByContentType( final MixinMappings xDataMappings, final ContentTypeName contentTypeName )
+    private MixinOptions getMixinOptionsByContentType( final MixinMappings mixinMappings, final ContentTypeName contentTypeName )
     {
-        final Map<MixinName, MixinOption> result = xDataMappings.stream()
-            .filter( xDataMapping -> {
-                final String pattern = xDataMapping.getAllowContentTypes();
-                final ApplicationKey applicationKey = xDataMapping.getMixinName().getApplicationKey();
+        final Map<MixinName, MixinOption> result = mixinMappings.stream()
+            .filter( mixinMapping -> {
+                final String pattern = mixinMapping.getAllowContentTypes();
+                final ApplicationKey applicationKey = mixinMapping.getMixinName().getApplicationKey();
                 return nullToEmpty( pattern ).isBlank() || new ApplicationWildcardMatcher<>( applicationKey, ContentTypeName::toString,
                                                                                              ApplicationWildcardMatcher.Mode.MATCH ).matches(
                     pattern, contentTypeName );
             } )
             .map( mixinMapping -> {
-                final MixinDescriptor xData = this.mixinService.getByName( mixinMapping.getMixinName() );
-                if ( xData == null )
+                final MixinDescriptor mixinDescriptor = this.mixinService.getByName( mixinMapping.getMixinName() );
+                if ( mixinDescriptor == null )
                 {
                     if ( !mixinMapping.getOptional() )
                     {
@@ -82,7 +82,7 @@ public final class MixinMappingServiceImpl
                     }
                     return null;
                 }
-                return Map.entry( xData.getName(), new MixinOption( xData, mixinMapping.getOptional() ) );
+                return Map.entry( mixinDescriptor.getName(), new MixinOption( mixinDescriptor, mixinMapping.getOptional() ) );
             } )
             .filter( Objects::nonNull )
             .collect(

@@ -36,10 +36,10 @@ class ContentServiceImplTest_media
     @BeforeEach
     void beforeEach()
     {
-        xDataService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
-        contentService.setMixinService( xDataService );
-        contentService.setMixinMappingService( xDataMappingService );
+        mixinService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
     }
 
     @Test

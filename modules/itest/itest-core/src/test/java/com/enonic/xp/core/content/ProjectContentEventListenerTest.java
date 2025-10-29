@@ -69,8 +69,8 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.resource.ResourceProcessor;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.SiteConfig;
@@ -247,7 +247,7 @@ class ProjectContentEventListenerTest
                 contentService.patch( PatchContentParams.create().contentId( sourceContent.getId() ).patcher( ( edit -> {
                     edit.data.setValue( new PropertyTree() );
                     edit.displayName.setValue( "newDisplayName" );
-                    edit.extraDatas.setValue( Mixins.create().add( createExtraData() ).build() );
+                    edit.extraDatas.setValue( Mixins.create().add( createMixin() ).build() );
                     edit.owner.setValue( PrincipalKey.from( "user:system:newOwner" ) );
                     edit.language.setValue( Locale.forLanguageTag( "no" ) );
                     edit.page.setValue( createPage() );
@@ -483,7 +483,7 @@ class ProjectContentEventListenerTest
     void testUpdatedWithExtradata()
     {
         final ApplicationKey myApp = ApplicationKey.from( "myApp" );
-        final MixinName xDataName = MixinName.from( myApp, "xData" );
+        final MixinName mixinName = MixinName.from( myApp, "mixinName" );
 
         projectContext.runWith( () -> projectService.modify( ModifyProjectParams.create()
                                                                  .addSiteConfig( SiteConfig.create()
@@ -498,15 +498,15 @@ class ProjectContentEventListenerTest
                                                                                                   .applicationKey( myApp )
                                                                                                   .mixinMappings( MixinMappings.from(
                                                                                                       MixinMapping.create()
-                                                                                                          .mixinName( xDataName )
+                                                                                                          .mixinName( mixinName )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( true )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final MixinDescriptor xData = MixinDescriptor.create().name( xDataName ).form( Form.create().build() ).build();
-        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create().name( mixinName ).form( Form.create().build() ).build();
+        when( mixinService.getByName( mixinDescriptor.getName() ) ).thenReturn( mixinDescriptor );
 
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
 
@@ -514,7 +514,7 @@ class ProjectContentEventListenerTest
             () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
                 edit.data = new PropertyTree();
                 edit.displayName = "newDisplayName";
-                edit.extraDatas = Mixins.create().add( createExtraData() ).build();
+                edit.extraDatas = Mixins.create().add( createMixin() ).build();
                 edit.owner = PrincipalKey.from( "user:system:newOwner" );
                 edit.language = Locale.forLanguageTag( "no" );
                 edit.page = new EditablePage( createPage() );
@@ -1174,7 +1174,7 @@ class ProjectContentEventListenerTest
         assertDoesNotThrow( this::handleEvents );
     }
 
-    private Mixin createExtraData()
+    private Mixin createMixin()
     {
         final PropertyTree mediaData = new PropertyTree();
         mediaData.setLong( IMAGE_INFO_PIXEL_SIZE, 300L );
@@ -1182,7 +1182,7 @@ class ProjectContentEventListenerTest
         mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
         mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        return new Mixin( MixinName.from( "myApp:xData" ), mediaData );
+        return new Mixin( MixinName.from( "myApp:mixinName" ), mediaData );
     }
 
     private Page createPage()

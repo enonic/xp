@@ -1,5 +1,5 @@
-displayName: "Virtual X-data"
-description: "X-data description"
+displayName: "Virtual Mixin"
+description: "Mixin description"
 form:
   - type: "TextLine"
     name: "label"

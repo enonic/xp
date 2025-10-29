@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
@@ -39,19 +39,19 @@ public class YmlCmsDescriptorParserTest
         assertNotNull( form );
         assertNotNull( form.getFormItem( FormItemPath.from( "backgroundColor" ) ) );
 
-        // verify xData
-        final MixinMappings xDataMappings = siteDescriptor.getMixinMappings();
-        final Iterator<MixinMapping> xDataMappingIterator = xDataMappings.iterator();
+        // verify mixin mappings
+        final MixinMappings mixinMappings = siteDescriptor.getMixinMappings();
+        final Iterator<MixinMapping> mixinMappingIterator = mixinMappings.iterator();
 
-        final MixinMapping xDataMapping_1 = xDataMappingIterator.next();
-        assertEquals( MixinName.from( currentApplication, "all-except-folders" ), xDataMapping_1.getMixinName() );
-        assertEquals( "^(?!base:folder$).*", xDataMapping_1.getAllowContentTypes() );
-        assertTrue( xDataMapping_1.getOptional() );
+        final MixinMapping mixinMapping_1 = mixinMappingIterator.next();
+        assertEquals( MixinName.from( currentApplication, "all-except-folders" ), mixinMapping_1.getMixinName() );
+        assertEquals( "^(?!base:folder$).*", mixinMapping_1.getAllowContentTypes() );
+        assertTrue( mixinMapping_1.getOptional() );
 
-        final MixinMapping xDataMapping_2 = xDataMappingIterator.next();
-        assertEquals( MixinName.from( currentApplication, "folders-only" ), xDataMapping_2.getMixinName() );
-        assertEquals( "base:folder", xDataMapping_2.getAllowContentTypes() );
-        assertFalse( xDataMapping_2.getOptional() );
+        final MixinMapping mixinMapping_2 = mixinMappingIterator.next();
+        assertEquals( MixinName.from( currentApplication, "folders-only" ), mixinMapping_2.getMixinName() );
+        assertEquals( "base:folder", mixinMapping_2.getAllowContentTypes() );
+        assertFalse( mixinMapping_2.getOptional() );
     }
 
     private String readAsString( final String name )

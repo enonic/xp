@@ -57,7 +57,7 @@ import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
+import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -109,7 +109,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -156,9 +156,9 @@ public abstract class AbstractContentServiceTest
 
     protected CmsFormFragmentService formFragmentService;
 
-    protected MixinService xDataService;
+    protected MixinService mixinService;
 
-    protected MixinMappingServiceImpl xDataMappingService;
+    protected MixinMappingServiceImpl mixinMappingService;
 
     protected SiteConfigServiceImpl siteConfigService;
 
@@ -273,7 +273,7 @@ public abstract class AbstractContentServiceTest
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        xDataService = mock( MixinService.class );
+        mixinService = mock( MixinService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
@@ -326,7 +326,7 @@ public abstract class AbstractContentServiceTest
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
-        xDataMappingService = new MixinMappingServiceImpl( cmsService, xDataService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
@@ -337,14 +337,14 @@ public abstract class AbstractContentServiceTest
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
-        contentService.setMixinService( xDataService );
-        contentService.setMixinMappingService( xDataMappingService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );
         contentService.addContentValidator( new SiteConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
-        contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
+        contentService.addContentValidator( new MixinValidator( mixinService ) );
     }
 
     @AfterEach

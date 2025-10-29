@@ -20,7 +20,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
@@ -96,7 +96,7 @@ public class PatchNodeParamsFactory
             .contentTypeName( editedContent.getType() )
             .page( editedContent.getPage() )
             .siteConfigs( editedContent.isSite() ? SiteConfigsDataSerializer.fromData( editedContent.getData().getRoot() ) : null )
-            .extraDatas( editedContent.getAllMixins() )
+            .extraDatas( editedContent.getMixins() )
             .language( editedContent.getLanguage() != null ? editedContent.getLanguage().getLanguage() : null )
             .build();
 

@@ -1,5 +1,5 @@
-displayName: "DisplayName of the X-Data"
-description: "Description of the X-Data"
+displayName: "DisplayName of the Mixin"
+description: "Description of the Mixin"
 form:
   - type: "TextLine"
     name: "myField"

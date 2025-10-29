@@ -13,7 +13,7 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.MixinMapping;
 import com.enonic.xp.site.MixinMappings;
@@ -35,15 +35,15 @@ class GetDynamicSiteHandlerTest
 
             final Form form = Form.create().addFormItem( formItem ).build();
 
-            List<MixinMapping> xDataMappingList = new ArrayList<>();
-            xDataMappingList.add( MixinMapping.create().mixinName( MixinName.from( "myapplication:my" ) ).build() );
-            MixinMappings xDataMappings = MixinMappings.from( xDataMappingList );
+            List<MixinMapping> mixinMappings = new ArrayList<>();
+            mixinMappings.add( MixinMapping.create().mixinName( MixinName.from( "myapplication:my" ) ).build() );
+            MixinMappings mappings = MixinMappings.from( mixinMappings );
 
             CmsDescriptor cmsDescriptor = CmsDescriptor.create()
                 .applicationKey( applicationKey )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .form( form )
-                .mixinMappings( xDataMappings )
+                .mixinMappings( mappings )
                 .build();
 
             final Resource resource = mock( Resource.class );

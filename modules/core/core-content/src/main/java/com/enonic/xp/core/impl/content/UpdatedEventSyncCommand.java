@@ -94,7 +94,7 @@ final class UpdatedEventSyncCommand
     private boolean needToUpdate( final Content sourceContent, final Content targetContent )
     {
         return !Objects.equals( sourceContent.getData(), targetContent.getData() ) ||
-            !Objects.equals( sourceContent.getAllMixins(), targetContent.getAllMixins() ) ||
+            !Objects.equals( sourceContent.getMixins(), targetContent.getMixins() ) ||
             !Objects.equals( sourceContent.getPage(), targetContent.getPage() ) ||
             !Objects.equals( sourceContent.getDisplayName(), targetContent.getDisplayName() ) ||
             !Objects.equals( sourceContent.getOwner(), targetContent.getOwner() ) ||
@@ -120,7 +120,7 @@ final class UpdatedEventSyncCommand
     {
         return PatchContentParams.create().contentId( source.getId() ).patcher( edit -> {
             edit.data.setValue( source.getData() );
-            edit.extraDatas.setValue( source.getAllMixins() );
+            edit.extraDatas.setValue( source.getMixins() );
             edit.displayName.setValue( source.getDisplayName() );
             edit.owner.setValue( source.getOwner() );
             edit.language.setValue( source.getLanguage() );

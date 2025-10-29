@@ -7,8 +7,8 @@ import com.enonic.xp.core.impl.schema.SchemaLoader;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 
 final class MixinDescriptorLoader
     extends SchemaLoader<MixinName, MixinDescriptor>

@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual part.
+// Create virtual mixin.
 
 var params = {
     name: 'myapp:mydata',
@@ -15,9 +15,9 @@ var result = schemaLib.deleteSchema(params);
 
 
 if (result) {
-    log.info('Deleted x-data: ' + params.key);
+    log.info('Deleted mixin: ' + params.key);
 } else {
-    log.info('X-data deletion failed: ' + params.key);
+    log.info('Mixin deletion failed: ' + params.key);
 }
 
 // END

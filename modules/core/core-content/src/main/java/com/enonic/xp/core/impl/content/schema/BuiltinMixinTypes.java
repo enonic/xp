@@ -10,9 +10,9 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinDescriptors;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinDescriptors;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
 import static com.enonic.xp.media.MediaInfo.GPS_INFO_GEO_POINT;
@@ -139,7 +139,7 @@ final class BuiltinMixinTypes
         return this.mixins;
     }
 
-    public MixinDescriptor getXData( final MixinName mixinName )
+    public MixinDescriptor getMixinDescriptor( final MixinName mixinName )
     {
         return this.map.get( mixinName );
     }

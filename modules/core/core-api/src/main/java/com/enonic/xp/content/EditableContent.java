@@ -36,7 +36,7 @@ public final class EditableContent
         this.source = source;
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
-        this.extraDatas = source.getAllMixins().copy();
+        this.extraDatas = source.getMixins().copy();
         this.page = source.getPage() != null ? new EditablePage( source.getPage() ) : null;
         this.owner = source.getOwner();
         this.language = source.getLanguage();

@@ -146,7 +146,7 @@ final class UpdateContentCommand
             Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
             Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
             Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
-            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllMixins(), c2.getAllMixins() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getMixins(), c2.getMixins() ) &&
             Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
             Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
             Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
@@ -195,7 +195,7 @@ final class UpdateContentCommand
         return ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
-            .extraDatas( editedContent.getAllMixins() )
+            .extraDatas( editedContent.getMixins() )
             .contentTypeName( editedContent.getType() )
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )

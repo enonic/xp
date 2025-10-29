@@ -16,7 +16,7 @@ import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
@@ -115,7 +115,7 @@ class ContentOutboundDependenciesIdsResolverTest
     }
 
     @Test
-    void resolve_outbound_from_xdata()
+    void resolve_outbound_from_mixin()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -131,7 +131,7 @@ class ContentOutboundDependenciesIdsResolverTest
         data.addReference( "refToMyself", Reference.from( "contentId" ) );
 
         final Content content = createContent( "contentId", new PropertyTree(), ContentTypeName.site(),
-                                               Mixins.create().add( new Mixin( MixinName.from( "x-data" ), data ) ).build() );
+                                               Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), data ) ).build() );
 
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
             Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );

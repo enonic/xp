@@ -23,12 +23,12 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.Media;
-import com.enonic.xp.core.impl.content.schema.BuiltinXDataTypesAccessor;
+import com.enonic.xp.core.impl.content.schema.BuiltinMixinsTypesAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,9 +49,9 @@ class ImageContentProcessorTest
     void setUp()
     {
         this.contentService = Mockito.mock( ContentService.class );
-        final MixinService xDataService = Mockito.mock( MixinService.class );
-        when( xDataService.getByNames( any() ) ).thenReturn( BuiltinXDataTypesAccessor.getAll() );
-        this.imageContentProcessor = new ImageContentProcessor( contentService, xDataService );
+        final MixinService mixinService = Mockito.mock( MixinService.class );
+        when( mixinService.getByNames( any() ) ).thenReturn( BuiltinMixinsTypesAccessor.getAll() );
+        this.imageContentProcessor = new ImageContentProcessor( contentService, mixinService );
     }
 
     @Test
@@ -83,7 +83,7 @@ class ImageContentProcessorTest
             addMetadata( "geo lat", "1" ).addMetadata( "geo long", "2" ).build(), ContentIds.empty() );
         final GeoPoint geoPoint = new GeoPoint( 1.0, 2.0 );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
-        final Mixin geoExtraData = result.getCreateContentParams().getMixins().getMetadata( MediaInfo.GPS_INFO_METADATA_NAME );
+        final Mixin geoExtraData = result.getCreateContentParams().getMixins().getByName( MediaInfo.GPS_INFO_METADATA_NAME );
         assertEquals( geoExtraData.getData().getGeoPoint( MediaInfo.GPS_INFO_GEO_POINT, 0 ), geoPoint );
     }
 
@@ -95,9 +95,9 @@ class ImageContentProcessorTest
             addMetadata( "exposure time", "1" ).addMetadata( "gps altitude ", "2" ).addMetadata( "bytesize", "13" ).build(), ContentIds.empty() );
         final ProcessCreateResult result = this.imageContentProcessor.processCreate( processCreateParams );
         final Mixins extraDatas = result.getCreateContentParams().getMixins();
-        assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
-        assertEquals( "2", extraDatas.getMetadata( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
-        assertEquals( 13, extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
+        assertEquals( "1", extraDatas.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
+        assertEquals( "2", extraDatas.getByName( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
+        assertEquals( 13, extraDatas.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     @Test
@@ -122,7 +122,7 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final Mixin extraData = result.getContent().getAllMixins().getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        final Mixin extraData = result.getContent().getMixins().getByName( MediaInfo.IMAGE_INFO_METADATA_NAME );
         assertNotNull( extraData.getData().getLong( "pixelSize", 0 ) );
         assertNotNull( extraData.getData().getLong( "imageHeight", 0 ) );
         assertNotNull( extraData.getData().getLong( "imageWidth", 0 ) );
@@ -152,7 +152,7 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        assertThat(result.getContent().getAllMixins()).map( Mixin::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
+        assertThat(result.getContent().getMixins()).map( Mixin::getName ).containsExactly( MediaInfo.IMAGE_INFO_METADATA_NAME );
     }
 
     @Test
@@ -166,10 +166,10 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final Mixins extraDatas = result.getContent().getAllMixins();
-        assertEquals( "1", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
-        assertEquals( "2", extraDatas.getMetadata( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
-        assertEquals( 13, extraDatas.getMetadata( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
+        final Mixins extraDatas = result.getContent().getMixins();
+        assertEquals( "1", extraDatas.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
+        assertEquals( "2", extraDatas.getByName( MediaInfo.GPS_INFO_METADATA_NAME ).getData().getString( "altitude", 0 ) );
+        assertEquals( 13, extraDatas.getByName( MediaInfo.IMAGE_INFO_METADATA_NAME ).getData().getLong( MediaInfo.MEDIA_INFO_BYTE_SIZE, 0 ) );
     }
 
     @Test
@@ -186,8 +186,8 @@ class ImageContentProcessorTest
 
         final ProcessUpdateResult result = this.imageContentProcessor.processUpdate( processUpdateParams );
 
-        final Mixins extraDatas = result.getContent().getAllMixins();
-        assertEquals( "2", extraDatas.getMetadata( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
+        final Mixins extraDatas = result.getContent().getMixins();
+        assertEquals( "2", extraDatas.getByName( MediaInfo.CAMERA_INFO_METADATA_NAME ).getData().getString( "shutterTime", 0 ) );
     }
 
     private CreateAttachments createAttachments()

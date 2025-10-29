@@ -39,11 +39,11 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinNames;
-import com.enonic.xp.schema.xdata.MixinService;
-import com.enonic.xp.schema.xdata.MixinDescriptors;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinNames;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.schema.mixin.MixinDescriptors;
 import com.enonic.xp.util.GeoPoint;
 
 import static com.enonic.xp.media.MediaInfo.CAMERA_INFO_METADATA_NAME;
@@ -188,14 +188,14 @@ public final class ImageContentProcessor
 
     private final ContentService contentService;
 
-    private final MixinDescriptors xDatas;
+    private final MixinDescriptors mixinDescriptors;
 
     @Activate
-    public ImageContentProcessor( @Reference final ContentService contentService, @Reference final MixinService xDataService )
+    public ImageContentProcessor( @Reference final ContentService contentService, @Reference final MixinService mixinService )
     {
         this.contentService = contentService;
-        this.xDatas =
-            xDataService.getByNames( MixinNames.from( IMAGE_INFO_METADATA_NAME, CAMERA_INFO_METADATA_NAME, GPS_INFO_METADATA_NAME ) );
+        this.mixinDescriptors =
+            mixinService.getByNames( MixinNames.from( IMAGE_INFO_METADATA_NAME, CAMERA_INFO_METADATA_NAME, GPS_INFO_METADATA_NAME ) );
     }
 
     @Override
@@ -208,9 +208,9 @@ public final class ImageContentProcessor
     public ProcessCreateResult processCreate( final ProcessCreateParams params )
     {
         final MediaInfo mediaInfo = params.getMediaInfo();
-        final Mixins extraDatas = mediaInfo != null ? extractMetadata( mediaInfo ) : null;
+        final Mixins mixins = mediaInfo != null ? extractMetadata( mediaInfo ) : null;
 
-        return new ProcessCreateResult( CreateContentParams.create( params.getCreateContentParams() ).mixins( extraDatas ).build(),
+        return new ProcessCreateResult( CreateContentParams.create( params.getCreateContentParams() ).mixins( mixins ).build(),
                                         params.getProcessedReferences() );
     }
 
@@ -218,31 +218,31 @@ public final class ImageContentProcessor
     public ProcessUpdateResult processUpdate( final ProcessUpdateParams params )
     {
         final MediaInfo mediaInfo = params.getMediaInfo();
-        final Mixins extraDatas;
+        final Mixins mixins;
         if ( mediaInfo != null )
         {
-            extraDatas = Mixins.create()
-                .addAll( params.getContent().getAllMixins().copy() )
+            mixins = Mixins.create()
+                .addAll( params.getContent().getMixins().copy() )
                 .addAll( extractMetadata( mediaInfo ) )
                 .buildKeepingLast();
         }
         else
         {
             final Mixin updatedImageMetadata = updateImageMetadata( (Media) params.getContent(), params.getContent()
-                .getAllMixins()
-                .getMetadata( IMAGE_INFO_METADATA_NAME ) );
+                .getMixins()
+                .getByName( IMAGE_INFO_METADATA_NAME ) );
             if ( updatedImageMetadata == null )
             {
                 return new ProcessUpdateResult( params.getContent() );
             }
             else
             {
-                extraDatas =
-                    Mixins.create().addAll( params.getContent().getAllMixins().copy() ).add( updatedImageMetadata ).buildKeepingLast();
+                mixins =
+                    Mixins.create().addAll( params.getContent().getMixins().copy() ).add( updatedImageMetadata ).buildKeepingLast();
             }
         }
 
-        return new ProcessUpdateResult( Content.create( params.getContent() ).extraDatas( extraDatas ).build() );
+        return new ProcessUpdateResult( Content.create( params.getContent() ).extraDatas( mixins ).build() );
     }
 
     private Mixin updateImageMetadata( final Media media, final Mixin imageMetadata )
@@ -283,11 +283,11 @@ public final class ImageContentProcessor
             imageHeight = croppedImage.getHeight();
         }
 
-        final PropertyTree xData = imageMetadata.getData();
-        setLongProperty( xData, IMAGE_INFO_PIXEL_SIZE, imageWidth * imageHeight );
-        setLongProperty( xData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
-        setLongProperty( xData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
-        setLongProperty( xData, MEDIA_INFO_BYTE_SIZE, mediaAttachment.getSize() );
+        final PropertyTree mixinData = imageMetadata.getData();
+        setLongProperty( mixinData, IMAGE_INFO_PIXEL_SIZE, imageWidth * imageHeight );
+        setLongProperty( mixinData, IMAGE_INFO_IMAGE_HEIGHT, imageHeight );
+        setLongProperty( mixinData, IMAGE_INFO_IMAGE_WIDTH, imageWidth );
+        setLongProperty( mixinData, MEDIA_INFO_BYTE_SIZE, mediaAttachment.getSize() );
 
         return imageMetadata;
     }
@@ -357,25 +357,25 @@ public final class ImageContentProcessor
                 mediaEntryValues = mediaInfoEntry.getValue();
             }
 
-            for ( MixinDescriptor xData : xDatas )
+            for ( MixinDescriptor mixinDescriptor : mixinDescriptors )
             {
-                final FormItem formItem = xData.getForm().getFormItem( FormItemPath.from( formItemName ) );
+                final FormItem formItem = mixinDescriptor.getForm().getFormItem( FormItemPath.from( formItemName ) );
                 if ( formItem instanceof Input input )
                 {
-                    final Mixin extraData = getOrCreate( metadataMap, xData.getName() );
+                    final Mixin mixin = getOrCreate( metadataMap, mixinDescriptor.getName() );
                     if ( InputTypeName.DATE_TIME.equals( input.getInputType() ) )
                     {
-                        extraData.getData()
+                        mixin.getData()
                             .addLocalDateTime( formItemName, ValueTypes.LOCAL_DATE_TIME.convert( mediaEntryValues.toArray()[0] ) );
                     }
                     else if ( InputTypeName.LONG.equals( input.getInputType() ) )
                     {
                         final Long[] longValues = mediaEntryValues.stream().map( Long::parseLong ).toArray( Long[]::new );
-                        extraData.getData().addLongs( formItemName, longValues );
+                        mixin.getData().addLongs( formItemName, longValues );
                     }
                     else
                     {
-                        extraData.getData().addStrings( formItemName, mediaEntryValues );
+                        mixin.getData().addStrings( formItemName, mediaEntryValues );
                     }
                 }
             }

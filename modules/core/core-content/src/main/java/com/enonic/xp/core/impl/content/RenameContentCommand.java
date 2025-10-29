@@ -71,8 +71,8 @@ final class RenameContentCommand
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
-            final Mixins extraData = data.hasProperty( ContentPropertyNames.MIXIN_DATA ) ? new ContentDataSerializer().fromExtraData(
-                data.getProperty( ContentPropertyNames.MIXIN_DATA ).getSet() ) : null;
+            final Mixins extraData = data.hasProperty( ContentPropertyNames.MIXINS ) ? new ContentDataSerializer().fromExtraData(
+                data.getProperty( ContentPropertyNames.MIXINS ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )

@@ -11,7 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
+import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
@@ -24,7 +24,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
@@ -39,7 +39,7 @@ class ValidateContentDataCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private MixinService xDataService;
+    private MixinService mixinService;
 
     private CmsService cmsService;
 
@@ -47,7 +47,7 @@ class ValidateContentDataCommandTest
     void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataService = Mockito.mock( MixinService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
         this.cmsService = Mockito.mock( CmsService.class );
     }
 
@@ -243,7 +243,7 @@ class ValidateContentDataCommandTest
             .displayName( displayName )
             .contentTypeService( this.contentTypeService )
             .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( cmsService ), new OccurrenceValidator(),
-                                         new ExtraDataValidator( xDataService ) ) )
+                                         new MixinValidator( mixinService ) ) )
             .build()
             .execute();
     }

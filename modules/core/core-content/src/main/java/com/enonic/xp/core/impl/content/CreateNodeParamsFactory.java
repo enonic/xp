@@ -20,7 +20,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -63,7 +63,7 @@ public class CreateNodeParamsFactory
     {
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
-        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.MIXIN_DATA ) );
+        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.MIXINS ) );
 
         final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
 

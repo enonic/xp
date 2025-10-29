@@ -28,7 +28,7 @@ import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;

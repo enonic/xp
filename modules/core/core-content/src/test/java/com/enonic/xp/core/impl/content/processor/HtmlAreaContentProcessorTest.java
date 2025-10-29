@@ -43,9 +43,9 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
-import com.enonic.xp.schema.xdata.MixinService;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
@@ -65,7 +65,7 @@ class HtmlAreaContentProcessorTest
 
     private ContentTypeService contentTypeService;
 
-    private MixinService xDataService;
+    private MixinService mixinService;
 
     private CmsService cmsService;
 
@@ -82,7 +82,7 @@ class HtmlAreaContentProcessorTest
     {
 
         this.cmsService = Mockito.mock( CmsService.class );
-        this.xDataService = Mockito.mock( MixinService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
@@ -105,7 +105,7 @@ class HtmlAreaContentProcessorTest
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
         htmlAreaContentProcessor.setCmsService( cmsService );
-        htmlAreaContentProcessor.setXDataService( xDataService );
+        htmlAreaContentProcessor.setMixinService( mixinService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
@@ -234,16 +234,16 @@ class HtmlAreaContentProcessorTest
     }
 
     @Test
-    void extra_data()
+    void mixins()
     {
-        final MixinName xDataName = MixinName.from( "xDataName" );
+        final MixinName mixinName = MixinName.from( "mixinName" );
 
-        final MixinDescriptor xData = MixinDescriptor.create()
-            .name( xDataName )
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
+            .name( mixinName )
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
-        when( xDataService.getByName( xDataName ) ).thenReturn( xData );
+        when( mixinService.getByName( mixinName ) ).thenReturn( mixinDescriptor );
 
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString(
@@ -257,7 +257,7 @@ class HtmlAreaContentProcessorTest
                                 .data( new PropertyTree() )
                                 .extraDatas( Mixins.create()
                                                  .add(
-                                                     new Mixin( MixinName.from( "xDataName" ), data ) )
+                                                     new Mixin( MixinName.from( "mixinName" ), data ) )
                                                  .build() )
                                 .build() )
             .build();
@@ -541,7 +541,7 @@ class HtmlAreaContentProcessorTest
         htmlAreaContentProcessor = new HtmlAreaContentProcessor( contentConfig );
         htmlAreaContentProcessor.setContentTypeService( contentTypeService );
         htmlAreaContentProcessor.setCmsService( cmsService );
-        htmlAreaContentProcessor.setXDataService( xDataService );
+        htmlAreaContentProcessor.setMixinService( mixinService );
         htmlAreaContentProcessor.setPageDescriptorService( pageDescriptorService );
         htmlAreaContentProcessor.setPartDescriptorService( partDescriptorService );
         htmlAreaContentProcessor.setLayoutDescriptorService( layoutDescriptorService );
@@ -564,10 +564,10 @@ class HtmlAreaContentProcessorTest
         data.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans01.jpg\" data-src=\"image://image-id1\" src=\"/admin/rest-v2/cs/cms/features/content/content/image/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b?ts=1438862613943&amp;size=679&amp;scaleWidth=true\"/>" ) );
 
-        final MixinName xDataName = MixinName.from( "xDataName" );
+        final MixinName mixinName = MixinName.from( "mixinName" );
 
-        final MixinDescriptor xData = MixinDescriptor.create()
-            .name( xDataName )
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
+            .name( mixinName )
             .addFormItem( Input.create().name( "htmlData" ).label( "htmlData" ).inputType( InputTypeName.HTML_AREA ).build() )
             .build();
 
@@ -575,12 +575,12 @@ class HtmlAreaContentProcessorTest
         extraData.addProperty( "htmlData", ValueFactory.newString(
             "<img alt=\"Dictyophorus_spumans02.jpg\" data-src=\"image://image-id2\" src=\"/admin/rest-v2/cs/cms/features/5a5fc786-a4e6-4a4d-a21a-19ac6fd4784b\"/>" ) );
 
-        when( xDataService.getByName( xDataName ) ).thenReturn( xData );
+        when( mixinService.getByName( mixinName ) ).thenReturn( mixinDescriptor );
 
         final CreateContentParams createContentParams = CreateContentParams.create()
             .parent( ContentPath.ROOT )
             .contentData( data )
-            .mixins( Mixins.create().add( new Mixin( MixinName.from( "xDataName" ), extraData ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), extraData ) ).build() )
             .type( contentTypeName )
             .build();
         final ProcessCreateParams processCreateParams = new ProcessCreateParams( createContentParams, null, ContentIds.empty() );

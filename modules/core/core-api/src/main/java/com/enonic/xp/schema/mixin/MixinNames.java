@@ -1,4 +1,4 @@
-package com.enonic.xp.schema.xdata;
+package com.enonic.xp.schema.mixin;
 
 import java.util.Arrays;
 import java.util.Collection;

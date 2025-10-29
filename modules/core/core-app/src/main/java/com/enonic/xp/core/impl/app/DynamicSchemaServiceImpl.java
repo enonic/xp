@@ -45,8 +45,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.MixinDescriptor;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
@@ -397,7 +397,7 @@ public class DynamicSchemaServiceImpl
             case FORM_FRAGMENT:
                 return VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME;
             case MIXIN:
-                return VirtualAppConstants.X_DATA_ROOT_NAME;
+                return VirtualAppConstants.MIXINS_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic schema type: " + type );
         }

@@ -7,7 +7,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.schema.xdata.MixinName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,14 +25,14 @@ public class CmsDescriptorTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
         //Builds FragmentsNames
-        MixinMappings xDataMappings =
+        MixinMappings mixinMappings =
             MixinMappings.from( MixinMapping.create().mixinName( MixinName.from( applicationKey, "my" ) ).build() );
 
         //Builds a SiteDescriptor
         final CmsDescriptor descriptor =
-            CmsDescriptor.create().applicationKey( applicationKey ).form( form ).mixinMappings( xDataMappings ).build();
+            CmsDescriptor.create().applicationKey( applicationKey ).form( form ).mixinMappings( mixinMappings ).build();
 
         assertEquals( form, descriptor.getForm() );
-        assertEquals( xDataMappings, descriptor.getMixinMappings() );
+        assertEquals( mixinMappings, descriptor.getMixinMappings() );
     }
 }
