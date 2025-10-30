@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Objects;
+
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
@@ -12,7 +14,6 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.CommitNodeParams;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeVersionIds;
@@ -74,18 +75,12 @@ final class ApplyContentPermissionsCommand
         final NodeVersionIds versionIdsToCommit = result.getResults()
             .entrySet()
             .stream()
-            .flatMap( Collection::stream )
-            .filter( branchResult -> ContentConstants.BRANCH_MASTER.equals( branchResult.branch() ) )
-            .map( ApplyNodePermissionsResult.BranchResult::node )
-            .filter( Objects::nonNull )
-            .map( Node::getNodeVersionId )
-            .collect( NodeVersionIds.collector() );
             .flatMap( entry -> entry.getValue()
                 .stream()
                 .filter( br -> ContentConstants.BRANCH_MASTER.equals( br.branch() ) )
-                .filter( br -> br.nodeVersionId() != null )
-                .map( br -> RoutableNodeVersionId.from( entry.getKey(), br.nodeVersionId() ) ) )
-            .collect( RoutableNodeVersionIds.collector() );
+                .map( ApplyNodePermissionsResult.BranchResult::nodeVersionId )
+                .filter( Objects::nonNull ) )
+            .collect( NodeVersionIds.collector() );
 
         if ( !versionIdsToCommit.isEmpty() )
         {

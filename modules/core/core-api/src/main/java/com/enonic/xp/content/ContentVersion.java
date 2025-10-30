@@ -2,6 +2,7 @@ package com.enonic.xp.content;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.security.PrincipalKey;
@@ -133,6 +134,26 @@ public final class ContentVersion
     public Attributes getAttributes()
     {
         return attributes;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return o instanceof final ContentVersion that && Objects.equals( id, that.id ) && Objects.equals( path, that.path ) &&
+            Objects.equals( timestamp, that.timestamp ) && Objects.equals( change, that.change ) &&
+            Objects.equals( changeFields, that.changeFields ) && Objects.equals( changedTime, that.changedTime ) &&
+            Objects.equals( changedBy, that.changedBy ) && Objects.equals( publishedTime, that.publishedTime ) &&
+            Objects.equals( publishedBy, that.publishedBy ) && Objects.equals( publishedFrom, that.publishedFrom ) &&
+            Objects.equals( publishedTo, that.publishedTo ) && Objects.equals( unpublishedTime, that.unpublishedTime ) &&
+            Objects.equals( unpublishedBy, that.unpublishedBy ) && Objects.equals( comment, that.comment ) &&
+            Objects.equals( attributes, that.attributes );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( id, path, timestamp, change, changeFields, changedTime, changedBy, publishedTime, publishedBy, publishedFrom,
+                             publishedTo, unpublishedTime, unpublishedBy, comment, attributes );
     }
 
     public static Builder create()

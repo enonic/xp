@@ -62,7 +62,7 @@ public class NodeVersionDiffQuery
         private final NodePaths.Builder excludes = NodePaths.create();
 
 
-        public Builder()
+        private Builder()
         {
             super();
         }

@@ -68,7 +68,7 @@ public class ApplyNodePermissionsCommand
         return new Builder();
     }
 
-    public static Builder create( AbstractNodeCommand source )
+    static Builder create( AbstractNodeCommand source )
     {
         return new Builder( source );
     }
@@ -205,17 +205,7 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionData != null )
             {
-                this.nodeStorageService.push( List.of( NodeBranchEntry.fromNodeVersionMetadata( updatedVersionMetadata ) ), branch, l -> {
-                this.nodeStorageService.push( List.of( NodeBranchEntry.create()
-                                                           .nodeVersionId( updatedVersionData.node().getNodeVersionId() )
-                                                           .nodePath( updatedVersionData.node().path() )
-                                                                                 .nodeVersionKey(
-                                                                                     updatedVersionData.metadata().getNodeVersionKey() )
-                                                           .nodeId( updatedVersionData.node().id() )
-                                                           .timestamp( updatedVersionData.metadata().getTimestamp() )
-                                                                                 .build() ), branch, l -> {
-                }, targetContext );
-
+                this.nodeStorageService.push( List.of( NodeBranchEntry.fromNodeVersionMetadata( updatedVersionData.metadata() ) ), branch, l -> {}, targetContext);
                 return updatedVersionData;
             }
             else

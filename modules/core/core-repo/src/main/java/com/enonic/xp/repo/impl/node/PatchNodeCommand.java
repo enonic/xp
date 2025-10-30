@@ -98,7 +98,7 @@ public final class PatchNodeCommand
         {
             Permission requiredPermission;
 
-            if ( firstBranch.equals( branch ) ||
+            if ( branch.equals( firstBranch ) ||
                 !activeNodeMap.get( firstBranch ).getNodeVersionId().equals( persistedNode.getNodeVersionId() ) )
             {
                 requiredPermission = Permission.MODIFY;
@@ -163,14 +163,7 @@ public final class PatchNodeCommand
 
         if ( patchedNode != null )
         {
-            this.nodeStorageService.push( List.of( NodeBranchEntry.create()
-                                                       .nodeVersionId( patchedNode.node().getNodeVersionId() )
-                                                       .nodePath( patchedNode.node().path() )
-                                                       .nodeVersionKey( patchedNode.metadata().getNodeVersionKey() )
-                                                       .nodeId( patchedNode.node().id() )
-                                                       .timestamp( patchedNode.node().getTimestamp() )
-                                                       .build() ), branch, l -> {
-            this.nodeStorageService.push( List.of( NodeBranchEntry.fromNodeVersionMetadata( patchedVersionMetadata ) ), branch, l -> {
+            this.nodeStorageService.push( List.of( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ) ), branch, l -> {
             }, internalContext );
 
             return patchedNode;
