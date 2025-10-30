@@ -13,7 +13,7 @@ public final class MixinMapping
 
     private final String allowContentTypes;
 
-    private final Boolean optional;
+    private final boolean optional;
 
     public MixinMapping( final Builder builder )
     {
@@ -37,7 +37,7 @@ public final class MixinMapping
         return allowContentTypes;
     }
 
-    public Boolean getOptional()
+    public boolean isOptional()
     {
         return optional;
     }
@@ -55,7 +55,7 @@ public final class MixinMapping
         }
         final MixinMapping that = (MixinMapping) o;
         return Objects.equals( mixinName, that.mixinName ) && Objects.equals( allowContentTypes, that.allowContentTypes ) &&
-            Objects.equals( optional, that.optional );
+            optional == that.optional;
     }
 
     @Override
@@ -71,7 +71,7 @@ public final class MixinMapping
 
         private String allowContentTypes;
 
-        private Boolean optional = false;
+        private boolean optional;
 
         private Builder()
         {
@@ -89,7 +89,7 @@ public final class MixinMapping
             return this;
         }
 
-        public Builder optional( final Boolean optional )
+        public Builder optional( final boolean optional )
         {
             this.optional = optional;
             return this;

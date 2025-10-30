@@ -46,12 +46,12 @@ public class YmlCmsDescriptorParserTest
         final MixinMapping mixinMapping_1 = mixinMappingIterator.next();
         assertEquals( MixinName.from( currentApplication, "all-except-folders" ), mixinMapping_1.getMixinName() );
         assertEquals( "^(?!base:folder$).*", mixinMapping_1.getAllowContentTypes() );
-        assertTrue( mixinMapping_1.getOptional() );
+        assertTrue( mixinMapping_1.isOptional() );
 
         final MixinMapping mixinMapping_2 = mixinMappingIterator.next();
         assertEquals( MixinName.from( currentApplication, "folders-only" ), mixinMapping_2.getMixinName() );
         assertEquals( "base:folder", mixinMapping_2.getAllowContentTypes() );
-        assertFalse( mixinMapping_2.getOptional() );
+        assertFalse( mixinMapping_2.isOptional() );
     }
 
     private String readAsString( final String name )

@@ -76,13 +76,13 @@ public final class MixinMappingServiceImpl
                 final MixinDescriptor mixinDescriptor = this.mixinService.getByName( mixinMapping.getMixinName() );
                 if ( mixinDescriptor == null )
                 {
-                    if ( !mixinMapping.getOptional() )
+                    if ( !mixinMapping.isOptional() )
                     {
                         throw new IllegalStateException( "Mixin '" + mixinMapping.getMixinName() + "' not found" );
                     }
                     return null;
                 }
-                return Map.entry( mixinDescriptor.getName(), new MixinOption( mixinDescriptor, mixinMapping.getOptional() ) );
+                return Map.entry( mixinDescriptor.getName(), new MixinOption( mixinDescriptor, mixinMapping.isOptional() ) );
             } )
             .filter( Objects::nonNull )
             .collect(

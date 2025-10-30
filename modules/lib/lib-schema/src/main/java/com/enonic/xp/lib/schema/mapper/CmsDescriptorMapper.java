@@ -41,7 +41,7 @@ public class CmsDescriptorMapper
                 gen.map();
 
                 gen.value( "name", mixinMapping.getMixinName() );
-                gen.value( "optional", mixinMapping.getOptional() );
+                gen.value( "optional", mixinMapping.isOptional() );
                 gen.value( "allowContentTypes", mixinMapping.getAllowContentTypes() );
 
                 gen.end();
