@@ -1,7 +1,5 @@
 package com.enonic.xp.content;
 
-import java.time.Instant;
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,11 +9,7 @@ class FindContentVersionsResultTest
     @Test
     void sameVersion()
     {
-        final Instant now = Instant.now();
-
-        final ContentVersion version = ContentVersion.create().
-            id( ContentVersionId.from( "a" ) ).
-            modified( now ).
+        final ContentVersion version = ContentVersion.create().versionId( ContentVersionId.from( "a" ) ).
             build();
 
         final ContentVersions contentVersions = ContentVersions.create().

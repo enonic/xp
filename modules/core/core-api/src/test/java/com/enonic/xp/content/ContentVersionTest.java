@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import com.enonic.xp.security.PrincipalKey;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ContentVersionTest
@@ -15,23 +13,18 @@ class ContentVersionTest
     @Test
     void testBuilder()
     {
-        final Instant now1 = Instant.now();
         final Instant now2 = Instant.now();
 
         final ContentVersion version = ContentVersion.create()
-            .id( ContentVersionId.from( "a" ) )
+            .versionId( ContentVersionId.from( "a" ) )
             .path( ContentPath.from( ContentPath.ROOT, "a" ) )
-            .modified( now1 )
             .timestamp( now2 )
-            .changedBy( PrincipalKey.ofAnonymous() )
             .comment( "comment" )
             .build();
 
-        assertEquals( ContentVersionId.from( "a" ), version.getId() );
-        assertEquals( now1, version.getChangedTime() );
+        assertEquals( ContentVersionId.from( "a" ), version.getVersionId() );
         assertEquals( now2, version.getTimestamp() );
         assertEquals( "comment", version.getComment() );
-        assertEquals( PrincipalKey.ofAnonymous(), version.getChangedBy() );
         assertEquals( "/a", version.getPath().toString() );
     }
 

@@ -4,19 +4,14 @@ import java.util.List;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.ContentVersionId;
 import com.enonic.xp.content.ContentVersions;
 import com.enonic.xp.content.FindContentVersionsResult;
-import com.enonic.xp.core.impl.content.serializer.PublishInfoSerializer;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.util.GenericValue;
@@ -47,7 +42,6 @@ public class FindContentVersionsCommand
 
     public FindContentVersionsResult execute()
     {
-
         final NodeVersionQueryResult nodeVersionQueryResult = nodeService.findVersions(
             GetNodeVersionsParams.create().nodeId( NodeId.from( this.contentId ) ).from( this.from ).size( this.size ).build() );
 
@@ -69,46 +63,20 @@ public class FindContentVersionsCommand
         final Attributes attributes = nodeVersionMetadata.getAttributes();
 
         final ContentVersion.Builder builder = ContentVersion.create()
-            .id( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
+            .contentId( ContentId.from( nodeVersionMetadata.getNodeId() ) )
+            .versionId( ContentVersionId.from( nodeVersionMetadata.getNodeVersionId().toString() ) )
             .path( ContentNodeHelper.translateNodePathToContentPath( nodeVersionMetadata.getNodePath() ) )
-            .timestamp( nodeVersionMetadata.getTimestamp() )
-            .attributes( attributes );
+            .timestamp( nodeVersionMetadata.getTimestamp() );
 
         if ( attributes != null )
         {
-            final GenericValue publishAttr = attributes.get( ContentAttributesHelper.PUBLISH_KEY );
-            final GenericValue unpublishAttr = attributes.get( ContentAttributesHelper.UNPUBLISH_KEY );
-            if ( publishAttr != null || unpublishAttr != null )
-            {
-                final NodeVersion nodeVersion = nodeService.getByNodeVersionKey( nodeVersionMetadata.getNodeVersionKey() );
-                final PropertyTree data = nodeVersion.getData();
-
-                final ContentPublishInfo publishInfo = PublishInfoSerializer.serialize( data.getSet( ContentPropertyNames.PUBLISH_INFO ) );
-                if ( publishAttr != null )
-                {
-                    builder.published( ContentAttributesHelper.getOpTime( publishAttr ) );
-                    builder.publishedBy( ContentAttributesHelper.getUser( publishAttr ) );
-                }
-
-                builder.publishedFrom( publishInfo.getFrom() );
-                builder.publishedTo( publishInfo.getTo() );
-
-                if ( unpublishAttr != null )
-                {
-                    builder.unpublished( ContentAttributesHelper.getOpTime( unpublishAttr ) );
-                    builder.unpublishedBy( ContentAttributesHelper.getUser( unpublishAttr ) );
-                }
-            }
-
             attributes.list()
                 .stream()
-                .filter( v -> ContentAttributesHelper.CHANGE_KEYS.contains( v.property( Attributes.KEY_PROPERTY ).asString() ) )
-                .reduce( ( first, second ) -> second )
-                .ifPresent( changeAttr -> {
-                    builder.changedBy( ContentAttributesHelper.getUser( changeAttr ) );
-                    builder.changeFields( changeAttr.optional( "fields" ).map( GenericValue::asStringList ).orElse( List.of() ) );
-                    builder.change( changeAttr.property( Attributes.KEY_PROPERTY ).asString() );
-                } );
+                .filter( v -> ContentAttributesHelper.getKey( v ).startsWith( "content." ) )
+                .map( v -> new ContentVersion.Change( ContentAttributesHelper.getKey( v ),
+                                                      v.optional( "fields" ).map( GenericValue::asStringList ).orElse( List.of() ),
+                                                      ContentAttributesHelper.getUser( v ), ContentAttributesHelper.getOpTime( v ) ) )
+                .forEach( builder::addChange );
         }
 
         if ( nodeVersionMetadata.getNodeCommitId() != null )
@@ -144,7 +112,6 @@ public class FindContentVersionsCommand
 
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
-
     {
         private ContentId contentId;
 

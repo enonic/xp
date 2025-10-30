@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 import com.enonic.xp.content.Content;
@@ -45,10 +44,6 @@ public class ContentAttributesHelper
     public static final String PUBLISH_KEY = "content.publish";
 
     public static final String UNPUBLISH_KEY = "content.unpublish";
-
-    public static final Set<String> CHANGE_KEYS =
-        Set.of( CREATE_KEY, DUPLICATE_KEY, IMPORT_KEY, UPDATE_KEY, PERMISSIONS_KEY, MOVE_KEY, SORT_KEY, PATCH_KEY, ARCHIVE_KEY,
-                RESTORE_KEY );
 
     private static final Clock MILLIS_CLOCK = Clock.tick( Clock.systemUTC(), Duration.ofMillis( 1 ) );
 
@@ -91,6 +86,11 @@ public class ContentAttributesHelper
     public static Instant getOpTime( final GenericValue attribute )
     {
         return Instant.parse( attribute.property( ContentAttributesHelper.OPTIME_PROPERTY ).asString() );
+    }
+
+    public static String getKey( final GenericValue attribute )
+    {
+        return attribute.property( Attributes.KEY_PROPERTY ).asString();
     }
 
     public static PrincipalKey getUser( final GenericValue attribute )

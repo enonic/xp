@@ -16,19 +16,15 @@ class ContentVersionsTest
 
         final Instant now1 = Instant.now();
 
-        final ContentVersion version1 = ContentVersion.create().
-            id( ContentVersionId.from( "a" ) ).
-            modified( now1 ).
-            timestamp( now1 ).changedBy( PrincipalKey.ofAnonymous() ).
+        final ContentVersion version1 = ContentVersion.create().versionId( ContentVersionId.from( "a" ) ).
+            timestamp( now1 ).
             comment( "comment" ).
             build();
 
         final Instant now2 = now1.plusMillis( 1000 );
 
-        final ContentVersion version2 = ContentVersion.create().
-            id( ContentVersionId.from( "b" ) ).
-            modified( now2 ).
-            timestamp( now2 ).changedBy( PrincipalKey.ofAnonymous() ).
+        final ContentVersion version2 = ContentVersion.create().versionId( ContentVersionId.from( "b" ) ).
+            timestamp( now2 ).
             comment( "comment" ).
             build();
 

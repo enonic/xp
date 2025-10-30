@@ -1,5 +1,8 @@
 package com.enonic.xp.core.content;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.archive.ArchiveContentParams;
@@ -72,7 +75,8 @@ class ContentServiceImplTest_versions
         assertEquals( 3, result.getTotalHits() );
 
         assertThat( result.getContentVersions() ).elements( 0, 1 )
-            .extracting( ContentVersion::getChange )
+            .extracting( ContentVersion::getChanges )
+            .map( cs -> cs.stream().map( ContentVersion.Change::operation ).findFirst().orElseThrow() )
             .containsExactly( "content.restore", "content.archive" );
     }
 }
