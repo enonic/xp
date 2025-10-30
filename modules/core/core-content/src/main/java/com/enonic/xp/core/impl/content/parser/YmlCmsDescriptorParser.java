@@ -48,7 +48,7 @@ public class YmlCmsDescriptorParser
             return CmsDescriptor.create();
         }
 
-        @JsonProperty("x")
+        @JsonProperty("mixin")
         @JsonDeserialize(using = MixinMappingsDeserializer.class)
         abstract CmsDescriptor.Builder mixinMappings( MixinMappings mixinMappings );
 

@@ -49,7 +49,7 @@ public final class VirtualAppConstants
     public static final String CMS_RESOURCE_PATH = "/" + CMS_ROOT_NAME + "/" + CMS_ROOT_NAME + ".yml";
 
     public static final String CMS_DESCRIPTOR_DEFAULT_VALUE = """
-        x: [ ]
+        mixin: [ ]
         form: [ ]
         """;
 

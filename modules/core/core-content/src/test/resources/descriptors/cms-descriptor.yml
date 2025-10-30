@@ -1,4 +1,4 @@
-x:
+mixin:
   - name: "all-except-folders"
     allowContentTypes: "^(?!base:folder$).*"
     optional: true
