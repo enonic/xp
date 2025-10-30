@@ -20,7 +20,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -129,7 +128,7 @@ public final class PatchNodeCommand
     {
         final Map<Branch, Node> activeNodeMap = getActiveNodes( this.branches );
 
-        final Map<NodeVersionId, NodeVersionMetadata> patchedVersions = new HashMap<>(); // old version id -> new version metadata
+        final Map<NodeVersionId, NodeVersionData> patchedVersions = new HashMap<>(); // old version id -> new version data
 
         for ( Branch targetBranch : this.branches )
         {
@@ -141,7 +140,7 @@ public final class PatchNodeCommand
 
             if ( updatedTargetNode != null )
             {
-                patchedVersions.put( activeNodeMap.get( targetBranch ).getNodeVersionId(), updatedTargetNode.nodeVersionMetadata() );
+                patchedVersions.put( activeNodeMap.get( targetBranch ).getNodeVersionId(), updatedTargetNode );
                 results.nodeId( updatedTargetNode.node().id() );
             }
 
@@ -150,7 +149,7 @@ public final class PatchNodeCommand
 
     }
 
-    private NodeVersionData patchNodeInBranch( final NodeVersionMetadata patchedVersionMetadata, final Branch branch )
+    private NodeVersionData patchNodeInBranch( final NodeVersionData patchedNode, final Branch branch )
     {
         final Node persistedNode = getPersistedNode( branch );
 
@@ -162,18 +161,18 @@ public final class PatchNodeCommand
             return null;
         }
 
-        if ( patchedVersionMetadata != null )
+        if ( patchedNode != null )
         {
             this.nodeStorageService.push( List.of( NodeBranchEntry.create()
-                                                                             .nodeVersionId( patchedVersionMetadata.getNodeVersionId() )
-                                                                             .nodePath( patchedVersionMetadata.getNodePath() )
-                                                                             .nodeVersionKey( patchedVersionMetadata.getNodeVersionKey() )
-                                                                             .nodeId( patchedVersionMetadata.getNodeId() )
-                                                                             .timestamp( patchedVersionMetadata.getTimestamp() )
-                                                                             .build() ), branch, l -> {
+                                                       .nodeVersionId( patchedNode.node().getNodeVersionId() )
+                                                       .nodePath( patchedNode.node().path() )
+                                                       .nodeVersionKey( patchedNode.metadata().getNodeVersionKey() )
+                                                       .nodeId( patchedNode.node().id() )
+                                                       .timestamp( patchedNode.node().getTimestamp() )
+                                                       .build() ), branch, l -> {
             }, internalContext );
 
-            return new NodeVersionData( nodeStorageService.get( persistedNode.id(), internalContext ), patchedVersionMetadata );
+            return patchedNode;
         }
         else
         {

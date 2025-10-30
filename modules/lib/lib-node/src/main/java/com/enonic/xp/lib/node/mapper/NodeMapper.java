@@ -58,7 +58,7 @@ public class NodeMapper
 
     private void serializePermissions( final MapGenerator gen, final Node node )
     {
-        new PermissionsMapper( node ).serialize( gen );
+        new PermissionsMapper( node.getPermissions() ).serialize( gen );
     }
 
 

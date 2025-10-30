@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Collection;
-import java.util.Objects;
-
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
@@ -35,7 +32,8 @@ final class ApplyContentPermissionsCommand
         final NodeId nodeId = NodeId.from( params.getContentId() );
 
         final ApplyNodePermissionsParams.Builder applyNodePermissionsBuilder = ApplyNodePermissionsParams.create()
-            .nodeId( nodeId ).permissions( params.getPermissions() )
+            .nodeId( nodeId )
+            .permissions( params.getPermissions() )
             .addPermissions( params.getAddPermissions() )
             .removePermissions( params.getRemovePermissions() )
             .scope( params.getScope() )
@@ -57,7 +55,7 @@ final class ApplyContentPermissionsCommand
             {
                 if ( branchResult.branch().equals( ContextAccessor.current().getBranch() ) )
                 {
-                    builder.addResult( ContentId.from( id ), branchResult.node() != null ? branchResult.node().getPermissions() : null );
+                    builder.addResult( ContentId.from( id ), branchResult.permissions() );
                     break;
                 }
             }
@@ -69,19 +67,19 @@ final class ApplyContentPermissionsCommand
     private void commitResult( final ApplyNodePermissionsResult result )
     {
         final RoutableNodeVersionIds versionIdsToCommit = result.getResults()
-            .values()
+            .entrySet()
             .stream()
-            .flatMap( Collection::stream )
-            .filter( branchResult -> ContentConstants.BRANCH_MASTER.equals( branchResult.branch() ) )
-            .map( ApplyNodePermissionsResult.BranchResult::node )
-            .filter( Objects::nonNull )
-            .map( node -> RoutableNodeVersionId.from( node.id(), node.getNodeVersionId() ) )
+            .flatMap( entry -> entry.getValue()
+                .stream()
+                .filter( br -> ContentConstants.BRANCH_MASTER.equals( br.branch() ) )
+                .filter( br -> br.nodeVersionId() != null )
+                .map( br -> RoutableNodeVersionId.from( entry.getKey(), br.nodeVersionId() ) ) )
             .collect( RoutableNodeVersionIds.collector() );
 
         if ( !versionIdsToCommit.isEmpty() )
         {
-            nodeService.commit( NodeCommitEntry.create().message( ContentConstants.APPLY_PERMISSIONS_COMMIT_PREFIX )
-                                    .build(), versionIdsToCommit );
+            nodeService.commit( NodeCommitEntry.create().message( ContentConstants.APPLY_PERMISSIONS_COMMIT_PREFIX ).build(),
+                                versionIdsToCommit );
         }
     }
 

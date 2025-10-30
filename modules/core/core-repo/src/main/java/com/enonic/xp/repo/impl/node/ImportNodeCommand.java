@@ -6,7 +6,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
-import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.CreateRootNodeParams;
@@ -159,7 +158,7 @@ public class ImportNodeCommand
                 .stream()
                 .filter( branchResult -> ContextAccessor.current().getBranch().equals( branchResult.branch() ) )
                 .findAny()
-                .map( ApplyNodePermissionsResult.BranchResult::node )
+                .map( br -> br.permissions() != null ? Node.create( updatedNode ).permissions( br.permissions() ).build() : updatedNode )
                 .orElse( updatedNode );
         }
 
