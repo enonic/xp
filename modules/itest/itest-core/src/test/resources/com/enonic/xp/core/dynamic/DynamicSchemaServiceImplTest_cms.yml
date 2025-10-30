@@ -1,4 +1,4 @@
-x:
+mixin:
   - name: "myapp1:menu-item"
     optional: false
   - name: "myapp2:my-meta-fragment"

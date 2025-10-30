@@ -3,7 +3,7 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-let resource = `x:
+let resource = `mixin:
 - name: "myapp1:menu-item"
   optional: false
   allowContentTypes: "mycontent"
@@ -33,7 +33,7 @@ log.info('Updated site: ' + result.application);
 
 assert.assertJsonEquals({
     application: 'myapp',
-    resource: `x:
+    resource: `mixin:
 - name: "myapp1:menu-item"
   optional: false
   allowContentTypes: "mycontent"

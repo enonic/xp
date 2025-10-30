@@ -1,4 +1,4 @@
-x:
+mixin:
   - name: "system:menu-item"
     optional: false
   - name: "myapplication:my-meta-fragment"
