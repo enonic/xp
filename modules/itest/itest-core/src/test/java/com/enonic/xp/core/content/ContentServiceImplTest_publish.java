@@ -423,7 +423,6 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertEquals( "user:system:test-user", version.getPublishedBy().toString() );
         assertEquals( "", version.getComment() );
     }
 

@@ -2,6 +2,7 @@ package com.enonic.xp.content;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
 
@@ -61,6 +62,21 @@ public final class ContentVersion
     public List<Change> getChanges()
     {
         return changes;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return o instanceof final ContentVersion that && Objects.equals( versionId, that.versionId ) &&
+            Objects.equals( contentId, that.contentId ) && Objects.equals( path, that.path ) &&
+            Objects.equals( timestamp, that.timestamp ) && Objects.equals( comment, that.comment ) &&
+            Objects.equals( changes, that.changes );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( versionId, contentId, path, timestamp, comment, changes );
     }
 
     public static Builder create()

@@ -643,10 +643,10 @@ public abstract class AbstractContentServiceTest
 
             if ( lastModified != null )
             {
-                assertFalse( next.getChangedTime().isAfter( lastModified ) );
+                assertFalse( next.getTimestamp().isAfter( lastModified ) );
             }
 
-            lastModified = next.getChangedTime();
+            lastModified = next.getTimestamp();
         }
     }
 
