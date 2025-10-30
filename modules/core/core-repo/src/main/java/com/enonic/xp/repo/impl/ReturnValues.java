@@ -41,14 +41,9 @@ public class ReturnValues
         return returnValue == null ? Optional.empty() : Optional.of( returnValue.getSingleValue() );
     }
 
-    public ReturnValue get( final String key )
+    public ReturnValue get( final IndexPath key )
     {
-        return this.returnValues.get( key );
-    }
-
-    public Map<String, ReturnValue> getReturnValues()
-    {
-        return returnValues;
+        return this.returnValues.get( key.getPath() );
     }
 
     public static final class Builder
@@ -90,5 +85,4 @@ public class ReturnValues
             return new ReturnValues( this );
         }
     }
-
 }

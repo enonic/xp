@@ -27,8 +27,8 @@ public class NodeVersionFactory
         final String path = values.getStringValue( VersionIndexPath.NODE_PATH );
         final NodeCommitId commitId =
             values.getOptional( VersionIndexPath.COMMIT_ID ).map( Object::toString ).map( NodeCommitId::from ).orElse( null );
-        final ReturnValue attributes = values.get( VersionIndexPath.ATTRIBUTES.getPath() );
-        final BlobKeys binaryBlobKeys = toBlobKeys( values.get( VersionIndexPath.BINARY_BLOB_KEYS.getPath() ) );
+        final ReturnValue attributes = values.get( VersionIndexPath.ATTRIBUTES );
+        final BlobKeys binaryBlobKeys = toBlobKeys( values.get( VersionIndexPath.BINARY_BLOB_KEYS ) );
 
         return NodeVersionMetadata.create()
             .nodeId( NodeId.from( id ) )

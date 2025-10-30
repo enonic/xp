@@ -25,10 +25,7 @@ import com.enonic.xp.repository.RepositoryId;
 public class VersionServiceImpl
     implements VersionService
 {
-    private static final ReturnFields VERSION_RETURN_FIELDS =
-        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
-                           VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.BINARY_BLOB_KEYS, VersionIndexPath.TIMESTAMP,
-                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID );
+    private static final ReturnFields VERSION_RETURN_FIELDS = ReturnFields.from( VersionIndexPath.entryFields() );
 
     private final StorageDao storageDao;
 

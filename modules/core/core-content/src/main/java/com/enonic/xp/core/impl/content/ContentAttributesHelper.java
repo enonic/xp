@@ -28,7 +28,7 @@ public class ContentAttributesHelper
 
     public static final String IMPORT_KEY = "content.import";
 
-    public static final String UPDATE_KEY = "content.publish";
+    public static final String UPDATE_KEY = "content.update";
 
     public static final String PERMISSIONS_KEY = "content.permissions";
 
