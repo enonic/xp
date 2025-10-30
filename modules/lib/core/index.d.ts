@@ -16,7 +16,7 @@ declare global {
     interface XpPartMap {
         [partDescriptor: ComponentDescriptor]: NestedRecord;
     }
-    interface XpXData {
+    interface XpMixin {
         [key: string]: Record<string, Record<string, unknown>>;
     }
 }
@@ -700,7 +700,7 @@ export interface Content<
     childOrder?: string;
     _sort?: object[];
     page?: Type extends 'portal:fragment' ? never : _Component;
-    x: XpXData;
+    x: XpMixin;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
     workflow?: Workflow;
@@ -715,7 +715,7 @@ export interface PatchableContent<
 > {
     displayName: string;
     data: Type extends 'portal:fragment' ? Record<string, never> : Data;
-    x: XpXData; // extraData
+    x: XpMixin; //
     page: Type extends 'portal:fragment' ? never : _Component;
     valid: boolean;
     owner: UserKey;

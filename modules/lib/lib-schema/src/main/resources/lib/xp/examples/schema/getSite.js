@@ -31,7 +31,7 @@ assert.assertJsonEquals({
             'config': {}
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             'name': 'myapplication:my',
             'optional': false

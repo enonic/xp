@@ -15,8 +15,8 @@ import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +42,7 @@ class UpdateContentHandlerTest
         when( this.contentService.update( Mockito.isA( UpdateContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0], content ) );
 
-        mockXData();
+        mockMixins();
         runScript( "/lib/xp/examples/content/update.js" );
     }
 
@@ -56,7 +56,7 @@ class UpdateContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         final CmsDescriptor siteDescriptor1 = CmsDescriptor.create()
             .applicationKey( ApplicationKey.from( "appKey1" ) )
@@ -88,7 +88,7 @@ class UpdateContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         final CmsDescriptor siteDescriptor1 = CmsDescriptor.create().applicationKey( ApplicationKey.from( "appKey1" ) )
             .form( Form.create()
@@ -112,7 +112,7 @@ class UpdateContentHandlerTest
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/UpdateContentHandlerTest.js", "updateById" );
     }
@@ -127,13 +127,13 @@ class UpdateContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/UpdateContentHandlerTest.js", "updateByPath" );
     }
 
     @Test
-    void updateNotMappedXDataFieldNameStricted()
+    void updateNotMappedMixinsFieldNameStricted()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -142,13 +142,13 @@ class UpdateContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
-        runFunction( "/test/UpdateContentHandlerTest.js", "updateNotMappedXDataFieldName_stricted" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateNotMappedMixinsFieldNameStricted" );
     }
 
     @Test
-    void updateNotMappedXDataFieldNameNotStricted()
+    void updateNotMappedMixinsFieldNameNotStricted()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentService.getByPath( content.getPath() ) ).thenReturn( content );
@@ -157,9 +157,9 @@ class UpdateContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
-        runFunction( "/test/UpdateContentHandlerTest.js", "updateNotMappedXDataFieldName_notStricted" );
+        runFunction( "/test/UpdateContentHandlerTest.js", "updateNotMappedMixinsFieldNameNotStricted" );
     }
 
     @Test
@@ -178,12 +178,12 @@ class UpdateContentHandlerTest
             invocationOnMock -> invokeUpdate( (UpdateContentParams) invocationOnMock.getArguments()[0],
                                               TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/UpdateContentHandlerTest.js", "updatePageAllComponents" );
     }
 
-    private void mockXData()
+    private void mockMixins()
     {
         final FormItemSet cSet = FormItemSet.create()
             .name( "c" )
@@ -206,18 +206,18 @@ class UpdateContentHandlerTest
             argThat( argument -> argument.getContentTypeName().equals( ContentTypeName.from( "test:myContentType" ) ) ) ) ).thenReturn(
             contentType );
 
-        final XData xData1 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
+        final MixinDescriptor mixinDescriptor1 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:myschema" ) )
             .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.DOUBLE ).build() )
             .build();
-        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.mixinService.getByName( eq( mixinDescriptor1.getName() ) ) ).thenReturn( mixinDescriptor1 );
 
-        final XData xData2 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:other" ) )
+        final MixinDescriptor mixinDescriptor2 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:other" ) )
             .addFormItem( Input.create().label( "name" ).name( "name" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .build();
-        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
-        when( this.xDataService.getByName( eq( xData2.getName() ) ) ).thenReturn( xData2 );
+        when( this.mixinService.getByName( eq( mixinDescriptor1.getName() ) ) ).thenReturn( mixinDescriptor1 );
+        when( this.mixinService.getByName( eq( mixinDescriptor2.getName() ) ) ).thenReturn( mixinDescriptor2 );
         when( formFragmentService.inlineFormItems( any() ) ).thenAnswer( returnsFirstArg() );
     }
 

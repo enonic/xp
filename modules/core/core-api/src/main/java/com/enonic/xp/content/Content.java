@@ -42,7 +42,7 @@ public class Content
 
     private final Attachments attachments;
 
-    private final ExtraDatas extraDatas;
+    private final Mixins mixins;
 
     private final Instant createdTime;
 
@@ -94,7 +94,7 @@ public class Content
         this.id = builder.id;
         this.data = builder.data;
         this.attachments = requireNonNullElse( builder.attachments, Attachments.empty() );
-        this.extraDatas = Objects.requireNonNull( builder.extraDatas );
+        this.mixins = Objects.requireNonNull( builder.mixins );
         this.createdTime = builder.createdTime;
         this.modifiedTime = builder.modifiedTime;
         this.publishInfo = builder.publishInfo;
@@ -241,14 +241,9 @@ public class Content
         return attachments;
     }
 
-    public boolean hasExtraData()
+    public Mixins getMixins()
     {
-        return !this.extraDatas.isEmpty();
-    }
-
-    public ExtraDatas getAllExtraData()
-    {
-        return this.extraDatas;
+        return this.mixins;
     }
 
     public ContentId getId()
@@ -359,7 +354,7 @@ public class Content
             Objects.equals( originProject, other.originProject ) && Objects.equals( childOrder, other.childOrder ) &&
             Objects.equals( permissions, other.permissions ) &&
             Objects.equals( attachments, other.attachments ) && Objects.equals( data, other.data ) &&
-            Objects.equals( extraDatas, other.extraDatas ) && Objects.equals( page, other.page ) &&
+            Objects.equals( mixins, other.mixins ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( publishInfo, other.publishInfo ) &&
             Objects.equals( processedReferences, other.processedReferences ) && Objects.equals( workflowInfo, other.workflowInfo ) &&
             Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( originalName, other.originalName ) &&
@@ -371,8 +366,7 @@ public class Content
     public int hashCode()
     {
         return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime,
-                             inherit, originProject, childOrder, permissions, attachments, data,
-                             extraDatas, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
+                             inherit, originProject, childOrder, permissions, attachments, data, mixins, page, language, publishInfo, processedReferences, workflowInfo, manualOrderValue, originalName,
                              originalParentPath, archivedTime, archivedBy, variantOf );
     }
 
@@ -396,7 +390,7 @@ public class Content
 
         protected Attachments attachments;
 
-        protected ExtraDatas extraDatas;
+        protected Mixins mixins;
 
         protected String displayName;
 
@@ -446,7 +440,7 @@ public class Content
         {
             this.type = ContentTypeName.unstructured();
             this.data = new PropertyTree();
-            this.extraDatas = ExtraDatas.empty();
+            this.mixins = Mixins.empty();
             this.processedReferences = ContentIds.create();
         }
 
@@ -460,7 +454,7 @@ public class Content
             this.type = source.type;
             this.data = source.data.copy();
             this.attachments = source.attachments;
-            this.extraDatas = source.extraDatas.copy();
+            this.mixins = source.mixins.copy();
             this.displayName = source.displayName;
             this.owner = source.owner;
             this.createdTime = source.createdTime;
@@ -554,9 +548,9 @@ public class Content
             return (BUILDER) this;
         }
 
-        public BUILDER extraDatas( final ExtraDatas extraDatas )
+        public BUILDER mixins( final Mixins mixins )
         {
-            this.extraDatas = extraDatas;
+            this.mixins = mixins;
             return (BUILDER) this;
         }
 

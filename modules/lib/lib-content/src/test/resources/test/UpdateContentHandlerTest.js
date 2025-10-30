@@ -296,7 +296,7 @@ exports.updateSiteConfig_strict = function () {
     }
 };
 
-exports.updateNotMappedXDataFieldName_stricted = function () {
+exports.updateNotMappedMixinsFieldNameStricted = function () {
 
     try {
         var result = content.update({
@@ -320,7 +320,7 @@ exports.updateNotMappedXDataFieldName_stricted = function () {
 
 };
 
-exports.updateNotMappedXDataFieldName_notStricted = function () {
+exports.updateNotMappedMixinsFieldNameNotStricted = function () {
 
     var result = content.update({
         key: '/a/b/mycontent',

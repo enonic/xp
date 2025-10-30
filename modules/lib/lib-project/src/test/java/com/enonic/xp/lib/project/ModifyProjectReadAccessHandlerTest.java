@@ -8,7 +8,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.acl.AccessControlList;
 
@@ -31,8 +31,7 @@ class ModifyProjectReadAccessHandlerTest
                 name( ContentName.from( "root" ) ).
                 parentPath( ContentPath.ROOT ).
                 permissions( AccessControlList.empty() ).
-                data( new PropertyTree() ).
-                extraDatas( ExtraDatas.empty() ).permissions( params.getPermissions() ).build() );
+                data( new PropertyTree() ).mixins( Mixins.empty() ).permissions( params.getPermissions() ).build() );
 
             return null;
         } );

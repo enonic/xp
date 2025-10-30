@@ -5,7 +5,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.parser.YmlContentTypeParser;
-import com.enonic.xp.core.impl.content.parser.YmlXDataParser;
+import com.enonic.xp.core.impl.content.parser.YmlMixinDescriptorParser;
 import com.enonic.xp.core.impl.schema.YmlFormFragmentParser;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
@@ -14,8 +14,8 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -72,18 +72,18 @@ class UpdateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    void testXData()
+    void testMixin()
     {
         when( dynamicSchemaService.updateContentSchema( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicContentSchemaParams schemaParams = params.getArgument( 0, UpdateDynamicContentSchemaParams.class );
 
-            final XData.Builder builder = YmlXDataParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
+            final MixinDescriptor.Builder builder = YmlMixinDescriptorParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
 
             final Instant modifiedTime = Instant.parse( "2021-09-25T10:00:00.00Z" );
             builder.modifiedTime( modifiedTime );
             builder.createdTime( modifiedTime );
 
-            builder.name( XDataName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
+            builder.name( MixinName.from( schemaParams.getName().getApplicationKey(), schemaParams.getName().getLocalName() ) );
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( schemaParams.getResource() );
@@ -91,7 +91,7 @@ class UpdateDynamicContentSchemaHandlerTest
             return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/updateXData.js" );
+        runScript( "/lib/xp/examples/schema/updateMixin.js" );
     }
 
     @Test

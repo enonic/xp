@@ -111,7 +111,7 @@ final class UpdateContentCommand
             .createAttachments( params.getCreateAttachments() )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
@@ -146,7 +146,7 @@ final class UpdateContentCommand
             Objects.equals( c1.getInherit(), c2.getInherit() ) && Objects.equals( c1.getOriginProject(), c2.getOriginProject() ) &&
             Objects.equals( c1.getChildOrder(), c2.getChildOrder() ) &&
             Objects.equals( c1.getPermissions(), c2.getPermissions() ) && Objects.equals( c1.getAttachments(), c2.getAttachments() ) &&
-            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getAllExtraData(), c2.getAllExtraData() ) &&
+            Objects.equals( c1.getData(), c2.getData() ) && Objects.equals( c1.getMixins(), c2.getMixins() ) &&
             Objects.equals( c1.getPage(), c2.getPage() ) && Objects.equals( c1.getLanguage(), c2.getLanguage() ) &&
             Objects.equals( c1.getPublishInfo(), c2.getPublishInfo() ) && Objects.equals( c1.getWorkflowInfo(), c2.getWorkflowInfo() ) &&
             Objects.equals( c1.getManualOrderValue(), c2.getManualOrderValue() ) &&
@@ -195,7 +195,7 @@ final class UpdateContentCommand
         return ValidateContentDataCommand.create()
             .contentId( editedContent.getId() )
             .data( editedContent.getData() )
-            .extraDatas( editedContent.getAllExtraData() )
+            .mixins( editedContent.getMixins() )
             .contentTypeName( editedContent.getType() )
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
@@ -262,9 +262,9 @@ final class UpdateContentCommand
             editor.edit( editableContent );
         }
 
-        editableContent.extraDatas = mergeExtraData( original.getType(), editableContent.data,
-                                                     original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
-                                                     editableContent.extraDatas );
+        editableContent.mixins = mergeMixins( original.getType(), editableContent.data,
+                                              original.getPath().isRoot() ? original.getPath() : original.getParentPath(),
+                                              editableContent.mixins );
 
         return Content.create( editableContent.build() ).build();
     }

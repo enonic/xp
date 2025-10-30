@@ -12,7 +12,7 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
@@ -21,8 +21,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.CmsDescriptor;
 
@@ -70,12 +70,12 @@ class CreateContentHandlerTest
 
         when( this.contentTypeService.getByName( any() ) ).thenReturn( contentType );
 
-        final PropertyTree extraData = new PropertyTree();
-        extraData.addDouble( "a", 1.0 );
-        extraData.addBoolean( "b", true );
+        final PropertyTree mixinData = new PropertyTree();
+        mixinData.addDouble( "a", 1.0 );
+        mixinData.addBoolean( "b", true );
 
-        final XData xData = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:myschema" ) )
             .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.DOUBLE ).build() )
             .addFormItem( Input.create().label( "b" ).name( "b" ).inputType( InputTypeName.CHECK_BOX ).build() )
             .build();
@@ -96,7 +96,7 @@ class CreateContentHandlerTest
         when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey1" ) ) ).thenReturn( siteDescriptor1 );
         when( this.cmsService.getDescriptor( ApplicationKey.from( "appKey2" ) ) ).thenReturn( siteDescriptor2 );
 
-        when( this.xDataService.getByName( Mockito.eq( XDataName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( xData );
+        when( this.mixinService.getByName( Mockito.eq( MixinName.from( "com.enonic.myapplication:myschema" ) ) ) ).thenReturn( mixinDescriptor );
         when( this.formFragmentService.inlineFormItems( any() ) ).then( returnsFirstArg() );
     }
 
@@ -203,9 +203,9 @@ class CreateContentHandlerTest
         builder.childOrder( params.getChildOrder() );
         builder.workflowInfo( params.getWorkflowInfo() );
 
-        if ( params.getExtraDatas() != null )
+        if ( params.getMixins() != null )
         {
-            builder.extraDatas( ExtraDatas.from( params.getExtraDatas() ) );
+            builder.mixins( Mixins.from( params.getMixins() ) );
         }
 
         return builder.build();

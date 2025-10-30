@@ -15,7 +15,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -75,8 +75,8 @@ final class CreateContentCommand
         final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
         validateContentType( contentType );
 
-        final ExtraDatas mergedExtraData = mergeExtraData( params.getType(), params.getData(), params.getParent(), params.getExtraDatas() );
-        params = CreateContentParams.create( this.params ).extraDatas( mergedExtraData ).build();
+        final Mixins mergedMixins = mergeMixins( params.getType(), params.getData(), params.getParent(), params.getMixins() );
+        params = CreateContentParams.create( this.params ).mixins( mergedMixins ).build();
 
         ProcessCreateResult processedParams = runContentProcessors( params );
 
@@ -87,7 +87,7 @@ final class CreateContentCommand
         final CreateNodeParams createNodeParams = CreateNodeParamsFactory.create( createContentTranslatorParams )
             .contentTypeService( this.contentTypeService )
             .pageDescriptorService( this.pageDescriptorService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .contentDataSerializer( this.translator.getContentDataSerializer() )
@@ -288,7 +288,7 @@ final class CreateContentCommand
     {
         final ValidationErrors validationErrors = ValidateContentDataCommand.create()
             .data( builder.getData() )
-            .extraDatas( builder.getExtraDatas() )
+            .mixins( builder.getMixins() )
             .contentTypeName( builder.getType() )
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )

@@ -6,7 +6,7 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyPath;
@@ -20,7 +20,7 @@ import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
@@ -35,7 +35,7 @@ public class CreateNodeParamsFactory
 
     private final ContentTypeService contentTypeService;
 
-    private final XDataService xDataService;
+    private final MixinService mixinService;
 
     private final PageDescriptorService pageDescriptorService;
 
@@ -51,7 +51,7 @@ public class CreateNodeParamsFactory
     {
         this.params = builder.params;
         this.contentTypeService = builder.contentTypeService;
-        this.xDataService = builder.xDataService;
+        this.mixinService = builder.mixinService;
         this.cmsService = builder.cmsService;
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
@@ -63,7 +63,7 @@ public class CreateNodeParamsFactory
     {
         final PropertyTree contentAsData = contentDataSerializer.toCreateNodeData( params );
 
-        final PropertySet extraDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.EXTRA_DATA ) );
+        final PropertySet mixinDataSet = contentAsData.getPropertySet( PropertyPath.from( ContentPropertyNames.MIXINS ) );
 
         final String language = contentAsData.getString( PropertyPath.from( ContentPropertyNames.LANGUAGE ) );
 
@@ -72,13 +72,13 @@ public class CreateNodeParamsFactory
 
         final Page page = contentAsData.hasProperty( COMPONENTS ) ? contentDataSerializer.fromPageData( contentAsData.getRoot() ) : null;
 
-        final ExtraDatas extraData = extraDataSet != null ? contentDataSerializer.fromExtraData( extraDataSet ) : null;
+        final Mixins mixins = mixinDataSet != null ? contentDataSerializer.fromMixinData( mixinDataSet ) : null;
 
         final ContentIndexConfigFactory.Builder indexConfigFactoryBuilder = ContentIndexConfigFactory.create()
             .contentTypeName( params.getType() )
             .siteConfigs( siteConfigs )
             .cmsService( cmsService )
-            .xDataService( xDataService )
+            .mixinService( mixinService )
             .contentTypeService( contentTypeService );
 
         if ( page != null )
@@ -89,9 +89,9 @@ public class CreateNodeParamsFactory
                 .layoutDescriptorService( layoutDescriptorService );
         }
 
-        if ( extraData != null )
+        if ( mixins != null )
         {
-            indexConfigFactoryBuilder.extraDatas( extraData );
+            indexConfigFactoryBuilder.mixins( mixins );
         }
 
         if ( !nullToEmpty( language ).isBlank() )
@@ -140,7 +140,7 @@ public class CreateNodeParamsFactory
 
         private ContentTypeService contentTypeService;
 
-        private XDataService xDataService;
+        private MixinService mixinService;
 
         private PageDescriptorService pageDescriptorService;
 
@@ -163,9 +163,9 @@ public class CreateNodeParamsFactory
             return this;
         }
 
-        Builder xDataService( final XDataService value )
+        Builder mixinService( final MixinService value )
         {
-            this.xDataService = value;
+            this.mixinService = value;
             return this;
         }
 
@@ -205,7 +205,7 @@ public class CreateNodeParamsFactory
             Objects.requireNonNull( contentTypeService );
             Objects.requireNonNull( pageDescriptorService );
             Objects.requireNonNull( cmsService );
-            Objects.requireNonNull( xDataService );
+            Objects.requireNonNull( mixinService );
             Objects.requireNonNull( contentDataSerializer );
         }
 

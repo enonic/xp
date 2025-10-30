@@ -37,15 +37,15 @@ class DeleteDynamicContentSchemaHandlerTest
     }
 
     @Test
-    void testXData()
+    void testMixin()
     {
         when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
 
-            return DynamicContentSchemaType.XDATA == schemaParams.getType();
+            return DynamicContentSchemaType.MIXIN == schemaParams.getType();
         } );
 
-        runScript( "/lib/xp/examples/schema/deleteXData.js" );
+        runScript( "/lib/xp/examples/schema/deleteMixin.js" );
     }
 
 

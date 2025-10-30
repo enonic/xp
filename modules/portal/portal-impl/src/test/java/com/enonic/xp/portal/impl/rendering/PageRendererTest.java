@@ -12,8 +12,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
@@ -30,7 +30,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
 import com.enonic.xp.web.HttpStatus;
@@ -251,7 +251,7 @@ class PageRendererTest
             .modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( contentTypeName ) )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "myApplication:myField" ), metadata ) ).build() )
             .build();
     }
 
@@ -273,7 +273,7 @@ class PageRendererTest
             .modifiedTime( Instant.parse( "2013-08-23T12:55:09.162Z" ) )
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.fragment() )
-            .extraDatas( ExtraDatas.create().add( new ExtraData( XDataName.from( "myApplication:myField" ), metadata ) ).build() )
+            .mixins( Mixins.create().add( new Mixin( MixinName.from( "myApplication:myField" ), metadata ) ).build() )
             .build();
     }
 }

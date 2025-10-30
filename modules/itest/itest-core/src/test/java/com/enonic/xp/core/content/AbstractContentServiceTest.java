@@ -39,7 +39,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentByParentResult;
 import com.enonic.xp.content.FindContentVersionsParams;
@@ -54,10 +54,10 @@ import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
+import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
@@ -109,7 +109,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -156,9 +156,9 @@ public abstract class AbstractContentServiceTest
 
     protected CmsFormFragmentService formFragmentService;
 
-    protected XDataService xDataService;
+    protected MixinService mixinService;
 
-    protected XDataMappingServiceImpl xDataMappingService;
+    protected MixinMappingServiceImpl mixinMappingService;
 
     protected SiteConfigServiceImpl siteConfigService;
 
@@ -273,7 +273,7 @@ public abstract class AbstractContentServiceTest
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );
 
-        xDataService = mock( XDataService.class );
+        mixinService = mock( MixinService.class );
 
         Map<String, List<String>> metadata = new HashMap<>();
         metadata.put( HttpHeaders.CONTENT_TYPE, List.of( "image/jpeg" ) );
@@ -326,7 +326,7 @@ public abstract class AbstractContentServiceTest
 
         projectService.create( CreateProjectParams.create().name( testprojectName ).displayName( "test" ).build() );
 
-        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         this.config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
@@ -337,14 +337,14 @@ public abstract class AbstractContentServiceTest
         contentService.setMediaInfoService( mediaInfoService );
         contentService.setCmsService( cmsService );
         contentService.setContentTypeService( contentTypeService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
 
         contentService.addContentValidator( new ContentNameValidator() );
         contentService.addContentValidator( new SiteConfigsValidator( cmsService ) );
         contentService.addContentValidator( new OccurrenceValidator() );
-        contentService.addContentValidator( new ExtraDataValidator( xDataService ) );
+        contentService.addContentValidator( new MixinValidator( mixinService ) );
     }
 
     @AfterEach
@@ -376,19 +376,19 @@ public abstract class AbstractContentServiceTest
 
     protected Content createContent( ContentPath parentPath )
     {
-        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+        return doCreateContent( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
                                 ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName )
     {
-        return doCreateContent( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, new PropertyTree(), Mixins.empty(), ContentTypeName.folder() );
     }
 
     protected Content createContent( ContentPath parentPath, final ContentPublishInfo publishInfo )
     {
         final CreateContentParams.Builder builder =
-            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
                                   ContentTypeName.folder() ).contentPublishInfo( publishInfo );
 
         return doCreateContent( builder );
@@ -396,24 +396,24 @@ public abstract class AbstractContentServiceTest
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
     {
-        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, data, Mixins.empty(), ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data, ContentTypeName type )
     {
-        return doCreateContent( parentPath, displayName, data, ExtraDatas.empty(), type );
+        return doCreateContent( parentPath, displayName, data, Mixins.empty(), type );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final ExtraDatas extraDatas )
+                                     final Mixins mixins )
     {
-        return doCreateContent( parentPath, displayName, data, extraDatas, ContentTypeName.folder() );
+        return doCreateContent( parentPath, displayName, data, mixins, ContentTypeName.folder() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final AccessControlList permissions )
     {
         final CreateContentParams.Builder builder =
-            createContentBuilder( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
+            createContentBuilder( parentPath, displayName, new PropertyTree(), Mixins.empty(), ContentTypeName.folder() );
 
         builder.permissions( permissions );
         builder.inheritPermissions( false );
@@ -422,9 +422,9 @@ public abstract class AbstractContentServiceTest
     }
 
     private Content doCreateContent( final ContentPath parentPath, final String displayName, final PropertyTree data,
-                                     final ExtraDatas extraDatas, ContentTypeName type )
+                                     final Mixins mixins, ContentTypeName type )
     {
-        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, extraDatas, type );
+        final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, mixins, type );
         return doCreateContent( builder );
     }
 
@@ -443,13 +443,13 @@ public abstract class AbstractContentServiceTest
     }
 
     private CreateContentParams.Builder createContentBuilder( final ContentPath parentPath, final String displayName,
-                                                              final PropertyTree data, final ExtraDatas extraDatas, ContentTypeName type )
+                                                              final PropertyTree data, final Mixins mixins, ContentTypeName type )
     {
         return CreateContentParams.create()
             .displayName( displayName )
             .parent( parentPath )
             .contentData( data )
-            .extraDatas( extraDatas )
+            .mixins( mixins )
             .type( type );
     }
 

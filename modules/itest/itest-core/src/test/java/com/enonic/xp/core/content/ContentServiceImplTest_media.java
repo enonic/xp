@@ -16,8 +16,8 @@ import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
-import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
-import com.enonic.xp.core.impl.content.schema.XDataServiceImpl;
+import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
+import com.enonic.xp.core.impl.content.schema.MixinServiceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,10 +36,10 @@ class ContentServiceImplTest_media
     @BeforeEach
     void beforeEach()
     {
-        xDataService = new XDataServiceImpl( mock( ApplicationService.class ), resourceService );
-        xDataMappingService = new XDataMappingServiceImpl( cmsService, xDataService );
-        contentService.setxDataService( xDataService );
-        contentService.setXDataMappingService( xDataMappingService );
+        mixinService = new MixinServiceImpl( mock( ApplicationService.class ), resourceService );
+        mixinMappingService = new MixinMappingServiceImpl( cmsService, mixinService );
+        contentService.setMixinService( mixinService );
+        contentService.setMixinMappingService( mixinMappingService );
     }
 
     @Test

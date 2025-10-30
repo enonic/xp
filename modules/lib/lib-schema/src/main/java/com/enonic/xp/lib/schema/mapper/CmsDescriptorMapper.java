@@ -4,8 +4,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 public class CmsDescriptorMapper
     implements MapSerializable
@@ -28,21 +28,21 @@ public class CmsDescriptorMapper
         gen.value( "modifiedTime", descriptor.getModifiedTime() );
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
-        serializeXDataMappings( gen, descriptor.getXDataMappings() );
+        serializeMixinMappings( gen, descriptor.getMixinMappings() );
     }
 
-    private void serializeXDataMappings( final MapGenerator gen, final XDataMappings xDataMappings )
+    private void serializeMixinMappings( final MapGenerator gen, final MixinMappings mixinMappings )
     {
-        if ( !xDataMappings.isEmpty() )
+        if ( !mixinMappings.isEmpty() )
         {
-            gen.array( "xDataMappings" );
-            for ( XDataMapping xDataMapping : xDataMappings )
+            gen.array( "mixinMappings" );
+            for ( MixinMapping mixinMapping : mixinMappings )
             {
                 gen.map();
 
-                gen.value( "name", xDataMapping.getXDataName() );
-                gen.value( "optional", xDataMapping.getOptional() );
-                gen.value( "allowContentTypes", xDataMapping.getAllowContentTypes() );
+                gen.value( "name", mixinMapping.getMixinName() );
+                gen.value( "optional", mixinMapping.isOptional() );
+                gen.value( "allowContentTypes", mixinMapping.getAllowContentTypes() );
 
                 gen.end();
 

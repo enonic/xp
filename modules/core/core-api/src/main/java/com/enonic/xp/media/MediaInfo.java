@@ -8,7 +8,7 @@ import com.google.common.collect.Multimap;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.form.FormItemName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @PublicApi
 public final class MediaInfo
@@ -25,11 +25,11 @@ public final class MediaInfo
 
     public static final String IMAGE_INFO = "imageInfo";
 
-    public static final XDataName IMAGE_INFO_METADATA_NAME = XDataName.from( ApplicationKey.MEDIA_MOD, IMAGE_INFO );
+    public static final MixinName IMAGE_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, IMAGE_INFO );
 
-    public static final XDataName CAMERA_INFO_METADATA_NAME = XDataName.from( ApplicationKey.MEDIA_MOD, CAMERA_INFO );
+    public static final MixinName CAMERA_INFO_METADATA_NAME = MixinName.from( ApplicationKey.MEDIA_MOD, CAMERA_INFO );
 
-    public static final XDataName GPS_INFO_METADATA_NAME = XDataName.from( ApplicationKey.BASE, GPS_INFO );
+    public static final MixinName GPS_INFO_METADATA_NAME = MixinName.from( ApplicationKey.BASE, GPS_INFO );
 
     public static final String GPS_INFO_GEO_POINT = "geoPoint";
 

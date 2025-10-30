@@ -10,8 +10,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.data.PropertySet;
@@ -19,11 +19,11 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
-import com.enonic.xp.site.XDataMapping;
-import com.enonic.xp.site.XDataMappings;
+import com.enonic.xp.site.MixinMapping;
+import com.enonic.xp.site.MixinMappings;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,7 +67,7 @@ class ContentServiceImplTest_move
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
         final MoveContentParams params =
             MoveContentParams.create().contentId( content.getId() ).parentContentPath( ContentPath.ROOT ).build();
@@ -76,8 +76,7 @@ class ContentServiceImplTest_move
 
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
-        assertEquals( movedContent.getAllExtraData().getSize(), 1 );
-
+        assertEquals( 1, movedContent.getMixins().getSize() );
     }
 
     @Test
@@ -87,7 +86,7 @@ class ContentServiceImplTest_move
         siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
         final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
 
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
+        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
         final MoveContentParams params =
             MoveContentParams.create().contentId( content.getId() ).parentContentPath( content.getParentPath() ).build();
@@ -136,26 +135,26 @@ class ContentServiceImplTest_move
             .isEqualTo( child1.getId().toString() );
     }
 
-    private ExtraDatas createExtraDatas()
+    private Mixins createMixins()
     {
-        final XDataName xDataName = XDataName.from( "com.enonic.app.test:xdata1" );
+        final MixinName mixinName = MixinName.from( "com.enonic.app.test:mixin1" );
 
         when( resourceService.processResource( isA( ResourceProcessor.class ) ) ).thenReturn( CmsDescriptor.create()
                                                                                                   .applicationKey( ApplicationKey.from(
                                                                                                       "com.enonic.app.test" ) )
-                                                                                                  .xDataMappings( XDataMappings.from(
-                                                                                                      XDataMapping.create()
-                                                                                                          .xDataName( xDataName )
+                                                                                                  .mixinMappings( MixinMappings.from(
+                                                                                                      MixinMapping.create()
+                                                                                                          .mixinName( mixinName )
                                                                                                           .allowContentTypes(
                                                                                                               "base:folder" )
                                                                                                           .optional( false )
                                                                                                           .build() ) )
                                                                                                   .build() );
 
-        final XData xData = XData.create().name( xDataName ).form( Form.create().build() ).build();
-        when( xDataService.getByName( xData.getName() ) ).thenReturn( xData );
+        final MixinDescriptor mixinDescriptor = MixinDescriptor.create().name( mixinName ).form( Form.create().build() ).build();
+        when( mixinService.getByName( mixinDescriptor.getName() ) ).thenReturn( mixinDescriptor );
 
-        return ExtraDatas.create().add( new ExtraData( xDataName, new PropertyTree() ) ).
+        return Mixins.create().add( new Mixin( mixinName, new PropertyTree() ) ).
             build();
     }
 

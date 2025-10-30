@@ -8,7 +8,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentType;
@@ -37,7 +37,7 @@ final class ValidateContentDataCommand
             .name( builder.contentName )
             .displayName( builder.displayName )
             .data( builder.data )
-            .extraDatas( builder.extraDatas )
+            .mixins( builder.mixins )
             .createAttachments( builder.createAttachments );
         contentTypeName = builder.contentTypeName;
         resultBuilder = Objects.requireNonNullElseGet( builder.validationErrorsBuilder, ValidationErrors::create );
@@ -79,7 +79,7 @@ final class ValidateContentDataCommand
 
         private PropertyTree data;
 
-        private ExtraDatas extraDatas;
+        private Mixins mixins;
 
         private ContentName contentName;
 
@@ -127,9 +127,9 @@ final class ValidateContentDataCommand
             return this;
         }
 
-        public Builder extraDatas( final ExtraDatas extraDatas )
+        public Builder mixins( final Mixins mixins )
         {
-            this.extraDatas = extraDatas;
+            this.mixins = mixins;
             return this;
         }
 

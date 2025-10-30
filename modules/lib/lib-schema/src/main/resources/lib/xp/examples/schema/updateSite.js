@@ -60,7 +60,7 @@ form:
             'config': {}
         }
     ],
-    xDataMappings: [
+    mixinMappings: [
         {
             'name': 'myapp1:menu-item',
             'optional': false,

@@ -80,7 +80,6 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
@@ -103,14 +102,14 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.XDataMappingService;
+import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -130,9 +129,9 @@ public class ContentServiceImpl
 
     private MediaInfoService mediaInfoService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private XDataMappingService xDataMappingService;
+    private MixinMappingService mixinMappingService;
 
     private CmsService cmsService;
 
@@ -180,10 +179,10 @@ public class ContentServiceImpl
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .cmsService( this.cmsService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
@@ -226,8 +225,8 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .mediaInfoService( this.mediaInfoService )
             .cmsService( this.cmsService )
-            .xDataService( this.xDataService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinService( this.mixinService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
@@ -254,13 +253,13 @@ public class ContentServiceImpl
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .cmsService( this.cmsService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
             .build()
@@ -286,8 +285,8 @@ public class ContentServiceImpl
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .cmsService( this.cmsService )
-            .xDataService( this.xDataService )
-            .xDataMappingService( this.xDataMappingService ).siteConfigService( this.siteConfigService )
+            .mixinService( this.mixinService )
+            .mixinMappingService( this.mixinMappingService ).siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -654,7 +653,7 @@ public class ContentServiceImpl
 
         final Content content = RenameContentCommand.create( params )
             .nodeService( this.nodeService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .cmsService( this.cmsService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
@@ -1010,7 +1009,7 @@ public class ContentServiceImpl
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .cmsService( this.cmsService )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
@@ -1044,15 +1043,15 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setxDataService( final XDataService xDataService )
+    public void setMixinService( final MixinService mixinService )
     {
-        this.xDataService = xDataService;
+        this.mixinService = mixinService;
     }
 
     @Reference
-    public void setXDataMappingService( final XDataMappingService xDataMappingService )
+    public void setMixinMappingService( final MixinMappingService mixinMappingService )
     {
-        this.xDataMappingService = xDataMappingService;
+        this.mixinMappingService = mixinMappingService;
     }
 
     @Reference

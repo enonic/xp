@@ -15,7 +15,6 @@ import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.XDataMappingService;
 
 final class CreateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -24,8 +23,6 @@ final class CreateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final XDataMappingService xDataMappingService;
-
     private final SiteConfigService siteConfigService;
 
     private CreateMediaCommand( final Builder builder )
@@ -33,7 +30,6 @@ final class CreateMediaCommand
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.xDataMappingService = builder.xDataMappingService;
         this.siteConfigService = builder.siteConfigService;
     }
 
@@ -98,8 +94,8 @@ final class CreateMediaCommand
             .translator( this.translator )
             .params( createContentParams )
             .cmsService( this.cmsService )
-            .xDataService( this.xDataService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinService( this.mixinService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
@@ -129,8 +125,6 @@ final class CreateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        private XDataMappingService xDataMappingService;
-
         private SiteConfigService siteConfigService;
 
         public Builder params( final CreateMediaParams params )
@@ -145,12 +139,6 @@ final class CreateMediaCommand
             return this;
         }
 
-        public Builder xDataMappingService( final XDataMappingService xDataMappingService )
-        {
-            this.xDataMappingService = xDataMappingService;
-            return this;
-        }
-
         public Builder siteConfigService( final SiteConfigService siteConfigService )
         {
             this.siteConfigService = siteConfigService;
@@ -162,7 +150,7 @@ final class CreateMediaCommand
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
-            Objects.requireNonNull( xDataMappingService );
+            Objects.requireNonNull( mixinMappingService );
             Objects.requireNonNull( siteConfigService );
         }
 

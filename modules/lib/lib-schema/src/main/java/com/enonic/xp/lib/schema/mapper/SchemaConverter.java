@@ -4,7 +4,7 @@ import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
-import com.enonic.xp.schema.xdata.XData;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
 
 public class SchemaConverter
 {
@@ -24,9 +24,9 @@ public class SchemaConverter
         {
             return new FormFragmentMapper( (DynamicSchemaResult<FormFragmentDescriptor>) result );
         }
-        if ( dynamicSchema instanceof XData )
+        if ( dynamicSchema instanceof MixinDescriptor )
         {
-            return new XDataMapper( (DynamicSchemaResult<XData>) result );
+            return new MixinDescriptorMapper( (DynamicSchemaResult<MixinDescriptor>) result );
         }
 
         throw new IllegalArgumentException( "invalid component type: " + result.getClass() );

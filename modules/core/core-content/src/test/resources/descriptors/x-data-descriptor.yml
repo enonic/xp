@@ -1,6 +1,0 @@
-displayName: "DisplayName of the X-Data"
-description: "Description of the X-Data"
-form:
-  - type: "TextLine"
-    name: "myField"
-    label: "My Field"

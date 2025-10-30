@@ -6,7 +6,7 @@ import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
@@ -71,12 +71,12 @@ final class RenameContentCommand
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
-            final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? new ContentDataSerializer().fromExtraData(
-                data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() ) : null;
+            final Mixins mixins = data.hasProperty( ContentPropertyNames.MIXINS ) ? new ContentDataSerializer().fromMixinData(
+                data.getProperty( ContentPropertyNames.MIXINS ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )
-                .extraDatas( extraData )
+                .mixins( mixins )
                 .contentTypeName( type )
                 .contentName( ContentName.from( nodePath.getName().toString() ) )
                 .displayName( displayName )

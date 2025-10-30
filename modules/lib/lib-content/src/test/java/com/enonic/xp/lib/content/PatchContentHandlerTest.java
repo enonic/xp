@@ -24,8 +24,8 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XData;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinDescriptor;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +54,7 @@ public class PatchContentHandlerTest
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], content ) );
 
-        mockXData();
+        mockMixins();
         runScript( "/lib/xp/examples/content/patch.js" );
     }
 
@@ -70,7 +70,7 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         final CmsDescriptor siteDescriptor1 = CmsDescriptor.create()
             .applicationKey( ApplicationKey.from( "appKey1" ) )
@@ -103,7 +103,7 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         final CmsDescriptor siteDescriptor1 = CmsDescriptor.create()
             .applicationKey( ApplicationKey.from( "appKey1" ) )
@@ -130,7 +130,7 @@ public class PatchContentHandlerTest
             ContentType.create().name( ContentTypeName.unstructured() ).setBuiltIn().build() );
         when( this.contentService.getById( content.getId() ) ).thenReturn( content );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchById" );
     }
@@ -147,13 +147,13 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchByPath" );
     }
 
     @Test
-    void patchNotMappedXDataFieldName()
+    void patchNotMappedMixinsFieldName()
     {
         final Content content = TestDataFixtures.newSmallContent();
         when( this.contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn(
@@ -164,9 +164,9 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
-        runFunction( "/test/PatchContentHandlerTest.js", "patchNotMappedXDataFieldName" );
+        runFunction( "/test/PatchContentHandlerTest.js", "patchNotMappedMixinsFieldName" );
     }
 
     @Test
@@ -187,7 +187,7 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchWorkflowInfo" );
     }
@@ -204,7 +204,7 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchPageAllComponents" );
     }
@@ -220,7 +220,7 @@ public class PatchContentHandlerTest
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
             invocation -> invokePatch( invocation.getArgument( 0 ), content ) );
 
-        mockXData();
+        mockMixins();
 
         runFunction( "/test/PatchContentHandlerTest.js", "patchValidationErrors" );
     }
@@ -242,7 +242,7 @@ public class PatchContentHandlerTest
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0],
                                              TestDataFixtures.newSmallContent() ) );
 
-        mockXData();
+        mockMixins();
 
         ArgumentCaptor<PatchContentParams> captor = ArgumentCaptor.forClass( PatchContentParams.class );
 
@@ -278,7 +278,7 @@ public class PatchContentHandlerTest
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], content ) );
 
-        mockXData();
+        mockMixins();
 
         final ArgumentCaptor<PatchContentParams> captor = ArgumentCaptor.forClass( PatchContentParams.class );
 
@@ -319,12 +319,12 @@ public class PatchContentHandlerTest
         when( this.contentService.patch( Mockito.isA( PatchContentParams.class ) ) ).thenAnswer(
             invocationOnMock -> invokePatch( (PatchContentParams) invocationOnMock.getArguments()[0], contentWithoutAttachments ) );
 
-        mockXData();
+        mockMixins();
 
         assertThrowsExactly( RuntimeException.class, () -> runFunction( "/test/PatchContentHandlerTest.js", "patchAttachments" ) );
     }
 
-    private void mockXData()
+    private void mockMixins()
     {
         final FormItemSet cSet = FormItemSet.create()
             .name( "c" )
@@ -346,18 +346,18 @@ public class PatchContentHandlerTest
         GetContentTypeParams getContentType = GetContentTypeParams.from( ContentTypeName.from( "test:myContentType" ) );
         when( this.contentTypeService.getByName( eq( getContentType ) ) ).thenReturn( contentType );
 
-        final XData xData1 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:myschema" ) )
+        final MixinDescriptor descriptor1 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:myschema" ) )
             .addFormItem( Input.create().label( "a" ).name( "a" ).inputType( InputTypeName.DOUBLE ).build() )
             .build();
-        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
+        when( this.mixinService.getByName( eq( descriptor1.getName() ) ) ).thenReturn( descriptor1 );
 
-        final XData xData2 = XData.create()
-            .name( XDataName.from( "com.enonic.myapplication:other" ) )
+        final MixinDescriptor descriptor2 = MixinDescriptor.create()
+            .name( MixinName.from( "com.enonic.myapplication:other" ) )
             .addFormItem( Input.create().label( "name" ).name( "name" ).inputType( InputTypeName.TEXT_LINE ).build() )
             .build();
-        when( this.xDataService.getByName( eq( xData1.getName() ) ) ).thenReturn( xData1 );
-        when( this.xDataService.getByName( eq( xData2.getName() ) ) ).thenReturn( xData2 );
+        when( this.mixinService.getByName( eq( descriptor1.getName() ) ) ).thenReturn( descriptor1 );
+        when( this.mixinService.getByName( eq( descriptor2.getName() ) ) ).thenReturn( descriptor2 );
         when( this.formFragmentService.inlineFormItems( any( Form.class ) ) ).then( returnsFirstArg() );
     }
 
