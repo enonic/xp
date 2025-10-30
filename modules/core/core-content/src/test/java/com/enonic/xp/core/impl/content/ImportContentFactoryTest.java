@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.attachment.Attachments;
@@ -17,6 +16,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
@@ -29,6 +29,7 @@ import static com.enonic.xp.content.ContentPropertyNames.ORIGIN_PROJECT;
 import static com.enonic.xp.content.ContentPropertyNames.PUBLISH_INFO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ImportContentFactoryTest
@@ -41,22 +42,23 @@ class ImportContentFactoryTest
     @BeforeEach
     void setUp()
     {
-        Mockito.when( content.getType() ).thenReturn( ContentTypeName.from( "base:folder" ) );
-        Mockito.when( content.getId() ).thenReturn( ContentId.from( "contentId" ) );
-        Mockito.when( content.getModifier() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
-        Mockito.when( content.getCreator() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
-        Mockito.when( content.getData() ).thenReturn( new PropertyTree() );
-        Mockito.when( content.getPermissions() ).thenReturn( AccessControlList.empty() );
-        Mockito.when( content.getAttachments() ).thenReturn( Attachments.empty() );
-        Mockito.when( content.getPublishInfo() )
+        when( content.getType() ).thenReturn( ContentTypeName.from( "base:folder" ) );
+        when( content.getId() ).thenReturn( ContentId.from( "contentId" ) );
+        when( content.getModifier() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
+        when( content.getCreator() ).thenReturn( PrincipalKey.from( "user:system:user" ) );
+        when( content.getData() ).thenReturn( new PropertyTree() );
+        when( content.getPermissions() ).thenReturn( AccessControlList.empty() );
+        when( content.getAttachments() ).thenReturn( Attachments.empty() );
+        when( content.getPublishInfo() )
             .thenReturn( ContentPublishInfo.create().first( Instant.now() ).from( Instant.now() ).to( Instant.now() ).build() );
+        when( content.getMixins() ).thenReturn( Mixins.empty() );
     }
 
     @Test
     void replaceOriginProject()
     {
 
-        Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
+        when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 
         params = ImportContentParams.create()
             .importContent( content )
@@ -77,7 +79,7 @@ class ImportContentFactoryTest
     @Test
     void removeOriginProject()
     {
-        Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
+        when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 
         params =
             ImportContentParams.create().importContent( content ).targetPath( ContentPath.from( ContentPath.ROOT, "content" ) ).build();
@@ -91,7 +93,7 @@ class ImportContentFactoryTest
     @Test
     void removePublishInfo()
     {
-        Mockito.when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
+        when( content.getOriginProject() ).thenReturn( ProjectName.from( "old-project" ) );
 
         params =
             ImportContentParams.create().importContent( content ).targetPath( ContentPath.from( ContentPath.ROOT, "content" ) ).build();

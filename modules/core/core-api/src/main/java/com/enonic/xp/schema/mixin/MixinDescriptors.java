@@ -19,11 +19,6 @@ public final class MixinDescriptors
         super( list );
     }
 
-    public MixinDescriptor getMixinDescriptor( final MixinName mixinName )
-    {
-        return stream().filter( mixin -> mixinName.equals( mixin.getName() ) ).findFirst().orElse( null );
-    }
-
     public static MixinDescriptors empty()
     {
         return EMPTY;

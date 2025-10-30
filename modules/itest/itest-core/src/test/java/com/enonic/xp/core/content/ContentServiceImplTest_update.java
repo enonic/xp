@@ -343,7 +343,7 @@ class ContentServiceImplTest_update
 
             final Content content = this.contentService.create( createContentParams );
 
-            assertTrue( content.hasMixins() );
+            assertTrue( !content.getMixins().isEmpty() );
 
             final UpdateContentParams updateContentParams = new UpdateContentParams();
             updateContentParams.contentId( content.getId() ).editor( edit -> {

@@ -241,11 +241,6 @@ public class Content
         return attachments;
     }
 
-    public boolean hasMixins()
-    {
-        return !this.mixins.isEmpty();
-    }
-
     public Mixins getMixins()
     {
         return this.mixins;

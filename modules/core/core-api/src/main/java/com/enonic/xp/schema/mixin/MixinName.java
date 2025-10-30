@@ -7,7 +7,6 @@ import com.enonic.xp.schema.BaseSchemaName;
 @PublicApi
 public final class MixinName
     extends BaseSchemaName
-    implements Comparable<MixinName>
 {
     private MixinName( final String name )
     {
@@ -27,11 +26,5 @@ public final class MixinName
     public static MixinName from( final String value )
     {
         return new MixinName( value );
-    }
-
-    @Override
-    public int compareTo( final MixinName that )
-    {
-        return this.toString().compareTo( that.toString() );
     }
 }

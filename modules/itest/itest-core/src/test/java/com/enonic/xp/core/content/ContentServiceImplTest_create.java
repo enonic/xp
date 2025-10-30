@@ -514,7 +514,7 @@ class ContentServiceImplTest_create
                                                                 .type( ContentTypeName.folder() )
                                                                 .build() );
 
-        assertFalse( content.hasMixins() );
+        assertFalse( !content.getMixins().isEmpty() );
 
     }
 

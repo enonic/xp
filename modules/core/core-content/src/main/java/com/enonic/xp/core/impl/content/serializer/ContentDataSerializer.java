@@ -138,7 +138,7 @@ public final class ContentDataSerializer
         addMetadata( contentAsData, content );
         contentAsData.addSet( DATA, content.getData().getRoot().copy( contentAsData.getTree() ) );
 
-        if ( content.hasMixins() )
+        if ( !content.getMixins().isEmpty() )
         {
             mixinDataSerializer.toData( content.getMixins(), contentAsData );
         }
