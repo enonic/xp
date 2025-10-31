@@ -7,8 +7,6 @@ import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.project.CreateProjectRolesCommand;
 import com.enonic.xp.core.impl.project.ProjectAccessHelper;
 import com.enonic.xp.index.IndexService;
@@ -28,9 +26,8 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class DefaultProjectMigrator
+public class Xp8DefaultProjectMigrator
 {
     public static final ProjectName DEFAULT_PROJECT_NAME = ProjectName.from( RepositoryId.from( "com.enonic.cms.default" ) );
 
@@ -63,7 +60,7 @@ public class DefaultProjectMigrator
 
     private final IndexService indexService;
 
-    public DefaultProjectMigrator( final NodeService nodeService, final SecurityService securityService, final IndexService indexService )
+    public Xp8DefaultProjectMigrator( final NodeService nodeService, final SecurityService securityService, final IndexService indexService )
     {
         this.nodeService = nodeService;
         this.securityService = securityService;
@@ -151,17 +148,6 @@ public class DefaultProjectMigrator
 
     private Context createAdminContext( Branch branch )
     {
-        final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() )
-            .branch( branch )
-            .repositoryId( DEFAULT_PROJECT_NAME.getRepoId() )
-            .authInfo( authInfo )
-            .build();
+        return RepoDependentInitializer.createAdminContext( branch, DEFAULT_PROJECT_NAME.getRepoId() );
     }
-
-    private AuthenticationInfo createAdminAuthInfo()
-    {
-        return AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( SUPER_USER ).build();
-    }
-
 }

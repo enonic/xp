@@ -18,7 +18,6 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -26,8 +25,6 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public class SystemRepoInitializer
     extends Initializer
 {
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
-
     private final IndexServiceInternal indexServiceInternal;
 
     private final RepositoryService repositoryService;
@@ -47,13 +44,11 @@ public class SystemRepoInitializer
     public void doInitialize()
     {
         createAdminContext().runWith( () -> {
-            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
+            this.repositoryService.createRepository( CreateRepositoryParams.create().
                 repositoryId( SystemConstants.SYSTEM_REPO_ID ).
                 rootChildOrder( ChildOrder.name() ).
                 rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
-                build();
-
-            this.repositoryService.createRepository( createRepositoryParams );
+                build() );
 
             initRepositoryFolder();
         } );
@@ -100,10 +95,10 @@ public class SystemRepoInitializer
 
     private Context createAdminContext()
     {
-        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
+        final User admin = User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         return ContextBuilder.create().
-            branch( SecurityConstants.BRANCH_SECURITY ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             authInfo( authInfo ).build();
     }

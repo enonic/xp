@@ -1,8 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.util.List;
-import java.util.function.Function;
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.archive.ArchiveContentParams;
@@ -19,8 +16,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class ContentServiceImplTest_versions
     extends AbstractContentServiceTest

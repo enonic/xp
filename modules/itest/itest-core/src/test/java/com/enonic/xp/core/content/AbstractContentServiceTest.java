@@ -210,10 +210,7 @@ public abstract class AbstractContentServiceTest
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
             repositoryId( testprojectName.getRepoId() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( ContentInitializer.SUPER_USER ).
-                build() ).
+            authInfo( ContentInitializer.SUPER_USER_AUTH ).
             build();
     }
 
