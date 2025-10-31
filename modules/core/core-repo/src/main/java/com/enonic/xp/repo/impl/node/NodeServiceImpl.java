@@ -60,7 +60,6 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -956,7 +955,7 @@ public class NodeServiceImpl
 
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
-        nodeStorageService.setAttribute( nodeVersionId, attributes, context );
+        nodeStorageService.addAttributes( nodeVersionId, attributes, context );
 
         refresh( RefreshMode.STORAGE );
     }

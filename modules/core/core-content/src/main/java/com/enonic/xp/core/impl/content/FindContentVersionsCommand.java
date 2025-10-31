@@ -48,14 +48,9 @@ public class FindContentVersionsCommand
         final FindContentVersionsResult.Builder findContentVersionsResultBuilder =
             FindContentVersionsResult.create().totalHits( nodeVersionQueryResult.getTotalHits() );
 
-        final ContentVersions.Builder contentVersionsBuilder = ContentVersions.create();
-
-        for ( final NodeVersionMetadata nodeVersionMetadata : nodeVersionQueryResult.getNodeVersionMetadatas() )
-        {
-            contentVersionsBuilder.add( createVersion( nodeVersionMetadata ) );
-        }
-
-        return findContentVersionsResultBuilder.contentVersions( contentVersionsBuilder.build() ).build();
+        return findContentVersionsResultBuilder.contentVersions(
+                nodeVersionQueryResult.getNodeVersionMetadatas().stream().map( this::createVersion ).collect( ContentVersions.collector() ) )
+            .build();
     }
 
     public ContentVersion createVersion( final NodeVersionMetadata nodeVersionMetadata )

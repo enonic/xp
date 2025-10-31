@@ -3,10 +3,8 @@ package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
 
-import com.enonic.xp.node.Attributes;
-import com.enonic.xp.node.NodeVersionIds;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
@@ -16,6 +14,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.PushNodesListener;
@@ -23,7 +23,6 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.security.acl.AccessControlList;
-import com.enonic.xp.util.GenericValue;
 
 public interface NodeStorageService
 {
@@ -41,7 +40,7 @@ public interface NodeStorageService
 
     NodeCommitEntry commit( NodeCommitEntry entry, NodeVersionIds versionIds, InternalContext context );
 
-    void setAttribute( NodeVersionId versionId, Attributes attributes, InternalContext context );
+    void addAttributes( NodeVersionId versionId, Attributes attributes, InternalContext context );
 
     Node get( NodeId nodeId, InternalContext context );
 

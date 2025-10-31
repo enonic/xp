@@ -52,7 +52,7 @@ public final class Attributes
 
         public Attributes build()
         {
-            return new Attributes( builder.build() );
+            return new Attributes( builder.buildOrThrow() );
         }
 
         public Attributes buildKeepingLast()

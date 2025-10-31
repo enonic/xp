@@ -192,7 +192,7 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public void setAttribute( final NodeVersionId versionId, Attributes value, final InternalContext context )
+    public void addAttributes( final NodeVersionId versionId, Attributes value, final InternalContext context )
     {
         final NodeVersionMetadata existingVersion = this.versionService.getVersion( versionId, context );
 
