@@ -186,6 +186,7 @@ public class ProjectServiceImpl
     private void doInitRootNodes( final CreateProjectParams params, final PropertyTree contentRootData )
     {
         ContentRepoInitializer.create()
+            .setIndexService( indexService )
             .repositoryService( repositoryService )
             .repositoryId( params.getName().getRepoId() )
             .repositoryData( createProjectData( params ) )

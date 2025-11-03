@@ -55,7 +55,7 @@ public class RepositoryServiceActivator
             build().
             initialize();
 
-        new Xp8IndexMigrator( repositoryService, indexServiceInternal).migrate();
+        //new Xp8IndexMigrator( repositoryService, indexServiceInternal).migrate();
 
         service = context.registerService( new String[]{RepositoryService.class.getName(), InternalRepositoryService.class.getName()},
                                            repositoryService, null );
