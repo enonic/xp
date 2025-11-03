@@ -36,9 +36,7 @@ public final class ContentConstants
 
     public static final String CONTENT_ROOT_NAME = "content";
 
-    public static final NodePath CONTENT_ROOT_PARENT = NodePath.ROOT;
-
-    public static final NodePath CONTENT_ROOT_PATH = new NodePath( CONTENT_ROOT_PARENT, NodeName.from( CONTENT_ROOT_NAME ) );
+    public static final NodePath CONTENT_ROOT_PATH = new NodePath( NodePath.ROOT, NodeName.from( CONTENT_ROOT_NAME ) );
 
     public static final NodeType CONTENT_NODE_COLLECTION = NodeType.from( "content" );
 

@@ -41,7 +41,6 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
@@ -176,13 +175,6 @@ class AbstractCreatingOrUpdatingContentCommand
                 }
             }
         }
-    }
-
-    User getCurrentUser()
-    {
-        final Context context = ContextAccessor.current();
-
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
     }
 
     protected boolean isBinaryContentType( final String contentType )

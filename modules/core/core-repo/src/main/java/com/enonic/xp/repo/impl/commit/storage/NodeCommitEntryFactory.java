@@ -11,17 +11,11 @@ public class NodeCommitEntryFactory
 {
     public static NodeCommitEntry create( final ReturnValues returnValues )
     {
+        final NodeCommitId commitId = NodeCommitId.from( returnValues.getStringValue( CommitIndexPath.COMMIT_ID ) );
+        final String message = returnValues.getStringValue( CommitIndexPath.MESSAGE );
+        final Instant timestamp = Instant.parse( returnValues.getStringValue( CommitIndexPath.TIMESTAMP ) );
+        final PrincipalKey committer = PrincipalKey.from( returnValues.getStringValue( CommitIndexPath.COMMITTER ) );
 
-        final Object commitId = returnValues.getSingleValue( CommitIndexPath.COMMIT_ID.getPath() );
-        final Object message = returnValues.getSingleValue( CommitIndexPath.MESSAGE.getPath() );
-        final Object timestamp = returnValues.getSingleValue( CommitIndexPath.TIMESTAMP.getPath() );
-        final Object committer = returnValues.getSingleValue( CommitIndexPath.COMMITTER.getPath() );
-
-        return NodeCommitEntry.create().
-            nodeCommitId( NodeCommitId.from( commitId ) ).
-            message( message.toString() ).
-            timestamp( Instant.parse( timestamp.toString() ) ).
-            committer( PrincipalKey.from(committer.toString()) ).
-            build();
+        return NodeCommitEntry.create().nodeCommitId( commitId ).message( message ).timestamp( timestamp ).committer( committer ).build();
     }
 }

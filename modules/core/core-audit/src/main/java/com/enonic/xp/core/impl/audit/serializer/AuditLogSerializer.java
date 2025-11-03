@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.audit.serializer;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -9,6 +10,7 @@ import com.enonic.xp.audit.AuditLogId;
 import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogPropertyNames;
 import com.enonic.xp.data.PropertySet;
@@ -33,7 +35,13 @@ public class AuditLogSerializer
         data.addString( AuditLogPropertyNames.TYPE, auditLogParams.getType() );
         data.addInstant( AuditLogPropertyNames.TIME, auditLogParams.getTime() );
         data.addString( AuditLogPropertyNames.SOURCE, auditLogParams.getSource() );
-        data.addString( AuditLogPropertyNames.USER, auditLogParams.getUser().toString() );
+
+        final PrincipalKey userKey = Objects.requireNonNullElseGet( auditLogParams.getUser(),
+                                                                    () -> ContextAccessor.current().getAuthInfo().getUser() != null
+                                                                        ? ContextAccessor.current().getAuthInfo().getUser().getKey()
+                                                                        : PrincipalKey.ofAnonymous() );
+
+        data.addString( AuditLogPropertyNames.USER, userKey.toString() );
         data.addStrings( AuditLogPropertyNames.OBJECTURIS, objectUris );
         data.addSet( AuditLogPropertyNames.DATA, auditLogParams.getData().getRoot().copy( data.getTree() ) );
 

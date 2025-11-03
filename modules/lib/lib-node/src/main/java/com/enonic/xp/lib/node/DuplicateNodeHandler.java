@@ -48,7 +48,7 @@ public class DuplicateNodeHandler
                                                           .includeChildren( this.includeChildren )
                                                           .dataProcessor( this.dataProcessor )
                                                           .refresh( this.refresh )
-                                                          .build() ) );
+                                                          .build() ).getNode() );
     }
 
     public static final class Builder

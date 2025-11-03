@@ -98,7 +98,7 @@ public final class PatchNodeCommand
         {
             Permission requiredPermission;
 
-            if ( firstBranch.equals( branch ) ||
+            if ( branch.equals( firstBranch ) ||
                 !activeNodeMap.get( firstBranch ).getNodeVersionId().equals( persistedNode.getNodeVersionId() ) )
             {
                 requiredPermission = Permission.MODIFY;
@@ -163,13 +163,7 @@ public final class PatchNodeCommand
 
         if ( patchedNode != null )
         {
-            this.nodeStorageService.push( List.of( NodeBranchEntry.create()
-                                                       .nodeVersionId( patchedNode.node().getNodeVersionId() )
-                                                       .nodePath( patchedNode.node().path() )
-                                                       .nodeVersionKey( patchedNode.metadata().getNodeVersionKey() )
-                                                       .nodeId( patchedNode.node().id() )
-                                                       .timestamp( patchedNode.node().getTimestamp() )
-                                                       .build() ), branch, l -> {
+            this.nodeStorageService.push( List.of( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ) ), branch, l -> {
             }, internalContext );
 
             return patchedNode;
@@ -198,7 +192,7 @@ public final class PatchNodeCommand
             final Node updatedNode =
                 Node.create( editedNode ).timestamp( Instant.now( CLOCK ) ).attachedBinaries( updatedBinaries ).build();
 
-            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode ), internalContext );
+            return this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, params.getVersionAttributes() ), internalContext );
         }
     }
 
@@ -243,11 +237,6 @@ public final class PatchNodeCommand
         private Builder()
         {
             super();
-        }
-
-        private Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public Builder params( final PatchNodeParams params )

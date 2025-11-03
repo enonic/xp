@@ -23,8 +23,7 @@ import com.enonic.xp.repo.impl.storage.StoreStorageName;
 public class CommitServiceImpl
     implements CommitService
 {
-    private static final ReturnFields COMMIT_RETURN_FIELDS =
-        ReturnFields.from( CommitIndexPath.COMMIT_ID, CommitIndexPath.MESSAGE, CommitIndexPath.TIMESTAMP, CommitIndexPath.COMMITTER );
+    private static final ReturnFields COMMIT_RETURN_FIELDS = ReturnFields.from( CommitIndexPath.entryFields() );
 
     private final StorageDao storageDao;
 

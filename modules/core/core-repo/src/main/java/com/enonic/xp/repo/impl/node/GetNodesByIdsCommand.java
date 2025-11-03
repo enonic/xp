@@ -23,11 +23,6 @@ public class GetNodesByIdsCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public Nodes execute()
     {
         return this.nodeStorageService.get( ids, InternalContext.from( ContextAccessor.current() ) );
@@ -41,11 +36,6 @@ public class GetNodesByIdsCommand
         private Builder()
         {
             super();
-        }
-
-        private Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public Builder ids( NodeIds ids )

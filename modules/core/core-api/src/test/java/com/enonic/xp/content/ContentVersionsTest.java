@@ -4,43 +4,43 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.security.PrincipalKey;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ContentVersionsTest
 {
     @Test
     void testBuilder()
     {
-
         final Instant now1 = Instant.now();
 
-        final ContentVersion version1 = ContentVersion.create().
-            id( ContentVersionId.from( "a" ) ).
-            modified( now1 ).
-            timestamp( now1 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
-            comment( "comment" ).
-            build();
+        final ContentVersion version1 =
+            ContentVersion.create().versionId( ContentVersionId.from( "a" ) ).timestamp( now1 ).comment( "comment" ).build();
 
         final Instant now2 = now1.plusMillis( 1000 );
 
-        final ContentVersion version2 = ContentVersion.create().
-            id( ContentVersionId.from( "b" ) ).
-            modified( now2 ).
-            timestamp( now2 ).
-            modifier( PrincipalKey.ofAnonymous() ).
-            displayName( "contentVersion" ).
-            comment( "comment" ).
-            build();
+        final ContentVersion version2 =
+            ContentVersion.create().versionId( ContentVersionId.from( "b" ) ).timestamp( now2 ).comment( "comment" ).build();
 
-        final ContentVersions versions = ContentVersions.create().
-            add( version1 ).
-            add( version2 ).
-            build();
+        final ContentVersions versions = ContentVersions.create().add( version1 ).add( version2 ).build();
 
-        assertTrue( versions.iterator().hasNext() );
+        assertThat( versions ).extracting( ContentVersion::getVersionId ).map( ContentVersionId::toString ).containsExactly( "a", "b" );
+    }
+
+    @Test
+    void testFrom()
+    {
+        final Instant now1 = Instant.now();
+
+        final ContentVersion version1 =
+            ContentVersion.create().versionId( ContentVersionId.from( "a" ) ).timestamp( now1 ).comment( "comment" ).build();
+
+        final Instant now2 = now1.plusMillis( 1000 );
+
+        final ContentVersion version2 =
+            ContentVersion.create().versionId( ContentVersionId.from( "b" ) ).timestamp( now2 ).comment( "comment" ).build();
+
+        final ContentVersions versions = ContentVersions.from( version1, version2 );
+
+        assertThat( versions ).extracting( ContentVersion::getVersionId ).map( ContentVersionId::toString ).containsExactly( "a", "b" );
     }
 }

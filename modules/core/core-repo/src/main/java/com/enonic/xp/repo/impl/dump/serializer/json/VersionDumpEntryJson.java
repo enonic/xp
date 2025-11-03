@@ -39,6 +39,7 @@ public class VersionDumpEntryJson
     @JsonProperty("commitId")
     private String commitId;
 
+    @SuppressWarnings("unused")
     public VersionDumpEntryJson()
     {
     }
@@ -72,13 +73,13 @@ public class VersionDumpEntryJson
     public static VersionDumpEntryJson from( final VersionMeta meta )
     {
         return VersionDumpEntryJson.create().
-            nodePath( meta.getNodePath().toString() ).
-            timestamp( Objects.toString( meta.getTimestamp(), null ) ).
-            version( Objects.toString( meta.getVersion(), null ) ).
-            nodeBlobKey( meta.getNodeVersionKey().getNodeBlobKey().toString() ).
-            indexConfigBlobKey( meta.getNodeVersionKey().getIndexConfigBlobKey().toString() ).
-            accessControlBlobKey( meta.getNodeVersionKey().getAccessControlBlobKey().toString() ).
-            commitId( Objects.toString( meta.getNodeCommitId(), null ) ).
+            nodePath( meta.nodePath().toString() ).
+            timestamp( Objects.toString( meta.timestamp(), null ) ).
+            version( Objects.toString( meta.version(), null ) ).
+            nodeBlobKey( meta.nodeVersionKey().getNodeBlobKey().toString() ).
+            indexConfigBlobKey( meta.nodeVersionKey().getIndexConfigBlobKey().toString() ).
+            accessControlBlobKey( meta.nodeVersionKey().getAccessControlBlobKey().toString() ).
+            commitId( Objects.toString( meta.nodeCommitId(), null ) ).
             build();
     }
 
@@ -140,8 +141,6 @@ public class VersionDumpEntryJson
         private String indexConfigBlobKey;
 
         private String accessControlBlobKey;
-
-        private String nodeState;
 
         private String commitId;
 

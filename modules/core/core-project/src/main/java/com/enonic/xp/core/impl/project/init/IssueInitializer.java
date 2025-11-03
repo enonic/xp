@@ -16,6 +16,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
@@ -95,7 +96,8 @@ public class IssueInitializer
 
         LOG.info( "Created issue root-node: " + issueRoot.path() );
 
-        nodeService.push( NodeIds.from( issueRoot.id() ), ContentConstants.BRANCH_MASTER );
+        final NodeIds ids = NodeIds.from( issueRoot.id() );
+        nodeService.push( PushNodeParams.create().ids( ids ).target( ContentConstants.BRANCH_MASTER ).build() );
     }
 
     public static class Builder

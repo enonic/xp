@@ -97,6 +97,7 @@ final class RenameContentCommand
         final MoveNodeParams moveParams = MoveNodeParams.create()
             .nodeId( NodeId.from( params.getContentId() ) )
             .newName( NodeName.from( params.getNewName() ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.MOVE_KEY ) )
             .processor( initProcessors() )
             .refresh( RefreshMode.ALL )
             .build();
@@ -106,7 +107,7 @@ final class RenameContentCommand
         return translator.fromNode( node );
     }
 
-    public static class Builder
+    static class Builder
         extends AbstractCreatingOrUpdatingContentCommand.Builder<Builder>
     {
         private final RenameContentParams params;
@@ -122,7 +123,7 @@ final class RenameContentCommand
             super.validate();
         }
 
-        public RenameContentCommand build()
+        RenameContentCommand build()
         {
             validate();
             return new RenameContentCommand( this );

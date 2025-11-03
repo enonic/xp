@@ -33,6 +33,7 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
+import com.enonic.xp.repository.BranchAlreadyExistsException;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -41,6 +42,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryAlreadyExistsException;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
@@ -97,7 +99,7 @@ public class RepositoryServiceImpl
 
         if ( repoAlreadyInitialized )
         {
-            throw new RepositoryAlreadyExistException( repositoryId );
+            throw new RepositoryAlreadyExistsException( repositoryId );
         }
 
         this.nodeRepositoryService.create( CreateRepositoryIndexParams.create()
@@ -176,7 +178,7 @@ public class RepositoryServiceImpl
         final Branch newBranch = createBranchParams.getBranch();
         if ( previousRepository.getBranches().contains( newBranch ) )
         {
-            throw new BranchAlreadyExistException( newBranch );
+            throw new BranchAlreadyExistsException( newBranch );
         }
 
         //If the root node does not exist, creates it

@@ -294,7 +294,7 @@ class FormDefaultValuesProcessorImplTest
             Property checkOptionSet_1 = data.getProperty( "checkOptionSet", i );
             assertEquals( "option_2", checkOptionSet_1.getSet().getString( "_selected" ) );
 
-            PropertySet propertySet = checkOptionSet_1.getSet().getPropertySet( "option_2" );
+            PropertySet propertySet = checkOptionSet_1.getSet().getSet( "option_2" );
             for ( int j = 0; j < 3; j++ )
             {
                 assertEquals( "Default Value", propertySet.getString( "testInput", j ) );

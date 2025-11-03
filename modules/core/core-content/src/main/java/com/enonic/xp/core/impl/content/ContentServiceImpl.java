@@ -24,7 +24,6 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.CompareContentsParams;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
@@ -54,8 +53,6 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.content.FindContentVersionsParams;
 import com.enonic.xp.content.FindContentVersionsResult;
-import com.enonic.xp.content.GetActiveContentVersionsParams;
-import com.enonic.xp.content.GetActiveContentVersionsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
@@ -71,7 +68,6 @@ import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PublishStatus;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.ReorderChildContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.ResolveRequiredDependenciesParams;
 import com.enonic.xp.content.SortContentParams;
@@ -90,14 +86,9 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.SortNodeParams;
-import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
@@ -360,7 +351,8 @@ public class ContentServiceImpl
             .eventPublisher( this.eventPublisher )
             .contentIds( params.getContentIds() )
             .excludedContentIds( params.getExcludedContentIds() )
-            .contentPublishInfo( params.getContentPublishInfo() )
+            .publishFrom( params.getPublishFrom() )
+            .publishTo( params.getPublishTo() )
             .excludeDescendantsOf( params.getExcludeDescendantsOf() )
             .includeDependencies( params.isIncludeDependencies() )
             .pushListener( params.getPublishContentListener() )
@@ -785,65 +777,21 @@ public class ContentServiceImpl
     }
 
     @Override
-    public GetActiveContentVersionsResult getActiveVersions( final GetActiveContentVersionsParams params )
-    {
-        return GetActiveContentVersionsCommand.create()
-            .nodeService( this.nodeService )
-            .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
-            .eventPublisher( this.eventPublisher )
-            .contentId( params.getContentId() )
-            .branches( params.getBranches() )
-            .build()
-            .execute();
-    }
-
-    @Override
     public SortContentResult sort( final SortContentParams params )
     {
         verifyContextBranch( ContentConstants.BRANCH_DRAFT );
 
-        try
-        {
-            final SortNodeParams.Builder paramsBuilder = SortNodeParams.create()
-                .nodeId( NodeId.from( params.getContentId() ) )
-                .refresh( RefreshMode.ALL )
-                .childOrder( params.getChildOrder() )
-                .manualOrderSeed( params.getManualOrderSeed() );
+        final SortContentResult result = SortContentCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .translator( this.translator )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
 
-            for ( final ReorderChildContentParams param : params.getReorderChildContents() )
-            {
-                paramsBuilder.addManualOrder( ReorderChildNodeParams.create()
-                                                  .nodeId( NodeId.from( param.getContentToMove() ) )
-                                                  .moveBefore( param.getContentToMoveBefore() == null
-                                                                   ? null
-                                                                   : NodeId.from( param.getContentToMoveBefore() ) )
-                                                  .build() );
-            }
+        contentAuditLogSupport.sort( params, result );
 
-            if ( params.stopInherit() )
-            {
-                paramsBuilder.processor( InheritedContentDataProcessor.SORT );
-            }
-
-            final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
-
-            final Content content = translator.fromNode( sortNodeResult.getNode() );
-
-            final SortContentResult result = SortContentResult.create()
-                .content( content )
-                .movedChildren(
-                    sortNodeResult.getReorderedNodes().stream().map( Node::id ).map( ContentId::from ).collect( ContentIds.collector() ) )
-                .build();
-
-            contentAuditLogSupport.sort( params, result );
-
-            return result;
-        }
-        catch ( NodeAccessException e )
-        {
-            throw new ContentAccessException( e );
-        }
+        return result;
     }
 
     @Override
@@ -1007,16 +955,6 @@ public class ContentServiceImpl
             .execute();
     }
 
-    private static void verifyContextBranch( final Branch branch )
-    {
-        final Branch contextBranch = ContextAccessor.current().getBranch();
-
-        if ( !branch.equals( contextBranch ) )
-        {
-            throw new IllegalStateException( String.format( "Branch must be %s", branch ) );
-        }
-    }
-
     @Override
     public PatchContentResult patch( final PatchContentParams params )
     {
@@ -1043,6 +981,16 @@ public class ContentServiceImpl
         contentAuditLogSupport.patch( params, result );
 
         return result;
+    }
+
+    private static void verifyContextBranch( final Branch branch )
+    {
+        final Branch contextBranch = ContextAccessor.current().getBranch();
+
+        if ( !branch.equals( contextBranch ) )
+        {
+            throw new IllegalStateException( String.format( "Branch must be %s", branch ) );
+        }
     }
 
     @Reference

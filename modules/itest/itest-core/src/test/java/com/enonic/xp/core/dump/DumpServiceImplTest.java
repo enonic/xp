@@ -65,6 +65,7 @@ import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -406,7 +407,8 @@ class DumpServiceImplTest
     void same_version_in_different_branches_not_duplicated()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
+        final NodeIds ids = NodeIds.from( node.id() );
+        this.nodeService.push( PushNodeParams.create().ids( ids ).target( WS_OTHER ).build() );
         refresh();
 
         final NodeVersionQueryResult versionsBeforeDump =
@@ -432,7 +434,8 @@ class DumpServiceImplTest
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
         updateNode( node );
-        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
+        final NodeIds ids = NodeIds.from( node.id() );
+        this.nodeService.push( PushNodeParams.create().ids( ids ).target( WS_OTHER ).build() );
         updateNode( node );
         updateNode( node );
         refresh();
@@ -453,7 +456,8 @@ class DumpServiceImplTest
     void active_versions_after_load()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
+        final NodeIds ids = NodeIds.from( node.id() );
+        this.nodeService.push( PushNodeParams.create().ids( ids ).target( WS_OTHER ).build() );
         updateNode( node );
         refresh();
 
@@ -477,7 +481,8 @@ class DumpServiceImplTest
     void active_versions_in_versions_list()
     {
         final Node node = createNode( NodePath.ROOT, "myNode" );
-        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
+        final NodeIds ids = NodeIds.from( node.id() );
+        this.nodeService.push( PushNodeParams.create().ids( ids ).target( WS_OTHER ).build() );
         updateNode( node );
         refresh();
 
@@ -504,7 +509,8 @@ class DumpServiceImplTest
 
         renameNode( node.id(), "renamed" );
 
-        this.nodeService.push( NodeIds.from( node.id() ), WS_OTHER );
+        final NodeIds ids = NodeIds.from( node.id() );
+        this.nodeService.push( PushNodeParams.create().ids( ids ).target( WS_OTHER ).build() );
         updateNode( node );
         refresh();
 

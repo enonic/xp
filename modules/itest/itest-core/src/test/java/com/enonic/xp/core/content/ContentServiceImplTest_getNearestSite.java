@@ -126,10 +126,8 @@ class ContentServiceImplTest_getNearestSite
         final Content site = createSite();
         this.contentService.publish( PushContentParams.create()
                                          .contentIds( ContentIds.from( site.getId() ) )
-                                         .contentPublishInfo( ContentPublishInfo.create()
-                                                                  .from( Instant.parse( "2022-12-01T14:00:00.668487800Z" ) )
-                                                                  .to( Instant.parse( "2099-12-03T14:00:00.669487800Z" ) )
-                                                                  .build() )
+                                         .publishFrom( Instant.parse( "2022-12-01T14:00:00.668487800Z" ) )
+                                         .publishTo( Instant.parse( "2099-12-03T14:00:00.669487800Z" ) )
                                          .build() );
 
         final Content publishedContent = ctxMaster().callWith( () -> this.contentService.getById( site.getId() ) );
