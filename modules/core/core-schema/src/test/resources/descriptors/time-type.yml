@@ -1,5 +1,9 @@
 type: "Time"
 name: "mytime"
 label: "My Time"
-default: "13:22"
-config: {}
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+config:
+  default: "13:22"

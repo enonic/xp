@@ -1,6 +1,7 @@
 type: "Tag"
 name: "myTag"
 label: "My Tag"
+helpText: "Help Text"
 occurrences:
   min: 0
   max: 0

@@ -1,6 +1,7 @@
 type: "ContentTypeFilter"
 name: "myContentTypeFilter"
 label: "My ContentTypeFilter"
+helpText: "Help Text"
 occurrences:
   min: 0
   max: 1

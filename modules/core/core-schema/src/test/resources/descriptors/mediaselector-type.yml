@@ -1,6 +1,7 @@
 type: "MediaSelector"
 name: "myMediaSelector"
 label: "My MediaSelector"
+helpText: "Help Text"
 occurrences:
   min: 0
   max: 1

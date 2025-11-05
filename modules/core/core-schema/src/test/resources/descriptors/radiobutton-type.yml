@@ -1,6 +1,10 @@
 type: "RadioButton"
 name: "type"
 label: "Policy type"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
 options:
   - value: "cookie"
     label:
@@ -8,6 +12,6 @@ options:
       i18n: "i18n.rbg.cookie"
   - value: "privacy"
     label: "Privacy"
-default: "cookie"
 config:
+  default: "cookie"
   theme: "Dark"

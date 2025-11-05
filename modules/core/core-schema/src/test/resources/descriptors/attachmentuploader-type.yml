@@ -1,6 +1,11 @@
 type: "AttachmentUploader"
 name: "myattachmentUploader"
-label: "My AttachmentUploader"
-config: {
+label:
+  text: "My AttachmentUploader"
+  i18n: "i18n.key"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+config:
   disabled: false
-}

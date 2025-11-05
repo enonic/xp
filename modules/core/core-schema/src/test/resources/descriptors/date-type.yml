@@ -1,7 +1,10 @@
 type: "Date"
 name: "mydate"
 label: "My Date"
-default: "2025-08-29"
-config: {
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+config:
+  default: "2025-08-29"
   required: true
-}

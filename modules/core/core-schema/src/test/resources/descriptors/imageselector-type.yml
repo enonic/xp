@@ -1,6 +1,7 @@
 type: "ImageSelector"
 name: "myImageSelector"
 label: "My ImageSelector"
+helpText: "Help Text"
 occurrences:
   min: 0
   max: 1

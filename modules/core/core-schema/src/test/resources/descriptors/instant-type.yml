@@ -1,5 +1,9 @@
 type: "Instant"
 name: "myInstant"
 label: "My Instant"
-default: "2025-08-29T07:44:27Z"
-config: { }
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+config:
+  default: "2025-08-29T07:44:27Z"

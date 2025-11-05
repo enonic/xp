@@ -1,6 +1,10 @@
 type: "CheckBox"
 name: "mycheckbox"
 label: "My Checkbox"
-default: "checked"
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
 config:
+  default: "checked"
   alignment: "right"

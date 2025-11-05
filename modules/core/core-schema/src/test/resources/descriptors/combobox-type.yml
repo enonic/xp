@@ -1,7 +1,7 @@
 type: "ComboBox"
 name: "mycombobox"
 label: "My Combobox"
-default: "one"
+helpText: "Help Text"
 occurrences:
   min: 1
   max: 2
@@ -13,4 +13,5 @@ options:
       text: "Option Two"
       i18n: "combobox.option2"
 config:
+  default: "one"
   required: true

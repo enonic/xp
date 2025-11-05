@@ -1,6 +1,7 @@
 type: "ContentSelector"
 name: "searchResultPage"
 label: "Search result page"
+helpText: "Help Text"
 occurrences:
   min: 1
   max: 1
