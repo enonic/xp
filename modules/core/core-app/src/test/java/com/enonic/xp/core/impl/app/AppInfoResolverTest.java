@@ -11,10 +11,9 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ApplicationNameResolverTest
+class AppInfoResolverTest
     extends BundleBasedTest
 {
     @Test
@@ -23,7 +22,7 @@ class ApplicationNameResolverTest
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", true ) );
 
-        final String bundleName = ApplicationNameResolver.resolve( source );
+        final String bundleName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", bundleName );
     }
@@ -33,8 +32,7 @@ class ApplicationNameResolverTest
     {
         final ByteSource source = ByteSource.wrap( "abc".getBytes() );
         assertThrows(IOException.class, () -> {
-                final String appName = ApplicationNameResolver.resolve( source );
-                assertNull( appName );
+                AppInfoResolver.resolve( source );
         } );
 
     }
@@ -44,8 +42,7 @@ class ApplicationNameResolverTest
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", false ) );
-        assertThrows(ApplicationInvalidException.class, () -> {final String appName = ApplicationNameResolver.resolve( source );
-            assertNull( appName );});
+        assertThrows(ApplicationInvalidException.class, () -> {AppInfoResolver.resolve( source ); });
     }
 
 
@@ -54,7 +51,7 @@ class ApplicationNameResolverTest
         throws Exception
     {
         final ByteSource source = wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ) );
-        final String appName = ApplicationNameResolver.resolve( source );
+        final String appName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", appName );
     }

@@ -1,5 +1,6 @@
 package com.enonic.xp.app;
 
+@Deprecated
 public final class ApplicationInstallationParams
 {
     private final boolean start;
