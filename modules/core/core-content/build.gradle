@@ -12,6 +12,7 @@ dependencies {
 
 jar {
     bundle {
-        bnd( 'Bundle-Name': 'Enonic XP Core - Content' )
+        bnd( 'Bundle-Name': 'Enonic XP Core - Content',
+             'Export-Package': 'com.enonic.xp.core.impl.content.parser')
     }
 }
