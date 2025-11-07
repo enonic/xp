@@ -10,6 +10,7 @@ dependencies {
 
 jar {
     bundle {
-        bnd( 'Bundle-Name': 'Enonic XP Core - Schema' )
+        bnd( 'Bundle-Name': 'Enonic XP Core - Schema',
+             'Export-Package': 'com.enonic.xp.core.impl.schema,com.enonic.xp.core.impl.schema.mapper')
     }
 }
