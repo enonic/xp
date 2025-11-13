@@ -8,11 +8,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.Nodes;
 
-interface ApplicationRepoService
+public interface ApplicationRepoService
 {
-    Node createApplicationNode( Application application, ByteSource source );
-
-    Node updateApplicationNode( Application application, ByteSource source );
+    Node upsertApplicationNode( AppInfo application, ByteSource source );
 
     void deleteApplicationNode( ApplicationKey application );
 
@@ -23,5 +21,4 @@ interface ApplicationRepoService
     Nodes getApplications();
 
     Node updateStartedState( ApplicationKey applicationKey, boolean started );
-
 }

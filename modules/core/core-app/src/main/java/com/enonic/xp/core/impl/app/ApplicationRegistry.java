@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.osgi.framework.Bundle;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
@@ -14,13 +16,13 @@ public interface ApplicationRegistry
 
     List<Application> getAll();
 
-    Application installApplication( Bundle bundle );
+    Application install( ApplicationKey applicationKey, ByteSource byteSource );
 
-    void uninstallApplication( ApplicationKey applicationKey );
+    void uninstall( ApplicationKey applicationKey );
 
-    void stopApplication( ApplicationKey applicationKey );
+    void stop( ApplicationKey applicationKey );
 
-    boolean startApplication( ApplicationKey applicationKey, boolean throwOnInvalidVersion );
+    void start( ApplicationKey applicationKey );
 
-    void configureApplication( Bundle bundle, Configuration configuration );
+    void configure( Bundle bundle, Configuration configuration );
 }

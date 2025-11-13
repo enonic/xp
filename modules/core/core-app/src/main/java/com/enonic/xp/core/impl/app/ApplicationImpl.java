@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.net.URL;
 import java.time.Instant;
 import java.util.Set;
 
@@ -13,7 +12,6 @@ import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.resource.Resource;
 
 final class ApplicationImpl
     implements ApplicationAdaptor
@@ -71,7 +69,7 @@ final class ApplicationImpl
     @Override
     public String getMaxSystemVersion()
     {
-        return this.systemVersion != null ? this.systemVersion.getRight().toString() : null;
+        return this.systemVersion != null && this.systemVersion.getRight() != null ? this.systemVersion.getRight().toString() : null;
     }
 
     @Override
