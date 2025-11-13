@@ -260,7 +260,7 @@ public class DynamicSchemaServiceImplTest
             .initialize();
 
         ApplicationService applicationService =
-            new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
+            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
                                         virtualAppService, new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
         createSchemaAdminContext().runWith( () -> applicationService.createVirtualApplication(

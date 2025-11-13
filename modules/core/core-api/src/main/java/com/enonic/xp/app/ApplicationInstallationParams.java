@@ -2,6 +2,7 @@ package com.enonic.xp.app;
 
 import java.util.Objects;
 
+@Deprecated
 public class ApplicationInstallationParams
 {
     private final boolean start;

@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.List;
 
@@ -22,8 +23,8 @@ import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationMode;
+import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
@@ -66,10 +67,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-public class ApplicationServiceImplTest
+class ApplicationServiceImplTest
     extends BundleBasedTest
 {
     private final ApplicationRepoServiceImpl repoService = mock( ApplicationRepoServiceImpl.class );
@@ -87,7 +87,7 @@ public class ApplicationServiceImplTest
     private VirtualAppService virtualAppService;
 
     @BeforeEach
-    public void initService()
+    void initService()
     {
         final BundleContext bundleContext = getBundleContext();
 
@@ -108,16 +108,15 @@ public class ApplicationServiceImplTest
 
         virtualAppService = new VirtualAppService( nodeService );
 
-        this.service = new ApplicationServiceImpl( bundleContext, applicationRegistry, repoService, eventPublisher, appFilterService,
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
                                                    virtualAppService, auditLogSupport );
     }
 
     @Test
-    public void get_installed_application()
-        throws Exception
+    void get_installed_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         final Application result = this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
@@ -125,11 +124,10 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application()
-        throws Exception
+    void get_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         final Application result = this.service.get( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
@@ -137,8 +135,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_virtual_application()
-        throws Exception
+    void get_virtual_application()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         when( nodeService.nodeExists(
@@ -169,8 +166,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void create_virtual_application_without_admin()
-        throws Exception
+    void create_virtual_application_without_admin()
     {
         final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
@@ -182,7 +178,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void delete_virtual_application()
+    void delete_virtual_application()
     {
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
@@ -200,7 +196,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void delete_virtual_application_without_admin()
+    void delete_virtual_application_without_admin()
     {
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
@@ -218,21 +214,20 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application_not_found()
+    void get_application_not_found()
     {
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "app1" ) ) );
     }
 
     @Test
-    public void get_all_applications()
-        throws Exception
+    void get_all_applications()
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
         deployBundle( "noapp" );
 
-        applicationRegistry.installApplication( bundle1 );
-        applicationRegistry.installApplication( bundle2 );
+        applicationRegistry.registerApplication( bundle1 );
+        applicationRegistry.registerApplication( bundle2 );
 
         final Applications result = this.service.getInstalledApplications();
         assertNotNull( result );
@@ -240,22 +235,21 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void list()
-        throws Exception
+    void list()
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
         deployBundle( "noapp" );
 
-        applicationRegistry.installApplication( bundle1 );
-        applicationRegistry.installApplication( bundle2 );
+        applicationRegistry.registerApplication( bundle1 );
+        applicationRegistry.registerApplication( bundle2 );
 
         NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
 
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
         when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
-            FindNodesByParentResult.create().totalHits( 1L ).hits( 1L ).nodeIds( ids ).build() );
+            FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
 
         when( nodeService.getByIds( ids ) ).thenReturn(
             Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );
@@ -267,30 +261,11 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application_keys()
-        throws Exception
-    {
-        final Bundle bundle1 = deployAppBundle( "app1" );
-        final Bundle bundle2 = deployAppBundle( "app2" );
-        deployAppBundle( "noapp" );
-
-        applicationRegistry.installApplication( bundle1 );
-        applicationRegistry.installApplication( bundle2 );
-
-        final ApplicationKeys result = this.service.getInstalledApplicationKeys();
-        assertNotNull( result );
-        assertEquals( 2, result.getSize() );
-        assertTrue( result.contains( ApplicationKey.from( "app1" ) ) );
-        assertTrue( result.contains( ApplicationKey.from( "app2" ) ) );
-    }
-
-    @Test
-    public void start_application()
-        throws Exception
+    void start_application()
     {
         final Bundle bundle = deployAppBundle( "app1" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
@@ -305,24 +280,19 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_missing_application()
+    void start_missing_application()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
-        this.service.startApplication( applicationKey, true );
-
-        verify( this.eventPublisher, times( 1 ) ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
-        verifyNoMoreInteractions( this.eventPublisher );
+        assertThrows( ApplicationNotFoundException.class, () -> this.service.startApplication( applicationKey, true ));
     }
 
     @Test
-    public void start_application_no_triggerEvent()
-        throws Exception
+    void start_application_no_triggerEvent()
     {
         final Bundle bundle = deployAppBundle( "app1" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
@@ -337,13 +307,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_atleast_version()
-        throws Exception
+    void start_app_atleast_version()
     {
         // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "6.0" ) );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -351,13 +320,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_version_range()
-        throws Exception
+    void start_app_version_range()
     {
         // At a time of writing Felix version is 6.0.1. Range covers all future versions as well.
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "(6.0,9999.0]" ) );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( ApplicationKey.from( "app1" ), false );
@@ -365,13 +333,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_app_invalid_version_range()
-        throws Exception
+    void start_app_invalid_version_range()
     {
         // Version upper bound is too low for current and future Felix version (at a time of writing 6.0.1)
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "[5.1,5.2)" ) );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         assertThrows( ApplicationInvalidVersionException.class,
@@ -379,13 +346,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void start_ex()
-        throws Exception
+    void start_ex()
     {
         // There is no version 0.0 of Felix.
         final Bundle bundle = deployAppBundle( "app1", VersionRange.valueOf( "[0.0,0.0]" ) );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         assertThrows( ApplicationInvalidVersionException.class,
@@ -393,12 +359,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void stop_application()
+    void stop_application()
         throws Exception
     {
         final Bundle bundle = deployAppBundle( "app1" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         bundle.start();
 
@@ -414,12 +380,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void stop_system_application_ignored()
+    void stop_system_application_ignored()
         throws Exception
     {
         final Bundle bundle = deploySystemAppBundle( "systemApp" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         bundle.start();
 
@@ -430,12 +396,12 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void stop_application_no_triggerEvent()
+    void stop_application_no_triggerEvent()
         throws Exception
     {
         final Bundle bundle = deployAppBundle( "app1" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         bundle.start();
 
@@ -451,15 +417,14 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global()
-        throws Exception
+    void install_global()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
 
         final String bundleName = "my-bundle";
 
-        mockRepoCreateNode( applicationNode );
-        mockRepoGetNode( applicationNode, bundleName );
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
 
         final ByteSource byteSource = createBundleSource( bundleName );
 
@@ -470,13 +435,13 @@ public class ApplicationServiceImplTest
         assertFalse( this.service.isLocalApplication( application.getKey() ) );
         assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
 
-        verifyInstalledEvents( applicationNode, times( 1 ) );
+        verifyInstallEvents( ApplicationKey.from( "my-bundle" ), node.id(), times( 1 ) );
+        verifyInstalledEvents( ApplicationKey.from( "my-bundle" ), node.id(), times( 1 ) );
         verifyStartedEvent( application.getKey(), times( 1 ) );
     }
 
     @Test
-    public void install_global_invalid()
-        throws Exception
+    void install_global_invalid()
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
@@ -491,8 +456,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global_denied()
-        throws Exception
+    void install_global_denied()
     {
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( false );
 
@@ -509,15 +473,14 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_local()
-        throws Exception
+    void install_local()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
 
         final String bundleName = "my-bundle";
 
-        mockRepoCreateNode( applicationNode );
-        mockRepoGetNode( applicationNode, bundleName );
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
 
         final ByteSource byteSource = createBundleSource( bundleName );
         final Application application = this.service.installLocalApplication( byteSource, bundleName );
@@ -527,15 +490,14 @@ public class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
         assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
 
-        verifyInstalledEvents( applicationNode, never() );
+        verifyInstalledEvents( ApplicationKey.from( "my-bundle" ), node.id(), never() );
         verifyStartedEvent( application.getKey(), never() );
     }
 
     @Test
-    public void install_local_invalid()
-        throws Exception
+    void install_local_invalid()
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
 
         final String bundleName = "my-bundle";
 
@@ -548,16 +510,16 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void update_installed_application()
+    void update_installed_application()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
 
         final String bundleName = "my-bundle";
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
             node );
 
         mockRepoGetNode( node, bundleName );
@@ -576,16 +538,16 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void update_installed_local_application()
+    void update_installed_local_application()
         throws Exception
     {
-        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "my-bundle" ).build();
 
         final String bundleName = "my-bundle";
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
             node );
 
         mockRepoGetNode( node, bundleName );
@@ -601,64 +563,12 @@ public class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( updatedApplication.getKey() ) );
         assertEquals( updatedApplication, this.service.getInstalledApplication( updatedApplication.getKey() ) );
 
-        verifyInstalledEvents( node, never() );
+        verifyInstalledEvents( ApplicationKey.from( "my-bundle" ), node.id(), never() );
         verifyStartedEvent( updatedApplication.getKey(), never() );
     }
 
     @Test
-    public void install_stored_application_not_found()
-        throws Exception
-    {
-        assertThrows( ApplicationInstallException.class, () -> this.service.installStoredApplication( NodeId.from( "dummy" ) ) );
-    }
-
-    @Test
-    public void install_stored_application()
-        throws Exception
-    {
-        final Node node = Node.create()
-            .id( NodeId.from( "myNodeId" ) )
-            .name( "myBundle" )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
-            .build();
-
-        final String bundleName = "my-bundle";
-
-        when( this.repoService.getApplicationSource( node.id() ) ).thenReturn( createBundleSource( bundleName ) );
-
-        final Application application = this.service.installStoredApplication( node.id() );
-
-        assertNotNull( application );
-        assertEquals( bundleName, application.getKey().getName() );
-        assertFalse( this.service.isLocalApplication( application.getKey() ) );
-        assertEquals( application, this.service.getInstalledApplication( application.getKey() ) );
-
-        verifyInstalledEvents( node, never() );
-        verifyStartedEvent( application.getKey(), never() );
-    }
-
-    @Test
-    public void install_stored_application_denied()
-        throws Exception
-    {
-        when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( false );
-
-        final Node node = Node.create()
-            .id( NodeId.from( "myNodeId" ) )
-            .name( "myBundle" )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
-            .build();
-
-        final String bundleName = "my-bundle";
-
-        when( this.repoService.getApplicationSource( node.id() ) ).thenReturn( createBundleSource( bundleName ) );
-
-        final Application application = this.service.installStoredApplication( node.id() );
-        assertNull( application );
-    }
-
-    @Test
-    public void install_stored_applications()
+    void install_stored_applications()
         throws Exception
     {
         final String bundleName1 = "my-bundle1";
@@ -671,13 +581,13 @@ public class ApplicationServiceImplTest
 
         final Node node1 = Node.create()
             .id( NodeId.from( "myNodeId1" ) )
-            .name( "myBundle1" )
+            .name( bundleName1 )
             .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
             .build();
 
         final Node node2 = Node.create()
             .id( NodeId.from( "myNodeId2" ) )
-            .name( "myBundle2" )
+            .name( bundleName2 )
             .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
             .build();
 
@@ -686,45 +596,34 @@ public class ApplicationServiceImplTest
         when( this.repoService.getApplicationSource( node1.id() ) ).thenReturn( createBundleSource( bundleName1 ) );
         when( this.repoService.getApplicationSource( node2.id() ) ).thenReturn( createBundleSource( bundleName2 ) );
 
-        this.service.installAllStoredApplications( ApplicationInstallationParams.create().triggerEvent( false ).build() );
+        this.service.installAllStoredApplications();
 
         assertFalse( this.service.isLocalApplication( applicationKey1 ) );
         assertNotNull( this.service.getInstalledApplication( applicationKey1 ) );
         assertNull( this.service.getInstalledApplication( applicationKey2 ) );
 
-        verifyInstalledEvents( node1, never() );
+        verifyInstalledEvents( applicationKey1, node1.id(), never() );
         verifyStartedEvent( applicationKey1, never() );
     }
 
 
     @Test
-    public void uninstall_global_application()
-        throws Exception
+    void uninstall_global_application()
     {
-        final Node node = Node.create()
-            .id( NodeId.from( "myNodeId" ) )
-            .name( "myBundle" )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
-            .build();
+        final ApplicationKey application = ApplicationKey.from( "myBundle" );
 
-        final String bundleName = "my-bundle";
+        this.service.uninstallApplication( application, true );
 
-        when( this.repoService.getApplicationSource( node.id() ) ).thenReturn( createBundleSource( bundleName ) );
-
-        final Application application = this.service.installStoredApplication( node.id() );
-
-        this.service.uninstallApplication( application.getKey(), true );
-
-        assertNull( this.service.getInstalledApplication( application.getKey() ) );
+        assertNull( this.service.getInstalledApplication( application ) );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application.getKey() ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application.getKey() ) ) ) );
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application ) ) ) );
     }
 
     @Test
-    public void uninstall_local_application()
+    void uninstall_local_application()
         throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -747,7 +646,7 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_local_overriding_global()
+    void install_local_overriding_global()
         throws Exception
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -756,7 +655,7 @@ public class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
             node );
 
         mockRepoGetNode( node, bundleName );
@@ -779,7 +678,7 @@ public class ApplicationServiceImplTest
 
 
     @Test
-    public void uninstall_local_reinstall_global()
+    void uninstall_local_reinstall_global()
         throws Exception
     {
         PropertyTree data = new PropertyTree();
@@ -791,7 +690,7 @@ public class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.updateApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
             node );
 
         mockRepoGetNode( node, bundleName );
@@ -823,53 +722,51 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void install_global_when_local_installed()
+    void install_global_when_local_installed()
         throws Exception
     {
-        final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
+        final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
         final String bundleName = "my-bundle";
 
-        mockRepoCreateNode( applicationNode );
+        mockRepoCreateNode( node );
 
         final ByteSource byteSource = createBundleSource( bundleName );
 
         final Application application = this.service.installLocalApplication( byteSource, bundleName );
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
-        when( this.repoService.getApplicationNode( application.getKey() ) ).thenReturn( applicationNode );
+        when( this.repoService.getApplicationNode( application.getKey() ) ).thenReturn( node );
 
-        this.service.installGlobalApplication( byteSource, bundleName );
+        assertThrows( ApplicationInstallException.class, () -> this.service.installGlobalApplication( byteSource, bundleName ) );
 
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
-        verifyInstalledEvents( applicationNode, times( 1 ) );
+        verifyInstalledEvents( ApplicationKey.from( "myNode" ), node.id(), never() );
     }
 
     @Test
     void deactivate()
-        throws Exception
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
         final Bundle bundle3 = deploySystemAppBundle( "systemApp" );
 
-        applicationRegistry.installApplication( bundle1 );
-        applicationRegistry.installApplication( bundle2 );
-        applicationRegistry.configureApplication( bundle3, mock( Configuration.class ) );
+        applicationRegistry.registerApplication( bundle1 );
+        applicationRegistry.registerApplication( bundle2 );
+        applicationRegistry.configure( bundle3, mock( Configuration.class ) );
 
         service.deactivate();
         assertThat( applicationRegistry.getAll() ).map( Application::getKey ).containsOnly( ApplicationKey.from( "systemApp" ) );
     }
 
     @Test
-    public void configuration_comes_first()
-        throws Exception
+    void configuration_comes_first()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
 
-        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
+        applicationRegistry.configure( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
         final Application app = service.getInstalledApplication( key );
 
@@ -877,67 +774,63 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void configuration_comes_last()
-        throws Exception
+    void configuration_comes_last()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         final Application app = service.getInstalledApplication( key );
 
-        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
+        applicationRegistry.configure( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
         assertEquals( ConfigBuilder.create().add( "a", "b" ).build(), app.getConfig() );
     }
 
     @Test
-    public void configuration_comes_twice()
-        throws Exception
+    void configuration_comes_twice()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         final Application app = service.getInstalledApplication( key );
 
         final ApplicationInvalidator mock = mock( ApplicationInvalidator.class );
         applicationRegistry.addInvalidator( mock );
 
-        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
+        applicationRegistry.configure( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
-        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
+        applicationRegistry.configure( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
 
         assertEquals( ConfigBuilder.create().add( "c", "d" ).build(), app.getConfig() );
     }
 
     @Test
-    public void configuration_comes_twice_invalidators_called()
-        throws Exception
+    void configuration_comes_twice_invalidators_called()
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
 
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         service.getInstalledApplication( key );
 
         final ApplicationInvalidator mock = mock( ApplicationInvalidator.class );
         applicationRegistry.addInvalidator( mock );
 
-        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
+        applicationRegistry.configure( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
-        applicationRegistry.configureApplication( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
+        applicationRegistry.configure( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
 
         verify( mock, times( 1 ) ).invalidate( eq( key ), eq( ApplicationInvalidationLevel.FULL ) );
     }
 
 
     @Test
-    public void get_application_mode()
-        throws Exception
+    void get_application_mode()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
@@ -946,7 +839,7 @@ public class ApplicationServiceImplTest
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
             final CreateNodeParams createNodeParams = params.getArgument( 0 );
 
-            if ( applicationKey.toString().equals( createNodeParams.getName() ) )
+            if ( applicationKey.toString().equals( createNodeParams.getName().toString() ) )
             {
 
                 when( nodeService.nodeExists(
@@ -960,7 +853,7 @@ public class ApplicationServiceImplTest
                     .build();
 
             }
-            if ( appNodeNames.contains( createNodeParams.getName() ) )
+            if ( appNodeNames.contains( createNodeParams.getName().toString() ) )
             {
                 return Node.create()
                     .id( NodeId.from( createNodeParams.getName() ) )
@@ -979,7 +872,7 @@ public class ApplicationServiceImplTest
                       VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 
         final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         assertEquals( ApplicationMode.AUGMENTED,
                       VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
@@ -987,29 +880,32 @@ public class ApplicationServiceImplTest
     }
 
     @Test
-    public void get_application_mode_bundled()
-        throws Exception
+    void get_application_mode_bundled()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer(
-            searchParams -> FindNodesByQueryResult.create().totalHits( 0 ).hits( 0 ).build() );
+        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create().build() );
 
         assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
 
         final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.installApplication( bundle );
+        applicationRegistry.registerApplication( bundle );
 
         assertEquals( ApplicationMode.BUNDLED,
                       VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
     }
 
-    private void verifyInstalledEvents( final Node node, final VerificationMode never )
+    private void verifyInstalledEvents( final ApplicationKey applicationKey, final NodeId nodeId, final VerificationMode times )
     {
-        verify( this.eventPublisher, never ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( node ) ) ) );
+        verify( this.eventPublisher, times ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.installed( applicationKey, nodeId ) ) ) );
     }
 
+    private void verifyInstallEvents( final ApplicationKey applicationKey, final NodeId nodeId, final VerificationMode times )
+    {
+        verify( this.eventPublisher, times ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.install( applicationKey, nodeId ) ) ) );
+    }
 
     private void verifyStartedEvent( final ApplicationKey applicationKey, final VerificationMode never )
     {
@@ -1021,7 +917,7 @@ public class ApplicationServiceImplTest
 
     private void mockRepoCreateNode( final Node node )
     {
-        when( this.repoService.createApplicationNode( Mockito.isA( Application.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
             node );
     }
 
@@ -1031,21 +927,25 @@ public class ApplicationServiceImplTest
     }
 
     private ByteSource createBundleSource( final String bundleName )
-        throws IOException
     {
         return createBundleSource( bundleName, true );
     }
 
     private ByteSource createBundleSource( final String bundleName, final boolean isApp )
-        throws IOException
     {
         final InputStream in = newBundle( bundleName, isApp ).build();
 
-        return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+        try
+        {
+            return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     private Bundle deployBundle( final String key )
-        throws Exception
     {
         final InputStream in = newBundle( key, false ).build();
 
@@ -1053,7 +953,6 @@ public class ApplicationServiceImplTest
     }
 
     private Bundle deployAppBundle( final String key )
-        throws Exception
     {
         final InputStream in = newBundle( key, true ).build();
 
@@ -1061,7 +960,6 @@ public class ApplicationServiceImplTest
     }
 
     private Bundle deployAppBundle( final String key, final VersionRange systemVersionRange )
-        throws Exception
     {
         final InputStream in = newBundle( key, true ).set( ApplicationManifestConstants.X_SYSTEM_VERSION,
                                                            systemVersionRange != null ? systemVersionRange.toString() : null ).build();
@@ -1070,7 +968,6 @@ public class ApplicationServiceImplTest
     }
 
     private Bundle deploySystemAppBundle( final String key )
-        throws Exception
     {
         final InputStream in = newBundle( key, true ).set( ApplicationManifestConstants.X_BUNDLE_TYPE, "system" ).build();
 

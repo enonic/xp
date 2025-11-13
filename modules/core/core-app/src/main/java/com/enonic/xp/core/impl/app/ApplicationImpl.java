@@ -71,7 +71,7 @@ final class ApplicationImpl
     @Override
     public String getMaxSystemVersion()
     {
-        return this.systemVersion != null ? this.systemVersion.getRight().toString() : null;
+        return this.systemVersion != null && this.systemVersion.getRight() != null ? this.systemVersion.getRight().toString() : null;
     }
 
     @Override

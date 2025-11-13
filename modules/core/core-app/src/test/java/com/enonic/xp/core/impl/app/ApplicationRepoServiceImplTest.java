@@ -39,9 +39,9 @@ class ApplicationRepoServiceImplTest
     @Test
     void create_node()
     {
-        final MockApplication app = createApp();
+        final AppInfo app = createApp();
 
-        this.service.createApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
+        this.service.upsertApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
 
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).create( Mockito.isA( CreateNodeParams.class ) );
     }
@@ -49,14 +49,14 @@ class ApplicationRepoServiceImplTest
     @Test
     void update_node()
     {
-        final MockApplication app = createApp();
+        final AppInfo app = createApp();
 
         Mockito.when(
                 this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
             .thenReturn(
                 Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
 
-        this.service.updateApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
+        this.service.upsertApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
 
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).update( Mockito.isA( UpdateNodeParams.class ) );
     }
@@ -64,13 +64,13 @@ class ApplicationRepoServiceImplTest
     @Test
     void delete_node()
     {
-        final MockApplication app = createApp();
+        final AppInfo app = createApp();
 
         Mockito.when( this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
             .thenReturn(
                 Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
 
-        this.service.deleteApplicationNode( app.getKey() );
+        this.service.deleteApplicationNode( ApplicationKey.from( app.name ) );
 
         ArgumentCaptor<DeleteNodeParams> argCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).delete( argCaptor.capture() );
@@ -78,12 +78,10 @@ class ApplicationRepoServiceImplTest
                       argCaptor.getValue().getNodePath() );
     }
 
-    private MockApplication createApp()
+    private AppInfo createApp()
     {
-        final MockApplication app = new MockApplication();
-        app.setKey( ApplicationKey.from( "myBundle" ) );
-        app.setStarted( true );
-        app.setResourcePath( Path.of( ROOT_TEST_PATH + "/myApp" ) );
+        var app =  new AppInfo();
+        app.name = "myBundle";
         return app;
     }
 }

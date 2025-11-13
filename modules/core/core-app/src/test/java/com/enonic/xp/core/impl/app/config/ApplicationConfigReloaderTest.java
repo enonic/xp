@@ -20,7 +20,7 @@ public class ApplicationConfigReloaderTest
         final Bundle bundle = mock( Bundle.class );
         final ApplicationRegistry serviceMock = mock( ApplicationRegistry.class );
         new ApplicationConfigReloader( bundle, serviceMock ).updated( null );
-        verify( serviceMock ).configureApplication( same( bundle ), eq( ConfigBuilder.create().build() ) );
+        verify( serviceMock ).configure( same( bundle ), eq( ConfigBuilder.create().build() ) );
     }
 
     @Test
@@ -29,6 +29,6 @@ public class ApplicationConfigReloaderTest
         final Bundle bundle = mock( Bundle.class );
         final ApplicationRegistry serviceMock = mock( ApplicationRegistry.class );
         new ApplicationConfigReloader( bundle, serviceMock ).updated( Dictionaries.of( "a", "b" ) );
-        verify( serviceMock ).configureApplication( same( bundle ), eq( ConfigBuilder.create().add( "a", "b" ).build() ) );
+        verify( serviceMock ).configure( same( bundle ), eq( ConfigBuilder.create().add( "a", "b" ).build() ) );
     }
 }

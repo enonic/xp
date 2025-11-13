@@ -32,13 +32,14 @@ public interface ApplicationService
 
     Application installGlobalApplication( URL url, byte[] sha512 );
 
-    Application installGlobalApplication( ByteSource byteSource, String applicationName );
+    Application installGlobalApplication( ByteSource byteSource, String unused );
 
-    Application installLocalApplication( ByteSource byteSource, String applicationName );
+    Application installLocalApplication( ByteSource byteSource, String unused );
 
     @Deprecated
     Application installStoredApplication( NodeId nodeId );
 
+    @Deprecated
     Application installStoredApplication( NodeId nodeId, ApplicationInstallationParams params );
 
     void uninstallApplication( ApplicationKey key, boolean triggerEvent );
@@ -52,9 +53,9 @@ public interface ApplicationService
     @Deprecated
     void invalidate( ApplicationKey key, ApplicationInvalidationLevel level );
 
-    @Deprecated
     void installAllStoredApplications();
 
+    @Deprecated
     void installAllStoredApplications( ApplicationInstallationParams params );
 
     Application createVirtualApplication( CreateVirtualApplicationParams params );

@@ -11,51 +11,47 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ApplicationNameResolverTest
+class AppInfoResolverTest
     extends BundleBasedTest
 {
     @Test
-    public void valid_bundle()
+    void valid_bundle()
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", true ) );
 
-        final String bundleName = ApplicationNameResolver.resolve( source );
+        final String bundleName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", bundleName );
     }
 
     @Test
-    public void invalid_bundle()
-        throws Exception
+    void invalid_bundle()
     {
         final ByteSource source = ByteSource.wrap( "abc".getBytes() );
         assertThrows(IOException.class, () -> {
-                final String appName = ApplicationNameResolver.resolve( source );
-                assertNull( appName );
+                AppInfoResolver.resolve( source );
         } );
 
     }
 
     @Test
-    public void not_application()
+    void not_application()
         throws Exception
     {
         final ByteSource source = wrapBundle( newBundle( "myBundle", false ) );
-        assertThrows(ApplicationInvalidException.class, () -> {final String appName = ApplicationNameResolver.resolve( source );
-            assertNull( appName );});
+        assertThrows(ApplicationInvalidException.class, () -> {AppInfoResolver.resolve( source ); });
     }
 
 
     @Test
-    public void has_application_header()
+    void has_application_header()
         throws Exception
     {
         final ByteSource source = wrapBundle( createBundleWithHeader( "myBundle", "1.0.0" ) );
-        final String appName = ApplicationNameResolver.resolve( source );
+        final String appName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", appName );
     }
