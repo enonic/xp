@@ -1,0 +1,16 @@
+superType: "content"
+abstract: false
+final: true
+allowChildContent: false
+displayName: "Virtual Content Type"
+description: "description"
+form:
+  - type: "Date"
+    name: "myDate"
+    label: "label"
+    occurrences:
+      min: 0
+      max: 1
+config:
+  displayNamePlaceholder: "Display Name Label"
+  displayNameExpression: "${firstName} ${lastName}"

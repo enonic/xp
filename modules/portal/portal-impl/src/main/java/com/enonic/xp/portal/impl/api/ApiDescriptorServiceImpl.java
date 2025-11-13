@@ -15,7 +15,6 @@ import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.xml.XmlException;
 
 @Component(immediate = true)
 public final class ApiDescriptorServiceImpl
@@ -42,38 +41,24 @@ public final class ApiDescriptorServiceImpl
     @Override
     public ApiDescriptors getByApplication( final ApplicationKey applicationKey )
     {
-        return descriptorKeyLocator.findKeys( applicationKey ).stream().map(
-            this::getByKey ).filter( Objects::nonNull ).collect( ApiDescriptors.collector() );
+        return descriptorKeyLocator.findKeys( applicationKey )
+            .stream()
+            .map( this::getByKey )
+            .filter( Objects::nonNull )
+            .collect( ApiDescriptors.collector() );
     }
 
     private ResourceProcessor<DescriptorKey, ApiDescriptor> newRootProcessor( final DescriptorKey key )
     {
         return new ResourceProcessor.Builder<DescriptorKey, ApiDescriptor>().key( key )
             .segment( "rootApiDescriptor" )
-            .keyTranslator( descriptorKey -> ApiDescriptor.toResourceKey( descriptorKey, "xml" ) )
+            .keyTranslator( descriptorKey -> ApiDescriptor.toResourceKey( descriptorKey, "yml" ) )
             .processor( resource -> loadDescriptor( key, resource ) )
             .build();
     }
 
     private ApiDescriptor loadDescriptor( final DescriptorKey key, final Resource resource )
     {
-        final ApiDescriptor.Builder builder = ApiDescriptor.create();
-        builder.key( key );
-        parseXml( resource, builder );
-        return builder.build();
-    }
-
-    private void parseXml( final Resource resource, final ApiDescriptor.Builder builder )
-    {
-        try
-        {
-            new XmlApiDescriptorParser( builder ).currentApplication( resource.getKey().getApplicationKey() )
-                .source( resource.readString() )
-                .parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load api descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
+        return YmlApiDescriptorParser.parse( resource.readString(), key.getApplicationKey() ).key( key ).build();
     }
 }

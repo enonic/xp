@@ -8,6 +8,8 @@ import java.util.stream.StreamSupport;
 
 import com.google.common.base.Preconditions;
 
+import com.enonic.xp.schema.LocalizedText;
+
 import static com.google.common.base.Strings.nullToEmpty;
 
 public final class FormOptionSet
@@ -222,6 +224,13 @@ public final class FormOptionSet
             return this;
         }
 
+        public Builder setLabel( LocalizedText value )
+        {
+            this.label = value.text();
+            this.labelI18nKey = value.i18n();
+            return this;
+        }
+
         public Builder expanded( boolean value )
         {
             this.expanded = value;
@@ -275,6 +284,13 @@ public final class FormOptionSet
         public Builder helpTextI18nKey( String value )
         {
             helpTextI18nKey = value;
+            return this;
+        }
+
+        public Builder setHelpText( LocalizedText value )
+        {
+            this.helpText = value.text();
+            this.helpTextI18nKey = value.i18n();
             return this;
         }
 

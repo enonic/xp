@@ -16,7 +16,7 @@ declare global {
     interface XpPartMap {
         [partDescriptor: ComponentDescriptor]: NestedRecord;
     }
-    interface XpXData {
+    interface XpMixin {
         [key: string]: Record<string, Record<string, unknown>>;
     }
 }
@@ -700,7 +700,7 @@ export interface Content<
     childOrder?: string;
     _sort?: object[];
     page?: Type extends 'portal:fragment' ? never : _Component;
-    x: XpXData;
+    x: XpMixin;
     attachments: Record<string, Attachment>;
     publish?: PublishInfo;
     workflow?: Workflow;
@@ -715,7 +715,7 @@ export interface PatchableContent<
 > {
     displayName: string;
     data: Type extends 'portal:fragment' ? Record<string, never> : Data;
-    x: XpXData; // extraData
+    x: XpMixin;
     page: Type extends 'portal:fragment' ? never : _Component;
     valid: boolean;
     owner: UserKey;
@@ -1167,6 +1167,7 @@ export type Filter = ExistsFilter | NotExistsFilter | HasValueFilter | IdsFilter
 export type InputType =
     | 'Time'
     | 'DateTime'
+    | 'Instant'
     | 'CheckBox'
     | 'ComboBox'
     | 'Long'
@@ -1273,9 +1274,9 @@ export interface FormItemOptionSet {
     }[];
 }
 
-export interface FormItemInlineMixin {
-    formItemType: 'InlineMixin';
+export interface FormItemFormFragment {
+    formItemType: 'FormFragment';
     name: string;
 }
 
-export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput | FormItemInlineMixin;
+export type FormItem = FormItemSet | FormItemLayout | FormItemOptionSet | FormItemInput | FormItemFormFragment;

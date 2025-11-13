@@ -2,11 +2,11 @@ package com.enonic.xp.site;
 
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.form.Form;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptors;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
@@ -16,13 +16,9 @@ import static java.util.Objects.requireNonNullElse;
 @PublicApi
 public final class SiteDescriptor
 {
-    private static final String SITE_DESCRIPTOR_PATH = "site/site.xml";
+    private static final String SITE_DESCRIPTOR_PATH = "cms/site.yml";
 
     private final ApplicationKey applicationKey;
-
-    private final Form form;
-
-    private final XDataMappings xDataMappings;
 
     private final ResponseProcessorDescriptors responseProcessors;
 
@@ -34,9 +30,7 @@ public final class SiteDescriptor
 
     private SiteDescriptor( final Builder builder )
     {
-        this.applicationKey = builder.applicationKey;
-        this.form = requireNonNullElse( builder.form, Form.empty() );
-        this.xDataMappings = requireNonNullElse( builder.xDataMappings, XDataMappings.empty() );
+        this.applicationKey = Objects.requireNonNull( builder.applicationKey );
         this.modifiedTime = builder.modifiedTime;
         this.responseProcessors = requireNonNullElse( builder.responseProcessors, ResponseProcessorDescriptors.empty() );
         this.mappingDescriptors = requireNonNullElse( builder.mappingDescriptors, ControllerMappingDescriptors.empty() );
@@ -46,16 +40,6 @@ public final class SiteDescriptor
     public ApplicationKey getApplicationKey()
     {
         return applicationKey;
-    }
-
-    public Form getForm()
-    {
-        return form;
-    }
-
-    public XDataMappings getXDataMappings()
-    {
-        return xDataMappings;
     }
 
     public Instant getModifiedTime()
@@ -97,10 +81,6 @@ public final class SiteDescriptor
     {
         private ApplicationKey applicationKey;
 
-        private Form form;
-
-        private XDataMappings xDataMappings;
-
         private Instant modifiedTime;
 
         private ResponseProcessorDescriptors responseProcessors;
@@ -116,8 +96,6 @@ public final class SiteDescriptor
         private Builder( final SiteDescriptor siteDescriptor )
         {
             this.applicationKey = siteDescriptor.applicationKey;
-            this.form = siteDescriptor.form != null ? siteDescriptor.form : null;
-            this.xDataMappings = siteDescriptor.xDataMappings;
             this.modifiedTime = siteDescriptor.modifiedTime;
             this.responseProcessors = siteDescriptor.responseProcessors;
             this.mappingDescriptors = siteDescriptor.mappingDescriptors;
@@ -127,18 +105,6 @@ public final class SiteDescriptor
         public Builder applicationKey( final ApplicationKey applicationKey )
         {
             this.applicationKey = applicationKey;
-            return this;
-        }
-
-        public Builder form( final Form form )
-        {
-            this.form = form;
-            return this;
-        }
-
-        public Builder xDataMappings( final XDataMappings xDataMappings )
-        {
-            this.xDataMappings = xDataMappings;
             return this;
         }
 

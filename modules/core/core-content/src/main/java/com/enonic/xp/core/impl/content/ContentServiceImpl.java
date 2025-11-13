@@ -80,14 +80,12 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -98,21 +96,20 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
-import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.XDataMappingService;
+import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -132,23 +129,17 @@ public class ContentServiceImpl
 
     private MediaInfoService mediaInfoService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private XDataMappingService xDataMappingService;
+    private MixinMappingService mixinMappingService;
 
-    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private final ContentNodeTranslator translator;
 
     private final List<ContentProcessor> contentProcessors = new CopyOnWriteArrayList<>();
 
     private final List<ContentValidator> contentValidators = new CopyOnWriteArrayList<>();
-
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
 
     private final SiteConfigService siteConfigService;
 
@@ -166,10 +157,7 @@ public class ContentServiceImpl
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
-                               @Reference final SiteConfigService siteConfigService,
-                               @Reference final FormDefaultValuesProcessor formDefaultValuesProcessor,
-                               @Reference final PageDefaultValuesProcessor pageFormDefaultValuesProcessor,
-                               @Reference final XDataDefaultValuesProcessor xDataDefaultValuesProcessor, ContentConfig config )
+                               @Reference final SiteConfigService siteConfigService, ContentConfig config )
     {
         this.config = config;
         this.nodeService = nodeService;
@@ -178,10 +166,6 @@ public class ContentServiceImpl
         this.layoutDescriptorService = layoutDescriptorService;
         this.siteConfigService = siteConfigService;
         this.translator = new ContentNodeTranslator();
-
-        this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-        this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
-        this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
     }
 
     @Override
@@ -194,14 +178,11 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
@@ -243,15 +224,12 @@ public class ContentServiceImpl
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .mediaInfoService( this.mediaInfoService )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
-            .xDataMappingService( this.xDataMappingService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
@@ -274,14 +252,14 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
             .build()
@@ -306,8 +284,9 @@ public class ContentServiceImpl
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService ).xDataMappingService( this.xDataMappingService ).siteConfigService( this.siteConfigService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
+            .mixinMappingService( this.mixinMappingService ).siteConfigService( this.siteConfigService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -674,8 +653,8 @@ public class ContentServiceImpl
 
         final Content content = RenameContentCommand.create( params )
             .nodeService( this.nodeService )
-            .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .mixinService( this.mixinService )
+            .cmsService( this.cmsService )
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
@@ -1029,8 +1008,8 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
@@ -1064,21 +1043,21 @@ public class ContentServiceImpl
     }
 
     @Reference
-    public void setxDataService( final XDataService xDataService )
+    public void setMixinService( final MixinService mixinService )
     {
-        this.xDataService = xDataService;
+        this.mixinService = mixinService;
     }
 
     @Reference
-    public void setXDataMappingService( final XDataMappingService xDataMappingService )
+    public void setMixinMappingService( final MixinMappingService mixinMappingService )
     {
-        this.xDataMappingService = xDataMappingService;
+        this.mixinMappingService = mixinMappingService;
     }
 
     @Reference
-    public void setSiteService( final SiteService siteService )
+    public void setCmsService( final CmsService cmsService )
     {
-        this.siteService = siteService;
+        this.cmsService = cmsService;
     }
 
     @SuppressWarnings("unused")

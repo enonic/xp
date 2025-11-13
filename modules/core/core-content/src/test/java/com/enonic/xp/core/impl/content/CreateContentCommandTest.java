@@ -19,7 +19,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.schema.content.BuiltinContentTypesAccessor;
+import com.enonic.xp.core.impl.content.schema.BuiltinContentTypesAccessor;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
@@ -39,7 +39,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -47,13 +47,13 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteService;
-import com.enonic.xp.site.XDataMappingService;
-import com.enonic.xp.site.XDataOptions;
+import com.enonic.xp.site.MixinMappingService;
+import com.enonic.xp.site.MixinOptions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,15 +67,15 @@ class CreateContentCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     private NodeService nodeService;
 
     private PageDescriptorService pageDescriptorService;
 
-    private XDataMappingService xDataMappingService;
+    private MixinMappingService mixinMappingService;
 
     private SiteConfigService siteConfigService;
 
@@ -86,18 +86,18 @@ class CreateContentCommandTest
     @BeforeEach
     void setUp()
     {
-        this.siteService = Mockito.mock( SiteService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
         this.nodeService = Mockito.mock( NodeService.class );
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
         this.eventPublisher = Mockito.mock( EventPublisher.class );
-        this.xDataService = Mockito.mock( XDataService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataMappingService = Mockito.mock( XDataMappingService.class );
+        this.mixinMappingService = Mockito.mock( MixinMappingService.class );
         this.siteConfigService = Mockito.mock( SiteConfigService.class );
 
         this.translator = new ContentNodeTranslator();
 
-        when( this.xDataMappingService.getXDataMappingOptions( any(), any() ) ).thenReturn( XDataOptions.empty() );
+        when( this.mixinMappingService.getMixinMappingOptions( any(), any() ) ).thenReturn( MixinOptions.empty() );
         when( this.siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
         when( this.nodeService.create( any( CreateNodeParams.class ) ) ).thenAnswer( this::mockNodeServiceCreate );
     }
@@ -686,16 +686,11 @@ class CreateContentCommandTest
             .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .mediaInfo( mediaInfo )
-            .xDataService( this.xDataService )
-            .siteService( this.siteService )
+            .mixinService( this.mixinService )
+            .cmsService( this.cmsService )
             .pageDescriptorService( this.pageDescriptorService )
-            .xDataMappingService( this.xDataMappingService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
-            .formDefaultValuesProcessor( ( form, data ) -> {
-            } ).pageFormDefaultValuesProcessor( ( page ) -> {
-            } )
-            .xDataDefaultValuesProcessor( extraDatas -> {
-            } )
             .build();
     }
 

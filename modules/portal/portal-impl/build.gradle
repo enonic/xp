@@ -2,6 +2,7 @@ dependencies {
     implementation project( ':portal:portal-api' )
     implementation project( ':admin:admin-api' )
     implementation project( ':core:core-internal' )
+    implementation project( ':core:core-schema' )
     implementation libs.attoparser
 
     testImplementation( project( ':core:core-macro' ) )

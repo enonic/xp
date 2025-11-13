@@ -1,6 +1,7 @@
 dependencies {
     implementation project( ':portal:portal-api' )
     implementation project( ':core:core-internal' )
+    implementation project( ':core:core-schema' )
     implementation libs.hazelcast.hazelcast
 
     testImplementation( testFixtures( project(":script:script-impl") ) )

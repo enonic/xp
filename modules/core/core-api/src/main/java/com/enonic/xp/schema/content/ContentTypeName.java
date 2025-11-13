@@ -223,19 +223,10 @@ public final class ContentTypeName
 
     public boolean isDescendantOfMedia()
     {
-        return MEDIA_ARCHIVE.equals( this ) ||
-            MEDIA_AUDIO.equals( this ) ||
-            MEDIA_VIDEO.equals( this ) ||
-            MEDIA_CODE.equals( this ) ||
-            MEDIA_DATA.equals( this ) ||
-            MEDIA_DOCUMENT.equals( this ) ||
-            MEDIA_EXECUTABLE.equals( this ) ||
-            MEDIA_IMAGE.equals( this ) ||
-            MEDIA_SPREADSHEET.equals( this ) ||
-            MEDIA_PRESENTATION.equals( this ) ||
-            MEDIA_VECTOR.equals( this ) ||
-            MEDIA_TEXT.equals( this ) ||
-            MEDIA_UNKNOWN.equals( this );
+        return MEDIA_ARCHIVE.equals( this ) || MEDIA_AUDIO.equals( this ) || MEDIA_VIDEO.equals( this ) || MEDIA_CODE.equals( this ) ||
+            MEDIA_DATA.equals( this ) || MEDIA_DOCUMENT.equals( this ) || MEDIA_EXECUTABLE.equals( this ) || MEDIA_IMAGE.equals( this ) ||
+            MEDIA_SPREADSHEET.equals( this ) || MEDIA_PRESENTATION.equals( this ) || MEDIA_VECTOR.equals( this ) ||
+            MEDIA_TEXT.equals( this ) || MEDIA_UNKNOWN.equals( this );
     }
 
     public boolean isTextMedia()
@@ -245,12 +236,8 @@ public final class ContentTypeName
 
     public boolean isTextualMedia()
     {
-        return MEDIA_TEXT.equals( this ) ||
-            MEDIA_CODE.equals( this ) ||
-            MEDIA_DATA.equals( this ) ||
-            MEDIA_SPREADSHEET.equals( this ) ||
-            MEDIA_PRESENTATION.equals( this ) ||
-            MEDIA_DOCUMENT.equals( this );
+        return MEDIA_TEXT.equals( this ) || MEDIA_CODE.equals( this ) || MEDIA_DATA.equals( this ) || MEDIA_SPREADSHEET.equals( this ) ||
+            MEDIA_PRESENTATION.equals( this ) || MEDIA_DOCUMENT.equals( this );
     }
 
     public boolean isDataMedia()

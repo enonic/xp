@@ -1,0 +1,18 @@
+mixin:
+  - name: "all-except-folders"
+    allowContentTypes: "^(?!base:folder$).*"
+    optional: true
+  - name: "folders-only"
+    allowContentTypes: "base:folder"
+    optional: false
+
+form:
+  - type: "RadioButton"
+    name: "backgroundColor"
+    label: "Page background"
+    options:
+      - value: "white"
+        label: "White"
+      - value: "grey"
+        label: "Grey"
+    default: "white"

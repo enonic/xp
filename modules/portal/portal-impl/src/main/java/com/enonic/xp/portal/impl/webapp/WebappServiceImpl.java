@@ -11,8 +11,6 @@ import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.webapp.WebappService;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlWebappDescriptorParser;
 
 @Component
 public class WebappServiceImpl
@@ -44,26 +42,6 @@ public class WebappServiceImpl
 
     private WebappDescriptor loadDescriptor( final Resource resource )
     {
-        final WebappDescriptor.Builder builder = WebappDescriptor.create();
-        builder.applicationKey( resource.getKey().getApplicationKey() );
-
-        parseXml( resource, builder );
-
-        return builder.build();
-    }
-
-    private void parseXml( final Resource resource, final WebappDescriptor.Builder builder )
-    {
-        try
-        {
-            new XmlWebappDescriptorParser().descriptorBuilder( builder )
-                .currentApplication( resource.getKey().getApplicationKey() )
-                .source( resource.readString() )
-                .parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, String.format( "Could not load webapp descriptor [%s]: %s", resource.getKey(), e.getMessage() ) );
-        }
+        return YmlWebappDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() ).build();
     }
 }
