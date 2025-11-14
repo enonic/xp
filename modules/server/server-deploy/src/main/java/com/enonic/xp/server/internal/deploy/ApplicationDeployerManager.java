@@ -38,9 +38,9 @@ public class ApplicationDeployerManager
     {
         bundleContext.registerService( Condition.class, Condition.INSTANCE,
                                        Dictionaries.of( Condition.CONDITION_ID, "com.enonic.xp.server.deploy.ready" ) );
-        storedApplicationsDeployer.deploy();
         autoDeployer.deploy();
         deployDirectoryWatcher.deploy();
+        storedApplicationsDeployer.deploy();
     }
 
     @Reference

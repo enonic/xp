@@ -24,9 +24,9 @@ public interface ApplicationService
 
     boolean isLocalApplication( ApplicationKey key );
 
-    void startApplication( ApplicationKey key, boolean triggerEvent );
+    void startApplication( ApplicationKey key, boolean unused );
 
-    void stopApplication( ApplicationKey key, boolean triggerEvent );
+    void stopApplication( ApplicationKey key, boolean unused );
 
     Application installGlobalApplication( URL url );
 
@@ -42,7 +42,7 @@ public interface ApplicationService
     @Deprecated
     Application installStoredApplication( NodeId nodeId, ApplicationInstallationParams params );
 
-    void uninstallApplication( ApplicationKey key, boolean triggerEvent );
+    void uninstallApplication( ApplicationKey key, boolean unused );
 
     @Deprecated
     void publishUninstalledEvent( ApplicationKey key );
