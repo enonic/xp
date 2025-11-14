@@ -5,7 +5,6 @@ import java.net.URL;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.node.NodeId;
 
 @PublicApi
 public interface ApplicationService
@@ -21,9 +20,9 @@ public interface ApplicationService
 
     boolean isLocalApplication( ApplicationKey key );
 
-    void startApplication( ApplicationKey key, boolean triggerEvent );
+    void startApplication( ApplicationKey key, boolean unused );
 
-    void stopApplication( ApplicationKey key, boolean triggerEvent );
+    void stopApplication( ApplicationKey key, boolean unused );
 
     Application installGlobalApplication( URL url );
 
@@ -33,12 +32,9 @@ public interface ApplicationService
 
     Application installLocalApplication( ByteSource byteSource, String unused );
 
-    @Deprecated
-    Application installStoredApplication( NodeId nodeId, ApplicationInstallationParams params );
+    void uninstallApplication( ApplicationKey key, boolean unused );
 
-    void uninstallApplication( ApplicationKey key, boolean triggerEvent );
-
-    void installAllStoredApplications( ApplicationInstallationParams params );
+    void installAllStoredApplications();
 
     Application createVirtualApplication( CreateVirtualApplicationParams params );
 

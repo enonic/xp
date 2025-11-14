@@ -19,7 +19,6 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
@@ -276,25 +275,6 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void start_application_no_triggerEvent()
-    {
-        final Bundle bundle = deployAppBundle( "app1" );
-
-        applicationRegistry.registerApplication( bundle );
-
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        assertEquals( Bundle.INSTALLED, bundle.getState() );
-        this.service.startApplication( applicationKey, false );
-        assertEquals( Bundle.ACTIVE, bundle.getState() );
-
-        verify( this.eventPublisher, never() ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
-        verify( this.eventPublisher, never() ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
-    }
-
-    @Test
     void start_app_atleast_version()
     {
         // At a time of writing Felix version is 6.0.1. All greater versions should work as well.
@@ -381,27 +361,6 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "systemApp" );
         this.service.stopApplication( applicationKey, true );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
-    }
-
-    @Test
-    void stop_application_no_triggerEvent()
-        throws Exception
-    {
-        final Bundle bundle = deployAppBundle( "app1" );
-
-        applicationRegistry.registerApplication( bundle );
-
-        bundle.start();
-
-        assertEquals( Bundle.ACTIVE, bundle.getState() );
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        this.service.stopApplication( applicationKey, false );
-        assertEquals( Bundle.RESOLVED, bundle.getState() );
-
-        verify( this.eventPublisher, never() ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
-        verify( this.eventPublisher, never() ).publish(
-            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stopped( applicationKey ) ) ) );
     }
 
     @Test
@@ -584,7 +543,7 @@ class ApplicationServiceImplTest
         when( this.repoService.getApplicationSource( node1.id() ) ).thenReturn( createBundleSource( bundleName1 ) );
         when( this.repoService.getApplicationSource( node2.id() ) ).thenReturn( createBundleSource( bundleName2 ) );
 
-        this.service.installAllStoredApplications( ApplicationInstallationParams.create().build() );
+        this.service.installAllStoredApplications();
 
         assertFalse( this.service.isLocalApplication( applicationKey1 ) );
         assertNotNull( this.service.getInstalledApplication( applicationKey1 ) );
