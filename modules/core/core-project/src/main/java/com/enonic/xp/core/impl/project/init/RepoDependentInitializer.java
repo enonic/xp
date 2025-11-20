@@ -35,7 +35,7 @@ public abstract class RepoDependentInitializer
 
         this.nodeService = Objects.requireNonNull( builder.nodeService );
         this.repositoryId = Objects.requireNonNull( builder.repositoryId );
-        this.accessControlList = Objects.requireNonNull( builder.accessControlList );
+        this.accessControlList = builder.accessControlList;
     }
 
     protected Context createAdminContext( Branch branch )

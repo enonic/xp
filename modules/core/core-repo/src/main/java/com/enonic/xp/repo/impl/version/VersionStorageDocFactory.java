@@ -20,37 +20,37 @@ public class VersionStorageDocFactory
     public static StoreRequest create( final NodeVersionMetadata nodeVersion, final RepositoryId repositoryId )
     {
         final StorageData.Builder data = StorageData.create()
-            .add( VersionIndexPath.VERSION_ID.getPath(), nodeVersion.getNodeVersionId().toString() )
-            .add( VersionIndexPath.NODE_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getNodeBlobKey().toString() )
-            .add( VersionIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getIndexConfigBlobKey().toString() )
-            .add( VersionIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), nodeVersion.getNodeVersionKey().getAccessControlBlobKey().toString() )
-            .add( VersionIndexPath.BINARY_BLOB_KEYS.getPath(), nodeVersion.getBinaryBlobKeys() )
-            .add( VersionIndexPath.NODE_ID.getPath(), nodeVersion.getNodeId().toString() )
-            .add( VersionIndexPath.TIMESTAMP.getPath(), nodeVersion.getTimestamp() )
-            .add( VersionIndexPath.NODE_PATH.getPath(), nodeVersion.getNodePath().toString() );
+            .add( VersionIndexPath.VERSION_ID, nodeVersion.getNodeVersionId().toString() )
+            .add( VersionIndexPath.NODE_BLOB_KEY, nodeVersion.getNodeVersionKey().getNodeBlobKey().toString() )
+            .add( VersionIndexPath.INDEX_CONFIG_BLOB_KEY, nodeVersion.getNodeVersionKey().getIndexConfigBlobKey().toString() )
+            .add( VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, nodeVersion.getNodeVersionKey().getAccessControlBlobKey().toString() )
+            .add( VersionIndexPath.BINARY_BLOB_KEYS, nodeVersion.getBinaryBlobKeys() )
+            .add( VersionIndexPath.NODE_ID, nodeVersion.getNodeId().toString() )
+            .add( VersionIndexPath.TIMESTAMP, nodeVersion.getTimestamp() )
+            .add( VersionIndexPath.NODE_PATH, nodeVersion.getNodePath().toString() );
 
         if ( nodeVersion.getNodeCommitId() != null )
         {
-            data.add( VersionIndexPath.COMMIT_ID.getPath(), nodeVersion.getNodeCommitId().toString() );
+            data.add( VersionIndexPath.COMMIT_ID, nodeVersion.getNodeCommitId().toString() );
         }
 
         if ( nodeVersion.getAttributes() != null )
         {
-            data.add( VersionIndexPath.ATTRIBUTES.getPath(), attributesToString( nodeVersion.getAttributes() ) );
+            data.add( VersionIndexPath.ATTRIBUTES, attributesToStorage( nodeVersion.getAttributes() ) );
         }
 
         return StoreRequest.create()
             .nodePath( nodeVersion.getNodePath() )
             .id( nodeVersion.getNodeVersionId().toString() )
-            .settings( StorageSource.create()
-                           .storageName( StoreStorageName.from( repositoryId ) )
-                           .storageType( StaticStorageType.VERSION )
-                           .build() )
+            .storage( StorageSource.create()
+                          .storageName( StoreStorageName.from( repositoryId ) )
+                          .storageType( StaticStorageType.VERSION )
+                          .build() )
             .data( data.build() )
             .build();
     }
 
-    private static List<Map<String, Object>> attributesToString( final Attributes attributes )
+    private static List<Map<String, Object>> attributesToStorage( final Attributes attributes )
     {
         return attributes.list()
             .stream()

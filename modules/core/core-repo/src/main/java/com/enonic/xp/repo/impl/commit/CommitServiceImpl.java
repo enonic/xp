@@ -36,7 +36,7 @@ public class CommitServiceImpl
     @Override
     public String store( final NodeCommitEntry nodeBranchEntry, final InternalContext context )
     {
-        final StoreRequest storeRequest = CommitStorageRequestFactory.create( nodeBranchEntry, context );
+        final StoreRequest storeRequest = CommitStorageRequestFactory.create( nodeBranchEntry, context.getRepositoryId() );
         return storageDao.store( storeRequest );
     }
 
@@ -67,9 +67,9 @@ public class CommitServiceImpl
 
     private StorageSource createStorageSettings( final InternalContext context )
     {
-        return StorageSource.create().
-            storageName( StoreStorageName.from( context.getRepositoryId() ) ).
-            storageType( StaticStorageType.COMMIT ).
-            build();
+        return StorageSource.create()
+            .storageName( StoreStorageName.from( context.getRepositoryId() ) )
+            .storageType( StaticStorageType.COMMIT )
+            .build();
     }
 }
