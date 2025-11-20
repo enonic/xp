@@ -105,13 +105,6 @@ public final class UpdateContentHandler
 
         updatePage( target, map );
 
-        final Object publishInfo = map.get( "publish" );
-
-        if ( publishInfo instanceof Map )
-        {
-            target.publishInfo = createContentPublishInfo( (Map) publishInfo );
-        }
-
         final Object workflowInfo = map.get( "workflow" );
         if ( workflowInfo instanceof Map )
         {
