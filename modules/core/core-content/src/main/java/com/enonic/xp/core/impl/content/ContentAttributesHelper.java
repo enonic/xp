@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.enonic.xp.content.Content;
@@ -52,6 +53,8 @@ public class ContentAttributesHelper
                 "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
                 Content::getWorkflowInfo, "variantOf", Content::getVariantOf, "attachments", Content::getAttachments );
 
+    public static final Set<String> EDITORIAL_FIELDS = Set.of( "displayName", "data", "x", "page", "attachments" );
+
     public static List<String> modifiedFields( Content existingContent, Content updatedContent )
     {
         return FIELD_GETTERS.entrySet()
@@ -72,11 +75,11 @@ public class ContentAttributesHelper
             .build();
     }
 
-    public static Attributes updateVersionHistoryAttr( Content existingContent, Content updatedContent )
+    public static Attributes updateVersionHistoryAttr( final List<String> modifiedFields )
     {
         return Attributes.create()
             .attribute( UPDATE_KEY )
-            .putArray( "fields", ContentAttributesHelper.modifiedFields( existingContent, updatedContent ) )
+            .putArray( "fields", modifiedFields )
             .put( USER_PROPERTY, getCurrentUserKey().toString() )
             .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
             .end()

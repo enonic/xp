@@ -12,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.PatchNodeParams;
@@ -23,7 +24,6 @@ import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.node.Attributes;
 
 public class PatchNodeParamsFactory
 {
@@ -206,7 +206,6 @@ public class PatchNodeParamsFactory
         void validate()
         {
             Objects.requireNonNull( editedContent, "editedContent cannot be null" );
-            Objects.requireNonNull( editedContent.getModifier(), "modifier cannot be null" );
             Objects.requireNonNull( editedContent.getAttachments(), "attachments cannot be null" );
             Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
 
