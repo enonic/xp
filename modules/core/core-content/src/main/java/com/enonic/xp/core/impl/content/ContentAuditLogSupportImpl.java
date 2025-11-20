@@ -28,7 +28,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -369,6 +368,7 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
         paramsSet.addString( "parentContentPath", nullToNull( params.getParentContentPath() ) );
+        paramsSet.addString( "newName", nullToNull( params.getNewName() ) );
 
         addContents( resultSet, result.getMovedContents(), "movedContents" );
 

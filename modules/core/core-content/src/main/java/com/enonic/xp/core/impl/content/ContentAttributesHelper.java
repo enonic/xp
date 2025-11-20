@@ -75,6 +75,17 @@ public class ContentAttributesHelper
             .build();
     }
 
+    public static Attributes moveVersionHistoryAttr( final List<String> modifiedFields )
+    {
+        return Attributes.create()
+            .attribute( MOVE_KEY )
+            .putArray( "fields", modifiedFields )
+            .put( USER_PROPERTY, getCurrentUserKey().toString() )
+            .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+            .end()
+            .build();
+    }
+
     public static Attributes updateVersionHistoryAttr( final List<String> modifiedFields )
     {
         return Attributes.create()
