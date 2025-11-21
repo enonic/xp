@@ -54,7 +54,7 @@ class SortContentCommand
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 
-            final Content content = translator.fromNode( sortNodeResult.getNode() );
+            final Content content = ContentNodeTranslator.fromNode( sortNodeResult.getNode() );
 
             return SortContentResult.create()
                 .content( content )

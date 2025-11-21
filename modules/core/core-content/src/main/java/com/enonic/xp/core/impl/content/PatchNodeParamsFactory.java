@@ -45,7 +45,7 @@ public class PatchNodeParamsFactory
 
     private final SiteService siteService;
 
-    private final ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     private final Branches branches;
 
@@ -58,7 +58,6 @@ public class PatchNodeParamsFactory
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.contentDataSerializer = builder.contentDataSerializer;
         this.siteService = builder.siteService;
         this.versionAttributes  = builder.versionAttributes;
         branches = Branches.from( builder.branches.build() );
@@ -133,8 +132,6 @@ public class PatchNodeParamsFactory
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentDataSerializer contentDataSerializer;
-
         private SiteService siteService;
 
         Builder editedContent( final Content editedContent )
@@ -197,12 +194,6 @@ public class PatchNodeParamsFactory
             return this;
         }
 
-        Builder contentDataSerializer( final ContentDataSerializer contentDataSerializer )
-        {
-            this.contentDataSerializer = contentDataSerializer;
-            return this;
-        }
-
         void validate()
         {
             Objects.requireNonNull( editedContent, "editedContent cannot be null" );
@@ -214,7 +205,6 @@ public class PatchNodeParamsFactory
             Objects.requireNonNull( pageDescriptorService );
             Objects.requireNonNull( partDescriptorService );
             Objects.requireNonNull( layoutDescriptorService );
-            Objects.requireNonNull( contentDataSerializer );
         }
 
         public PatchNodeParamsFactory build()

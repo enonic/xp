@@ -103,7 +103,6 @@ final class DeleteContentCommand
         return UnpublishContentCommand.create()
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
-            .translator( translator )
             .eventPublisher( eventPublisher )
             .params( UnpublishContentParams.create()
                          .contentIds( ContentIds.create()

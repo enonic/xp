@@ -34,7 +34,6 @@ final class ImportContentCommand
     {
         final Node importNode = ImportContentFactory.create().
             params( params ).
-            contentDataSerializer( this.translator.getContentDataSerializer() ).
             build().execute();
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
@@ -48,7 +47,7 @@ final class ImportContentCommand
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );
 
-        return ImportContentResult.create().content( translator.fromNode( result.getNode() ) ).build();
+        return ImportContentResult.create().content( ContentNodeTranslator.fromNode( result.getNode() ) ).build();
     }
 
     static class Builder

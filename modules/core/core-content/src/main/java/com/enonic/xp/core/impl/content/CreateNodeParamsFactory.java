@@ -44,7 +44,7 @@ public class CreateNodeParamsFactory
 
     private final SiteService siteService;
 
-    private final ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     public CreateNodeParamsFactory( final Builder builder )
     {
@@ -55,7 +55,6 @@ public class CreateNodeParamsFactory
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public CreateNodeParams.Builder produce()
@@ -148,8 +147,6 @@ public class CreateNodeParamsFactory
 
         private LayoutDescriptorService layoutDescriptorService;
 
-        private ContentDataSerializer contentDataSerializer;
-
         private SiteService siteService;
 
         Builder( final CreateContentTranslatorParams params )
@@ -193,12 +190,6 @@ public class CreateNodeParamsFactory
             return this;
         }
 
-        Builder contentDataSerializer( final ContentDataSerializer value )
-        {
-            this.contentDataSerializer = value;
-            return this;
-        }
-
         void validate()
         {
             Objects.requireNonNull( params, "params cannot be null" );
@@ -206,7 +197,6 @@ public class CreateNodeParamsFactory
             Objects.requireNonNull( pageDescriptorService );
             Objects.requireNonNull( siteService );
             Objects.requireNonNull( xDataService );
-            Objects.requireNonNull( contentDataSerializer );
         }
 
         public CreateNodeParamsFactory build()

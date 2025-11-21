@@ -158,7 +158,6 @@ public class PublishContentCommand
                                .includeDependencies( this.includeDependencies )
                                .contentTypeService( this.contentTypeService )
                                .eventPublisher( this.eventPublisher )
-                               .translator( this.translator )
                                .nodeService( this.nodeService )
                                .build()::execute );
     }
@@ -166,7 +165,6 @@ public class PublishContentCommand
     private ContentValidityResult checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
         return CheckContentValidityCommand.create()
-            .translator( this.translator )
             .nodeService( this.nodeService )
             .eventPublisher( this.eventPublisher )
             .contentTypeService( this.contentTypeService )

@@ -24,8 +24,6 @@ public interface ContentService
 
     DeleteContentsResult delete( DeleteContentParams params );
 
-    Content rename( RenameContentParams params );
-
     MoveContentsResult move( MoveContentParams params );
 
     PublishContentResult publish( PushContentParams params );

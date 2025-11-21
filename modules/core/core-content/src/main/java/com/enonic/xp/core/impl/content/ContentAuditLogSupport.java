@@ -19,9 +19,8 @@ import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
@@ -52,8 +51,6 @@ interface ContentAuditLogSupport
     void archive( ArchiveContentParams params, ArchiveContentsResult result );
 
     void restore( RestoreContentParams params, RestoreContentsResult result );
-
-    void rename( RenameContentParams params, Content content );
 
     void sort( SortContentParams params, SortContentResult result );
 

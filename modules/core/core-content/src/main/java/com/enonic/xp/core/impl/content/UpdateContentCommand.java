@@ -120,14 +120,13 @@ final class UpdateContentCommand
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
             .siteService( this.siteService )
             .build()
             .produce();
 
         final PatchNodeResult result = this.nodeService.patch( patchNodeParams );
 
-        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
+        return ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
     }
 
     private Content editContentMetadata( Content content, final boolean editModifier )

@@ -67,7 +67,6 @@ public class NodeEventListener
                 handleEventType( event, nodeDeletedHandler );
                 break;
             case NodeEvents.NODE_MOVED_EVENT:
-                case NodeEvents.NODE_RENAMED_EVENT:
                 handleEventType( event, nodeMovedHandler );
                 break;
             case NodeEvents.NODE_PUSHED_EVENT:

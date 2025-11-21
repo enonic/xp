@@ -38,6 +38,8 @@ final class MoveContentCommand
 {
     private final MoveContentParams params;
 
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+
     private MoveContentCommand( final Builder builder )
     {
         super( builder );
@@ -77,18 +79,19 @@ final class MoveContentCommand
         List<String> modifiedFields = new ArrayList<>();
 
         final NodePath newParentPath;
-        if ( params.getParentContentPath() == null )
+        if ( params.getParentContentPath() == null || params.getParentContentPath().equals( sourceContent.getParentPath() ) )
         {
             newParentPath = null;
         }
         else
         {
+            validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
             newParentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );
             modifiedFields.add( "parentPath" );
         }
 
         final NodeName newNodeName;
-        if ( params.getNewName() == null )
+        if ( params.getNewName() == null || params.getNewName().equals( sourceContent.getName() ) )
         {
             newNodeName = null;
         }
@@ -96,11 +99,6 @@ final class MoveContentCommand
         {
             newNodeName = NodeName.from( params.getNewName() );
             modifiedFields.add( "name" );
-        }
-
-        if ( params.getParentContentPath() != null )
-        {
-            validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
         }
 
         final NodeId sourceNodeId = NodeId.from( contentId );
@@ -120,7 +118,7 @@ final class MoveContentCommand
 
         final MoveNodeResult movedNode = nodeService.move( moveParams.build() );
 
-        final Content movedContent = translator.fromNode( movedNode.getMovedNodes().getFirst().getNode() );
+        final Content movedContent = ContentNodeTranslator.fromNode( movedNode.getMovedNodes().getFirst().getNode() );
 
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
     }
@@ -150,7 +148,7 @@ final class MoveContentCommand
             final PropertyTree contentData = data.getProperty( ContentPropertyNames.DATA ).getSet().toTree();
             final String displayName = data.getProperty( ContentPropertyNames.DISPLAY_NAME ).getString();
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
-            final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? new ContentDataSerializer().fromExtraData(
+            final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? contentDataSerializer.fromExtraData(
                 data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()

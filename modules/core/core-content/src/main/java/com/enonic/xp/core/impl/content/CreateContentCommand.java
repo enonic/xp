@@ -105,7 +105,6 @@ final class CreateContentCommand
             .xDataService( this.xDataService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
             .siteService( this.siteService )
             .build()
             .produce()
@@ -129,7 +128,7 @@ final class CreateContentCommand
             throw ContentNodeHelper.toContentAccessException( e );
         }
 
-        return translator.fromNode( createdNode );
+        return ContentNodeTranslator.fromNode( createdNode );
     }
 
     private void validateBlockingChecks( final CreateContentParams params )

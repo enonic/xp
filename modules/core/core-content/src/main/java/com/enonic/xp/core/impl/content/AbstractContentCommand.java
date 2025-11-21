@@ -48,14 +48,11 @@ abstract class AbstractContentCommand
 
     final EventPublisher eventPublisher;
 
-    final ContentNodeTranslator translator;
-
     AbstractContentCommand( final Builder builder )
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
         this.eventPublisher = builder.eventPublisher;
-        this.translator = builder.translator;
     }
 
     private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
@@ -242,8 +239,6 @@ abstract class AbstractContentCommand
 
         private EventPublisher eventPublisher;
 
-        private ContentNodeTranslator translator;
-
         Builder()
         {
         }
@@ -253,20 +248,12 @@ abstract class AbstractContentCommand
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
             this.eventPublisher = source.eventPublisher;
-            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B translator( final ContentNodeTranslator translator )
-        {
-            this.translator = translator;
             return (B) this;
         }
 
@@ -289,7 +276,6 @@ abstract class AbstractContentCommand
             Objects.requireNonNull( nodeService );
             Objects.requireNonNull( contentTypeService );
             Objects.requireNonNull( eventPublisher );
-            Objects.requireNonNull( translator );
         }
     }
 }

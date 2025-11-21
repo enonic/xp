@@ -71,7 +71,6 @@ public class PatchContentCommand
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
             .siteService( this.siteService )
             .build()
             .produce();
@@ -89,7 +88,7 @@ public class PatchContentCommand
 
         result.getResults()
             .forEach( branchResult -> builder.addResult( branchResult.branch(), branchResult.node() != null
-                ? translator.fromNode( branchResult.node() )
+                ? ContentNodeTranslator.fromNode( branchResult.node() )
                 : null ) );
 
         return builder.build();

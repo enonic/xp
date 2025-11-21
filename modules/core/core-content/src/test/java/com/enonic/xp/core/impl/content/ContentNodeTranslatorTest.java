@@ -1,6 +1,5 @@
 package com.enonic.xp.core.impl.content;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
@@ -20,26 +19,18 @@ class ContentNodeTranslatorTest
 {
     public static final NodeId ID_1 = NodeId.from( "id1" );
 
-    private ContentNodeTranslator contentNodeTranslator;
-
-    @BeforeEach
-    void setUp()
-    {
-        this.contentNodeTranslator = new ContentNodeTranslator();
-    }
-
     @Test
     void testNodeOutsideOfContentRoot()
     {
-        assertThrows( ContentNotFoundException.class, () -> this.contentNodeTranslator.fromNode( createNode( NodePath.ROOT ) ) );
+        assertThrows( ContentNotFoundException.class, () -> ContentNodeTranslator.fromNode( createNode( NodePath.ROOT ) ) );
         assertThrows( ContentNotFoundException.class,
-                      () -> this.contentNodeTranslator.fromNode( createNode( new NodePath( "/non-content" ) ) ) );
+                      () -> ContentNodeTranslator.fromNode( createNode( new NodePath( "/non-content" ) ) ) );
     }
 
     @Test
     void testNodeOutsideOfContentRootAllowed()
     {
-        final Content content = this.contentNodeTranslator.fromNodeWithAnyRootPath( createNode( NodePath.ROOT ) );
+        final Content content = ContentNodeTranslator.fromNodeWithAnyRootPath( createNode( NodePath.ROOT ) );
         assertEquals( ContentPath.ROOT, content.getPath() );
     }
 

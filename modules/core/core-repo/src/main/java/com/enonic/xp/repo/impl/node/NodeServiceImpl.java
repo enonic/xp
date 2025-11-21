@@ -462,18 +462,7 @@ public class NodeServiceImpl
 
         final List<MoveNodeResult.MovedNode> movedNodes = moveNodeResult.getMovedNodes();
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        if ( params.getNewParentPath() == null )
-        {
-            this.eventPublisher.publish( NodeEvents.renamed( movedNodes.getFirst(), internalContext ) );
-            if ( movedNodes.size() > 1 )
-            {
-                this.eventPublisher.publish( NodeEvents.moved( movedNodes.subList( 1, movedNodes.size() ), internalContext ) );
-            }
-        }
-        else
-        {
-            this.eventPublisher.publish( NodeEvents.moved( movedNodes, internalContext ) );
-        }
+        this.eventPublisher.publish( NodeEvents.moved( movedNodes, internalContext ) );
 
         return moveNodeResult;
     }

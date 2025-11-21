@@ -40,7 +40,7 @@ public final class GetContentByIdAndVersionIdCommand
         {
             final Node node = nodeService.getByIdAndVersionId( nodeId, nodeVersionId );
 
-            return translator.fromNodeWithAnyRootPath( node );
+            return ContentNodeTranslator.fromNodeWithAnyRootPath( node );
         }
         catch ( NodeNotFoundException e )
         {
