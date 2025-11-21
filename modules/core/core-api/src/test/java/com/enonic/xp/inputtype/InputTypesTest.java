@@ -20,7 +20,7 @@ class InputTypesTest
     @Test
     void countBuiltinTypes()
     {
-        assertEquals( 22, StreamSupport.stream( this.types.spliterator(), false ).count() );
+        assertEquals( 23, StreamSupport.stream( this.types.spliterator(), false ).count() );
     }
 
     @Test

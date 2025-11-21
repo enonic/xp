@@ -66,8 +66,7 @@ class InputVisitorTest
                         InputTypeName.TEXT_LINE ).build() ).build() ).
             build();
 
-        InlineMixin myInline = InlineMixin.create().
-            mixin( "myapplication:mymixin" ).
+        FormFragment myInline = FormFragment.create().formFragment( "myapplication:myFormFragment" ).
             build();
 
         Form form = Form.create().

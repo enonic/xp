@@ -18,7 +18,7 @@ final class FormValidator
             switch ( item.getType() )
             {
                 case INPUT:
-                case MIXIN_REFERENCE:
+                case FORM_FRAGMENT:
                 case FORM_OPTION_SET_OPTION:
                     if ( items.containsKey( item.getPath() ) )
                     {

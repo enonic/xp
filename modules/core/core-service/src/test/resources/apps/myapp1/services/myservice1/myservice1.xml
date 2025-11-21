@@ -1,5 +1,0 @@
-<service>
-  <allow>
-    <principal>role:system.admin</principal>
-  </allow>
-</service>

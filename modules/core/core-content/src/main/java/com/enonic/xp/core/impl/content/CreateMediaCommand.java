@@ -9,16 +9,12 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
-import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.form.FormDefaultValuesProcessor;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.media.MediaInfoService;
-import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.XDataMappingService;
 
 final class CreateMediaCommand
     extends AbstractCreatingOrUpdatingContentCommand
@@ -27,14 +23,6 @@ final class CreateMediaCommand
 
     private final MediaInfoService mediaInfoService;
 
-    private final FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-    private final PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-    private final XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
-    private final XDataMappingService xDataMappingService;
-
     private final SiteConfigService siteConfigService;
 
     private CreateMediaCommand( final Builder builder )
@@ -42,10 +30,6 @@ final class CreateMediaCommand
         super( builder );
         this.params = builder.params;
         this.mediaInfoService = builder.mediaInfoService;
-        this.formDefaultValuesProcessor = builder.formDefaultValuesProcessor;
-        this.pageFormDefaultValuesProcessor = builder.pageFormDefaultValuesProcessor;
-        this.xDataDefaultValuesProcessor = builder.xDataDefaultValuesProcessor;
-        this.xDataMappingService = builder.xDataMappingService;
         this.siteConfigService = builder.siteConfigService;
     }
 
@@ -109,12 +93,9 @@ final class CreateMediaCommand
             .mediaInfo( mediaInfo )
             .translator( this.translator )
             .params( createContentParams )
-            .siteService( this.siteService )
-            .xDataService( this.xDataService )
-            .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
-            .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
-            .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
-            .xDataMappingService( this.xDataMappingService )
+            .cmsService( this.cmsService )
+            .mixinService( this.mixinService )
+            .mixinMappingService( this.mixinMappingService )
             .siteConfigService( this.siteConfigService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
@@ -144,14 +125,6 @@ final class CreateMediaCommand
 
         private MediaInfoService mediaInfoService;
 
-        private FormDefaultValuesProcessor formDefaultValuesProcessor;
-
-        private PageDefaultValuesProcessor pageFormDefaultValuesProcessor;
-
-        private XDataDefaultValuesProcessor xDataDefaultValuesProcessor;
-
-        private XDataMappingService xDataMappingService;
-
         private SiteConfigService siteConfigService;
 
         public Builder params( final CreateMediaParams params )
@@ -166,30 +139,6 @@ final class CreateMediaCommand
             return this;
         }
 
-        public Builder formDefaultValuesProcessor( final FormDefaultValuesProcessor formDefaultValuesProcessor )
-        {
-            this.formDefaultValuesProcessor = formDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder pageFormDefaultValuesProcessor( final PageDefaultValuesProcessor pageFormDefaultValuesProcessor )
-        {
-            this.pageFormDefaultValuesProcessor = pageFormDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder xDataDefaultValuesProcessor( final XDataDefaultValuesProcessor xDataDefaultValuesProcessor )
-        {
-            this.xDataDefaultValuesProcessor = xDataDefaultValuesProcessor;
-            return this;
-        }
-
-        public Builder xDataMappingService( final XDataMappingService xDataMappingService )
-        {
-            this.xDataMappingService = xDataMappingService;
-            return this;
-        }
-
         public Builder siteConfigService( final SiteConfigService siteConfigService )
         {
             this.siteConfigService = siteConfigService;
@@ -201,9 +150,7 @@ final class CreateMediaCommand
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
-            Objects.requireNonNull( formDefaultValuesProcessor );
-            Objects.requireNonNull( xDataDefaultValuesProcessor );
-            Objects.requireNonNull( xDataMappingService );
+            Objects.requireNonNull( mixinMappingService );
             Objects.requireNonNull( siteConfigService );
         }
 

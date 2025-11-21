@@ -1,0 +1,6 @@
+displayName: "DisplayName of the Mixin"
+description: "Description of the Mixin"
+form:
+  - type: "TextLine"
+    name: "myField"
+    label: "My Field"

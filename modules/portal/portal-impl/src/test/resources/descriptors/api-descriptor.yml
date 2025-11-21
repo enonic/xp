@@ -1,0 +1,7 @@
+displayName: "GraphQL API"
+description: "Description of GraphQL API"
+mount: true
+allow:
+  - "role:system.roleId_1"
+  - "role:system.roleId_2"
+documentationUrl: "https://docs.mygraphqlapi.com"

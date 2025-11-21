@@ -1,8 +1,0 @@
-<styles css="assets/styles2.css">
-  <image name="duplicatedName">
-    <displayName>Style 1</displayName>
-  </image>
-  <image name="duplicatedName">
-    <displayName>Style 2</displayName>
-  </image>
-</styles>

@@ -14,6 +14,19 @@ exports.testWidgetUrl = function () {
     t.assertEquals("generated_url", result);
 };
 
+exports.testExtensionUrl = function () {
+    const result = adminLib.extensionUrl({
+        application: 'myapp',
+        extension: 'myExtension',
+        params: {
+            k1: 'v1',
+            k2: ['v21', 'v22'],
+        }
+    });
+
+    t.assertEquals("generated_url", result);
+};
+
 exports.testWidgetUrlWithoutParams = function () {
     const result = adminLib.widgetUrl({
         application: 'myapp',

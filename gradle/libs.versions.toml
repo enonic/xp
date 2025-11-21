@@ -100,6 +100,8 @@ jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-
 jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 
+snakeyaml = { module = "org.yaml:snakeyaml", version = "2.4" }
+
 tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
 tika-bundlestandard = { module = "org.apache.tika:tika-bundle-standard", version.ref = "tika" }
 tika-parser-apple = { module = "org.apache.tika:tika-parser-apple-module", version.ref = "tika" }

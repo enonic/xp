@@ -13,7 +13,7 @@ declare global {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface XpXData {}
+    interface XpMixin {}
 }
 
 import {
@@ -89,7 +89,7 @@ export type {
     FieldSortDsl,
     Filter,
     FormItem,
-    FormItemInlineMixin,
+    FormItemFormFragment,
     FormItemInput,
     FormItemLayout,
     FormItemOptionSet,
@@ -533,7 +533,7 @@ export interface CreateContentParams<Data, Type extends string, _Component exten
     childOrder?: string;
     data: Data;
     page?: Type extends 'portal:fragment' ? never : _Component;
-    x?: XpXData;
+    x?: XpMixin;
     idGenerator?: IdGeneratorSupplier;
     workflow?: Workflow;
 }

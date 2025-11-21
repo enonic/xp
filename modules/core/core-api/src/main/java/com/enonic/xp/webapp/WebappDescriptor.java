@@ -10,7 +10,7 @@ import com.enonic.xp.resource.ResourceKey;
 @PublicApi
 public final class WebappDescriptor
 {
-    private static final String WEBAPP_DESCRIPTOR_PATH = "webapp/webapp.xml";
+    private static final String WEBAPP_DESCRIPTOR_PATH = "webapp/webapp.yml";
 
     private final ApplicationKey applicationKey;
 

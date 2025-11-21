@@ -87,7 +87,6 @@ public final class BuiltinMacroDescriptors
             inputType( InputTypeName.TEXT_AREA ).
             label( label ).
             labelI18nKey( macroKey.getApplicationKey().getName() + "." + macroKey.getName() + "." + name + ".label" ).
-            name( name ).
-            immutable( true );
+            name( name );
     }
 }

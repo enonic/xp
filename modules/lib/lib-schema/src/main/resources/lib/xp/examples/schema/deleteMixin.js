@@ -4,10 +4,10 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual part.
+// Create virtual mixin.
 
 var params = {
-    name: 'myapp:mymixin',
+    name: 'myapp:mydata',
     type: 'MIXIN'
 };
 

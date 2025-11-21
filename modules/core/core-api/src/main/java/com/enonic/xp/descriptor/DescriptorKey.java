@@ -68,7 +68,7 @@ public final class DescriptorKey
         final int index = key.indexOf( SEPARATOR );
         final String applicationKey = index == -1 ? key : key.substring( 0, index );
         final String descriptorName = index == -1 ? "" : key.substring( index + 1 );
-        return new DescriptorKey( ApplicationKey.from( applicationKey ), descriptorName );
+        return DescriptorKey.from( ApplicationKey.from( applicationKey ), descriptorName );
     }
 
     public static DescriptorKey from( final ApplicationKey applicationKey, final String descriptorName )
