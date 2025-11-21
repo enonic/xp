@@ -45,7 +45,7 @@ public class NodeRepositoryServiceImpl
                              DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.COMMIT ) ) );
 
         createIndex( repositoryId, repositorySettings, IndexType.SEARCH, Map.of( IndexType.SEARCH, IndexSettingsMerger.merge(
-            repositorySettings.getIndexMappings( IndexType.SEARCH ), DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ) ) ) );
+            DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ), repositorySettings.getIndexMappings( IndexType.SEARCH ) ) ) );
 
         indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
     }
