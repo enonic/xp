@@ -1,27 +1,26 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
-import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
 public class IndexItems
-    implements Iterable<String>
 {
-    private final ImmutableMultimap<String, IndexValue> indexItemsMap;
+    private final Map<String, Collection<Object>> values;
 
     private IndexItems( Builder builder )
     {
-        indexItemsMap = ImmutableMultimap.copyOf( builder.indexItemsMap );
+        this.values = ImmutableMultimap.copyOf( builder.values ).asMap();
     }
 
     public static Builder create()
@@ -29,68 +28,34 @@ public class IndexItems
         return new Builder();
     }
 
-    @Override
-    public Iterator<String> iterator()
+    public Map<String, Collection<Object>> asValuesMap()
     {
-        return this.indexItemsMap.keySet().iterator();
-    }
-
-    public Collection<IndexValue> get( final String key )
-    {
-        return this.indexItemsMap.get( key );
+        return values;
     }
 
     public static final class Builder
     {
-        private final Multimap<String, IndexValue> indexItemsMap = ArrayListMultimap.create();
+        private final Multimap<String, Object> values = ArrayListMultimap.create();
 
         private Builder()
         {
         }
 
-        public Builder add( final Property property, final IndexConfigDocument indexConfigDocument )
-        {
-            if ( property.getValue() == null )
-            {
-                return this;
-            }
-
-            final List<IndexItem> indexItems = IndexItemFactory.create( property, indexConfigDocument );
-
-            add( indexItems );
-
-            return this;
-        }
-
         public Builder add( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
         {
-            return doAdd( indexPath, value, indexConfigDocument );
+            Objects.requireNonNull( indexPath );
+            Objects.requireNonNull( value );
+
+            add( IndexItemFactory.create( indexPath, value, indexConfigDocument ) );
+
+            return this;
         }
 
         public Builder add( final List<IndexItem> indexItems )
         {
-            return doAdd( indexItems );
-        }
-
-        private Builder doAdd( final IndexPath indexPath, final Value value, final IndexConfigDocument indexConfigDocument )
-        {
-            if ( value == null )
-            {
-                return this;
-            }
-
-            final List<IndexItem> indexItems = IndexItemFactory.create( indexPath, value, indexConfigDocument );
-
-            add( indexItems );
-
-            return this;
-        }
-
-        private Builder doAdd( final List<IndexItem> indexItems )
-        {
-            indexItems.stream().
-                filter( this::singleOrderByValueOnlyFilter ).
-                forEach( ( item ) -> this.indexItemsMap.put( item.getPath(), item.getValue() ) );
+            indexItems.stream()
+                .filter( this::singleOrderByValueOnlyFilter )
+                .forEach( ( item ) -> this.values.put( item.getPath(), item.getValue().getValue() ) );
 
             return this;
         }
@@ -99,7 +64,7 @@ public class IndexItems
         {
             final boolean isOrderByItem = item.valueType().equals( IndexValueType.ORDERBY );
 
-            return !isOrderByItem || !this.indexItemsMap.containsKey( item.getPath() );
+            return !isOrderByItem || !this.values.containsKey( item.getPath() );
         }
 
         public IndexItems build()

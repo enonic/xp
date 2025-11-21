@@ -8,10 +8,10 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeListener;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
@@ -36,15 +36,7 @@ import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 public class MoveNodeCommand
     extends AbstractNodeCommand
 {
-    private final NodeId nodeId;
-
-    private final NodePath newParentPath;
-
-    private final NodeName newNodeName;
-
-    private final RefreshMode refresh;
-
-    private final NodeDataProcessor processor;
+    private final MoveNodeParams params;
 
     private final MoveNodeListener moveListener;
 
@@ -53,13 +45,9 @@ public class MoveNodeCommand
     private MoveNodeCommand( final Builder builder )
     {
         super( builder );
-        this.nodeId = builder.id;
-        this.newParentPath = builder.newParentPath;
-        this.newNodeName = builder.newNodeName;
-        this.moveListener = Objects.requireNonNullElse( builder.moveListener, count -> {
+        this.params = builder.params;
+        this.moveListener = Objects.requireNonNullElse( builder.params.getMoveListener(), count -> {
         } );
-        this.processor = builder.processor;
-        this.refresh = builder.refresh;
         this.result = MoveNodeResult.create();
     }
 
@@ -68,18 +56,13 @@ public class MoveNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public MoveNodeResult execute()
     {
-        final Node existingNode = doGetById( nodeId );
+        final Node existingNode = doGetById( params.getNodeId() );
 
         if ( existingNode == null )
         {
-            throw new NodeNotFoundException( "cannot rename/move node with id [" + nodeId + "]" );
+            throw new NodeNotFoundException( "cannot rename/move node with id [" + params.getNodeId() + "]" );
         }
 
         if ( existingNode.isRoot() )
@@ -89,13 +72,14 @@ public class MoveNodeCommand
 
         final NodeName newNodeName = resolveNodeName( existingNode );
 
-        final NodePath newParentPath = Objects.requireNonNullElseGet( this.newParentPath, existingNode::parentPath );
+        final NodePath newParentPath = Objects.requireNonNullElseGet( params.getNewParentPath(), existingNode::parentPath );
 
         final Context context = ContextAccessor.current();
 
         if ( noChanges( existingNode, newParentPath, newNodeName ) )
         {
-            throw new NodeAlreadyExistAtPathException( new NodePath( newParentPath, newNodeName ), context.getRepositoryId(), context.getBranch() );
+            throw new NodeAlreadyExistAtPathException( new NodePath( newParentPath, newNodeName ), context.getRepositoryId(),
+                                                       context.getBranch() );
         }
 
         checkNotMovedToSelfOrChild( existingNode, newParentPath, newNodeName );
@@ -110,9 +94,9 @@ public class MoveNodeCommand
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
 
-        adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, nodeId ) );
+        adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, params.getNodeId() ) );
 
-        refresh( refresh );
+        refresh( params.getRefresh() );
 
         return result.build();
     }
@@ -131,16 +115,7 @@ public class MoveNodeCommand
 
     private NodeName resolveNodeName( final Node existingNode )
     {
-        final NodeName newNodeName;
-        if ( this.newNodeName == null )
-        {
-            newNodeName = existingNode.name();
-        }
-        else
-        {
-            newNodeName = this.newNodeName;
-        }
-        return newNodeName;
+        return params.getNewNodeName() == null ? existingNode.name() : params.getNewNodeName();
     }
 
     private void checkNotMovedToSelfOrChild( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
@@ -164,12 +139,12 @@ public class MoveNodeCommand
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
             .data(
-                processor.process( persistedNode.data(), NodePath.create( newParentPath ).addElement( newNodeName ).build() ) )
+                params.getProcessor().process( persistedNode.data(), NodePath.create( newParentPath ).addElement( newNodeName ).build() ) )
             .parentPath( newParentPath )
             .indexConfigDocument( persistedNode.getIndexConfigDocument() )
             .timestamp( Instant.now( CLOCK ) );
 
-        final boolean isTheOriginalMovedNode = persistedNode.id().equals( this.nodeId );
+        final boolean isTheOriginalMovedNode = persistedNode.id().equals( params.getNodeId() );
         if ( isTheOriginalMovedNode )
         {
             final boolean isRenaming = newParentPath.equals( persistedNode.parentPath() );
@@ -188,7 +163,7 @@ public class MoveNodeCommand
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final Node movedNode =
-            this.nodeStorageService.store( StoreNodeParams.create().node( nodeToMoveBuilder.build() ).build(), internalContext ).node();
+            this.nodeStorageService.store( StoreNodeParams.newVersion( nodeToMoveBuilder.build(), params.getVersionAttributes() ), internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );
 
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
@@ -204,7 +179,7 @@ public class MoveNodeCommand
         for ( final SearchHit nodeBranchEntry : children.getHits() )
         {
             doMoveNode( movedNode.path(),
-                        NodeName.from( (String) nodeBranchEntry.getField( NodeIndexPath.NAME.toString() ).getSingleValue() ),
+                        NodeName.from( nodeBranchEntry.getReturnValues().getStringValue( NodeIndexPath.NAME ) ),
                         NodeId.from( nodeBranchEntry.getId() ) );
         }
 
@@ -219,61 +194,16 @@ public class MoveNodeCommand
     public static class Builder
         extends AbstractNodeCommand.Builder<Builder>
     {
-        private NodeId id;
-
-        private NodePath newParentPath;
-
-        private NodeName newNodeName;
-
-        private NodeDataProcessor processor = ( n, p ) -> n;
-
-        private MoveNodeListener moveListener;
-
-        private RefreshMode refresh;
+        private MoveNodeParams params;
 
         private Builder()
         {
             super();
         }
 
-        private Builder( final AbstractNodeCommand source )
+        public Builder params( final MoveNodeParams params )
         {
-            super( source );
-        }
-
-        public Builder id( final NodeId nodeId )
-        {
-            this.id = nodeId;
-            return this;
-        }
-
-        public Builder newParent( final NodePath parentNodePath )
-        {
-            this.newParentPath = parentNodePath;
-            return this;
-        }
-
-        public Builder newNodeName( final NodeName nodeName )
-        {
-            this.newNodeName = nodeName;
-            return this;
-        }
-
-        public Builder moveListener( final MoveNodeListener moveListener )
-        {
-            this.moveListener = moveListener;
-            return this;
-        }
-
-        public Builder processor( final NodeDataProcessor processor )
-        {
-            this.processor = processor;
-            return this;
-        }
-
-        public Builder refresh( final RefreshMode refresh )
-        {
-            this.refresh = refresh;
+            this.params = params;
             return this;
         }
 
@@ -287,14 +217,7 @@ public class MoveNodeCommand
         void validate()
         {
             super.validate();
-            Objects.requireNonNull( id, "id is required" );
-            Objects.requireNonNull( processor, "processor cant be null" );
-
-            if ( this.newParentPath == null && this.newNodeName == null )
-            {
-                throw new IllegalArgumentException( "Must provide either newNodeName or newParentPath" );
-            }
-
+            Objects.requireNonNull( params, "params cannot be null" );
         }
     }
 

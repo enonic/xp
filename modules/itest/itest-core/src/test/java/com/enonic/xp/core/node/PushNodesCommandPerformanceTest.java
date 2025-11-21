@@ -12,6 +12,7 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.node.PushNodesCommand;
@@ -48,8 +49,7 @@ class PushNodesCommandPerformanceTest
         final Stopwatch started = Stopwatch.createStarted();
 
         final PushNodesResult result = PushNodesCommand.create()
-            .ids( syncWork.getNodeComparisons().getNodeIds() )
-            .target( WS_OTHER )
+            .params( PushNodeParams.create().ids( syncWork.getNodeComparisons().getNodeIds() ).target( WS_OTHER ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )

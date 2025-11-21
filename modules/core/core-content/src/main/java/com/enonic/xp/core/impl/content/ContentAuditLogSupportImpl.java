@@ -28,7 +28,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -41,7 +40,6 @@ import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -280,14 +278,11 @@ public class ContentAuditLogSupportImpl
                               params.getExcludedContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         paramsSet.addStrings( "excludeDescendantsOf",
                               params.getExcludeDescendantsOf().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
-        if ( params.getContentPublishInfo() != null )
-        {
-            final ContentPublishInfo contentPublishInfo = params.getContentPublishInfo();
-            final PropertySet contentPublishInfoSet = paramsSet.addSet( "contentPublishInfo" );
-            contentPublishInfoSet.addInstant( "from", contentPublishInfo.getFrom() );
-            contentPublishInfoSet.addInstant( "to", contentPublishInfo.getTo() );
-            contentPublishInfoSet.addInstant( "first", contentPublishInfo.getFirst() );
-        }
+
+        final PropertySet contentPublishInfoSet = paramsSet.addSet( "contentPublishInfo" );
+        contentPublishInfoSet.addInstant( "from", params.getPublishFrom() );
+        contentPublishInfoSet.addInstant( "to", params.getPublishTo() );
+
         paramsSet.addString( "message", params.getMessage() );
         paramsSet.addBoolean( "includeDependencies", params.isIncludeDependencies() );
 
@@ -372,6 +367,7 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
         paramsSet.addString( "parentContentPath", nullToNull( params.getParentContentPath() ) );
+        paramsSet.addString( "newName", nullToNull( params.getNewName() ) );
 
         addContents( resultSet, result.getMovedContents(), "movedContents" );
 
@@ -421,28 +417,6 @@ public class ContentAuditLogSupportImpl
         addContents( resultSet, result.getRestoredContents(), "restoredContents" );
 
         log( "system.content.restore", data, params.getContentId(), rootContext );
-    }
-
-    @Override
-    public void rename( final RenameContentParams params, final Content content )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doRename( params, content, context ) );
-    }
-
-    private void doRename( final RenameContentParams params, final Content content, final Context rootContext )
-    {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-        final PropertySet resultSet = data.addSet( "result" );
-
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "newName", nullToNull( params.getNewName() ) );
-
-        addContent( resultSet, content );
-
-        log( "system.content.rename", data, content.getId(), rootContext );
     }
 
     @Override

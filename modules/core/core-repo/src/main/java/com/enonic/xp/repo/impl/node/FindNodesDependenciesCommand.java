@@ -41,7 +41,7 @@ public class FindNodesDependenciesCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }
@@ -102,7 +102,7 @@ public class FindNodesDependenciesCommand
         final NodeIds.Builder builder = NodeIds.create();
         for ( SearchHit hit : result.getHits() )
         {
-            final ReturnValue returnValue = hit.getReturnValues().get( NodeIndexPath.REFERENCE.getPath() );
+            final ReturnValue returnValue = hit.getReturnValues().get( NodeIndexPath.REFERENCE );
 
             if ( returnValue == null || returnValue.getValues().isEmpty() )
             {

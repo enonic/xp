@@ -1,17 +1,12 @@
-package com.enonic.xp.repo.impl.node;
+package com.enonic.xp.node;
 
-import java.util.List;
 import java.util.Objects;
-
-import com.google.common.collect.ImmutableList;
-
-import com.enonic.xp.node.Node;
 
 public class DuplicateNodeResult
 {
     private final Node node;
 
-    private final List<Node> children;
+    private final Nodes children;
 
     private DuplicateNodeResult( Builder builder )
     {
@@ -24,7 +19,7 @@ public class DuplicateNodeResult
         return new Builder();
     }
 
-    public List<Node> getChildren()
+    public Nodes getChildren()
     {
         return children;
     }
@@ -36,7 +31,7 @@ public class DuplicateNodeResult
 
     public static class Builder
     {
-        private final ImmutableList.Builder<Node> children = ImmutableList.builder();
+        private final Nodes.Builder children = Nodes.create();
 
         private Node node;
 

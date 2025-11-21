@@ -29,8 +29,6 @@ public final class NodeEvents
 
     public static final String NODE_MOVED_EVENT = "node.moved";
 
-    public static final String NODE_RENAMED_EVENT = "node.renamed";
-
     public static final String NODE_SORTED_EVENT = "node.sorted";
 
     public static final String NODE_PERMISSIONS_UPDATED = "node.permissionsUpdated";
@@ -85,11 +83,6 @@ public final class NodeEvents
     public static Event moved( final Collection<MoveNodeResult.MovedNode> movedNodes, final InternalContext internalContext )
     {
         return buildEvent( NODE_MOVED_EVENT, movedNodes.stream(), internalContext, n -> createMoved( n, internalContext ) );
-    }
-
-    public static Event renamed( final MoveNodeResult.MovedNode movedNode, final InternalContext internalContext )
-    {
-        return buildEvent( NODE_RENAMED_EVENT, Stream.of( movedNode ), internalContext, n -> createMoved( n, internalContext ) );
     }
 
     public static Event sorted( final Node sortedNode, final InternalContext internalContext )

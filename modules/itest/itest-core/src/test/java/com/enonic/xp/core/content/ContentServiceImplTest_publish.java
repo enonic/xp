@@ -28,7 +28,6 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -407,9 +406,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertEquals( "My message", version.getPublishInfo().getMessage() );
+        assertEquals( "My message", version.getComment() );
     }
 
     @Test
@@ -426,9 +423,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertNull( version.getPublishInfo().getMessage() );
+        assertNull( version.getComment() );
     }
 
     @Test
@@ -482,10 +477,10 @@ class ContentServiceImplTest_publish
                 PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() ) ) );
     }
 
-    private Content renameContent( final ContentId contentId, final String newName )
+    private void renameContent( final ContentId contentId, final String newName )
     {
-        return this.contentService.rename(
-            RenameContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
+        this.contentService.move(
+            MoveContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
     }
 
     private Content getInMaster( final ContentId contentId )

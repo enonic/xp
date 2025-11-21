@@ -1,18 +1,23 @@
 package com.enonic.xp.content;
 
+import java.util.List;
+import java.util.Objects;
+
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class PublishContentResult
 {
-    private final ContentIds pushedContents;
+    private final ImmutableList<Result> publishedContents;
 
-    private final ContentIds failedContents;
+    private final ImmutableList<Result> failedContents;
 
     private PublishContentResult( Builder builder )
     {
-        this.pushedContents = builder.pushedContents;
-        this.failedContents = builder.failedContents;
+        this.publishedContents = builder.publishedContents.build();
+        this.failedContents = builder.failedContents.build();
     }
 
     public static Builder create()
@@ -22,39 +27,68 @@ public final class PublishContentResult
 
     public ContentIds getPushedContents()
     {
-        return pushedContents;
+        return publishedContents.stream().map( Result::contentId ).collect( ContentIds.collector() );
     }
 
     public ContentIds getFailedContents()
     {
+        return failedContents.stream().map( Result::contentId ).collect( ContentIds.collector() );
+    }
+
+    public List<Result> getFailed()
+    {
         return failedContents;
+    }
+
+    public List<Result> getPublished()
+    {
+        return publishedContents;
     }
 
     public static final class Builder
     {
-        private ContentIds pushedContents = ContentIds.empty();
+        private ImmutableList.Builder<Result> publishedContents = ImmutableList.builder();
 
-        private ContentIds failedContents = ContentIds.empty();
+        private ImmutableList.Builder<Result> failedContents = ImmutableList.builder();
 
         private Builder()
         {
         }
 
-        public Builder setPushed( final ContentIds pushedContents )
+        public Builder add( Result result )
         {
-            this.pushedContents = pushedContents;
-            return this;
-        }
-
-        public Builder setFailed( final ContentIds failedContents )
-        {
-            this.failedContents = failedContents;
+            if ( result.failureReason == null )
+            {
+                publishedContents.add( result );
+            }
+            else
+            {
+                failedContents.add( result );
+            }
             return this;
         }
 
         public PublishContentResult build()
         {
             return new PublishContentResult( this );
+        }
+    }
+
+    public enum Reason
+    {
+        ALREADY_EXIST, PARENT_NOT_FOUND, ACCESS_DENIED, INVALID, NOT_READY
+    }
+
+    public record Result(ContentId contentId, Reason failureReason)
+    {
+        public static Result success( final ContentId contentId )
+        {
+            return new Result( contentId, null );
+        }
+
+        public static Result failure( final ContentId contentId, Reason failureReason )
+        {
+            return new Result( contentId, Objects.requireNonNull( failureReason ) );
         }
     }
 }

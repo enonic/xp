@@ -1,17 +1,17 @@
-package com.enonic.xp.repo.impl.repository;
+package com.enonic.xp.repository;
 
 
 import java.text.MessageFormat;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.exception.BaseException;
+import com.enonic.xp.exception.DuplicateElementException;
 
-class BranchAlreadyExistException
-    extends BaseException
+public final class BranchAlreadyExistsException
+    extends DuplicateElementException
 {
     private final Branch branch;
 
-    BranchAlreadyExistException( final Branch branch )
+    public BranchAlreadyExistsException( final Branch branch )
     {
         super( MessageFormat.format( "Branch [{0}] already exists", branch ) );
         this.branch = branch;

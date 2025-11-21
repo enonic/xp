@@ -1,18 +1,21 @@
 package com.enonic.xp.core.node;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
+import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.node.CompareNodesCommand;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CompareNodesCommandTest
     extends AbstractNodeTest
@@ -54,8 +57,7 @@ class CompareNodesCommandTest
             build().
             execute();
 
-        assertEquals( 1, result.getWithStatus( CompareStatus.NEW_TARGET ).size() );
-        assertEquals( 1, result.getWithStatus( CompareStatus.NEW ).size() );
-        assertEquals( 1, result.getWithStatus( CompareStatus.EQUAL ).size() );
+        assertThat( result.getComparisons() ).map( NodeComparison::getCompareStatus )
+            .containsOnlyOnceElementsOf( List.of( NodeCompareStatus.NEW_TARGET, NodeCompareStatus.NEW, NodeCompareStatus.EQUAL ) );
     }
 }

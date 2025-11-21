@@ -162,7 +162,6 @@ public abstract class AbstractIssueServiceTest
         ContentInitializer.create().
             setIndexService( indexService ).
             setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
             repositoryId( TEST_REPO_ID ).
             build().
             initialize();

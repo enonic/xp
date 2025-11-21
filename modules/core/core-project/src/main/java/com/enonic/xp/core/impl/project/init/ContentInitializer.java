@@ -8,23 +8,20 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.Direction;
 import com.enonic.xp.repository.BranchNotFoundException;
-import com.enonic.xp.repository.CreateBranchParams;
-import com.enonic.xp.repository.CreateRepositoryParams;
-import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -44,17 +41,11 @@ public final class ContentInitializer
 
     private static final ChildOrder CONTENT_DEFAULT_CHILD_ORDER = ChildOrder.from( CONTENT_INDEX_PATH_DISPLAY_NAME + " " + Direction.ASC );
 
-    private final RepositoryService repositoryService;
-
-    private final PropertyTree repositoryData;
-
     private final PropertyTree contentData;
 
     private ContentInitializer( final Builder builder )
     {
         super( builder );
-        this.repositoryService = builder.repositoryService;
-        this.repositoryData = builder.repositoryData;
         this.contentData = builder.contentData;
     }
 
@@ -66,12 +57,7 @@ public final class ContentInitializer
     @Override
     public void doInitialize()
     {
-        createAdminContext( ContentConstants.BRANCH_MASTER ).runWith( () -> {
-            initializeRepository();
-            createDraftBranch();
-        } );
-        final Context adminDraft = createAdminContext( ContentConstants.BRANCH_DRAFT );
-        adminDraft.runWith( this::initContentNode );
+        createAdminContext( ContentConstants.BRANCH_DRAFT ).runWith( this::initContentNode );
     }
 
     @Override
@@ -79,8 +65,8 @@ public final class ContentInitializer
     {
         try
         {
-            return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith( () -> repositoryService.isInitialized( repositoryId ) &&
-                nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
+            return createAdminContext( ContentConstants.BRANCH_MASTER ).callWith(
+                () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) != null );
         }
         catch ( BranchNotFoundException e )
         {
@@ -91,33 +77,19 @@ public final class ContentInitializer
     @Override
     protected String getInitializationSubject()
     {
-        return repositoryId + " repo";
-    }
-
-    private void createDraftBranch()
-    {
-        this.repositoryService.createBranch( CreateBranchParams.from( ContentConstants.BRANCH_DRAFT.getValue() ) );
-    }
-
-    private void initializeRepository()
-    {
-        final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
-            .repositoryId( repositoryId )
-            .data( repositoryData )
-            .rootPermissions( ContentConstants.CONTENT_REPO_DEFAULT_ACL )
-            .rootChildOrder( ContentConstants.DEFAULT_CONTENT_REPO_ROOT_ORDER )
-            .build();
-
-        this.repositoryService.createRepository( createRepositoryParams );
+        return repositoryId + " repo [content] layout";
     }
 
     private void initContentNode()
     {
         final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
 
-        final User user = ContextAccessor.current().getAuthInfo().getUser();
-
-        if ( contentRootNode == null )
+        final NodeId contentRootNodeId;
+        if ( contentRootNode != null )
+        {
+            contentRootNodeId = contentRootNode.id();
+        }
+        else
         {
             LOG.info( "Content root-node not found, creating" );
 
@@ -126,7 +98,7 @@ public final class ContentInitializer
             data.setString( ContentPropertyNames.DISPLAY_NAME, "Content" );
             data.addSet( ContentPropertyNames.DATA );
             data.addSet( ContentPropertyNames.FORM );
-            data.setString( ContentPropertyNames.CREATOR, user.getKey().toString() );
+            data.setString( ContentPropertyNames.CREATOR, ContextAccessor.current().getAuthInfo().getUser().getKey().toString() );
             data.setInstant( ContentPropertyNames.CREATED_TIME, Instant.now() );
 
             final Node contentRoot = nodeService.create( CreateNodeParams.create()
@@ -141,30 +113,16 @@ public final class ContentInitializer
 
             LOG.info( "Created content root-node: {}", contentRoot );
 
-            nodeService.push( NodeIds.from( contentRoot.id() ), ContentConstants.BRANCH_MASTER );
+            contentRootNodeId = contentRoot.id();
         }
+        nodeService.push(
+            PushNodeParams.create().ids( NodeIds.from( contentRootNodeId ) ).target( ContentConstants.BRANCH_MASTER ).build() );
     }
 
     public static class Builder
         extends RepoDependentInitializer.Builder<Builder>
     {
-        private RepositoryService repositoryService;
-
-        private PropertyTree repositoryData;
-
         private PropertyTree contentData;
-
-        public Builder setRepositoryService( final RepositoryService repositoryService )
-        {
-            this.repositoryService = repositoryService;
-            return this;
-        }
-
-        public Builder setRepositoryData( final PropertyTree repositoryData )
-        {
-            this.repositoryData = repositoryData;
-            return this;
-        }
 
         public Builder setContentData( final PropertyTree contentData )
         {

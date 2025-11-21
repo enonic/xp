@@ -3,11 +3,8 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.User;
 
 public final class LogAuditLogParams
 {
@@ -25,19 +22,12 @@ public final class LogAuditLogParams
 
     private LogAuditLogParams( final Builder builder )
     {
-        type = Objects.requireNonNull( builder.type, "AuditLogParams type cannot be null" );
+        type = Objects.requireNonNull( builder.type, "LogAuditLogParams type cannot be null" );
         time = Objects.requireNonNullElseGet( builder.time, Instant::now );
         source = Objects.requireNonNullElse( builder.source, "" );
-        user = Objects.requireNonNullElseGet( builder.user, this::getUserKey );
+        user = builder.user;
         objectUris = Objects.requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
         data = Objects.requireNonNullElse( builder.data, new PropertyTree() );
-    }
-
-    private PrincipalKey getUserKey()
-    {
-        final Context context = ContextAccessor.current();
-        final User user = context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
-        return user.getKey();
     }
 
     public String getType()

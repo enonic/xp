@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import java.time.Instant;
 import java.util.Objects;
 
 import com.google.common.base.Preconditions;
@@ -15,7 +16,9 @@ public final class PushContentParams
 
     private final ContentIds excludeDescendantsOf;
 
-    private final ContentPublishInfo contentPublishInfo;
+    private final Instant publishFrom;
+
+    private final Instant publishTo;
 
     private final boolean includeDependencies;
 
@@ -26,7 +29,8 @@ public final class PushContentParams
     private PushContentParams( Builder builder )
     {
         this.contentIds = builder.contentIds;
-        this.contentPublishInfo = builder.contentPublishInfo;
+        this.publishFrom = builder.publishFrom;
+        this.publishTo = builder.publishTo;
         this.includeDependencies = builder.includeDependencies;
         this.excludeDescendantsOf = Objects.requireNonNullElse( builder.excludeDescendantsOf, ContentIds.empty() );
         this.publishContentListener = builder.publishContentListener;
@@ -49,9 +53,14 @@ public final class PushContentParams
         return excludedContentIds;
     }
 
-    public ContentPublishInfo getContentPublishInfo()
+    public Instant getPublishFrom()
     {
-        return contentPublishInfo;
+        return publishFrom;
+    }
+
+    public Instant getPublishTo()
+    {
+        return publishTo;
     }
 
     public ContentIds getExcludeDescendantsOf()
@@ -82,7 +91,9 @@ public final class PushContentParams
 
         private ContentIds excludeDescendantsOf;
 
-        private ContentPublishInfo contentPublishInfo;
+        private Instant publishFrom;
+
+        private Instant publishTo;
 
         private boolean includeDependencies = true;
 
@@ -112,9 +123,15 @@ public final class PushContentParams
             return this;
         }
 
-        public Builder contentPublishInfo( ContentPublishInfo contentPublishInfo )
+        public Builder publishFrom( final Instant publishFrom )
         {
-            this.contentPublishInfo = contentPublishInfo;
+            this.publishFrom = publishFrom;
+            return this;
+        }
+
+        public Builder publishTo( final Instant publishTo )
+        {
+            this.publishTo = publishTo;
             return this;
         }
 

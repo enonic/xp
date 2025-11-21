@@ -7,6 +7,7 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -39,7 +40,6 @@ class MoveNodeCommandTest
         this.createDefaultRootNode();
     }
 
-
     @Test
     void timestamp_updated()
     {
@@ -52,9 +52,11 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( node.id() )
-            .newNodeName( NodeName.from( "mynode2" ) )
-            .newParent( node.parentPath() )
+            .params( MoveNodeParams.create()
+                         .nodeId( node.id() )
+                         .newParentPath( node.parentPath() )
+                         .newName( NodeName.from( "mynode2" ) )
+                         .build() )
             .build()
             .execute();
 
@@ -73,9 +75,11 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( node.id() )
-            .newNodeName( NodeName.from( "mynode2" ) )
-            .newParent( node.parentPath() )
+            .params( MoveNodeParams.create()
+                         .nodeId( node.id() )
+                         .newParentPath( node.parentPath() )
+                         .newName( NodeName.from( "mynode2" ) )
+                         .build() )
             .build()
             .execute();
 
@@ -84,7 +88,6 @@ class MoveNodeCommandTest
         assertEquals( NodePath.ROOT, movedNode.parentPath() );
         assertEquals( "mynode2", movedNode.name().toString() );
     }
-
 
     @Test
     void move_to_child_as_self_not_allowed()
@@ -96,9 +99,8 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( node.id() )
-            .newNodeName( NodeName.from( "mynode2" ) )
-            .newParent( node.path() )
+            .params(
+                MoveNodeParams.create().nodeId( node.id() ).newParentPath( node.path() ).newName( NodeName.from( "mynode2" ) ).build() )
             .build()
             .execute() );
     }
@@ -116,13 +118,11 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( node.id() )
-            .newNodeName( NodeName.from( "mynode2" ) )
-            .newParent( child.path() )
+            .params(
+                MoveNodeParams.create().nodeId( node.id() ).newParentPath( child.path() ).newName( NodeName.from( "mynode2" ) ).build() )
             .build()
             .execute() );
     }
-
 
     @Test
     void move_node_already_exists()
@@ -139,9 +139,8 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( node.id() )
-            .newNodeName( NodeName.from( "mynode" ) )
-            .newParent( newParent.path() )
+            .params(
+                MoveNodeParams.create().nodeId( node.id() ).newParentPath( newParent.path() ).newName( NodeName.from( "mynode" ) ).build() )
             .build()
             .execute() );
     }
@@ -159,8 +158,10 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( node.id() )
-            .newParent( newParent.path() )
+            .params( MoveNodeParams.create()
+                         .nodeId( node.id() )
+                         .newParentPath( newParent.path() )
+                         .build() )
             .build()
             .execute();
 
@@ -181,11 +182,8 @@ class MoveNodeCommandTest
                                                 AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) )
                                             .build() );
 
-        final Node child1 = createNode( CreateNodeParams.create()
-                                            .name( "child1" )
-                                            .parent( parent.path() )
-                                            .setNodeId( NodeId.from( "child1" ) )
-                                            .build() );
+        final Node child1 =
+            createNode( CreateNodeParams.create().name( "child1" ).parent( parent.path() ).setNodeId( NodeId.from( "child1" ) ).build() );
 
         final Node child1_1 = createNode(
             CreateNodeParams.create().name( "child1_1" ).parent( child1.path() ).setNodeId( NodeId.from( "child1_1" ) ).build() );
@@ -203,9 +201,7 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( child1.id() )
-            .newParent( newParent.path() )
-            .refresh( RefreshMode.ALL )
+            .params( MoveNodeParams.create().nodeId( child1.id() ).newParentPath( newParent.path() ).refresh( RefreshMode.ALL ).build() )
             .build()
             .execute()
             .getMovedNodes()
@@ -245,11 +241,8 @@ class MoveNodeCommandTest
                                                 AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() ) )
                                             .build() );
 
-        final Node child1 = createNode( CreateNodeParams.create()
-                                            .name( "child1" )
-                                            .parent( parent.path() )
-                                            .setNodeId( NodeId.from( "child1" ) )
-                                            .build() );
+        final Node child1 =
+            createNode( CreateNodeParams.create().name( "child1" ).parent( parent.path() ).setNodeId( NodeId.from( "child1" ) ).build() );
 
         final Node child1_1 = createNode(
             CreateNodeParams.create().name( "child1_1" ).parent( child1.path() ).setNodeId( NodeId.from( "child1_1" ) ).build() );
@@ -264,12 +257,15 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .refresh( RefreshMode.ALL )
-            .id( child1.id() )
-            .newParent( newParent.path() ).processor( ( data, path ) -> {
-                data.addString( "field", "value" );
-                return data;
-            } )
+            .params( MoveNodeParams.create()
+                         .nodeId( child1.id() )
+                         .newParentPath( newParent.path() )
+                         .refresh( RefreshMode.ALL )
+                         .processor( ( data, path ) -> {
+                             data.addString( "field", "value" );
+                             return data;
+                         } )
+                         .build() )
             .build()
             .execute()
             .getMovedNodes()
@@ -297,7 +293,7 @@ class MoveNodeCommandTest
     @Test
     void move_without_permissions()
     {
-        final Node cannonMoveNode = createNode( CreateNodeParams.create()
+        final Node cannotMoveNode = createNode( CreateNodeParams.create()
                                                     .name( "mynode" )
                                                     .parent( NodePath.ROOT )
                                                     .setNodeId( NodeId.from( "mynode" ) )
@@ -344,8 +340,7 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( cannonMoveNode.id() )
-            .newParent( canMoveIntoNode.path() )
+            .params( MoveNodeParams.create().nodeId( cannotMoveNode.id() ).newParentPath( canMoveIntoNode.path() ).build() )
             .build()::execute );
 
         // Tests the check of the CREATE right on the new parent
@@ -353,8 +348,7 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( canMoveNode.id() )
-            .newParent( cannotMoveIntoNode.path() )
+            .params( MoveNodeParams.create().nodeId( canMoveNode.id() ).newParentPath( cannotMoveIntoNode.path() ).build() )
             .build()::execute );
     }
 
@@ -394,8 +388,7 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( nodeToMove.id() )
-            .newParent( newParent.path() )
+            .params( MoveNodeParams.create().nodeId( nodeToMove.id() ).newParentPath( newParent.path() ).build() )
             .build()
             .execute();
 
@@ -441,8 +434,7 @@ class MoveNodeCommandTest
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .id( nodeId )
-            .newParent( newParent )
+            .params( MoveNodeParams.create().nodeId( nodeId ).newParentPath( newParent ).build() )
             .build()
             .execute();
     }
@@ -453,5 +445,4 @@ class MoveNodeCommandTest
 
         return FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).build().execute();
     }
-
 }

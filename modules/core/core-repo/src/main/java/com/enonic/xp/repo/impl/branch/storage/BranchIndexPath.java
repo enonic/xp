@@ -22,5 +22,8 @@ public class BranchIndexPath
 
     public static final IndexPath PATH = IndexPath.from( "path" );
 
-    public static final IndexPath REFERENCES = IndexPath.from( "references" );
+    public static IndexPath[] entryFields()
+    {
+        return new IndexPath[]{PATH, VERSION_ID, NODE_BLOB_KEY, INDEX_CONFIG_BLOB_KEY, ACCESS_CONTROL_BLOB_KEY, TIMESTAMP, NODE_ID};
+    }
 }

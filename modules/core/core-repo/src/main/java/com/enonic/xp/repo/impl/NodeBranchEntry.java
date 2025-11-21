@@ -3,10 +3,11 @@ package com.enonic.xp.repo.impl;
 import java.time.Instant;
 import java.util.Objects;
 
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
+import com.enonic.xp.node.NodeVersionMetadata;
 
 public final class NodeBranchEntry
 {
@@ -59,49 +60,14 @@ public final class NodeBranchEntry
         return nodeId;
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-
-        final NodeBranchEntry that = (NodeBranchEntry) o;
-
-        if ( nodeVersionId != null ? !nodeVersionId.equals( that.nodeVersionId ) : that.nodeVersionId != null )
-        {
-            return false;
-        }
-        if ( nodeVersionKey != null ? !nodeVersionKey.equals( that.nodeVersionKey ) : that.nodeVersionKey != null )
-        {
-            return false;
-        }
-        if ( nodePath != null ? !nodePath.equals( that.nodePath ) : that.nodePath != null )
-        {
-            return false;
-        }
-        if ( timestamp != null ? !timestamp.equals( that.timestamp ) : that.timestamp != null )
-        {
-            return false;
-        }
-        return !( nodeId != null ? !nodeId.equals( that.nodeId ) : that.nodeId != null );
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = nodeVersionId != null ? nodeVersionId.hashCode() : 0;
-        result = 31 * result + ( nodeVersionKey != null ? nodeVersionKey.hashCode() : 0 );
-        result = 31 * result + ( nodePath != null ? nodePath.hashCode() : 0 );
-        result = 31 * result + ( timestamp != null ? timestamp.hashCode() : 0 );
-        result = 31 * result + ( nodeId != null ? nodeId.hashCode() : 0 );
-        return result;
+    public static NodeBranchEntry fromNodeVersionMetadata( final NodeVersionMetadata nodeVersionMetadata ) {
+        return NodeBranchEntry.create()
+            .nodeId( nodeVersionMetadata.getNodeId() )
+            .nodeVersionId( nodeVersionMetadata.getNodeVersionId() )
+            .nodePath( nodeVersionMetadata.getNodePath() )
+            .nodeVersionKey( nodeVersionMetadata.getNodeVersionKey() )
+            .timestamp( nodeVersionMetadata.getTimestamp() )
+            .build();
     }
 
     public static final class Builder

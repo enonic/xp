@@ -95,7 +95,7 @@ public final class ModifyProfileHandler
         {
             if ( scope != null )
             {
-                target.profile.removeProperty( scope );
+                target.profile.removeProperties( scope );
             }
             return;
         }

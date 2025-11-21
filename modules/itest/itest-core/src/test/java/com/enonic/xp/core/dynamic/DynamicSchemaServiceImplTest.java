@@ -273,7 +273,6 @@ class DynamicSchemaServiceImplTest
         ContentInitializer.create()
             .setIndexService( indexService )
             .setNodeService( nodeService )
-            .setRepositoryService( repositoryService )
             .repositoryId( ProjectName.from( "my-project" ).getRepoId() )
             .build()
             .initialize();
