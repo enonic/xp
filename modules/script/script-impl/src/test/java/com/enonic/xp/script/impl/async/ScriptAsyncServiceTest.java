@@ -12,7 +12,7 @@ import com.enonic.xp.core.impl.app.BundleBasedTest;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ScriptAsyncServiceImplTest
+class ScriptAsyncServiceTest
     extends BundleBasedTest
 {
     @Test
@@ -20,7 +20,7 @@ class ScriptAsyncServiceImplTest
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ScriptAsyncServiceImpl service = new ScriptAsyncServiceImpl( bundleContext );
+        final ScriptAsyncService service = new ScriptAsyncService( bundleContext );
 
         final String appName = "app1";
 

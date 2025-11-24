@@ -100,20 +100,20 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public ScriptExports executeMain( final ResourceKey key )
+    public ScriptExports execute( final ResourceKey key )
     {
         exportsCache.expireCacheIfNeeded();
-        return doExecuteMain( key );
+        return doExecute( key );
     }
 
     @Override
-    public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
+    public CompletableFuture<ScriptExports> executeAsync( final ResourceKey key )
     {
         exportsCache.expireCacheIfNeeded();
-        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
+        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecute, asyncExecutor );
     }
 
-    private ScriptExports doExecuteMain( final ResourceKey key )
+    private ScriptExports doExecute( final ResourceKey key )
     {
         final Object exports = executeRequire( key );
         final ScriptValue value = newScriptValue( exports );

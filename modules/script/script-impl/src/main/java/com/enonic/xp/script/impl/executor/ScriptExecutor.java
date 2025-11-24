@@ -15,9 +15,9 @@ public interface ScriptExecutor
 {
     Application getApplication();
 
-    ScriptExports executeMain( ResourceKey key );
+    ScriptExports execute( ResourceKey key );
 
-    CompletableFuture<ScriptExports> executeMainAsync( ResourceKey key );
+    CompletableFuture<ScriptExports> executeAsync( ResourceKey key );
 
     Object executeRequire( ResourceKey key );
 

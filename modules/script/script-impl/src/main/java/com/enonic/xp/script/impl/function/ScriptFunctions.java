@@ -5,7 +5,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.bean.BeanContextImpl;
 import com.enonic.xp.script.impl.bean.ScriptBeanFactory;
-import com.enonic.xp.script.impl.bean.ScriptBeanFactoryImpl;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.util.NashornHelper;
 import com.enonic.xp.script.impl.util.ObjectConverter;
@@ -27,12 +26,10 @@ public final class ScriptFunctions
     {
         this.script = script;
         this.executor = executor;
-
-        final BeanContextImpl beanContext = new BeanContextImpl();
-        beanContext.setExecutor( this.executor );
-        beanContext.setResourceKey( this.script );
-
-        this.scriptBeanFactory = new ScriptBeanFactoryImpl( this.executor.getClassLoader(), beanContext );
+        this.scriptBeanFactory = new ScriptBeanFactory( this.executor.getClassLoader(),
+                                                        new BeanContextImpl( this.script, this.executor.getServiceRegistry(),
+                                                                             this.executor.getScriptSettings(),
+                                                                             this.executor.getApplication() ) );
         this.converter = this.executor.getObjectConverter();
         this.logger = new ScriptLogger( this.script, this.executor.getObjectConverter() );
     }
@@ -57,6 +54,7 @@ public final class ScriptFunctions
         return new ResolveFunction( this.script, this.executor );
     }
 
+    @Deprecated
     public Application getApp()
     {
         return this.executor.getApplication();

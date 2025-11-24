@@ -40,7 +40,7 @@ class ScriptRuntimeImplTest
 
         scriptRuntime.executeAsync( resourceKey );
 
-        verify( scriptExecutor, Mockito.times( 1 ) ).executeMainAsync( resourceKey );
+        verify( scriptExecutor, Mockito.times( 1 ) ).executeAsync( resourceKey );
     }
 
     @Test
@@ -54,7 +54,7 @@ class ScriptRuntimeImplTest
 
         scriptRuntime.execute( resourceKey );
 
-        verify( scriptExecutor, Mockito.times( 1 ) ).executeMain( resourceKey );
+        verify( scriptExecutor, Mockito.times( 1 ) ).execute( resourceKey );
     }
 
     @Test

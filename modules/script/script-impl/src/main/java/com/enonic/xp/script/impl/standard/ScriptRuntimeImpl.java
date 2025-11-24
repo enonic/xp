@@ -52,14 +52,14 @@ public class ScriptRuntimeImpl
     public ScriptExports execute( final ResourceKey script )
     {
         final ScriptExecutor executor = getExecutor( script.getApplicationKey() );
-        return executor.executeMain( script );
+        return executor.execute( script );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
         final ScriptExecutor executor = getExecutor( script.getApplicationKey() );
-        return executor.executeMainAsync( script );
+        return executor.executeAsync( script );
     }
 
     @Override

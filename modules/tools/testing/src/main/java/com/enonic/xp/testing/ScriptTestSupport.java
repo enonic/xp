@@ -195,7 +195,7 @@ public abstract class ScriptTestSupport
 
     public final ScriptExports runScript( final ResourceKey key )
     {
-        return this.executor.executeMain( key );
+        return this.executor.execute( key );
     }
 
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )

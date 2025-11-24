@@ -18,23 +18,13 @@ public final class ApplicationListenerHub
 
     public void activated( final Application app )
     {
-        notifyActivated( app );
-    }
-
-    public void deactivated( final Application app )
-    {
-        notifyDeactivated( app );
-    }
-
-    private void notifyActivated( final Application app )
-    {
         for ( final ApplicationListener listener : this.listeners )
         {
             listener.activated( app );
         }
     }
 
-    private void notifyDeactivated( final Application app )
+    public void deactivated( final Application app )
     {
         for ( final ApplicationListener listener : this.listeners )
         {
