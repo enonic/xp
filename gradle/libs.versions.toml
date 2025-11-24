@@ -32,7 +32,7 @@ slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "slf4j" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.1.Final" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.19" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.21" }
 
 jakarta-activation = { module = "com.sun.activation:jakarta.activation", version = "2.0.1" }
 jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "2.0.2" }
