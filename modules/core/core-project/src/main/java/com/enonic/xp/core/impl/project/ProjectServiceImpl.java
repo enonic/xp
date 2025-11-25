@@ -62,6 +62,7 @@ import com.enonic.xp.project.ProjectPermissions;
 import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
+import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
@@ -658,18 +659,22 @@ public class ProjectServiceImpl
 
     private SiteConfigs getProjectSiteConfigs( final ProjectName projectName )
     {
-        final PropertyTree contentRootData;
+        final Node contentRoot;
         try
         {
-            contentRootData =
-                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ).data() );
+            contentRoot =
+                contentRootDataContext( projectName ).callWith( () -> nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH ) );
+            if ( contentRoot == null )
+            {
+                return null;
+            }
         }
-        catch ( RepositoryNotFoundException e )
+        catch ( RepositoryNotFoundException | BranchNotFoundException e )
         {
             return null;
         }
 
-        return getProjectSiteConfigs( contentRootData );
+        return getProjectSiteConfigs( contentRoot.data() );
     }
 
     private SiteConfigs getProjectSiteConfigs( final PropertyTree contentRootData )
