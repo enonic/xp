@@ -381,14 +381,11 @@ public class NodeServiceImpl
             trace.put( "filter", multiNodeQuery.getNodeQuery().getQueryFilters() );
             trace.put( "from", multiNodeQuery.getNodeQuery().getFrom() );
             trace.put( "size", multiNodeQuery.getNodeQuery().getSize() );
-            trace.put( "repo", ContextAccessor.current().getRepositoryId().toString() );
-            trace.put( "branch", ContextAccessor.current().getBranch() );
         }, () -> executeFindByQuery( multiNodeQuery ), ( trace, result ) -> trace.put( "hits", result.getTotalHits() ) );
     }
 
     private FindNodesByMultiRepoQueryResult executeFindByQuery( final MultiRepoNodeQuery nodeQuery )
     {
-        verifyContext();
         return FindNodesByMultiRepoQueryCommand.create()
             .query( nodeQuery )
             .indexServiceInternal( this.indexServiceInternal )
