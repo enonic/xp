@@ -7,15 +7,15 @@ import java.util.regex.PatternSyntaxException;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 @PublicApi
 public final class ContentMappingConstraint
@@ -38,7 +38,7 @@ public final class ContentMappingConstraint
 
     private static final String DATA_PROPERTY_PREFIX = "data.";
 
-    private static final String XDATA_PROPERTY_PREFIX = "x.";
+    private static final String MIXINS_PROPERTY_PREFIX = "x.";
 
     private final String id;
 
@@ -93,9 +93,9 @@ public final class ContentMappingConstraint
             final Value propertyValue = convert( val, prop.getValue().getType() );
             return propertyValue != null && valueMatches( propertyValue.asString(), prop.getValue().asString() );
         }
-        else if ( this.id.startsWith( XDATA_PROPERTY_PREFIX ) )
+        else if ( this.id.startsWith( MIXINS_PROPERTY_PREFIX ) )
         {
-            final String dataPath = id.substring( XDATA_PROPERTY_PREFIX.length() );
+            final String dataPath = id.substring( MIXINS_PROPERTY_PREFIX.length() );
 
             final String appPrefix;
             final String mixinName;
@@ -116,13 +116,13 @@ public final class ContentMappingConstraint
                 propertyName = secondIndex == -1 ? "" : dataPath.substring( secondIndex + 1 );
             }
 
-            final PropertyTree xData = getXData( content.getAllExtraData(), appPrefix, mixinName );
-            if ( xData == null )
+            final PropertyTree mixin = getMixin( content.getMixins(), appPrefix, mixinName );
+            if ( mixin == null )
             {
                 return false;
             }
 
-            final Property prop = xData.getProperty( propertyName );
+            final Property prop = mixin.getProperty( propertyName );
             if ( prop == null || prop.getValue() == null )
             {
                 return false;
@@ -135,22 +135,22 @@ public final class ContentMappingConstraint
         return false;
     }
 
-    private PropertyTree getXData( final ExtraDatas xDatas, final String appPrefix, final String name )
+    private PropertyTree getMixin( final Mixins mixins, final String appPrefix, final String name )
     {
-        if ( xDatas == null )
+        if ( mixins == null )
         {
             return null;
         }
         try
         {
-            final ApplicationKey app = ExtraData.fromApplicationPrefix( appPrefix );
-            final XDataName xDataName = XDataName.from( app, name );
-            final ExtraData extraData = xDatas.getMetadata( xDataName );
-            if ( extraData == null )
+            final ApplicationKey app = Mixin.fromApplicationPrefix( appPrefix );
+            final MixinName mixinName = MixinName.from( app, name );
+            final Mixin mixin = mixins.getByName( mixinName );
+            if ( mixin == null )
             {
                 return null;
             }
-            return extraData.getData();
+            return mixin.getData();
         }
         catch ( Exception e )
         {

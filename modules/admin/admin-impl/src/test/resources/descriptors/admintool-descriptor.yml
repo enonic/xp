@@ -1,0 +1,10 @@
+displayName: "Content Studio"
+description: "Manage content and sites"
+allow:
+  - "role:system.authenticated"
+apis:
+  - "admin:extension"
+  - "content"
+interfaces:
+  - "contentstudio.menuitem"
+  - "contentstudio.contextpanel"

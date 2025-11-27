@@ -6,11 +6,12 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.LocalizedText;
 
 @PublicApi
 public final class MacroDescriptor
 {
-    private static final String SITE_MACROS_PREFIX = "site/macros/";
+    private static final String CMS_MACROS_PREFIX = "cms/macros/";
 
     private final MacroKey key;
 
@@ -87,22 +88,22 @@ public final class MacroDescriptor
 
     public ResourceKey toDescriptorResourceKey()
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     public ResourceKey toControllerResourceKey()
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
+        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
     public static ResourceKey toDescriptorResourceKey( final MacroKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".xml" );
+        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".yml" );
     }
 
     public static ResourceKey toControllerResourceKey( final MacroKey key )
     {
-        return ResourceKey.from( key.getApplicationKey(), SITE_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
+        return ResourceKey.from( key.getApplicationKey(), CMS_MACROS_PREFIX + key.getName() + "/" + key.getName() + ".js" );
     }
 
     public static Builder create()
@@ -156,6 +157,13 @@ public final class MacroDescriptor
             return this;
         }
 
+        public Builder displayName( final LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return this;
+        }
+
         public Builder description( final String description )
         {
             this.description = description;
@@ -165,6 +173,13 @@ public final class MacroDescriptor
         public Builder descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return this;
+        }
+
+        public Builder description( final LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
             return this;
         }
 

@@ -69,7 +69,7 @@ class PartDescriptorsTest
     @Test
     void fromIterable()
     {
-        final PartDescriptors partDescriptors = PartDescriptors.from( (Iterable) PART_DESCRIPTORS_LIST );
+        final PartDescriptors partDescriptors = PartDescriptors.from( PART_DESCRIPTORS_LIST );
 
         assertEquals( 3, partDescriptors.getSize() );
         assertTrue( partDescriptors.contains( PART_DESCRIPTORS_LIST.get( 0 ) ) );

@@ -25,6 +25,18 @@ class DeleteDynamicContentSchemaHandlerTest
     }
 
     @Test
+    void testFormFragment()
+    {
+        when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+            final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
+
+            return DynamicContentSchemaType.FORM_FRAGMENT == schemaParams.getType();
+        } );
+
+        runScript( "/lib/xp/examples/schema/deleteFormFragment.js" );
+    }
+
+    @Test
     void testMixin()
     {
         when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
@@ -34,18 +46,6 @@ class DeleteDynamicContentSchemaHandlerTest
         } );
 
         runScript( "/lib/xp/examples/schema/deleteMixin.js" );
-    }
-
-    @Test
-    void testXData()
-    {
-        when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
-
-            return DynamicContentSchemaType.XDATA == schemaParams.getType();
-        } );
-
-        runScript( "/lib/xp/examples/schema/deleteXData.js" );
     }
 
 

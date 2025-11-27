@@ -124,7 +124,7 @@ class ResponseSerializerTest
     void serializeBodyResource()
         throws Exception
     {
-        final ResourceKey resourceKey = ResourceKey.from( "myapp:/site/test/view/body_file.txt" );
+        final ResourceKey resourceKey = ResourceKey.from( "myapp:/cms/test/view/body_file.txt" );
         final URL resourceUrl = ResponseSerializerTest.class.getResource( "body_file.txt" );
 
         final WebRequest req = new WebRequest();

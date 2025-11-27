@@ -12,6 +12,7 @@ public final class InputTypes
         add( ComboBoxType.INSTANCE ).
         add( DateType.INSTANCE ).
         add( TimeType.INSTANCE ).
+        add( InstantType.INSTANCE ).
         add( DateTimeType.INSTANCE ).
         add( CheckBoxType.INSTANCE ).
         add( DoubleType.INSTANCE ).

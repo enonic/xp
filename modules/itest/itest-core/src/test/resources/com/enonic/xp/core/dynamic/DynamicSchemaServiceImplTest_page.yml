@@ -1,0 +1,22 @@
+displayName:
+  text: "Virtual Page"
+  i18n: "key.display-name"
+description:
+  text: "My Page Description"
+  i18n: "key.description"
+form:
+  - type: "Double"
+    name: "pause"
+    label:
+      text: "Pause parameter"
+      i18n: "key1.label"
+    helpText:
+      text: "key1.help-text"
+      i18n: "key1.help-text"
+    occurrences:
+      min: 0
+      max: 1
+regions:
+  - "header"
+  - "main"
+  - "footer"

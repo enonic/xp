@@ -1,0 +1,14 @@
+description: "Vacuum task"
+form:
+  - type: "TextLine"
+    name: "ageThreshold"
+    label: "Age threshold"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "TextLine"
+    name: "tasks"
+    label: "Tasks to be run"
+    occurrences:
+      min: 0
+      max: 0

@@ -8,8 +8,8 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
@@ -28,7 +28,7 @@ import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
@@ -53,8 +53,8 @@ public final class ContentFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.data( newPropertyTree() );
 
-        builder.extraDatas(
-            ExtraDatas.create().add( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) ).build() );
+        builder.mixins(
+            Mixins.create().add( new Mixin( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) ).build() );
         builder.page( newPage() );
 
         return builder.build();
@@ -77,7 +77,7 @@ public final class ContentFixtures
         mediaData.setLong( IMAGE_INFO_IMAGE_WIDTH, 300L );
         mediaData.setLong( MEDIA_INFO_BYTE_SIZE, 100000L );
 
-        final ExtraData mediaExtraData = new ExtraData( MediaInfo.IMAGE_INFO_METADATA_NAME, mediaData );
+        final Mixin mediaMixin = new Mixin( MediaInfo.IMAGE_INFO_METADATA_NAME, mediaData );
 
         final Media.Builder builder = Media.create();
         builder.id( ContentId.from( "123456" ) );
@@ -92,9 +92,9 @@ public final class ContentFixtures
         builder.attachments( Attachments.from( attachment ) );
         builder.data( data );
 
-        builder.extraDatas( ExtraDatas.create()
-                                .add( new ExtraData( XDataName.from( "myapplication:myschema" ), newTinyPropertyTree() ) )
-                                .add( mediaExtraData )
+        builder.mixins( Mixins.create()
+                                .add( new Mixin( MixinName.from( "myapplication:myschema" ), newTinyPropertyTree() ) )
+                                .add( mediaMixin )
                                 .build() );
         builder.page( newPage() );
 

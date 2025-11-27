@@ -1,0 +1,12 @@
+type: "Double"
+name: "backgroundGreen"
+label: "Green"
+min: 0
+max: 255
+helpText: "Help Text"
+occurrences:
+  min: 0
+  max: 1
+config:
+  default: 250.0
+  required: true

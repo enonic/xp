@@ -128,7 +128,7 @@ class ApiHandlerTest
         when( this.apiDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( apiDescriptors );
 
         universalApiHandlerRegistry.addApiHandler( request -> WebResponse.create().build(),
-                                                   Map.of( "applicationKey", "admin", "apiKey", "widget", "displayName", "Display Name",
+                                                   Map.of( "applicationKey", "admin", "apiKey", "extension", "displayName", "Display Name",
                                                            "description", "Brief description", "documentationUrl",
                                                            "https://docs.enonic.com", "mount", "true", "allowedPrincipals",
                                                            RoleKeys.EVERYONE.toString() ) );
@@ -153,9 +153,9 @@ class ApiHandlerTest
 
         final Map<String, Object> dynamicApiResource = resources.get( 0 );
 
-        assertEquals( "admin:widget", dynamicApiResource.get( "descriptor" ) );
+        assertEquals( "admin:extension", dynamicApiResource.get( "descriptor" ) );
         assertEquals( "admin", dynamicApiResource.get( "application" ) );
-        assertEquals( "widget", dynamicApiResource.get( "name" ) );
+        assertEquals( "extension", dynamicApiResource.get( "name" ) );
         assertEquals( "Display Name", dynamicApiResource.get( "displayName" ) );
         assertEquals( "Brief description", dynamicApiResource.get( "description" ) );
         assertEquals( "https://docs.enonic.com", dynamicApiResource.get( "documentationUrl" ) );
