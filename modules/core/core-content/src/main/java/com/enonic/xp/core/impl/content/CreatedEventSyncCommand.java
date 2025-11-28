@@ -94,8 +94,7 @@ final class CreatedEventSyncCommand
             builder.add( new BinaryAttachment( attachment.getBinaryReference(), binary ) );
         } );
 
-        final ContentPath targetPath = buildNewPath( parentPath, content.getSourceContent().getName(),
-                                                     content.getTargetContent() );
+        final ContentPath targetPath = buildNewPath( parentPath, content.getSourceContent().getName(), null );
 
         final EnumSet<ContentInheritType> inheritTypes = Objects.equals( content.getSourceContent().getName(), targetPath.getName() )
             ? EnumSet.allOf( ContentInheritType.class )

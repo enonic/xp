@@ -99,14 +99,18 @@ final class MovedEventSyncCommand
                         return;
                     }
 
-                    final ContentPath newPath = buildNewPath( targetParentPath, content.getTargetContent().getName(), content.getTargetContent() );
+                    if ( !content.getTargetContent().getPath().equals( content.getSourceContent().getPath() ) )
+                    {
+                        final ContentPath newPath =
+                            buildNewPath( targetParentPath, content.getSourceContent().getName(), content.getTargetContent() );
 
-                    contentService.move( MoveContentParams.create()
-                                             .contentId( content.getTargetContent().getId() )
-                                             .newName( newPath.getName() )
-                                             .parentContentPath( targetParentPath )
-                                             .stopInherit( false )
-                                             .build() );
+                        contentService.move( MoveContentParams.create()
+                                                 .contentId( content.getTargetContent().getId() )
+                                                 .newName( newPath.getName() )
+                                                 .parentContentPath( targetParentPath )
+                                                 .stopInherit( false )
+                                                 .build() );
+                    }
                 } );
             }
         }

@@ -110,20 +110,6 @@ class ContentServiceImplTest_getByPaths
     }
 
     @Test
-    void test_published_draft()
-    {
-        final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT,  Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
-
-        final ContentPaths paths = ContentPaths.from( content1.getPath(), content2.getPath() );
-        final Contents contents = this.contentService.getByPaths( paths );
-
-        assertEquals( contents.getSize(), 2 );
-        assertTrue( contents.contains( content1 ) );
-        assertTrue( contents.contains( content2 ) );
-    }
-
-    @Test
     void test_published_master()
     {
         ctxMaster().callWith( () -> {

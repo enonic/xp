@@ -677,8 +677,8 @@ class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         final Content targetContent = syncCreated( sourceContent.getId() );
 
-        assertEquals( targetContent, syncMoved( sourceContent.getId() ) );
-
+        final Content result = syncMoved( sourceContent.getId() );
+        assertEquals( targetContent, result );
     }
 
     @Test

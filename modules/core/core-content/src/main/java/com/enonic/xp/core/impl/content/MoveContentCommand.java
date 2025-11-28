@@ -76,7 +76,8 @@ final class MoveContentCommand
         final ContentId contentId = params.getContentId();
         final Content sourceContent = getContent( contentId );
 
-        List<String> modifiedFields = new ArrayList<>();
+        final List<String> modifiedFields = new ArrayList<>();
+        final var processors = CompositeNodeDataProcessor.create().add( updateValid() );
 
         final NodePath newParentPath;
         if ( params.getParentContentPath() == null || params.getParentContentPath().equals( sourceContent.getParentPath() ) )
@@ -85,6 +86,10 @@ final class MoveContentCommand
         }
         else
         {
+            if ( params.stopInherit() )
+            {
+                processors.add( InheritedContentDataProcessor.PARENT );
+            }
             validateParentChildRelations( params.getParentContentPath(), sourceContent.getType() );
             newParentPath = ContentNodeHelper.translateContentPathToNodePath( params.getParentContentPath() );
             modifiedFields.add( "parentPath" );
@@ -97,6 +102,10 @@ final class MoveContentCommand
         }
         else
         {
+            if ( params.stopInherit() )
+            {
+                processors.add( InheritedContentDataProcessor.NAME );
+            }
             newNodeName = NodeName.from( params.getNewName() );
             modifiedFields.add( "name" );
         }
@@ -108,7 +117,7 @@ final class MoveContentCommand
             .newName( newNodeName )
             .newParentPath( newParentPath )
             .versionAttributes( ContentAttributesHelper.moveVersionHistoryAttr( modifiedFields ) )
-            .processor( initProcessors() )
+            .processor( processors.build() )
             .refresh( RefreshMode.ALL );
 
         if ( params.getMoveContentListener() != null )
@@ -121,24 +130,6 @@ final class MoveContentCommand
         final Content movedContent = ContentNodeTranslator.fromNode( movedNode.getMovedNodes().getFirst().getNode() );
 
         return MoveContentsResult.create().setContentName( movedContent.getDisplayName() ).addMoved( movedContent.getId() ).build();
-    }
-
-    private NodeDataProcessor initProcessors()
-    {
-        final var processors = CompositeNodeDataProcessor.create().add( updateValid() );
-        if ( params.stopInherit() )
-        {
-            if (params.getParentContentPath() == null )
-            {
-                processors.add( InheritedContentDataProcessor.PARENT );
-            }
-
-            if ( params.getNewName() != null )
-            {
-                processors.add( InheritedContentDataProcessor.NAME );
-            }
-        }
-        return processors.build();
     }
 
     private NodeDataProcessor updateValid()
