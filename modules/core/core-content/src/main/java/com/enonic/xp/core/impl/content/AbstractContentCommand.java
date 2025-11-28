@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -146,16 +147,17 @@ abstract class AbstractContentCommand
     {
         if ( shouldFilterScheduledPublished() )
         {
+            final Instant now = Instant.now().truncatedTo( ChronoUnit.MILLIS );
             final BooleanFilter notPendingFilter = BooleanFilter.create()
                 .mustNot( RangeFilter.create()
                               .fieldName( ContentIndexPath.PUBLISH_FROM.getPath() )
-                              .from( ValueFactory.newDateTime( Instant.now() ) )
+                              .from( ValueFactory.newDateTime( now ) )
                               .build() )
                 .build();
             final BooleanFilter notExpiredFilter = BooleanFilter.create()
                 .mustNot( RangeFilter.create()
                               .fieldName( ContentIndexPath.PUBLISH_TO.getPath() )
-                              .to( ValueFactory.newDateTime( Instant.now() ) )
+                              .to( ValueFactory.newDateTime( now ) )
                               .build() )
                 .build();
             return Filters.from( notPendingFilter, notExpiredFilter );

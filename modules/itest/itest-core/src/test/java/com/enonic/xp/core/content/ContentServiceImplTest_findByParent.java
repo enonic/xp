@@ -213,34 +213,31 @@ class ContentServiceImplTest_findByParent
     @Test
     void test_pending_publish_master()
     {
-        ctxMaster().callWith( () -> {
+        ctxMaster().runWith( () -> {
             createContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
             final FindContentByParentResult result = findByParent();
             assertEquals( 0, result.getTotalHits() );
-            return null;
         } );
     }
 
     @Test
     void test_publish_expired_master()
     {
-        ctxMaster().callWith( () -> {
+        ctxMaster().runWith( () -> {
             createContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ) , Instant.now().minus( Duration.ofDays( 1 ) ) );
             final FindContentByParentResult result = findByParent();
             assertEquals( 0, result.getTotalHits() );
-            return null;
         } );
     }
 
     @Test
     void test_published_master()
     {
-        ctxMaster().callWith( () -> {
+        ctxMaster().runWith( () -> {
             createContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
             final FindContentByParentResult result = findByParent();
 
             assertEquals( 1, result.getTotalHits() );
-            return null;
         } );
     }
 
