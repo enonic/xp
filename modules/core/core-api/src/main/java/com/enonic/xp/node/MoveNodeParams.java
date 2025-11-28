@@ -15,6 +15,8 @@ public final class MoveNodeParams
 
     private final NodePath newParentPath;
 
+    private final Attributes versionAttributes;
+
     private final MoveNodeListener moveListener;
 
     private final NodeDataProcessor processor;
@@ -26,6 +28,7 @@ public final class MoveNodeParams
         this.nodeId = Objects.requireNonNull( builder.nodeId, "nodeId is required" );
         this.newName = builder.newName;
         this.newParentPath = builder.newParentPath;
+        this.versionAttributes = builder.versionAttributes;
         this.moveListener = builder.moveListener;
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n);
         this.refresh = builder.refresh;
@@ -51,6 +54,11 @@ public final class MoveNodeParams
         return newParentPath;
     }
 
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public MoveNodeListener getMoveListener()
     {
         return moveListener;
@@ -73,6 +81,8 @@ public final class MoveNodeParams
         private NodeName newName;
 
         private NodePath newParentPath;
+
+        private Attributes versionAttributes;
 
         private MoveNodeListener moveListener;
 
@@ -99,6 +109,12 @@ public final class MoveNodeParams
         public Builder newParentPath( final NodePath parentPath )
         {
             this.newParentPath = parentPath;
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

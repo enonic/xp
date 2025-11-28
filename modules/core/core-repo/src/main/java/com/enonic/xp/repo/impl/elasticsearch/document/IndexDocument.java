@@ -11,7 +11,6 @@ public class IndexDocument
 
     private final String analyzer;
 
-
     public String getId()
     {
         return id;

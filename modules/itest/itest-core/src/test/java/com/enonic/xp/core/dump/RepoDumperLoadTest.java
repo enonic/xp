@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.dump.RepoDumper;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -36,7 +35,7 @@ class RepoDumperLoadTest
                 parent( NodePath.ROOT ).
                 build() );
             // commit every node, so number of commits is also greater than elasticsearch can return in a single query
-            commit( NodeIds.from( node.id() ) );
+            commit( node );
         }
 
         refresh();

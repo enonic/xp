@@ -210,10 +210,7 @@ public abstract class AbstractContentServiceTest
         return ContextBuilder.create().
             branch( ContentConstants.BRANCH_MASTER ).
             repositoryId( testprojectName.getRepoId() ).
-            authInfo( AuthenticationInfo.create().
-                principals( RoleKeys.ADMIN ).
-                user( ContentInitializer.SUPER_USER ).
-                build() ).
+            authInfo( ContentInitializer.SUPER_USER_AUTH ).
             build();
     }
 
@@ -399,14 +396,31 @@ public abstract class AbstractContentServiceTest
         return doCreateContent( parentPath, displayName, new PropertyTree(), ExtraDatas.empty(), ContentTypeName.folder() );
     }
 
+    protected Content createContent( ContentPath parentPath, final Instant publishFrom )
+    {
+        final CreateContentParams params =
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+                                  ContentTypeName.folder() ).build();
+
+        return doCreateContent( params, publishFrom, null );
+    }
+
+    protected Content createContent( ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
+    {
+        final CreateContentParams params =
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
+                                  ContentTypeName.folder() ).build();
+
+        return doCreateContent( params, publishFrom, publishTo );
+    }
+
     protected Content createContent( ContentPath parentPath, final ContentPublishInfo publishInfo )
     {
-        final CreateContentParams.Builder builder =
+        final CreateContentParams params =
             createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), ExtraDatas.empty(),
-                                  ContentTypeName.folder() ).
-                contentPublishInfo( publishInfo );
+                                  ContentTypeName.folder() ).build();
 
-        return doCreateContent( builder );
+        return doCreateContent( params, publishInfo.getFrom(), publishInfo.getTo() );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
@@ -441,6 +455,21 @@ public abstract class AbstractContentServiceTest
     {
         final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, extraDatas, type );
         return doCreateContent( builder );
+    }
+
+    private Content doCreateContent( final CreateContentParams params, final Instant publishFrom, final Instant publishTo )
+    {
+        final Context context = ContextAccessor.current();
+
+        return ContextBuilder.from( context ).branch( ContentConstants.BRANCH_DRAFT ).build().callWith( () -> {
+            final Content content = this.contentService.create( params );
+            this.contentService.publish( PushContentParams.create()
+                                             .publishFrom( publishFrom )
+                                             .publishTo( publishTo )
+                                             .contentIds( ContentIds.from( content.getId() ) )
+                                             .build() );
+            return content;
+        } );
     }
 
     private Content doCreateContent( final CreateContentParams.Builder builder )
@@ -643,10 +672,10 @@ public abstract class AbstractContentServiceTest
 
             if ( lastModified != null )
             {
-                assertFalse( next.getModified().isAfter( lastModified ) );
+                assertFalse( next.getTimestamp().isAfter( lastModified ) );
             }
 
-            lastModified = next.getModified();
+            lastModified = next.getTimestamp();
         }
     }
 

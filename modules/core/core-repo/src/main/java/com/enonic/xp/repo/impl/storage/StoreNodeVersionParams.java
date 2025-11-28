@@ -7,6 +7,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.Attributes;
 
 public final class StoreNodeVersionParams
 {
@@ -22,6 +23,8 @@ public final class StoreNodeVersionParams
 
     private final NodeCommitId nodeCommitId;
 
+    private final Attributes attributes;
+
     private StoreNodeVersionParams( final Builder builder )
     {
         nodeVersion = builder.nodeVersion;
@@ -30,6 +33,7 @@ public final class StoreNodeVersionParams
         nodeId = builder.nodeId;
         nodeVersionId = builder.nodeVersionId;
         nodeCommitId = builder.nodeCommitId;
+        attributes = builder.attributes;
     }
 
     public NodeId getNodeId()
@@ -62,6 +66,11 @@ public final class StoreNodeVersionParams
         return nodeCommitId;
     }
 
+    public Attributes getAttributes()
+    {
+        return attributes;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -70,6 +79,8 @@ public final class StoreNodeVersionParams
 
     public static final class Builder
     {
+        private Attributes attributes;
+
         private NodeVersion nodeVersion;
 
         private Instant timestamp;
@@ -119,6 +130,12 @@ public final class StoreNodeVersionParams
         public Builder nodeCommitId( final NodeCommitId val )
         {
             nodeCommitId = val;
+            return this;
+        }
+
+        public Builder attributes( final Attributes val )
+        {
+            attributes = val;
             return this;
         }
 

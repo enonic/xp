@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -19,7 +18,6 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeEvents;
@@ -103,7 +101,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public RepositoryEntry addBranchToRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( NodeId.from( repositoryId ) ).
             editor( RepositoryNodeTranslator.toCreateBranchNodeEditor( branch ) ).
             refresh( RefreshMode.ALL ).
@@ -115,7 +113,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public RepositoryEntry removeBranchFromRepositoryEntry( final RepositoryId repositoryId, final Branch branch )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( NodeId.from( repositoryId ) ).
             editor( RepositoryNodeTranslator.toDeleteBranchNodeEditor( branch ) ).
             refresh( RefreshMode.ALL ).
@@ -127,7 +125,7 @@ public class RepositoryEntryServiceImpl
     @Override
     public RepositoryEntry updateRepositoryEntry( UpdateRepositoryEntryParams params )
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
+        final PatchNodeParams updateNodeParams = PatchNodeParams.create().
             id( NodeId.from( params.getRepositoryId() ) ).
             editor( RepositoryNodeTranslator.toUpdateRepositoryNodeEditor( params ) ).
             setBinaryAttachments( params.getAttachments() ).
@@ -172,10 +170,10 @@ public class RepositoryEntryServiceImpl
         } );
     }
 
-    private RepositoryEntry updateRepositoryNode( final UpdateNodeParams updateNodeParams )
+    private RepositoryEntry updateRepositoryNode( final PatchNodeParams updateNodeParams )
     {
         final Node updatedNode = createContext().callWith(
-            () -> PatchNodeCommand.create().params( convertUpdateParams( updateNodeParams ) ).binaryService( this.binaryService ).
+            () -> PatchNodeCommand.create().params(  updateNodeParams ).binaryService( this.binaryService ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.nodeStorageService ).
             searchService( this.nodeSearchService ).
@@ -205,17 +203,5 @@ public class RepositoryEntryServiceImpl
             branch( SystemConstants.BRANCH_SYSTEM ).
             searchPreference( SearchPreference.PRIMARY ).
             build();
-    }
-
-    private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )
-    {
-        return PatchNodeParams.create()
-            .id( params.getId() )
-            .path( params.getPath() )
-            .editor( params.getEditor() )
-            .setBinaryAttachments( params.getBinaryAttachments() )
-            .refresh( params.getRefresh() )
-            .addBranches( Branches.from( ContextAccessor.current().getBranch() ) )
-            .build();
     }
 }

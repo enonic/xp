@@ -23,10 +23,7 @@ public class NodeRepositoryServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( NodeRepositoryServiceImpl.class );
 
-    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
-
-    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
-        new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =  new DefaultIndexResourceProvider();
 
     private final IndexServiceInternal indexServiceInternal;
 
@@ -43,12 +40,12 @@ public class NodeRepositoryServiceImpl
         final RepositorySettings repositorySettings = params.getRepositorySettings();
 
         createIndex( repositoryId, repositorySettings, IndexType.VERSION,
-                     Map.ofEntries( mergeWithDefaultMapping( repositorySettings, IndexType.VERSION ),
-                                    mergeWithDefaultMapping( repositorySettings, IndexType.BRANCH ),
-                                    mergeWithDefaultMapping( repositorySettings, IndexType.COMMIT ) ) );
+                     Map.of( IndexType.VERSION, DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.VERSION ), IndexType.BRANCH,
+                             DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.BRANCH ), IndexType.COMMIT,
+                             DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.COMMIT ) ) );
 
-        createIndex( repositoryId, repositorySettings, IndexType.SEARCH,
-                     Map.ofEntries( mergeWithDefaultMapping( repositorySettings, IndexType.SEARCH ) ) );
+        createIndex( repositoryId, repositorySettings, IndexType.SEARCH, Map.of( IndexType.SEARCH, IndexSettingsMerger.merge(
+            DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ), repositorySettings.getIndexMappings( IndexType.SEARCH ) ) ) );
 
         indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
     }
@@ -78,7 +75,8 @@ public class NodeRepositoryServiceImpl
     }
 
 
-    private IndexSettings mergeWithDefaultSettings( final RepositoryId repositoryId, final IndexSettings indexSettings, final IndexType indexType )
+    private IndexSettings mergeWithDefaultSettings( final RepositoryId repositoryId, final IndexSettings indexSettings,
+                                                    final IndexType indexType )
     {
         final IndexSettings defaultFromFile = DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( indexType );
         if ( SystemConstants.SYSTEM_REPO_ID.equals( repositoryId ) )
@@ -98,7 +96,7 @@ public class NodeRepositoryServiceImpl
                 .get( "index.number_of_replicas" );
 
             return IndexSettingsMerger.merge( defaultSettings,
-                                       IndexSettings.from( Map.of( "index", Map.of( "number_of_replicas", numberOfReplicas ) ) ) );
+                                              IndexSettings.from( Map.of( "index", Map.of( "number_of_replicas", numberOfReplicas ) ) ) );
         }
         catch ( Exception e )
         {
@@ -107,14 +105,6 @@ public class NodeRepositoryServiceImpl
         }
 
         return defaultSettings;
-    }
-
-    private static Map.Entry<IndexType, IndexMapping> mergeWithDefaultMapping( final RepositorySettings repositorySettings, final IndexType indexType )
-    {
-        final IndexMapping defaultMapping = DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( indexType );
-        final IndexMapping settingsMapping = repositorySettings.getIndexMappings( indexType );
-
-        return Map.entry( indexType, IndexSettingsMerger.merge( defaultMapping, settingsMapping ) );
     }
 
     private static String[] resolveIndexNames( final RepositoryId repositoryId )

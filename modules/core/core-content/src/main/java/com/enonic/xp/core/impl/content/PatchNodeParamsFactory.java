@@ -12,6 +12,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.core.impl.content.index.ContentIndexConfigFactory;
 import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeEditor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.PatchNodeParams;
@@ -30,6 +31,8 @@ public class PatchNodeParamsFactory
 
     private final CreateAttachments createAttachments;
 
+    private final Attributes versionAttributes;
+
     private final ContentTypeService contentTypeService;
 
     private final XDataService xDataService;
@@ -42,7 +45,7 @@ public class PatchNodeParamsFactory
 
     private final SiteService siteService;
 
-    private final ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     private final Branches branches;
 
@@ -55,8 +58,8 @@ public class PatchNodeParamsFactory
         this.pageDescriptorService = builder.pageDescriptorService;
         this.partDescriptorService = builder.partDescriptorService;
         this.layoutDescriptorService = builder.layoutDescriptorService;
-        this.contentDataSerializer = builder.contentDataSerializer;
         this.siteService = builder.siteService;
+        this.versionAttributes  = builder.versionAttributes;
         branches = Branches.from( builder.branches.build() );
     }
 
@@ -73,6 +76,7 @@ public class PatchNodeParamsFactory
             .id( NodeId.from( editedContent.getId() ) )
             .editor( nodeEditor )
             .addBranches( branches )
+            .versionAttributes(  versionAttributes )
             .refresh( RefreshMode.ALL );
 
         for ( final CreateAttachment createAttachment : createAttachments )
@@ -116,6 +120,8 @@ public class PatchNodeParamsFactory
 
         private CreateAttachments createAttachments = CreateAttachments.empty();
 
+        private Attributes versionAttributes;
+
         private ContentTypeService contentTypeService;
 
         private XDataService xDataService;
@@ -125,8 +131,6 @@ public class PatchNodeParamsFactory
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
-
-        private ContentDataSerializer contentDataSerializer;
 
         private SiteService siteService;
 
@@ -139,6 +143,12 @@ public class PatchNodeParamsFactory
         Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 
@@ -184,16 +194,9 @@ public class PatchNodeParamsFactory
             return this;
         }
 
-        Builder contentDataSerializer( final ContentDataSerializer contentDataSerializer )
-        {
-            this.contentDataSerializer = contentDataSerializer;
-            return this;
-        }
-
         void validate()
         {
             Objects.requireNonNull( editedContent, "editedContent cannot be null" );
-            Objects.requireNonNull( editedContent.getModifier(), "modifier cannot be null" );
             Objects.requireNonNull( editedContent.getAttachments(), "attachments cannot be null" );
             Objects.requireNonNull( createAttachments, "createAttachments cannot be null" );
 
@@ -202,7 +205,6 @@ public class PatchNodeParamsFactory
             Objects.requireNonNull( pageDescriptorService );
             Objects.requireNonNull( partDescriptorService );
             Objects.requireNonNull( layoutDescriptorService );
-            Objects.requireNonNull( contentDataSerializer );
         }
 
         public PatchNodeParamsFactory build()

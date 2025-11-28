@@ -11,8 +11,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeVersionDiffResult;
+import com.enonic.xp.repo.impl.node.NodeVersionDiffResult;
 import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.repo.impl.node.FindNodesWithVersionDifferenceCommand;
 import com.enonic.xp.repo.impl.node.PatchNodeCommand;
@@ -345,9 +346,7 @@ class FindNodesWithVersionDifferenceCommandTest
 
     private PushNodesResult doPushNode( final Branch target, final Node createdNode )
     {
-        return PushNodesCommand.create().
-            ids( NodeIds.from( createdNode.id() ) ).
-            target( target ).
+        return PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( createdNode.id() ) ).target( target ).build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

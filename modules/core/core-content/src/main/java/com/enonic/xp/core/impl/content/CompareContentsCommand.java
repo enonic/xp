@@ -29,10 +29,7 @@ public class CompareContentsCommand
 
     public CompareContentResults execute()
     {
-        final NodeIds nodeIds = ContentNodeHelper.toNodeIds( this.contentIds );
-        final NodeComparisons comparisons = this.nodeService.compare( nodeIds, this.target );
-
-        return CompareResultTranslator.translate( comparisons );
+        return CompareResultTranslator.translate( this.nodeService.compare( ContentNodeHelper.toNodeIds( this.contentIds ), this.target ) );
     }
 
     public static final class Builder

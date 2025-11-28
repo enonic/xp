@@ -9,9 +9,9 @@ import org.mockito.stubbing.Answer;
 
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
+import com.enonic.xp.content.ApplyContentPermissionsScope;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
-import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -175,6 +175,6 @@ class ApplyPermissionsHandlerTest
 
         verify( contentService ).applyPermissions( paramsCaptor.capture() );
 
-        assertEquals( ApplyPermissionsScope.TREE, paramsCaptor.getValue().getScope() );
+        assertEquals( ApplyContentPermissionsScope.TREE, paramsCaptor.getValue().getScope() );
     }
 }

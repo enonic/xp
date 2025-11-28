@@ -118,7 +118,7 @@ public class DiffQueryFactory
 
     private TermQueryBuilder createWsConstraint( final Branch branch )
     {
-        return new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.toString(), branch );
+        return new TermQueryBuilder( BranchIndexPath.BRANCH_NAME.getPath(), branch );
     }
 
     public static final class Builder

@@ -44,13 +44,14 @@ public class NodeStoreDocumentFactory
 
     public IndexDocument create()
     {
-        return IndexDocument.create().
-            id( this.node.id().toString() ).
-            indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) ).
-            indexTypeName( this.branch.getValue() ).
-            analyzer( this.node.getIndexConfigDocument().getAnalyzer() ).
-            indexItems( createIndexItems() ).
-            refreshAfterOperation( this.refresh ).build();
+        return IndexDocument.create()
+            .id( this.node.id().toString() )
+            .indexName( IndexNameResolver.resolveSearchIndexName( this.repositoryId ) )
+            .indexTypeName( this.branch.getValue() )
+            .analyzer( this.node.getIndexConfigDocument().getAnalyzer() )
+            .indexItems( createIndexItems() )
+            .refreshAfterOperation( this.refresh )
+            .build();
     }
 
     private IndexItems createIndexItems()
@@ -159,26 +160,23 @@ public class NodeStoreDocumentFactory
             {
                 if ( !isNullOrEmpty( property.getString() ) )
                 {
-                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( IndexPath.from( property.getPath() ) );
+                    final IndexPath indexPath = IndexPath.from( property.getPath() );
+                    final IndexConfig configForData = node.getIndexConfigDocument().getConfigForPath( indexPath );
 
                     if ( configForData == null )
                     {
                         throw new RuntimeException( "Missing index configuration for data " + property.getPath() );
                     }
 
-                    builder.add( property, node.getIndexConfigDocument() );
+                    builder.add( indexPath, property.getValue(), node.getIndexConfigDocument() );
 
-                    addReferenceAggregation( property );
+                    if ( property.getType().equals( ValueTypes.REFERENCE ) )
+                    {
+                        builder.add( NodeIndexPath.REFERENCE, property.getValue(), createDefaultDocument( IndexConfig.MINIMAL ) );
+                    }
                 }
             }
 
-            private void addReferenceAggregation( final Property property )
-            {
-                if ( property.getType().equals( ValueTypes.REFERENCE ) )
-                {
-                    builder.add( NodeIndexPath.REFERENCE, property.getValue(), createDefaultDocument( IndexConfig.MINIMAL ) );
-                }
-            }
         };
 
         visitor.traverse( this.node.data() );
@@ -188,10 +186,7 @@ public class NodeStoreDocumentFactory
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().defaultConfig( indexConfig );
 
-        this.node.getIndexConfigDocument().
-            getAllTextConfig().
-            getLanguages().
-            forEach( builder::addAllTextConfigLanguage );
+        this.node.getIndexConfigDocument().getAllTextConfig().getLanguages().forEach( builder::addAllTextConfigLanguage );
 
         return builder.build();
     }

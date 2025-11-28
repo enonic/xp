@@ -7,8 +7,8 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 
@@ -21,10 +21,11 @@ class DeleteNodeHandlerTest
 {
     private void mockGetNode()
     {
-        when( this.nodeService.delete( any() ) ).thenReturn( DeleteNodeResult.create().nodeIds( NodeIds.empty() ).build() );
+        when( this.nodeService.delete( any() ) ).thenReturn( DeleteNodeResult.create().build() );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .nodeIds( NodeIds.from(NodeId.from( "nodeId" ), NodeId.from( "aSubNodeId" ) ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" )  ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "aSubNodeId" ), NodeVersionId.from( "aSubNodeVersionId" )  ) )
             .build();
         doReturn( result ).when( this.nodeService )
             .delete( ArgumentMatchers.argThat( argument -> NodeId.from( "nodeId" ).equals( argument.getNodeId() ) ) );

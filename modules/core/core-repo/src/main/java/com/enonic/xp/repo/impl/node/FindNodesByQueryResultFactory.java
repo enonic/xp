@@ -26,12 +26,13 @@ class FindNodesByQueryResultFactory
                 highlight( hit.getHighlightedProperties() ).
                 sort( hit.getSortValues() );
 
-            final String nodePath = (String) hit.getReturnValues().getSingleValue( NodeIndexPath.PATH.getPath() );
+            final NodePath nodePath = hit.getReturnValues()
+                .getOptional( NodeIndexPath.PATH )
+                .map( Object::toString )
+                .map( NodePath::new )
+                .orElse( null );
 
-            if ( nodePath != null )
-            {
-                nodeHit.nodePath( new NodePath( nodePath ) );
-            }
+            nodeHit.nodePath( nodePath );
 
             resultBuilder.addNodeHit( nodeHit.build() );
 

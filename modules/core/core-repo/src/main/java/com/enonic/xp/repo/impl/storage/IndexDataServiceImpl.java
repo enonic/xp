@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -10,7 +9,6 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -51,33 +49,6 @@ public class IndexDataServiceImpl
             .returnFields( returnFields )
             .id( nodeId.toString() )
             .build();
-    }
-
-    @Override
-    public ReturnValues get( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
-    {
-        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
-
-        for ( final NodeId nodeId : nodeIds )
-        {
-            getByIdsRequest.add( createGetByIdRequest( nodeId, returnFields, context ) );
-        }
-
-        final List<GetResult> result = storageDao.getByIds( getByIdsRequest );
-
-        final ReturnValues.Builder allResultValues = ReturnValues.create();
-
-        for ( GetResult getResult : result )
-        {
-            final ReturnValues returnValues = getResult.getReturnValues();
-
-            for ( final String key : returnValues.getReturnValues().keySet() )
-            {
-                allResultValues.add( key, returnValues.get( key ).getValues() );
-            }
-        }
-
-        return allResultValues.build();
     }
 
     @Override

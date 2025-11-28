@@ -8,7 +8,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentAlreadyExistsException;
-import com.enonic.xp.content.ContentAlreadyMovedException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -77,22 +76,6 @@ class ContentServiceImplTest_move
         final Content movedContent = contentService.getById( result.getMovedContents().first() );
 
         assertEquals( movedContent.getAllExtraData().getSize(), 1 );
-
-    }
-
-    @Test
-    void move_to_the_same_parent()
-    {
-        final PropertyTree siteData = new PropertyTree();
-        siteData.setSet( "siteConfig", this.createSiteConfig( siteData ) );
-        final Content site = createContent( ContentPath.ROOT, "site", siteData, ContentTypeName.site() );
-
-        final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createExtraDatas() );
-
-        final MoveContentParams params =
-            MoveContentParams.create().contentId( content.getId() ).parentContentPath( content.getParentPath() ).build();
-
-        assertThrows( ContentAlreadyMovedException.class, () -> this.contentService.move( params ) );
 
     }
 

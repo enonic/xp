@@ -6,11 +6,12 @@ import com.enonic.xp.data.PropertySet;
 
 public class PublishInfoSerializer
 {
-
-    public ContentPublishInfo serialize( final PropertySet contentAsSet )
+    private PublishInfoSerializer()
     {
-        final PropertySet publishInfo = contentAsSet.getSet( ContentPropertyNames.PUBLISH_INFO );
+    }
 
+    public static ContentPublishInfo serialize( final PropertySet publishInfo )
+    {
         if ( publishInfo == null )
         {
             return null;

@@ -61,15 +61,16 @@ public class PatchContentCommand
                 .build();
         }
 
-        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create().editedContent( patchedContent )
+        final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
+            .editedContent( patchedContent )
             .createAttachments( params.getCreateAttachments() )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PATCH_KEY ) )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
             .siteService( this.siteService )
             .build()
             .produce();
@@ -87,7 +88,7 @@ public class PatchContentCommand
 
         result.getResults()
             .forEach( branchResult -> builder.addResult( branchResult.branch(), branchResult.node() != null
-                ? translator.fromNode( branchResult.node() )
+                ? ContentNodeTranslator.fromNode( branchResult.node() )
                 : null ) );
 
         return builder.build();
