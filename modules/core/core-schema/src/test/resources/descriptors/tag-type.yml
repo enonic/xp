@@ -5,6 +5,4 @@ helpText: "Help Text"
 occurrences:
   min: 0
   max: 0
-config:
-  disabled: false
-
+attributes: { }

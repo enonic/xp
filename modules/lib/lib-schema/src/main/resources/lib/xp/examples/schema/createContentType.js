@@ -17,7 +17,7 @@ form:
   occurrences:
     min: 0
     max: 0
-  config:
+  attributes:
     context: "true"
 config:
   alignment: "bottom"
@@ -43,7 +43,7 @@ assert.assertJsonEquals({
     createdTime: '2021-09-25T10:00:00Z',
     creator: 'user:system:anonymous',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'superType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"Tag\"\n  name: \"tag_unlimited\"\n  label: \"Tag, unlimited occurrences\"\n  helpText: \"Some help text\"\n  occurrences:\n    min: 0\n    max: 0\n  config:\n    context: \"true\"\nconfig:\n  alignment: \"bottom\"\n',
+    resource: 'superType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"Tag\"\n  name: \"tag_unlimited\"\n  label: \"Tag, unlimited occurrences\"\n  helpText: \"Some help text\"\n  occurrences:\n    min: 0\n    max: 0\n  attributes:\n    context: \"true\"\nconfig:\n  alignment: \"bottom\"\n',
     type: 'CONTENT_TYPE',
     icon: {
         'data': {},

@@ -5,6 +5,5 @@ helpText: "Help Text"
 occurrences:
   min: 0
   max: 1
-config:
-  default: "51.5,-0.1"
-  disabled: true
+default: "51.5,-0.1"
+attributes: { }

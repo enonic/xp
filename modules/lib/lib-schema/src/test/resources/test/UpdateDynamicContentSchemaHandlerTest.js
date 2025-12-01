@@ -111,7 +111,7 @@ form:
         label: "Option 2_2"
         defaultOption: true
         items:
-        - type: "Checkbox"
+        - type: "CheckBox"
           name: "myCheckbox"
           label: "my-checkbox"
           occurrences:
@@ -130,13 +130,12 @@ form:
       occurrences:
         min: 1
         max: 1
-      config:
-        allowPath:
-        - "path1"
-        - "path2"
-        allowContentType:
-        - "mytype2"
-        - "mytype"
+      allowPath:
+       - "path1"
+       - "path2"
+      allowContentType:
+       - "mytype2"
+       - "mytype"
   - name: "option_4"
     label: "Option 4"
     defaultOption: false
@@ -171,7 +170,7 @@ exports.updateWithForm = function () {
         'description': 'My description',
         'createdTime': '2021-09-25T10:00:00Z',
         'modifiedTime': '2021-09-25T10:00:00Z',
-        'resource': 'superType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"OptionSet\"\n  name: \"radioOptionSet\"\n  expanded: false\n  label: \"Single selection\"\n  occurrences:\n    min: 0\n    max: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    defaultOption: false\n    items:\n    - type: \"TextLine\"\n      name: \"text-input\"\n      label: \"Name\"\n      helpText: \"Text input\"\n      occurrences:\n        min: 1\n        max: 1\n      default: \"something\"\n    - type: \"ItemSet\"\n      name: \"minimum3\"\n      label: \"Minimum 3\"\n      occurrences:\n        min: 3\n        max: 0\n      items:\n      - type: \"TextLine\"\n        name: \"label\"\n        label: \"Label\"\n        occurrences:\n          min: 0\n          max: 1\n      - type: \"TextLine\"\n        name: \"value\"\n        label: \"Value\"\n        occurrences:\n          min: 0\n          max: 1\n  - name: \"option_2\"\n    label: \"Option 2\"\n    defaultOption: false\n  selected:\n    min: 1\n    max: 1\n- type: \"OptionSet\"\n  name: \"checkOptionSet\"\n  expanded: true\n  label: \"Multi selection\"\n  occurrences:\n    min: 0\n    max: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    defaultOption: true\n  - name: \"option_2\"\n    label: \"Option 2\"\n    defaultOption: true\n    items:\n    - type: \"OptionSet\"\n      name: \"nestedOptionSet\"\n      expanded: false\n      label: \"Multi selection\"\n      occurrences:\n        min: 1\n        max: 1\n      options:\n      - name: \"option2_1\"\n        label: \"Option 1_1\"\n        defaultOption: false\n        items:\n        - type: \"TextLine\"\n          name: \"name\"\n          label: \"Name\"\n          helpText: \"Text input\"\n          occurrences:\n            min: 1\n            max: 1\n      - name: \"option2_2\"\n        label: \"Option 2_2\"\n        defaultOption: true\n        items:\n        - type: \"Checkbox\"\n          name: \"myCheckbox\"\n          label: \"my-checkbox\"\n          occurrences:\n            min: 0\n            max: 1\n      selected:\n        min: 2\n        max: 2\n  - name: \"option_3\"\n    label: \"Option 3\"\n    defaultOption: false\n    items:\n    - type: \"ImageSelector\"\n      name: \"imageselector\"\n      label: \"Image selector\"\n      occurrences:\n        min: 1\n        max: 1\n      config:\n        allowPath:\n        - \"path1\"\n        - \"path2\"\n        allowContentType:\n        - \"mytype2\"\n        - \"mytype\"\n  - name: \"option_4\"\n    label: \"Option 4\"\n    defaultOption: false\n    items:\n    - type: \"Double\"\n      name: \"double\"\n      label: \"Double\"\n      occurrences:\n        min: 1\n        max: 1\n    - type: \"Long\"\n      name: \"long\"\n      label: \"Long\"\n      occurrences:\n        min: 0\n        max: 1\n  selected:\n    min: 0\n    max: 3\n',
+        'resource': 'superType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ndisplayName: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"OptionSet\"\n  name: \"radioOptionSet\"\n  expanded: false\n  label: \"Single selection\"\n  occurrences:\n    min: 0\n    max: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    defaultOption: false\n    items:\n    - type: \"TextLine\"\n      name: \"text-input\"\n      label: \"Name\"\n      helpText: \"Text input\"\n      occurrences:\n        min: 1\n        max: 1\n      default: \"something\"\n    - type: \"ItemSet\"\n      name: \"minimum3\"\n      label: \"Minimum 3\"\n      occurrences:\n        min: 3\n        max: 0\n      items:\n      - type: \"TextLine\"\n        name: \"label\"\n        label: \"Label\"\n        occurrences:\n          min: 0\n          max: 1\n      - type: \"TextLine\"\n        name: \"value\"\n        label: \"Value\"\n        occurrences:\n          min: 0\n          max: 1\n  - name: \"option_2\"\n    label: \"Option 2\"\n    defaultOption: false\n  selected:\n    min: 1\n    max: 1\n- type: \"OptionSet\"\n  name: \"checkOptionSet\"\n  expanded: true\n  label: \"Multi selection\"\n  occurrences:\n    min: 0\n    max: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    defaultOption: true\n  - name: \"option_2\"\n    label: \"Option 2\"\n    defaultOption: true\n    items:\n    - type: \"OptionSet\"\n      name: \"nestedOptionSet\"\n      expanded: false\n      label: \"Multi selection\"\n      occurrences:\n        min: 1\n        max: 1\n      options:\n      - name: \"option2_1\"\n        label: \"Option 1_1\"\n        defaultOption: false\n        items:\n        - type: \"TextLine\"\n          name: \"name\"\n          label: \"Name\"\n          helpText: \"Text input\"\n          occurrences:\n            min: 1\n            max: 1\n      - name: \"option2_2\"\n        label: \"Option 2_2\"\n        defaultOption: true\n        items:\n        - type: \"CheckBox\"\n          name: \"myCheckbox\"\n          label: \"my-checkbox\"\n          occurrences:\n            min: 0\n            max: 1\n      selected:\n        min: 2\n        max: 2\n  - name: \"option_3\"\n    label: \"Option 3\"\n    defaultOption: false\n    items:\n    - type: \"ImageSelector\"\n      name: \"imageselector\"\n      label: \"Image selector\"\n      occurrences:\n        min: 1\n        max: 1\n      allowPath:\n       - \"path1\"\n       - \"path2\"\n      allowContentType:\n       - \"mytype2\"\n       - \"mytype\"\n  - name: \"option_4\"\n    label: \"Option 4\"\n    defaultOption: false\n    items:\n    - type: \"Double\"\n      name: \"double\"\n      label: \"Double\"\n      occurrences:\n        min: 1\n        max: 1\n    - type: \"Long\"\n      name: \"long\"\n      label: \"Long\"\n      occurrences:\n        min: 0\n        max: 1\n  selected:\n    min: 0\n    max: 3\n',
         'type': 'CONTENT_TYPE',
         'form': [
             {
@@ -203,7 +202,9 @@ exports.updateWithForm = function () {
                                     'maximum': 1,
                                     'minimum': 1
                                 },
-                                'config': {}
+                                'config': {
+                                    'default': 'something'
+                                }
                             },
                             {
                                 'formItemType': 'ItemSet',

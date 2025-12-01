@@ -6,6 +6,6 @@ occurrences:
   min: 0
   max: 1
 maxLength: 11
-config:
-  default: "Default text goes here"
-  showCounter: true
+default: "Default text goes here"
+showCounter: true
+attributes: { }
