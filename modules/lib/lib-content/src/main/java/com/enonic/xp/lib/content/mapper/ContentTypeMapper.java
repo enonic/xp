@@ -12,7 +12,7 @@ import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.schema.content.ContentType;
-import com.enonic.xp.script.serializer.InputTypeConfigSerializer;
+import com.enonic.xp.script.serializer.ConfigSerializer;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -158,7 +158,7 @@ public final class ContentTypeMapper
 
     private void serializeConfig( final MapGenerator gen, final GenericValue config )
     {
-        InputTypeConfigSerializer.serializeConfig( gen, config );
+        ConfigSerializer.serializeConfig( gen, config );
     }
 
     private void serializeLayout( final MapGenerator gen, final FieldSet fieldSet )

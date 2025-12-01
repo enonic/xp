@@ -7,12 +7,17 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.util.GenericValue;
 
-public final class InputTypeConfigSerializer
+public final class ConfigSerializer
 {
-    public static void serializeConfig( final MapGenerator gen, final GenericValue config )
+    public static void serializeDescriptorConfig( final MapGenerator gen, final GenericValue config )
     {
         gen.map( "config" );
+        serializeConfig( gen, config );
+        gen.end();
+    }
 
+    public static void serializeConfig( final MapGenerator gen, final GenericValue config )
+    {
         config.getProperties().forEach( e -> {
             final String propertyName = e.getKey();
             if ( e.getValue().getType() == GenericValue.Type.LIST )
@@ -29,8 +34,6 @@ public final class InputTypeConfigSerializer
                 serializeConfigProperty( gen, propertyName, e.getValue(), false );
             }
         } );
-
-        gen.end();
     }
 
     private static void serializeConfigProperty( final MapGenerator gen, final String propertyName, final GenericValue property,
@@ -98,7 +101,7 @@ public final class InputTypeConfigSerializer
             case STRING -> propertyValue.asString();
             case BOOLEAN -> propertyValue.asBoolean();
             case NUMBER -> propertyValue.asDouble();
-            case LIST -> propertyValue.asList().stream().map( InputTypeConfigSerializer::unwrapScalarOrComposite ).toList();
+            case LIST -> propertyValue.asList().stream().map( ConfigSerializer::unwrapScalarOrComposite ).toList();
             case OBJECT -> propertyValue.getProperties()
                 .stream()
                 .collect( Collectors.toMap( Map.Entry::getKey, e -> unwrapScalarOrComposite( e.getValue() ), ( a, b ) -> a,

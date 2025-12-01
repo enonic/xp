@@ -61,9 +61,7 @@ assert.assertJsonEquals({
                 'maximum': 0,
                 'minimum': 0
             },
-            'config': {
-                'context': 'true'
-            }
+            'context': 'true'
         }
     ],
     config: {

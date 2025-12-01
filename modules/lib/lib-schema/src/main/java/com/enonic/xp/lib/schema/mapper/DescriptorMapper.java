@@ -33,7 +33,7 @@ public abstract class DescriptorMapper<T extends ComponentDescriptor>
         gen.value( "type", getType() );
 
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getConfig() );
-        DynamicSchemaSerializer.serializeConfig( gen, descriptor.getSchemaConfig() );
+        DynamicSchemaSerializer.serializeDescriptorConfig( gen, descriptor.getSchemaConfig() );
     }
 
     protected abstract String getType();

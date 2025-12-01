@@ -202,9 +202,7 @@ exports.updateWithForm = function () {
                                     'maximum': 1,
                                     'minimum': 1
                                 },
-                                'config': {
-                                    'default': 'something'
-                                }
+                                'default': 'something',
                             },
                             {
                                 'formItemType': 'ItemSet',
@@ -224,7 +222,6 @@ exports.updateWithForm = function () {
                                             'maximum': 1,
                                             'minimum': 0
                                         },
-                                        'config': {}
                                     },
                                     {
                                         'formItemType': 'Input',
@@ -235,7 +232,6 @@ exports.updateWithForm = function () {
                                             'maximum': 1,
                                             'minimum': 0
                                         },
-                                        'config': {}
                                     }
                                 ]
                             }
@@ -303,7 +299,6 @@ exports.updateWithForm = function () {
                                                     'maximum': 1,
                                                     'minimum': 1
                                                 },
-                                                'config': {}
                                             }
                                         ]
                                     },
@@ -321,7 +316,6 @@ exports.updateWithForm = function () {
                                                     'maximum': 1,
                                                     'minimum': 0
                                                 },
-                                                'config': {}
                                             }
                                         ]
                                     }
@@ -343,16 +337,14 @@ exports.updateWithForm = function () {
                                     'maximum': 1,
                                     'minimum': 1
                                 },
-                                'config': {
-                                    'allowPath': [
-                                        'path1',
-                                        'path2'
-                                    ],
-                                    'allowContentType': [
-                                        'mytype2',
-                                        'mytype'
-                                    ]
-                                }
+                                'allowPath': [
+                                    'path1',
+                                    'path2'
+                                ],
+                                'allowContentType': [
+                                    'mytype2',
+                                    'mytype'
+                                ],
                             }
                         ]
                     },
@@ -370,7 +362,6 @@ exports.updateWithForm = function () {
                                     'maximum': 1,
                                     'minimum': 1
                                 },
-                                'config': {}
                             },
                             {
                                 'formItemType': 'Input',
@@ -381,7 +372,6 @@ exports.updateWithForm = function () {
                                     'maximum': 1,
                                     'minimum': 0
                                 },
-                                'config': {}
                             }
                         ]
                     }
