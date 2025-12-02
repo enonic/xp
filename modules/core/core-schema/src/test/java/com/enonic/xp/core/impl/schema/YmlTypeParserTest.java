@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -22,6 +23,18 @@ public class YmlTypeParserTest
     private final YmlParserBase parser = new YmlParserBase();
 
     private static final ApplicationKey CURRENT_APPLICATION = ApplicationKey.from( "myapp" );
+
+    private JsonSchemaServiceImpl validator;
+
+    @BeforeEach
+    void setUp()
+    {
+        final JsonSchemaRegistry registry = new JsonSchemaRegistry();
+        registry.activate();
+
+        validator = new JsonSchemaServiceImpl( registry );
+        validator.activate();
+    }
 
     @Test
     void testParseRadioButton()
@@ -47,6 +60,8 @@ public class YmlTypeParserTest
         throws Exception
     {
         final String yaml = readAsString( "/descriptors/textline-type.yml" );
+
+        validator.isSchemaValid( "https://json-schema.enonic.com/8.0.0/textline.schema.json", yaml );
 
         final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 

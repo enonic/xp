@@ -37,7 +37,6 @@ public class FormItemDeserializer
             case "FormFragment" -> mapper.treeToValue( node, FormFragment.class );
             default ->
             {
-//                final InputYml inputYml = mapper.treeToValue( node, InputRegistry.getInputType( type ) );
                 final InputYml inputYml = mapper.treeToValue( node, InputYml.class );
                 yield inputYml.convertToInput();
             }

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/item-set.schema.json",
+  "allOf": [
+    {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form-item.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "label": {
+          "$ref": "https://json-schema.enonic.com/8.0.0/localized-text.schema.json"
+        },
+        "helpText": {
+          "$ref": "https://json-schema.enonic.com/8.0.0/localized-text.schema.json"
+        },
+        "occurrences": {
+          "$ref": "https://json-schema.enonic.com/8.0.0/occurrences.schema.json"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "https://json-schema.enonic.com/8.0.0/form-items.schema.json"
+          }
+        },
+        "type": {
+          "const": "ItemSet"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
