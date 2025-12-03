@@ -16,9 +16,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * A generic value wrapper that can hold different types of values such as String, Number, Boolean, List, and Map, similar to JSON values.
+ * It provides methods to access and convert the underlying value in a type-safe manner.
+ * It is serializable and can be constructed using static factory methods or builders for lists and objects.
+ * Null values are not supported.
+ */
 public final class GenericValue
     implements Serializable
 {
+    private static final GenericValue TRUE = new GenericValue( Boolean.TRUE );
+
+    private static final GenericValue FALSE = new GenericValue( Boolean.FALSE );
+
     @Serial
     private static final long serialVersionUID = 0;
 
@@ -29,28 +39,55 @@ public final class GenericValue
         this.value = Objects.requireNonNull( value );
     }
 
+    /**
+     * Gets a property from this GenericValue assuming it is an object (map).
+     *
+     * @param propertyName the name of the property to get
+     * @return the property value
+     * @throws NoSuchElementException if this GenericValue is not an object or if the property does not exist
+     */
+    public GenericValue property( final String propertyName )
+    {
+        return optional( propertyName ).orElseThrow( () -> new NoSuchElementException( propertyName ) );
+    }
+
+    /**
+     * Gets an optional property from this GenericValue assuming it is an object (map).
+     *
+     * @param propertyName the name of the property to get
+     * @return an Optional containing the property value if it exists, or an empty Optional if it does not exist or if this GenericValue is not an object
+     */
     public Optional<GenericValue> optional( final String propertyName )
     {
         return whenMapOrElse( m -> Optional.ofNullable( m.get( propertyName ) ), Optional::empty );
     }
 
-    public GenericValue property( final String propertyName )
-    {
-        return whenMapOrElse( m -> m.get( propertyName ), () -> {
-            throw new NoSuchElementException();
-        } );
-    }
-
-    public Set<Map.Entry<String, GenericValue>> getProperties()
+    /**
+     * Gets all properties from this GenericValue assuming it is an object (map).
+     *
+     * @return a set of map entries representing the properties, or an empty set if this GenericValue is not an object
+     */
+    public Set<Map.Entry<String, GenericValue>> properties()
     {
         return whenMapOrElse( Map::entrySet, ImmutableSet::of );
     }
 
+    /**
+     * Gets all elements from this GenericValue assuming it is a list (array).
+     *
+     * @return a list of GenericValue elements, or a list containing this GenericValue if it is not a list
+     */
     public List<GenericValue> asList()
     {
         return whenListOrElse( Function.identity(), () -> ImmutableList.of( this ) );
     }
 
+    /**
+     * Converts this GenericValue to a string representation.
+     *
+     * @return the string representation of the value
+     * @throws IllegalStateException if the value is not of a type that can be converted to a string ( object or list )
+     */
     public String asString()
     {
         return switch ( value )
@@ -64,6 +101,13 @@ public final class GenericValue
         };
     }
 
+    /**
+     * Converts this GenericValue to a double representation.
+     *
+     * @return the double representation of the value
+     * @throws IllegalStateException if the value is not of a type that can be converted to a double ( boolean, object or list )
+     * @throws NumberFormatException if the value is a string that cannot be parsed as a double
+     */
     public double asDouble()
     {
         return switch ( value )
@@ -76,6 +120,15 @@ public final class GenericValue
         };
     }
 
+    /**
+     * Converts this GenericValue to an integer representation.
+     * double values decimal part will be truncated.
+     *
+     * @return the integer representation of the value
+     * @throws IllegalStateException if the value is not of a type that can be converted to an integer ( boolean, object or list )
+     * @throws NumberFormatException if the value is a string that cannot be parsed as an integer
+     * @throws ArithmeticException   if the value is a long or double that is out of integer range
+     */
     public int asInteger()
     {
         return switch ( value )
@@ -88,6 +141,14 @@ public final class GenericValue
         };
     }
 
+    /**
+     * Converts this GenericValue to a long representation.
+     * double values decimal part will be truncated.
+     *
+     * @return the long representation of the value
+     * @throws IllegalStateException if the value is not of a type that can be converted to a long ( boolean, object or list )
+     * @throws NumberFormatException if the value is a string that cannot be parsed as a long
+     */
     public long asLong()
     {
         return switch ( value )
@@ -100,6 +161,12 @@ public final class GenericValue
         };
     }
 
+    /**
+     * Converts this GenericValue to a boolean representation.
+     *
+     * @return the boolean representation of the value
+     * @throws IllegalStateException if the value is not of a type that can be converted to a boolean ( string, number, object or list )
+     */
     public boolean asBoolean()
     {
         return switch ( value )
@@ -109,11 +176,22 @@ public final class GenericValue
         };
     }
 
+    /**
+     * A utility method to convert this GenericValue into a list of strings. Single values are converted into a list with one string element.
+     *
+     * @return list of strings
+     * @throws IllegalStateException if the values are not of a type that can be converted to a string ( object or list )
+     */
     public List<String> asStringList()
     {
         return asList().stream().map( GenericValue::asString ).collect( ImmutableList.toImmutableList() );
     }
 
+    /**
+     * Converts this GenericValue into its raw Java representation.
+     *
+     * @return the raw Java object: String, Long, Integer, Double, Boolean, List, or Map
+     */
     public Object rawJava()
     {
         return switch ( value )
@@ -125,11 +203,17 @@ public final class GenericValue
             case Boolean b -> b;
             case List<?> l -> asList().stream().map( GenericValue::rawJava ).collect( ImmutableList.toImmutableList() );
             case Map<?, ?> m ->
-                getProperties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().rawJava() ) );
+                properties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().rawJava() ) );
             default -> throw new AssertionError( value );
         };
     }
 
+    /**
+     * Converts this GenericValue into its raw JavaScript-compatible representation.
+     * The difference from rawJava() is that Long values are converted to Double to accommodate JavaScript's number type.
+     *
+     * @return the raw Java object: String, Double, Integer, Boolean, List, or Map
+     */
     public Object rawJs()
     {
         return switch ( value )
@@ -141,11 +225,16 @@ public final class GenericValue
             case Boolean b -> b;
             case List<?> l -> asList().stream().map( GenericValue::rawJs ).collect( ImmutableList.toImmutableList() );
             case Map<?, ?> m ->
-                getProperties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().rawJs() ) );
+                properties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().rawJs() ) );
             default -> throw new AssertionError( value );
         };
     }
 
+    /**
+     * Returns the type of value stored in this GenericValue.
+     *
+     * @return type of value
+     */
     public Type getType()
     {
         return switch ( value )
@@ -173,26 +262,56 @@ public final class GenericValue
         return value instanceof List ? then.apply( (List<GenericValue>) value ) : orElse.get();
     }
 
+    /**
+     * Creates a GenericValue wrapping a number.
+     *
+     * @param value number value
+     * @return GenericValue wrapping the number
+     */
     public static GenericValue numberValue( final long value )
     {
-        return new GenericValue( (int) value == value ? (int) value : value );
+        return (int) value == value ? new GenericValue( (int) value ) : new GenericValue( value );
     }
 
+    /**
+     * Creates a GenericValue wrapping a number.
+     *
+     * @param value number value
+     * @return GenericValue wrapping the number
+     */
     public static GenericValue numberValue( final double value )
     {
         return new GenericValue( value );
     }
 
+    /**
+     * Creates a GenericValue wrapping a string.
+     *
+     * @param value string value
+     * @return GenericValue wrapping the string
+     */
     public static GenericValue stringValue( final String value )
     {
         return new GenericValue( value );
     }
 
+    /**
+     * Creates a GenericValue wrapping a boolean.
+     *
+     * @param value boolean value
+     * @return GenericValue wrapping the boolean
+     */
     public static GenericValue booleanValue( final boolean value )
     {
-        return new GenericValue( value );
+        return value ? TRUE : FALSE;
     }
 
+    /**
+     * A utility method to create a GenericValue representing an array of strings.
+     *
+     * @param value collection of strings
+     * @return GenericValue representing the array of strings
+     */
     public static GenericValue stringArray( final Collection<String> value )
     {
         final var list = list();
@@ -200,6 +319,10 @@ public final class GenericValue
         return list.build();
     }
 
+    /**
+     * A utility method to convert a raw Java object into a GenericValue.
+     * * Supported types are String, Boolean, Byte, Short, Integer, Long, Float, Double, Collection, and Map.
+     */
     public static GenericValue fromRawJava( final Object obj )
     {
         return switch ( obj )
@@ -212,10 +335,8 @@ public final class GenericValue
             case Long l -> GenericValue.numberValue( l );
             case Float f -> GenericValue.numberValue( f );
             case Double d -> GenericValue.numberValue( d );
-
             case Collection<?> c ->
             {
-                // TODO prevent heterogeneous collections
                 final var builder = GenericValue.list();
                 c.stream().map( GenericValue::fromRawJava ).forEach( builder::add );
                 yield builder.build();
@@ -230,16 +351,29 @@ public final class GenericValue
         };
     }
 
+    /**
+     * Creates a builder for a GenericValue representing a list (array).
+     *
+     * @return ArrayBuilder instance
+     */
     public static ListBuilder list()
     {
         return new ListBuilder();
     }
 
+    /**
+     * Creates a builder for a GenericValue representing an object (map).
+     *
+     * @return ObjectBuilder instance
+     */
     public static ObjectBuilder object()
     {
         return new ObjectBuilder();
     }
 
+    /**
+     * The type of value stored in this GenericValue.
+     */
     public enum Type
     {
         STRING, NUMBER, BOOLEAN, LIST, OBJECT
@@ -257,6 +391,9 @@ public final class GenericValue
         return Objects.hashCode( value );
     }
 
+    /**
+     * Builder for creating GenericValue instances representing lists (arrays).
+     */
     public static final class ListBuilder
     {
         private final ImmutableList.Builder<GenericValue> builder = ImmutableList.builder();
@@ -265,18 +402,32 @@ public final class GenericValue
         {
         }
 
+        /**
+         * Adds a GenericValue to the list.
+         *
+         * @param value GenericValue to add
+         * @return the ListBuilder instance for chaining
+         */
         public ListBuilder add( final GenericValue value )
         {
             builder.add( value );
             return this;
         }
 
+        /**
+         * Builds the GenericValue representing the list.
+         *
+         * @return GenericValue representing the list
+         */
         public GenericValue build()
         {
             return new GenericValue( builder.build() );
         }
     }
 
+    /**
+     * Builder for creating GenericValue instances representing objects (maps).
+     */
     public static final class ObjectBuilder
     {
         private final ImmutableMap.Builder<String, GenericValue> builder = ImmutableMap.builder();
@@ -285,30 +436,76 @@ public final class GenericValue
         {
         }
 
+        /**
+         * Puts a string key-value pair into the object.
+         *
+         * @param key   the key
+         * @param value the string value
+         * @return the ObjectBuilder instance for chaining
+         */
         public ObjectBuilder put( final String key, final String value )
         {
             builder.put( Objects.requireNonNull( key ), GenericValue.stringValue( value ) );
             return this;
         }
 
+        /**
+         * Puts a long key-value pair into the object.
+         *
+         * @param key   the key
+         * @param value the long value
+         * @return the ObjectBuilder instance for chaining
+         */
         public ObjectBuilder put( final String key, final long value )
         {
             builder.put( Objects.requireNonNull( key ), GenericValue.numberValue( value ) );
             return this;
         }
 
+        /**
+         * Puts a long key-value pair into the object.
+         *
+         * @param key   the key
+         * @param value the double value
+         * @return the ObjectBuilder instance for chaining
+         */
+        public ObjectBuilder put( final String key, final double value )
+        {
+            builder.put( Objects.requireNonNull( key ), GenericValue.numberValue( value ) );
+            return this;
+        }
+
+        /**
+         * Puts a long key-value pair into the object.
+         *
+         * @param key   the key
+         * @param value the boolean value
+         * @return the ObjectBuilder instance for chaining
+         */
+        public ObjectBuilder put( final String key, final boolean value )
+        {
+            builder.put( Objects.requireNonNull( key ), GenericValue.booleanValue( value ) );
+            return this;
+        }
+
+        /**
+         * Puts a GenericValue key-value pair into the object.
+         *
+         * @param key   the key
+         * @param value the GenericValue
+         * @return the ObjectBuilder instance for chaining
+         */
         public ObjectBuilder put( final String key, final GenericValue value )
         {
             builder.put( Objects.requireNonNull( key ), Objects.requireNonNull( value ) );
             return this;
         }
 
-        public ObjectBuilder putArray( final String key, final List<String> value )
-        {
-            builder.put( Objects.requireNonNull( key ), GenericValue.stringArray( value ) );
-            return this;
-        }
-
+        /**
+         * Builds the GenericValue representing the object.
+         *
+         * @return GenericValue representing the object
+         */
         public GenericValue build()
         {
             return new GenericValue( ImmutableMap.copyOf( builder.build() ) );
