@@ -9,15 +9,10 @@ import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.schema.mixin.MixinService;
 import com.enonic.xp.task.TaskDescriptor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TaskDescriptorLoaderTest
     extends ApplicationTestSupport
@@ -28,10 +23,7 @@ class TaskDescriptorLoaderTest
     @Override
     protected void initialize()
     {
-        MixinService mixinService = mock( MixinService.class );
-        when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
-
-        this.loader = new TaskDescriptorLoader( this.resourceService, mixinService );
+        this.loader = new TaskDescriptorLoader( this.resourceService );
         addApplication( "myapp1", "/apps/myapp1" );
     }
 
@@ -73,7 +65,7 @@ class TaskDescriptorLoaderTest
         final DescriptorKey descriptorKey = DescriptorKey.from( "myapp1:task1" );
 
         final ResourceKey resourceKey = this.loader.toResource( descriptorKey );
-        assertEquals( "myapp1:/tasks/task1/task1.xml", resourceKey.toString() );
+        assertEquals( "myapp1:/tasks/task1/task1.yml", resourceKey.toString() );
 
         final Resource resource = this.resourceService.getResource( resourceKey );
         final TaskDescriptor descriptor = this.loader.load( descriptorKey, resource );
@@ -81,6 +73,6 @@ class TaskDescriptorLoaderTest
         assertEquals( "MyTask", descriptor.getDescription() );
 
         Input formItem = descriptor.getConfig().getInput( "param1" );
-        assertEquals( " something ", formItem.getDefaultValue().getRootValue() );
+        assertTrue( formItem.getInputTypeConfig().optional( "default" ).isPresent() );
     }
 }

@@ -12,11 +12,11 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Contents;
-import com.enonic.xp.content.ExtraData;
-import com.enonic.xp.content.ExtraDatas;
+import com.enonic.xp.content.Mixin;
+import com.enonic.xp.content.Mixins;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.schema.xdata.XDataName;
+import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.util.Reference;
 
@@ -39,11 +39,10 @@ class ContentOutboundDependenciesIdsResolverTest
 
     private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName )
     {
-        return this.createContent( id, data, contentTypeName, ExtraDatas.empty() );
+        return this.createContent( id, data, contentTypeName, Mixins.empty() );
     }
 
-    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName,
-                                   final ExtraDatas extraDatas )
+    private Content createContent( final String id, final PropertyTree data, final ContentTypeName contentTypeName, final Mixins mixins )
     {
         return Content.create().
             id( ContentId.from( id ) ).
@@ -53,8 +52,7 @@ class ContentOutboundDependenciesIdsResolverTest
             valid( true ).
             creator( PrincipalKey.from( "user:system:admin" ) ).
             owner( PrincipalKey.from( "user:myStore:me" ) ).
-            language( Locale.ENGLISH ).
-            extraDatas( extraDatas ).
+            language( Locale.ENGLISH ).mixins( mixins ).
             displayName( "My Content" ).
             modifier( PrincipalKey.from( "user:system:admin" ) ).
             type( contentTypeName ).
@@ -115,7 +113,7 @@ class ContentOutboundDependenciesIdsResolverTest
     }
 
     @Test
-    void resolve_outbound_from_xdata()
+    void resolve_outbound_from_mixin()
     {
         final PropertyTree data = new PropertyTree();
 
@@ -131,7 +129,7 @@ class ContentOutboundDependenciesIdsResolverTest
         data.addReference( "refToMyself", Reference.from( "contentId" ) );
 
         final Content content = createContent( "contentId", new PropertyTree(), ContentTypeName.site(),
-                                               ExtraDatas.create().add( new ExtraData( XDataName.from( "x-data" ), data ) ).build() );
+                                               Mixins.create().add( new Mixin( MixinName.from( "mixinName" ), data ) ).build() );
 
         Mockito.when( contentService.getByIds( Mockito.any() ) ).thenReturn(
             Contents.from( folderRefContent1, folderRefContent2, siteRefContent1 ) );

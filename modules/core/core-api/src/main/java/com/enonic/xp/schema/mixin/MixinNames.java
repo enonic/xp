@@ -1,7 +1,5 @@
 package com.enonic.xp.schema.mixin;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -26,16 +24,6 @@ public final class MixinNames
         return EMPTY;
     }
 
-    public static MixinNames from( final String... mixinNames )
-    {
-        return from(  Arrays.asList( mixinNames ) );
-    }
-
-    public static MixinNames from( final Collection<String> mixinNames )
-    {
-        return mixinNames.stream().map( MixinName::from ).collect( collector() );
-    }
-
     public static MixinNames from( final MixinName... mixinNames )
     {
         return fromInternal( ImmutableSet.copyOf( mixinNames ) );
@@ -43,16 +31,16 @@ public final class MixinNames
 
     public static MixinNames from( final Iterable<MixinName> mixinNames )
     {
-        return mixinNames instanceof MixinNames m ? m : fromInternal( ImmutableSet.copyOf( mixinNames ) );
-    }
-
-    private static MixinNames fromInternal( final ImmutableSet<MixinName> mixinNames )
-    {
-        return mixinNames.isEmpty() ? EMPTY : new MixinNames( mixinNames );
+        return mixinNames instanceof MixinNames x ? x : fromInternal( ImmutableSet.copyOf( mixinNames ) );
     }
 
     public static Collector<MixinName, ?, MixinNames> collector()
     {
         return Collectors.collectingAndThen( ImmutableSet.toImmutableSet(), MixinNames::fromInternal );
+    }
+
+    private static MixinNames fromInternal( final ImmutableSet<MixinName> mixinNames )
+    {
+        return mixinNames.isEmpty() ? EMPTY : new MixinNames( mixinNames );
     }
 }

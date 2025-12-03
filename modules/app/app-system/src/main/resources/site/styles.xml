@@ -1,5 +1,0 @@
-<styles css="styles/styles.css" xmlns="urn:enonic:xp:model:1.0">
-  <image name="editor-style-original">
-    <display-name i18n="style.editor.original">Original (no image processing)</display-name>
-  </image>
-</styles>

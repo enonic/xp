@@ -20,14 +20,12 @@ import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.xml.XmlException;
-import com.enonic.xp.xml.parser.XmlMacroDescriptorParser;
 
 @Component
 public final class MacroDescriptorServiceImpl
     implements MacroDescriptorService
 {
-    private static final String PATH = "/site/macros";
+    private static final String PATH = "/cms/macros";
 
     private final BuiltinMacroDescriptors builtinMacrosDescriptors = new BuiltinMacroDescriptors();
 
@@ -122,27 +120,10 @@ public final class MacroDescriptorServiceImpl
             .build();
     }
 
-    private void parseXml( final Resource resource, final MacroDescriptor.Builder builder )
-    {
-        try
-        {
-            final XmlMacroDescriptorParser parser = new XmlMacroDescriptorParser();
-            parser.builder( builder );
-            parser.currentApplication( resource.getKey().getApplicationKey() );
-            parser.source( resource.readString() );
-            parser.parse();
-        }
-        catch ( final Exception e )
-        {
-            throw new XmlException( e, "Could not load macro descriptor [" + resource.getKey() + "]: " + e.getMessage() );
-        }
-    }
-
     private MacroDescriptor loadDescriptor( final MacroKey key, final Resource resource )
     {
-        final MacroDescriptor.Builder builder = MacroDescriptor.create();
-
-        parseXml( resource, builder );
+        final MacroDescriptor.Builder builder =
+            YmlMacroDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() );
 
         builder.key( key ).icon( IconLoader.loadIcon( key, this.resourceService, PATH ) );
 

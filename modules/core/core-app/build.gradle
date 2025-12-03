@@ -1,6 +1,8 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
+    implementation project( ':core:core-schema' )
+    implementation project( ':core:core-content' )
     implementation libs.osgi.service.cm
 
     testFixturesApi project( ':core:core-api' )

@@ -1,0 +1,24 @@
+processors:
+  - name: "background-color-filter"
+    order: 10
+  - name: "branch-filter"
+    order: 10
+  - name: "app-header-filter"
+    order: 11
+
+mappings:
+  - filter: "/site/services/image.js"
+    service: "image"
+    order: 10
+  - pattern: "/my-controller"
+    controller: "/site/mappings/my-controller.js"
+    order: 10
+  - filter: "/site/mappings/my-filter.js"
+    pattern: "/my-filter"
+    invertPattern: true
+    match: "type:'portal:fragment'"
+    order: 10
+
+apis:
+  - "admin:extension"
+  - "content"

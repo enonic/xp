@@ -1,0 +1,10 @@
+displayName: "FormFragment 1"
+form:
+- type: "TextLine"
+  name: "text1"
+  label: "Text 1"
+  occurrences:
+    min: 0
+    max: 1
+- type: "FormFragment"
+  name: "myapp2:inline2"

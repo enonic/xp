@@ -220,7 +220,6 @@ class MacroInstructionTest
         return Input.create().
             inputType( InputTypeName.TEXT_LINE ).
             label( label ).
-            name( name ).
-            immutable( true );
+            name( name );
     }
 }

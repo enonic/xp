@@ -275,7 +275,7 @@ exports.patchSiteSingleDescriptor = function () {
     assert.assertJsonEquals(expect, result.results[0].content.data.siteConfig);
 };
 
-exports.patchNotMappedXDataFieldName = function () {
+exports.patchNotMappedMixinsFieldName = function () {
 
     var result = content.patch({
         key: '/a/b/mycontent',

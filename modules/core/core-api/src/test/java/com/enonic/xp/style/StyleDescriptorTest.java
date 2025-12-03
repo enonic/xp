@@ -61,7 +61,7 @@ class StyleDescriptorTest
     void testToResourceKey()
     {
         final ResourceKey resourceKey = StyleDescriptor.toResourceKey( ApplicationKey.from( "myapp" ) );
-        assertEquals( "myapp:/site/styles.xml", resourceKey.toString() );
+        assertEquals( "myapp:/cms/styles/image.yml", resourceKey.toString() );
     }
 
     @Test

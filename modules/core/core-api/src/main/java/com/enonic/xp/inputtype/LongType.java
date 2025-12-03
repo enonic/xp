@@ -8,9 +8,7 @@ import com.enonic.xp.data.Property;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
-import com.enonic.xp.form.Input;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import com.enonic.xp.util.GenericValue;
 
 final class LongType
     extends InputTypeBase
@@ -25,35 +23,24 @@ final class LongType
     }
 
     @Override
-    public Value createValue( final Value value, final InputTypeConfig config )
+    public Value createValue( final Value value, final GenericValue config )
     {
         return ValueFactory.newLong( value.asLong() );
     }
 
     @Override
-    public Value createDefaultValue( final Input input )
-    {
-        final String defaultValue = input.getDefaultValue().getRootValue();
-        if ( !isNullOrEmpty( defaultValue ) )
-        {
-            return ValueFactory.newLong( Long.valueOf( defaultValue ) );
-        }
-        return super.createDefaultValue( input );
-    }
-
-    @Override
-    public void validate( final Property property, final InputTypeConfig config )
+    public void validate( final Property property, final GenericValue config )
     {
         validateType( property, ValueTypes.LONG );
         validateMin( property, config );
         validateMax( property, config );
     }
 
-    private void validateMin( final Property property, final InputTypeConfig config )
+    private void validateMin( final Property property, final GenericValue config )
     {
         try
         {
-            final Long min = config.getValue( "min", Long.class );
+            final Long min = getLongValueFromConfig( config, "min" );
             final Long value = property.getLong();
 
             if ( min != null && value != null )
@@ -69,11 +56,11 @@ final class LongType
         }
     }
 
-    private void validateMax( final Property property, final InputTypeConfig config )
+    private void validateMax( final Property property, final GenericValue config )
     {
         try
         {
-            final Long max = config.getValue( "max", Long.class );
+            final Long max = getLongValueFromConfig( config, "max" );
             final Long value = property.getLong();
 
             if ( max != null && value != null )
@@ -85,5 +72,10 @@ final class LongType
         {
             LOG.warn( "Cannot convert 'max' config to Long", e );
         }
+    }
+
+    private Long getLongValueFromConfig( final GenericValue config, final String key )
+    {
+        return config.optional( key ).map( GenericValue::asLong ).orElse( null );
     }
 }

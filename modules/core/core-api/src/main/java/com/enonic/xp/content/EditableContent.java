@@ -17,7 +17,7 @@ public final class EditableContent
 
     public PropertyTree data;
 
-    public ExtraDatas extraDatas;
+    public Mixins mixins;
 
     public EditablePage page;
 
@@ -36,7 +36,7 @@ public final class EditableContent
         this.source = source;
         this.displayName = source.getDisplayName();
         this.data = source.getData().copy();
-        this.extraDatas = source.getAllExtraData().copy();
+        this.mixins = source.getMixins().copy();
         this.page = source.getPage() != null ? new EditablePage( source.getPage() ) : null;
         this.owner = source.getOwner();
         this.language = source.getLanguage();
@@ -50,7 +50,7 @@ public final class EditableContent
         return Content.create( this.source )
             .displayName( displayName )
             .data( data )
-            .extraDatas( extraDatas ).page( page != null ? page.build() : null )
+            .mixins( mixins ).page( page != null ? page.build() : null )
             .owner( owner )
             .language( language )
             .publishInfo( buildPublishInfo() )

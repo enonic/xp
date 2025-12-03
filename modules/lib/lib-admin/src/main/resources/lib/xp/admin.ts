@@ -33,10 +33,10 @@ interface AdminLibHelper {
     getHomeToolUrl(type?: string): string;
 }
 
-interface WidgetUrlHandler {
+interface AdminExtensionUrlHandler {
     setApplication(value: string): void;
 
-    setWidget(value: string): void;
+    setExtension(value: string): void;
 
     setUrlType(value?: string | null): void;
 
@@ -99,6 +99,8 @@ export interface WidgetUrlParams {
 }
 
 /**
+ * @deprecated Use `extensionUrl` instead. This function will be removed in future versions.
+ *
  * Returns the URL for a widget.
  *
  * @param {object} [params] Parameter object
@@ -113,10 +115,42 @@ export function widgetUrl(params: WidgetUrlParams): string {
     checkRequired(params, 'application');
     checkRequired(params, 'widget');
 
-    const bean: WidgetUrlHandler = __.newBean<WidgetUrlHandler>('com.enonic.xp.lib.admin.WidgetUrlHandler');
+    const extensionParams: ExtensionUrlParams = {
+        application: params.application,
+        extension: params.widget,
+        type: params.type,
+        params: params.params,
+    };
+
+    return extensionUrl(extensionParams);
+}
+
+export interface ExtensionUrlParams {
+    application: string;
+    extension: string;
+    type?: 'server' | 'absolute';
+    params?: object;
+}
+
+/**
+ * Returns the URL for an extension.
+ *
+ * @param {object} [params] Parameter object
+ * @param {string} params.application Application to reference to an extension.
+ * @param {string} params.extension Name of the extension.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {object} [params.params] Custom query parameters to append to the URL.
+ *
+ * @returns {string} URL.
+ */
+export function extensionUrl(params: ExtensionUrlParams): string {
+    checkRequired(params, 'application');
+    checkRequired(params, 'extension');
+
+    const bean: AdminExtensionUrlHandler = __.newBean<AdminExtensionUrlHandler>('com.enonic.xp.lib.admin.AdminExtensionUrlHandler');
 
     bean.setApplication(params.application);
-    bean.setWidget(params.widget);
+    bean.setExtension(params.extension);
     bean.setUrlType(__.nullOrValue(params.type));
     bean.addQueryParams(__.toScriptValue(params.params));
 

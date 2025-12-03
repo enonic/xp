@@ -185,6 +185,13 @@ public abstract class BaseSchema<T extends BaseSchemaName>
             return getThis();
         }
 
+        public T displayName( LocalizedText text )
+        {
+            this.displayName = text.text();
+            this.displayNameI18nKey = text.i18n();
+            return getThis();
+        }
+
         public T description( String value )
         {
             this.description = value;
@@ -194,6 +201,13 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         public T descriptionI18nKey( final String descriptionI18nKey )
         {
             this.descriptionI18nKey = descriptionI18nKey;
+            return getThis();
+        }
+
+        public T description( LocalizedText text )
+        {
+            this.description = text.text();
+            this.descriptionI18nKey = text.i18n();
             return getThis();
         }
 

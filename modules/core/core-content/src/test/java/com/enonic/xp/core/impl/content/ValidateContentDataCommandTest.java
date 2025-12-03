@@ -11,7 +11,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
-import com.enonic.xp.core.impl.content.validate.ExtraDataValidator;
+import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
 import com.enonic.xp.core.impl.content.validate.SiteConfigsValidator;
 import com.enonic.xp.data.PropertyTree;
@@ -20,17 +20,16 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
-import com.enonic.xp.schema.xdata.XDataService;
+import com.enonic.xp.schema.mixin.MixinService;
+import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.site.CmsService;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
-import com.enonic.xp.site.SiteDescriptor;
-import com.enonic.xp.site.SiteService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -40,16 +39,16 @@ class ValidateContentDataCommandTest
 {
     private ContentTypeService contentTypeService;
 
-    private XDataService xDataService;
+    private MixinService mixinService;
 
-    private SiteService siteService;
+    private CmsService cmsService;
 
     @BeforeEach
     void setUp()
     {
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
-        this.xDataService = Mockito.mock( XDataService.class );
-        this.siteService = Mockito.mock( SiteService.class );
+        this.mixinService = Mockito.mock( MixinService.class );
+        this.cmsService = Mockito.mock( CmsService.class );
     }
 
     @Test
@@ -80,7 +79,7 @@ class ValidateContentDataCommandTest
         final ValidationErrors result = executeValidation( content.getData(), contentType.getName() );
         // test
         assertTrue( result.hasErrors() );
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
 
     @Test
@@ -125,12 +124,12 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createCmsDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
 
     @Test
@@ -157,7 +156,7 @@ class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
 
     @Test
@@ -189,19 +188,20 @@ class ValidateContentDataCommandTest
         final ValidationErrors result =
             executeValidation( content.getData(), contentType.getName(), content.getName(), content.getDisplayName() );
 
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
     }
 
-    private SiteDescriptor createSiteDescriptor()
+    private CmsDescriptor createCmsDescriptor()
     {
-        final Form config = Form.create().addFormItem( Input.create()
-                                                           .inputType( InputTypeName.TEXT_LINE )
-                                                           .label( "some-label" )
-                                                           .name( "textInput-1" )
-                                                           .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
-                                                           .immutable( true )
-                                                           .build() ).build();
-        return SiteDescriptor.create().form( config ).build();
+        final Form config = Form.create()
+            .addFormItem( Input.create()
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .label( "some-label" )
+                              .name( "textInput-1" )
+                              .inputTypeProperty( "regexp", "\\d+" )
+                              .build() )
+            .build();
+        return CmsDescriptor.create().applicationKey( ApplicationKey.from( "myapp" ) ).form( config ).build();
     }
 
     @Test
@@ -220,7 +220,7 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createCmsDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
@@ -242,8 +242,8 @@ class ValidateContentDataCommandTest
             .contentName( name )
             .displayName( displayName )
             .contentTypeService( this.contentTypeService )
-            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( siteService ), new OccurrenceValidator(),
-                                         new ExtraDataValidator( xDataService ) ) )
+            .contentValidators( List.of( new ContentNameValidator(), new SiteConfigsValidator( cmsService ), new OccurrenceValidator(),
+                                         new MixinValidator( mixinService ) ) )
             .build()
             .execute();
     }

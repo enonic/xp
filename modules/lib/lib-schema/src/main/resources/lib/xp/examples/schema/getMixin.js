@@ -6,7 +6,7 @@ var assert = require('/lib/xp/testing');
 // BEGIN
 // Fetch virtual mixin type.
 var result = schemaLib.getSchema({
-    name: 'myapp:mymixin',
+    name: 'myapp:mydata',
     type: 'MIXIN'
 });
 
@@ -16,27 +16,12 @@ log.info('Fetched mixin: ' + result.name);
 
 
 assert.assertJsonEquals({
-    name: 'myapp:mymixin',
-    displayName: 'My mixin display name',
-    description: 'My mixin description',
-    createdTime: '2009-01-01T10:00:00Z',
-    creator: 'user:system:anonymous',
-    modifiedTime: '2010-01-01T10:00:00Z',
-    resource: '<mixin><some-data></some-data></mixin>',
+    name: 'media:cameraInfo',
+    displayName: 'Photo Info',
+    displayNameI18nKey: 'media.cameraInfo.displayName',
+    modifiedTime: '1970-01-06T03:07:14.242Z',
+    resource: '<x-data><some-data></some-data></x-data>',
     type: 'MIXIN',
-    form: [
-        {
-            'formItemType': 'Input',
-            'name': 'inputToBeMixedIn',
-            'label': 'Mixed in',
-            'maximize': true,
-            'inputType': 'TextLine',
-            'occurrences': {
-                'maximum': 1,
-                'minimum': 0
-            },
-            'config': {}
-        }
-    ]
+    form: []
 }, result);
 
