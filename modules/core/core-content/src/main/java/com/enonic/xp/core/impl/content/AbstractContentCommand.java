@@ -167,9 +167,7 @@ abstract class AbstractContentCommand
 
     static PrincipalKey getCurrentUserKey()
     {
-        final Context context = ContextAccessor.current();
-
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+        return ContentAttributesHelper.getCurrentUserKey();
     }
 
     protected <T> T runAsAdmin( final Callable<T> callable )
