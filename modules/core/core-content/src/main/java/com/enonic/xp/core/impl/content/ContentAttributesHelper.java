@@ -81,7 +81,7 @@ public class ContentAttributesHelper
     {
         return Attributes.create()
             .attribute( MOVE_KEY )
-            .put( FIELDS_PROPERTY, GenericValue.stringArray( modifiedFields ) )
+            .put( FIELDS_PROPERTY, GenericValue.stringList( modifiedFields ) )
             .put( USER_PROPERTY, getCurrentUserKey().toString() )
             .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
             .end()
@@ -92,7 +92,7 @@ public class ContentAttributesHelper
     {
         return Attributes.create()
             .attribute( UPDATE_KEY )
-            .put( FIELDS_PROPERTY, GenericValue.stringArray( modifiedFields ) )
+            .put( FIELDS_PROPERTY, GenericValue.stringList( modifiedFields ) )
             .put( USER_PROPERTY, getCurrentUserKey().toString() )
             .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
             .end()

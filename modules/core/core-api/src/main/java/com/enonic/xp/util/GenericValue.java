@@ -312,7 +312,7 @@ public final class GenericValue
      * @param value collection of strings
      * @return GenericValue representing the array of strings
      */
-    public static GenericValue stringArray( final Collection<String> value )
+    public static GenericValue stringList( final Collection<String> value )
     {
         final var list = list();
         value.stream().map( GenericValue::stringValue ).forEach( list::add );
@@ -354,7 +354,7 @@ public final class GenericValue
     /**
      * Creates a builder for a GenericValue representing a list (array).
      *
-     * @return ArrayBuilder instance
+     * @return ListBuilder instance
      */
     public static ListBuilder list()
     {

@@ -1,5 +1,6 @@
 package com.enonic.xp.util;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -131,6 +132,20 @@ class GenericValueTest
     void optional_incompatible()
     {
         assertFalse( GenericValue.booleanValue( false ).optional( "any" ).isPresent() );
+    }
+
+    @Test
+    void asList()
+    {
+        final GenericValue value = GenericValue.stringList( List.of( "a", "b" ) );
+
+        assertEquals( List.of( GenericValue.stringValue( "a" ), GenericValue.stringValue( "b" ) ), value.asList() );
+    }
+
+    @Test
+    void asList_wrap_single()
+    {
+        assertThat( GenericValue.booleanValue( true ).asList() ).containsExactly( GenericValue.booleanValue( true ) );
     }
 
     @Test
