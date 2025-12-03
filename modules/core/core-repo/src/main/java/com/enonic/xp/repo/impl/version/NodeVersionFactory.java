@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.version;
 
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Map;
 
 import com.enonic.xp.blob.BlobKey;
@@ -72,5 +71,4 @@ public class NodeVersionFactory
         }
         return builder.build();
     }
-
 }

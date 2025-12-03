@@ -39,7 +39,6 @@ public class DuplicateNodeResult
         {
         }
 
-
         public Builder node( final Node node )
         {
             this.node = node;

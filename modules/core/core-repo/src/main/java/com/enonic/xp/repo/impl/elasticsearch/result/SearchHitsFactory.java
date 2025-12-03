@@ -10,7 +10,6 @@ import com.enonic.xp.repo.impl.search.result.SearchHit;
 
 public class SearchHitsFactory
 {
-
     public static List<SearchHit> create( final org.elasticsearch.search.SearchHits searchHits, ReturnFields returnFields )
     {
         final List<SearchHit> builder = new ArrayList<>();
@@ -35,9 +34,9 @@ public class SearchHitsFactory
 
     public static ReturnValues createReturnValues( final org.elasticsearch.search.SearchHit hit, final ReturnFields returnFields )
     {
-        final ReturnValues.Builder builder = ReturnValues.create();
-
         final Map<String, Object> hitFieldMap = hit.sourceAsMap();
+
+        final ReturnValues.Builder builder = ReturnValues.create();
 
         for ( String returnFieldName : returnFields.getReturnFieldNames() )
         {

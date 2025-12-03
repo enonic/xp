@@ -17,5 +17,5 @@ public interface IndexDataService
 
     void store( Node node, InternalContext context );
 
-    void push( final NodeId nodeId, Branch origin, InternalContext context );
+    void push( NodeId nodeId, Branch origin, InternalContext context );
 }

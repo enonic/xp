@@ -17,7 +17,6 @@ public class ResolveRequiredDependenciesCommand
 {
     private final ContentIds contentIds;
 
-
     private ResolveRequiredDependenciesCommand( final Builder builder )
     {
         super( builder );

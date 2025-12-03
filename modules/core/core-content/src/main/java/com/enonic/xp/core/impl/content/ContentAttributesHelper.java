@@ -20,6 +20,8 @@ public class ContentAttributesHelper
 {
     public static final String USER_PROPERTY = "user";
 
+    public static final String FIELDS_PROPERTY = "fields";
+
     public static final String OPTIME_PROPERTY = "optime";
 
     public static final String CREATE_KEY = "content.create";
@@ -79,7 +81,7 @@ public class ContentAttributesHelper
     {
         return Attributes.create()
             .attribute( MOVE_KEY )
-            .putArray( "fields", modifiedFields )
+            .put( FIELDS_PROPERTY, GenericValue.stringArray( modifiedFields ) )
             .put( USER_PROPERTY, getCurrentUserKey().toString() )
             .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
             .end()
@@ -90,7 +92,7 @@ public class ContentAttributesHelper
     {
         return Attributes.create()
             .attribute( UPDATE_KEY )
-            .putArray( "fields", modifiedFields )
+            .put( FIELDS_PROPERTY, GenericValue.stringArray( modifiedFields ) )
             .put( USER_PROPERTY, getCurrentUserKey().toString() )
             .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
             .end()

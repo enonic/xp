@@ -1,7 +1,7 @@
 package com.enonic.xp.node;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -16,9 +16,9 @@ public final class Attributes
         this.attrs = list;
     }
 
-    public List<Map.Entry<String, GenericValue>> list()
+    public Set<Map.Entry<String, GenericValue>> entrySet()
     {
-        return attrs.entrySet().asList();
+        return attrs.entrySet();
     }
 
     public GenericValue get( final String key )
@@ -89,12 +89,6 @@ public final class Attributes
         public AttributeBuilder put( final String key, final String value )
         {
             obj.put( key, value );
-            return this;
-        }
-
-        public AttributeBuilder putArray( final String key, final List<String> value )
-        {
-            obj.put( key, GenericValue.stringList( value ) );
             return this;
         }
 

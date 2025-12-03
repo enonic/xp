@@ -56,7 +56,6 @@ public class ContentNodeTranslator
         return contents.build();
     }
 
-
     private static Content doTranslate( final Node node, final boolean allowAltRootPath )
     {
         final ContentId contentId = ContentId.from( node.id() );

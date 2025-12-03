@@ -23,8 +23,6 @@ public interface IndexServiceInternal
 
     Map<String, String> getIndexSettings( RepositoryId repositoryId, IndexType indexType );
 
-    Map<String, Object> getIndexMapping( RepositoryId repositoryId, IndexType indexType );
-
     void putIndexMapping( RepositoryId repositoryId, IndexType indexType, Map<String,Object> mapping );
 
     void refresh( String... indexNames );

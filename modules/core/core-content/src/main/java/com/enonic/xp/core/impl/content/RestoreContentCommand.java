@@ -226,6 +226,7 @@ final class RestoreContentCommand
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
         }
+
         RestoreContentCommand build()
         {
             validate();

@@ -65,7 +65,7 @@ public class FindContentVersionsCommand
 
         if ( attributes != null )
         {
-            attributes.list()
+            attributes.entrySet()
                 .stream()
                 .filter( v -> v.getKey().startsWith( "content." ) )
                 .map( v -> new ContentVersion.Action( v.getKey(),

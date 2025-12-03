@@ -49,7 +49,10 @@ class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
 {
 
-    private Content content1, content2, content1_1, content2_1;
+    private Content content1;
+    private Content content2;
+    private Content content1_1;
+    private Content content2_1;
 
     @Test
     void push_one_content()

@@ -71,8 +71,6 @@ import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
@@ -702,10 +700,8 @@ public class NodeServiceImpl
 
                 final Context context = ContextBuilder.from( ContextAccessor.current() ).branch( br.branch() ).build();
 
-                context.runWith( () -> {
-                    eventPublisher.publish(
-                        NodeEvents.permissionsUpdated( entry.getKey(), InternalContext.from( ContextAccessor.current() ) ) );
-                } );
+                context.runWith( () -> eventPublisher.publish(
+                    NodeEvents.permissionsUpdated( entry.getKey(), InternalContext.from( ContextAccessor.current() ) ) ) );
             }
         }
 
@@ -899,15 +895,6 @@ public class NodeServiceImpl
     }
 
     @Override
-    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds )
-    {
-        verifyContext();
-        return doCommit( nodeCommitEntry, routableNodeVersionIds.stream()
-            .map( RoutableNodeVersionId::getNodeVersionId )
-            .collect( NodeVersionIds.collector() ) );
-    }
-
-    @Override
     public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeIds nodeIds )
     {
         verifyContext();
@@ -978,11 +965,10 @@ public class NodeServiceImpl
     {
         Objects.requireNonNull( branch, "Branch cannot be null" );
         NodeHelper.runAsAdmin( () -> {
-            final RepositoryId repoId = repositoryId;
-            final Repository repository = this.repositoryService.get( repoId );
+            final Repository repository = this.repositoryService.get( repositoryId );
             if ( repository == null )
             {
-                throw new RepositoryNotFoundException( repoId );
+                throw new RepositoryNotFoundException( repositoryId );
             }
 
             if ( !repository.getBranches().contains( branch ) )

@@ -10,7 +10,6 @@ import com.enonic.xp.repo.impl.storage.GetResult;
 
 public class GetResultFactory
 {
-
     public static GetResult create( final GetResponse getResponse, ReturnFields returnFields )
     {
         if ( !getResponse.isExists() )

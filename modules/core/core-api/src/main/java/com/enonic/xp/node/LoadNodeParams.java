@@ -35,7 +35,6 @@ public final class LoadNodeParams
         return new Builder();
     }
 
-
     public static final class Builder
     {
         private Node node;

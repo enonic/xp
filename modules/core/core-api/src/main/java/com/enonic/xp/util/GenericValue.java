@@ -193,7 +193,7 @@ public final class GenericValue
         return new GenericValue( value );
     }
 
-    public static GenericValue stringList( final List<String> value )
+    public static GenericValue stringArray( final Collection<String> value )
     {
         final var list = list();
         value.stream().map( GenericValue::stringValue ).forEach( list::add );
@@ -305,7 +305,7 @@ public final class GenericValue
 
         public ObjectBuilder putArray( final String key, final List<String> value )
         {
-            builder.put( Objects.requireNonNull( key ), GenericValue.stringList( value ) );
+            builder.put( Objects.requireNonNull( key ), GenericValue.stringArray( value ) );
             return this;
         }
 

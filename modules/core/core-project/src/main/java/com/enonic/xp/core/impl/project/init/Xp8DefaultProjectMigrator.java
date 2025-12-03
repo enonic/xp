@@ -22,7 +22,6 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -42,9 +41,6 @@ public class Xp8DefaultProjectMigrator
     private static final PrincipalKey CONTRIBUTOR = ProjectAccessHelper.createRoleKey( DEFAULT_PROJECT_NAME, ProjectRole.CONTRIBUTOR );
 
     private static final PrincipalKey VIEWER = ProjectAccessHelper.createRoleKey( DEFAULT_PROJECT_NAME, ProjectRole.VIEWER );
-
-    private static final User SUPER_USER =
-        User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build();
 
     private static final List<AccessControlEntry> EXTRA_PERMISSIONS_CONTENT_OR_ARCHIVE =
         List.of( AccessControlEntry.create().allowAll().principal( OWNER ).build(),

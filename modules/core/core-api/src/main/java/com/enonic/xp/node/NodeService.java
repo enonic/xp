@@ -69,9 +69,6 @@ public interface NodeService
 
     LoadNodeResult loadNode( LoadNodeParams params );
 
-    @Deprecated
-    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
-
     NodeCommitEntry commit( CommitNodeParams params );
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );

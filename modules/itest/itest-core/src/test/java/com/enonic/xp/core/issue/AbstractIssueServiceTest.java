@@ -17,8 +17,6 @@ import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
-import com.enonic.xp.core.impl.project.init.ContentInitializer;
-import com.enonic.xp.core.impl.project.init.IssueInitializer;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
@@ -78,15 +76,9 @@ public abstract class AbstractIssueServiceTest
 
     protected NodeServiceImpl nodeService;
 
-    private IndexServiceImpl indexService;
-
-    private RepositoryServiceImpl repositoryService;
-
     private ExecutorService executorService;
 
     private Context initialContext;
-
-    private ProjectServiceImpl projectService;
 
     @BeforeEach
     void setUpAbstractIssueServiceTest()
@@ -138,12 +130,11 @@ public abstract class AbstractIssueServiceTest
         final RepositoryEntryServiceImpl repositoryEntryService =
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        final IndexServiceImpl indexService =
+            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-
-        repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
-                                       searchService );
+        final RepositoryServiceImpl repositoryService =
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
             setRepositoryService( repositoryService ).
@@ -151,7 +142,8 @@ public abstract class AbstractIssueServiceTest
             build().
             initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService,
+                                           repositoryService );
 
         issueService.setNodeService( nodeService );
 
@@ -166,7 +158,9 @@ public abstract class AbstractIssueServiceTest
             .build()
             .initialize();
 
-        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, mock( ProjectConfig.class ) );
+        final ProjectServiceImpl projectService =
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                    mock( ProjectConfig.class ) );
         projectService.initialize();
 
         projectService.create( CreateProjectParams.create().name( ProjectName.from( TEST_REPO_ID ) ).displayName( "test" ).build() );

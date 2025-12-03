@@ -74,7 +74,6 @@ class AbstractEntryProcessor
         LOG.error( message );
     }
 
-
     public static class Builder<B extends Builder<?>>
     {
         private BlobStore blobStore;

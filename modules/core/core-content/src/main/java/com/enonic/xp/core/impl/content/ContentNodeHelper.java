@@ -93,9 +93,11 @@ public class ContentNodeHelper
                                            ContentConstants.CONTENT_ROOT_PATH );
     }
 
-    public static ContentAccessException toContentAccessException( NodeAccessException nodeAccessException) {
-        throw new ContentAccessException(  nodeAccessException, nodeAccessException.getUser(), ContentNodeHelper.translateNodePathToContentPath( nodeAccessException.getNodePath() ),
-                                           nodeAccessException.getPermission() );
+    public static ContentAccessException toContentAccessException( final NodeAccessException nodeAccessException )
+    {
+        throw new ContentAccessException( nodeAccessException, nodeAccessException.getUser(),
+                                          ContentNodeHelper.translateNodePathToContentPath( nodeAccessException.getNodePath() ),
+                                          nodeAccessException.getPermission() );
     }
 }
 

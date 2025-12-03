@@ -3,7 +3,6 @@ package com.enonic.xp.repo.impl.storage;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -190,9 +189,9 @@ public class NodeStorageServiceImpl
         final Attributes.Builder builder = Attributes.create();
         if ( attributes != null )
         {
-            builder.addAll( attributes.list() );
+            builder.addAll( attributes.entrySet() );
         }
-        final Attributes newAttrs = builder.addAll( value.list() ).buildKeepingLast();
+        final Attributes newAttrs = builder.addAll( value.entrySet() ).buildKeepingLast();
         final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create()
             .nodeVersionId( existingVersion.getNodeVersionId() )
             .nodeVersionKey( existingVersion.getNodeVersionKey() )

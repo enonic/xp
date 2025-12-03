@@ -426,6 +426,4 @@ public class CreateContentTranslatorParams
             return new CreateContentTranslatorParams( this );
         }
     }
-
-
 }

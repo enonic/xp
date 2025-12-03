@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -45,10 +44,6 @@ public class StorageData
             if ( value instanceof Iterable )
             {
                 builder.putAll( key.getPath(), ( (Iterable<?>) value ) );
-            }
-            else if ( value instanceof Object[] )
-            {
-                builder.putAll( key.getPath(), Arrays.asList( (Object[]) value ) );
             }
             else
             {
