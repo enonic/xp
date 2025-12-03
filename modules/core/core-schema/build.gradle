@@ -5,7 +5,9 @@ dependencies {
     implementation libs.jackson.dataformat.yaml
     implementation libs.jackson.datatype.jsr310
     implementation libs.jackson.core
-    implementation libs.networknt
+    implementation libs.networknt.jsv
+//    implementation libs.jstuff.core
+    implementation libs.ethlo.time
 
     testFixturesApi project( ':core:core-api' )
     testImplementation( testFixtures( project(":core:core-app") ) )

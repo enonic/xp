@@ -1,11 +1,11 @@
 package com.enonic.xp.core.impl.schema;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,13 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public final class JsonSchemaRegistry
+public class JsonSchemaRegistry
 {
     private static final Logger LOG = LoggerFactory.getLogger( JsonSchemaRegistry.class );
 
@@ -27,13 +28,9 @@ public final class JsonSchemaRegistry
 
     private final ConcurrentMap<String, JsonSchemaDefinitionWrapper> schemasMap = new ConcurrentHashMap<>();
 
-    public JsonSchemaRegistry()
+    public void activate( final BundleContext bundleContext )
     {
-    }
-
-    public void activate()
-    {
-        registerBuiltinSchemas();
+        registerBuiltinSchemas( bundleContext );
     }
 
     public String register( final String jsonSchemaDef )
@@ -65,25 +62,31 @@ public final class JsonSchemaRegistry
             .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, entry -> entry.getValue().schema() ) );
     }
 
-    private void registerBuiltinSchemas()
+    private void registerBuiltinSchemas( final BundleContext bundleContext )
     {
         schemasMap.clear();
-        registerBuiltinSchemasFromDir( Paths.get( "src/main/resources/META-INF/schemas" ) );
-    }
 
-    private void registerBuiltinSchemasFromDir( final Path dirPath )
-    {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream( dirPath, "*.json" ))
+        final Enumeration<URL> predefinedSchemas = bundleContext.getBundle().findEntries( "/META-INF/schemas", "*.json", true );
+
+        if ( predefinedSchemas == null )
         {
-            for ( Path path : stream )
+            return;
+        }
+
+        while ( predefinedSchemas.hasMoreElements() )
+        {
+            final URL schemaURL = predefinedSchemas.nextElement();
+
+            try (InputStream inputStream = schemaURL.openStream())
             {
-                final String schemaId = register( Files.readString( path ) );
+                final String schemaDefinition = new String( inputStream.readAllBytes(), StandardCharsets.UTF_8 );
+                final String schemaId = register( schemaDefinition );
                 LOG.debug( "JSON Schema Definition: {} is registered", schemaId );
             }
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
+            catch ( Exception e )
+            {
+                throw new RuntimeException( e );
+            }
         }
     }
 }

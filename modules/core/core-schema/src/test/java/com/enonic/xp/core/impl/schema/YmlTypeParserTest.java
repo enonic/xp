@@ -15,6 +15,7 @@ import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.util.GenericValue;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,10 +30,7 @@ public class YmlTypeParserTest
     @BeforeEach
     void setUp()
     {
-        final JsonSchemaRegistry registry = new JsonSchemaRegistry();
-        registry.activate();
-
-        validator = new JsonSchemaServiceImpl( registry );
+        validator = new JsonSchemaServiceImpl( null ); // TODO
         validator.activate();
     }
 
@@ -61,7 +59,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/textline-type.yml" );
 
-        validator.isSchemaValid( "https://json-schema.enonic.com/8.0.0/textline.schema.json", yaml );
+        assertDoesNotThrow( () -> validator.validate( "https://json-schema.enonic.com/8.0.0/textline.schema.json", yaml ) );
 
         final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 

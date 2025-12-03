@@ -68,7 +68,9 @@ addBundle( libs.jackson.dataformat.yaml, 8 )
 addBundle( libs.snakeyaml, 8 )
 addBundle( libs.jackson.jakarta.base, 8 )
 addBundle( libs.jackson.jakarta.jsonprovider, 8 )
-addBundle( libs.networknt, 8 )
+addBundle( libs.ethlo.time, 8 )
+addBundle( libs.networknt.jsv, 8 )
+//addBundle( libs.jstuff.core, 8 )
 
 repackBundle( libs.tika.core, 8 ) {
     forceOptional = ["org.apache.xerces"]
