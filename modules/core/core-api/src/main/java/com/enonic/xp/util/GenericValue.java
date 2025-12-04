@@ -453,7 +453,7 @@ public final class GenericValue
         }
 
         /**
-         * Puts a long key-value pair into the object.
+         * Puts a number key-value pair into the object.
          *
          * @param key   the key
          * @param value the long value
@@ -466,7 +466,7 @@ public final class GenericValue
         }
 
         /**
-         * Puts a long key-value pair into the object.
+         * Puts a number key-value pair into the object.
          *
          * @param key   the key
          * @param value the double value
@@ -479,7 +479,7 @@ public final class GenericValue
         }
 
         /**
-         * Puts a long key-value pair into the object.
+         * Puts a boolean key-value pair into the object.
          *
          * @param key   the key
          * @param value the boolean value
