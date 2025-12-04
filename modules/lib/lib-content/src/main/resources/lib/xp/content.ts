@@ -20,8 +20,11 @@ import {
     Aggregations,
     AggregationsResult,
     AggregationsToAggregationResults,
+    Attachment,
     ByteSource,
     Content,
+    ContentComponent,
+    ContentComponentConstraint,
     ContentInheritValue,
     Filter,
     FormItem,
@@ -33,11 +36,12 @@ import {
     PageComponent,
     Part,
     PartComponent,
-    PatchableContent,
     PublishInfo,
     QueryDsl,
     ScriptValue,
     SortDsl,
+    UserKey,
+    ValidationError,
     Workflow,
 } from '@enonic-types/core';
 
@@ -77,6 +81,8 @@ export type {
     ByteSource,
     Component,
     Content,
+    ContentComponent,
+    ContentComponentConstraint,
     DateBucket,
     DateHistogramAggregation,
     DateRange,
@@ -146,6 +152,40 @@ export interface PageComponentWhenSpecificTemplate {
 }
 
 export type Schedule = Omit<PublishInfo, 'first'>;
+
+export interface PatchableContent<
+    Data extends Record<string, unknown> = Record<string, unknown>,
+    Type extends string = string,
+    _Component extends ContentComponentConstraint<Type> = ContentComponent<Type>
+> {
+    displayName: string;
+    data: Type extends 'portal:fragment' ? Record<string, never> : Data;
+    x: XpXData; // extraData
+    page: Type extends 'portal:fragment' ? never : _Component;
+    valid: boolean;
+    owner: UserKey;
+    language: string;
+    creator: UserKey;
+    createdTime: string;
+    modifier: UserKey;
+    modifiedTime: string;
+    publishInfo: PublishInfo;
+    processedReferences: string[];
+    workflowInfo: Workflow;
+    manualOrderValue: number;
+    inherit: ContentInheritValue[];
+    variantOf: string;
+    modifyAttachments: Attachment;
+    removeAttachments: string[];
+    createAttachments: AddAttachmentParam[];
+    validationErrors: ValidationError[];
+    type: Type;
+    childOrder: string;
+    originProject: string;
+    originalParentPath: string;
+    archivedTime: string;
+    archivedBy: UserKey;
+}
 
 /* eslint-disable @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any*/
 declare const Java: any;

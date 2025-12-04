@@ -671,16 +671,8 @@ export type Region<
 export interface Content<
     Data = Record<string, unknown>,
     Type extends string = string,
-    _Component extends (
-        Type extends 'portal:fragment'
-            ? LayoutComponent | PartComponent
-            : PageComponent
-        ) = (
-            Type extends 'portal:fragment'
-                ? Layout | Part
-                : Page
-            ),
-    > {
+    _Component extends ContentComponentConstraint<Type> = ContentComponent<Type>
+> {
     _id: string;
     _name: string;
     _path: string;
@@ -709,45 +701,22 @@ export interface Content<
     fragment?: Type extends 'portal:fragment' ? _Component : never;
 }
 
-export interface PatchableContent<
-    Data extends Record<string, unknown> = Record<string, unknown>,
-    Type extends string = string,
-> {
-    displayName: string;
-    data: Type extends 'portal:fragment' ? Record<string, never> : Data;
-    x: XpXData; // extraData
-    page: Type extends 'portal:fragment' ? never : _Component;
-    valid: boolean;
-    owner: UserKey;
-    language: string;
-    creator: UserKey;
-    createdTime: string;
-    modifier: UserKey;
-    modifiedTime: string;
-    publishInfo: PublishInfo;
-    processedReferences: string[];
-    workflowInfo: Workflow;
-    manualOrderValue: number;
-    inherit: ContentInheritValue[];
-    variantOf: string;
-    modifyAttachments: Attachment;
-    removeAttachments: string[];
-    createAttachments: AddAttachmentParam[];
-    validationErrors: ValidationError[];
-    type: Type;
-    childOrder: string;
-    originProject: string;
-    originalParentPath: string;
-    archivedTime: string;
-    archivedBy: UserKey;
-}
-
 export type Workflow = {
     state: 'IN_PROGRESS' | 'PENDING_APPROVAL' | 'REJECTED' | 'READY';
     checks?: Record<string, 'PENDING' | 'REJECTED' | 'APPROVED'>;
 };
 
 export type ContentInheritValue = 'CONTENT' | 'PARENT' | 'NAME' | 'SORT';
+
+export type ContentComponentConstraint<Type extends string> =
+    Type extends 'portal:fragment'
+        ? LayoutComponent | PartComponent
+        : PageComponent;
+
+export type ContentComponent<Type extends string> =
+    Type extends 'portal:fragment'
+        ? Layout | Part
+        : Page;
 
 // Compliant with npm module ts-brand
 type Brand<
