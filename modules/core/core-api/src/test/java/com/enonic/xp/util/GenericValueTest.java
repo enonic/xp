@@ -347,7 +347,8 @@ class GenericValueTest
             .put( "value", 42L )
             .build();
 
-        assertThat( obj.rawJava() ).isEqualTo( Map.of( "name", "test", "value", 42 ) ); // 42L is optimized to Integer
+        // 42L is stored as Integer due to GenericValue's number optimization
+        assertThat( obj.rawJava() ).isEqualTo( Map.of( "name", "test", "value", 42 ) );
     }
 
     @Test
@@ -641,21 +642,19 @@ class GenericValueTest
         assertEquals( 100, smallValue.asInteger() );
 
         // Values that don't fit in int should be stored as Long
-        final GenericValue largeValue = GenericValue.numberValue( (long) Integer.MAX_VALUE + 1L );
-        assertEquals( (long) Integer.MAX_VALUE + 1L, largeValue.asLong() );
+        final GenericValue largeValue = GenericValue.numberValue( Integer.MAX_VALUE + 1L );
+        assertEquals( Integer.MAX_VALUE + 1L, largeValue.asLong() );
     }
 
     @Test
     void booleanValue_singletonConstants()
     {
-        // Verify that the same instance is returned for the same boolean value
+        // Verify consistent behavior for boolean values
         final GenericValue true1 = GenericValue.booleanValue( true );
         final GenericValue true2 = GenericValue.booleanValue( true );
         final GenericValue false1 = GenericValue.booleanValue( false );
         final GenericValue false2 = GenericValue.booleanValue( false );
 
-        // While we can't test reference equality directly without accessing private fields,
-        // we can verify the behavior is correct
         assertEquals( true1, true2 );
         assertEquals( false1, false2 );
         assertTrue( true1.asBoolean() );
