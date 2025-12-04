@@ -2,6 +2,7 @@ package com.enonic.xp.util;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.math.DoubleMath;
 
 /**
  * A generic value wrapper that can hold different types of values such as String, Number, Boolean, List, and Map, similar to JSON values.
@@ -122,7 +124,7 @@ public final class GenericValue
 
     /**
      * Converts this GenericValue to an integer representation.
-     * double values decimal part will be truncated.
+     * double values decimal part will be rounded.
      *
      * @return the integer representation of the value
      * @throws IllegalStateException if the value is not of a type that can be converted to an integer ( boolean, object or list )
@@ -135,7 +137,7 @@ public final class GenericValue
         {
             case Integer i -> i;
             case Long l -> Math.toIntExact( l );
-            case Double d -> Math.toIntExact( d.longValue() );
+            case Double d -> DoubleMath.roundToInt( d, RoundingMode.HALF_EVEN );
             case String s -> Integer.parseInt( s );
             default -> throw new IllegalStateException();
         };
@@ -143,11 +145,12 @@ public final class GenericValue
 
     /**
      * Converts this GenericValue to a long representation.
-     * double values decimal part will be truncated.
+     * double values decimal part will be rounded.
      *
      * @return the long representation of the value
      * @throws IllegalStateException if the value is not of a type that can be converted to a long ( boolean, object or list )
      * @throws NumberFormatException if the value is a string that cannot be parsed as a long
+     * @throws ArithmeticException   if the value is a double that is out of long range
      */
     public long asLong()
     {
@@ -155,7 +158,7 @@ public final class GenericValue
         {
             case Long l -> l;
             case Integer i -> i;
-            case Double d -> d.longValue();
+            case Double d -> DoubleMath.roundToLong( d, RoundingMode.HALF_EVEN );
             case String s -> Long.parseLong( s );
             default -> throw new IllegalStateException();
         };
