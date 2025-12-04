@@ -18,10 +18,10 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 public abstract class RepoDependentInitializer
     extends ExternalInitializer
 {
-    public static final User SUPER_USER = User.create().
-        key( PrincipalKey.ofSuperUser() ).
-        login( PrincipalKey.ofSuperUser().getId() ).
-        build();
+    public static final AuthenticationInfo SUPER_USER_AUTH = AuthenticationInfo.create()
+        .principals( RoleKeys.ADMIN )
+        .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
+        .build();
 
     protected final NodeService nodeService;
 
@@ -33,23 +33,23 @@ public abstract class RepoDependentInitializer
     {
         super( builder );
 
-        this.nodeService = builder.nodeService;
-        this.repositoryId = builder.repositoryId;
+        this.nodeService = Objects.requireNonNull( builder.nodeService );
+        this.repositoryId = Objects.requireNonNull( builder.repositoryId );
         this.accessControlList = builder.accessControlList;
     }
 
     protected Context createAdminContext( Branch branch )
     {
-        final AuthenticationInfo authInfo = createAdminAuthInfo();
-        return ContextBuilder.from( ContextAccessor.current() ).branch( branch ).repositoryId( repositoryId ).authInfo( authInfo ).build();
+        return createAdminContext( branch, repositoryId );
     }
 
-    protected AuthenticationInfo createAdminAuthInfo()
+    static Context createAdminContext( Branch branch, RepositoryId repositoryId )
     {
-        return AuthenticationInfo.create().
-            principals( RoleKeys.ADMIN ).
-            user( SUPER_USER ).
-            build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch )
+            .repositoryId( repositoryId )
+            .authInfo( SUPER_USER_AUTH )
+            .build();
     }
 
     public static class Builder<T extends Builder>
@@ -78,14 +78,5 @@ public abstract class RepoDependentInitializer
             this.accessControlList = accessControlList;
             return (T) this;
         }
-
-        @Override
-        protected void validate()
-        {
-            super.validate();
-            Objects.requireNonNull( nodeService );
-            Objects.requireNonNull( repositoryId, "repositoryId is required" );
-        }
-
     }
 }

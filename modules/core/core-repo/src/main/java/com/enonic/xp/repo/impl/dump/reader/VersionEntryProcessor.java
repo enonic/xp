@@ -60,11 +60,11 @@ public class VersionEntryProcessor
             {
                 this.nodeService.importNodeVersion( ImportNodeVersionParams.create().
                     nodeId( versionsDumpEntry.getNodeId() ).
-                    timestamp( version.getTimestamp() ).
-                    nodePath( version.getNodePath() ).
+                    timestamp( version.timestamp() ).
+                    nodePath( version.nodePath() ).
                     nodeVersion( nodeVersion ).
-                    nodeVersionId( version.getVersion() ).
-                    nodeCommitId( version.getNodeCommitId() ).
+                    nodeVersionId( version.version() ).
+                    nodeCommitId( version.nodeCommitId() ).
                     build() );
 
                 addBinary( nodeVersion, result );
@@ -73,7 +73,7 @@ public class VersionEntryProcessor
             catch ( Exception e )
             {
                 final String message =
-                    String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.getNodeId(), version.getNodePath(),
+                    String.format( "Cannot load version with id %s, path %s: %s", versionsDumpEntry.getNodeId(), version.nodePath(),
                                    e.getMessage() );
                 result.error( EntryLoadError.error( message ) );
                 LOG.error( message, e );
@@ -85,11 +85,11 @@ public class VersionEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( repositoryId, meta.getNodeVersionKey() );
+            return this.dumpReader.get( repositoryId, meta.nodeVersionKey() );
         }
         catch ( RepoLoadException e )
         {
-            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: " + meta.getVersion(), e );
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: " + meta.version(), e );
             return null;
         }
     }

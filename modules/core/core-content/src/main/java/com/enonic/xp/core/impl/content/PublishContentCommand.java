@@ -1,31 +1,32 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Objects;
+
+import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.CompareContentResults;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentValidityResult;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
-import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesResult;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
-import com.enonic.xp.node.UpdateNodeParams;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class PublishContentCommand
     extends AbstractContentCommand
@@ -36,7 +37,9 @@ public class PublishContentCommand
 
     private final ContentIds excludeDescendantsOf;
 
-    private final ContentPublishInfo contentPublishInfo;
+    private final Instant publishFrom;
+
+    private final Instant publishTo;
 
     private final boolean includeDependencies;
 
@@ -51,7 +54,9 @@ public class PublishContentCommand
         super( builder );
         this.contentIds = builder.contentIds;
         this.excludedContentIds = builder.excludedContentIds;
-        this.contentPublishInfo = builder.contentPublishInfo;
+        this.publishFrom = Objects.requireNonNullElseGet( builder.publishFrom, Instant::now ).truncatedTo( ChronoUnit.MILLIS );
+        this.publishTo = builder.publishTo != null ? builder.publishTo.truncatedTo( ChronoUnit.MILLIS ) : null;
+        Preconditions.checkArgument( publishTo == null || publishTo.isAfter( publishFrom ), "publishTo must be after publishFrom" );
         this.includeDependencies = builder.includeDependencies;
         this.excludeDescendantsOf = builder.excludeDescendantsOf;
         this.resultBuilder = PublishContentResult.create();
@@ -77,7 +82,7 @@ public class PublishContentCommand
 
         final PublishContentResult result = resultBuilder.build();
 
-        if ( !result.getPushedContents().isEmpty() )
+        if ( !result.getPublished().isEmpty() )
         {
             runAsAdmin( this::doPushRoot );
         }
@@ -91,155 +96,123 @@ public class PublishContentCommand
             return;
         }
 
-        if ( !checkIfAllContentsValid( ids ) )
+        final ContentValidityResult contentValidityResult = checkIfAllContentsValid( ids );
+        if ( !contentValidityResult.allValid() )
         {
-            this.resultBuilder.setFailed( ids );
+            contentValidityResult.getNotValidContentIds()
+                .stream()
+                .map( c -> PublishContentResult.Result.failure( c, PublishContentResult.Reason.INVALID ) )
+                .forEach( resultBuilder::add );
+            contentValidityResult.getNotReadyContentIds()
+                .stream()
+                .map( c -> PublishContentResult.Result.failure( c, PublishContentResult.Reason.NOT_READY ) )
+                .forEach( resultBuilder::add );
             return;
         }
-        doPushNodes( ContentNodeHelper.toNodeIds( ids ) );
+
+        final NodeIds nodesToPush = ContentNodeHelper.toNodeIds( ids );
+        final PushNodeParams.Builder pushNodeParams =
+            PushNodeParams.create().ids( nodesToPush ).processor( setPublishInfo() ).target( ContentConstants.BRANCH_MASTER );
+        if ( publishContentListener != null )
+        {
+            pushNodeParams.publishListener( publishContentListener::contentPushed );
+        }
+
+        final PushNodesResult pushNodesResult = nodeService.push( pushNodeParams.build() );
+
+        commit( pushNodesResult.getSuccessful() );
+
+        for ( var pushNodeResult : pushNodesResult.getSuccessful() )
+        {
+            nodeService.addAttributes( pushNodeResult.getNodeVersionId(),
+                                       ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PUBLISH_KEY ) );
+        }
+
+        pushNodesResult.getFailed()
+            .stream()
+            .map( r -> PublishContentResult.Result.failure( ContentId.from( r.getNodeId() ),
+                                                            Enum.valueOf( PublishContentResult.Reason.class,
+                                                                          r.getFailureReason().toString() ) ) )
+            .forEach( resultBuilder::add );
+
+        pushNodesResult.getSuccessful()
+            .stream()
+            .map( r -> PublishContentResult.Result.success( ContentId.from( r.getNodeId() ) ) )
+            .forEach( resultBuilder::add );
     }
 
     private PushNodesResult doPushRoot()
     {
         final Node contentRootNode = nodeService.getByPath( ContentConstants.CONTENT_ROOT_PATH );
-        return nodeService.push( NodeIds.from( contentRootNode.id() ), ContentConstants.BRANCH_MASTER );
+        final PushNodeParams pushNodeParams =
+            PushNodeParams.create().ids( NodeIds.from( contentRootNode.id() ) ).target( ContentConstants.BRANCH_MASTER ).build();
+        return nodeService.push( pushNodeParams );
     }
 
     private CompareContentResults getSyncWork()
     {
-        final Context context = ContextAccessor.current();
-
-        final Context adminContext = ContextBuilder.from( context )
-            .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
-            .build();
-
-        return adminContext.callWith( ResolveContentsToBePublishedCommand.create()
-                                          .contentIds( this.contentIds )
-                                          .excludedContentIds( this.excludedContentIds )
-                                          .excludeDescendantsOf( this.excludeDescendantsOf )
-                                          .includeDependencies( this.includeDependencies )
-                                          .contentTypeService( this.contentTypeService )
-                                          .eventPublisher( this.eventPublisher )
-                                          .translator( this.translator )
-                                          .nodeService( this.nodeService )
-                                          .build()::execute );
+        return runAsAdmin( ResolveContentsToBePublishedCommand.create()
+                               .contentIds( this.contentIds )
+                               .excludedContentIds( this.excludedContentIds )
+                               .excludeDescendantsOf( this.excludeDescendantsOf )
+                               .includeDependencies( this.includeDependencies )
+                               .contentTypeService( this.contentTypeService )
+                               .eventPublisher( this.eventPublisher )
+                               .nodeService( this.nodeService )
+                               .build()::execute );
     }
 
-    private boolean checkIfAllContentsValid( final ContentIds pushContentsIds )
+    private ContentValidityResult checkIfAllContentsValid( final ContentIds pushContentsIds )
     {
-        final ContentValidityResult result = CheckContentValidityCommand.create()
-            .translator( this.translator )
+        return CheckContentValidityCommand.create()
             .nodeService( this.nodeService )
             .eventPublisher( this.eventPublisher )
             .contentTypeService( this.contentTypeService )
             .contentIds( pushContentsIds )
             .build()
             .execute();
-
-        return result.allValid();
     }
 
-    private void doPushNodes( final NodeIds nodesToPush )
+    private NodeDataProcessor setPublishInfo()
     {
-        setPublishInfo( nodesToPush );
+        return ( PropertyTree data, NodePath nodePath ) -> {
+            var toBeEdited = data.copy();
+            final PropertySet publishInfo = Objects.requireNonNullElseGet( toBeEdited.getSet( ContentPropertyNames.PUBLISH_INFO ),
+                                                                           () -> toBeEdited.addSet( ContentPropertyNames.PUBLISH_INFO ) );
 
-        final PushNodesResult pushNodesResult = nodeService.push( nodesToPush, ContentConstants.BRANCH_MASTER, count -> {
-            if ( publishContentListener != null )
+            if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FROM ) )
             {
-                publishContentListener.contentPushed( count );
+                publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
             }
-        } );
 
-        commitPushedNodes( pushNodesResult.getSuccessful() );
+            if ( publishTo == null )
+            {
+                publishInfo.removeProperties( ContentPropertyNames.PUBLISH_TO );
+            }
+            else
+            {
+                publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
+            }
 
-        this.resultBuilder.setFailed( pushNodesResult.getFailed()
-                                          .stream()
-                                          .map( PushNodeResult::getNodeId )
-                                          .map( ContentId::from )
-                                          .collect( ContentIds.collector() ) );
-        this.resultBuilder.setPushed( pushNodesResult.getSuccessful()
-                                          .stream()
-                                          .map( PushNodeResult::getNodeId )
-                                          .map( ContentId::from )
-                                          .collect( ContentIds.collector() ) );
+            if ( !publishInfo.hasProperty( ContentPropertyNames.PUBLISH_FIRST ) )
+            {
+                publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
+            }
+            return toBeEdited;
+        };
     }
 
-    private void setPublishInfo( final NodeIds nodesToPush )
-    {
-        final Instant publishFrom = contentPublishInfo.getFrom();
-        final Instant publishTo = contentPublishInfo.getTo();
-
-        for ( final NodeId id : nodesToPush )
-        {
-            this.nodeService.update( UpdateNodeParams.create().editor( toBeEdited -> {
-
-                PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
-
-                if ( publishInfo == null )
-                {
-                    publishInfo = toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO );
-                }
-
-                final Instant currentPublishFirst = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FIRST );
-                final Instant currentPublishFrom = publishInfo.getInstant( ContentPropertyNames.PUBLISH_FROM );
-
-                if ( currentPublishFirst != null && currentPublishFrom != null )
-                {
-                    return;
-                }
-
-                if ( currentPublishFirst == null )
-                {
-                    if ( currentPublishFrom == null )
-                    {
-                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, publishFrom );
-                    }
-                    else
-                    {
-                        //TODO Special case for Enonic XP 6.7 and 6.8 contents. Remove after 7.0
-                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_FIRST, currentPublishFrom );
-                    }
-                }
-
-                if ( currentPublishFrom == null )
-                {
-                    publishInfo.setInstant( ContentPropertyNames.PUBLISH_FROM, publishFrom );
-                    if ( publishTo == null )
-                    {
-                        if ( publishInfo.hasProperty( ContentPropertyNames.PUBLISH_TO ) )
-                        {
-                            publishInfo.removeProperty( ContentPropertyNames.PUBLISH_TO );
-                        }
-                    }
-                    else
-                    {
-                        publishInfo.setInstant( ContentPropertyNames.PUBLISH_TO, publishTo );
-                    }
-                }
-
-            } ).id( id ).build() );
-            if ( publishContentListener != null )
-            {
-                publishContentListener.contentPushed( 1 );
-            }
-        }
-    }
-
-    private void commitPushedNodes( final Iterable<PushNodeResult> branchEntries )
+    private void commit( final List<PushNodeResult> branchEntries )
     {
         final String commitEntryMessage = message == null
             ? ContentConstants.PUBLISH_COMMIT_PREFIX
             : String.join( ContentConstants.PUBLISH_COMMIT_PREFIX_DELIMITER, ContentConstants.PUBLISH_COMMIT_PREFIX, message );
 
-        final NodeCommitEntry commitEntry = NodeCommitEntry.create().message( commitEntryMessage ).build();
-        final RoutableNodeVersionIds.Builder routableNodeVersionIds = RoutableNodeVersionIds.create();
-        for ( PushNodeResult branchEntry : branchEntries )
-        {
-            final RoutableNodeVersionId routableNodeVersionId =
-                RoutableNodeVersionId.from( branchEntry.getNodeId(), branchEntry.getNodeVersionId() );
-            routableNodeVersionIds.add( routableNodeVersionId );
-        }
-        nodeService.commit( commitEntry, routableNodeVersionIds.build() );
+        nodeService.commit( CommitNodeParams.create()
+                                .nodeCommitEntry( NodeCommitEntry.create().message( commitEntryMessage ).build() )
+                                .nodeVersionIds(
+                                    branchEntries.stream().map( PushNodeResult::getNodeVersionId ).collect( NodeVersionIds.collector() ) )
+                                .build() );
     }
 
     public static class Builder
@@ -251,7 +224,9 @@ public class PublishContentCommand
 
         private ContentIds excludeDescendantsOf;
 
-        private ContentPublishInfo contentPublishInfo;
+        private Instant publishFrom;
+
+        private Instant publishTo;
 
         private boolean includeDependencies = true;
 
@@ -277,20 +252,15 @@ public class PublishContentCommand
             return this;
         }
 
-        public Builder contentPublishInfo( final ContentPublishInfo contentPublishInfo )
+        public Builder publishFrom( Instant publishFrom )
         {
-            if ( contentPublishInfo == null )
-            {
-                this.contentPublishInfo = ContentPublishInfo.create().from( Instant.now() ).build();
-            }
-            else if ( contentPublishInfo.getFrom() == null )
-            {
-                this.contentPublishInfo = ContentPublishInfo.create().from( Instant.now() ).to( contentPublishInfo.getTo() ).build();
-            }
-            else
-            {
-                this.contentPublishInfo = contentPublishInfo;
-            }
+            this.publishFrom = publishFrom;
+            return this;
+        }
+
+        public Builder publishTo( Instant publishTo )
+        {
+            this.publishTo = publishTo;
             return this;
         }
 
@@ -316,7 +286,6 @@ public class PublishContentCommand
         void validate()
         {
             super.validate();
-            ContentPublishInfoPreconditions.check( contentPublishInfo );
         }
 
         public PublishContentCommand build()

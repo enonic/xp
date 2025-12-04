@@ -31,7 +31,7 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
-import com.enonic.xp.repo.impl.node.DuplicateNodeResult;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
@@ -96,7 +96,7 @@ class DuplicateNodeCommandTest
         final DuplicateNodeResult result = duplicateNode( node );
 
         assertDuplicatedTree( node.path(), node, result.getNode() );
-        assertEquals( "my-child", result.getChildren().get( 0 ).name().toString() );
+        assertEquals( "my-child", result.getChildren().first().name().toString() );
 
         verify( duplicateNodeListener, times( 2 ) ).nodesDuplicated( anyInt() );
     }
@@ -119,7 +119,7 @@ class DuplicateNodeCommandTest
         final DuplicateNodeResult result = duplicateNode( node1 );
 
         assertDuplicatedTree( node1.path(), node1, result.getNode() );
-        assertEquals( 1, result.getChildren().size() );
+        assertEquals( 1, result.getChildren().getSize() );
     }
 
     @Test

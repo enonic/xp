@@ -48,6 +48,8 @@ import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
+import com.enonic.xp.core.impl.project.ProjectConfig;
+import com.enonic.xp.core.impl.project.ProjectServiceImpl;
 import com.enonic.xp.core.impl.project.init.ContentInitializer;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
@@ -59,6 +61,7 @@ import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
@@ -129,6 +132,8 @@ class DynamicSchemaServiceImplTest
     NodeServiceImpl nodeService;
 
     private DynamicSchemaServiceImpl dynamicSchemaService;
+
+    private ProjectServiceImpl projectService;
 
     @TempDir
     private Path felixTempFolder;
@@ -270,13 +275,12 @@ class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> applicationService.createVirtualApplication(
             CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my-other-app" ) ).build() ) );
 
-        ContentInitializer.create()
-            .setIndexService( indexService )
-            .setNodeService( nodeService )
-            .setRepositoryService( repositoryService )
-            .repositoryId( ProjectName.from( "my-project" ).getRepoId() )
-            .build()
-            .initialize();
+        projectService = new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher, mock( ProjectConfig.class ) );
+        projectService.initialize();
+
+        createAdminContext().runWith( () -> projectService.create(
+            CreateProjectParams.create().name( ProjectName.from( "my-project" ) ).displayName( "test" ).build() ) );
+
     }
 
     @Test

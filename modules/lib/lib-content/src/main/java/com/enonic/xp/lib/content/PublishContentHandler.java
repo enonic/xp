@@ -84,11 +84,8 @@ public final class PublishContentHandler
         {
             final Object from = this.contentPublishInfo.get( "from" );
             final Object to = this.contentPublishInfo.get( "to" );
-            final ContentPublishInfo contentPublishInfo = ContentPublishInfo.create().
-                from( from == null ? null : Instant.parse( (String) from ) ).
-                to( to == null ? null : Instant.parse( (String) to ) ).
-                build();
-            builder.contentPublishInfo( contentPublishInfo );
+            builder.publishFrom( from == null ? null : Instant.parse( (String) from ) );
+            builder.publishTo( to == null ? null : Instant.parse( (String) to ) );
         }
         if ( this.excludeDescendantsOf != null )
         {

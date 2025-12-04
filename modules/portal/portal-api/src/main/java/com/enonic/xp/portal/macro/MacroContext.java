@@ -120,7 +120,7 @@ public final class MacroContext
 
         private String document;
 
-        public Builder()
+        private Builder()
         {
             this.paramsBuilder = ImmutableListMultimap.builder();
         }

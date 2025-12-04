@@ -1,8 +1,9 @@
-package com.enonic.xp.node;
+package com.enonic.xp.repo.impl.node;
 
-import com.enonic.xp.annotation.PublicApi;
 
-@PublicApi
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+
 public final class NodeVersionDiffResult
 {
     private final NodeIds nodesWithDifferences;

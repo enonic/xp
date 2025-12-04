@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.aggregation.AggregationsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.ESQueryTranslator;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
-import com.enonic.xp.repo.impl.elasticsearch.result.SearchResultFactory;
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.SearchRequest;
@@ -65,7 +65,16 @@ public class SearchExecutor
             .build()
             .createSearchRequest();
 
-        return doSearchRequest( searchRequestBuilder );
+        try
+        {
+            final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet( SEARCH_TIMEOUT );
+
+            return createSearchResult( searchResponse, query.getReturnFields() );
+        }
+        catch ( ElasticsearchException e )
+        {
+            throw rethrowException( e, searchRequestBuilder );
+        }
     }
 
     private SearchResult scroll( final ElasticsearchQuery query )
@@ -86,7 +95,7 @@ public class SearchExecutor
         {
             LOG.debug( "Scrolling, got {} hits", scrollResp.getHits().hits().length );
 
-            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits() ) );
+            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits(), query.getReturnFields() ) );
 
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).setScroll( DEFAULT_SCROLL_TIME ).execute().actionGet();
 
@@ -104,18 +113,15 @@ public class SearchExecutor
             build();
     }
 
-    SearchResult doSearchRequest( final SearchRequestBuilder searchRequestBuilder )
+    public static SearchResult createSearchResult( final SearchResponse searchResponse, final ReturnFields returnFields )
     {
-        try
-        {
-            final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet( SEARCH_TIMEOUT );
-
-            return SearchResultFactory.create( searchResponse );
-        }
-        catch ( ElasticsearchException e )
-        {
-            throw rethrowException( e, searchRequestBuilder );
-        }
+        return SearchResult.create().
+            hits( SearchHitsFactory.create( searchResponse.getHits(), returnFields ) ).
+            totalHits( searchResponse.getHits().getTotalHits() ).
+            maxScore( searchResponse.getHits().maxScore() ).
+            aggregations( AggregationsFactory.create( searchResponse.getAggregations() ) ).
+            suggestions( SuggestionsFactory.create( searchResponse.getSuggest() ) ).
+            build();
     }
 
     private RuntimeException rethrowException( Throwable throwable, SearchRequestBuilder searchRequestBuilder )

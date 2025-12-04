@@ -4,17 +4,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Stopwatch;
-
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
@@ -22,7 +18,6 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -45,13 +40,9 @@ public class ResolveSyncWorkCommand
 
     private final ResolveSyncWorkResult.Builder result;
 
-    private final Set<CompareStatus> statusesToStopDependenciesSearch;
+    private final Set<NodeCompareStatus> statusesToStopDependenciesSearch;
 
     private final Function<NodeIds, NodeIds> filter;
-
-    private final Function<NodeIds, NodeIds> statusFilter;
-
-    private static final Logger LOG = LoggerFactory.getLogger( ResolveSyncWorkCommand.class );
 
     private ResolveSyncWorkCommand( final Builder builder )
     {
@@ -73,25 +64,6 @@ public class ResolveSyncWorkCommand
         }
 
         this.publishRootNode = publishRootNode;
-
-        this.statusFilter = statusesToStopDependenciesSearch != null ? nodeIds -> {
-            final NodeIds.Builder filteredNodeIds = NodeIds.create();
-
-            final NodeComparisons currentLevelNodeComparisons = CompareNodesCommand.create()
-                .nodeIds( nodeIds )
-                .target( target )
-                .storageService( this.nodeStorageService )
-                .build()
-                .execute();
-
-            currentLevelNodeComparisons.getComparisons()
-                .stream()
-                .filter( nodeComparison -> !statusesToStopDependenciesSearch.contains( nodeComparison.getCompareStatus() ) )
-                .map( NodeComparison::getNodeId )
-                .forEach( filteredNodeIds::add );
-
-            return filteredNodeIds.build();
-        } : Function.identity();
     }
 
     public static Builder create()
@@ -109,18 +81,18 @@ public class ResolveSyncWorkCommand
 
     private void getAllPossibleNodesToBePublished()
     {
-        final NodeIds.Builder diffAndDependantsBuilder = NodeIds.create();
-
         final NodeIds initialDiff = getInitialDiff();
-        diffAndDependantsBuilder.addAll( initialDiff );
 
-        if ( includeDependencies )
-        {
-            final NodeIds nodeDependencies = getNodeDependencies( initialDiff );
-            diffAndDependantsBuilder.addAll( nodeDependencies );
-        }
+        final NodeIds diffAndDependants =
+            includeDependencies ? NodeIds.create().addAll( getNodeDependencies( initialDiff ) ).addAll( initialDiff ).build() : initialDiff;
 
-        final Set<NodeComparison> comparisons = getFilteredComparisons( diffAndDependantsBuilder );
+        final Set<NodeComparison> comparisons = getComparisons( diffAndDependants ).getComparisons()
+            .stream()
+            .filter( comparison -> comparison.getCompareStatus() != NodeCompareStatus.EQUAL &&
+                comparison.getCompareStatus() != NodeCompareStatus.NEW_TARGET )
+            .filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) )
+            .filter( comparison -> !this.excludedIds.contains( comparison.getNodeId() ) )
+            .collect( Collectors.toSet() );
 
         addNewAndMovedParents( comparisons );
 
@@ -136,71 +108,55 @@ public class ResolveSyncWorkCommand
             return initialDiff.build();
         }
 
-        final Stopwatch timer = Stopwatch.createStarted();
+        final NodeVersionDiffResult nodesWithVersionDifference = FindNodesWithVersionDifferenceCommand.create()
+            .target( target )
+            .source( ContextAccessor.current().getBranch() )
+            .nodePath( this.publishRootNode.path() )
+            .excludes( this.excludedIds )
+            .searchService( this.nodeSearchService )
+            .storageService( this.nodeStorageService )
+            .build()
+            .execute();
 
-        final NodeVersionDiffResult nodesWithVersionDifference = findNodesWithVersionDifference( this.publishRootNode.path() );
+        nodesWithVersionDifference.getNodesWithDifferences()
+            .stream()
+            .filter( Predicate.not( excludedIds::contains ) )
+            .forEach( initialDiff::add );
 
-        LOG.debug( "Diff-query result in " + timer.stop() );
-
-        final NodeIds nodeIds = nodesWithVersionDifference.getNodesWithDifferences().stream().
-            filter( ( nodeId ) -> !this.excludedIds.contains( nodeId ) ).
-            collect( NodeIds.collector() );
-
-        return initialDiff.addAll( nodeIds ).
-            build();
+        return initialDiff.build();
     }
 
-    private NodeVersionDiffResult findNodesWithVersionDifference( final NodePath nodePath )
+    private NodeIds getNodeDependencies( final NodeIds nodeIds )
     {
-        return FindNodesWithVersionDifferenceCommand.create().
-            target( target ).
-            source( ContextAccessor.current().getBranch() ).
-            nodePath( nodePath ).
-            excludes( this.excludedIds ).
-            searchService( this.nodeSearchService ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
-    }
+        final Function<NodeIds, NodeIds> statusFilter = statusesToStopDependenciesSearch != null ? n -> getComparisons( n ).getComparisons()
+            .stream()
+            .filter( nodeComparison -> !statusesToStopDependenciesSearch.contains( nodeComparison.getCompareStatus() ) )
+            .map( NodeComparison::getNodeId )
+            .collect( NodeIds.collector() ) : Function.identity();
 
-    private NodeIds getNodeDependencies( final NodeIds initialDiff )
-    {
-        return FindNodesDependenciesCommand.create( this ).nodeIds( initialDiff )
+        return FindNodesDependenciesCommand.create( this )
+            .nodeIds( nodeIds )
             .excludedIds( excludedIds )
             .filter( filter != null ? statusFilter.compose( filter ) : statusFilter )
-            .
-            build().
-            execute();
+            .build()
+            .execute();
     }
 
     private void addNewAndMovedParents( final Set<NodeComparison> comparisons )
     {
-        final NodePaths parentPaths = getPathsFromComparisons( comparisons );
+        final NodeIds parentIds =
+            getParentIdsForPaths( comparisons.stream().map( NodeComparison::getSourcePath ).collect( Collectors.toSet() ) );
 
-        final NodeIds parentIds = getParentIdsFromPaths( parentPaths );
+        final NodeIds filteredParentIds =
+            filterNewAndMoved( parentIds ).stream().map( NodeComparison::getNodeId ).collect( NodeIds.collector() );
 
-        final NodeIds.Builder filteredParentIdsBuilder = NodeIds.create();
-        getFilteredNewAndMovedParentComparisons( parentIds ).
-            stream().
-            map( NodeComparison::getNodeId ).
-            forEach( filteredParentIdsBuilder::add );
-        final NodeIds filteredParentIds = filteredParentIdsBuilder.build();
+        final NodeIds parentsAndDependencies = includeDependencies
+            ? NodeIds.create().addAll( getNodeDependencies( filteredParentIds ) ).addAll( filteredParentIds ).build()
+            : filteredParentIds;
 
-        final NodeIds parentsDependencies = includeDependencies ? getNodeDependencies( filteredParentIds ) : NodeIds.empty();
+        final Set<NodeComparison> newAndMoved = filterNewAndMoved( parentsAndDependencies );
 
-        final NodeComparisons newComparisonsToConsider = CompareNodesCommand.create().
-            nodeIds( NodeIds.create().
-                addAll( parentsDependencies ).
-                addAll( filteredParentIds ).
-                build() ).
-            target( this.target ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
-
-        final Set<NodeComparison> newAndMoved = getNewAndMoved( newComparisonsToConsider );
-
-        addToResult( NodeComparisons.create().addAll( newAndMoved ).build() );
+        newAndMoved.forEach( this::addToResult );
 
         if ( !newAndMoved.isEmpty() )
         {
@@ -208,17 +164,33 @@ public class ResolveSyncWorkCommand
         }
     }
 
-    private Set<NodeComparison> getNewAndMoved( final NodeComparisons parentComparisons )
+    private NodePaths parentPaths( final Set<NodePath> comparisons )
     {
-        return parentComparisons.getComparisons().stream().
-            filter( comparison -> comparison.getCompareStatus().equals( CompareStatus.NEW ) ||
-                comparison.getCompareStatus().equals( CompareStatus.MOVED ) ).
-            filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
-            collect( Collectors.toSet() );
+        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
+
+        for ( final NodePath path : comparisons )
+        {
+            if ( !path.isRoot() )
+            {
+                for ( NodePath parentPath : path.getParentPaths() )
+                {
+                    if ( parentPath.isRoot() )
+                    {
+                        break;
+                    }
+
+                    parentPathsBuilder.addNodePath( parentPath );
+                }
+            }
+
+        }
+
+        return parentPathsBuilder.build();
     }
 
-    private NodeIds getParentIdsFromPaths( final NodePaths parentPaths )
+    private NodeIds getParentIdsForPaths( final Set<NodePath> paths )
     {
+        final NodePaths parentPaths = parentPaths( paths );
         final NodeIds.Builder parentIdBuilder = NodeIds.create();
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
@@ -237,98 +209,30 @@ public class ResolveSyncWorkCommand
         return parentIdBuilder.build();
     }
 
-    private NodePaths getPathsFromComparisons( final Set<NodeComparison> comparisons )
+    private Set<NodeComparison> filterNewAndMoved( final NodeIds nodeIds )
     {
-        final NodePaths.Builder parentPathsBuilder = NodePaths.create();
-
-        for ( final NodeComparison comparison : comparisons )
-        {
-            addParentPaths( parentPathsBuilder, comparison.getSourcePath() );
-        }
-
-        return parentPathsBuilder.build();
+        return getComparisons( nodeIds ).getComparisons()
+            .stream()
+            .filter( comparison -> comparison.getCompareStatus() == NodeCompareStatus.MOVED ||
+                comparison.getCompareStatus() == NodeCompareStatus.NEW )
+            .filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) )
+            .collect( Collectors.toSet() );
     }
 
-    private Set<NodeComparison> getFilteredComparisons( final NodeIds.Builder diffAndDependantsBuilder )
+    private NodeComparisons getComparisons( final NodeIds nodeIds )
     {
-        final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
-            target( this.target ).
-            nodeIds( diffAndDependantsBuilder.build() ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
-
-        return allNodesComparisons.getComparisons().stream().
-            filter( comparison -> !( nodeNotChanged( comparison ) || nodeNotInSource( comparison ) ) ).
-            filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
-            filter( comparison -> !this.excludedIds.contains( comparison.getNodeId() ) ).
-            collect( Collectors.toSet() );
+        return CompareNodesCommand.create()
+            .target( this.target )
+            .nodeIds( nodeIds )
+            .storageService( this.nodeStorageService )
+            .build()
+            .execute();
     }
-
-    private Set<NodeComparison> getFilteredNewAndMovedParentComparisons( final NodeIds nodeIds )
-    {
-        final NodeComparisons allNodesComparisons = CompareNodesCommand.create().
-            target( this.target ).
-            nodeIds( nodeIds ).
-            storageService( this.nodeStorageService ).
-            build().
-            execute();
-
-        return allNodesComparisons.getComparisons().stream().
-            filter( comparison -> nodeMoved( comparison ) || nodeNotInTarget( comparison ) ).
-            filter( comparison -> !this.processedIds.contains( comparison.getNodeId() ) ).
-            collect( Collectors.toSet() );
-    }
-
-    private void addParentPaths( final NodePaths.Builder parentPathsBuilder, final NodePath path )
-    {
-        if ( path.isRoot() )
-        {
-            return;
-        }
-
-        for ( NodePath parentPath : path.getParentPaths() )
-        {
-            if ( parentPath.isRoot() )
-            {
-                return;
-            }
-
-            parentPathsBuilder.addNodePath( parentPath );
-        }
-    }
-
 
     private void addToResult( final NodeComparison comparison )
     {
         this.result.add( comparison );
         this.processedIds.add( comparison.getNodeId() );
-    }
-
-    private void addToResult( final NodeComparisons comparisons )
-    {
-        this.result.addAll( comparisons.getComparisons() );
-        this.processedIds.addAll( comparisons.getNodeIds().getSet() );
-    }
-
-    private boolean nodeMoved( final NodeComparison comparison )
-    {
-        return comparison.getCompareStatus() == CompareStatus.MOVED;
-    }
-
-    private boolean nodeNotInTarget( final NodeComparison comparison )
-    {
-        return comparison.getCompareStatus() == CompareStatus.NEW;
-    }
-
-    private boolean nodeNotInSource( final NodeComparison comparison )
-    {
-        return comparison.getCompareStatus() == CompareStatus.NEW_TARGET;
-    }
-
-    private boolean nodeNotChanged( final NodeComparison comparison )
-    {
-        return comparison.getCompareStatus() == CompareStatus.EQUAL;
     }
 
     public static final class Builder
@@ -344,7 +248,7 @@ public class ResolveSyncWorkCommand
 
         private boolean includeDependencies = true;
 
-        private Set<CompareStatus> statusesToStopDependenciesSearch;
+        private Set<NodeCompareStatus> statusesToStopDependenciesSearch;
 
         private Function<NodeIds, NodeIds> filter;
 
@@ -391,7 +295,7 @@ public class ResolveSyncWorkCommand
             return this;
         }
 
-        public Builder statusesToStopDependenciesSearch( final Set<CompareStatus> statusesToStopDependenciesSearch )
+        public Builder statusesToStopDependenciesSearch( final Set<NodeCompareStatus> statusesToStopDependenciesSearch )
         {
             this.statusesToStopDependenciesSearch = statusesToStopDependenciesSearch;
             return this;

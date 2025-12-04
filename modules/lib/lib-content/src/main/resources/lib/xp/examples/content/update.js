@@ -8,8 +8,6 @@ function editor(c) {
     c.language = 'en';
     c.data.myCheckbox = false;
     c.data['myTime'] = '11:00';
-    c.publish.from = '2016-11-03T10:01:34Z';
-    c.publish.to = '2016-11-03T11:01:34Z';
     c.workflow.state = 'READY';
     c.workflow.checks = {
         'Review by marketing': 'APPROVED'
@@ -65,10 +63,7 @@ var expected = {
             'mimeType': 'application/pdf'
         }
     },
-    'publish': {
-        'from': '2016-11-03T10:01:34Z',
-        'to': '2016-11-03T11:01:34Z'
-    },
+    'publish': {},
     'workflow': {
         'state': 'READY',
         'checks': {

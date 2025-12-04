@@ -1,7 +1,6 @@
 package com.enonic.xp.node;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.content.CompareStatus;
 
 @PublicApi
 public final class NodeComparison
@@ -14,9 +13,9 @@ public final class NodeComparison
 
     private final NodeId targetId;
 
-    private final CompareStatus compareStatus;
+    private final NodeCompareStatus compareStatus;
 
-    public NodeComparison( final NodeId sourceId, final NodePath sourcePath, NodeId targetId, NodePath targetPath, final CompareStatus compareStatus )
+    public NodeComparison( final NodeId sourceId, final NodePath sourcePath, NodeId targetId, NodePath targetPath, final NodeCompareStatus compareStatus )
     {
         this.sourceId = sourceId;
         this.targetId = targetId;
@@ -31,7 +30,7 @@ public final class NodeComparison
         return sourceId != null ? sourceId : targetId;
     }
 
-    public CompareStatus getCompareStatus()
+    public NodeCompareStatus getCompareStatus()
     {
         return compareStatus;
     }

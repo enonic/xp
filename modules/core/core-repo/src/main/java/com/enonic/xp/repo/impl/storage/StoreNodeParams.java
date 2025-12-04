@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.storage;
 
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitId;
+import com.enonic.xp.node.Attributes;
 
 public class StoreNodeParams
 {
@@ -9,13 +10,16 @@ public class StoreNodeParams
 
     private final NodeCommitId nodeCommitId;
 
+    private final Attributes versionAttributes;
+
     private final boolean newVersion;
 
-    private StoreNodeParams( final Node node, final NodeCommitId nodeCommitId, final boolean newVersion )
+    private StoreNodeParams( final Node node, final NodeCommitId nodeCommitId, final boolean newVersion, final Attributes versionAttributes )
     {
         this.node = node;
         this.nodeCommitId = nodeCommitId;
         this.newVersion = newVersion;
+        this.versionAttributes = versionAttributes;
     }
 
     public Node getNode()
@@ -28,54 +32,28 @@ public class StoreNodeParams
         return nodeCommitId;
     }
 
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public boolean isNewVersion()
     {
         return newVersion;
     }
 
-    public static Builder create()
+    public static StoreNodeParams newVersion( final Node node, final Attributes attributes )
     {
-        return new Builder();
+        return new StoreNodeParams( node, null, true, attributes );
     }
 
     public static StoreNodeParams newVersion( final Node node )
     {
-        return new StoreNodeParams( node, null, true );
+        return new StoreNodeParams( node, null, true, null );
     }
 
-    public static final class Builder
+    public static StoreNodeParams overrideVersion( final Node node, final NodeCommitId nodeCommitId, final Attributes attributes )
     {
-        private Node node;
-
-        private NodeCommitId nodeCommitId;
-
-        private boolean newVersion = true;
-
-        private Builder()
-        {
-        }
-
-        public Builder node( final Node node )
-        {
-            this.node = node;
-            return this;
-        }
-
-        public Builder nodeCommitId( final NodeCommitId nodeCommitId )
-        {
-            this.nodeCommitId = nodeCommitId;
-            return this;
-        }
-
-        public Builder overrideVersion()
-        {
-            this.newVersion = false;
-            return this;
-        }
-
-        public StoreNodeParams build()
-        {
-            return new StoreNodeParams( node, nodeCommitId, newVersion );
-        }
+        return new StoreNodeParams( node, nodeCommitId, false, attributes );
     }
 }

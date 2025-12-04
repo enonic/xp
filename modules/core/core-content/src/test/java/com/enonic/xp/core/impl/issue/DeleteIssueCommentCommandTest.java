@@ -12,8 +12,8 @@ import com.enonic.xp.issue.DeleteIssueCommentResult;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,7 +66,8 @@ class DeleteIssueCommentCommandTest
     private static DeleteNodeResult answerDeleted( InvocationOnMock answer )
     {
         return DeleteNodeResult.create()
-            .nodeIds( NodeIds.from( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() ) )
+            .add( new DeleteNodeResult.Result( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId(),
+                                               NodeVersionId.from( "nodeVersionId" ) ) )
             .build();
     }
 }

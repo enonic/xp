@@ -21,7 +21,6 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraData;
 import com.enonic.xp.content.ExtraDatas;
@@ -503,37 +502,6 @@ class ContentServiceImplTest_update
         final Attachment updatedContentThumbnail = updatedContent.getAttachments().byName( AttachmentNames.THUMBNAIL );
         assertNotNull( updatedContentThumbnail );
         assertEquals( thumbnail.size(), updatedContentThumbnail.getSize() );
-    }
-    @Test
-    void update_publish_info()
-    {
-        final CreateContentParams createContentParams = CreateContentParams.create().
-            contentData( new PropertyTree() ).
-            displayName( "This is my content" ).
-            parent( ContentPath.ROOT ).
-            type( ContentTypeName.folder() ).
-            build();
-
-        final Content content = this.contentService.create( createContentParams );
-
-        final UpdateContentParams updateContentParams = new UpdateContentParams();
-        updateContentParams.
-            contentId( content.getId() ).
-            editor( edit -> {
-                edit.publishInfo = ContentPublishInfo.create().
-                    from( Instant.parse( "2016-11-03T10:43:44Z" ) ).
-                    to( Instant.parse( "2016-11-23T10:43:44Z" ) ).
-                    build();
-            } );
-
-        this.contentService.update( updateContentParams );
-
-        final Content storedContent = this.contentService.getById( content.getId() );
-        assertNotNull( storedContent.getPublishInfo() );
-        assertNotNull( storedContent.getPublishInfo().getFrom() );
-        assertNotNull( storedContent.getPublishInfo().getTo() );
-        assertEquals( storedContent.getPublishInfo().getFrom(), Instant.parse( "2016-11-03T10:43:44Z" ) );
-        assertEquals( storedContent.getPublishInfo().getTo(), Instant.parse( "2016-11-23T10:43:44Z" ) );
     }
 
     @Test

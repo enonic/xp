@@ -8,7 +8,6 @@ import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
@@ -56,8 +55,6 @@ public class CreateContentTranslatorParams
 
     private final ChildOrder childOrder;
 
-    private final ContentPublishInfo contentPublishInfo;
-
     private final Locale language;
 
     private final ContentIds processedIds;
@@ -88,7 +85,6 @@ public class CreateContentTranslatorParams
         this.createAttachments = builder.createAttachments;
         this.childOrder = builder.childOrder;
         this.language = builder.language;
-        this.contentPublishInfo = builder.contentPublishInfo;
         this.processedIds = builder.processedIds;
         this.workflowInfo = builder.workflowInfo;
         this.page = builder.page;
@@ -194,11 +190,6 @@ public class CreateContentTranslatorParams
         return language;
     }
 
-    public ContentPublishInfo getContentPublishInfo()
-    {
-        return contentPublishInfo;
-    }
-
     public ContentIds getProcessedIds()
     {
         return processedIds;
@@ -244,8 +235,6 @@ public class CreateContentTranslatorParams
 
         private ChildOrder childOrder;
 
-        private ContentPublishInfo contentPublishInfo;
-
         private Locale language;
 
         private ContentIds processedIds;
@@ -272,7 +261,6 @@ public class CreateContentTranslatorParams
             this.inheritPermissions = params.isInheritPermissions();
             this.childOrder = params.getChildOrder();
             this.language = params.getLanguage();
-            this.contentPublishInfo = params.getContentPublishInfo();
             this.workflowInfo = params.getWorkflowInfo();
             this.page = params.getPage();
         }
@@ -373,12 +361,6 @@ public class CreateContentTranslatorParams
             return this;
         }
 
-        public Builder contentPublishInfo( final ContentPublishInfo info )
-        {
-            this.contentPublishInfo = info;
-            return this;
-        }
-
         public Builder processedIds( final ContentIds processedIds )
         {
             this.processedIds = processedIds;
@@ -444,6 +426,4 @@ public class CreateContentTranslatorParams
             return new CreateContentTranslatorParams( this );
         }
     }
-
-
 }

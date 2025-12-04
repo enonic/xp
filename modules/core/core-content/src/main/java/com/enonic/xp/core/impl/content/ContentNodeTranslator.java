@@ -16,29 +16,24 @@ public class ContentNodeTranslator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ContentNodeTranslator.class );
 
-    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+    private static final ContentDataSerializer CONTENT_DATA_SERIALIZER = new ContentDataSerializer();
 
-    public ContentDataSerializer getContentDataSerializer()
-    {
-        return contentDataSerializer;
-    }
-
-    public Contents fromNodes( final Nodes nodes )
+    public static Contents fromNodes( final Nodes nodes )
     {
         return doTranslate( nodes );
     }
 
-    public Content fromNode( final Node node )
+    public static Content fromNode( final Node node )
     {
         return doTranslate( node, false );
     }
 
-    public Content fromNodeWithAnyRootPath( final Node node )
+    public static Content fromNodeWithAnyRootPath( final Node node )
     {
         return doTranslate( node, true );
     }
 
-    private Contents doTranslate( final Nodes nodes )
+    private static Contents doTranslate( final Nodes nodes )
     {
         final Contents.Builder contents = Contents.create();
 
@@ -61,8 +56,7 @@ public class ContentNodeTranslator
         return contents.build();
     }
 
-
-    private Content doTranslate( final Node node, final boolean allowAltRootPath )
+    private static Content doTranslate( final Node node, final boolean allowAltRootPath )
     {
         final ContentId contentId = ContentId.from( node.id() );
 
@@ -77,7 +71,7 @@ public class ContentNodeTranslator
                 .build();
         }
 
-        final Content.Builder<?> builder = contentDataSerializer.fromData( node.data().getRoot() );
+        final Content.Builder<?> builder = CONTENT_DATA_SERIALIZER.fromData( node.data().getRoot() );
 
         if ( node.parentPath().isRoot() )
         {

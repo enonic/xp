@@ -1,17 +1,19 @@
 package com.enonic.xp.node;
 
-import java.util.Objects;
+import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.annotation.PublicApi;
 
 @PublicApi
 public final class DeleteNodeResult
 {
-    private final NodeIds nodeIds;
+    private final ImmutableList<Result> results;
 
     private DeleteNodeResult( final Builder builder )
     {
-        this.nodeIds = Objects.requireNonNull( builder.nodeIds );
+        this.results = builder.builder.build();
     }
 
     public static Builder create()
@@ -21,20 +23,24 @@ public final class DeleteNodeResult
 
     public NodeIds getNodeIds()
     {
-        return nodeIds;
+        return results.stream().map( Result::nodeId ).collect( NodeIds.collector() );
+    }
+
+    public List<Result> getDeleted()
+    {
+        return results;
     }
 
     public static final class Builder
     {
-        private NodeIds nodeIds;
+        private ImmutableList.Builder builder = ImmutableList.builder();
 
         private Builder()
         {
         }
 
-        public Builder nodeIds( final NodeIds nodeIds )
-        {
-            this.nodeIds = nodeIds;
+        public Builder add( final Result result ) {
+            this.builder.add( result );
             return this;
         }
 
@@ -42,5 +48,8 @@ public final class DeleteNodeResult
         {
             return new DeleteNodeResult( this );
         }
+    }
+
+    public record Result(NodeId nodeId, NodeVersionId nodeVersionId) {
     }
 }

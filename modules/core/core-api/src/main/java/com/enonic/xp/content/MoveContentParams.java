@@ -11,6 +11,8 @@ public final class MoveContentParams
 
     private final ContentPath parentContentPath;
 
+    private final ContentName newName;
+
     private final MoveContentListener moveContentListener;
 
     private final boolean stopInherit;
@@ -19,6 +21,7 @@ public final class MoveContentParams
     {
         this.contentId = builder.contentId;
         this.parentContentPath = builder.parentContentPath;
+        this.newName = builder.newName;
         this.moveContentListener = builder.moveContentListener;
         this.stopInherit = builder.stopInherit;
     }
@@ -38,6 +41,11 @@ public final class MoveContentParams
         return parentContentPath;
     }
 
+    public ContentName getNewName()
+    {
+        return newName;
+    }
+
     public MoveContentListener getMoveContentListener()
     {
         return moveContentListener;
@@ -53,6 +61,8 @@ public final class MoveContentParams
         private ContentId contentId;
 
         private ContentPath parentContentPath;
+
+        private ContentName newName;
 
         private MoveContentListener moveContentListener;
 
@@ -71,6 +81,12 @@ public final class MoveContentParams
         public Builder parentContentPath( ContentPath parentContentPath )
         {
             this.parentContentPath = parentContentPath;
+            return this;
+        }
+
+        public Builder newName( ContentName newName )
+        {
+            this.newName = newName;
             return this;
         }
 

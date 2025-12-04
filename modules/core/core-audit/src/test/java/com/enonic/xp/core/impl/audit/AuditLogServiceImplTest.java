@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.audit;
 
+import java.util.Objects;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -28,8 +30,10 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.PrincipalKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -240,8 +244,7 @@ class AuditLogServiceImplTest
         assertEquals( auditLogParams.getTime(), log.getTime() );
         assertNotNull( log.getSource() );
         assertEquals( auditLogParams.getSource(), log.getSource() );
-        assertNotNull( log.getUser() );
-        assertEquals( auditLogParams.getUser(), log.getUser() );
+        assertEquals( Objects.requireNonNullElse( auditLogParams.getUser(), PrincipalKey.ofAnonymous()), log.getUser() );
         assertNotNull( log.getObjectUris() );
         assertEquals( 2, log.getObjectUris().getSize() );
         assertEquals( auditLogParams.getObjectUris(), log.getObjectUris() );
@@ -252,7 +255,8 @@ class AuditLogServiceImplTest
     private static DeleteNodeResult answerDeleted( InvocationOnMock answer )
     {
         return DeleteNodeResult.create()
-            .nodeIds( NodeIds.from( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId() ) )
+            .add( new DeleteNodeResult.Result( answer.getArgument( 0, DeleteNodeParams.class ).getNodeId(),
+                                               NodeVersionId.from( "nodeVersionId" ) ) )
             .build();
     }
 }

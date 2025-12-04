@@ -61,7 +61,6 @@ public final class FindNearestContentByPathCommand
         return GetContentByPathCommand.create( path )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
-            .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .build()
             .execute();
