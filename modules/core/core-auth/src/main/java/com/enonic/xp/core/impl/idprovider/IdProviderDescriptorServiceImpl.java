@@ -1,9 +1,17 @@
 package com.enonic.xp.core.impl.idprovider;
 
+import java.net.URL;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.JsonSchemaContributor;
 import com.enonic.xp.core.impl.schema.JsonSchemaService;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
@@ -13,11 +21,19 @@ import com.enonic.xp.resource.ResourceService;
 
 @Component(immediate = true)
 public final class IdProviderDescriptorServiceImpl
-    implements IdProviderDescriptorService
+    implements IdProviderDescriptorService, JsonSchemaContributor
 {
     private ResourceService resourceService;
 
     private JsonSchemaService  jsonSchemaService;
+
+    private final BundleContext bundleContext;
+
+    @Activate
+    public IdProviderDescriptorServiceImpl( final BundleContext bundleContext )
+    {
+        this.bundleContext = bundleContext;
+    }
 
     @Override
     public IdProviderDescriptor getDescriptor( final ApplicationKey key )
@@ -53,5 +69,12 @@ public final class IdProviderDescriptorServiceImpl
     public void setJsonSchemaService( final JsonSchemaService jsonSchemaService )
     {
         this.jsonSchemaService = jsonSchemaService;
+    }
+
+    @Override
+    public List<URL> getSchemaURLs()
+    {
+        final Enumeration<URL> predefinedSchemas = bundleContext.getBundle().findEntries( "/META-INF/schemas", "*.json", true );
+        return Collections.list( predefinedSchemas );
     }
 }

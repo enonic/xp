@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.idprovider;
 
 import org.junit.jupiter.api.Test;
+import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.ApplicationTestSupport;
@@ -25,7 +26,7 @@ class IdProviderDescriptorServiceTest
     protected void initialize()
     {
         addApplication( "myapp1", "/apps/myapp1" );
-        this.service = new IdProviderDescriptorServiceImpl();
+        this.service = new IdProviderDescriptorServiceImpl( mock( BundleContext.class ) );
         this.service.setResourceService( this.resourceService );
         this.service.setJsonSchemaService( mock( JsonSchemaService.class ) );
     }

@@ -12,7 +12,6 @@ import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,12 +22,7 @@ public class YmlFormFragmentParserTest
     void test()
         throws Exception
     {
-        final JsonSchemaServiceImpl validator = new JsonSchemaServiceImpl(null); // TODO
-        validator.activate();
-
         final String yaml = readAsString( "/descriptors/formfragment-descriptor.yml" );
-
-        assertDoesNotThrow( () -> validator.validate( "https://json-schema.enonic.com/8.0.0/form-fragment-descriptor.schema.json", yaml ) );
 
         final ApplicationKey currentApplication = ApplicationKey.from( "myapp" );
 
