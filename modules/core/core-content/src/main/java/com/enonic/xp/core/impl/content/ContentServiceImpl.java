@@ -590,7 +590,7 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .xDataService( this.xDataService )
-            .contentValidators( this.contentValidators  )
+            .contentValidators( this.contentValidators )
             .build()
             .execute();
 

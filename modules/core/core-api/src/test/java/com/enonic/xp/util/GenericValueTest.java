@@ -103,6 +103,17 @@ class GenericValueTest
     }
 
     @Test
+    void asDouble()
+    {
+        assertEquals( 10.5, GenericValue.numberValue( 10.5 ).asDouble() );
+        assertEquals( 10.0, GenericValue.numberValue( 10 ).asDouble() );
+        assertEquals( 9.223372036854776E18, GenericValue.numberValue( Long.MAX_VALUE ).asDouble() );
+        assertEquals( -9.22E18D, GenericValue.stringValue( "-9.22E18" ).asDouble() );
+        assertThrows( NumberFormatException.class, () -> GenericValue.stringValue( "a" ).asDouble() );
+        assertThrows( IllegalStateException.class, () -> GenericValue.stringValue( "a" ).asDouble() );
+    }
+
+    @Test
     void properties()
     {
         final GenericValue value =

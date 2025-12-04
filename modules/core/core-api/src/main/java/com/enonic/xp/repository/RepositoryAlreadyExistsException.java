@@ -14,6 +14,6 @@ public final class RepositoryAlreadyExistsException
     @Override
     public String getCode()
     {
-        return "branchAlreadyExists";
+        return "repositoryAlreadyExists";
     }
 }
