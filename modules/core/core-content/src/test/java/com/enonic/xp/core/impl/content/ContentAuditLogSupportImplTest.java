@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,14 +24,20 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.InsertManualStrategy;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.IdProviderKey;
@@ -40,10 +47,11 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ContentAuditLogSupportImplTest
 {
-
     private ExecutorService executor;
 
     private ContentAuditLogSupportImpl support;
@@ -67,8 +75,7 @@ class ContentAuditLogSupportImplTest
     }
 
     @Test
-    void testCreateContent()
-        throws Exception
+    void create()
     {
         final PropertyTree propertyTree = createTestPropertyTree();
 
@@ -91,8 +98,7 @@ class ContentAuditLogSupportImplTest
     }
 
     @Test
-    void testUpdateContent()
-        throws Exception
+    void update()
     {
         final UpdateContentParams params = new UpdateContentParams().requireValid( true )
             .contentId( ContentId.from( "contentId" ) )
@@ -111,8 +117,7 @@ class ContentAuditLogSupportImplTest
     }
 
     @Test
-    void testPatchContent()
-        throws Exception
+    void patch()
     {
         final PatchContentParams params = PatchContentParams.create()
             .contentId( ContentId.from( "contentId" ) )
@@ -129,7 +134,8 @@ class ContentAuditLogSupportImplTest
                                                             .name( "MyText.txp" )
                                                             .byteSource( ByteSource.wrap( "text data".getBytes( StandardCharsets.UTF_8 ) ) )
                                                             .text( "text data" )
-                                                            .build() ) ).patcher( edit -> edit.displayName.setValue( "New Display Name" ) )
+                                                            .build() ) )
+            .patcher( edit -> edit.displayName.setValue( "New Display Name" ) )
             .build();
 
         final PatchContentResult result = PatchContentResult.create()
@@ -171,8 +177,53 @@ class ContentAuditLogSupportImplTest
         assertEquals( "/contentName2", argumentCaptor.getValue().getData().getSet( "result" ).getSet( "master" ).getString( "path" ) );
     }
 
+    @Test
+    void importContent()
+    {
+        final ImportContentParams params = ImportContentParams.create()
+            .importContent( Content.create()
+                                .id( ContentId.from( "importedId" ) )
+                                .type( ContentTypeName.site() )
+                                .name( "importedName" )
+                                .displayName( "importedDisplayName" )
+                                .parentPath( ContentPath.ROOT )
+                                .build() )
+            .targetPath( ContentPath.from( "/parent" ) )
+            .insertManualStrategy( InsertManualStrategy.MANUAL )
+            .originProject( ProjectName.from( "origin-project" ) )
+            .inherit( EnumSet.allOf( ContentInheritType.class ) )
+            .importPermissions( true )
+            .importPermissionsOnCreate( true )
+            .build();
+
+        final Content importedContent = Content.create()
+            .id( ContentId.from( "importedId" ) )
+            .type( ContentTypeName.site() )
+            .name( "importedName" )
+            .displayName( "importedDisplayName" )
+            .parentPath( ContentPath.ROOT )
+            .build();
+
+        final ImportContentResult result = ImportContentResult.create().content( importedContent ).build();
+
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::importContent, params, result );
+
+        assertEquals( "system.content.import", argumentCaptor.getValue().getType() );
+
+        final PropertySet paramsInResult = argumentCaptor.getValue().getData().getSet( "params" );
+        assertFalse( paramsInResult.getBoolean( "withBinaryAttachments" ) );
+        assertEquals( "/parent", paramsInResult.getString( "targetPath" ) );
+        assertEquals( "MANUAL", paramsInResult.getString( "insertManualStrategy" ) );
+        assertEquals( "origin-project", paramsInResult.getString( "originProject" ) );
+        assertEquals( List.of( "CONTENT", "PARENT", "NAME", "SORT" ), paramsInResult.getStrings( "inherit" ) );
+        assertTrue( paramsInResult.getBoolean( "importPermissions" ) );
+        assertTrue( paramsInResult.getBoolean( "importPermissionsOnCreate" ) );
+        final PropertySet resultInResult = argumentCaptor.getValue().getData().getSet( "result" );
+        assertEquals( "importedId", resultInResult.getString( "id" ) );
+        assertEquals( "/importedName", resultInResult.getString( "path" ) );
+    }
+
     private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )
-        throws Exception
     {
         final User testUser = createTestUser();
         createTestContext( testUser );
@@ -214,10 +265,17 @@ class ContentAuditLogSupportImplTest
     }
 
     private void shutdownExecutor()
-        throws InterruptedException
     {
         executor.shutdown();
-        executor.awaitTermination( 1, TimeUnit.MINUTES );
+        try
+        {
+            executor.awaitTermination( 1, TimeUnit.MINUTES );
+        }
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( e );
+        }
     }
 
     private ArgumentCaptor<LogAuditLogParams> verifyAuditLog( User user )

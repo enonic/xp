@@ -29,7 +29,7 @@ public final class ImportContentParams
     private ImportContentParams( Builder builder )
     {
         binaryAttachments = builder.binaryAttachments;
-        content = builder.content;
+        content = Objects.requireNonNull( builder.content );
         targetPath = builder.targetPath;
         insertManualStrategy = builder.insertManualStrategy;
         inherit = builder.inherit;
