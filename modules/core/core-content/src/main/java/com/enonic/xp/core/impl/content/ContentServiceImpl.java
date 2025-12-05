@@ -883,13 +883,16 @@ public class ContentServiceImpl
     {
         verifyDraftBranch();
 
-        return ImportContentCommand.create()
+        final ImportContentResult result = ImportContentCommand.create()
             .params( params )
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
             .build()
             .execute();
+
+        contentAuditLogSupport.importContent( params, result );
+        return result;
     }
 
     @Override

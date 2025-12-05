@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -34,6 +36,8 @@ import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.ImportContentParams;
+import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
@@ -485,6 +489,33 @@ public class ContentAuditLogSupportImpl
         log( "system.content.applyPermissions", data, ContentIds.from( result.getResults().keySet() ), rootContext );
     }
 
+    @Override
+    public void importContent( final ImportContentParams params, final ImportContentResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doImportContent( params, result, context ) );
+    }
+
+    private void doImportContent( final ImportContentParams params, final ImportContentResult result, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        paramsSet.addBoolean( "withBinaryAttachments", params.getBinaryAttachments() != null && !params.getBinaryAttachments().isEmpty() );
+        paramsSet.addString( "targetPath", nullToNull( params.getTargetPath() ) );
+        paramsSet.addString( "insertManualStrategy", nullToNull( params.getInsertManualStrategy() ) );
+        paramsSet.addString( "originProject", nullToNull( params.getOriginProject() ) );
+        paramsSet.addStrings( "inherit", nullToNull( params.getInherit() ) );
+        paramsSet.addBoolean( "importPermissions", params.isImportPermissions() );
+        paramsSet.addBoolean( "importPermissionsOnCreate", params.isImportPermissionsOnCreate() );
+
+        addContent( resultSet, result.getContent() );
+
+        log( "system.content.import", data, result.getContent().getId(), rootContext );
+    }
+
     private void addContent( final PropertySet targetSet, final Content content )
     {
         targetSet.setString( "id", content.getId().toString() );
@@ -581,6 +612,11 @@ public class ContentAuditLogSupportImpl
     private AuditLogUri createAuditLogUri( final ContentPath contentPath, final Context rootContext )
     {
         return AuditLogUri.from( rootContext.getRepositoryId() + ":" + rootContext.getBranch() + ":/content" + contentPath );
+    }
+
+    private List<String> nullToNull( Collection<?> values )
+    {
+        return values != null ? values.stream().map( Objects::toString ).toList() : null;
     }
 
     private String nullToNull( Object value )
