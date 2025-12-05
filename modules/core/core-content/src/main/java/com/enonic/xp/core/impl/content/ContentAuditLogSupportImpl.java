@@ -26,6 +26,7 @@ import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.content.CreateContentParams;
@@ -38,8 +39,10 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -483,6 +486,47 @@ public class ContentAuditLogSupportImpl
         } );
 
         log( "system.content.applyPermissions", data, ContentIds.from( result.getResults().keySet() ), rootContext );
+    }
+
+    @Override
+    public void resetInheritance( final ResetContentInheritParams params )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doResetInheritance( params, context ) );
+    }
+
+    private void doResetInheritance( final ResetContentInheritParams params, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+
+        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+        paramsSet.addString( "projectName", nullToNull( params.getProjectName() ) );
+        paramsSet.addStrings( "inherit", params.getInherit()
+            .stream()
+            .map( ContentInheritType::toString )
+            .collect( Collectors.toList() ) );
+
+        log( "system.content.resetInheritance", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void syncProject( final ProjectSyncParams params )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doSyncProject( params, context ) );
+    }
+
+    private void doSyncProject( final ProjectSyncParams params, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+
+        paramsSet.addString( "targetProject", nullToNull( params.getTargetProject() ) );
+
+        log( "system.content.syncProject", data, AuditLogUris.empty(), rootContext );
     }
 
     private void addContent( final PropertySet targetSet, final Content content )

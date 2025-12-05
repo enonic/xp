@@ -17,8 +17,10 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -55,4 +57,8 @@ interface ContentAuditLogSupport
     void sort( SortContentParams params, SortContentResult result );
 
     void applyPermissions( ApplyContentPermissionsParams params, ApplyContentPermissionsResult result );
+
+    void resetInheritance( ResetContentInheritParams params );
+
+    void syncProject( ProjectSyncParams params );
 }
