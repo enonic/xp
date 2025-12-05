@@ -145,6 +145,8 @@ public abstract class AbstractContentSynchronizerTest
 
     protected Project mixedChildLayer;
 
+    protected ContentAuditLogSupportImpl contentAuditLogSupport;
+
     private ArgumentCaptor<Event> eventCaptor;
 
     private Set<Event> handledEvents;
@@ -320,7 +322,7 @@ public abstract class AbstractContentSynchronizerTest
         final AuditLogService auditLogService = mock( AuditLogService.class );
         final ContentConfig contentConfig = mock( ContentConfig.class );
 
-        final ContentAuditLogSupportImpl contentAuditLogSupport =
+        contentAuditLogSupport =
             new ContentAuditLogSupportImpl( contentConfig, Runnable::run, auditLogService, contentAuditLogFilterService );
 
         xDataMappingService = new XDataMappingServiceImpl( siteService, xDataService );
