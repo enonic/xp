@@ -108,7 +108,7 @@ final class CreateContentCommand
             .siteService( this.siteService )
             .build()
             .produce()
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.CREATE_KEY ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.CREATE_ATTR ) )
             .refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE )
             .build();
 

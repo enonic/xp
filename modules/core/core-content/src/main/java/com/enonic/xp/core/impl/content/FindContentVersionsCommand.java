@@ -69,7 +69,7 @@ public class FindContentVersionsCommand
                 .stream()
                 .filter( v -> v.getKey().startsWith( "content." ) )
                 .map( v -> new ContentVersion.Action( v.getKey(),
-                                                      v.getValue().optional( "fields" ).map( GenericValue::asStringList ).orElse( List.of() ),
+                                                      v.getValue().optional( "fields" ).map( GenericValue::toStringList ).orElse( List.of() ),
                                                       ContentAttributesHelper.getUser( v.getValue() ), ContentAttributesHelper.getOpTime( v.getValue() ) ) )
                 .forEach( builder::addAction );
         }

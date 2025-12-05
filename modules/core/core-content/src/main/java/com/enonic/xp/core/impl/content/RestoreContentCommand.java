@@ -122,7 +122,7 @@ final class RestoreContentCommand
             .nodeId( nodeToRestore.id() )
             .newParentPath( parentPathToRestore )
             .newName( newNodeName )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_KEY ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_ATTR ) )
             .refresh( RefreshMode.ALL );
 
         if ( params.getRestoreContentListener() != null )

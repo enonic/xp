@@ -50,7 +50,7 @@ class SortContentCommand
                 paramsBuilder.processor( InheritedContentDataProcessor.SORT );
             }
 
-            paramsBuilder.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_KEY ) );
+            paramsBuilder.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.SORT_ATTR ) );
 
             final SortNodeResult sortNodeResult = nodeService.sort( paramsBuilder.build() );
 

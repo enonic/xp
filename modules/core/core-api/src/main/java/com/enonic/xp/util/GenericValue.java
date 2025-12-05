@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -31,6 +33,10 @@ public final class GenericValue
 
     private static final GenericValue FALSE = new GenericValue( Boolean.FALSE );
 
+    private static final GenericValue EMPTY_LIST = new GenericValue( ImmutableList.of() );
+
+    private static final GenericValue EMPTY_OBJECT = new GenericValue( ImmutableMap.of() );
+
     @Serial
     private static final long serialVersionUID = 0;
 
@@ -39,6 +45,14 @@ public final class GenericValue
     private GenericValue( final Serializable value )
     {
         this.value = Objects.requireNonNull( value );
+    }
+
+    /**
+     * The type of value stored in this GenericValue.
+     */
+    public enum Type
+    {
+        STRING, NUMBER, BOOLEAN, LIST, OBJECT
     }
 
     /**
@@ -79,7 +93,7 @@ public final class GenericValue
      *
      * @return a list of GenericValue elements, or a list containing this GenericValue if it is not a list
      */
-    public List<GenericValue> asList()
+    public List<GenericValue> values()
     {
         return whenListOrElse( Function.identity(), () -> ImmutableList.of( this ) );
     }
@@ -124,7 +138,7 @@ public final class GenericValue
 
     /**
      * Converts this GenericValue to an integer representation.
-     * double values decimal part will be rounded.
+     * double values decimal part will be rounded down.
      *
      * @return the integer representation of the value
      * @throws IllegalStateException if the value is not of a type that can be converted to an integer ( boolean, object or list )
@@ -137,7 +151,7 @@ public final class GenericValue
         {
             case Integer i -> i;
             case Long l -> Math.toIntExact( l );
-            case Double d -> DoubleMath.roundToInt( d, RoundingMode.HALF_EVEN );
+            case Double d -> DoubleMath.roundToInt( d, RoundingMode.DOWN );
             case String s -> Integer.parseInt( s );
             default -> throw new IllegalStateException();
         };
@@ -145,7 +159,7 @@ public final class GenericValue
 
     /**
      * Converts this GenericValue to a long representation.
-     * double values decimal part will be rounded.
+     * double values decimal part will be rounded down.
      *
      * @return the long representation of the value
      * @throws IllegalStateException if the value is not of a type that can be converted to a long ( boolean, object or list )
@@ -158,7 +172,7 @@ public final class GenericValue
         {
             case Long l -> l;
             case Integer i -> i;
-            case Double d -> DoubleMath.roundToLong( d, RoundingMode.HALF_EVEN );
+            case Double d -> DoubleMath.roundToLong( d, RoundingMode.DOWN );
             case String s -> Long.parseLong( s );
             default -> throw new IllegalStateException();
         };
@@ -166,6 +180,8 @@ public final class GenericValue
 
     /**
      * Converts this GenericValue to a boolean representation.
+     * Note: To avoid ambiguity, only actual boolean values are converted. Strings like "true" or numbers like 1 are not converted.
+     * In case you need such conversions use {@link #asString()} method and implement your own logic.
      *
      * @return the boolean representation of the value
      * @throws IllegalStateException if the value is not of a type that can be converted to a boolean ( string, number, object or list )
@@ -185,9 +201,9 @@ public final class GenericValue
      * @return list of strings
      * @throws IllegalStateException if the values are not of a type that can be converted to a string ( object or list )
      */
-    public List<String> asStringList()
+    public List<String> toStringList()
     {
-        return asList().stream().map( GenericValue::asString ).collect( ImmutableList.toImmutableList() );
+        return values().stream().map( GenericValue::asString ).collect( ImmutableList.toImmutableList() );
     }
 
     /**
@@ -195,7 +211,7 @@ public final class GenericValue
      *
      * @return the raw Java object: String, Long, Integer, Double, Boolean, List, or Map
      */
-    public Object rawJava()
+    public Object toRawJava()
     {
         return switch ( value )
         {
@@ -204,9 +220,9 @@ public final class GenericValue
             case Integer i -> i;
             case Double d -> d;
             case Boolean b -> b;
-            case List<?> l -> asList().stream().map( GenericValue::rawJava ).collect( ImmutableList.toImmutableList() );
+            case List<?> l -> values().stream().map( GenericValue::toRawJava ).collect( ImmutableList.toImmutableList() );
             case Map<?, ?> m ->
-                properties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().rawJava() ) );
+                properties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().toRawJava() ) );
             default -> throw new AssertionError( value );
         };
     }
@@ -214,10 +230,11 @@ public final class GenericValue
     /**
      * Converts this GenericValue into its raw JavaScript-compatible representation.
      * The difference from rawJava() is that Long values are converted to Double to accommodate JavaScript's number type.
+     * Note that this may lead to precision loss for very large long values.
      *
      * @return the raw Java object: String, Double, Integer, Boolean, List, or Map
      */
-    public Object rawJs()
+    public Object toRawJs()
     {
         return switch ( value )
         {
@@ -226,9 +243,9 @@ public final class GenericValue
             case Integer i -> i;
             case Double d -> d;
             case Boolean b -> b;
-            case List<?> l -> asList().stream().map( GenericValue::rawJs ).collect( ImmutableList.toImmutableList() );
+            case List<?> l -> values().stream().map( GenericValue::toRawJs ).collect( ImmutableList.toImmutableList() );
             case Map<?, ?> m ->
-                properties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().rawJs() ) );
+                properties().stream().collect( ImmutableMap.toImmutableMap( Map.Entry::getKey, e -> e.getValue().toRawJs() ) );
             default -> throw new AssertionError( value );
         };
     }
@@ -251,18 +268,6 @@ public final class GenericValue
             case Map<?, ?> m -> Type.OBJECT;
             default -> throw new AssertionError( value );
         };
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T whenMapOrElse( final Function<Map<String, GenericValue>, T> then, final Supplier<T> orElse )
-    {
-        return value instanceof Map ? then.apply( (Map<String, GenericValue>) value ) : orElse.get();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T whenListOrElse( final Function<List<GenericValue>, T> then, final Supplier<T> orElse )
-    {
-        return value instanceof List ? then.apply( (List<GenericValue>) value ) : orElse.get();
     }
 
     /**
@@ -310,19 +315,6 @@ public final class GenericValue
     }
 
     /**
-     * A utility method to create a GenericValue representing an array of strings.
-     *
-     * @param value collection of strings
-     * @return GenericValue representing the array of strings
-     */
-    public static GenericValue stringList( final Collection<String> value )
-    {
-        final var list = list();
-        value.stream().map( GenericValue::stringValue ).forEach( list::add );
-        return list.build();
-    }
-
-    /**
      * A utility method to convert a raw Java object into a GenericValue.
      * * Supported types are String, Boolean, Byte, Short, Integer, Long, Float, Double, Collection, and Map.
      */
@@ -338,15 +330,10 @@ public final class GenericValue
             case Long l -> GenericValue.numberValue( l );
             case Float f -> GenericValue.numberValue( f );
             case Double d -> GenericValue.numberValue( d );
-            case Collection<?> c ->
-            {
-                final var builder = GenericValue.list();
-                c.stream().map( GenericValue::fromRawJava ).forEach( builder::add );
-                yield builder.build();
-            }
+            case Collection<?> c -> c.stream().map( GenericValue::fromRawJava ).collect( listCollector() );
             case Map<?, ?> m ->
             {
-                final var builder = GenericValue.object();
+                final var builder = GenericValue.newObject();
                 m.forEach( ( key, value ) -> builder.put( (String) key, fromRawJava( value ) ) );
                 yield builder.build();
             }
@@ -359,9 +346,19 @@ public final class GenericValue
      *
      * @return ListBuilder instance
      */
-    public static ListBuilder list()
+    public static ListBuilder newList()
     {
         return new ListBuilder();
+    }
+
+    /**
+     * Creates a collector that collects GenericValue elements into a GenericValue representing a list (array).
+     *
+     * @return Collector instance
+     */
+    public static Collector<GenericValue, ?, GenericValue> listCollector()
+    {
+        return Collectors.collectingAndThen( ImmutableList.toImmutableList(), GenericValue::newListInternal );
     }
 
     /**
@@ -369,17 +366,9 @@ public final class GenericValue
      *
      * @return ObjectBuilder instance
      */
-    public static ObjectBuilder object()
+    public static ObjectBuilder newObject()
     {
         return new ObjectBuilder();
-    }
-
-    /**
-     * The type of value stored in this GenericValue.
-     */
-    public enum Type
-    {
-        STRING, NUMBER, BOOLEAN, LIST, OBJECT
     }
 
     @Override
@@ -392,6 +381,28 @@ public final class GenericValue
     public int hashCode()
     {
         return Objects.hashCode( value );
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T whenMapOrElse( final Function<Map<String, GenericValue>, T> then, final Supplier<T> orElse )
+    {
+        return value instanceof Map ? then.apply( (Map<String, GenericValue>) value ) : orElse.get();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T whenListOrElse( final Function<List<GenericValue>, T> then, final Supplier<T> orElse )
+    {
+        return value instanceof List ? then.apply( (List<GenericValue>) value ) : orElse.get();
+    }
+
+    private static GenericValue newListInternal( final ImmutableList<GenericValue> list )
+    {
+        return list.isEmpty() ? EMPTY_LIST : new GenericValue( list );
+    }
+
+    private static GenericValue newObjectInternal( final ImmutableMap<String, GenericValue> map )
+    {
+        return map.isEmpty() ? EMPTY_OBJECT : new GenericValue( map );
     }
 
     /**
@@ -424,7 +435,7 @@ public final class GenericValue
          */
         public GenericValue build()
         {
-            return new GenericValue( builder.build() );
+            return newListInternal( builder.build() );
         }
     }
 
@@ -511,7 +522,7 @@ public final class GenericValue
          */
         public GenericValue build()
         {
-            return new GenericValue( ImmutableMap.copyOf( builder.build() ) );
+            return newObjectInternal( builder.build() );
         }
     }
 }
