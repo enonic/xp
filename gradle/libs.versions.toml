@@ -152,10 +152,7 @@ prometheus-metrics-exposition-textformats = { module = "io.prometheus:prometheus
 prometheus-metrics-model = { module = "io.prometheus:prometheus-metrics-model", version.ref = "prometheus" }
 prometheus-metrics-tracer-common = { module = "io.prometheus:prometheus-metrics-tracer-common", version.ref = "prometheus" }
 
-networknt-jsv = { module = "com.networknt:json-schema-validator", version = "1.5.8" }
 ethlo-time = { module = "com.ethlo.time:itu", version = "1.14.0" }
-
-#networknt-jsv = { module = "com.networknt:json-schema-validator", version = "2.0.0" }
-#jstuff-core = { module = "net.sf.jstuff:jstuff-core", version = "8.2.0" }
+networknt-jsv = { module = "com.networknt:json-schema-validator", version = "2.0.0" }
 
 [plugins]

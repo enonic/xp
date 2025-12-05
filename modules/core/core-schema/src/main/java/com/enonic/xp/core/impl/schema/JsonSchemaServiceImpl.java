@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.Schema;
 import com.networknt.schema.SchemaLocation;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.dialect.Dialects;
 
 @Component(immediate = true)
 public class JsonSchemaServiceImpl
@@ -48,7 +48,7 @@ public class JsonSchemaServiceImpl
 
     private final BundleContext bundleContext;
 
-    private volatile JsonSchemaFactory schemaFactory;
+    private volatile SchemaRegistry schemaRegistry;
 
     @Activate
     public JsonSchemaServiceImpl( final BundleContext bundleContext )
@@ -77,22 +77,18 @@ public class JsonSchemaServiceImpl
     @Override
     public void validate( final String schemaId, final String yml )
     {
-        final JsonSchemaFactory factory = this.schemaFactory;
+        final SchemaRegistry factory = this.schemaRegistry;
 
         if ( factory == null )
         {
             throw new IllegalArgumentException( "Schema factory is not initialized" );
         }
 
-        final JsonSchema schema = factory.getSchema( SchemaLocation.of( schemaId ) );
-        schema.initializeValidators();
+        final Schema schema = schemaRegistry.getSchema( SchemaLocation.of( schemaId ) );
 
-        Set<ValidationMessage> errors =
-            schema.validate( yml, InputFormat.YAML, ctx -> ctx.getExecutionConfig().setFormatAssertionsEnabled( true ) );
+        final List<Error> errors = schema.validate( yml, InputFormat.YAML );
 
-        final boolean valid = errors.isEmpty();
-
-        if ( !valid )
+        if ( !errors.isEmpty() )
         {
             final StringBuilder builder = new StringBuilder( "Validation errors:" );
             errors.forEach( err -> builder.append( "\n" ).append( "- " ).append( err.getMessage() ) );
@@ -162,8 +158,7 @@ public class JsonSchemaServiceImpl
     {
         synchronized ( lock )
         {
-            this.schemaFactory = JsonSchemaFactory.getInstance( SpecVersion.VersionFlag.V202012, builder -> builder.schemaLoaders(
-                loader -> loader.schemas( getAllSchemas() ) ) );
+            this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchemas() ) );
         }
     }
 
@@ -185,66 +180,3 @@ public class JsonSchemaServiceImpl
         // TODO remove contributor's schemas
     }
 }
-
-//package com.enonic.xp.core.impl.schema;
-//
-//import java.util.List;
-//import java.util.Set;
-//
-//import org.osgi.service.component.annotations.Component;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//
-//import com.networknt.schema.Error;
-//import com.networknt.schema.InputFormat;
-//import com.networknt.schema.Schema;
-//import com.networknt.schema.SchemaLocation;
-//import com.networknt.schema.SchemaRegistry;
-//import com.networknt.schema.dialect.Dialects;
-//
-//@Component(immediate = true)
-//public class JsonSchemaServiceImpl
-//    implements JsonSchemaService
-//{
-//    private static final Logger LOG = LoggerFactory.getLogger( JsonSchemaServiceImpl.class );
-//
-//    private final JsonSchemaRegistry jsonSchemaRegistry;
-//
-//    private SchemaRegistry schemaRegistry;
-//
-//    public JsonSchemaServiceImpl( final JsonSchemaRegistry jsonSchemaRegistry )
-//    {
-//        this.jsonSchemaRegistry = jsonSchemaRegistry;
-//    }
-//
-//    public void activate()
-//    {
-//        final FormItemsJsonSchemaGenerator formItemsJsonSchemaGenerator = new FormItemsJsonSchemaGenerator( Set.of() );
-//
-//        final String formItemsSchema = formItemsJsonSchemaGenerator.generate();
-//        jsonSchemaRegistry.register( formItemsSchema );
-//
-//        this.schemaRegistry =
-//            SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( jsonSchemaRegistry.getAllSchemas() ) );
-//    }
-//
-//    @Override
-//    public void validate( final String schemaId, final String yml )
-//    {
-//        final Schema schema = schemaRegistry.getSchema( SchemaLocation.of( schemaId ) );
-//
-//        final List<Error> errors = schema.validate( yml, InputFormat.YAML );
-//
-//        final boolean valid = errors.isEmpty();
-//
-//        if ( !valid )
-//        {
-//            final StringBuilder builder = new StringBuilder( "Validation errors:" );
-//            errors.forEach( err -> builder.append( "\n" ).append( "- " ).append( err.getMessage() ) );
-//            final String message = builder.toString();
-//            LOG.info( message );
-//
-//            throw new IllegalArgumentException( message );
-//        }
-//    }
-//}
