@@ -508,7 +508,7 @@ public class ContentAuditLogSupportImpl
             .map( ContentInheritType::toString )
             .collect( Collectors.toList() ) );
 
-        log( "system.content.resetInheritance", data, params.getContentId(), rootContext );
+        log( "system.contentSync.resetInheritance", data, params.getContentId(), rootContext );
     }
 
     @Override
@@ -526,7 +526,7 @@ public class ContentAuditLogSupportImpl
 
         paramsSet.addString( "targetProject", nullToNull( params.getTargetProject() ) );
 
-        log( "system.content.syncProject", data, AuditLogUris.empty(), rootContext );
+        log( "system.contentSync.syncProject", data, AuditLogUris.empty(), rootContext );
     }
 
     private void addContent( final PropertySet targetSet, final Content content )
