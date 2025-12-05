@@ -18,7 +18,7 @@ public final class ContentTypeMapper
     {
         super.serialize( gen );
         DynamicSchemaSerializer.serializeForm( gen, descriptor.getForm() );
-        DynamicSchemaSerializer.serializeConfig( gen, descriptor.getSchemaConfig() );
+        DynamicSchemaSerializer.serializeDescriptorConfig( gen, descriptor.getSchemaConfig() );
     }
 
     @Override

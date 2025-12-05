@@ -28,9 +28,7 @@ exports.testGet = function () {
                     'maximum': 1,
                     'minimum': 1
                 },
-                'config': {
-                    'regexp': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
-                }
+                'regexp': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
             },
             {
                 'formItemType': 'Input',
@@ -41,9 +39,7 @@ exports.testGet = function () {
                     'maximum': 1,
                     'minimum': 0
                 },
-                'config': {
-                    'default': 'checked'
-                }
+                'default': 'checked'
             },
             {
                 'formItemType': 'Input',
@@ -54,27 +50,25 @@ exports.testGet = function () {
                     'maximum': 1,
                     'minimum': 0
                 },
-                'config': {
-                    'option': [
-                        {
-                            'value': 'one',
-                            'label': {
-                                'text': 'Value One'
-                            }
-                        },
-                        {
-                            'value': 'two',
-                            'label': {
-                                'text': 'Value Two'
-                            }
+                'options': [
+                    {
+                        'value': 'one',
+                        'label': {
+                            'text': 'Value One'
                         }
-                    ],
-                    'theme': [
-                        'dark',
-                        'light'
-                    ],
-                    'disabled': false
-                }
+                    },
+                    {
+                        'value': 'two',
+                        'label': {
+                            'text': 'Value Two'
+                        }
+                    }
+                ],
+                'theme': [
+                    'dark',
+                    'light'
+                ],
+                'disabled': false
             },
             {
                 'formItemType': 'Layout',
@@ -88,8 +82,7 @@ exports.testGet = function () {
                         'occurrences': {
                             'maximum': 1,
                             'minimum': 0
-                        },
-                        'config': {}
+                        }
                     }
                 ]
             },
@@ -111,7 +104,6 @@ exports.testGet = function () {
                             'maximum': 1,
                             'minimum': 0
                         },
-                        'config': {}
                     }
                 ]
             },
@@ -145,7 +137,6 @@ exports.testGet = function () {
                                     'maximum': 1,
                                     'minimum': 0
                                 },
-                                'config': {}
                             }
                         ]
                     },
@@ -164,7 +155,6 @@ exports.testGet = function () {
                                     'maximum': 1,
                                     'minimum': 0
                                 },
-                                'config': {}
                             }
                         ]
                     }
@@ -216,9 +206,7 @@ exports.testList = function () {
                         'maximum': 1,
                         'minimum': 1
                     },
-                    'config': {
-                        'regexp': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
-                    }
+                    'regexp': '\\b\\d{3}-\\d{2}-\\d{4}\\b'
                 },
                 {
                     'formItemType': 'Input',
@@ -229,9 +217,7 @@ exports.testList = function () {
                         'maximum': 1,
                         'minimum': 0
                     },
-                    'config': {
-                        'default': 'checked'
-                    }
+                    'default': 'checked'
                 },
                 {
                     'formItemType': 'Input',
@@ -242,27 +228,25 @@ exports.testList = function () {
                         'maximum': 1,
                         'minimum': 0
                     },
-                    'config': {
-                        'option': [
-                            {
-                                'value': 'one',
-                                'label': {
-                                    'text': 'Value One'
-                                }
-                            },
-                            {
-                                'value': 'two',
-                                'label': {
-                                    'text': 'Value Two'
-                                }
+                    'options': [
+                        {
+                            'value': 'one',
+                            'label': {
+                                'text': 'Value One'
                             }
-                        ],
-                        'theme': [
-                            'dark',
-                            'light'
-                        ],
-                        'disabled': false
-                    }
+                        },
+                        {
+                            'value': 'two',
+                            'label': {
+                                'text': 'Value Two'
+                            }
+                        }
+                    ],
+                    'theme': [
+                        'dark',
+                        'light'
+                    ],
+                    'disabled': false
                 },
                 {
                     'formItemType': 'Layout',
@@ -276,8 +260,7 @@ exports.testList = function () {
                             'occurrences': {
                                 'maximum': 1,
                                 'minimum': 0
-                            },
-                            'config': {}
+                            }
                         }
                     ]
                 },
@@ -298,8 +281,7 @@ exports.testList = function () {
                             'occurrences': {
                                 'maximum': 1,
                                 'minimum': 0
-                            },
-                            'config': {}
+                            }
                         }
                     ]
                 },
@@ -332,8 +314,7 @@ exports.testList = function () {
                                     'occurrences': {
                                         'maximum': 1,
                                         'minimum': 0
-                                    },
-                                    'config': {}
+                                    }
                                 }
                             ]
                         },
@@ -351,8 +332,7 @@ exports.testList = function () {
                                     'occurrences': {
                                         'maximum': 1,
                                         'minimum': 0
-                                    },
-                                    'config': {}
+                                    }
                                 }
                             ]
                         }

@@ -5,11 +5,11 @@ helpText: "Help Text"
 occurrences:
   min: 0
   max: 1
-config:
-  allowContentType:
-    - "media:image"
-    - "media:video"
-  allowPath:
-    - "${site}/*"
-  treeMode: true
-  hideToggleIcon: true
+allowContentType:
+  - "media:image"
+  - "media:video"
+allowPath:
+  - "${site}/*"
+treeMode: true
+hideToggleIcon: true
+attributes: { }

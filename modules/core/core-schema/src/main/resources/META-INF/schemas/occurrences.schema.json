@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/occurrences.schema.json",
+  "type": "object",
+  "properties": {
+    "min": {
+      "type": "integer"
+    },
+    "max": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "min",
+    "max"
+  ],
+  "additionalProperties": false
+}

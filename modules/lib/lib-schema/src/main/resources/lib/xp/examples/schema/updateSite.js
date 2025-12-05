@@ -56,8 +56,7 @@ form:
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         }
     ],
     mixinMappings: [

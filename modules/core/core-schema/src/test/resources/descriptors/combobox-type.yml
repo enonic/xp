@@ -12,6 +12,5 @@ options:
     label:
       text: "Option Two"
       i18n: "combobox.option2"
-config:
-  default: "one"
-  required: true
+default: "one"
+attributes: { }

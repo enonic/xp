@@ -12,6 +12,5 @@ options:
       i18n: "i18n.rbg.cookie"
   - value: "privacy"
     label: "Privacy"
-config:
-  default: "cookie"
-  theme: "Dark"
+default: "cookie"
+attributes: { }

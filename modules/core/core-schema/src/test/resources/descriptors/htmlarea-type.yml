@@ -5,8 +5,8 @@ helpText: "Help Text"
 occurrences:
   min: 0
   max: 1
-config:
-  default: "<h3>Enter description here</h3>"
-  exclude: "*"
-  include: "JustifyLeft JustifyRight | Bold Italic"
-  allowHeadings: "h2 h4 h6"
+default: "<h3>Enter description here</h3>"
+exclude: "*"
+include: "JustifyLeft JustifyRight | Bold Italic"
+allowHeadings: "h2 h4 h6"
+attributes: { }

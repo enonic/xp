@@ -8,30 +8,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.schema.mapper.AttachmentUploaderYml;
-import com.enonic.xp.core.impl.schema.mapper.CheckBoxYml;
-import com.enonic.xp.core.impl.schema.mapper.ComboBoxYml;
-import com.enonic.xp.core.impl.schema.mapper.ContentSelectorYml;
-import com.enonic.xp.core.impl.schema.mapper.ContentTypeFilterYml;
-import com.enonic.xp.core.impl.schema.mapper.CustomSelectorYml;
-import com.enonic.xp.core.impl.schema.mapper.DateTimeYml;
-import com.enonic.xp.core.impl.schema.mapper.DateYml;
-import com.enonic.xp.core.impl.schema.mapper.DoubleYml;
-import com.enonic.xp.core.impl.schema.mapper.GeoPointYml;
-import com.enonic.xp.core.impl.schema.mapper.HtmlAreaYml;
-import com.enonic.xp.core.impl.schema.mapper.ImageSelectorYml;
-import com.enonic.xp.core.impl.schema.mapper.InstantYml;
-import com.enonic.xp.core.impl.schema.mapper.LongYml;
-import com.enonic.xp.core.impl.schema.mapper.MediaSelectorYml;
-import com.enonic.xp.core.impl.schema.mapper.RadioButtonYml;
-import com.enonic.xp.core.impl.schema.mapper.TagYml;
-import com.enonic.xp.core.impl.schema.mapper.TextAreaYml;
-import com.enonic.xp.core.impl.schema.mapper.TextLineYml;
-import com.enonic.xp.core.impl.schema.mapper.TimeYml;
+import com.enonic.xp.core.impl.schema.mapper.InputYml;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,19 +29,17 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/radiobutton-type.yml" );
 
-        final RadioButtonYml radioButtonYml = parser.parse( yaml, RadioButtonYml.class, CURRENT_APPLICATION );
-
-        Input input = radioButtonYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "RadioButton", input.getInputType().toString() );
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        final Optional<GenericValue> option = inputTypeConfig.optional( "option" );
-        assertTrue( option.isPresent() );
-        assertEquals( 2, option.get().asList().size() );
+        final Optional<GenericValue> options = inputTypeConfig.optional( "options" );
+        assertTrue( options.isPresent() );
+        assertEquals( 2, options.get().asList().size() );
 
-        assertTrue( inputTypeConfig.optional( "theme" ).isPresent() );
+        assertEquals( "cookie", inputTypeConfig.property( "default" ).asString() );
     }
 
     @Test
@@ -69,9 +48,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/textline-type.yml" );
 
-        final TextLineYml textLineYml = parser.parse( yaml, TextLineYml.class, CURRENT_APPLICATION );
-
-        Input input = textLineYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "TextLine", input.getInputType().toString() );
 
@@ -90,17 +67,15 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/double-type.yml" );
 
-        final DoubleYml doubleYml = parser.parse( yaml, DoubleYml.class, CURRENT_APPLICATION );
-
-        Input input = doubleYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "Double", input.getInputType().toString() );
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        assertEquals( 0, inputTypeConfig.optional( "min" ).map( GenericValue::asDouble ).orElse( null ) );
-        assertEquals( 255, inputTypeConfig.optional( "max" ).map( GenericValue::asDouble ).orElse( null ) );
-        assertTrue( inputTypeConfig.optional( "required" ).map( GenericValue::asBoolean ).orElse( false ) );
+        assertEquals( 0, inputTypeConfig.property( "min" ).asDouble() );
+        assertEquals( 255, inputTypeConfig.property( "max" ).asDouble() );
+        assertEquals( 250.0, inputTypeConfig.property( "default" ).asDouble() );
     }
 
     @Test
@@ -109,8 +84,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/contentselector-type.yml" );
 
-        final ContentSelectorYml contentSelectorYml = parser.parse( yaml, ContentSelectorYml.class, CURRENT_APPLICATION );
-        Input input = contentSelectorYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "ContentSelector", input.getInputType().toString() );
         assertEquals( "searchResultPage", input.getName() );
@@ -134,9 +108,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/customselector-type.yml" );
 
-        final CustomSelectorYml customSelectorYml = parser.parse( yaml, CustomSelectorYml.class, CURRENT_APPLICATION );
-
-        final Input input = customSelectorYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( InputTypeName.CUSTOM_SELECTOR, input.getInputType() );
 
@@ -152,9 +124,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/htmlarea-type.yml" );
 
-        final HtmlAreaYml htmlAreaYml = parser.parse( yaml, HtmlAreaYml.class, CURRENT_APPLICATION );
-
-        Input input = htmlAreaYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "HtmlArea", input.getInputType().toString() );
 
@@ -173,9 +143,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/textarea-type.yml" );
 
-        final TextAreaYml inputYml = parser.parse( yaml, TextAreaYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "TextArea", input.getInputType().toString() );
 
@@ -191,9 +159,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/date-type.yml" );
 
-        final DateYml inputYml = parser.parse( yaml, DateYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "Date", input.getInputType().toString() );
         assertEquals( "My Date", input.getLabel() );
@@ -201,7 +167,7 @@ public class YmlTypeParserTest
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.optional( "required" ).map( GenericValue::asBoolean ).orElse( false ) );
+        assertEquals( "2025-08-29", inputTypeConfig.property( "default" ).asString() );
     }
 
     @Test
@@ -210,9 +176,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/instant-type.yml" );
 
-        final InstantYml inputYml = parser.parse( yaml, InstantYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "Instant", input.getInputType().toString() );
         assertEquals( "My Instant", input.getLabel() );
@@ -225,9 +189,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/datetime-type.yml" );
 
-        final DateTimeYml inputYml = parser.parse( yaml, DateTimeYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "DateTime", input.getInputType().toString() );
         assertEquals( "My DateTime", input.getLabel() );
@@ -240,9 +202,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/time-type.yml" );
 
-        final TimeYml inputYml = parser.parse( yaml, TimeYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "Time", input.getInputType().toString() );
         assertEquals( "My Time", input.getLabel() );
@@ -255,9 +215,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/checkbox-type.yml" );
 
-        final CheckBoxYml inputYml = parser.parse( yaml, CheckBoxYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "CheckBox", input.getInputType().toString() );
         assertEquals( "My Checkbox", input.getLabel() );
@@ -276,9 +234,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/combobox-type.yml" );
 
-        final ComboBoxYml inputYml = parser.parse( yaml, ComboBoxYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "ComboBox", input.getInputType().toString() );
         assertEquals( "My Combobox", input.getLabel() );
@@ -286,8 +242,8 @@ public class YmlTypeParserTest
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.optional( "option" ).isPresent() );
-        assertTrue( inputTypeConfig.optional( "required" ).isPresent() );
+        assertTrue( inputTypeConfig.optional( "options" ).isPresent() );
+        assertEquals( "one", inputTypeConfig.property( "default" ).asString() );
     }
 
 
@@ -297,17 +253,14 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/attachmentuploader-type.yml" );
 
-        final AttachmentUploaderYml inputYml = parser.parse( yaml, AttachmentUploaderYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "AttachmentUploader", input.getInputType().toString() );
         assertEquals( "My AttachmentUploader", input.getLabel() );
         assertEquals( "myattachmentUploader", input.getName() );
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
-
-        assertTrue( inputTypeConfig.optional( "disabled" ).isPresent() );
+        assertTrue( inputTypeConfig.getProperties().isEmpty() );
     }
 
     @Test
@@ -316,8 +269,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/imageselector-type.yml" );
 
-        final ImageSelectorYml contentSelectorYml = parser.parse( yaml, ImageSelectorYml.class, CURRENT_APPLICATION );
-        Input input = contentSelectorYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "ImageSelector", input.getInputType().toString() );
         assertEquals( "myImageSelector", input.getName() );
@@ -342,8 +294,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/mediaselector-type.yml" );
 
-        final MediaSelectorYml contentSelectorYml = parser.parse( yaml, MediaSelectorYml.class, CURRENT_APPLICATION );
-        Input input = contentSelectorYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "MediaSelector", input.getInputType().toString() );
         assertEquals( "myMediaSelector", input.getName() );
@@ -370,8 +321,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/contenttypetilter-type.yml" );
 
-        final ContentTypeFilterYml contentSelectorYml = parser.parse( yaml, ContentTypeFilterYml.class, CURRENT_APPLICATION );
-        Input input = contentSelectorYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "ContentTypeFilter", input.getInputType().toString() );
         assertEquals( "myContentTypeFilter", input.getName() );
@@ -393,8 +343,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/tag-type.yml" );
 
-        final TagYml contentSelectorYml = parser.parse( yaml, TagYml.class, CURRENT_APPLICATION );
-        final Input input = contentSelectorYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "Tag", input.getInputType().toString() );
         assertEquals( "myTag", input.getName() );
@@ -406,7 +355,7 @@ public class YmlTypeParserTest
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.optional( "disabled" ).isPresent() );
+        assertTrue( inputTypeConfig.getProperties().isEmpty() );
     }
 
     @Test
@@ -415,9 +364,7 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/long-type.yml" );
 
-        final LongYml inputYml = parser.parse( yaml, LongYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "Long", input.getInputType().toString() );
         assertEquals( "myLong", input.getName() );
@@ -425,7 +372,9 @@ public class YmlTypeParserTest
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.optional( "disabled" ).isPresent() );
+        assertEquals( 350, inputTypeConfig.property( "min" ).asLong() );
+        assertEquals( 123456789, inputTypeConfig.property( "max" ).asLong() );
+        assertEquals( 1000, inputTypeConfig.property( "default" ).asLong() );
     }
 
     @Test
@@ -434,18 +383,14 @@ public class YmlTypeParserTest
     {
         final String yaml = readAsString( "/descriptors/geopoint-type.yml" );
 
-        final GeoPointYml inputYml = parser.parse( yaml, GeoPointYml.class, CURRENT_APPLICATION );
-
-        final Input input = inputYml.convertToInput();
+        final Input input = parser.parse( yaml, InputYml.class, CURRENT_APPLICATION ).convertToInput();
 
         assertEquals( "GeoPoint", input.getInputType().toString() );
         assertEquals( "myGeoPoint", input.getName() );
         assertEquals( "My GeoPoint", input.getLabel() );
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
-
-        assertTrue( inputTypeConfig.optional( "disabled" ).isPresent() );
-
+        assertEquals( "51.5,-0.1", inputTypeConfig.property( "default" ).asString() );
     }
 
     private String readAsString( final String name )

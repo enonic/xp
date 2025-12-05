@@ -157,7 +157,7 @@ class ContentTypeHandlerTest
             .name( "myRadioButton" )
             .inputType( InputTypeName.RADIO_BUTTON )
             .label( "Radio button" )
-            .inputTypeProperty( "option", GenericValue.list()
+            .inputTypeProperty( "options", GenericValue.list()
                 .add( GenericValue.object()
                           .put( "value", "one" )
                           .put( "label", GenericValue.object().put( "text", "Value One" ).build() )

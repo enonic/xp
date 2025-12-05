@@ -64,8 +64,7 @@ assert.assertJsonEquals({
         'inputType': 'Double',
         'occurrences': {
             'maximum': 1, 'minimum': 0
-        },
-        'config': {},
+        }
     }, {
         formItemType: 'FormFragment',
         name: 'myapp:link-urls'

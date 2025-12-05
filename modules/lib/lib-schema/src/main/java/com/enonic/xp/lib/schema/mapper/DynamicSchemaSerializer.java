@@ -10,10 +10,10 @@ import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.region.RegionDescriptors;
-import com.enonic.xp.script.serializer.InputTypeConfigSerializer;
+import com.enonic.xp.script.serializer.ConfigSerializer;
 import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.util.GenericValue;
 
 public class DynamicSchemaSerializer
 {
@@ -40,9 +40,14 @@ public class DynamicSchemaSerializer
         gen.end();
     }
 
+    static void serializeDescriptorConfig( final MapGenerator gen, final GenericValue config )
+    {
+        ConfigSerializer.serializeDescriptorConfig( gen, config );
+    }
+
     static void serializeConfig( final MapGenerator gen, final GenericValue config )
     {
-        InputTypeConfigSerializer.serializeConfig( gen, config );
+        ConfigSerializer.serializeConfig( gen, config );
     }
 
     static void serializeRegions( final MapGenerator gen, final RegionDescriptors regions )

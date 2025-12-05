@@ -7,5 +7,4 @@ occurrences:
   max: 3
 maxLength: 11
 regexp: '\\b\\d{3}-\\d{2}-\\d{4}\\b'
-config:
-  default: "000-00-0000"
+attributes: { }

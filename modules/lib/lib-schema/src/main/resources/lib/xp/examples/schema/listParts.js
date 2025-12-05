@@ -34,8 +34,7 @@ assert.assertJsonEquals([
                 'occurrences': {
                     'maximum': 1,
                     'minimum': 0
-                },
-                'config': {}
+                }
             }
         ],
         config: {}

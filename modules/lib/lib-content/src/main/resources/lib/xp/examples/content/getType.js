@@ -31,8 +31,7 @@ var expected = {
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
@@ -43,8 +42,7 @@ var expected = {
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
@@ -54,8 +52,7 @@ var expected = {
             'occurrences': {
                 'maximum': 1,
                 'minimum': 1
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
@@ -65,8 +62,7 @@ var expected = {
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'Input',
@@ -78,9 +74,7 @@ var expected = {
                 'maximum': 1,
                 'minimum': 1
             },
-            'config': {
-                'regexp': '^[^@]+@[^@]+\\.[^@]+$'
-            }
+            'regexp': '^[^@]+@[^@]+\\.[^@]+$'
         },
         {
             'formItemType': 'Input',
@@ -91,11 +85,9 @@ var expected = {
                 'maximum': 1,
                 'minimum': 0
             },
-            'config': {
-                'allowContentType': [
-                    'com.enonic.myapp:country'
-                ]
-            }
+            'allowContentType': [
+                'com.enonic.myapp:country'
+            ]
         }
     ]
 };
