@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.schema;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 final class FormItemsJsonSchemaGenerator
 {
     private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private static final List<String> PREDEFINED_SCHEMA_NAMES =
+        List.of( "field-set", "item-set", "form-fragment", "option-set", "textline", "time", "tag", "textarea", "radiobutton",
+                 "mediaselector", "long", "instant", "imageselector", "htmlarea", "geopoint", "double", "datetime", "date",
+                 "customselector", "contenttypefilter", "contentselector", "combobox", "checkbox", "attachmentuploader" );
 
     private final Set<String> inputTypeSchemaIds;
 
@@ -32,12 +38,7 @@ final class FormItemsJsonSchemaGenerator
 
         final ArrayNode oneOf = MAPPER.createArrayNode();
 
-        oneOf.add( ref( jsonSchemaBaseUrl + "field-set.schema.json" ) );
-        oneOf.add( ref( jsonSchemaBaseUrl + "item-set.schema.json" ) );
-        oneOf.add( ref( jsonSchemaBaseUrl + "form-fragment.schema.json" ) );
-        oneOf.add( ref( jsonSchemaBaseUrl + "option-set.schema.json" ) );
-//        oneOf.add( ref( jsonSchemaBaseUrl + "input.schema.json" ) );
-        oneOf.add( ref( jsonSchemaBaseUrl + "textline.schema.json" ) );
+        PREDEFINED_SCHEMA_NAMES.forEach( schemaName -> oneOf.add( ref( jsonSchemaBaseUrl + schemaName + ".schema.json" ) ) );
 
         inputTypeSchemaIds.forEach( id -> oneOf.add( ref( id ) ) );
 
