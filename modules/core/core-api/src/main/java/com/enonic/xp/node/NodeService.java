@@ -85,5 +85,5 @@ public interface NodeService
 
     void importNodeCommit( ImportNodeCommitParams params );
 
-    void addAttributes( NodeVersionId nodeVersionId, Attributes attributes );
+    void applyVersionAttributes( ApplyVersionAttributesParams params );
 }

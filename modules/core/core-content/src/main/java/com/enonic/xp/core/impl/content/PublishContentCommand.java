@@ -17,6 +17,7 @@ import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentListener;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -124,8 +125,11 @@ public class PublishContentCommand
 
         for ( var pushNodeResult : pushNodesResult.getSuccessful() )
         {
-            nodeService.addAttributes( pushNodeResult.getNodeVersionId(),
-                                       ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PUBLISH_KEY ) );
+            nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+                                                    .nodeVersionId( pushNodeResult.getNodeVersionId() )
+                                                    .addAttributes(
+                                                        ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PUBLISH_ATTR ) )
+                                                    .build() );
         }
 
         pushNodesResult.getFailed()

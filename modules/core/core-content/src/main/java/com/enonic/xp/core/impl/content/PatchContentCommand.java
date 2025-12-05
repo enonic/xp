@@ -64,7 +64,7 @@ public class PatchContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( patchedContent )
             .createAttachments( params.getCreateAttachments() )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PATCH_KEY ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.PATCH_ATTR ) )
             .branches( params.getBranches() )
             .contentTypeService( this.contentTypeService )
             .xDataService( this.xDataService )

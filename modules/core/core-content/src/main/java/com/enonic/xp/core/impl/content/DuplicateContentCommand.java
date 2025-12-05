@@ -70,7 +70,7 @@ final class DuplicateContentCommand
 
         final DuplicateNodeParams.Builder builder = DuplicateNodeParams.create()
             .nodeId( sourceNode.id() )
-            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_KEY ) )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
             .refresh( RefreshMode.SEARCH );
 

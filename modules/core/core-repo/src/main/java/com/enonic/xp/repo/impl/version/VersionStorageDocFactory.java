@@ -54,7 +54,7 @@ public class VersionStorageDocFactory
     {
         return attributes.entrySet()
             .stream()
-            .map( a -> ImmutableMap.of( "k", a.getKey(), "v", a.getValue().rawJava() ) )
+            .map( a -> ImmutableMap.of( "k", a.getKey(), "v", a.getValue().toRawJava() ) )
             .collect( ImmutableList.toImmutableList() );
     }
 }

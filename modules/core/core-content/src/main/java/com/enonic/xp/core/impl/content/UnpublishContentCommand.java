@@ -12,6 +12,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
@@ -66,8 +67,11 @@ public class UnpublishContentCommand
 
                 for ( DeleteNodeResult.Result deleted : deleteNodeResult.getDeleted() )
                 {
-                    this.nodeService.addAttributes( deleted.nodeVersionId(),
-                                                    ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_KEY ) );
+                    nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+                                                            .nodeVersionId( deleted.nodeVersionId() )
+                                                            .addAttributes(
+                                                                ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.UNPUBLISH_ATTR ) )
+                                                            .build() );
                 }
             }
         } );

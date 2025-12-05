@@ -21,7 +21,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
-import com.enonic.xp.node.Attributes;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -925,13 +925,13 @@ public class NodeServiceImpl
     }
 
     @Override
-    public void addAttributes( final NodeVersionId nodeVersionId, final Attributes attributes )
+    public void applyVersionAttributes( final ApplyVersionAttributesParams params )
     {
         verifyContext();
 
         final InternalContext context =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
-        nodeStorageService.addAttributes( nodeVersionId, attributes, context );
+        nodeStorageService.addAttributes( params.getNodeVersionId(), params.getAddAttributes(), context );
 
         refresh( RefreshMode.STORAGE );
     }

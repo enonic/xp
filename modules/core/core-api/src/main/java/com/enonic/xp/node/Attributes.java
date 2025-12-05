@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -26,6 +27,18 @@ public final class Attributes
         return attrs.get( key );
     }
 
+    @Override
+    public boolean equals( final Object o )
+    {
+        return o instanceof final Attributes that && Objects.equals( attrs, that.attrs );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode( attrs );
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -34,11 +47,6 @@ public final class Attributes
     public static class Builder
     {
         private final ImmutableMap.Builder<String, GenericValue> builder = ImmutableMap.builder();
-
-        public AttributeBuilder attribute( final String key )
-        {
-            return new AttributeBuilder( this, key );
-        }
 
         public Builder attribute( final String key, final GenericValue value )
         {
@@ -63,39 +71,6 @@ public final class Attributes
         public Attributes buildKeepingLast()
         {
             return new Attributes( builder.buildKeepingLast() );
-        }
-    }
-
-    public static final class AttributeBuilder
-    {
-        private final GenericValue.ObjectBuilder obj = GenericValue.object();
-
-        private final Attributes.Builder attributesBuilder;
-
-        private final String key;
-
-        private AttributeBuilder( final Attributes.Builder attributesBuilder, final String key )
-        {
-            this.attributesBuilder = attributesBuilder;
-            this.key = key;
-        }
-
-        public AttributeBuilder put( final String key, final GenericValue value )
-        {
-            obj.put( key, value );
-            return this;
-        }
-
-        public AttributeBuilder put( final String key, final String value )
-        {
-            obj.put( key, value );
-            return this;
-        }
-
-        public Attributes.Builder end()
-        {
-            attributesBuilder.builder.put( key, obj.build() );
-            return attributesBuilder;
         }
     }
 }

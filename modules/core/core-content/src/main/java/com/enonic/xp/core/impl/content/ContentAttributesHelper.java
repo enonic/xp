@@ -24,29 +24,29 @@ public class ContentAttributesHelper
 
     public static final String OPTIME_PROPERTY = "optime";
 
-    public static final String CREATE_KEY = "content.create";
+    public static final String CREATE_ATTR = "content.create";
 
-    public static final String DUPLICATE_KEY = "content.duplicate";
+    public static final String DUPLICATE_ATTR = "content.duplicate";
 
-    public static final String IMPORT_KEY = "content.import";
+    public static final String IMPORT_ATTR = "content.import";
 
-    public static final String UPDATE_KEY = "content.update";
+    public static final String UPDATE_ATTR = "content.update";
 
-    public static final String PERMISSIONS_KEY = "content.permissions";
+    public static final String PERMISSIONS_ATTR = "content.permissions";
 
-    public static final String MOVE_KEY = "content.move";
+    public static final String MOVE_ATTR = "content.move";
 
-    public static final String SORT_KEY = "content.sort";
+    public static final String SORT_ATTR = "content.sort";
 
-    public static final String PATCH_KEY = "content.patch";
+    public static final String PATCH_ATTR = "content.patch";
 
-    public static final String ARCHIVE_KEY = "content.archive";
+    public static final String ARCHIVE_ATTR = "content.archive";
 
-    public static final String RESTORE_KEY = "content.restore";
+    public static final String RESTORE_ATTR = "content.restore";
 
-    public static final String PUBLISH_KEY = "content.publish";
+    public static final String PUBLISH_ATTR = "content.publish";
 
-    public static final String UNPUBLISH_KEY = "content.unpublish";
+    public static final String UNPUBLISH_ATTR = "content.unpublish";
 
     private static final Clock MILLIS_CLOCK = Clock.tick( Clock.systemUTC(), Duration.ofMillis( 1 ) );
 
@@ -70,32 +70,32 @@ public class ContentAttributesHelper
     public static Attributes versionHistoryAttr( final String key )
     {
         return Attributes.create()
-            .attribute( key )
-            .put( USER_PROPERTY, getCurrentUserKey().toString() )
-            .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-            .end()
+            .attribute( key, GenericValue.newObject()
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
             .build();
     }
 
     public static Attributes moveVersionHistoryAttr( final List<String> modifiedFields )
     {
         return Attributes.create()
-            .attribute( MOVE_KEY )
-            .put( FIELDS_PROPERTY, GenericValue.stringList( modifiedFields ) )
-            .put( USER_PROPERTY, getCurrentUserKey().toString() )
-            .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-            .end()
+            .attribute( MOVE_ATTR, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
             .build();
     }
 
     public static Attributes updateVersionHistoryAttr( final List<String> modifiedFields )
     {
         return Attributes.create()
-            .attribute( UPDATE_KEY )
-            .put( FIELDS_PROPERTY, GenericValue.stringList( modifiedFields ) )
-            .put( USER_PROPERTY, getCurrentUserKey().toString() )
-            .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
-            .end()
+            .attribute( UPDATE_ATTR, GenericValue.newObject()
+                .put( FIELDS_PROPERTY, GenericValue.fromRawJava( modifiedFields ) )
+                .put( USER_PROPERTY, getCurrentUserKey().toString() )
+                .put( OPTIME_PROPERTY, Instant.now( MILLIS_CLOCK ).toString() )
+                .build() )
             .build();
     }
 
