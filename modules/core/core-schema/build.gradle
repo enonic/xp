@@ -6,7 +6,6 @@ dependencies {
     implementation libs.jackson.datatype.jsr310
     implementation libs.jackson.core
     implementation libs.networknt.jsv
-//    implementation libs.jstuff.core
     implementation libs.ethlo.time
 
     testFixturesApi project( ':core:core-api' )
