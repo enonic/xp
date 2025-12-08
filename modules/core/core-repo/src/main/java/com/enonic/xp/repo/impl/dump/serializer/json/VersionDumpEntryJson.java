@@ -69,7 +69,8 @@ public class VersionDumpEntryJson
         if ( json.getAttributes() != null )
         {
             final Attributes.Builder attrsBuilder = Attributes.create();
-            json.getAttributes().forEach( ( key, value ) -> attrsBuilder.attribute( key, GenericValue.fromRawJava( value ) ) );
+            json.getAttributes().entrySet().stream()
+                .forEach( entry -> attrsBuilder.attribute( entry.getKey(), GenericValue.fromRawJava( entry.getValue() ) ) );
             attributes = attrsBuilder.build();
         }
         else
@@ -93,15 +94,15 @@ public class VersionDumpEntryJson
 
     public static VersionDumpEntryJson from( final VersionMeta meta )
     {
-        final Map<String, Object> attributes;
+        final Map<String, Object> attributesMap;
         if ( meta.attributes() != null )
         {
-            attributes = meta.attributes().entrySet().stream()
+            attributesMap = meta.attributes().entrySet().stream()
                 .collect( Collectors.toMap( Map.Entry::getKey, entry -> entry.getValue().toRawJava() ) );
         }
         else
         {
-            attributes = null;
+            attributesMap = null;
         }
 
         return VersionDumpEntryJson.create().
@@ -112,7 +113,7 @@ public class VersionDumpEntryJson
             indexConfigBlobKey( meta.nodeVersionKey().getIndexConfigBlobKey().toString() ).
             accessControlBlobKey( meta.nodeVersionKey().getAccessControlBlobKey().toString() ).
             commitId( Objects.toString( meta.nodeCommitId(), null ) ).
-            attributes( attributes ).
+            attributes( attributesMap ).
             build();
     }
 
