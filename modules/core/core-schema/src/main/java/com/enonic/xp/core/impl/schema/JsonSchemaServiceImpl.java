@@ -5,28 +5,18 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Modified;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.InputFormat;
 import com.networknt.schema.Schema;
@@ -40,38 +30,45 @@ public class JsonSchemaServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( JsonSchemaServiceImpl.class );
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private final ConcurrentMap<String, JsonSchemaDefinitionWrapper> schemasMap = new ConcurrentHashMap<>();
 
     private final Object lock = new Object();
 
-    private final BundleContext bundleContext;
-
     private volatile SchemaRegistry schemaRegistry;
 
-    @Activate
-    public JsonSchemaServiceImpl( final BundleContext bundleContext )
+    @Override
+    public boolean registerSchema( final String schema )
     {
-        this.bundleContext = bundleContext;
+        return register( schema );
     }
 
-    @Activate
-    @Modified
-    public void activate()
+    @Override
+    public boolean loadSchemas( final List<URL> schemaURLs )
     {
-        schemasMap.clear();
-
-        final Enumeration<URL> predefinedSchemas = bundleContext.getBundle().findEntries( "/META-INF/schemas", "*.json", true );
-        registerSchemas( Collections.list( predefinedSchemas ) );
-
-        final FormItemsJsonSchemaGenerator formItemsJsonSchemaGenerator = new FormItemsJsonSchemaGenerator( Set.of() );
-
-        final String formItemsSchema = formItemsJsonSchemaGenerator.generate();
-        if ( register( formItemsSchema ) )
+        if ( schemaURLs == null )
         {
-            refreshSchemaRegistry();
+            return false;
         }
+
+        boolean shouldBeUpdated = false;
+
+        for ( URL schemaURL : schemaURLs )
+        {
+            try (InputStream inputStream = schemaURL.openStream())
+            {
+                final String schemaDefinition = new String( inputStream.readAllBytes(), StandardCharsets.UTF_8 );
+                if ( register( schemaDefinition ) )
+                {
+                    shouldBeUpdated = true;
+                }
+            }
+            catch ( Exception e )
+            {
+                throw new RuntimeException( e );
+            }
+        }
+
+        return shouldBeUpdated;
     }
 
     @Override
@@ -90,44 +87,20 @@ public class JsonSchemaServiceImpl
 
         if ( !errors.isEmpty() )
         {
-            final StringBuilder builder = new StringBuilder( "Validation errors:" );
-            errors.forEach( err -> builder.append( "\n" ).append( "- " ).append( err.getMessage() ) );
-            final String message = builder.toString();
-            LOG.info( message );
-
-            throw new IllegalArgumentException( message );
+            final StringBuilder builder = new StringBuilder( "Validation errors for schema \"" );
+            builder.append( schemaId );
+            builder.append( "\":" );
+            errors.forEach( err -> builder.append( "\n - " ).append( err.getMessage() ) );
+            throw new IllegalArgumentException( builder.toString() );
         }
     }
 
-    private void registerSchemas( final List<URL> schemaURLs )
+    @Override
+    public void refreshSchemaRegistry()
     {
-        if ( schemaURLs == null )
+        synchronized ( lock )
         {
-            return;
-        }
-
-        boolean shouldBeUpdated = false;
-
-        for ( URL schemaURL : schemaURLs )
-        {
-            try (InputStream inputStream = schemaURL.openStream())
-            {
-                final String schemaDefinition = new String( inputStream.readAllBytes(), StandardCharsets.UTF_8 );
-                if ( register( schemaDefinition ) )
-                {
-                    shouldBeUpdated = true;
-                }
-                LOG.debug( "JSON Schema Definition: {} is registered", schemaURL );
-            }
-            catch ( Exception e )
-            {
-                throw new RuntimeException( e );
-            }
-        }
-
-        if ( shouldBeUpdated )
-        {
-            refreshSchemaRegistry();
+            this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchemas() ) );
         }
     }
 
@@ -135,7 +108,7 @@ public class JsonSchemaServiceImpl
     {
         try
         {
-            final JsonNode schemaNode = MAPPER.readTree( schemaDefinition );
+            final JsonNode schemaNode = ObjectMapperProvider.MAPPER.readTree( schemaDefinition );
             final String schemaId = Objects.requireNonNull( schemaNode.get( "$id" ), "$id must be set" ).asText();
 
             final JsonSchemaDefinitionWrapper persistedSchema = schemasMap.get( schemaId );
@@ -144,6 +117,7 @@ public class JsonSchemaServiceImpl
             if ( changed )
             {
                 schemasMap.put( schemaId, new JsonSchemaDefinitionWrapper( schemaDefinition ) );
+                LOG.debug( "JSON Schema Definition: {} is registered", schemaId );
             }
 
             return changed;
@@ -154,29 +128,10 @@ public class JsonSchemaServiceImpl
         }
     }
 
-    private void refreshSchemaRegistry()
-    {
-        synchronized ( lock )
-        {
-            this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchemas() ) );
-        }
-    }
-
     private Map<String, String> getAllSchemas()
     {
         return schemasMap.entrySet()
             .stream()
             .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, entry -> entry.getValue().schema() ) );
-    }
-
-    @Reference(service = JsonSchemaContributor.class, cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addContributor( final JsonSchemaContributor contributor )
-    {
-        registerSchemas( contributor.getSchemaURLs() );
-    }
-
-    public void removeContributor( final JsonSchemaContributor contributor )
-    {
-        // TODO remove contributor's schemas
     }
 }

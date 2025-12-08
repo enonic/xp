@@ -5,14 +5,11 @@ import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 final class FormItemsJsonSchemaGenerator
 {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     private static final List<String> PREDEFINED_SCHEMA_NAMES =
         List.of( "field-set", "item-set", "form-fragment", "option-set", "textline", "time", "tag", "textarea", "radiobutton",
                  "mediaselector", "long", "instant", "imageselector", "htmlarea", "geopoint", "double", "datetime", "date",
@@ -31,12 +28,12 @@ final class FormItemsJsonSchemaGenerator
 
         final String schemaId = jsonSchemaBaseUrl + "form-items.schema.json";
 
-        final ObjectNode schema = MAPPER.createObjectNode();
+        final ObjectNode schema = ObjectMapperProvider.MAPPER.createObjectNode();
 
         schema.put( "$schema", "https://json-schema.org/draft/2020-12/schema" );
         schema.put( "$id", schemaId );
 
-        final ArrayNode oneOf = MAPPER.createArrayNode();
+        final ArrayNode oneOf = ObjectMapperProvider.MAPPER.createArrayNode();
 
         PREDEFINED_SCHEMA_NAMES.forEach( schemaName -> oneOf.add( ref( jsonSchemaBaseUrl + schemaName + ".schema.json" ) ) );
 
@@ -46,7 +43,7 @@ final class FormItemsJsonSchemaGenerator
 
         try
         {
-            return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( schema );
+            return ObjectMapperProvider.MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( schema );
         }
         catch ( IOException e )
         {
@@ -56,7 +53,7 @@ final class FormItemsJsonSchemaGenerator
 
     private ObjectNode ref( final String refPath )
     {
-        final ObjectNode ref = MAPPER.createObjectNode();
+        final ObjectNode ref = ObjectMapperProvider.MAPPER.createObjectNode();
         ref.put( "$ref", refPath );
         return ref;
     }

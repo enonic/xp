@@ -28,7 +28,10 @@
         "default": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "options"
+      ]
     }
   ],
   "unevaluatedProperties": false
