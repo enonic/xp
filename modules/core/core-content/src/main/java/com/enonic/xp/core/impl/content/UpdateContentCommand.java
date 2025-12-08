@@ -207,6 +207,7 @@ final class UpdateContentCommand
             .contentName( editedContent.getName() )
             .displayName( editedContent.getDisplayName() )
             .createAttachments( params.getCreateAttachments() )
+            .page( editedContent.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .validationErrorsBuilder( validationErrorsBuilder )

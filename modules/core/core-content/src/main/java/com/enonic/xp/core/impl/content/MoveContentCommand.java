@@ -19,6 +19,7 @@ import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.serializer.ValidationErrorsSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
@@ -141,6 +142,8 @@ final class MoveContentCommand
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
             final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? contentDataSerializer.fromExtraData(
                 data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() ) : null;
+            final Page page = data.hasProperty( ContentPropertyNames.PAGE ) ? contentDataSerializer.fromPageData(
+                data.getProperty( ContentPropertyNames.PAGE ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )
@@ -148,6 +151,7 @@ final class MoveContentCommand
                 .contentTypeName( type )
                 .contentName( ContentName.from( nodePath.getName().toString() ) )
                 .displayName( displayName )
+                .page( page )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
                 .build()
