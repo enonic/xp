@@ -14,6 +14,9 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -34,6 +37,8 @@ class PageComponentsValidatorTest
 {
     private PageDescriptorService pageDescriptorService;
 
+    private PageTemplateService pageTemplateService;
+
     private PartDescriptorService partDescriptorService;
 
     private LayoutDescriptorService layoutDescriptorService;
@@ -44,9 +49,11 @@ class PageComponentsValidatorTest
     void setUp()
     {
         this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        this.validator = new PageComponentsValidator( pageDescriptorService, partDescriptorService, layoutDescriptorService );
+        this.validator =
+            new PageComponentsValidator( pageDescriptorService, pageTemplateService, partDescriptorService, layoutDescriptorService );
     }
 
     @Test
@@ -256,6 +263,85 @@ class PageComponentsValidatorTest
         final Regions pageRegions = Regions.create().add( pageRegion ).build();
 
         final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( pageRegions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+    }
+
+    @Test
+    void page_template_with_valid_config_passes_validation()
+    {
+        final PageTemplateKey pageTemplateKey = PageTemplateKey.from( "my-page-template" );
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+
+        final Page templatePage = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).build();
+        final PageTemplate pageTemplate = PageTemplate.newPageTemplate()
+            .key( pageTemplateKey )
+            .name( "my-template" )
+            .parentPath( com.enonic.xp.content.ContentPath.ROOT )
+            .page( templatePage )
+            .build();
+
+        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( pageTemplate );
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        pageConfig.addString( "title", "My Page Title" );
+
+        final Page page = Page.create().template( pageTemplateKey ).config( pageConfig ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void page_template_with_missing_required_config_fails_validation()
+    {
+        final PageTemplateKey pageTemplateKey = PageTemplateKey.from( "my-page-template" );
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+
+        final Page templatePage = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).build();
+        final PageTemplate pageTemplate = PageTemplate.newPageTemplate()
+            .key( pageTemplateKey )
+            .name( "my-template" )
+            .parentPath( com.enonic.xp.content.ContentPath.ROOT )
+            .page( templatePage )
+            .build();
+
+        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( pageTemplate );
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        // Missing required 'title' field
+
+        final Page page = Page.create().template( pageTemplateKey ).config( pageConfig ).build();
 
         final ContentValidatorParams params = ContentValidatorParams.create()
             .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
