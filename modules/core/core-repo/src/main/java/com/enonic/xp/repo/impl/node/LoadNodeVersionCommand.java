@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.node;
 import java.time.Instant;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.NodeCommitId;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -26,6 +27,8 @@ public class LoadNodeVersionCommand
 
     private final NodeCommitId nodeCommitId;
 
+    private final Attributes attributes;
+
     private LoadNodeVersionCommand( final Builder builder )
     {
         super( builder );
@@ -35,6 +38,7 @@ public class LoadNodeVersionCommand
         nodeVersion = builder.nodeVersion;
         nodeVersionId = builder.nodeVersionId;
         nodeCommitId = builder.nodeCommitId;
+        attributes = builder.attributes;
     }
 
     public void execute()
@@ -46,6 +50,7 @@ public class LoadNodeVersionCommand
             nodeVersionId( this.nodeVersionId ).
             nodeCommitId( this.nodeCommitId ).
             timestamp( this.timestamp ).
+            attributes( this.attributes ).
             build(), InternalContext.from( ContextAccessor.current() ) );
     }
 
@@ -68,6 +73,8 @@ public class LoadNodeVersionCommand
         private NodeVersionId nodeVersionId;
 
         private NodeCommitId nodeCommitId;
+
+        private Attributes attributes;
 
         private Builder()
         {
@@ -111,6 +118,12 @@ public class LoadNodeVersionCommand
         public Builder nodeCommitId( final NodeCommitId val )
         {
             nodeCommitId = val;
+            return this;
+        }
+
+        public Builder attributes( final Attributes val )
+        {
+            attributes = val;
             return this;
         }
     }
