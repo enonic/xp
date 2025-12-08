@@ -53,7 +53,7 @@ public class PageValidator
     @Override
     public boolean supports( final ContentTypeName contentTypeName )
     {
-        return true; // All content types can have pages
+        return true;
     }
 
     @Override
