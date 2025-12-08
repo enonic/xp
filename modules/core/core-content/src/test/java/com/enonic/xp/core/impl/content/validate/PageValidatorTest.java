@@ -354,4 +354,218 @@ class PageValidatorTest
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSize( 1 );
     }
+
+    @Test
+    void page_template_not_found_passes_validation()
+    {
+        final PageTemplateKey pageTemplateKey = PageTemplateKey.from( "my-page-template" );
+
+        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( null );
+
+        final Page page = Page.create().template( pageTemplateKey ).config( new PropertyTree() ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void page_template_without_page_passes_validation()
+    {
+        final PageTemplateKey pageTemplateKey = PageTemplateKey.from( "my-page-template" );
+        final PageTemplate pageTemplate = PageTemplate.newPageTemplate()
+            .key( pageTemplateKey )
+            .name( "my-template" )
+            .parentPath( com.enonic.xp.content.ContentPath.ROOT )
+            .build();
+
+        Mockito.when( pageTemplateService.getByKey( pageTemplateKey ) ).thenReturn( pageTemplate );
+
+        final Page page = Page.create().template( pageTemplateKey ).config( new PropertyTree() ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void page_descriptor_not_found_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( null );
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void part_component_without_descriptor_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PartComponent partComponent = PartComponent.create().config( new PropertyTree() ).build();
+
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void part_descriptor_not_found_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( null );
+
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( new PropertyTree() ).build();
+
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void layout_component_without_descriptor_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final LayoutComponent layoutComponent = LayoutComponent.create().config( new PropertyTree() ).build();
+
+        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void layout_descriptor_not_found_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( null );
+
+        final LayoutComponent layoutComponent =
+            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( new PropertyTree() ).build();
+
+        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void page_with_null_passes_validation()
+    {
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( null )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
 }
