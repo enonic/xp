@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class PageComponentsValidatorTest
+class PageValidatorTest
 {
     private PageDescriptorService pageDescriptorService;
 
@@ -43,7 +43,7 @@ class PageComponentsValidatorTest
 
     private LayoutDescriptorService layoutDescriptorService;
 
-    private PageComponentsValidator validator;
+    private PageValidator validator;
 
     @BeforeEach
     void setUp()
@@ -52,8 +52,7 @@ class PageComponentsValidatorTest
         this.pageTemplateService = Mockito.mock( PageTemplateService.class );
         this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
         this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
-        this.validator =
-            new PageComponentsValidator( pageDescriptorService, pageTemplateService, partDescriptorService, layoutDescriptorService );
+        this.validator = new PageValidator( pageDescriptorService, pageTemplateService, partDescriptorService, layoutDescriptorService );
     }
 
     @Test

@@ -27,7 +27,7 @@ import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 @Component
-public class PageComponentsValidator
+public class PageValidator
     implements ContentValidator
 {
     private final PageDescriptorService pageDescriptorService;
@@ -39,10 +39,10 @@ public class PageComponentsValidator
     private final LayoutDescriptorService layoutDescriptorService;
 
     @Activate
-    public PageComponentsValidator( @Reference final PageDescriptorService pageDescriptorService,
-                                     @Reference final PageTemplateService pageTemplateService,
-                                     @Reference final PartDescriptorService partDescriptorService,
-                                     @Reference final LayoutDescriptorService layoutDescriptorService )
+    public PageValidator( @Reference final PageDescriptorService pageDescriptorService,
+                          @Reference final PageTemplateService pageTemplateService,
+                          @Reference final PartDescriptorService partDescriptorService,
+                          @Reference final LayoutDescriptorService layoutDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
         this.pageTemplateService = pageTemplateService;
