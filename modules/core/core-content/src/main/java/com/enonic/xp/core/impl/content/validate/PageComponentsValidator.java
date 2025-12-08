@@ -14,6 +14,8 @@ import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -30,16 +32,20 @@ public class PageComponentsValidator
 {
     private final PageDescriptorService pageDescriptorService;
 
+    private final PageTemplateService pageTemplateService;
+
     private final PartDescriptorService partDescriptorService;
 
     private final LayoutDescriptorService layoutDescriptorService;
 
     @Activate
     public PageComponentsValidator( @Reference final PageDescriptorService pageDescriptorService,
+                                     @Reference final PageTemplateService pageTemplateService,
                                      @Reference final PartDescriptorService partDescriptorService,
                                      @Reference final LayoutDescriptorService layoutDescriptorService )
     {
         this.pageDescriptorService = pageDescriptorService;
+        this.pageTemplateService = pageTemplateService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
     }
@@ -55,14 +61,30 @@ public class PageComponentsValidator
     {
         final Page page = params.getPage();
 
-        if ( page == null || !page.hasDescriptor() )
+        if ( page == null )
         {
             return;
         }
 
-        // Validate page descriptor config
-        final PageDescriptor pageDescriptor = pageDescriptorService.getByKey( page.getDescriptor() );
+        // Get the page descriptor to validate against
+        PageDescriptor pageDescriptor = null;
 
+        if ( page.hasDescriptor() )
+        {
+            // Direct page descriptor
+            pageDescriptor = pageDescriptorService.getByKey( page.getDescriptor() );
+        }
+        else if ( page.hasTemplate() )
+        {
+            // Page template - get descriptor from the template
+            final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate() );
+            if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
+            {
+                pageDescriptor = pageDescriptorService.getByKey( pageTemplate.getPage().getDescriptor() );
+            }
+        }
+
+        // Validate page config against descriptor
         if ( pageDescriptor != null )
         {
             OccurrenceValidator.validate( pageDescriptor.getConfig(), page.getConfig().getRoot(), validationErrorsBuilder );
@@ -79,7 +101,7 @@ public class PageComponentsValidator
             {
                 validationErrorsBuilder.add( ValidationError.generalError(
                         ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.pageConfigInvalid" ) )
-                                                 .args( page.getDescriptor() )
+                                                 .args( page.hasDescriptor() ? page.getDescriptor() : page.getTemplate() )
                                                  .build() );
             }
         }
