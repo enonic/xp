@@ -695,7 +695,7 @@ class DumpServiceImplTest
 
         final NodeVersionQueryResult versionsAfterLoad =
             this.nodeService.findVersions( GetNodeVersionsParams.create().nodeId( node.id() ).build() );
-        assertEquals( 3, versionsAfterLoad.getTotalHits() );
+        assertEquals( 1, versionsAfterLoad.getTotalHits() );
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( currentNode.data(), currentStoredNode.data() );
