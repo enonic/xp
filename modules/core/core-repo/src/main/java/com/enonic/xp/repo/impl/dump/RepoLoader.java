@@ -69,13 +69,10 @@ class RepoLoader
 
         getBranches().forEach( branch -> setContext( branch ).runWith( () -> doExecute( loadResult ) ) );
 
-        if ( this.includeVersions )
-        {
-            ContextBuilder.from( ContextAccessor.current() ).
-                repositoryId( this.repositoryId ).
-                branch( RepositoryConstants.MASTER_BRANCH ).
-                build().runWith( () -> loadVersions( loadResult ) );
-        }
+        ContextBuilder.from( ContextAccessor.current() ).
+            repositoryId( this.repositoryId ).
+            branch( RepositoryConstants.MASTER_BRANCH ).
+            build().runWith( () -> loadVersions( loadResult ) );
 
         ContextBuilder.from( ContextAccessor.current() ).
             repositoryId( this.repositoryId ).

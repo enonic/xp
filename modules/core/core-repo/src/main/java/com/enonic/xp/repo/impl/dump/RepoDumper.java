@@ -90,19 +90,13 @@ public class RepoDumper
     {
         final Set<NodeId> dumpedNodes = new HashSet<>();
 
-        final Consumer<NodeId> nodeIdsAccumulator = includeVersions ? dumpedNodes::add : nodeId -> {
-        };
-
         setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> {
             this.nodeService.refresh( RefreshMode.ALL );
             for ( Branch branch : this.repository.getBranches() )
             {
-                dumpBranch( branch, nodeIdsAccumulator );
+                dumpBranch( branch, dumpedNodes::add );
             }
-            if ( includeVersions )
-            {
-                dumpVersions( dumpedNodes );
-            }
+            dumpVersions( dumpedNodes );
             dumpCommits();
         } );
 
