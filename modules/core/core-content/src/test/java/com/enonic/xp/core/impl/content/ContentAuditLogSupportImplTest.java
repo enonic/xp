@@ -17,22 +17,44 @@ import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.archive.ArchiveContentParams;
+import com.enonic.xp.archive.ArchiveContentsResult;
+import com.enonic.xp.archive.RestoreContentParams;
+import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.ApplyContentPermissionsResult;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.CreateMediaParams;
+import com.enonic.xp.content.DeleteContentParams;
+import com.enonic.xp.content.DeleteContentsResult;
+import com.enonic.xp.content.DuplicateContentParams;
+import com.enonic.xp.content.DuplicateContentsResult;
+import com.enonic.xp.content.Media;
+import com.enonic.xp.content.MoveContentParams;
+import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.ProjectSyncParams;
+import com.enonic.xp.content.PublishContentResult;
+import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.ResetContentInheritParams;
+import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.content.SortContentResult;
+import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.UpdateMediaParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
@@ -207,6 +229,192 @@ class ContentAuditLogSupportImplTest
 
         assertEquals( "system.contentSync.syncProject", argumentCaptor.getValue().getType() );
         assertEquals( "target-project", argumentCaptor.getValue().getData().getSet( "params" ).getString( "targetProject" ) );
+    }
+
+    @Test
+    void testCreateMedia()
+        throws Exception
+    {
+        final CreateMediaParams params = new CreateMediaParams();
+        params.name( "mediaName" );
+        params.parent( ContentPath.ROOT );
+        params.mimeType( "image/jpeg" );
+
+        final Content content = Media.create()
+            .id( ContentId.from( "mediaId" ) )
+            .type( ContentTypeName.imageMedia() )
+            .name( "mediaName" )
+            .displayName( "Media Display Name" )
+            .parentPath( ContentPath.ROOT )
+            .build();
+
+        test( support::createMedia, params, content );
+    }
+
+    @Test
+    void testUpdateMedia()
+        throws Exception
+    {
+        final UpdateMediaParams params = new UpdateMediaParams();
+        params.content( ContentId.from( "mediaId" ) );
+        params.name( "updatedMediaName" );
+        params.mimeType( "image/png" );
+
+        final Content content = Media.create()
+            .id( ContentId.from( "mediaId" ) )
+            .type( ContentTypeName.imageMedia() )
+            .name( "updatedMediaName" )
+            .displayName( "Updated Media" )
+            .parentPath( ContentPath.ROOT )
+            .build();
+
+        test( support::update, params, content );
+    }
+
+    @Test
+    void testDelete()
+        throws Exception
+    {
+        final DeleteContentParams params = DeleteContentParams.create()
+            .contentPath( ContentPath.from( "/content-to-delete" ) )
+            .build();
+
+        final DeleteContentsResult result = DeleteContentsResult.create()
+            .addDeleted( ContentId.from( "deletedId" ) )
+            .addUnpublished( ContentId.from( "unpublishedId" ) )
+            .build();
+
+        test( support::delete, params, result );
+    }
+
+    @Test
+    void testPublish()
+        throws Exception
+    {
+        final PushContentParams params = PushContentParams.create()
+            .contentIds( ContentIds.from( ContentId.from( "contentId" ) ) )
+            .build();
+
+        final PublishContentResult result = PublishContentResult.create()
+            .add( PublishContentResult.Result.success( ContentId.from( "contentId" ) ) )
+            .build();
+
+        test( support::publish, params, result );
+    }
+
+    @Test
+    void testUnpublishContent()
+        throws Exception
+    {
+        final UnpublishContentParams params = UnpublishContentParams.create()
+            .contentIds( ContentIds.from( ContentId.from( "contentId" ) ) )
+            .build();
+
+        final UnpublishContentsResult result = UnpublishContentsResult.create()
+            .addUnpublished( ContentId.from( "contentId" ) )
+            .build();
+
+        test( support::unpublishContent, params, result );
+    }
+
+    @Test
+    void testDuplicate()
+        throws Exception
+    {
+        final DuplicateContentParams params = DuplicateContentParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .build();
+
+        final DuplicateContentsResult result = DuplicateContentsResult.create()
+            .addDuplicated( ContentId.from( "duplicatedId" ) )
+            .build();
+
+        test( support::duplicate, params, result );
+    }
+
+    @Test
+    void testMove()
+        throws Exception
+    {
+        final MoveContentParams params = MoveContentParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .parentContentPath( ContentPath.from( "/new-parent" ) )
+            .build();
+
+        final MoveContentsResult result = MoveContentsResult.create()
+            .addMoved( ContentId.from( "movedId" ) )
+            .build();
+
+        test( support::move, params, result );
+    }
+
+    @Test
+    void testArchive()
+        throws Exception
+    {
+        final ArchiveContentParams params = ArchiveContentParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .build();
+
+        final ArchiveContentsResult result = ArchiveContentsResult.create()
+            .addArchived( ContentId.from( "archivedId" ) )
+            .build();
+
+        test( support::archive, params, result );
+    }
+
+    @Test
+    void testRestore()
+        throws Exception
+    {
+        final RestoreContentParams params = RestoreContentParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .build();
+
+        final RestoreContentsResult result = RestoreContentsResult.create()
+            .addRestored( ContentId.from( "restoredId" ) )
+            .parentPath( ContentPath.ROOT )
+            .build();
+
+        test( support::restore, params, result );
+    }
+
+    @Test
+    void testSort()
+        throws Exception
+    {
+        final SortContentParams params = SortContentParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .build();
+
+        final Content content = Content.create()
+            .id( ContentId.from( "contentId" ) )
+            .type( ContentTypeName.folder() )
+            .name( "sortedContent" )
+            .displayName( "Sorted Content" )
+            .parentPath( ContentPath.ROOT )
+            .build();
+
+        final SortContentResult result = SortContentResult.create()
+            .content( content )
+            .movedChildren( ContentIds.empty() )
+            .build();
+
+        test( support::sort, params, result );
+    }
+
+    @Test
+    void testApplyPermissions()
+        throws Exception
+    {
+        final ApplyContentPermissionsParams params = ApplyContentPermissionsParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .build();
+
+        final ApplyContentPermissionsResult result = ApplyContentPermissionsResult.create()
+            .build();
+
+        test( support::applyPermissions, params, result );
     }
 
     private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )
