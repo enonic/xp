@@ -2,11 +2,13 @@ package com.enonic.xp.core.impl.content;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,14 +25,18 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.content.ProjectSyncParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.IdProviderKey;
@@ -171,6 +177,38 @@ class ContentAuditLogSupportImplTest
         assertEquals( "/contentName2", argumentCaptor.getValue().getData().getSet( "result" ).getSet( "master" ).getString( "path" ) );
     }
 
+    @Test
+    void testResetInheritance()
+        throws Exception
+    {
+        final ResetContentInheritParams params = ResetContentInheritParams.create()
+            .contentId( ContentId.from( "contentId" ) )
+            .projectName( ProjectName.from( "test-project" ) )
+            .inherit( EnumSet.of( ContentInheritType.CONTENT, ContentInheritType.SORT ) )
+            .build();
+
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = testSingle( support::resetInheritance, params );
+
+        assertEquals( "system.contentSync.resetInheritance", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "test-project", argumentCaptor.getValue().getData().getSet( "params" ).getString( "projectName" ) );
+        assertEquals( List.of( "CONTENT", "SORT" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "inherit" ) );
+    }
+
+    @Test
+    void testSyncProject()
+        throws Exception
+    {
+        final ProjectSyncParams params = ProjectSyncParams.create()
+            .targetProject( ProjectName.from( "target-project" ) )
+            .build();
+
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = testSingle( support::syncProject, params );
+
+        assertEquals( "system.contentSync.syncProject", argumentCaptor.getValue().getType() );
+        assertEquals( "target-project", argumentCaptor.getValue().getData().getSet( "params" ).getString( "targetProject" ) );
+    }
+
     private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )
         throws Exception
     {
@@ -179,6 +217,20 @@ class ContentAuditLogSupportImplTest
 
         //run
         createTestContext( testUser ).runWith( () -> log.accept( params, result ) );
+
+        shutdownExecutor();
+        return verifyAuditLog( testUser );
+    }
+
+
+    private <P> ArgumentCaptor<LogAuditLogParams> testSingle( Consumer<P> log, P params )
+        throws Exception
+    {
+        final User testUser = createTestUser();
+        createTestContext( testUser );
+
+        //run
+        createTestContext( testUser ).runWith( () -> log.accept( params ) );
 
         shutdownExecutor();
         return verifyAuditLog( testUser );
