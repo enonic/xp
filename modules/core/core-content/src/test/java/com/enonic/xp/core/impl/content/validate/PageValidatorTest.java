@@ -568,4 +568,125 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertFalse( validationErrors.hasErrors() );
     }
+
+    @Test
+    void page_config_validation_exception_adds_error()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create().name( "number" ).label( "Number" ).inputType( InputTypeName.LONG ).build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        // Add invalid value that will cause InputValidator to throw exception
+        pageConfig.addString( "number", "not-a-number" );
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( pageConfig ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+    }
+
+    @Test
+    void part_config_validation_exception_adds_error()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( Input.create().name( "count" ).label( "Count" ).inputType( InputTypeName.LONG ).build() )
+            .build();
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build();
+
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( partDescriptor );
+
+        final PropertyTree partConfig = new PropertyTree();
+        // Add invalid value that will cause InputValidator to throw exception
+        partConfig.addString( "count", "invalid-number" );
+
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+    }
+
+    @Test
+    void layout_config_validation_exception_adds_error()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        final Form layoutForm = Form.create()
+            .addFormItem( Input.create().name( "columns" ).label( "Columns" ).inputType( InputTypeName.LONG ).build() )
+            .build();
+        final LayoutDescriptor layoutDescriptor =
+            LayoutDescriptor.create().key( layoutDescriptorKey ).config( layoutForm ).regions( RegionDescriptors.create().build() ).build();
+
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor );
+
+        final PropertyTree layoutConfig = new PropertyTree();
+        // Add invalid value that will cause InputValidator to throw exception
+        layoutConfig.addString( "columns", "not-a-number" );
+
+        final LayoutComponent layoutComponent =
+            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( layoutConfig ).build();
+
+        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+    }
 }
