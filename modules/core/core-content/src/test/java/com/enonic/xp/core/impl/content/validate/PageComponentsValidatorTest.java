@@ -1,0 +1,272 @@
+package com.enonic.xp.core.impl.content.validate;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import com.enonic.xp.content.ContentValidatorParams;
+import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
+import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.RegionDescriptors;
+import com.enonic.xp.region.Regions;
+import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class PageComponentsValidatorTest
+{
+    private PageDescriptorService pageDescriptorService;
+
+    private PartDescriptorService partDescriptorService;
+
+    private LayoutDescriptorService layoutDescriptorService;
+
+    private PageComponentsValidator validator;
+
+    @BeforeEach
+    void setUp()
+    {
+        this.pageDescriptorService = Mockito.mock( PageDescriptorService.class );
+        this.partDescriptorService = Mockito.mock( PartDescriptorService.class );
+        this.layoutDescriptorService = Mockito.mock( LayoutDescriptorService.class );
+        this.validator = new PageComponentsValidator( pageDescriptorService, partDescriptorService, layoutDescriptorService );
+    }
+
+    @Test
+    void page_without_descriptor_passes_validation()
+    {
+        final Page page = Page.create().build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void page_with_valid_config_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        pageConfig.addString( "title", "My Page Title" );
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( pageConfig ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
+    void page_with_missing_required_config_fails_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final PropertyTree pageConfig = new PropertyTree();
+        // Missing required 'title' field
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( pageConfig ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+    }
+
+    @Test
+    void part_component_with_missing_required_config_fails_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( Input.create().name( "heading" ).label( "Heading" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build();
+
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( partDescriptor );
+
+        final PropertyTree partConfig = new PropertyTree();
+        // Missing required 'heading' field
+
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+    }
+
+    @Test
+    void layout_component_with_missing_required_config_fails_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        final Form layoutForm = Form.create()
+            .addFormItem( Input.create().name( "columns" ).label( "Columns" ).inputType( InputTypeName.LONG ).required( true ).build() )
+            .build();
+        final LayoutDescriptor layoutDescriptor =
+            LayoutDescriptor.create().key( layoutDescriptorKey ).config( layoutForm ).regions( RegionDescriptors.create().build() ).build();
+
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor );
+
+        final PropertyTree layoutConfig = new PropertyTree();
+        // Missing required 'columns' field
+
+        final LayoutComponent layoutComponent =
+            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( layoutConfig ).build();
+
+        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+    }
+
+    @Test
+    void nested_components_in_layout_are_validated()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
+        final LayoutDescriptor layoutDescriptor = LayoutDescriptor.create()
+            .key( layoutDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+
+        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( Input.create().name( "text" ).label( "Text" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build();
+
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( partDescriptor );
+
+        // Create a part component inside the layout with missing required config
+        final PropertyTree partConfig = new PropertyTree();
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+
+        final Region layoutRegion = Region.create().name( "left" ).add( partComponent ).build();
+        final Regions layoutRegions = Regions.create().add( layoutRegion ).build();
+
+        final LayoutComponent layoutComponent =
+            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( new PropertyTree() ).regions( layoutRegions ).build();
+
+        final Region pageRegion = Region.create().name( "main" ).add( layoutComponent ).build();
+        final Regions pageRegions = Regions.create().add( pageRegion ).build();
+
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( pageRegions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertTrue( validationErrors.hasErrors() );
+        assertThat( validationErrors.stream() ).hasSize( 1 );
+    }
+}
