@@ -44,10 +44,7 @@ public class ExtraDataValidator
             }
 
             final Form mixinForm = xData.getForm();
-            if ( extraData.getData().getRoot().getPropertySize() > 0 )
-            {
-                OccurrenceValidator.validate( mixinForm, extraData.getData().getRoot(), validationErrorsBuilder );
-            }
+            OccurrenceValidator.validate( mixinForm, extraData.getData().getRoot(), validationErrorsBuilder );
         }
     }
 
