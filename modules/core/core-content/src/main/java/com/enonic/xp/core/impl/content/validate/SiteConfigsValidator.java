@@ -60,16 +60,15 @@ public class SiteConfigsValidator
                         .build()
                         .validate( siteConfig.getConfig() );
                 }
-                catch ( final Exception e )
+                catch ( final InputTypeValidationException e )
                 {
                     final ValidationError.Builder errorBuilder;
                     
-                    if ( e instanceof InputTypeValidationException inputTypeValidationException && 
-                         inputTypeValidationException.getPropertyPath() != null )
+                    if ( e.getPropertyPath() != null )
                     {
                         errorBuilder = ValidationError.dataError(
                             ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ),
-                            inputTypeValidationException.getPropertyPath() );
+                            e.getPropertyPath() );
                     }
                     else
                     {
@@ -78,6 +77,14 @@ public class SiteConfigsValidator
                     }
                     
                     validationErrorsBuilder.add( errorBuilder
+                        .args( siteConfig.getApplicationKey() )
+                        .message( e.getMessage() )
+                        .build() );
+                }
+                catch ( final Exception e )
+                {
+                    validationErrorsBuilder.add( ValidationError.generalError(
+                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ) )
                         .args( siteConfig.getApplicationKey() )
                         .message( e.getMessage() )
                         .build() );
