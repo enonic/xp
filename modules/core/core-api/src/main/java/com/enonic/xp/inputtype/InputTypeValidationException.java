@@ -35,7 +35,7 @@ public final class InputTypeValidationException
         final String strList = Arrays.stream( expectedTypes ).map( Objects::toString ).
             collect( Collectors.joining( "," ) );
         throw new InputTypeValidationException(
-            String.format( "Invalid type in [%s]: [%s] instead of |%s]", property, property.getType(), strList ), property.getPath() );
+            String.format( "Invalid type in [%s]: [%s] instead of [%s]", property, property.getType(), strList ), property.getPath() );
     }
 
     public static InputTypeValidationException invalidValue( final Property property, final String message )
