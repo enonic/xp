@@ -71,12 +71,15 @@ public class InputYml
 
         if ( attributes != null )
         {
-            attributes.forEach( ( attribute, value ) -> {
+            for ( Map.Entry<String, GenericValue> entry : attributes.entrySet() )
+            {
+                final String attribute = entry.getKey();
+                final GenericValue value = entry.getValue();
                 if ( !topLevelAttributes.containsKey( attribute ) )
                 {
                     builder.inputTypeProperty( attribute, value );
                 }
-            } );
+            }
         }
 
         return builder.build();
