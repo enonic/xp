@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 class ExtraDataValidatorTest
 {
+    private static final String XDATA_WITH_REQUIRED_FIELD = "com-enonic-app-features:all-except-folders";
+    private static final String XDATA_WITH_OPTIONAL_FIELD = "com-enonic-app-features:optional-data";
+
     private XDataService xDataService;
 
     private ExtraDataValidator validator;
@@ -39,7 +42,7 @@ class ExtraDataValidatorTest
     void testEmptyExtraDataWithRequiredField()
     {
         // Create XData with a required field
-        final XDataName xDataName = XDataName.from( "com-enonic-app-features:all-except-folders" );
+        final XDataName xDataName = XDataName.from( XDATA_WITH_REQUIRED_FIELD );
         final Form xDataForm = Form.create()
             .addFormItem( Input.create()
                               .name( "requiredField" )
@@ -84,7 +87,7 @@ class ExtraDataValidatorTest
     void testEmptyExtraDataWithNoRequiredFields()
     {
         // Create XData with no required fields
-        final XDataName xDataName = XDataName.from( "com-enonic-app-features:optional-data" );
+        final XDataName xDataName = XDataName.from( XDATA_WITH_OPTIONAL_FIELD );
         final Form xDataForm = Form.create()
             .addFormItem( Input.create()
                               .name( "optionalField" )
@@ -129,7 +132,7 @@ class ExtraDataValidatorTest
     void testExtraDataWithRequiredFieldProvided()
     {
         // Create XData with a required field
-        final XDataName xDataName = XDataName.from( "com-enonic-app-features:all-except-folders" );
+        final XDataName xDataName = XDataName.from( XDATA_WITH_REQUIRED_FIELD );
         final Form xDataForm = Form.create()
             .addFormItem( Input.create()
                               .name( "requiredField" )
