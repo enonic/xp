@@ -13,12 +13,6 @@ public final class InputTypeValidationException
 {
     private final PropertyPath propertyPath;
 
-    public InputTypeValidationException( final String message )
-    {
-        super( message );
-        this.propertyPath = null;
-    }
-
     private InputTypeValidationException( final String message, final PropertyPath propertyPath )
     {
         super( message );
