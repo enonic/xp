@@ -308,6 +308,7 @@ final class CreateContentCommand
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
             .createAttachments( builder.getCreateAttachments() )
+            .page( builder.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .build()
