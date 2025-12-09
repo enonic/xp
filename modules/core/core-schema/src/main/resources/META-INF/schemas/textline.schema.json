@@ -17,6 +17,9 @@
         "regexp": {
           "type": "string"
         },
+        "showCounter": {
+          "type": "boolean"
+        },
         "default": {
           "type": "string"
         }
