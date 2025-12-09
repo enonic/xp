@@ -16,7 +16,7 @@ public final class InputTypeValidationException
     private InputTypeValidationException( final String message, final PropertyPath propertyPath )
     {
         super( message );
-        this.propertyPath = propertyPath;
+        this.propertyPath = Objects.requireNonNull( propertyPath );
     }
 
     public PropertyPath getPropertyPath()
