@@ -220,6 +220,19 @@ class ValidateContentDataCommandTest
         return SiteDescriptor.create().form( config ).build();
     }
 
+    private SiteDescriptor createMultiOccurrenceSiteDescriptor()
+    {
+        final Form config = Form.create().addFormItem( Input.create()
+                                                           .inputType( InputTypeName.TEXT_LINE )
+                                                           .label( "Multi Input" )
+                                                           .name( "multiInput" )
+                                                           .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+                                                           .minimumOccurrences( 0 )
+                                                           .maximumOccurrences( 5 )
+                                                           .build() ).build();
+        return SiteDescriptor.create().form( config ).build();
+    }
+
     @Test
     void testSiteConfigTextRegexpPasses()
     {
@@ -304,6 +317,39 @@ class ValidateContentDataCommandTest
         assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
         assertThat(dataError.getPropertyPath().toString()).isEqualTo( "myItemSet.nestedInput" );
+    }
+
+    @Test
+    void testSiteConfigValidationErrorIncludesFieldPathWithMultipleOccurrences()
+    {
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        PropertyTree rootDataSet = new PropertyTree();
+
+        PropertyTree siteConfigDataSet = new PropertyTree();
+        // First occurrence is valid, second is invalid
+        siteConfigDataSet.setString( "multiInput[0]", "123" );
+        siteConfigDataSet.setString( "multiInput[1]", "invalid-text" );
+
+        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+
+        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createMultiOccurrenceSiteDescriptor() );
+
+        // exercise
+        final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
+
+        // verify
+        assertThat(result.stream()).hasSize( 1 );
+        final var error = result.stream().findFirst().orElseThrow();
+        
+        // Verify that the error is a DataValidationError with the field path including the array index
+        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        final var dataError = (com.enonic.xp.content.DataValidationError) error;
+        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "multiInput[1]" );
     }
 
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
