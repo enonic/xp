@@ -15,7 +15,11 @@
           "type": "string"
         },
         "default": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "checked",
+            "unchecked"
+          ]
         }
       }
     }
