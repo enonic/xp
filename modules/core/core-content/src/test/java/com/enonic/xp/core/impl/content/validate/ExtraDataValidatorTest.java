@@ -38,6 +38,14 @@ class ExtraDataValidatorTest
         this.validator = new ExtraDataValidator( xDataService );
     }
 
+    private ContentType createContentType()
+    {
+        return ContentType.create()
+            .name( "myapplication:my_type" )
+            .superType( ContentTypeName.structured() )
+            .build();
+    }
+
     @Test
     void testEmptyExtraDataWithRequiredField()
     {
@@ -63,13 +71,8 @@ class ExtraDataValidatorTest
         final ExtraData emptyExtraData = new ExtraData( xDataName, new PropertyTree() );
 
         // Create validation params
-        final ContentType contentType = ContentType.create()
-            .name( "myapplication:my_type" )
-            .superType( ContentTypeName.structured() )
-            .build();
-
         final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( contentType )
+            .contentType( createContentType() )
             .data( new PropertyTree() )
             .extraDatas( ExtraDatas.create().add( emptyExtraData ).build() )
             .build();
@@ -93,7 +96,6 @@ class ExtraDataValidatorTest
                               .name( "optionalField" )
                               .label( "Optional Field" )
                               .inputType( InputTypeName.TEXT_LINE )
-                              .required( false )
                               .build() )
             .build();
 
@@ -108,13 +110,8 @@ class ExtraDataValidatorTest
         final ExtraData emptyExtraData = new ExtraData( xDataName, new PropertyTree() );
 
         // Create validation params
-        final ContentType contentType = ContentType.create()
-            .name( "myapplication:my_type" )
-            .superType( ContentTypeName.structured() )
-            .build();
-
         final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( contentType )
+            .contentType( createContentType() )
             .data( new PropertyTree() )
             .extraDatas( ExtraDatas.create().add( emptyExtraData ).build() )
             .build();
@@ -155,13 +152,8 @@ class ExtraDataValidatorTest
         final ExtraData extraData = new ExtraData( xDataName, data );
 
         // Create validation params
-        final ContentType contentType = ContentType.create()
-            .name( "myapplication:my_type" )
-            .superType( ContentTypeName.structured() )
-            .build();
-
         final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( contentType )
+            .contentType( createContentType() )
             .data( new PropertyTree() )
             .extraDatas( ExtraDatas.create().add( extraData ).build() )
             .build();
