@@ -233,6 +233,23 @@ class ValidateContentDataCommandTest
         return SiteDescriptor.create().form( config ).build();
     }
 
+    private SiteDescriptor createNestedMultiOccurrenceSiteDescriptor()
+    {
+        final Form config = Form.create()
+            .addFormItem( FormItemSet.create()
+                              .name( "multiItemSet" )
+                              .occurrences( 0, 5 )
+                              .addFormItem( Input.create()
+                                                .inputType( InputTypeName.TEXT_LINE )
+                                                .label( "Nested Input" )
+                                                .name( "nestedInput" )
+                                                .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+                                                .build() )
+                              .build() )
+            .build();
+        return SiteDescriptor.create().form( config ).build();
+    }
+
     @Test
     void testSiteConfigTextRegexpPasses()
     {
@@ -350,6 +367,39 @@ class ValidateContentDataCommandTest
         assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
         assertThat(dataError.getPropertyPath().toString()).isEqualTo( "multiInput[1]" );
+    }
+
+    @Test
+    void testSiteConfigValidationErrorIncludesNestedFieldPathWithMultipleOccurrences()
+    {
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        PropertyTree rootDataSet = new PropertyTree();
+
+        PropertyTree siteConfigDataSet = new PropertyTree();
+        // First occurrence is valid, second occurrence has invalid nested field
+        siteConfigDataSet.setString( "multiItemSet[0].nestedInput", "123" );
+        siteConfigDataSet.setString( "multiItemSet[1].nestedInput", "invalid-text" );
+
+        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+
+        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createNestedMultiOccurrenceSiteDescriptor() );
+
+        // exercise
+        final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
+
+        // verify
+        assertThat(result.stream()).hasSize( 1 );
+        final var error = result.stream().findFirst().orElseThrow();
+        
+        // Verify that the error is a DataValidationError with the nested field path including the array index
+        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        final var dataError = (com.enonic.xp.content.DataValidationError) error;
+        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "multiItemSet[1].nestedInput" );
     }
 
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
