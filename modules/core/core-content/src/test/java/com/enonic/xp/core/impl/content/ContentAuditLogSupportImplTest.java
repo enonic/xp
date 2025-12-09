@@ -248,7 +248,14 @@ class ContentAuditLogSupportImplTest
             .parentPath( ContentPath.ROOT )
             .build();
 
-        test( support::createMedia, params, content );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::createMedia, params, content );
+
+        assertEquals( "system.content.create", argumentCaptor.getValue().getType() );
+        assertEquals( "mediaName", argumentCaptor.getValue().getData().getSet( "params" ).getString( "name" ) );
+        assertEquals( "image/jpeg", argumentCaptor.getValue().getData().getSet( "params" ).getString( "mimeType" ) );
+        assertEquals( "/", argumentCaptor.getValue().getData().getSet( "params" ).getString( "parent" ) );
+        assertEquals( "mediaId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "/mediaName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
     @Test
@@ -268,7 +275,14 @@ class ContentAuditLogSupportImplTest
             .parentPath( ContentPath.ROOT )
             .build();
 
-        test( support::update, params, content );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::update, params, content );
+
+        assertEquals( "system.content.update", argumentCaptor.getValue().getType() );
+        assertEquals( "updatedMediaName", argumentCaptor.getValue().getData().getSet( "params" ).getString( "name" ) );
+        assertEquals( "image/png", argumentCaptor.getValue().getData().getSet( "params" ).getString( "mimeType" ) );
+        assertEquals( "mediaId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "content" ) );
+        assertEquals( "mediaId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "/updatedMediaName", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
     @Test
@@ -284,7 +298,12 @@ class ContentAuditLogSupportImplTest
             .addUnpublished( ContentId.from( "unpublishedId" ) )
             .build();
 
-        test( support::delete, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::delete, params, result );
+
+        assertEquals( "system.content.delete", argumentCaptor.getValue().getType() );
+        assertEquals( "/content-to-delete", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentPath" ) );
+        assertEquals( List.of( "deletedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "deletedContents" ) );
+        assertEquals( List.of( "unpublishedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
     }
 
     @Test
@@ -299,7 +318,11 @@ class ContentAuditLogSupportImplTest
             .add( PublishContentResult.Result.success( ContentId.from( "contentId" ) ) )
             .build();
 
-        test( support::publish, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::publish, params, result );
+
+        assertEquals( "system.content.publish", argumentCaptor.getValue().getType() );
+        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "contentIds" ) );
+        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "pushedContents" ) );
     }
 
     @Test
@@ -314,7 +337,11 @@ class ContentAuditLogSupportImplTest
             .addUnpublished( ContentId.from( "contentId" ) )
             .build();
 
-        test( support::unpublishContent, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::unpublishContent, params, result );
+
+        assertEquals( "system.content.unpublishContent", argumentCaptor.getValue().getType() );
+        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "params" ).getStrings( "contentIds" ) );
+        assertEquals( List.of( "contentId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "unpublishedContents" ) );
     }
 
     @Test
@@ -329,7 +356,11 @@ class ContentAuditLogSupportImplTest
             .addDuplicated( ContentId.from( "duplicatedId" ) )
             .build();
 
-        test( support::duplicate, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::duplicate, params, result );
+
+        assertEquals( "system.content.duplicate", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( List.of( "duplicatedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "duplicatedContents" ) );
     }
 
     @Test
@@ -345,7 +376,12 @@ class ContentAuditLogSupportImplTest
             .addMoved( ContentId.from( "movedId" ) )
             .build();
 
-        test( support::move, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::move, params, result );
+
+        assertEquals( "system.content.move", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "/new-parent", argumentCaptor.getValue().getData().getSet( "params" ).getString( "parentContentPath" ) );
+        assertEquals( List.of( "movedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "movedContents" ) );
     }
 
     @Test
@@ -360,7 +396,11 @@ class ContentAuditLogSupportImplTest
             .addArchived( ContentId.from( "archivedId" ) )
             .build();
 
-        test( support::archive, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::archive, params, result );
+
+        assertEquals( "system.content.archive", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( List.of( "archivedId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "archivedContents" ) );
     }
 
     @Test
@@ -376,7 +416,12 @@ class ContentAuditLogSupportImplTest
             .parentPath( ContentPath.ROOT )
             .build();
 
-        test( support::restore, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::restore, params, result );
+
+        assertEquals( "system.content.restore", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "/", argumentCaptor.getValue().getData().getSet( "result" ).getString( "parentContentPath" ) );
+        assertEquals( List.of( "restoredId" ), argumentCaptor.getValue().getData().getSet( "result" ).getStrings( "restoredContents" ) );
     }
 
     @Test
@@ -400,7 +445,12 @@ class ContentAuditLogSupportImplTest
             .movedChildren( ContentIds.empty() )
             .build();
 
-        test( support::sort, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::sort, params, result );
+
+        assertEquals( "system.content.sort", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "result" ).getString( "id" ) );
+        assertEquals( "/sortedContent", argumentCaptor.getValue().getData().getSet( "result" ).getString( "path" ) );
     }
 
     @Test
@@ -414,7 +464,10 @@ class ContentAuditLogSupportImplTest
         final ApplyContentPermissionsResult result = ApplyContentPermissionsResult.create()
             .build();
 
-        test( support::applyPermissions, params, result );
+        ArgumentCaptor<LogAuditLogParams> argumentCaptor = test( support::applyPermissions, params, result );
+
+        assertEquals( "system.content.applyPermissions", argumentCaptor.getValue().getType() );
+        assertEquals( "contentId", argumentCaptor.getValue().getData().getSet( "params" ).getString( "contentId" ) );
     }
 
     private <P, R> ArgumentCaptor<LogAuditLogParams> test( BiConsumer<P, R> log, P params, R result )
