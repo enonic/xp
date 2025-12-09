@@ -69,13 +69,13 @@ public class JsonSchemaServiceImpl
         register( formItemsSchema );
 
         final Bundle currentBundle = bundleContext.getBundle();
-        loadJsomSchemas( currentBundle );
+        loadJsonSchema( currentBundle );
 
         for ( Bundle bundle : bundleContext.getBundles() )
         {
             if ( bundle.getBundleId() != currentBundle.getBundleId() )
             {
-                loadJsomSchemas( bundle );
+                loadJsonSchema( bundle );
             }
         }
 
@@ -153,7 +153,7 @@ public class JsonSchemaServiceImpl
         lock.lock();
         try
         {
-            this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchemas() ) );
+            this.schemaRegistry = SchemaRegistry.withDialect( Dialects.getDraft202012(), builder -> builder.schemas( getAllSchema() ) );
         }
         finally
         {
@@ -199,7 +199,7 @@ public class JsonSchemaServiceImpl
         }
     }
 
-    private Map<String, String> getAllSchemas()
+    private Map<String, String> getAllSchema()
     {
         return schemasMap.entrySet()
             .stream()
@@ -208,13 +208,13 @@ public class JsonSchemaServiceImpl
 
     protected void addBundle( Bundle bundle )
     {
-        if ( loadJsomSchemas( bundle ) )
+        if ( loadJsonSchema( bundle ) )
         {
             refreshSchemaRegistry();
         }
     }
 
-    protected boolean loadJsomSchemas( final Bundle bundle )
+    protected boolean loadJsonSchema( final Bundle bundle )
     {
         return loadSchemas( loadJsonSchemasFromBundle( bundle ) );
     }

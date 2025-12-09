@@ -62,13 +62,13 @@ class JsonSchemaServiceImplTest
             Collections.enumeration( List.of( new URI( "file:/tmp/schema.json" ).toURL() ) ) );
 
         JsonSchemaServiceImpl service = spy( new JsonSchemaServiceImpl( mockContext ) );
-        doReturn( false ).when( service ).loadJsomSchemas( any() );
+        doReturn( false ).when( service ).loadJsonSchema( any() );
         doNothing().when( service ).refreshSchemaRegistry();
 
         service.activate();
 
         verify( mockContext ).addBundleListener( service );
-        verify( service ).loadJsomSchemas( mockBundle );
+        verify( service ).loadJsonSchema( mockBundle );
         verify( service ).refreshSchemaRegistry();
     }
 
@@ -225,7 +225,7 @@ class JsonSchemaServiceImplTest
     {
         Bundle bundle = mock( Bundle.class );
         JsonSchemaServiceImpl spyService = spy( service );
-        doReturn( true ).when( spyService ).loadJsomSchemas( bundle );
+        doReturn( true ).when( spyService ).loadJsonSchema( bundle );
         doNothing().when( spyService ).refreshSchemaRegistry();
         spyService.addBundle( bundle );
         verify( spyService ).refreshSchemaRegistry();
@@ -236,7 +236,7 @@ class JsonSchemaServiceImplTest
     {
         Bundle bundle = mock( Bundle.class );
         JsonSchemaServiceImpl spyService = spy( service );
-        doReturn( false ).when( spyService ).loadJsomSchemas( bundle );
+        doReturn( false ).when( spyService ).loadJsonSchema( bundle );
         spyService.addBundle( bundle );
         verify( spyService, never() ).refreshSchemaRegistry();
     }
@@ -248,7 +248,7 @@ class JsonSchemaServiceImplTest
         JsonSchemaServiceImpl spyService = spy( service );
         doReturn( Collections.emptyList() ).when( spyService ).loadJsonSchemasFromBundle( bundle );
         doReturn( true ).when( spyService ).loadSchemas( anyList() );
-        assertTrue( spyService.loadJsomSchemas( bundle ) );
+        assertTrue( spyService.loadJsonSchema( bundle ) );
     }
 
     @Test
