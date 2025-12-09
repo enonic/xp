@@ -39,6 +39,8 @@ public final class CreateNodeParams
 
     private final BinaryAttachments binaryAttachments;
 
+    private final Attributes versionAttributes;
+
     private final RefreshMode refresh;
 
     private CreateNodeParams( Builder builder )
@@ -55,6 +57,7 @@ public final class CreateNodeParams
         this.manualOrderValue = builder.manualOrderValue;
         this.nodeType = builder.nodeType;
         this.binaryAttachments = builder.binaryAttachments.build();
+        this.versionAttributes = builder.versionAttributes;
         this.refresh = builder.refresh;
     }
 
@@ -140,6 +143,11 @@ public final class CreateNodeParams
         return binaryAttachments;
     }
 
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public RefreshMode getRefresh()
     {
         return refresh;
@@ -170,6 +178,8 @@ public final class CreateNodeParams
         private NodeType nodeType;
 
         private BinaryAttachments.Builder binaryAttachments = BinaryAttachments.create();
+
+        private Attributes versionAttributes;
 
         private RefreshMode refresh;
 
@@ -279,6 +289,12 @@ public final class CreateNodeParams
             {
                 binaryAttachments.stream().forEach( this.binaryAttachments::add );
             }
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

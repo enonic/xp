@@ -43,8 +43,6 @@ public final class CreateContentParams
 
     private final boolean refresh;
 
-    private final ContentPublishInfo contentPublishInfo;
-
     private final WorkflowInfo workflowInfo;
 
     private final Page page;
@@ -65,7 +63,6 @@ public final class CreateContentParams
         this.childOrder = builder.childOrder;
         this.language = builder.language;
         this.refresh = builder.refresh;
-        this.contentPublishInfo = builder.contentPublishInfo;
         this.workflowInfo = builder.workflowInfo;
         this.page = builder.page;
     }
@@ -145,11 +142,6 @@ public final class CreateContentParams
         return language;
     }
 
-    public ContentPublishInfo getContentPublishInfo()
-    {
-        return contentPublishInfo;
-    }
-
     public boolean isRefresh()
     {
         return refresh;
@@ -193,8 +185,6 @@ public final class CreateContentParams
 
         private Locale language;
 
-        private ContentPublishInfo contentPublishInfo;
-
         private boolean refresh = true;
 
         private WorkflowInfo workflowInfo;
@@ -220,7 +210,6 @@ public final class CreateContentParams
             this.createAttachments = source.createAttachments;
             this.childOrder = source.childOrder;
             this.language = source.language;
-            this.contentPublishInfo = source.contentPublishInfo;
             this.workflowInfo = source.workflowInfo;
             this.page = source.page;
         }
@@ -313,12 +302,6 @@ public final class CreateContentParams
         public Builder refresh( final boolean refresh )
         {
             this.refresh = refresh;
-            return this;
-        }
-
-        public Builder contentPublishInfo( final ContentPublishInfo info )
-        {
-            this.contentPublishInfo = info;
             return this;
         }
 

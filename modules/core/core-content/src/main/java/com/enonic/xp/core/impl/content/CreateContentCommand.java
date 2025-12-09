@@ -5,7 +5,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
@@ -94,6 +93,7 @@ final class CreateContentCommand
             .cmsService( this.cmsService )
             .build()
             .produce()
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.CREATE_ATTR ) )
             .refresh( params.isRefresh() ? RefreshMode.ALL : RefreshMode.STORAGE )
             .build();
 
@@ -110,10 +110,10 @@ final class CreateContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
 
-        return translator.fromNode( createdNode );
+        return ContentNodeTranslator.fromNode( createdNode );
     }
 
     private void validateBlockingChecks( final CreateContentParams params )
@@ -136,11 +136,11 @@ final class CreateContentCommand
     {
         if ( contentType == null )
         {
-            throw new IllegalArgumentException( "Content type not found [" + params.getType().toString() + "]" );
+            throw new IllegalArgumentException( "Content type not found [" + params.getType() + "]" );
         }
         if ( contentType.isAbstract() )
         {
-            throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType().toString() + "]" );
+            throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType() + "]" );
         }
     }
 
@@ -178,7 +178,7 @@ final class CreateContentCommand
         final CreateContentParams processedContent = processedResult.getCreateContentParams();
         final CreateContentTranslatorParams.Builder builder = CreateContentTranslatorParams.create( processedContent )
             .processedIds( processedResult.getProcessedReferences() )
-            .creator( getCurrentUser().getKey() )
+            .creator( getCurrentUserKey() )
             .owner( getDefaultOwner( processedContent ) );
         populateName( builder );
         builder.childOrder( Objects.requireNonNullElse( this.params.getChildOrder(), ContentConstants.DEFAULT_CHILD_ORDER ) );

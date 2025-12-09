@@ -34,7 +34,6 @@ final class ImportContentCommand
     {
         final Node importNode = ImportContentFactory.create().
             params( params ).
-            contentDataSerializer( this.translator.getContentDataSerializer() ).
             build().execute();
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create().importNode( importNode )
@@ -42,12 +41,13 @@ final class ImportContentCommand
             .insertManualStrategy( params.getInsertManualStrategy() )
             .importPermissions( params.isImportPermissions() )
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.IMPORT_ATTR ) )
             .refresh( RefreshMode.ALL )
             .build();
 
         final ImportNodeResult result = nodeService.importNode( importNodeParams );
 
-        return ImportContentResult.create().content( translator.fromNode( result.getNode() ) ).build();
+        return ImportContentResult.create().content( ContentNodeTranslator.fromNode( result.getNode() ) ).build();
     }
 
     static class Builder

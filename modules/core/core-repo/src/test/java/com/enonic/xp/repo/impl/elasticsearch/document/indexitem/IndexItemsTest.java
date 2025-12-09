@@ -11,67 +11,48 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class IndexItemsTest
 {
     @Test
     void single_string()
     {
-        final IndexItems indexItems = IndexItems.create().
-            add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
-            build();
+        final IndexItems indexItems = IndexItems.create()
+            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .build();
 
-        final Collection<IndexValue> values = indexItems.get( "myitem" );
+        final Collection<Object> values = indexItems.asValuesMap().get( "myitem" );
 
-        assertTrue( values.size() == 1 );
-
-        final IndexValue value = values.iterator().next();
-
-        assertTrue( value instanceof IndexValueString );
-
-        assertEquals( "ost", value.getValue() );
+        assertThat( values ).containsExactly( "ost" );
     }
 
     @Test
     void multiple_strings()
     {
-        final IndexItems indexItems = IndexItems.create().
-            add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
-            add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
-            build();
+        final IndexItems indexItems = IndexItems.create()
+            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .build();
 
-        final Collection<IndexValue> values = indexItems.get( "myitem" );
+        final Collection<Object> values = indexItems.asValuesMap().get( "myitem" );
 
-        assertTrue( values.size() == 2 );
-
-        final IndexValue value = values.iterator().next();
-
-        assertTrue( value instanceof IndexValueString );
-
-        assertEquals( "ost", value.getValue() );
+        assertThat( values ).containsExactly( "ost", "fisk" );
     }
 
 
     @Test
     void single_orderby_value()
     {
-        final IndexItems indexItems = IndexItems.create().
-            add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
-            add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) ).
-            build();
+        final IndexItems indexItems = IndexItems.create()
+            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "ost" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .add( IndexPath.from( "myItem" ), ValueFactory.newString( "fisk" ), createDefaultDocument( IndexConfig.MINIMAL ) )
+            .build();
 
-        final Collection<IndexValue> values =
-            indexItems.get( "myitem" + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ORDERBY.getPostfix() );
+        final Collection<Object> values =
+            indexItems.asValuesMap().get( "myitem" + IndexItem.INDEX_VALUE_TYPE_SEPARATOR + IndexValueType.ORDERBY.getPostfix() );
 
-        assertEquals( 1, values.size() );
-
-        final IndexValue value = values.iterator().next();
-
-        assertTrue( value instanceof IndexValueString );
-
-        assertEquals( "ost", value.getValue() );
+        assertThat( values ).containsExactly( "ost" );
     }
 
     private IndexConfigDocument createDefaultDocument( final IndexConfig indexConfig )

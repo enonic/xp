@@ -34,7 +34,7 @@ final class FindContentByParentCommand
 
         final Nodes nodes = this.nodeService.getByIds( result.getNodeIds() );
 
-        final Contents contents = this.translator.fromNodes( nodes );
+        final Contents contents = ContentNodeTranslator.fromNodes( nodes );
 
         return FindContentByParentResult.create().contents( contents ).totalHits( result.getTotalHits() ).build();
     }
@@ -45,7 +45,7 @@ final class FindContentByParentCommand
 
         setNodePathOrIdAsIdentifier( findNodesParam );
 
-        return findNodesParam.queryFilters( createFilters() )
+        return findNodesParam.queryFilters( Filters.create().addAll( createFilters() ).addAll( params.getQueryFilters() ).build() )
             .from( params.getFrom() )
             .size( params.getSize() )
             .childOrder( params.getChildOrder() )
@@ -69,16 +69,6 @@ final class FindContentByParentCommand
             final NodeId parentId = NodeId.from( params.getParentId() );
             findNodesParam.parentId( parentId );
         }
-    }
-
-    @Override
-    protected Filters createFilters()
-    {
-        final Filters.Builder filters = Filters.create();
-        super.createFilters().forEach( filters::add );
-        params.getQueryFilters().forEach( filters::add );
-
-        return filters.build();
     }
 
     public static class Builder

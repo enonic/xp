@@ -68,7 +68,7 @@ public class ApplyNodePermissionsCommand
         return new Builder();
     }
 
-    public static Builder create( AbstractNodeCommand source )
+    static Builder create( AbstractNodeCommand source )
     {
         return new Builder( source );
     }
@@ -205,23 +205,14 @@ public class ApplyNodePermissionsCommand
         return NodeHelper.runAsAdmin( () -> {
             if ( updatedVersionData != null )
             {
-                this.nodeStorageService.push( List.of( NodeBranchEntry.create()
-                                                           .nodeVersionId( updatedVersionData.node().getNodeVersionId() )
-                                                           .nodePath( updatedVersionData.node().path() )
-                                                                                 .nodeVersionKey(
-                                                                                     updatedVersionData.metadata().getNodeVersionKey() )
-                                                           .nodeId( updatedVersionData.node().id() )
-                                                           .timestamp( updatedVersionData.metadata().getTimestamp() )
-                                                                                 .build() ), branch, l -> {
-                }, targetContext );
-
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( updatedVersionData.metadata() ), this.branches.first(), targetContext );
                 return updatedVersionData;
             }
             else
             {
                 final Node editedNode = Node.create( persistedNode ).timestamp( Instant.now( CLOCK ) ).permissions( permissions )
                     .build();
-                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode ), targetContext );
+                final NodeVersionData result = this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, params.getVersionAttributes() ), targetContext );
 
                 listener.permissionsApplied( 1 );
                 return result;

@@ -181,8 +181,7 @@ public final class ParentContentSynchronizer
 
             if ( contentToSync.getSourceContent() != null )
             {
-                return Stream.of( createEventCommand( singleContent, ContentSyncEventType.RENAMED ),
-                                  createEventCommand( singleContent, ContentSyncEventType.SORTED ),
+                return Stream.of( createEventCommand( singleContent, ContentSyncEventType.SORTED ),
                                   createEventCommand( singleContent, ContentSyncEventType.UPDATED ),
                                   createEventCommand( singleContent, ContentSyncEventType.MOVED ) );
             }
@@ -260,7 +259,6 @@ public final class ParentContentSynchronizer
             case CREATED ->
                 contentToSync.getFirst().getTargetContent() == null ? CreatedEventSyncCommand.create() : UpdatedEventSyncCommand.create();
             case MOVED -> MovedEventSyncCommand.create();
-            case RENAMED -> RenamedEventSyncCommand.create();
             case SORTED -> SortedEventSyncCommand.create();
             case UPDATED -> UpdatedEventSyncCommand.create();
             case DELETED -> DeletedEventSyncCommand.create();

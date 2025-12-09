@@ -5,6 +5,7 @@ import com.enonic.xp.lib.node.mapper.PushNodesResultMapper;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
@@ -51,7 +52,8 @@ public final class PushNodeHandler
             toBePushed.addAll( getNodeIds() );
         }
 
-        final PushNodesResult push = this.nodeService.push( toBePushed.build(), targetBranch );
+        final NodeIds ids = toBePushed.build();
+        final PushNodesResult push = this.nodeService.push( PushNodeParams.create().ids( ids ).target( targetBranch ).build() );
 
         return new PushNodesResultMapper( push );
     }

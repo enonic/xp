@@ -5,13 +5,13 @@ import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -80,7 +80,7 @@ class ImportNodeCommandTest
             build().
             execute();
 
-        assertEquals( CompareStatus.EQUAL, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.EQUAL, comparison.getCompareStatus() );
     }
 
     @Test

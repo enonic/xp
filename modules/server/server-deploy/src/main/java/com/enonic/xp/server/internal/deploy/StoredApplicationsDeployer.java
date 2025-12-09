@@ -4,7 +4,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.ApplicationInstallationParams;
 import com.enonic.xp.app.ApplicationService;
 
 @Component(service = StoredApplicationsDeployer.class)
@@ -20,7 +19,6 @@ public final class StoredApplicationsDeployer
 
     public void deploy()
     {
-        DeployHelper.runAsAdmin( () -> applicationService.installAllStoredApplications( ApplicationInstallationParams.create().
-            build() ) );
+        DeployHelper.runAsAdmin( applicationService::installAllStoredApplications );
     }
 }

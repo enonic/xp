@@ -23,7 +23,7 @@ public class CreateRootNodeCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }
@@ -44,12 +44,12 @@ public class CreateRootNodeCommand
     {
         private CreateRootNodeParams params;
 
-        public Builder()
+        private Builder()
         {
             super();
         }
 
-        public Builder( final AbstractNodeCommand source )
+        private Builder( final AbstractNodeCommand source )
         {
             super( source );
         }

@@ -66,7 +66,7 @@ public class ElasticsearchQuery
         this.aggregations = ImmutableList.copyOf( builder.aggregations );
         this.suggestions = ImmutableList.copyOf( builder.suggestions );
         this.highlight = builder.highlight;
-        this.returnFields = builder.returnFields;
+        this.returnFields = Objects.requireNonNullElse( builder.returnFields, ReturnFields.empty() );
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
         this.searchPreference = builder.searchPreference;
@@ -191,7 +191,7 @@ public class ElasticsearchQuery
 
         private ElasticHighlightQuery highlight = ElasticHighlightQuery.empty();
 
-        private ReturnFields returnFields = ReturnFields.empty();
+        private ReturnFields returnFields;
 
         private SearchOptimizer searchOptimizer = SearchOptimizer.DEFAULT;
 

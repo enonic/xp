@@ -80,7 +80,7 @@ public class ResolveInsertOrderValueCommand
         {
             final SearchHit hit = searchResult.getHits().getFirst();
             return hit.getReturnValues()
-                .getOptional( NodeIndexPath.MANUAL_ORDER_VALUE.getPath() )
+                .getOptional( NodeIndexPath.MANUAL_ORDER_VALUE )
                 .map( Object::toString )
                 .map( Long::valueOf )
                 .orElseThrow(
@@ -93,7 +93,7 @@ public class ResolveInsertOrderValueCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }

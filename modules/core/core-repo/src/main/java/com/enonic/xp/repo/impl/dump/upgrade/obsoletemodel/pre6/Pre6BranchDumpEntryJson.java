@@ -23,13 +23,6 @@ public class Pre6BranchDumpEntryJson
     {
     }
 
-    private Pre6BranchDumpEntryJson( final String nodeId, final Collection<String> binaries, final Pre6VersionDumpEntryJson meta )
-    {
-        this.nodeId = nodeId;
-        this.binaries = binaries;
-        this.meta = meta;
-    }
-
     private Pre6BranchDumpEntryJson( final Builder builder )
     {
         nodeId = builder.nodeId;
@@ -44,13 +37,6 @@ public class Pre6BranchDumpEntryJson
             meta( Pre6VersionDumpEntryJson.fromJson( json.getMeta() ) ).
             setBinaryReferences( json.getBinaries() ).
             build();
-    }
-
-    public static Pre6BranchDumpEntryJson from( final BranchDumpEntry branchDumpEntry )
-    {
-        String nodeId = branchDumpEntry.getNodeId().toString();
-        return new Pre6BranchDumpEntryJson( nodeId, branchDumpEntry.getBinaryReferences(),
-                                            Pre6VersionDumpEntryJson.from( branchDumpEntry.getMeta() ) );
     }
 
     public static Builder create( final Pre6BranchDumpEntryJson source )

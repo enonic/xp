@@ -13,7 +13,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
@@ -26,6 +25,7 @@ import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.query.parser.QueryParser;
+import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.GeoPoint;
 
@@ -57,65 +57,38 @@ class ContentServiceImplTest_find
     }
 
     @Test
-    void test_pending_publish_draft()
-    {
-        final FindContentIdsByQueryResult result =
-            createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
-        assertEquals( 1, result.getTotalHits() );
-    }
-
-    @Test
     void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
-            final FindContentIdsByQueryResult result =
-                createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
+
+            final FindContentIdsByQueryResult result = findContent( content.getId() );
             assertEquals( 0, result.getTotalHits() );
             return null;
         } );
-    }
-
-    @Test
-    void test_publish_expired_draft()
-    {
-        final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                          .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
-                                                                          .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                          .build() );
-        assertEquals( 1, result.getTotalHits() );
     }
 
     @Test
     void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
-            final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
-                                                                              .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                              .build() );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ) , Instant.now().minus( Duration.ofDays( 1 ) ) );
+
+            final FindContentIdsByQueryResult result = findContent( content.getId() );
+            printAllIndexContent( IndexNameResolver.resolveSearchIndexName( testprojectName.getRepoId()  ), "draft"  );
             assertEquals( 0, result.getTotalHits() );
             return null;
         } );
     }
 
     @Test
-    void test_published_draft()
-    {
-        final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                          .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                          .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
-                                                                          .build() );
-        assertEquals( 1, result.getTotalHits() );
-    }
-
-    @Test
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
-            final FindContentIdsByQueryResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                              .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
-                                                                              .build() );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ),
+                                                             Instant.now().plus( Duration.ofDays( 1 ) ));
+
+            final FindContentIdsByQueryResult result = findContent( content.getId() );
 
             assertEquals( 1, result.getTotalHits() );
             return null;
@@ -554,14 +527,11 @@ class ContentServiceImplTest_find
         assertOrder( contentService.find( queryDsl ).getContentIds(), child2 );
     }
 
-    private FindContentIdsByQueryResult createAndFindContent( final ContentPublishInfo publishInfo )
+    private FindContentIdsByQueryResult findContent( final ContentId contentId )
     {
-        final Content content = createContent( ContentPath.ROOT, publishInfo );
-
         final ContentQuery query =
-            ContentQuery.create().queryExpr( QueryParser.parse( "_id='" + content.getId().toString() + "'" ) ).build();
+            ContentQuery.create().queryExpr( QueryParser.parse( "_id='" + contentId.toString() + "'" ) ).build();
 
-        return contentService.find(  query );
+        return contentService.find( query );
     }
-
 }

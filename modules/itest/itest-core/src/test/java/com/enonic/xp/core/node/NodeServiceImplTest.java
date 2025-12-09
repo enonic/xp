@@ -23,6 +23,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
+import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
@@ -45,14 +46,13 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.NodeVersionMetadatas;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
 import com.enonic.xp.node.SortNodeParams;
@@ -199,7 +199,7 @@ class NodeServiceImplTest
                                                        .attachBinary( binaryRef1, ByteSource.wrap( binarySource.getBytes() ) )
                                                        .build() );
 
-        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node.id() ).build() );
+        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node.id() ).build() ).getNode();
 
         assertNotEquals( node, duplicatedNode );
         assertEquals( node.getAttachedBinaries(), duplicatedNode.getAttachedBinaries() );
@@ -221,7 +221,7 @@ class NodeServiceImplTest
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
-        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node_1.id() ).build() );
+        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node_1.id() ).build() ).getNode();
 
         final NodeId node_1_2_dup_id =
             this.nodeService.findByParent( FindNodesByParentParams.create().parentId( duplicatedNode.id() ).build() ).getNodeIds().first();
@@ -254,7 +254,7 @@ class NodeServiceImplTest
         this.nodeService.refresh( RefreshMode.SEARCH );
 
         final Node duplicatedNode =
-            this.nodeService.duplicate( DuplicateNodeParams.create().includeChildren( false ).nodeId( node_1.id() ).build() );
+            this.nodeService.duplicate( DuplicateNodeParams.create().includeChildren( false ).nodeId( node_1.id() ).build() ).getNode();
 
         final Long childrenNumber =
             this.nodeService.findByParent( FindNodesByParentParams.create().parentId( duplicatedNode.id() ).build() ).getTotalHits();
@@ -287,7 +287,7 @@ class NodeServiceImplTest
                                                                         originalData.setString( "extraProp", "extraPropValue" );
                                                                         return originalData;
                                                                     } )
-                                                                    .build() );
+                                                                    .build() ).getNode();
 
         assertEquals( "duplicated-of-child-1", duplicatedNode.name().toString() );
         assertEquals( node_1_2.path() + "/duplicated-of-child-1", duplicatedNode.path().toString() );
@@ -363,9 +363,12 @@ class NodeServiceImplTest
 
         //Call commit with the node version ID of the first version
         final NodeCommitEntry commitEntry2 = NodeCommitEntry.create().message( "Commit message 2" ).build();
-        final RoutableNodeVersionId routableNodeVersionId = RoutableNodeVersionId.from( nodeId, firstVersionMetadata2.getNodeVersionId() );
         final NodeCommitEntry returnedCommitEntry2 =
-            nodeService.commit( commitEntry, RoutableNodeVersionIds.from( routableNodeVersionId ) );
+        nodeService.commit( CommitNodeParams.create()
+                                .nodeCommitEntry( commitEntry )
+                                .nodeVersionIds( NodeVersionIds.from( firstVersionMetadata2.getNodeVersionId() ) )
+                                .build() );
+
         nodeService.refresh( RefreshMode.STORAGE );
 
         //Check that only the first version has been impacted

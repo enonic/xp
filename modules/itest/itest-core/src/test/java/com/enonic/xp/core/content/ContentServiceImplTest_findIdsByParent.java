@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 
@@ -184,81 +183,46 @@ class ContentServiceImplTest_findIdsByParent
 
 
     @Test
-    void test_pending_publish_draft()
-        throws Exception
-    {
-        final FindContentIdsByParentResult result =
-            createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
-        assertEquals( 1, result.getTotalHits() );
-    }
-
-    @Test
     void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
-            final FindContentIdsByParentResult result =
-                createAndFindContent( ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
+
+            final FindContentIdsByParentResult result = findIdsByParent();
             assertEquals( 0, result.getTotalHits() );
             return null;
         } );
-    }
-
-    @Test
-    void test_publish_expired_draft()
-        throws Exception
-    {
-        final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
-                                                                              .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                              .build() );
-        assertEquals( 1, result.getTotalHits() );
     }
 
     @Test
     void test_publish_expired_master()
     {
         ctxMaster().callWith( () -> {
-            final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                                  .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
-                                                                                  .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                                  .build() );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
+
+            final FindContentIdsByParentResult result = findIdsByParent();
             assertEquals( 0, result.getTotalHits() );
             return null;
         } );
     }
 
     @Test
-    void test_published_draft()
-        throws Exception
-    {
-        final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                              .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                              .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
-                                                                              .build() );
-        assertEquals( 1, result.getTotalHits() );
-    }
-
-    @Test
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
-            final FindContentIdsByParentResult result = createAndFindContent( ContentPublishInfo.create()
-                                                                                  .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                                                                                  .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
-                                                                                  .build() );
+            createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
+
+            final FindContentIdsByParentResult result = findIdsByParent();
 
             assertEquals( 1, result.getTotalHits() );
             return null;
         } );
     }
 
-    private FindContentIdsByParentResult createAndFindContent( final ContentPublishInfo publishInfo )
+    private FindContentIdsByParentResult findIdsByParent()
     {
-        createContent( ContentPath.ROOT, publishInfo );
-
         final FindContentByParentParams params = FindContentByParentParams.create().parentPath( ContentPath.ROOT ).build();
 
         return contentService.findIdsByParent( params );
     }
-
 }

@@ -5,13 +5,13 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
+import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class FindNodesWithVersionDifferenceCommand
@@ -49,37 +49,24 @@ public class FindNodesWithVersionDifferenceCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        final NodePaths excludeEntries = getExcludePaths( context );
+        final NodePaths excludeEntries = excludes.isEmpty()
+            ? NodePaths.empty()
+            : this.nodeStorageService.getBranchNodeVersions( excludes, context )
+                .stream()
+                .map( NodeBranchEntry::getNodePath )
+                .collect( NodePaths.collector() );
 
         final SearchResult result = this.nodeSearchService.query( NodeVersionDiffQuery.create()
                                                                       .source( source )
                                                                       .target( target )
                                                                       .nodePath( nodePath )
                                                                       .excludes( excludeEntries )
+                                                                      .returnFields( ReturnFields.from( VersionIndexPath.NODE_ID ) )
                                                                       .size( NodeSearchService.GET_ALL_SIZE_FLAG )
                                                                       .batchSize( BATCH_SIZE )
                                                                       .build(), context.getRepositoryId() );
 
         return NodeVersionDiffResultFactory.create( result );
-    }
-
-    private NodePaths getExcludePaths( final InternalContext context )
-    {
-        if ( this.excludes.isEmpty() )
-        {
-            return NodePaths.empty();
-        }
-
-        final NodePaths.Builder builder = NodePaths.create();
-
-        final NodeBranchEntries result = this.nodeStorageService.getBranchNodeVersions( excludes, context );
-
-        for ( final NodeBranchEntry entry : result )
-        {
-            builder.addNodePath( entry.getNodePath() );
-        }
-
-        return builder.build();
     }
 
     public static final class Builder

@@ -16,7 +16,7 @@ import com.google.common.base.Stopwatch;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.filter.IdFilter;
-import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
@@ -50,14 +50,15 @@ public class CopyExecutor
         final QueryBuilder idFilterBuilder =
             new FilterBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( Filters.from( idFilter ) );
 
-        return ElasticsearchQuery.create().query( QueryBuilders.boolQuery().filter( idFilterBuilder ) )
+        return ElasticsearchQuery.create()
+            .query( QueryBuilders.boolQuery().filter( idFilterBuilder ) )
             .addIndexName( copyRequest.getStorageSource().getStorageName().getName() )
             .addIndexType( copyRequest.getStorageSource().getStorageType().getName() )
             .size( copyRequest.getNodeIds().size() )
-            .batchSize( BATCH_SIZE ).
-            from( 0 ).
-            setReturnFields( ReturnFields.from( NodeIndexPath.SOURCE ) ).
-            build();
+            .batchSize( BATCH_SIZE )
+            .searchPreference( SearchPreference.PRIMARY )
+            .from( 0 )
+            .build();
     }
 
     public static Builder create( final Client client )

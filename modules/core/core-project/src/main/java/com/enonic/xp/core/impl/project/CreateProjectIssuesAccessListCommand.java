@@ -26,11 +26,6 @@ public final class CreateProjectIssuesAccessListCommand
 
     private AccessControlList createIssuesRootPermissions()
     {
-        if ( projectName == null )
-        {
-            return null;
-        }
-
         return AccessControlList.create().
             add( AccessControlEntry.create().
                 allowAll().
