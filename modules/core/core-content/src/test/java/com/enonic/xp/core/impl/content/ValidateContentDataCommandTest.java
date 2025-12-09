@@ -228,6 +228,37 @@ class ValidateContentDataCommandTest
         assertFalse( result.hasErrors() );
     }
 
+    @Test
+    void testSiteConfigValidationErrorIncludesFieldPath()
+    {
+        final ContentType contentType =
+            ContentType.create().superType( ContentTypeName.structured() ).name( ContentTypeName.site() ).build();
+
+        Mockito.when( contentTypeService.getByName( Mockito.isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
+
+        PropertyTree rootDataSet = new PropertyTree();
+
+        PropertyTree siteConfigDataSet = new PropertyTree();
+        siteConfigDataSet.setString( "textInput-1", "invalid-text" );
+
+        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
+        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
+
+        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
+
+        // exercise
+        final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
+
+        // verify
+        assertThat(result.stream()).hasSize( 1 );
+        final var error = result.stream().findFirst().orElseThrow();
+        
+        // Verify that the error is a DataValidationError with the field path
+        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        final var dataError = (com.enonic.xp.content.DataValidationError) error;
+        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "textInput-1" );
+    }
+
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )
     {
         return this.executeValidation( propertyTree, contentTypeName, ContentName.from( "name" ), "display-name" );

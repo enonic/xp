@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfig;
@@ -61,10 +62,25 @@ public class SiteConfigsValidator
                 }
                 catch ( final Exception e )
                 {
-                    validationErrorsBuilder.add( ValidationError.generalError(
-                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ) )
-                                                     .args( siteConfig.getApplicationKey() )
-                                                     .build() );
+                    final ValidationError.Builder errorBuilder;
+                    
+                    if ( e instanceof InputTypeValidationException inputTypeValidationException && 
+                         inputTypeValidationException.getPropertyPath() != null )
+                    {
+                        errorBuilder = ValidationError.dataError(
+                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ),
+                            inputTypeValidationException.getPropertyPath() );
+                    }
+                    else
+                    {
+                        errorBuilder = ValidationError.generalError(
+                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ) );
+                    }
+                    
+                    validationErrorsBuilder.add( errorBuilder
+                        .args( siteConfig.getApplicationKey() )
+                        .message( e.getMessage() )
+                        .build() );
                 }
 
             }
