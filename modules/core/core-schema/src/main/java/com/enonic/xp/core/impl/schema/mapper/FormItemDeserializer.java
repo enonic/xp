@@ -9,11 +9,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
-import com.enonic.xp.form.FormFragment;
 
 public class FormItemDeserializer
     extends JsonDeserializer<FormItem>
@@ -23,6 +23,7 @@ public class FormItemDeserializer
         throws IOException
     {
         final ObjectMapper mapper = (ObjectMapper) jsonParser.getCodec();
+
         final JsonNode node = mapper.readTree( jsonParser );
 
         final String type = node.get( "type" ).asText();
@@ -36,7 +37,7 @@ public class FormItemDeserializer
             case "FormFragment" -> mapper.treeToValue( node, FormFragment.class );
             default ->
             {
-                final InputYml inputYml = mapper.treeToValue( node, InputRegistry.getInputType( type ) );
+                final InputYml inputYml = mapper.treeToValue( node, InputYml.class );
                 yield inputYml.convertToInput();
             }
         };

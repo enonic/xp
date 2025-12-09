@@ -5,8 +5,8 @@ helpText: "Help Text"
 occurrences:
   min: 0
   max: 1
-config:
-  allowPath:
-    - "${site}/*"
-  treeMode: true
-  hideToggleIcon: true
+allowPath:
+  - "${site}/*"
+treeMode: true
+hideToggleIcon: true
+attributes: { }

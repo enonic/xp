@@ -52,8 +52,7 @@ assert.assertJsonEquals({
             'occurrences': {
                 'maximum': 2,
                 'minimum': 0
-            },
-            'config': {}
+            }
         }
     ]
 }, result);

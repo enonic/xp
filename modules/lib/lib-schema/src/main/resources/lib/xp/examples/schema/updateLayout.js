@@ -119,8 +119,7 @@ assert.assertJsonEquals({
             'occurrences': {
                 'maximum': 1,
                 'minimum': 0
-            },
-            'config': {}
+            }
         },
         {
             'formItemType': 'ItemSet',
@@ -139,8 +138,7 @@ assert.assertJsonEquals({
                     'occurrences': {
                         'maximum': 1,
                         'minimum': 1
-                    },
-                    'config': {}
+                    }
                 },
                 {
                     'formItemType': 'Input',
@@ -150,8 +148,7 @@ assert.assertJsonEquals({
                     'occurrences': {
                         'maximum': 1,
                         'minimum': 0
-                    },
-                    'config': {}
+                    }
                 }
             ]
         }

@@ -1,20 +1,22 @@
 package com.enonic.xp.core.impl.schema.mapper;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class InputYml
+public class InputYml
 {
-    private final InputTypeName inputTypeName;
+    private static final Set<String> RESERVED_VALUES = Set.of( "type", "name", "label", "helpText", "occurrences" );
 
     public String type;
 
@@ -26,16 +28,29 @@ public abstract class InputYml
 
     public Occurrences occurrences;
 
-    public Map<String, GenericValue> config;
+    public Map<String, GenericValue> attributes;
 
-    protected InputYml( final InputTypeName inputTypeName )
+    @JsonIgnore
+    private final Map<String, GenericValue> topLevelAttributes = new LinkedHashMap<>();
+
+    @JsonAnySetter
+    public void addAttribute( final String key, final GenericValue value )
     {
-        this.inputTypeName = Objects.requireNonNull( inputTypeName, "inputTypeName can not be null" );
+        if ( !RESERVED_VALUES.contains( key ) )
+        {
+            topLevelAttributes.put( key, value );
+        }
+    }
+
+    @JsonAnyGetter
+    public Map<String, GenericValue> getTopLevelAttributes()
+    {
+        return topLevelAttributes;
     }
 
     public final Input convertToInput()
     {
-        final Input.Builder builder = Input.create().name( name ).inputType( inputTypeName );
+        final Input.Builder builder = Input.create().name( name ).inputType( InputTypeName.from( type ) );
 
         if ( label != null )
         {
@@ -52,17 +67,21 @@ public abstract class InputYml
             builder.occurrences( occurrences );
         }
 
-        if ( config != null )
+        topLevelAttributes.forEach( builder::inputTypeProperty );
+
+        if ( attributes != null )
         {
-            config.forEach( builder::inputTypeProperty );
+            for ( Map.Entry<String, GenericValue> entry : attributes.entrySet() )
+            {
+                final String attribute = entry.getKey();
+                final GenericValue value = entry.getValue();
+                if ( !topLevelAttributes.containsKey( attribute ) )
+                {
+                    builder.inputTypeProperty( attribute, value );
+                }
+            }
         }
 
-        customizeInputType( builder );
-
         return builder.build();
-    }
-
-    public void customizeInputType( final Input.Builder builder )
-    {
     }
 }

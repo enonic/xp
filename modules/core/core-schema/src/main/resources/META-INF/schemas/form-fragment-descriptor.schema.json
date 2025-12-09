@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://json-schema.enonic.com/8.0.0/form-fragment-descriptor.schema.json",
+  "type": "object",
+  "properties": {
+    "displayName": {
+      "$ref": "https://json-schema.enonic.com/8.0.0/localized-text.schema.json"
+    },
+    "description": {
+      "$ref": "https://json-schema.enonic.com/8.0.0/localized-text.schema.json"
+    },
+    "form": {
+      "$ref": "https://json-schema.enonic.com/8.0.0/form.schema.json"
+    }
+  }
+}
