@@ -18,6 +18,8 @@ class ContentOutboundDependenciesIdsResolver
 {
     private final ContentService contentService;
 
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
+
     ContentOutboundDependenciesIdsResolver( final ContentService contentService )
     {
         this.contentService = contentService;
@@ -37,7 +39,7 @@ class ContentOutboundDependenciesIdsResolver
         final PropertySet contentPageData = new PropertyTree().getRoot();
         if ( content.getPage() != null )
         {
-            new ContentDataSerializer().toPageData( content.getPage(), contentPageData );
+            contentDataSerializer.toPageData( content.getPage(), contentPageData );
         }
 
         final Stream<Property> mixinDependencies = !content.getMixins().isEmpty() ? content.getMixins().

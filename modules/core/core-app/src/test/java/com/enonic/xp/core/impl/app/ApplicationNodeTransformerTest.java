@@ -1,14 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.osgi.framework.Version;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
@@ -26,12 +22,12 @@ class ApplicationNodeTransformerTest
     void binary_reference_added()
         throws Exception
     {
-        final Application app = Mockito.mock( Application.class );
-        Mockito.when( app.getKey() ).thenReturn( ApplicationKey.from( "myApp" ) );
-        Mockito.when( app.getVersion() ).thenReturn( Version.valueOf( "1.0.0" ) );
-        Mockito.when( app.getMaxSystemVersion() ).thenReturn( "1.0.0" );
-        Mockito.when( app.getMinSystemVersion() ).thenReturn( "1.0.0." );
-        Mockito.when( app.getDisplayName() ).thenReturn( "displayName" );
+        final AppInfo app = new AppInfo();
+        app.name = "myApp";
+        app.version = "1.0.0";
+        app.maxSystemVersion = "1.0.0";
+        app.minSystemVersion = "1.0.0.";
+        app.displayName = "displayName";
 
         final ByteSource appSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( "myBundle", true ).build() ) );
 
@@ -58,12 +54,12 @@ class ApplicationNodeTransformerTest
         final BinaryReference appReference = BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF );
         data.addBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF, appReference );
 
-        final Application app = Mockito.mock( Application.class );
-        Mockito.when( app.getKey() ).thenReturn( ApplicationKey.from( "myApp" ) );
-        Mockito.when( app.getVersion() ).thenReturn( Version.valueOf( "1.0.0" ) );
-        Mockito.when( app.getMaxSystemVersion() ).thenReturn( "1.0.0" );
-        Mockito.when( app.getMinSystemVersion() ).thenReturn( "1.0.0." );
-        Mockito.when( app.getDisplayName() ).thenReturn( "displayName" );
+        final AppInfo app = new AppInfo();
+         app.name = "myApp";
+         app.version = "1.0.0";
+         app.maxSystemVersion = "1.0.0";
+         app.minSystemVersion = "1.0.0.";
+         app.displayName = "displayName";
 
         final ByteSource updatedSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( "myBundleUpdated", true ).build() ) );
         final UpdateNodeParams updateNodeParams = ApplicationNodeTransformer.toUpdateNodeParams( app, updatedSource );

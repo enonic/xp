@@ -1,6 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.time.Instant;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Disabled;
@@ -18,7 +17,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -28,7 +26,6 @@ import com.enonic.xp.content.FindContentVersionsResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
@@ -52,7 +49,10 @@ class ContentServiceImplTest_publish
     extends AbstractContentServiceTest
 {
 
-    private Content content1, content2, content1_1, content1_2_offline, content2_1;
+    private Content content1;
+    private Content content2;
+    private Content content1_1;
+    private Content content2_1;
 
     @Test
     void push_one_content()
@@ -171,7 +171,7 @@ class ContentServiceImplTest_publish
         final PushContentParams pushParams = PushContentParams.create().contentIds( ContentIds.from( content1.getId() ) ).build();
 
         final PublishContentResult result = this.contentService.publish( pushParams );
-        assertEquals( 3, result.getPushedContents().getSize() );
+        assertEquals( 2, result.getPushedContents().getSize() );
     }
 
     /**
@@ -407,9 +407,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertEquals( "My message", version.getPublishInfo().getMessage() );
+        assertEquals( "My message", version.getComment() );
     }
 
     @Test
@@ -426,9 +424,7 @@ class ContentServiceImplTest_publish
         assertTrue( iterator.hasNext() );
 
         ContentVersion version = iterator.next();
-        assertNotNull( version.getPublishInfo().getTimestamp() );
-        assertEquals( "user:system:test-user", version.getPublishInfo().getPublisher().toString() );
-        assertNull( version.getPublishInfo().getMessage() );
+        assertNull( version.getComment() );
     }
 
     @Test
@@ -482,10 +478,10 @@ class ContentServiceImplTest_publish
                 PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).includeDependencies( false ).build() ) ) );
     }
 
-    private Content renameContent( final ContentId contentId, final String newName )
+    private void renameContent( final ContentId contentId, final String newName )
     {
-        return this.contentService.rename(
-            RenameContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
+        this.contentService.move(
+            MoveContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build() );
     }
 
     private Content getInMaster( final ContentId contentId )
@@ -531,7 +527,6 @@ class ContentServiceImplTest_publish
     /**
      * /content1
      * /content1_1
-     * /content1_2_offline
      * /content2
      * /content2_1 -> ref:content1_1
      */
@@ -557,15 +552,6 @@ class ContentServiceImplTest_publish
                                                           .parent( content1.getPath() )
                                                           .type( ContentTypeName.folder() )
                                                           .build() );
-
-        this.content1_2_offline = this.contentService.create( CreateContentParams.create()
-                                                                  .contentData( new PropertyTree() )
-                                                                  .displayName( "content1_2_offline" )
-                                                                  .parent( content1.getPath() )
-                                                                  .type( ContentTypeName.folder() )
-                                                                  .contentPublishInfo(
-                                                                      ContentPublishInfo.create().first( Instant.now() ).build() )
-                                                                  .build() );
 
         final PropertyTree data = new PropertyTree();
         data.addReference( "myRef", Reference.from( content1_1.getId().toString() ) );

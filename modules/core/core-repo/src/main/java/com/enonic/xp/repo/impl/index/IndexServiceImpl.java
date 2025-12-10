@@ -8,7 +8,6 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.ReindexParams;
@@ -31,10 +30,7 @@ public class IndexServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( IndexServiceImpl.class );
 
-    private static final String DEFAULT_INDEX_RESOURCE_FOLDER = "/com/enonic/xp/repo/impl/repository/index";
-
-    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER =
-        new DefaultIndexResourceProvider( DEFAULT_INDEX_RESOURCE_FOLDER );
+    private static final IndexResourceProvider DEFAULT_INDEX_RESOURCE_PROVIDER = new DefaultIndexResourceProvider();
 
     private IndexServiceInternal indexServiceInternal;
 
@@ -129,12 +125,6 @@ public class IndexServiceImpl
     public Map<String, String> getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
         return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
-    }
-
-    @Override
-    public Map<String, Object> getIndexMapping( final RepositoryId repositoryId, final Branch branch, final IndexType indexType )
-    {
-        return this.indexServiceInternal.getIndexMapping( repositoryId, branch, indexType );
     }
 
     @Override

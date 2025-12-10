@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -28,7 +30,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.CreateMediaParams;
 import com.enonic.xp.content.DeleteContentParams;
@@ -39,9 +40,10 @@ import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
+import com.enonic.xp.content.ProjectSyncParams;
 import com.enonic.xp.content.PublishContentResult;
 import com.enonic.xp.content.PushContentParams;
-import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.ResetContentInheritParams;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
 import com.enonic.xp.content.UnpublishContentParams;
@@ -98,8 +100,8 @@ public class ContentAuditLogSupportImpl
         final PropertySet resultSet = data.addSet( "result" );
 
         paramsSet.addString( "displayName", params.getDisplayName() );
-        paramsSet.addString( "type", nullToNull( params.getType() ) );
-        paramsSet.addString( "name", nullToNull( params.getName() ) );
+        paramsSet.addString( "type", safeToString( params.getType() ) );
+        paramsSet.addString( "name", safeToString( params.getName() ) );
         paramsSet.addBoolean( "requireValid", params.isRequireValid() );
 
         if ( params.getPermissions() != null )
@@ -134,11 +136,11 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "caption", params.getCaption() );
         paramsSet.addString( "copyright", params.getCopyright() );
         paramsSet.addString( "mimeType", params.getMimeType() );
-        paramsSet.addString( "name", nullToNull( params.getName() ) );
+        paramsSet.addString( "name", safeToString( params.getName() ) );
         paramsSet.addString( "tags", params.getTags() );
         paramsSet.addDouble( "focalX", params.getFocalX() );
         paramsSet.addDouble( "focalY", params.getFocalY() );
-        paramsSet.addString( "parent", nullToNull( params.getParent() ) );
+        paramsSet.addString( "parent", safeToString( params.getParent() ) );
 
         addContent( resultSet, content );
 
@@ -162,8 +164,8 @@ public class ContentAuditLogSupportImpl
         final PrincipalKey modifier =
             rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "modifier", nullToNull( modifier ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "modifier", safeToString( modifier ) );
         paramsSet.addBoolean( "clearAttachments", params.isClearAttachments() );
         paramsSet.addBoolean( "requireValid", params.isRequireValid() );
 
@@ -189,8 +191,8 @@ public class ContentAuditLogSupportImpl
         final PrincipalKey modifier =
             rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "modifier", nullToNull( modifier ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "modifier", safeToString( modifier ) );
         paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
         addCreateAttachments( paramsSet, params.getCreateAttachments() );
         paramsSet.addBoolean( "skipSync", params.isSkipSync() );
@@ -227,11 +229,11 @@ public class ContentAuditLogSupportImpl
         paramsSet.addString( "copyright", params.getCopyright() );
         paramsSet.addString( "caption", params.getCaption() );
         paramsSet.addString( "mimeType", params.getMimeType() );
-        paramsSet.addString( "name", nullToNull( params.getName() ) );
+        paramsSet.addString( "name", safeToString( params.getName() ) );
         paramsSet.addStrings( "tags", params.getTagList() );
         paramsSet.addDouble( "focalX", params.getFocalX() );
         paramsSet.addDouble( "focalY", params.getFocalY() );
-        paramsSet.addString( "content", nullToNull( params.getContent() ) );
+        paramsSet.addString( "content", safeToString( params.getContent() ) );
 
         addContent( resultSet, content );
 
@@ -280,14 +282,11 @@ public class ContentAuditLogSupportImpl
                               params.getExcludedContentIds().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
         paramsSet.addStrings( "excludeDescendantsOf",
                               params.getExcludeDescendantsOf().stream().map( ContentId::toString ).collect( Collectors.toList() ) );
-        if ( params.getContentPublishInfo() != null )
-        {
-            final ContentPublishInfo contentPublishInfo = params.getContentPublishInfo();
-            final PropertySet contentPublishInfoSet = paramsSet.addSet( "contentPublishInfo" );
-            contentPublishInfoSet.addInstant( "from", contentPublishInfo.getFrom() );
-            contentPublishInfoSet.addInstant( "to", contentPublishInfo.getTo() );
-            contentPublishInfoSet.addInstant( "first", contentPublishInfo.getFirst() );
-        }
+
+        final PropertySet contentPublishInfoSet = paramsSet.addSet( "contentPublishInfo" );
+        contentPublishInfoSet.addInstant( "from", params.getPublishFrom() );
+        contentPublishInfoSet.addInstant( "to", params.getPublishTo() );
+
         paramsSet.addString( "message", params.getMessage() );
         paramsSet.addBoolean( "includeDependencies", params.isIncludeDependencies() );
 
@@ -370,8 +369,9 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "parentContentPath", nullToNull( params.getParentContentPath() ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "parentContentPath", safeToString( params.getParentContentPath() ) );
+        paramsSet.addString( "newName", safeToString( params.getNewName() ) );
 
         addContents( resultSet, result.getMovedContents(), "movedContents" );
 
@@ -392,7 +392,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
 
         addContents( resultSet, result.getArchivedContents(), "archivedContents" );
         addContents( resultSet, result.getUnpublishedContents(), "unpublishedContents" );
@@ -414,35 +414,13 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "parentContentPath", nullToNull( params.getParentPath() ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "parentContentPath", safeToString( params.getParentPath() ) );
 
-        resultSet.addString( "parentContentPath", nullToNull( result.getParentPath() ) );
+        resultSet.addString( "parentContentPath", safeToString( result.getParentPath() ) );
         addContents( resultSet, result.getRestoredContents(), "restoredContents" );
 
         log( "system.content.restore", data, params.getContentId(), rootContext );
-    }
-
-    @Override
-    public void rename( final RenameContentParams params, final Content content )
-    {
-        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
-
-        executor.execute( () -> doRename( params, content, context ) );
-    }
-
-    private void doRename( final RenameContentParams params, final Content content, final Context rootContext )
-    {
-        final PropertyTree data = new PropertyTree();
-        final PropertySet paramsSet = data.addSet( "params" );
-        final PropertySet resultSet = data.addSet( "result" );
-
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "newName", nullToNull( params.getNewName() ) );
-
-        addContent( resultSet, content );
-
-        log( "system.content.rename", data, content.getId(), rootContext );
     }
 
     @Override
@@ -459,9 +437,9 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
-        paramsSet.addString( "childOrder", nullToNull( params.getChildOrder() ) );
-        paramsSet.addString( "manualOrderSeed", nullToNull( params.getChildOrder() ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "childOrder", safeToString( params.getChildOrder() ) );
+        paramsSet.addString( "manualOrderSeed", safeToString( params.getChildOrder() ) );
         addContents( resultSet, result.getMovedChildren(), "movedChildren" );
 
         addContent( resultSet, result.getContent() );
@@ -484,7 +462,7 @@ public class ContentAuditLogSupportImpl
         final PropertySet paramsSet = data.addSet( "params" );
         final PropertySet resultSet = data.addSet( "result" );
 
-        paramsSet.addString( "contentId", nullToNull( params.getContentId() ) );
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
         paramsSet.addString( "scope", params.getScope().toString() );
 
         if ( params.getPermissions() != null )
@@ -509,6 +487,44 @@ public class ContentAuditLogSupportImpl
         } );
 
         log( "system.content.applyPermissions", data, ContentIds.from( result.getResults().keySet() ), rootContext );
+    }
+
+    @Override
+    public void resetInheritance( final ResetContentInheritParams params )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doResetInheritance( params, context ) );
+    }
+
+    private void doResetInheritance( final ResetContentInheritParams params, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "projectName", safeToString( params.getProjectName() ) );
+        paramsSet.addStrings( "inherit", safeToString( params.getInherit() ) );
+
+        log( "system.contentSync.resetInheritance", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void syncProject( final ProjectSyncParams params )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doSyncProject( params, context ) );
+    }
+
+    private void doSyncProject( final ProjectSyncParams params, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+
+        paramsSet.addString( "targetProject", safeToString( params.getTargetProject() ) );
+
+        log( "system.contentSync.syncProject", data, AuditLogUris.empty(), rootContext );
     }
 
     private void addContent( final PropertySet targetSet, final Content content )
@@ -609,9 +625,14 @@ public class ContentAuditLogSupportImpl
         return AuditLogUri.from( rootContext.getRepositoryId() + ":" + rootContext.getBranch() + ":/content" + contentPath );
     }
 
-    private String nullToNull( Object value )
+    private static String safeToString( final Object value )
     {
-        return value != null ? value.toString() : null;
+        return Objects.toString( value, null );
+    }
+
+    private static List<String> safeToString( final Collection<?> values )
+    {
+        return values != null ? values.stream().map( Objects::toString ).toList() : null;
     }
 
     private <T> T runAsAuditLog( final Callable<T> callable, final Context rootContext )

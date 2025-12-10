@@ -19,12 +19,11 @@ public class ImportContentFactory
 {
     private final ImportContentParams params;
 
-    private final ContentDataSerializer contentDataSerializer;
+    private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     private ImportContentFactory( Builder builder )
     {
         this.params = builder.params;
-        this.contentDataSerializer = builder.contentDataSerializer;
     }
 
     public static Builder create()
@@ -73,8 +72,6 @@ public class ImportContentFactory
     {
         private ImportContentParams params;
 
-        private ContentDataSerializer contentDataSerializer;
-
         private Builder()
         {
         }
@@ -82,12 +79,6 @@ public class ImportContentFactory
         public Builder params( final ImportContentParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        public Builder contentDataSerializer( final ContentDataSerializer contentDataSerializer )
-        {
-            this.contentDataSerializer = contentDataSerializer;
             return this;
         }
 

@@ -8,13 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ApplyContentPermissionsParams;
+import com.enonic.xp.content.ApplyContentPermissionsScope;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.lib.content.mapper.ApplyPermissionsResultMapper;
-import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -35,7 +35,7 @@ public final class ApplyPermissionsHandler
 
     private String key;
 
-    private ApplyPermissionsScope scope;
+    private ApplyContentPermissionsScope scope;
 
     private AccessControlList permissions = AccessControlList.empty();
 
@@ -50,7 +50,7 @@ public final class ApplyPermissionsHandler
 
     public void setScope( final String scope )
     {
-        this.scope = scope != null ? ApplyPermissionsScope.valueOf( scope ) : null;
+        this.scope = scope != null ? ApplyContentPermissionsScope.valueOf( scope ) : null;
     }
 
     public void setPermissions( final ScriptValue permissions )

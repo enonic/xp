@@ -17,6 +17,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.dump.RepoDumper;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
@@ -134,12 +135,8 @@ class RepoDumperTest
         final Node node2 = createNode( node1.path(), "myChild2" );
         createNode( node1.path(), "myChild3" );
 
-        nodeService.update( UpdateNodeParams.create().id( node1.id() ).editor( ( e ) -> {
-            e.data.addBoolean( "bool", true );
-        } ).build() );
-        nodeService.update( UpdateNodeParams.create().id( node2.id() ).editor( ( e ) -> {
-            e.data.addBoolean( "bool", true );
-        } ).build() );
+        nodeService.patch( PatchNodeParams.create().id( node1.id() ).editor( e -> e.data.addBoolean( "bool", true ) ).build() );
+        nodeService.patch( PatchNodeParams.create().id( node2.id() ).editor( e -> e.data.addBoolean( "bool", true ) ).build() );
 
         final TestDumpWriter writer = new TestDumpWriter();
 

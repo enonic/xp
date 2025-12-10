@@ -55,25 +55,14 @@ public class AbstractQuery
         this.aggregationQueries = builder.aggregationQueries.build();
         this.suggestionQueries = builder.suggestionQueries.build();
         this.highlight = builder.highlight;
-        this.orderBys = setOrderExpressions( builder );
+        this.orderBys = ImmutableList.<OrderExpr>builder()
+            .addAll( builder.query != null ? builder.query.getOrderList() : List.of() )
+            .addAll( builder.orderBys )
+            .build();
         this.postFilters = builder.postFilters.build();
         this.queryFilters = builder.queryFilters.build();
         this.searchOptimizer = builder.searchOptimizer;
         this.explain = builder.explain;
-    }
-
-    private ImmutableList<OrderExpr> setOrderExpressions( final Builder<?> builder )
-    {
-        final List<OrderExpr> orderBys = new ArrayList<>();
-
-        if ( query != null )
-        {
-            orderBys.addAll( query.getOrderList() );
-        }
-
-        orderBys.addAll( builder.orderBys );
-
-        return ImmutableList.copyOf( orderBys );
     }
 
     @Override

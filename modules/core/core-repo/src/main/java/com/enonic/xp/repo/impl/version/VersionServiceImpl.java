@@ -19,17 +19,13 @@ import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
-import com.enonic.xp.repo.impl.version.storage.VersionStorageDocFactory;
 import com.enonic.xp.repository.RepositoryId;
 
 @Component
 public class VersionServiceImpl
     implements VersionService
 {
-    private static final ReturnFields VERSION_RETURN_FIELDS =
-        ReturnFields.from( VersionIndexPath.VERSION_ID, VersionIndexPath.NODE_BLOB_KEY, VersionIndexPath.INDEX_CONFIG_BLOB_KEY,
-                           VersionIndexPath.ACCESS_CONTROL_BLOB_KEY, VersionIndexPath.BINARY_BLOB_KEYS, VersionIndexPath.TIMESTAMP,
-                           VersionIndexPath.NODE_PATH, VersionIndexPath.NODE_ID, VersionIndexPath.COMMIT_ID );
+    private static final ReturnFields VERSION_RETURN_FIELDS = ReturnFields.from( VersionIndexPath.entryFields() );
 
     private final StorageDao storageDao;
 
@@ -59,11 +55,6 @@ public class VersionServiceImpl
     @Override
     public NodeVersionMetadata getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        return doGetById( nodeVersionId, context );
-    }
-
-    private NodeVersionMetadata doGetById( final NodeVersionId nodeVersionId, final InternalContext context )
-    {
         final GetByIdRequest getByIdRequest = GetByIdRequest.create()
             .id( nodeVersionId.toString() )
             .returnFields( VERSION_RETURN_FIELDS )
@@ -78,7 +69,7 @@ public class VersionServiceImpl
             return null;
         }
 
-        return NodeVersionFactory.create( getResult );
+        return NodeVersionFactory.create( getResult.getReturnValues() );
     }
 
     private StorageSource createStorageSettings( final RepositoryId repositoryId )

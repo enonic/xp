@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.ApplyContentPermissionsParams;
 import com.enonic.xp.content.ApplyContentPermissionsResult;
+import com.enonic.xp.content.ApplyContentPermissionsScope;
 import com.enonic.xp.content.ApplyPermissionsListener;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
@@ -16,7 +17,6 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -101,7 +101,7 @@ class ContentServiceImplTest_applyPermissions
 
         final ApplyContentPermissionsParams applyParams = ApplyContentPermissionsParams.create()
             .contentId( content.getId() )
-            .applyPermissionsScope( ApplyPermissionsScope.TREE )
+            .applyPermissionsScope( ApplyContentPermissionsScope.TREE )
             .applyContentPermissionsListener( listener )
             .build();
 

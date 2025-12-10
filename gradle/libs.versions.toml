@@ -18,7 +18,7 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.2" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.2.5" }
 
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.6" }
 
@@ -32,7 +32,7 @@ slf4j-jultoslf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 slf4j-jcloverslf4j= { module = "org.slf4j:jcl-over-slf4j", version.ref = "slf4j" }
 slf4j-log4joverslf4j = { module = "org.slf4j:log4j-over-slf4j", version.ref = "slf4j" }
 jboss-logging = { module = "org.jboss.logging:jboss-logging", version = "3.6.1.Final" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.19" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version = "1.5.21" }
 
 jakarta-activation = { module = "com.sun.activation:jakarta.activation", version = "2.0.1" }
 jakarta-mail = { module = "com.sun.mail:jakarta.mail", version = "2.0.2" }
@@ -73,7 +73,7 @@ jsoup = { module = "org.jsoup:jsoup", version = "1.21.2" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20240325.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.17.8" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.2" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 

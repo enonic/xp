@@ -2,8 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Objects;
 
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodeVersionMetadata;
@@ -40,45 +40,45 @@ class CompareStatusResolver
 
         if ( source == null )
         {
-            return new NodeComparison( null, null, target.getNodeId(), target.getNodePath(), CompareStatus.NEW_TARGET );
+            return new NodeComparison( null, null, target.getNodeId(), target.getNodePath(), NodeCompareStatus.NEW_TARGET );
         }
         else if ( target == null )
         {
-            return new NodeComparison( source.getNodeId(), source.getNodePath(), null, null, CompareStatus.NEW );
+            return new NodeComparison( source.getNodeId(), source.getNodePath(), null, null, NodeCompareStatus.NEW );
         }
 
         if ( source.equals( target ) )
         {
             return new NodeComparison( source.getNodeId(), source.getNodePath(), target.getNodeId(), target.getNodePath(),
-                                       CompareStatus.EQUAL );
+                                       NodeCompareStatus.EQUAL );
         }
 
         if ( !source.getNodePath().equals( target.getNodePath() ) )
         {
             return new NodeComparison( source.getNodeId(), source.getNodePath(), target.getNodeId(), target.getNodePath(),
-                                       CompareStatus.MOVED );
+                                       NodeCompareStatus.MOVED );
         }
 
         return new NodeComparison( source.getNodeId(), source.getNodePath(), target.getNodeId(), target.getNodePath(),
                                    resolveFromVersion() );
     }
 
-    private CompareStatus resolveFromVersion()
+    private NodeCompareStatus resolveFromVersion()
     {
         final NodeVersionMetadata sourceVersion = getVersion( this.source );
         final NodeVersionMetadata targetVersion = getVersion( this.target );
 
         if ( sourceVersion.getTimestamp().isAfter( targetVersion.getTimestamp() ) )
         {
-            return CompareStatus.NEWER;
+            return NodeCompareStatus.NEWER;
         }
 
         if ( sourceVersion.getTimestamp().isBefore( targetVersion.getTimestamp() ) )
         {
-            return CompareStatus.OLDER;
+            return NodeCompareStatus.OLDER;
         }
 
-        return CompareStatus.EQUAL;
+        return NodeCompareStatus.EQUAL;
     }
 
     private NodeVersionMetadata getVersion( final NodeBranchEntry nodeBranchEntry )
@@ -95,7 +95,7 @@ class CompareStatusResolver
         return version;
     }
 
-    public static final class Builder
+    static final class Builder
     {
         private NodeBranchEntry source;
 
@@ -130,7 +130,7 @@ class CompareStatusResolver
             Objects.requireNonNull( this.nodeStorageService );
         }
 
-        public CompareStatusResolver build()
+        CompareStatusResolver build()
         {
             this.validate();
             return new CompareStatusResolver( this );

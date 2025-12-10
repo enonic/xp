@@ -11,8 +11,7 @@ import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.RefreshMode;
@@ -49,11 +48,11 @@ final class DuplicateContentCommand
     {
         final Node sourceNode = nodeService.getById( NodeId.from( params.getContentId() ) );
 
-        final Node duplicatedNode = nodeService.duplicate( createDuplicateNodeParams( sourceNode ) );
+        final DuplicateNodeResult duplicatedNode = nodeService.duplicate( createDuplicateNodeParams( sourceNode ) );
 
-        final Content duplicatedContent = translator.fromNode( duplicatedNode );
+        final Content duplicatedContent = ContentNodeTranslator.fromNode( duplicatedNode.getNode() );
 
-        final ContentIds childrenIds = params.getIncludeChildren() ? getAllChildren( duplicatedContent ) : ContentIds.empty();
+        final ContentIds childrenIds = ContentNodeHelper.toContentIds( duplicatedNode.getChildren().getIds() );
 
         return DuplicateContentsResult.create()
             .setSourceContentPath( ContentNodeHelper.translateNodePathToContentPath( sourceNode.path() ) )
@@ -71,6 +70,7 @@ final class DuplicateContentCommand
 
         final DuplicateNodeParams.Builder builder = DuplicateNodeParams.create()
             .nodeId( sourceNode.id() )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.DUPLICATE_ATTR ) )
             .dataProcessor( new DuplicateContentProcessor( params.getWorkflowInfo(), sourceNodeId ) )
             .refresh( RefreshMode.SEARCH );
 
@@ -89,15 +89,7 @@ final class DuplicateContentCommand
         return builder.build();
     }
 
-    private ContentIds getAllChildren( final Content duplicatedContent )
-    {
-        final FindNodesByParentResult findNodesByParentResult = this.nodeService.findByParent(
-            FindNodesByParentParams.create().parentId( NodeId.from( duplicatedContent.getId() ) ).recursive( true ).build() );
-
-        return ContentNodeHelper.toContentIds( findNodesByParentResult.getNodeIds() );
-    }
-
-    public static class Builder
+    static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private final DuplicateContentParams params;
@@ -114,7 +106,7 @@ final class DuplicateContentCommand
             Objects.requireNonNull( params, "params cannot be null" );
         }
 
-        public DuplicateContentCommand build()
+        DuplicateContentCommand build()
         {
             validate();
             return new DuplicateContentCommand( this );

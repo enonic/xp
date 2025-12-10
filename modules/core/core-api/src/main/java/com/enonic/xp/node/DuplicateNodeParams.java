@@ -19,6 +19,8 @@ public final class DuplicateNodeParams
 
     private final NodePath parent;
 
+    private final Attributes versionAttributes;
+
     private final RefreshMode refresh;
 
     private DuplicateNodeParams( Builder builder )
@@ -29,6 +31,7 @@ public final class DuplicateNodeParams
         this.includeChildren = builder.includeChildren;
         this.name = builder.name;
         this.parent = builder.parent;
+        this.versionAttributes = builder.versionAttributes;
         this.refresh = builder.refresh;
     }
 
@@ -67,6 +70,11 @@ public final class DuplicateNodeParams
         return parent;
     }
 
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public RefreshMode getRefresh()
     {
         return refresh;
@@ -85,6 +93,8 @@ public final class DuplicateNodeParams
         private String name;
 
         private NodePath parent;
+
+        private Attributes versionAttributes;
 
         private RefreshMode refresh;
 
@@ -125,6 +135,12 @@ public final class DuplicateNodeParams
         public Builder parent( final NodePath parent )
         {
             this.parent = parent;
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

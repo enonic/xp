@@ -27,7 +27,7 @@ final class ApplicationConfigReloader
     @Override
     public void updated( final Dictionary<String, ?> properties )
     {
-        applicationRegistry.configureApplication( bundle, properties == null ? EMPTY_CONFIG : ConfigBuilder.create().
+        applicationRegistry.configure( bundle, properties == null ? EMPTY_CONFIG : ConfigBuilder.create().
             addAll( properties ).build() );
     }
 }

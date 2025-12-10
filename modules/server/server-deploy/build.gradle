@@ -5,6 +5,8 @@ dependencies {
     implementation project( ':portal:portal-api' )
 
     implementation libs.commons.io
+
+    testImplementation( testFixtures( project(":core:core-api") ) )
 }
 
 jar {

@@ -14,6 +14,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -150,8 +151,8 @@ class ResolveSyncWorkCommandTest
         final ResolveSyncWorkResult resultChildrenIncluded = resolveSyncWorkResult( node1_1_1_1.id(), true );
         final ResolveSyncWorkResult resultChildrenNotIncluded = resolveSyncWorkResult( node1_1_1_1.id(), false );
 
-        assertEquals( resultChildrenIncluded.getSize(), 4 );
-        assertEquals( resultChildrenNotIncluded.getSize(), 4 );
+        assertEquals( 4, resultChildrenIncluded.getSize() );
+        assertEquals( 4, resultChildrenNotIncluded.getSize() );
     }
 
     /**
@@ -282,19 +283,6 @@ class ResolveSyncWorkCommandTest
 
         //Should be 2 IMO. Has been discussed internally and left as it is for now
         assertEquals( 1, resultChildrenNotIncluded.getSize() );
-    }
-
-    private void moveNode( Node moveMe, NodePath to )
-    {
-        MoveNodeCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            id( moveMe.id() ).
-            newNodeName( NodeName.from( moveMe.name() + "_new" ) ).
-            newParent( to ).
-            build().
-            execute();
     }
 
     @Test
@@ -1269,15 +1257,32 @@ class ResolveSyncWorkCommandTest
 
     private void moveNode( final String nodeId, final NodePath newParent, final String newName )
     {
-        MoveNodeCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
-            storageService( this.storageService ).
-            searchService( this.searchService ).
-            id( NodeId.from( nodeId ) ).
-            newNodeName( NodeName.from( newName ) ).
-            newParent( newParent ).
-            build().
-            execute();
+        MoveNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .params( MoveNodeParams.create()
+                         .nodeId( NodeId.from( nodeId ) )
+                         .newParentPath( newParent )
+                         .newName( NodeName.from( newName ) )
+                         .build() )
+            .build()
+            .execute();
+    }
+
+    private void moveNode( Node moveMe, NodePath to )
+    {
+        MoveNodeCommand.create()
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .params( MoveNodeParams.create()
+                         .nodeId( moveMe.id() )
+                         .newParentPath( to )
+                         .newName( NodeName.from( moveMe.name() + "_new" ) )
+                         .build() )
+            .build()
+            .execute();
     }
 
 

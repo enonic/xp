@@ -21,7 +21,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -140,7 +140,7 @@ class ContentServiceImplTest_duplicate
 
         final Content content = this.contentService.create( createContentParams );
 
-        this.nodeService.update( UpdateNodeParams.create().
+        this.nodeService.patch( PatchNodeParams.create().
             id( NodeId.from( content.getId() ) ).
             editor( toBeEdited -> {
                 toBeEdited.data.addSet( ContentPropertyNames.PUBLISH_INFO, toBeEdited.data.newSet() );

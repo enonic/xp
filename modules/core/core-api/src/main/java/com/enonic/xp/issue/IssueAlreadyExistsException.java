@@ -1,7 +1,9 @@
 package com.enonic.xp.issue;
 
+import com.enonic.xp.exception.DuplicateElementException;
+
 public final class IssueAlreadyExistsException
-    extends RuntimeException
+    extends DuplicateElementException
 {
     public IssueAlreadyExistsException( final IssueName issueName )
     {

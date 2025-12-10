@@ -8,11 +8,12 @@ import java.util.stream.Stream;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.exception.DuplicateElementException;
 import com.enonic.xp.repository.RepositoryId;
 
 @PublicApi
 public class NodeAlreadyExistAtPathException
-    extends RuntimeException
+    extends DuplicateElementException
 {
     private final NodePath node;
 

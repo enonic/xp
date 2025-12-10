@@ -28,8 +28,6 @@ class FindContentIdsByQueryCommandTest
 
     private NodeService nodeService;
 
-    private ContentNodeTranslator translator;
-
     private ContentTypeService contentTypeService;
 
     private EventPublisher eventPublisher;
@@ -38,7 +36,6 @@ class FindContentIdsByQueryCommandTest
     void setUp()
     {
         nodeService = Mockito.mock( NodeService.class );
-        translator = Mockito.mock( ContentNodeTranslator.class );
         contentTypeService = Mockito.mock( ContentTypeService.class );
         eventPublisher = Mockito.mock( EventPublisher.class );
     }
@@ -65,7 +62,6 @@ class FindContentIdsByQueryCommandTest
         Mockito.when( nodeService.findByQuery( Mockito.any( NodeQuery.class ) ) ).thenReturn( nodesByQueryResult );
 
         FindContentIdsByQueryCommand command = FindContentIdsByQueryCommand.create().
-            translator( translator ).
             nodeService( nodeService ).
             contentTypeService( contentTypeService ).
             eventPublisher( eventPublisher ).

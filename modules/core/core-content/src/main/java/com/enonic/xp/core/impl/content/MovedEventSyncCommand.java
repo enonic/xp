@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,7 +12,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
-import com.enonic.xp.content.RenameContentParams;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
 
@@ -83,8 +81,8 @@ final class MovedEventSyncCommand
             .filter( content -> !paths.contains( content.getSourceContent().getParentPath() ) )
             .collect( Collectors.toList() );
 
-        rootsToSync.forEach( content -> {
-
+        for ( ContentToSync content : rootsToSync )
+        {
             if ( isToSync( content.getTargetContent() ) )
             {
                 content.getTargetContext().runWith( () -> {
@@ -101,31 +99,26 @@ final class MovedEventSyncCommand
                         return;
                     }
 
-                    if ( !targetParentPath.equals( content.getTargetContent().getParentPath() ) )
+                    if ( !content.getTargetContent().getPath().equals( content.getSourceContent().getPath() ) )
                     {
-                        final ContentPath newPath = buildNewPath( targetParentPath, content.getTargetContent().getName() );
+                        final ContentPath newPath =
+                            buildNewPath( targetParentPath, content.getSourceContent().getName(), content.getTargetContent() );
 
-                        if ( !Objects.equals( newPath.getName(), content.getTargetContent().getPath().getName() ) )
-                        {
-                            contentService.rename( RenameContentParams.create()
-                                                       .contentId( content.getTargetContent().getId() )
-                                                       .newName( newPath.getName() )
-                                                       .build() );
-                        }
                         contentService.move( MoveContentParams.create()
                                                  .contentId( content.getTargetContent().getId() )
+                                                 .newName( newPath.getName() )
                                                  .parentContentPath( targetParentPath )
                                                  .stopInherit( false )
                                                  .build() );
                     }
                 } );
             }
-        } );
+        }
     }
 
     private boolean isToSync( final Content targetContent )
     {
-        return targetContent.getInherit().contains( ContentInheritType.PARENT );
+        return targetContent.getInherit().contains( ContentInheritType.PARENT ) || targetContent.getInherit().contains( ContentInheritType.NAME );
     }
 
     public static class Builder

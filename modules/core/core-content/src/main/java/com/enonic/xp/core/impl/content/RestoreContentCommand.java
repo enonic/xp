@@ -6,13 +6,13 @@ import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
+import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
@@ -23,10 +23,9 @@ import com.enonic.xp.node.NodeDataProcessor;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
 
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
@@ -62,7 +61,7 @@ final class RestoreContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
     }
 
@@ -78,7 +77,11 @@ final class RestoreContentCommand
 
         final MoveNodeResult moveNodeResult = rename( nodeToRestore, parentPathToRestore );
 
-        commit( moveNodeResult.getMovedNodes().stream().map( MoveNodeResult.MovedNode::getNode ).collect( Nodes.collector() ) );
+        final Nodes nodes = moveNodeResult.getMovedNodes().stream().map( MoveNodeResult.MovedNode::getNode ).collect( Nodes.collector() );
+        nodeService.commit( CommitNodeParams.create()
+                                .nodeCommitEntry( NodeCommitEntry.create().message( ContentConstants.RESTORE_COMMIT_PREFIX ).build() )
+                                .nodeVersionIds( nodes.stream().map( Node::getNodeVersionId ).collect( NodeVersionIds.collector() ) )
+                                .build() );
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
@@ -119,6 +122,7 @@ final class RestoreContentCommand
             .nodeId( nodeToRestore.id() )
             .newParentPath( parentPathToRestore )
             .newName( newNodeName )
+            .versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.RESTORE_ATTR ) )
             .refresh( RefreshMode.ALL );
 
         if ( params.getRestoreContentListener() != null )
@@ -146,15 +150,6 @@ final class RestoreContentCommand
             toBeEdited.removeProperties( ARCHIVED_BY );
             return toBeEdited;
         };
-    }
-
-    private void commit( final Nodes nodes )
-    {
-        final RoutableNodeVersionIds routableNodeVersionIds = nodes.stream()
-            .map( n -> RoutableNodeVersionId.from( n.id(), n.getNodeVersionId() ) )
-            .collect( RoutableNodeVersionIds.collector() );
-
-        nodeService.commit( NodeCommitEntry.create().message( ContentConstants.RESTORE_COMMIT_PREFIX ).build(), routableNodeVersionIds );
     }
 
     private NodePath getParentPathToRestore( final Node node )
@@ -215,7 +210,7 @@ final class RestoreContentCommand
         return newName;
     }
 
-    public static class Builder
+    static class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private final RestoreContentParams params;
@@ -231,7 +226,8 @@ final class RestoreContentCommand
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
         }
-        public RestoreContentCommand build()
+
+        RestoreContentCommand build()
         {
             validate();
             return new RestoreContentCommand( this );

@@ -3,16 +3,17 @@ package com.enonic.xp.core.node;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.CompareStatus;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.PatchNodeParams;
+import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.repo.impl.node.CompareNodeCommand;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
@@ -37,7 +38,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.NEW, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.NEW, comparison.getCompareStatus() );
     }
 
     @Test
@@ -52,7 +53,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
 
     @Test
@@ -68,7 +69,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
 
     @Test
@@ -97,7 +98,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.NEW_TARGET, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.NEW_TARGET, comparison.getCompareStatus() );
     }
 
 
@@ -115,7 +116,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.EQUAL, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.EQUAL, comparison.getCompareStatus() );
     }
 
     @Test
@@ -136,7 +137,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.NEWER, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.NEWER, comparison.getCompareStatus() );
     }
 
     @Test
@@ -157,7 +158,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.OLDER, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.OLDER, comparison.getCompareStatus() );
     }
 
 
@@ -183,7 +184,7 @@ class CompareNodeCommandTest
 
         final NodeComparison comparison = ctxDefault().callWith( () -> doCompare( WS_OTHER, createdNode ) );
 
-        assertEquals( CompareStatus.MOVED, comparison.getCompareStatus() );
+        assertEquals( NodeCompareStatus.MOVED, comparison.getCompareStatus() );
     }
 
 
@@ -213,9 +214,7 @@ class CompareNodeCommandTest
 
     private PushNodesResult doPushNode( final Branch branch, final Node createdNode )
     {
-        return PushNodesCommand.create().
-            ids( NodeIds.from( createdNode.id() ) ).
-            target( branch ).
+        return PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( createdNode.id() ) ).target( branch ).build() ).
             indexServiceInternal( this.indexServiceInternal ).
             storageService( this.storageService ).
             searchService( this.searchService ).

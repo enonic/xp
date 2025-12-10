@@ -13,6 +13,7 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DuplicateNodeListener;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -113,6 +114,8 @@ public final class DuplicateNodeCommand
         {
             paramsBuilder.parent( params.getParent() );
         }
+
+        paramsBuilder.versionAttributes( params.getVersionAttributes() );
 
         if ( params.getName() != null || params.getParent() != null )
         {
