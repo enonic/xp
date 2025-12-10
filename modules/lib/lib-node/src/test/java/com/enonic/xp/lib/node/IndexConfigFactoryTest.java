@@ -95,6 +95,33 @@ class IndexConfigFactoryTest
         assertThrows(IllegalArgumentException.class, () -> create( "{ \"default\" : \"fisk\" }" ));
     }
 
+    @Test
+    void allTextLanguages()
+    {
+        final PatternIndexConfigDocument config = (PatternIndexConfigDocument) create(
+            "{\n" +
+                "  \"allTextLanguages\": [\"en\", \"no\", \"fr\"]\n" +
+                "}" );
+
+        final List<String> languages = config.getAllTextConfig().getLanguages();
+        assertEquals( 3, languages.size() );
+        assertEquals( "en", languages.get( 0 ) );
+        assertEquals( "no", languages.get( 1 ) );
+        assertEquals( "fr", languages.get( 2 ) );
+    }
+
+    @Test
+    void allTextLanguages_empty()
+    {
+        final PatternIndexConfigDocument config = (PatternIndexConfigDocument) create(
+            "{\n" +
+                "  \"allTextLanguages\": []\n" +
+                "}" );
+
+        final List<String> languages = config.getAllTextConfig().getLanguages();
+        assertEquals( 0, languages.size() );
+    }
+
     private IndexConfigDocument create( final String json )
     {
         final PropertyTree properties = PropertyTree.fromMap( JsonHelper.toMap( JsonHelper.from( json ) ) );
