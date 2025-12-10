@@ -97,7 +97,7 @@ public abstract class ComponentDescriptor
 
         protected Form config;
 
-        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.object();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         protected BaseBuilder()
         {
@@ -116,7 +116,7 @@ public abstract class ComponentDescriptor
 
             if ( descriptor.schemaConfig != null )
             {
-                descriptor.schemaConfig.getProperties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
+                descriptor.schemaConfig.properties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -178,7 +178,7 @@ public abstract class ComponentDescriptor
 
         public final T schemaConfig( final GenericValue config )
         {
-            config.getProperties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
+            config.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return typecastToBuilder( this );
         }
 

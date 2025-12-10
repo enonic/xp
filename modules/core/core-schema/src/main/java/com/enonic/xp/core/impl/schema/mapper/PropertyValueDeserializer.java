@@ -35,11 +35,11 @@ public class PropertyValueDeserializer
         }
         else if ( node.isDouble() )
         {
-            return GenericValue.doubleValue( node.asDouble() );
+            return GenericValue.numberValue( node.asDouble() );
         }
         else if ( node.canConvertToLong() )
         {
-            return GenericValue.longValue( node.asLong() );
+            return GenericValue.numberValue( node.asLong() );
         }
         else if ( node.isBoolean() )
         {
@@ -47,13 +47,13 @@ public class PropertyValueDeserializer
         }
         else if ( node.isArray() )
         {
-            final GenericValue.ListBuilder listBuilder = GenericValue.list();
+            final GenericValue.ListBuilder listBuilder = GenericValue.newList();
             node.valueStream().forEach( item -> listBuilder.add( PropertyValueDeserializer.fromYml( item ) ) );
             return listBuilder.build();
         }
         else if ( node.isObject() )
         {
-            final GenericValue.ObjectBuilder objectBuilder = GenericValue.object();
+            final GenericValue.ObjectBuilder objectBuilder = GenericValue.newObject();
             node.propertyStream().forEach( e -> objectBuilder.put( e.getKey(), fromYml( e.getValue() ) ) );
             return objectBuilder.build();
         }

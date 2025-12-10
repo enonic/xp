@@ -35,7 +35,7 @@ class ImageSelectorTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.REFERENCE, value.getType() );
@@ -44,12 +44,12 @@ class ImageSelectorTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( referenceProperty( "value" ), GenericValue.object().build() );
+        this.type.validate( referenceProperty( "value" ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ));
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ));
     }
 }

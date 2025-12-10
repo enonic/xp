@@ -32,8 +32,8 @@ final class RadioButtonType
 
         final String valueAsString = property.getString();
 
-        final boolean flag = valueAsString == null || config.optional( "option" )
-            .map( GenericValue::asList )
+        final boolean flag = valueAsString == null || config.optional( "options" )
+            .map( GenericValue::values )
             .stream()
             .flatMap( Collection::stream )
             .map( gv -> gv.property( "value" ) )

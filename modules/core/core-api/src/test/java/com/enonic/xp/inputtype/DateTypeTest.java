@@ -35,7 +35,7 @@ class DateTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_DATE, value.getType() );
@@ -44,12 +44,12 @@ class DateTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( localDateProperty(), GenericValue.object().build() );
+        this.type.validate( localDateProperty(), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 }

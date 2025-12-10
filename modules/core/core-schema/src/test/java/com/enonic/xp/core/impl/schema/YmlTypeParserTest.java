@@ -37,7 +37,7 @@ public class YmlTypeParserTest
 
         final Optional<GenericValue> options = inputTypeConfig.optional( "options" );
         assertTrue( options.isPresent() );
-        assertEquals( 2, options.get().asList().size() );
+        assertEquals( 2, options.get().values().size() );
 
         assertEquals( "cookie", inputTypeConfig.property( "default" ).asString() );
     }
@@ -260,7 +260,7 @@ public class YmlTypeParserTest
         assertEquals( "myattachmentUploader", input.getName() );
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
-        assertTrue( inputTypeConfig.getProperties().isEmpty() );
+        assertTrue( inputTypeConfig.properties().isEmpty() );
     }
 
     @Test
@@ -355,7 +355,7 @@ public class YmlTypeParserTest
 
         final GenericValue inputTypeConfig = input.getInputTypeConfig();
 
-        assertTrue( inputTypeConfig.getProperties().isEmpty() );
+        assertTrue( inputTypeConfig.properties().isEmpty() );
     }
 
     @Test

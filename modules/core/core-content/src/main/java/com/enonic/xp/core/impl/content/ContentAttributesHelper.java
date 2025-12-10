@@ -51,7 +51,7 @@ public class ContentAttributesHelper
     private static final Clock MILLIS_CLOCK = Clock.tick( Clock.systemUTC(), Duration.ofMillis( 1 ) );
 
     private static final Map<String, Function<Content, ?>> FIELD_GETTERS =
-        Map.of( "displayName", Content::getDisplayName, "data", Content::getData, "x", Content::getAllExtraData, "page", Content::getPage,
+        Map.of( "displayName", Content::getDisplayName, "data", Content::getData, "x", Content::getMixins, "page", Content::getPage,
                 "owner", Content::getOwner, "language", Content::getLanguage, "publish", Content::getPublishInfo, "workflow",
                 Content::getWorkflowInfo, "variantOf", Content::getVariantOf, "attachments", Content::getAttachments );
 

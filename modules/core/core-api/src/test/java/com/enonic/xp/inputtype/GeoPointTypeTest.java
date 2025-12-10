@@ -35,7 +35,7 @@ class GeoPointTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "1,2" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "1,2" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.GEO_POINT, value.getType() );
@@ -44,12 +44,12 @@ class GeoPointTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( geoPointProperty( "1,2" ), GenericValue.object().build() );
+        this.type.validate( geoPointProperty( "1,2" ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ));
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ));
     }
 }
