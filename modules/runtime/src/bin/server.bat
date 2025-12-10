@@ -45,7 +45,16 @@ set CONSTANT_XP_OPTS=-Dfile.encoding=UTF8 -Dmapper.allow_dots_in_name=true --add
 if "%JAVA_OPTS%" == "" set JAVA_OPTS=%DEFAULT_JAVA_OPTS%
 if "%JAVA_DEBUG_OPTS%" == "" set JAVA_DEBUG_OPTS=%DEFAULT_JAVA_DEBUG_OPTS%
 
-IF "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
+if "%1"=="debug" set JAVA_OPTS=%JAVA_OPTS% %JAVA_DEBUG_OPTS%
+
+if defined XP_TMP (
+  set "TMPDIR=%XP_TMP%"
+) else if defined XP_HOME (
+  set "TMPDIR=%XP_HOME%\work"
+) else (
+  set "TMPDIR=%XP_INSTALL%\home\work"
+)
+set "JAVA_OPTS=-Djava.io.tmpdir="%TMPDIR%." %JAVA_OPTS%"
 
 :execute
 "%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" %XP_OPTS% %CONSTANT_XP_OPTS% --module-path "%XP_INSTALL%\mods" -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%

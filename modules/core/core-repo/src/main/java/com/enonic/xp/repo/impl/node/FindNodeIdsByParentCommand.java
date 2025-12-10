@@ -57,11 +57,6 @@ public class FindNodeIdsByParentCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public FindNodesByParentResult execute()
     {
         NodePath parentPath = getParentPath();
@@ -166,14 +161,9 @@ public class FindNodeIdsByParentCommand
 
         private boolean recursive;
 
-        public Builder()
+        private Builder()
         {
             super();
-        }
-
-        public Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public FindNodeIdsByParentCommand build()

@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -36,6 +37,7 @@ import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.security.PrincipalKey;
 
 abstract class AbstractContentCommand
 {
@@ -47,14 +49,11 @@ abstract class AbstractContentCommand
 
     final EventPublisher eventPublisher;
 
-    final ContentNodeTranslator translator;
-
     AbstractContentCommand( final Builder builder )
     {
         this.contentTypeService = builder.contentTypeService;
         this.nodeService = builder.nodeService;
         this.eventPublisher = builder.eventPublisher;
-        this.translator = builder.translator;
     }
 
     private static Predicate<ContentTypeName> allowContentTypeFilter( final ApplicationKey applicationKey, final List<String> wildcards )
@@ -148,21 +147,27 @@ abstract class AbstractContentCommand
     {
         if ( shouldFilterScheduledPublished() )
         {
+            final Instant now = Instant.now().truncatedTo( ChronoUnit.MILLIS );
             final BooleanFilter notPendingFilter = BooleanFilter.create()
                 .mustNot( RangeFilter.create()
                               .fieldName( ContentIndexPath.PUBLISH_FROM.getPath() )
-                              .from( ValueFactory.newDateTime( Instant.now() ) )
+                              .from( ValueFactory.newDateTime( now ) )
                               .build() )
                 .build();
             final BooleanFilter notExpiredFilter = BooleanFilter.create()
                 .mustNot( RangeFilter.create()
                               .fieldName( ContentIndexPath.PUBLISH_TO.getPath() )
-                              .to( ValueFactory.newDateTime( Instant.now() ) )
+                              .to( ValueFactory.newDateTime( now ) )
                               .build() )
                 .build();
             return Filters.from( notPendingFilter, notExpiredFilter );
         }
         return Filters.from();
+    }
+
+    static PrincipalKey getCurrentUserKey()
+    {
+        return ContentAttributesHelper.getCurrentUserKey();
     }
 
     protected <T> T runAsAdmin( final Callable<T> callable )
@@ -234,8 +239,6 @@ abstract class AbstractContentCommand
 
         private EventPublisher eventPublisher;
 
-        private ContentNodeTranslator translator;
-
         Builder()
         {
         }
@@ -245,20 +248,12 @@ abstract class AbstractContentCommand
             this.nodeService = source.nodeService;
             this.contentTypeService = source.contentTypeService;
             this.eventPublisher = source.eventPublisher;
-            this.translator = source.translator;
         }
 
         @SuppressWarnings("unchecked")
         public B nodeService( final NodeService nodeService )
         {
             this.nodeService = nodeService;
-            return (B) this;
-        }
-
-        @SuppressWarnings("unchecked")
-        public B translator( final ContentNodeTranslator translator )
-        {
-            this.translator = translator;
             return (B) this;
         }
 
@@ -281,8 +276,6 @@ abstract class AbstractContentCommand
             Objects.requireNonNull( nodeService );
             Objects.requireNonNull( contentTypeService );
             Objects.requireNonNull( eventPublisher );
-            Objects.requireNonNull( translator );
         }
     }
-
 }

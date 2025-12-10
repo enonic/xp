@@ -35,7 +35,7 @@ class TagTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "test" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "test" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
@@ -44,13 +44,13 @@ class TagTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
+        this.type.validate( stringProperty( "test" ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
+        assertThrows(InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 }
 

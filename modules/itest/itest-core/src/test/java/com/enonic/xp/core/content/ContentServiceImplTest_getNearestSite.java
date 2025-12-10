@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -85,7 +84,7 @@ class ContentServiceImplTest_getNearestSite
         final Content site = createSite();
 
         final Content child =
-            createContent( site.getPath(), ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
+            createAndPublishContent( site.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ) );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
@@ -98,7 +97,7 @@ class ContentServiceImplTest_getNearestSite
         final Content site = createSite();
         final Content childLevel1 = createContent( site.getPath() );
         final Content childLevel2 =
-            createContent( childLevel1.getPath(), ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
+            createAndPublishContent( childLevel1.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ) );
         final Content childLevel3 = createContent( childLevel2.getPath() );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
@@ -110,10 +109,7 @@ class ContentServiceImplTest_getNearestSite
     void child_of_site_published_master()
     {
         final Content site = createSite();
-        final Content child = createContent( site.getPath(), ContentPublishInfo.create()
-            .from( Instant.now().plus( Duration.ofDays( 1 ) ) )
-            .to( Instant.now().plus( Duration.ofDays( 2 ) ) )
-            .build() );
+        final Content child = createAndPublishContent( site.getPath(), Instant.now().plus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 2 ) ) );
         this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( site.getId() ) ).build() );
 
         final Site fetchedSite = ctxMaster().callWith( () -> this.contentService.getNearestSite( child.getId() ) );
@@ -126,10 +122,8 @@ class ContentServiceImplTest_getNearestSite
         final Content site = createSite();
         this.contentService.publish( PushContentParams.create()
                                          .contentIds( ContentIds.from( site.getId() ) )
-                                         .contentPublishInfo( ContentPublishInfo.create()
-                                                                  .from( Instant.parse( "2022-12-01T14:00:00.668487800Z" ) )
-                                                                  .to( Instant.parse( "2099-12-03T14:00:00.669487800Z" ) )
-                                                                  .build() )
+                                         .publishFrom( Instant.parse( "2022-12-01T14:00:00.668487800Z" ) )
+                                         .publishTo( Instant.parse( "2099-12-03T14:00:00.669487800Z" ) )
                                          .build() );
 
         final Content publishedContent = ctxMaster().callWith( () -> this.contentService.getById( site.getId() ) );

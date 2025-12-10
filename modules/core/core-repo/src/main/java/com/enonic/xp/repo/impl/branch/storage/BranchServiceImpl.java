@@ -44,10 +44,7 @@ import com.enonic.xp.repository.RepositoryId;
 public class BranchServiceImpl
     implements BranchService
 {
-    private static final ReturnFields BRANCH_RETURN_FIELDS =
-        ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.VERSION_ID, BranchIndexPath.NODE_BLOB_KEY,
-                           BranchIndexPath.INDEX_CONFIG_BLOB_KEY, BranchIndexPath.ACCESS_CONTROL_BLOB_KEY, BranchIndexPath.STATE,
-                           BranchIndexPath.PATH, BranchIndexPath.TIMESTAMP, BranchIndexPath.REFERENCES );
+    private static final ReturnFields BRANCH_RETURN_FIELDS = ReturnFields.from( BranchIndexPath.entryFields() );
 
     private final Cache<BranchPath, NodeBranchEntry> cache =
         CacheBuilder.newBuilder().maximumSize( 100000 ).expireAfterWrite( Duration.ofMinutes( 10 ) ).build();
@@ -64,6 +61,18 @@ public class BranchServiceImpl
     }
 
     @Override
+    public void push( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
+    {
+        final RepositoryId repositoryId = context.getRepositoryId();
+        final Branch branch = context.getBranch();
+
+        cache.asMap().compute( new BranchPath( repositoryId, branch, nodeBranchEntry.getNodePath() ), ( cK, inCache ) -> {
+            this.storageDao.store( BranchStorageRequestFactory.create( nodeBranchEntry, cK.getRepositoryId(), cK.getBranch() ) );
+            return nodeBranchEntry;
+        } );
+    }
+
+    @Override
     public void store( final NodeBranchEntry nodeBranchEntry, final InternalContext context )
     {
         final RepositoryId repositoryId = context.getRepositoryId();
@@ -71,7 +80,7 @@ public class BranchServiceImpl
 
         final boolean[] alreadyExists = {false};
         cache.asMap().compute( new BranchPath( repositoryId, branch, nodeBranchEntry.getNodePath() ), ( cK, inCache ) -> {
-            if ( inCache != null && !context.isSkipConstraints() && !inCache.getNodeId().equals( nodeBranchEntry.getNodeId() ) )
+            if ( inCache != null && !inCache.getNodeId().equals( nodeBranchEntry.getNodeId() ) )
             {
                 alreadyExists[0] = true;
                 return inCache;

@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -24,7 +23,6 @@ import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
-import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
@@ -33,6 +31,7 @@ import com.enonic.xp.repo.impl.node.RefreshCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
+import com.enonic.xp.repository.BranchAlreadyExistsException;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -41,6 +40,7 @@ import com.enonic.xp.repository.DeleteRepositoryParams;
 import com.enonic.xp.repository.EditableRepository;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
+import com.enonic.xp.repository.RepositoryAlreadyExistsException;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryExeption;
 import com.enonic.xp.repository.RepositoryId;
@@ -97,7 +97,7 @@ public class RepositoryServiceImpl
 
         if ( repoAlreadyInitialized )
         {
-            throw new RepositoryAlreadyExistException( repositoryId );
+            throw new RepositoryAlreadyExistsException( repositoryId );
         }
 
         this.nodeRepositoryService.create( CreateRepositoryIndexParams.create()
@@ -176,23 +176,22 @@ public class RepositoryServiceImpl
         final Branch newBranch = createBranchParams.getBranch();
         if ( previousRepository.getBranches().contains( newBranch ) )
         {
-            throw new BranchAlreadyExistException( newBranch );
+            throw new BranchAlreadyExistsException( newBranch );
         }
 
         //If the root node does not exist, creates it
         if ( getRootNode( previousRepository.getId(), newBranch ) == null )
         {
-            final InternalContext internalContext =
-                InternalContext.create( ContextAccessor.current() ).branch( RepositoryConstants.MASTER_BRANCH ).build();
-            final NodeBranchEntry rootNode = this.nodeStorageService.getBranchNodeVersion( Node.ROOT_UUID, internalContext );
+            final Node rootNode = this.nodeStorageService.get( Node.ROOT_UUID, InternalContext.create(
+                ContextAccessor.current() ).branch( RepositoryConstants.MASTER_BRANCH ).build() );
 
             if ( rootNode == null )
             {
                 throw new NodeNotFoundException( "Cannot find root-node in repository [" + previousRepository.getId() + "]" );
             }
 
-            this.nodeStorageService.push( List.of( rootNode ), newBranch, c -> {
-            }, internalContext );
+            this.nodeStorageService.store( StoreNodeParams.overrideVersion( rootNode, null, null ),
+                                           InternalContext.create( ContextAccessor.current() ).branch( newBranch ).build() );
 
             doRefresh();
         }

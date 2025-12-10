@@ -35,7 +35,7 @@ public class InstantTypeTest
     @Test
     public void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00Z" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "2015-01-02T22:11:00Z" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.DATE_TIME, value.getType() );
@@ -44,12 +44,12 @@ public class InstantTypeTest
     @Test
     public void testValidate_dateTime()
     {
-        this.type.validate( dateTimeProperty(), GenericValue.object().build() );
+        this.type.validate( dateTimeProperty(), GenericValue.newObject().build() );
     }
 
     @Test
     public void testValidate_invalidType()
     {
-        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 }

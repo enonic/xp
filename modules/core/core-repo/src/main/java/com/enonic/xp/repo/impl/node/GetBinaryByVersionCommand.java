@@ -54,8 +54,7 @@ public class GetBinaryByVersionCommand
 
         private NodeId nodeId;
 
-
-        public Builder()
+        private Builder()
         {
             super();
         }

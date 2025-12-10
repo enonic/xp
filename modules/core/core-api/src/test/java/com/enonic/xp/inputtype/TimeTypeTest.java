@@ -35,7 +35,7 @@ class TimeTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "22:11:00" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "22:11:00" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.LOCAL_TIME, value.getType() );
@@ -44,13 +44,13 @@ class TimeTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( localTimeProperty(), GenericValue.object().build() );
+        this.type.validate( localTimeProperty(), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
         assertThrows( InputTypeValidationException.class,
-                      () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
+                      () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 }

@@ -19,6 +19,8 @@ public final class SortNodeParams
 
     private final ImmutableList<ReorderChildNodeParams> reorderChildNodes;
 
+    private final Attributes versionAttributes;
+
     private final NodeDataProcessor processor;
 
     private final RefreshMode refresh;
@@ -29,6 +31,7 @@ public final class SortNodeParams
         this.childOrder = builder.childOrder;
         this.manualOrderSeed = builder.manualOrderSeed;
         this.reorderChildNodes = builder.reorderChildNodes.build();
+        this.versionAttributes = builder.versionAttributes;
         this.processor = Objects.requireNonNullElse( builder.processor, ( n, p ) -> n );
         this.refresh = builder.refresh;
     }
@@ -48,6 +51,16 @@ public final class SortNodeParams
         return manualOrderSeed;
     }
 
+    public List<ReorderChildNodeParams> getReorderChildNodes()
+    {
+        return reorderChildNodes;
+    }
+
+    public Attributes getVersionAttributes()
+    {
+        return versionAttributes;
+    }
+
     public NodeDataProcessor getProcessor()
     {
         return processor;
@@ -56,11 +69,6 @@ public final class SortNodeParams
     public RefreshMode getRefresh()
     {
         return refresh;
-    }
-
-    public List<ReorderChildNodeParams> getReorderChildNodes()
-    {
-        return reorderChildNodes;
     }
 
     public static Builder create()
@@ -77,6 +85,8 @@ public final class SortNodeParams
         private ChildOrder manualOrderSeed;
 
         private final ImmutableList.Builder<ReorderChildNodeParams> reorderChildNodes = ImmutableList.builder();
+
+        private Attributes versionAttributes;
 
         private NodeDataProcessor processor;
 
@@ -107,6 +117,12 @@ public final class SortNodeParams
         public Builder addManualOrder( final ReorderChildNodeParams reorderChildNodeParams )
         {
             this.reorderChildNodes.add( reorderChildNodeParams );
+            return this;
+        }
+
+        public Builder versionAttributes( final Attributes versionAttributes )
+        {
+            this.versionAttributes = versionAttributes;
             return this;
         }
 

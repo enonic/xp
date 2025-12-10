@@ -61,9 +61,13 @@ class PublishContentHandlerTest
                            exampleContent( PUB_ID_3, "content3", "Content 3", "/mysite/page3", "myfield", "Hello x 3" ) );
         Contents failed = Contents.from( exampleContent( FAIL_ID, "badcontent", "Bad bad Content", "/mysite/fail", "myop", "Publish" ) );
 
-        return PublishContentResult.create().setPushed( published.getIds() ).
-            setFailed( failed.getIds() ).
-            build();
+        final PublishContentResult.Builder builder = PublishContentResult.create();
+        published.getIds().stream().map( PublishContentResult.Result::success ).forEach( builder::add );
+        failed.getIds()
+            .stream()
+            .map( c -> new PublishContentResult.Result( c, PublishContentResult.Reason.INVALID ) )
+            .forEach( builder::add );
+        return builder.build();
     }
 
     @Test
@@ -115,9 +119,10 @@ class PublishContentHandlerTest
     {
         Contents published =
             Contents.from( exampleContent( PUB_ID_3, "mycontent", "My Content", "/mysite/somepage", "myfield", "Hello World" ) );
-        PublishContentResult exampleResult = PublishContentResult.create().
-            setPushed( published.getIds() ).
-            build();
+        final PublishContentResult.Builder builder = PublishContentResult.create();
+        published.getIds().stream().map( PublishContentResult.Result::success ).forEach( builder::add );
+
+        PublishContentResult exampleResult = builder.build();
 
         final ArgumentCaptor<PushContentParams> captor = ArgumentCaptor.forClass( PushContentParams.class );
         when( this.contentService.publish( captor.capture() ) ).thenReturn( exampleResult );

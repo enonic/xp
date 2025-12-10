@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -30,7 +30,7 @@ jobs:
           PREVIOS_RELEASE_TAG: ${{ steps.get_previous_release_tag.outputs.previous_release_tag }}
           OUTPUT_FILE: changelog.md
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: changelog
           path: changelog.md
@@ -41,7 +41,7 @@ jobs:
     needs: release_notes
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-java@v5
         with:
@@ -49,7 +49,7 @@ jobs:
           java-version: 21
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Get publishing variables
         id: publish_vars
@@ -68,7 +68,7 @@ jobs:
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
       - name: Download changelog
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: changelog
 

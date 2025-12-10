@@ -175,7 +175,7 @@ class InputValidationVisitorTest
                               .inputType( InputTypeName.TEXT_LINE )
                               .label( "URL" )
                               .occurrences( 0, 0 )
-                              .inputTypeConfig( GenericValue.object()
+                              .inputTypeConfig( GenericValue.newObject()
                                                     .put( "regexp",
                                                           "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
                                                     .build() )
@@ -213,7 +213,7 @@ class InputValidationVisitorTest
                                                                          .name( "htmlData" )
                                                                          .label( "htmlData" )
                                                                          .inputType( InputTypeName.TEXT_LINE )
-                                                                         .inputTypeConfig( GenericValue.object()
+                                                                         .inputTypeConfig( GenericValue.newObject()
                                                                                                .put( "regexp",
                                                                                                      "^http(s)?:\\/\\/.?(www\\.)?[a-zA-Z0-9][-a-zA-Z0-9@:%._\\+~#=]{0,255}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)" )
                                                                                                .build() )

@@ -8,52 +8,55 @@
     },
     "date_detection": false,
     "numeric_detection": false,
+    "dynamic": false,
     "properties": {
       "nodeid": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "versionid": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "nodeblobkey": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "indexconfigblobkey": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "accesscontrolblobkey": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "binaryblobkeys": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "timestamp": {
         "type": "date",
-        "store": false,
         "index": "not_analyzed"
       },
       "nodepath": {
         "type": "string",
-        "store": false,
         "index": "analyzed",
         "analyzer": "keywordlowercase"
       },
       "commitid": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
+      },
+      "attributes": {
+        "properties": {
+          "k" : {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "v": {
+            "enabled": false
+          }
+        }
       }
     }
   }

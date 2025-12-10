@@ -1,7 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexConfig;
@@ -11,7 +12,7 @@ class FulltextTypeFactory
 {
     public static List<IndexItem> create( final IndexPath indexPath, final Value value, final IndexConfig indexConfig )
     {
-        List<IndexItem> fulltextItems = new ArrayList<>();
+        final ImmutableList.Builder<IndexItem> fulltextItems = ImmutableList.builder();
 
         if ( indexConfig.isDecideByType() )
         {
@@ -34,6 +35,6 @@ class FulltextTypeFactory
             }
         }
 
-        return fulltextItems;
+        return fulltextItems.build();
     }
 }

@@ -1,9 +1,13 @@
 package com.enonic.xp.repo.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import com.enonic.xp.index.IndexPath;
 
 public class ReturnValues
 {
@@ -19,33 +23,28 @@ public class ReturnValues
         return new Builder();
     }
 
-    public Object getSingleValue( final String key )
+    public String getStringValue( final IndexPath key )
     {
-        final ReturnValue returnValue = returnValues.get( key );
+        final ReturnValue returnValue = returnValues.get( key.getPath() );
 
         if ( returnValue == null )
         {
-            return null;
+            throw new NoSuchElementException( key.getPath() );
         }
 
-        return returnValue.getSingleValue();
+        return returnValue.getSingleValue().toString();
     }
 
-    public Optional<Object> getOptional( final String key )
+    public Optional<Object> getOptional( final IndexPath key )
     {
-        final ReturnValue returnValue = returnValues.get( key );
+        final ReturnValue returnValue = returnValues.get( key.getPath() );
 
         return returnValue == null ? Optional.empty() : Optional.of( returnValue.getSingleValue() );
     }
 
-    public ReturnValue get( final String key )
+    public ReturnValue get( final IndexPath key )
     {
-        return this.returnValues.get( key );
-    }
-
-    public Map<String, ReturnValue> getReturnValues()
-    {
-        return returnValues;
+        return this.returnValues.get( key.getPath() );
     }
 
     public static final class Builder
@@ -56,17 +55,12 @@ public class ReturnValues
         {
         }
 
-        public Builder add( final String key, final String value )
+        public Builder add( final String key, final Object value )
         {
-            return doAdd( key, value );
+            return add( key, value instanceof Collection ? (Collection<?>) value : Collections.singleton( value ) );
         }
 
-        public Builder add( final String key, final Collection<Object> value )
-        {
-            return doAdd( key, value );
-        }
-
-        private Builder doAdd( final String key, final Object value )
+        public Builder add( final String key, final Collection<?> value )
         {
             final ReturnValue entry = returnValues.get( key );
 
@@ -87,5 +81,4 @@ public class ReturnValues
             return new ReturnValues( this );
         }
     }
-
 }

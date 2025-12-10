@@ -1,71 +1,47 @@
 package com.enonic.xp.content;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 
+import com.google.common.collect.ImmutableList;
+
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.acl.AccessControlList;
 
 @PublicApi
 public final class ContentVersion
 {
-    private final ContentVersionId id;
+    private final ContentVersionId versionId;
 
-    private final PrincipalKey modifier;
-
-    private final String displayName;
+    private final ContentId contentId;
 
     private final ContentPath path;
 
-    private final Instant modified;
-
     private final Instant timestamp;
-
-    private final ChildOrder childOrder;
 
     private final String comment;
 
-    private final ContentVersionPublishInfo publishInfo;
-
-    private final WorkflowInfo workflowInfo;
-
-    private final AccessControlList permissions;
+    private final List<Action> actions;
 
     private ContentVersion( Builder builder )
     {
-        this.modifier = builder.modifier;
-        this.displayName = builder.displayName;
+        this.versionId = builder.versionId;
+        this.contentId = builder.contentId;
         this.path = builder.path;
-        this.modified = builder.modified;
-        this.comment = builder.comment;
         this.timestamp = builder.timestamp;
-        this.childOrder = builder.childOrder;
-        this.id = builder.id;
-        this.publishInfo = builder.publishInfo;
-        this.workflowInfo = builder.workflowInfo;
-        this.permissions = builder.permissions;
+        this.comment = builder.comment;
+        this.actions = builder.actions.build();
     }
 
-    public PrincipalKey getModifier()
+    public ContentVersionId getVersionId()
     {
-        return modifier;
+        return versionId;
     }
 
-    public String getDisplayName()
+    public ContentId getContentId()
     {
-        return displayName;
-    }
-
-    public Instant getModified()
-    {
-        return modified;
-    }
-
-    public String getComment()
-    {
-        return comment;
+        return contentId;
     }
 
     public Instant getTimestamp()
@@ -73,24 +49,9 @@ public final class ContentVersion
         return timestamp;
     }
 
-    public ChildOrder getChildOrder()
+    public String getComment()
     {
-        return childOrder;
-    }
-
-    public ContentVersionId getId()
-    {
-        return id;
-    }
-
-    public ContentVersionPublishInfo getPublishInfo()
-    {
-        return publishInfo;
-    }
-
-    public WorkflowInfo getWorkflowInfo()
-    {
-        return workflowInfo;
+        return comment;
     }
 
     public ContentPath getPath()
@@ -98,9 +59,24 @@ public final class ContentVersion
         return path;
     }
 
-    public AccessControlList getPermissions()
+    public List<Action> getActions()
     {
-        return permissions;
+        return actions;
+    }
+
+    @Override
+    public boolean equals( final Object o )
+    {
+        return o instanceof final ContentVersion that && Objects.equals( versionId, that.versionId ) &&
+            Objects.equals( contentId, that.contentId ) && Objects.equals( path, that.path ) &&
+            Objects.equals( timestamp, that.timestamp ) && Objects.equals( comment, that.comment ) &&
+            Objects.equals( actions, that.actions );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash( versionId, contentId, path, timestamp, comment, actions );
     }
 
     public static Builder create()
@@ -108,124 +84,57 @@ public final class ContentVersion
         return new Builder();
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof ContentVersion ) )
-        {
-            return false;
-        }
-        final ContentVersion that = (ContentVersion) o;
-        return Objects.equals( id, that.id ) && Objects.equals( modifier, that.modifier ) &&
-            Objects.equals( displayName, that.displayName ) && Objects.equals( modified, that.modified ) &&
-            Objects.equals( timestamp, that.timestamp ) && Objects.equals( childOrder, that.childOrder ) &&
-            Objects.equals( comment, that.comment ) && Objects.equals( publishInfo, that.publishInfo ) &&
-            Objects.equals( workflowInfo, that.workflowInfo ) && Objects.equals( permissions, that.permissions ) &&
-            Objects.equals( path, that.path );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( id, modifier, displayName, modified, timestamp, childOrder, comment, publishInfo, workflowInfo, path,
-                             permissions );
-    }
-
     public static final class Builder
     {
-        private PrincipalKey modifier;
-
-        private String displayName;
-
         private ContentPath path;
-
-        private Instant modified;
 
         private Instant timestamp;
 
-        private ChildOrder childOrder;
-
         private String comment;
 
-        private ContentVersionId id;
+        private ContentVersionId versionId;
 
-        private ContentVersionPublishInfo publishInfo;
+        private ContentId contentId;
 
-        private WorkflowInfo workflowInfo;
-
-        private AccessControlList permissions;
+        private final ImmutableList.Builder<Action> actions = ImmutableList.builder();
 
         private Builder()
         {
         }
 
-        public Builder id( final ContentVersionId id )
+        public Builder versionId( final ContentVersionId id )
         {
-            this.id = id;
+            this.versionId = id;
             return this;
         }
 
-        public Builder modifier( PrincipalKey modifier )
+        public Builder contentId( final ContentId contentId )
         {
-            this.modifier = modifier;
+            this.contentId = contentId;
             return this;
         }
 
-        public Builder displayName( String displayName )
-        {
-            this.displayName = displayName;
-            return this;
-        }
-
-        public Builder path( ContentPath path )
+        public Builder path( final ContentPath path )
         {
             this.path = path;
             return this;
         }
 
-        public Builder modified( Instant modified )
-        {
-            this.modified = modified;
-            return this;
-        }
-
-        public Builder timestamp( Instant timestamp )
+        public Builder timestamp( final Instant timestamp )
         {
             this.timestamp = timestamp;
             return this;
         }
 
-        public Builder childOrder( ChildOrder childOrder )
-        {
-            this.childOrder = childOrder;
-            return this;
-        }
-
-        public Builder comment( String comment )
+        public Builder comment( final String comment )
         {
             this.comment = comment;
             return this;
         }
 
-        public Builder publishInfo( ContentVersionPublishInfo publishInfo )
+        public Builder addAction( Action action )
         {
-            this.publishInfo = publishInfo;
-            return this;
-        }
-
-        public Builder workflowInfo( WorkflowInfo workflowInfo )
-        {
-            this.workflowInfo = workflowInfo;
-            return this;
-        }
-
-        public Builder permissions( AccessControlList permissions )
-        {
-            this.permissions = permissions;
+            actions.add( action );
             return this;
         }
 
@@ -233,5 +142,9 @@ public final class ContentVersion
         {
             return new ContentVersion( this );
         }
+    }
+
+    public record Action(String operation, List<String> fields, PrincipalKey user, Instant opTime)
+    {
     }
 }

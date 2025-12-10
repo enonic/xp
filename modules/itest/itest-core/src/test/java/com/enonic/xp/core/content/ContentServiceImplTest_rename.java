@@ -8,7 +8,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.content.RenameContentParams;
+import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
@@ -38,14 +38,19 @@ class ContentServiceImplTest_rename
 
         final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
-        final RenameContentParams params =
-            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.from( "newName" ) ).build();
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( content.getId() ).newName( ContentName.from( "newName" ) ).build();
 
-        final Content result = this.contentService.rename( params );
+        final Content result = doRename( params );
 
         assertEquals( "newName", result.getName().toString() );
         assertTrue( result.isValid() );
         assertFalse( result.getValidationErrors().hasErrors() );
+    }
+
+    private Content doRename( final MoveContentParams params )
+    {
+        return this.contentService.getById( this.contentService.move( params ).getMovedContents().first() );
     }
 
     @Test
@@ -57,10 +62,10 @@ class ContentServiceImplTest_rename
 
         final Content content = createContent( site.getPath(), "child", new PropertyTree(), this.createMixins() );
 
-        final RenameContentParams params =
-            RenameContentParams.create().contentId( content.getId() ).newName( ContentName.from( "__unnamed__" ) ).build();
+        final MoveContentParams params =
+            MoveContentParams.create().contentId( content.getId() ).newName( ContentName.from( "__unnamed__" ) ).build();
 
-        final Content result = this.contentService.rename( params );
+        final Content result = doRename( params );
 
         assertTrue( result.getName().isUnnamed() );
         assertFalse( result.isValid() );

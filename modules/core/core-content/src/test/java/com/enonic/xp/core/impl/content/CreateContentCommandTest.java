@@ -79,8 +79,6 @@ class CreateContentCommandTest
 
     private SiteConfigService siteConfigService;
 
-    private ContentNodeTranslator translator;
-
     private EventPublisher eventPublisher;
 
     @BeforeEach
@@ -94,8 +92,6 @@ class CreateContentCommandTest
         this.contentTypeService = Mockito.mock( ContentTypeService.class );
         this.mixinMappingService = Mockito.mock( MixinMappingService.class );
         this.siteConfigService = Mockito.mock( SiteConfigService.class );
-
-        this.translator = new ContentNodeTranslator();
 
         when( this.mixinMappingService.getMixinMappingOptions( any(), any() ) ).thenReturn( MixinOptions.empty() );
         when( this.siteConfigService.getSiteConfigs( any() ) ).thenReturn( SiteConfigs.empty() );
@@ -683,7 +679,6 @@ class CreateContentCommandTest
             .params( params )
             .contentTypeService( this.contentTypeService )
             .nodeService( this.nodeService )
-            .translator( this.translator )
             .eventPublisher( this.eventPublisher )
             .mediaInfo( mediaInfo )
             .mixinService( this.mixinService )

@@ -1,7 +1,8 @@
 package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.AllTextIndexConfig;
@@ -12,7 +13,7 @@ class AllTextTypeFactory
 {
     static List<IndexItem> create( final Value propertyValue, final IndexConfig indexConfig, final AllTextIndexConfig allTextIndexConfig )
     {
-        List<IndexItem> allTextItems = new ArrayList<>();
+        final ImmutableList.Builder<IndexItem> allTextItems = ImmutableList.builder();
 
         if ( ( indexConfig.isDecideByType() && propertyValue.isText() ) || indexConfig.isIncludeInAllText() )
         {
@@ -20,13 +21,13 @@ class AllTextTypeFactory
 
             allTextItems.add( new IndexItemNgram( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
 
-            allTextIndexConfig.getLanguages().
-                stream().
-                map( language -> new IndexItemStemmed( NodeIndexPath.ALL_TEXT, propertyValue.asString(), language ) ).
-                filter( indexItem -> indexItem.valueType() != null ).
-                forEach( allTextItems::add );
+            allTextIndexConfig.getLanguages()
+                .stream()
+                .map( language -> new IndexItemStemmed( NodeIndexPath.ALL_TEXT, propertyValue.asString(), language ) )
+                .filter( indexItem -> indexItem.valueType() != null )
+                .forEach( allTextItems::add );
         }
 
-        return allTextItems;
+        return allTextItems.build();
     }
 }

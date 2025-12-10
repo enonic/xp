@@ -143,8 +143,8 @@ var expectedJson = {
     },
     'attachments': {},
     'publish': {
-        'from': '2018-11-03T10:00:01Z',
-        'to': '2018-11-03T10:00:01Z',
+        "from": "2016-11-02T10:36:00Z",
+        "to": "2016-11-22T10:36:00Z"
     },
     'workflow': {
         'state': 'READY',
@@ -171,8 +171,6 @@ function globalEditor(c) {
 
     c.language = 'es';
 
-    c.publish.from = '2018-11-03T10:00:01Z';
-    c.publish.to = '2018-11-03T10:00:01Z';
     c.workflow.state = 'READY';
     c.workflow.checks = {
         'Review by marketing': 'APPROVED'

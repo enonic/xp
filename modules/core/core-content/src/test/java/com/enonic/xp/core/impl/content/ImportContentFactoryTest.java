@@ -17,7 +17,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ImportContentParams;
 import com.enonic.xp.content.Mixins;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.project.ProjectName;
@@ -106,6 +105,6 @@ class ImportContentFactoryTest
 
     private ImportContentFactory createFactory()
     {
-        return ImportContentFactory.create().params( this.params ).contentDataSerializer( new ContentDataSerializer() ).build();
+        return ImportContentFactory.create().params( this.params ).build();
     }
 }

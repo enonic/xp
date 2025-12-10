@@ -9,6 +9,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 import com.google.common.base.Splitter;
@@ -101,6 +102,21 @@ public final class ApplicationHelper
         catch ( final Exception e )
         {
             return null;
+        }
+    }
+
+    public static void checkSystemVersion( final Bundle bundle, final Version systemVersion )
+    {
+        final String systemVersionRange = getHeader( bundle, ApplicationManifestConstants.X_SYSTEM_VERSION, "" );
+
+        if ( !systemVersionRange.isEmpty() )
+        {
+            final VersionRange appVersionRange = parseVersionRange( systemVersionRange );
+            if ( appVersionRange != null && appVersionRange.includes( systemVersion ) )
+            {
+                return;
+            }
+            throw new ApplicationInvalidVersionException( systemVersionRange, systemVersion );
         }
     }
 

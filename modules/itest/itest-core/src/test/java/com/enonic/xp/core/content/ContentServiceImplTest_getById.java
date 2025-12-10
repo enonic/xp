@@ -9,7 +9,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodePath;
 
@@ -21,43 +20,20 @@ class ContentServiceImplTest_getById
 {
 
     @Test
-    void test_pending_publish_draft()
-    {
-        final Content content =
-            createContent( ContentPath.ROOT, ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
-
-        assertNotNull( this.contentService.getById( content.getId() ) );
-    }
-
-    @Test
     void test_pending_publish_master()
     {
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
             final Content content =
-                createContent( ContentPath.ROOT, ContentPublishInfo.create().from( Instant.now().plus( Duration.ofDays( 1 ) ) ).build() );
+                createAndPublishContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             return this.contentService.getById( content.getId() );
         } ) );
     }
 
     @Test
-    void test_publish_expired_draft()
-    {
-        final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-            .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
-            .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-            .build() );
-
-        assertNotNull( this.contentService.getById( content.getId() ) );
-    }
-
-    @Test
     void test_publish_expired_master()
     {
-        final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-            .from( Instant.now().minus( Duration.ofDays( 2 ) ) )
-            .to( Instant.now().minus( Duration.ofDays( 1 ) ) )
-            .build() );
+        final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
 
         assertThrows( ContentNotFoundException.class, () -> ctxMaster().callWith( () -> {
 
@@ -68,10 +44,7 @@ class ContentServiceImplTest_getById
     @Test
     void test_published_draft()
     {
-        final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-            .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-            .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
-            .build() );
+        final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
 
         assertNotNull( this.contentService.getById( content.getId() ) );
     }
@@ -80,10 +53,7 @@ class ContentServiceImplTest_getById
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
-            final Content content = createContent( ContentPath.ROOT, ContentPublishInfo.create()
-                .from( Instant.now().minus( Duration.ofDays( 1 ) ) )
-                .to( Instant.now().plus( Duration.ofDays( 1 ) ) )
-                .build() );
+            final Content content = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ));
 
             assertNotNull( this.contentService.getById( content.getId() ) );
             return null;

@@ -6,6 +6,7 @@
     "_source": {
       "enabled": true
     },
+    "dynamic": false,
     "date_detection": false,
     "numeric_detection": false,
     "_parent": {
@@ -14,53 +15,43 @@
     "properties": {
       "versionid": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "nodeblobkey": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "indexconfigblobkey": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "accesscontrolblobkey": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "timestamp": {
         "type": "date",
-        "store": false,
         "index": "not_analyzed"
       },
       "status": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "path": {
         "type": "string",
-        "store": false,
         "index": "analyzed",
         "analyzer": "keywordlowercase"
       },
       "state": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "branch": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       },
       "nodeid": {
         "type": "string",
-        "store": false,
         "index": "not_analyzed"
       }
     }

@@ -42,7 +42,7 @@ class SiteConfiguratorTypeTest
         final PropertySet appConfig = tree.newSet();
         appConfig.setString( "param", "value" );
         siteConfig.setSet( "config", appConfig );
-        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( siteConfig ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
@@ -51,6 +51,6 @@ class SiteConfiguratorTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
+        this.type.validate( stringProperty( "test" ), GenericValue.newObject().build() );
     }
 }

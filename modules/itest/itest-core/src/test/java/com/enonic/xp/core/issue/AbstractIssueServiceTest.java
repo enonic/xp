@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -14,11 +15,17 @@ import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.issue.IssueServiceImpl;
-import com.enonic.xp.core.impl.project.init.ContentInitializer;
-import com.enonic.xp.core.impl.project.init.IssueInitializer;
+import com.enonic.xp.core.impl.project.ProjectConfig;
+import com.enonic.xp.core.impl.project.ProjectServiceImpl;
+import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
+import com.enonic.xp.core.impl.security.SecurityConfig;
+import com.enonic.xp.core.impl.security.SecurityInitializer;
+import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.issue.CreateIssueParams;
 import com.enonic.xp.issue.Issue;
+import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
@@ -45,6 +52,8 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
+import static org.mockito.Mockito.mock;
+
 public abstract class AbstractIssueServiceTest
     extends AbstractElasticsearchIntegrationTest
 {
@@ -66,10 +75,6 @@ public abstract class AbstractIssueServiceTest
     protected IssueServiceImpl issueService;
 
     protected NodeServiceImpl nodeService;
-
-    private IndexServiceImpl indexService;
-
-    private RepositoryServiceImpl repositoryService;
 
     private ExecutorService executorService;
 
@@ -125,12 +130,11 @@ public abstract class AbstractIssueServiceTest
         final RepositoryEntryServiceImpl repositoryEntryService =
             new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        final IndexServiceImpl indexService =
+            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-
-        repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService,
-                                       searchService );
+        final RepositoryServiceImpl repositoryService =
+            new RepositoryServiceImpl( repositoryEntryService, indexServiceInternal, nodeRepositoryService, storageService, searchService );
         SystemRepoInitializer.create().
             setIndexServiceInternal( indexServiceInternal ).
             setRepositoryService( repositoryService ).
@@ -138,11 +142,28 @@ public abstract class AbstractIssueServiceTest
             build().
             initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService, repositoryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService,
+                                           repositoryService );
 
         issueService.setNodeService( nodeService );
 
-        initializeRepository();
+        final SecurityAuditLogSupportImpl securityAuditLogSupport = new SecurityAuditLogSupportImpl( mock( AuditLogService.class ) );
+        securityAuditLogSupport.activate( mock( SecurityConfig.class ) );
+
+        final SecurityServiceImpl securityService = new SecurityServiceImpl( nodeService, securityAuditLogSupport );
+        SecurityInitializer.create()
+            .setIndexService( indexService )
+            .setSecurityService( securityService )
+            .setNodeService( nodeService )
+            .build()
+            .initialize();
+
+        final ProjectServiceImpl projectService =
+            new ProjectServiceImpl( repositoryService, indexService, nodeService, securityService, eventPublisher,
+                                    mock( ProjectConfig.class ) );
+        projectService.initialize();
+
+        projectService.create( CreateProjectParams.create().name( ProjectName.from( TEST_REPO_ID ) ).displayName( "test" ).build() );
     }
 
     @AfterEach
@@ -155,22 +176,5 @@ public abstract class AbstractIssueServiceTest
     protected Issue createIssue( CreateIssueParams.Builder builder )
     {
         return this.issueService.create( builder.build() );
-    }
-
-    private void initializeRepository()
-    {
-        ContentInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            setRepositoryService( repositoryService ).
-            repositoryId( TEST_REPO_ID ).
-            build().
-            initialize();
-        IssueInitializer.create().
-            setIndexService( indexService ).
-            setNodeService( nodeService ).
-            repositoryId( TEST_REPO_ID ).
-            build().
-            initialize();
     }
 }

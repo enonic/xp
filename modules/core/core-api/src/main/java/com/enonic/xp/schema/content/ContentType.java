@@ -8,9 +8,9 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 @PublicApi
 public final class ContentType
@@ -143,7 +143,7 @@ public final class ContentType
 
         private List<String> allowChildContentType;
 
-        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.object();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -169,7 +169,7 @@ public final class ContentType
 
             if ( source.schemaConfig != null )
             {
-                source.schemaConfig.getProperties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
+                source.schemaConfig.properties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -261,7 +261,7 @@ public final class ContentType
 
         public Builder schemaConfig( final GenericValue config )
         {
-            config.getProperties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
+            config.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return this;
         }
 

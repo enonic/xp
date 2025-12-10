@@ -22,4 +22,11 @@ public class VersionIndexPath
 
     public static final IndexPath COMMIT_ID = IndexPath.from( "commitid" );
 
+    public static final IndexPath ATTRIBUTES = IndexPath.from( "attributes" );
+
+    public static IndexPath[] entryFields()
+    {
+        return new IndexPath[]{VERSION_ID, NODE_BLOB_KEY, INDEX_CONFIG_BLOB_KEY, ACCESS_CONTROL_BLOB_KEY, BINARY_BLOB_KEYS, NODE_ID,
+            TIMESTAMP, NODE_PATH, COMMIT_ID, ATTRIBUTES};
+    }
 }

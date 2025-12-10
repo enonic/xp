@@ -14,6 +14,8 @@ public interface BranchService
 
     void delete( Collection<NodeBranchEntry> nodeBranchEntries, InternalContext context );
 
+    void push( NodeBranchEntry nodeBranchEntry, InternalContext context );
+
     NodeBranchEntry get( NodeId nodeId, InternalContext context );
 
     NodeBranchEntries get( Iterable<NodeId> nodeIds, InternalContext context );

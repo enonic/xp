@@ -58,9 +58,6 @@ public class StorageSource
     @Override
     public String toString()
     {
-        return "StorageSettings{" +
-            "storageName=" + storageName +
-            ", storageType=" + storageType +
-            '}';
+        return storageName + ":" + storageType;
     }
 }

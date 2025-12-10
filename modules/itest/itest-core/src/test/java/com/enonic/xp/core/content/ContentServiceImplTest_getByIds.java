@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.GetContentByIdsParams;
 
@@ -21,29 +20,11 @@ class ContentServiceImplTest_getByIds
 {
 
     @Test
-    void test_pending_publish_draft()
-    {
-        final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-            build() );
-
-        final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-        final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
-
-        assertEquals( contents.getSize(), 2 );
-        assertTrue( contents.contains( content1 ) );
-        assertTrue( contents.contains( content2 ) );
-    }
-
-    @Test
     void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
-            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                build() );
+            final Content content2 = createAndPublishContent( ContentPath.ROOT, Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
             final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
@@ -58,10 +39,7 @@ class ContentServiceImplTest_getByIds
     void test_publish_expired_draft()
     {
         final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
-            to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-            build() );
+        final Content content2 = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
 
         final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
         final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
@@ -74,10 +52,7 @@ class ContentServiceImplTest_getByIds
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
-            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 2 ) ) ).
-                to( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                build() );
+            final Content content2 = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 2 ) ), Instant.now().minus( Duration.ofDays( 1 ) ) );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
             final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
@@ -89,31 +64,11 @@ class ContentServiceImplTest_getByIds
     }
 
     @Test
-    void test_published_draft()
-    {
-        final Content content1 = createContent( ContentPath.ROOT );
-        final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-            from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-            to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-            build() );
-
-        final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
-        final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );
-
-        assertEquals( contents.getSize(), 2 );
-        assertTrue( contents.contains( content1 ) );
-        assertTrue( contents.contains( content2 ) );
-    }
-
-    @Test
     void test_published_master()
     {
         ctxMaster().callWith( () -> {
             final Content content1 = createContent( ContentPath.ROOT );
-            final Content content2 = createContent( ContentPath.ROOT, ContentPublishInfo.create().
-                from( Instant.now().minus( Duration.ofDays( 1 ) ) ).
-                to( Instant.now().plus( Duration.ofDays( 1 ) ) ).
-                build() );
+            final Content content2 = createAndPublishContent( ContentPath.ROOT, Instant.now().minus( Duration.ofDays( 1 ) ), Instant.now().plus( Duration.ofDays( 1 ) ) );
 
             final ContentIds ids = ContentIds.from( content1.getId(), content2.getId() );
             final Contents contents = this.contentService.getByIds( GetContentByIdsParams.create().contentIds( ids ).build() );

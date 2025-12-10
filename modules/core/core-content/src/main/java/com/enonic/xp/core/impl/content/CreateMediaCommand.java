@@ -91,7 +91,6 @@ final class CreateMediaCommand
 
         final CreateContentCommand createCommand = CreateContentCommand.create( this )
             .mediaInfo( mediaInfo )
-            .translator( this.translator )
             .params( createContentParams )
             .cmsService( this.cmsService )
             .mixinService( this.mixinService )

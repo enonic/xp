@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.init.Initializer;
 import com.enonic.xp.node.Node;
@@ -18,16 +21,16 @@ import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SecurityConstants;
 import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.Version;
+
+import static com.enonic.xp.repo.impl.node.NodeConstants.CLOCK;
 
 public class SystemRepoInitializer
     extends Initializer
 {
-    private static final PrincipalKey SUPER_USER = PrincipalKey.ofSuperUser();
-
     private final IndexServiceInternal indexServiceInternal;
 
     private final RepositoryService repositoryService;
@@ -47,15 +50,27 @@ public class SystemRepoInitializer
     public void doInitialize()
     {
         createAdminContext().runWith( () -> {
-            final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create().
-                repositoryId( SystemConstants.SYSTEM_REPO_ID ).
-                rootChildOrder( ChildOrder.name() ).
-                rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
-                build();
+            if (!this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID )) {
+                this.repositoryService.createRepository( CreateRepositoryParams.create().
+                    repositoryId( SystemConstants.SYSTEM_REPO_ID ).
+                    rootChildOrder( ChildOrder.name() ).
+                    rootPermissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
+                    build() );
+            }
 
-            this.repositoryService.createRepository( createRepositoryParams );
+            Node repoFolder = initRepositoryFolder();
+            if ( !repoVersionMatch( repoFolder ) )
+            {
+                new Xp8IndexMigrator( this.repositoryService, this.indexServiceInternal ).migrate();
 
-            initRepositoryFolder();
+                final PropertyTree data = new PropertyTree();
+                data.addString( "version", Version.valueOf( "8.0.0.pre1" ).toString() );
+
+                final Node updatedRepoFolder =
+                    Node.create( repoFolder ).data( data ).timestamp( Instant.now( CLOCK ) ).build();
+
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedRepoFolder ), InternalContext.from( ContextAccessor.current() ) );
+            }
         } );
     }
 
@@ -63,9 +78,25 @@ public class SystemRepoInitializer
     public boolean isInitialized()
     {
         return createAdminContext().
-            callWith( () -> this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) &&
-                this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
-                                             InternalContext.from( ContextAccessor.current() ) ) != null );
+            callWith( () -> {
+            if ( this.repositoryService.isInitialized( SystemConstants.SYSTEM_REPO_ID ) )
+            {
+                final Node node = this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
+                                                               InternalContext.from( ContextAccessor.current() ) );
+                return repoVersionMatch( node );
+            }
+            return false;
+        } );
+    }
+
+    private static boolean repoVersionMatch( final Node node )
+    {
+        return Optional.ofNullable( node )
+            .map( Node::data )
+            .map( pt -> pt.getString( "version" ) )
+            .map( Version::parseVersion )
+            .orElse( Version.emptyVersion )
+            .equals( Version.parseVersion( "8.0.0.pre1" ) );
     }
 
     @Override
@@ -86,24 +117,38 @@ public class SystemRepoInitializer
         return indexServiceInternal.waitForYellowStatus();
     }
 
-    private void initRepositoryFolder()
+    private Node initRepositoryFolder()
     {
-        final Node node = Node.create( new NodeId() ).
-            childOrder( ChildOrder.defaultOrder() ).
-            parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.getParentPath() ).
-            name( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.getName() ).
-            permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL ).
-            build();
+        final Node existing = this.nodeStorageService.get( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH,
+                                                           InternalContext.from( ContextAccessor.current() ) );
+        if ( existing == null )
+        {
+            final PropertyTree data = new PropertyTree();
+            data.addString( "version", Version.valueOf( "8.0.0.pre1" ).toString() );
 
-        this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( ContextAccessor.current() ) );
+            final Node node = Node.create( new NodeId() )
+                .childOrder( ChildOrder.defaultOrder() )
+                .parentPath( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.getParentPath() )
+                .name( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.getName() )
+                .permissions( SystemConstants.SYSTEM_REPO_DEFAULT_ACL )
+                .data( data )
+                .build();
+
+            return this.nodeStorageService.store( StoreNodeParams.newVersion( node ), InternalContext.from( ContextAccessor.current() ) )
+                .node();
+        }
+        else
+        {
+            return existing;
+        }
     }
 
     private Context createAdminContext()
     {
-        final User admin = User.create().key( SUPER_USER ).login( SUPER_USER.getId() ).build();
+        final User admin = User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build();
         final AuthenticationInfo authInfo = AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( admin ).build();
         return ContextBuilder.create().
-            branch( SecurityConstants.BRANCH_SECURITY ).
+            branch( SystemConstants.BRANCH_SYSTEM ).
             repositoryId( SystemConstants.SYSTEM_REPO_ID ).
             authInfo( authInfo ).build();
     }

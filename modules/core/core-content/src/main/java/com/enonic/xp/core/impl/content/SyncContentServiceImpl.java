@@ -25,17 +25,18 @@ public class SyncContentServiceImpl
 
     private final EventPublisher eventPublisher;
 
-    private final ContentNodeTranslator translator;
-
     private final ProjectService projectService;
 
     private final ContentSynchronizer contentSynchronizer;
+
+    private final ContentAuditLogSupport contentAuditLogSupport;
 
     @Activate
     public SyncContentServiceImpl( @Reference final ContentTypeService contentTypeService, @Reference final NodeService nodeService,
                                    @Reference final EventPublisher eventPublisher,
                                    @Reference final ProjectService projectService, @Reference final ContentService contentService,
-                                   @Reference final ContentSynchronizer contentSynchronizer )
+                                   @Reference final ContentSynchronizer contentSynchronizer,
+                                   @Reference final ContentAuditLogSupport contentAuditLogSupport )
     {
         this.contentTypeService = contentTypeService;
         this.nodeService = nodeService;
@@ -43,7 +44,7 @@ public class SyncContentServiceImpl
         this.projectService = projectService;
         this.contentService = contentService;
         this.contentSynchronizer = contentSynchronizer;
-        this.translator = new ContentNodeTranslator();
+        this.contentAuditLogSupport = contentAuditLogSupport;
     }
 
     @Override
@@ -55,10 +56,11 @@ public class SyncContentServiceImpl
             nodeService( nodeService ).
             contentTypeService( contentTypeService ).
             eventPublisher( eventPublisher ).
-            translator( translator ).
             contentSynchronizer( contentSynchronizer ).
             build().
             execute();
+
+        contentAuditLogSupport.resetInheritance( params );
     }
 
     @Override
@@ -69,5 +71,7 @@ public class SyncContentServiceImpl
             projectService( projectService ).
             build().
             execute();
+
+        contentAuditLogSupport.syncProject( params );
     }
 }

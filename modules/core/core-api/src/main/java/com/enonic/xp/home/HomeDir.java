@@ -5,8 +5,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 import com.enonic.xp.annotation.PublicApi;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
+import com.enonic.xp.server.ServerInfo;
 
 @PublicApi
 public final class HomeDir
@@ -42,13 +41,8 @@ public final class HomeDir
         {
             return homeDir;
         }
-        final String str = System.getProperty( "xp.home" );
-        if ( isNullOrEmpty( str ) )
-        {
-            throw new IllegalArgumentException( "Home dir [xp.home] is not set." );
-        }
 
-        return new HomeDir( Path.of( str ).toAbsolutePath().normalize() );
+        return new HomeDir( ServerInfo.get().getHomeDir().toPath().toAbsolutePath().normalize() );
     }
 
     static void set( final Path dir )

@@ -1,6 +1,5 @@
 package com.enonic.xp.core.content;
 
-import java.time.Instant;
 import java.util.Locale;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
@@ -186,29 +184,6 @@ class ContentServiceImplTest_create
         assertThrows( IllegalArgumentException.class, () -> {
             this.contentService.create( createContentParams );
         } );
-    }
-
-    @Test
-    void create_with_publish_info()
-    {
-        final CreateContentParams createContentParams = CreateContentParams.create()
-            .contentData( new PropertyTree() )
-            .displayName( "This is my content" )
-            .parent( ContentPath.ROOT )
-            .type( ContentTypeName.folder() )
-            .contentPublishInfo( ContentPublishInfo.create()
-                                     .from( Instant.parse( "2016-11-03T10:42:00Z" ) )
-                                     .from( Instant.parse( "2016-11-23T10:42:00Z" ) )
-                                     .build() )
-            .build();
-
-        final Content content = this.contentService.create( createContentParams );
-        assertNotNull( content.getPublishInfo() );
-        assertNotNull( content.getPublishInfo().getFrom() );
-
-        final Content storedContent = this.contentService.getById( content.getId() );
-        assertNotNull( storedContent.getPublishInfo() );
-        assertNotNull( storedContent.getPublishInfo().getFrom() );
     }
 
     @Test

@@ -43,7 +43,7 @@ setupDefaults() {
 }
 
 setupOptions() {
-    if [ "x$JAVA_OPTS" = "x" ]; then
+    if [ -z "$JAVA_OPTS" ]; then
         JAVA_OPTS="$DEFAULT_JAVA_OPTS"
     fi
     export JAVA_OPTS
@@ -51,7 +51,7 @@ setupOptions() {
 
 setupDebugOptions() {
     if [ "$ARG1" = "debug" ]; then
-        if [ "x$JAVA_DEBUG_OPTS" = "x" ]; then
+        if [ -z "$JAVA_DEBUG_OPTS" ]; then
             JAVA_DEBUG_OPTS="$DEFAULT_JAVA_DEBUG_OPTS"
         fi
 
@@ -66,12 +66,19 @@ locateInstallDir() {
     fi
 }
 
+setupTmpDir() {
+  tmpdir=${XP_TMP:-${XP_HOME:+$XP_HOME/work}}
+  tmpdir=${tmpdir:-$XP_INSTALL/home/work}
+  JAVA_OPTS="-Djava.io.tmpdir=$tmpdir $JAVA_OPTS"
+}
+
 init() {
     locateJava
     setupDefaults
     setupOptions
     setupDebugOptions
     locateInstallDir
+    setupTmpDir
 }
 
 run() {

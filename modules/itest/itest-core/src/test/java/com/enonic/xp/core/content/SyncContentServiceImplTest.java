@@ -44,7 +44,8 @@ class SyncContentServiceImplTest
         synchronizer = new ParentContentSynchronizer( contentService );
 
         syncContentService =
-            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer );
+            new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
+                                        contentAuditLogSupport );
     }
 
     @Test

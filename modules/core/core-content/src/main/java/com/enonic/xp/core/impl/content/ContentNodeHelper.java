@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.Objects;
 
+import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
@@ -9,6 +10,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPaths;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
@@ -89,6 +91,13 @@ public class ContentNodeHelper
     {
         return Objects.requireNonNullElse( (NodePath) ContextAccessor.current().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ),
                                            ContentConstants.CONTENT_ROOT_PATH );
+    }
+
+    public static ContentAccessException toContentAccessException( final NodeAccessException nodeAccessException )
+    {
+        throw new ContentAccessException( nodeAccessException, nodeAccessException.getUser(),
+                                          ContentNodeHelper.translateNodePathToContentPath( nodeAccessException.getNodePath() ),
+                                          nodeAccessException.getPermission() );
     }
 }
 

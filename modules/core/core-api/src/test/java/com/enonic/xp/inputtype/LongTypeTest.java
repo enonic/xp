@@ -35,7 +35,7 @@ class LongTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newDouble( 13.0 ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newDouble( 13.0 ), GenericValue.newObject().build() );
         assertNotNull( value );
         assertSame( ValueTypes.LONG, value.getType() );
     }
@@ -43,26 +43,26 @@ class LongTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( longProperty( 13 ), GenericValue.object().build() );
+        this.type.validate( longProperty( 13 ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
-        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
+        assertThrows( InputTypeValidationException.class, () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 
     @Test
     void testValidate_invalidMin()
     {
-        final GenericValue config = GenericValue.object().put( "min", GenericValue.longValue( 5 ) ).build();
+        final GenericValue config = GenericValue.newObject().put( "min", GenericValue.numberValue( 5 ) ).build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( longProperty( 2 ), config ) );
     }
 
     @Test
     void testValidate_invalidMax()
     {
-        final GenericValue config = GenericValue.object().put( "max", GenericValue.longValue( 5 ) ).build();
+        final GenericValue config = GenericValue.newObject().put( "max", GenericValue.numberValue( 5 ) ).build();
         assertThrows( InputTypeValidationException.class, () -> this.type.validate( longProperty( 7 ), config ) );
     }
 

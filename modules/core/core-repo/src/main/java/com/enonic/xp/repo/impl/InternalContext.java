@@ -19,8 +19,6 @@ public class InternalContext
 
     private final PrincipalKeys principalsKeys;
 
-    private final boolean skipConstraints;
-
     private final SearchPreference searchPreference;
 
     private final Map<String, String> eventMetadata;
@@ -30,7 +28,6 @@ public class InternalContext
         this.repositoryId = builder.repositoryId;
         this.branch = builder.branch;
         this.principalsKeys = Objects.requireNonNullElse( builder.principalsKeys, PrincipalKeys.empty() );
-        this.skipConstraints = builder.skipConstraints;
         this.searchPreference = builder.searchPreference;
         this.eventMetadata = builder.eventMetadata.build();
     }
@@ -60,17 +57,11 @@ public class InternalContext
         return principalsKeys;
     }
 
-    public boolean isSkipConstraints()
-    {
-        return skipConstraints;
-    }
-
     public static Builder create( final InternalContext context )
     {
         return create().principalsKeys( context.getPrincipalsKeys() )
             .branch( context.getBranch() )
             .repositoryId( context.getRepositoryId() )
-            .skipConstraints( context.skipConstraints )
             .searchPreference( context.searchPreference )
             .eventMetadata( context.eventMetadata );
     }
@@ -110,7 +101,7 @@ public class InternalContext
             return false;
         }
         final InternalContext that = (InternalContext) o;
-        return skipConstraints == that.skipConstraints && Objects.equals( repositoryId, that.repositoryId ) &&
+        return Objects.equals( repositoryId, that.repositoryId ) &&
             Objects.equals( branch, that.branch ) && Objects.equals( principalsKeys, that.principalsKeys ) &&
             Objects.equals( searchPreference, that.searchPreference ) && Objects.equals( eventMetadata, that.eventMetadata );
     }
@@ -118,7 +109,7 @@ public class InternalContext
     @Override
     public int hashCode()
     {
-        return Objects.hash( repositoryId, branch, principalsKeys, skipConstraints, searchPreference, eventMetadata );
+        return Objects.hash( repositoryId, branch, principalsKeys, searchPreference, eventMetadata );
     }
 
     public static final class Builder
@@ -128,8 +119,6 @@ public class InternalContext
         private Branch branch;
 
         private PrincipalKeys principalsKeys;
-
-        private boolean skipConstraints;
 
         private SearchPreference searchPreference;
 
@@ -154,12 +143,6 @@ public class InternalContext
         public Builder principalsKeys( final PrincipalKeys principalsKeys )
         {
             this.principalsKeys = principalsKeys;
-            return this;
-        }
-
-        public Builder skipConstraints( final boolean skip )
-        {
-            this.skipConstraints = skip;
             return this;
         }
 

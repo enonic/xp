@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeName;
@@ -28,14 +29,10 @@ class RenameNodeCommandTest
     @Test
     void rename()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
         MoveNodeCommand.create()
-            .id( createdNode.id() )
-            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -50,14 +47,10 @@ class RenameNodeCommandTest
     @Test
     void rename_to_same()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
         final MoveNodeCommand command = MoveNodeCommand.create()
-            .id( createdNode.id() )
-            .newNodeName( NodeName.from( "my-node" ) )
+            .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -69,19 +62,12 @@ class RenameNodeCommandTest
     @Test
     void rename_to_existing_fails()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        createNode( CreateNodeParams.create().
-            name( "my-node-existing" ).
-            parent( NodePath.ROOT ).
-            build() );
+        createNode( CreateNodeParams.create().name( "my-node-existing" ).parent( NodePath.ROOT ).build() );
 
         final MoveNodeCommand command = MoveNodeCommand.create()
-            .id( createdNode.id() )
-            .newNodeName( NodeName.from( "my-node-existing" ) )
+            .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-existing" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -93,16 +79,12 @@ class RenameNodeCommandTest
     @Test
     void timestamp_updated()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
         final Node beforeRename = getNodeById( createdNode.id() );
 
         MoveNodeCommand.create()
-            .id( createdNode.id() )
-            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -118,39 +100,20 @@ class RenameNodeCommandTest
     @Test
     void rename_with_children()
     {
-        final Node createdNode = createNode( CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build() );
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
 
-        final Node child1_1 = createNode( CreateNodeParams.create().
-            name( "child1_1" ).
-            parent( createdNode.path() ).
-            build() );
+        final Node child1_1 = createNode( CreateNodeParams.create().name( "child1_1" ).parent( createdNode.path() ).build() );
 
-        final Node child1_2 = createNode( CreateNodeParams.create().
-            name( "child1_2" ).
-            parent( createdNode.path() ).
-            build() );
+        final Node child1_2 = createNode( CreateNodeParams.create().name( "child1_2" ).parent( createdNode.path() ).build() );
 
-        final Node child1_1_1 = createNode( CreateNodeParams.create().
-            name( "child1_1_1" ).
-            parent( child1_1.path() ).
-            build() );
+        final Node child1_1_1 = createNode( CreateNodeParams.create().name( "child1_1_1" ).parent( child1_1.path() ).build() );
 
-        final Node child1_2_1 = createNode( CreateNodeParams.create().
-            name( "child1_2_1" ).
-            parent( child1_2.path() ).
-            build() );
+        final Node child1_2_1 = createNode( CreateNodeParams.create().name( "child1_2_1" ).parent( child1_2.path() ).build() );
 
-        final Node child1_2_2 = createNode( CreateNodeParams.create().
-            name( "child1_2_2" ).
-            parent( child1_2.path() ).
-            build() );
+        final Node child1_2_2 = createNode( CreateNodeParams.create().name( "child1_2_2" ).parent( child1_2.path() ).build() );
 
         MoveNodeCommand.create()
-            .id( createdNode.id() )
-            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -179,22 +142,17 @@ class RenameNodeCommandTest
     @Test
     void rename_then_create_with_same_name()
     {
-        final CreateNodeParams createNodeNamedMyNodeParams = CreateNodeParams.create().
-            name( "my-node" ).
-            parent( NodePath.ROOT ).
-            build();
+        final CreateNodeParams createNodeNamedMyNodeParams = CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build();
 
         final Node createdNode = createNode( createNodeNamedMyNodeParams );
 
         MoveNodeCommand.create()
-            .id( createdNode.id() )
-            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()
             .execute();
-
 
         createNode( createNodeNamedMyNodeParams );
     }
@@ -203,8 +161,7 @@ class RenameNodeCommandTest
     void cannot_rename_root_node()
     {
         assertThrows( OperationNotPermittedException.class, () -> MoveNodeCommand.create()
-            .id( Node.ROOT_UUID )
-            .newNodeName( NodeName.from( "my-node-edited" ) )
+            .params( MoveNodeParams.create().nodeId( Node.ROOT_UUID ).newName( NodeName.from( "my-node-edited" ) ).build() )
             .indexServiceInternal( this.indexServiceInternal )
             .searchService( this.searchService )
             .storageService( this.storageService )

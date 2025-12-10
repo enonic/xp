@@ -36,7 +36,7 @@ class ImageUploaderTypeTest
     void testCreateProperty()
     {
         final PropertyTree tree = new PropertyTree();
-        final Value value = this.type.createValue( ValueFactory.newPropertySet( tree.newSet() ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newPropertySet( tree.newSet() ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.PROPERTY_SET, value.getType() );
@@ -45,6 +45,6 @@ class ImageUploaderTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( stringProperty( "test" ), GenericValue.object().build() );
+        this.type.validate( stringProperty( "test" ), GenericValue.newObject().build() );
     }
 }

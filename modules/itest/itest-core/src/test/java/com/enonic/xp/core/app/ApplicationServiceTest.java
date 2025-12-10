@@ -84,8 +84,7 @@ class ApplicationServiceTest
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl( bundleContext,
-                                                              new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
+        this.applicationService = new ApplicationServiceImpl( new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(),
                                                                                            applicationFactoryService ), repoService,
                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                               new AppFilterServiceImpl( appConfig ),

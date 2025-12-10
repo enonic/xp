@@ -47,7 +47,8 @@ please see the xp-distro project that bundles the necessary part together: (http
 
 ## License
 
-This software is licensed under GPL v3. See [LICENSE.txt](https://github.com/enonic/xp/raw/master/LICENSE.txt). 
+This software is licensed under GPL v3 with [Linking exception](https://en.wikipedia.org/wiki/GPL_linking_exception). GPL Linking exception means you can create applications on the platform without being subject to licensing them as GPL too. Derivate work of the platform itself is however subject to the terms of the GPL license.
+See [LICENSE.txt](https://github.com/enonic/xp/raw/master/LICENSE.txt). 
 Also, the distribution includes 3rd party software components. The vast majority of these libraries are licensed under 
 Apache 2.0. For a complete list please read [NOTICE.txt](https://github.com/enonic/xp/raw/master/NOTICE.txt).
 

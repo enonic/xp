@@ -165,7 +165,7 @@ public final class Input
 
         private String helpTextI18nKey;
 
-        private final GenericValue.ObjectBuilder inputTypeConfig = GenericValue.object();
+        private final GenericValue.ObjectBuilder inputTypeConfig = GenericValue.newObject();
 
         private Builder()
         {
@@ -183,7 +183,7 @@ public final class Input
 
             if ( source.inputTypeConfig != null )
             {
-                source.inputTypeConfig.getProperties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
+                source.inputTypeConfig.properties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -287,7 +287,7 @@ public final class Input
 
         public Builder inputTypeConfig( GenericValue config )
         {
-            config.getProperties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
+            config.properties().forEach( p -> this.inputTypeConfig.put( p.getKey(), p.getValue() ) );
             return this;
         }
 

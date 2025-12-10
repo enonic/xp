@@ -27,7 +27,6 @@ import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
-import com.enonic.xp.core.impl.content.serializer.ContentDataSerializer;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
 import com.enonic.xp.core.impl.content.validate.MixinValidator;
 import com.enonic.xp.core.impl.content.validate.OccurrenceValidator;
@@ -100,8 +99,6 @@ class UpdateContentCommandTest
 
     private final SiteConfigService siteConfigService = mock( SiteConfigService.class );
 
-    private final ContentNodeTranslator translator = mock( ContentNodeTranslator.class );
-
     private final EventPublisher eventPublisher = mock( EventPublisher.class );
 
     private final MediaInfo mediaInfo = MediaInfo.create().mediaType( "image/jpeg" ).build();
@@ -134,9 +131,8 @@ class UpdateContentCommandTest
         UpdateContentCommand command = createCommand( new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> {
         } ) );
 
-        Node mockNode = Node.create().build();
+        Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( mock( ContentType.class ) );
 
         command.execute();
@@ -156,15 +152,16 @@ class UpdateContentCommandTest
 
         UpdateContentCommand command = createCommand( params );
 
-        Node mockNode = Node.create().build();
+        Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
-        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         ContentType contentType = mock( ContentType.class );
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
         when( contentType.getForm() ).thenReturn( Form.create().build() );
-        when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( PatchNodeResult.create().build() );
+
+        Node result = ContentFixture.mockContentNode( existingContent );
+        result.data().setString( "data.language", Locale.CANADA.toString() );
+        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, result ).build() );
 
         ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
 
@@ -186,6 +183,7 @@ class UpdateContentCommandTest
         final Content existingContent = Site.create()
             .id( ContentId.from( "mycontent" ) )
             .name( "myContentName" )
+            .creator( PrincipalKey.ofAnonymous() )
             .type( ContentTypeName.site() ).parentPath( ContentPath.ROOT ).data( data )
             .build();
 
@@ -194,10 +192,8 @@ class UpdateContentCommandTest
 
         final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) ).params( params ).build();
 
-        Node mockNode = Node.create().build();
+        Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
-        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         final ContentType contentType = ContentType.create()
             .superType( ContentTypeName.structured() )
@@ -255,15 +251,13 @@ class UpdateContentCommandTest
                 }
             } ) ).build();
 
-        Node mockNode = Node.create().build();
+        Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
-        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         ContentType contentType = mock( ContentType.class );
         when( contentTypeService.getByName( any() ) ).thenReturn( contentType );
         when( contentType.getForm() ).thenReturn( Form.empty() );
-        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().build() );
+        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, mockNode ).build() );
 
         ContextBuilder.from( ContextAccessor.current() ).branch( ContentConstants.BRANCH_DRAFT ).build().runWith( command::execute );
 
@@ -288,10 +282,8 @@ class UpdateContentCommandTest
                                          new MixinValidator( mixinService ) ) )
             .build();
 
-        Node mockNode = Node.create().build();
+        Node mockNode = ContentFixture.mockContentNode( existingContent );
         when( nodeService.getById( NodeId.from( existingContent.getId() ) ) ).thenReturn( mockNode );
-        when( translator.fromNode( mockNode ) ).thenReturn( existingContent );
-        when( translator.getContentDataSerializer() ).thenReturn( new ContentDataSerializer() );
 
         final ContentType contentType = ContentType.create()
             .superType( ContentTypeName.structured() )
@@ -311,7 +303,9 @@ class UpdateContentCommandTest
             .build();
 
         when( contentTypeService.getByName( isA( GetContentTypeParams.class ) ) ).thenReturn( contentType );
-        when( nodeService.patch( isA( PatchNodeParams.class ) ) ).thenReturn( PatchNodeResult.create().build() );
+
+        Node result = ContentFixture.mockContentNode( existingContent );
+        when( nodeService.patch( any() ) ).thenReturn( PatchNodeResult.create().addResult( ContentConstants.BRANCH_DRAFT, result ).build() );
 
         assertThrows( ContentDataValidationException.class, () -> ContextBuilder.from( ContextAccessor.current() )
             .branch( ContentConstants.BRANCH_DRAFT )
@@ -324,7 +318,6 @@ class UpdateContentCommandTest
         return UpdateContentCommand.create( params )
             .contentTypeService( contentTypeService )
             .nodeService( nodeService )
-            .translator( translator )
             .eventPublisher( eventPublisher )
             .mediaInfo( mediaInfo )
             .mixinService( mixinService )

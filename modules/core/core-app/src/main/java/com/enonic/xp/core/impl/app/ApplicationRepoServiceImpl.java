@@ -31,15 +31,16 @@ public class ApplicationRepoServiceImpl
     }
 
     @Override
-    public Node createApplicationNode( final Application application, final ByteSource source )
+    public Node upsertApplicationNode( final AppInfo application, final ByteSource source )
     {
-        return this.nodeService.create( ApplicationNodeTransformer.toCreateNodeParams( application, source ) );
-    }
-
-    @Override
-    public Node updateApplicationNode( final Application application, final ByteSource source )
-    {
-        return this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source ) );
+        if ( doGetNodeByName( application.name ) != null )
+        {
+            return this.nodeService.update( ApplicationNodeTransformer.toUpdateNodeParams( application, source ) );
+        }
+        else
+        {
+            return this.nodeService.create( ApplicationNodeTransformer.toCreateNodeParams( application, source ) );
+        }
     }
 
     @Override

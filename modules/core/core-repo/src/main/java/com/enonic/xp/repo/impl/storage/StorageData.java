@@ -1,17 +1,21 @@
 package com.enonic.xp.repo.impl.storage;
 
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMultimap;
+
+import com.enonic.xp.index.IndexPath;
 
 public class StorageData
 {
-    private final Multimap<String, Object> values;
+    private final Map<String, Collection<Object>> values;
 
     private StorageData( Builder builder )
     {
-        this.values = builder.values;
+        this.values = builder.builder.build().asMap();
     }
 
     public static Builder create()
@@ -19,32 +23,31 @@ public class StorageData
         return new Builder();
     }
 
-    public Multimap<String, Object> getValues()
+    public Map<String, Collection<Object>> asValuesMap()
     {
         return values;
     }
 
     public static final class Builder
     {
-        final Multimap<String, Object> values = ArrayListMultimap.create();
+        private final ImmutableMultimap.Builder<String, Object> builder = ImmutableListMultimap.builder();
 
         private Builder()
         {
         }
 
-        public Builder add( final String key, final Object value )
+        public Builder add( final IndexPath key, final Object value )
         {
+            Objects.requireNonNull( key );
+            Objects.requireNonNull( value );
+
             if ( value instanceof Iterable )
             {
-                values.putAll( key, ( (Iterable) value ) );
-            }
-            else if ( value instanceof Object[] )
-            {
-                values.putAll( key, Arrays.asList( (Object[]) value ) );
+                builder.putAll( key.getPath(), ( (Iterable<?>) value ) );
             }
             else
             {
-                values.put( key, value );
+                builder.put( key.getPath(), value );
             }
 
             return this;

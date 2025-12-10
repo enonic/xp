@@ -9,7 +9,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobKey;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -19,6 +18,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
@@ -101,7 +101,7 @@ class NodeEventListenerTest
 
         final Node movedNode = Node.create( sourceNode ).parentPath( new NodePath( "/newParent" ) ).build();
 
-        final Event localEvent =  NodeEvents.renamed( MoveNodeResult.MovedNode.create().node( movedNode ).previousPath( sourceNode.path() ).build(),
+        final Event localEvent =  NodeEvents.moved( List.of(MoveNodeResult.MovedNode.create().node( movedNode ).previousPath( sourceNode.path() ).build()),
                                           createInternalContext() );
         nodeEventListener.onEvent( Event.create( localEvent ).localOrigin( false ).build() );
 

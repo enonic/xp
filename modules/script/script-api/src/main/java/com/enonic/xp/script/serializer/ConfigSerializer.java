@@ -18,12 +18,12 @@ public final class ConfigSerializer
 
     public static void serializeConfig( final MapGenerator gen, final GenericValue config )
     {
-        config.getProperties().forEach( e -> {
+        config.properties().forEach( e -> {
             final String propertyName = e.getKey();
             if ( e.getValue().getType() == GenericValue.Type.LIST )
             {
                 gen.array( propertyName );
-                for ( final GenericValue property : e.getValue().asList() )
+                for ( final GenericValue property : e.getValue().values() )
                 {
                     serializeConfigProperty( gen, propertyName, property, true );
                 }
@@ -45,8 +45,8 @@ public final class ConfigSerializer
             case BOOLEAN -> writeValue( gen, propertyName, property.asBoolean(), withoutName );
             case NUMBER -> writeValue( gen, propertyName, property.asDouble(), withoutName );
             case LIST -> writeArray( gen, propertyName, withoutName,
-                                     g -> property.asList().forEach( pv -> g.value( unwrapScalarOrComposite( pv ) ) ) );
-            case OBJECT -> writeMap( gen, propertyName, withoutName, g -> property.getProperties()
+                                     g -> property.values().forEach( pv -> g.value( unwrapScalarOrComposite( pv ) ) ) );
+            case OBJECT -> writeMap( gen, propertyName, withoutName, g -> property.properties()
                 .forEach( entry -> g.value( entry.getKey(), unwrapScalarOrComposite( entry.getValue() ) ) ) );
             default -> throw new AssertionError( "Unrecognized property type: " + property );
         }
@@ -101,8 +101,8 @@ public final class ConfigSerializer
             case STRING -> propertyValue.asString();
             case BOOLEAN -> propertyValue.asBoolean();
             case NUMBER -> propertyValue.asDouble();
-            case LIST -> propertyValue.asList().stream().map( ConfigSerializer::unwrapScalarOrComposite ).toList();
-            case OBJECT -> propertyValue.getProperties()
+            case LIST -> propertyValue.values().stream().map( ConfigSerializer::unwrapScalarOrComposite ).toList();
+            case OBJECT -> propertyValue.properties()
                 .stream()
                 .collect( Collectors.toMap( Map.Entry::getKey, e -> unwrapScalarOrComposite( e.getValue() ), ( a, b ) -> a,
                                             LinkedHashMap::new ) );
