@@ -38,5 +38,7 @@ public class NodePropertyConstants
 
     public static final String CONFIG_PATH = "path";
 
+    public static final String ALL_TEXT_LANGUAGES = "allTextLanguages";
+
 
 }

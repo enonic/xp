@@ -48,6 +48,8 @@ public class IndexConfigFactory
 
         createPathConfigs( builder );
 
+        createAllTextConfig( builder );
+
         return builder.build();
     }
 
@@ -80,6 +82,11 @@ public class IndexConfigFactory
             final IndexConfig config = createConfig( pathConfig.getProperty( CONFIG_SETTINGS ) );
             builder.add( path, config );
         }
+    }
+
+    private void createAllTextConfig( final PatternIndexConfigDocument.Builder builder )
+    {
+        this.propertySet.getStrings( NodePropertyConstants.ALL_TEXT_LANGUAGES ).forEach( builder::addAllTextConfigLanguage );
     }
 
     private IndexConfig createConfig( final Property defaultSettings )
