@@ -44,7 +44,8 @@ var expected = {
                         'indexValueProcessors': [],
                         'languages': []
                     },
-                    'configs': []
+                    'configs': [],
+                    'allTextLanguages': []
                 },
                 '_permissions': [
                     {
@@ -82,7 +83,8 @@ var expected = {
                         'indexValueProcessors': [],
                         'languages': []
                     },
-                    'configs': []
+                    'configs': [],
+                    'allTextLanguages': []
                 },
                 '_permissions': [
                     {

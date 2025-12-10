@@ -28,4 +28,17 @@ class IndexConfigDocMapperTest
 
         JsonAssert.assertMapper( getClass(), "index_config_full.json", new IndexConfigDocMapper( doc ) );
     }
+
+    @Test
+    void allTextLanguages()
+    {
+        final IndexConfigDocument doc = PatternIndexConfigDocument.create().
+            defaultConfig( IndexConfig.BY_TYPE ).
+            addAllTextConfigLanguage( "en" ).
+            addAllTextConfigLanguage( "no" ).
+            addAllTextConfigLanguage( "fr" ).
+            build();
+
+        JsonAssert.assertMapper( getClass(), "index_config_with_all_text_languages.json", new IndexConfigDocMapper( doc ) );
+    }
 }
