@@ -7,9 +7,9 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
 
 @PublicApi
 public abstract class ComponentDescriptor
@@ -97,7 +97,7 @@ public abstract class ComponentDescriptor
 
         protected Form config;
 
-        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.object();
+        private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         protected BaseBuilder()
         {
@@ -116,7 +116,7 @@ public abstract class ComponentDescriptor
 
             if ( descriptor.schemaConfig != null )
             {
-                descriptor.schemaConfig.getProperties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
+                descriptor.schemaConfig.properties().forEach( p -> this.schemaConfig.put( p.getKey(), p.getValue() ) );
             }
         }
 
@@ -178,7 +178,7 @@ public abstract class ComponentDescriptor
 
         public final T schemaConfig( final GenericValue config )
         {
-            config.getProperties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
+            config.properties().forEach( e -> this.schemaConfig.put( e.getKey(), e.getValue() ) );
             return typecastToBuilder( this );
         }
 

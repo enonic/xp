@@ -89,7 +89,6 @@ final class CreateContentCommand
             .mixinService( this.mixinService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
             .cmsService( this.cmsService )
             .build()
             .produce()
@@ -342,7 +341,6 @@ final class CreateContentCommand
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
-            ContentPublishInfoPreconditions.check( params.getContentPublishInfo() );
         }
 
         public CreateContentCommand build()

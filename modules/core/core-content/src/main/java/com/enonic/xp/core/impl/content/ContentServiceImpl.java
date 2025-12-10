@@ -85,10 +85,6 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.ReorderChildNodeParams;
-import com.enonic.xp.node.SortNodeParams;
-import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -100,9 +96,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
+import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigService;
-import com.enonic.xp.site.MixinMappingService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -156,7 +152,6 @@ public class ContentServiceImpl
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
         this.siteConfigService = siteConfigService;
-        this.translator = new ContentNodeTranslator();
     }
 
     @Override
@@ -574,7 +569,7 @@ public class ContentServiceImpl
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
-            .xDataService( this.xDataService )
+            .mixinService( this.mixinService )
             .contentValidators( this.contentValidators )
             .build()
             .execute();

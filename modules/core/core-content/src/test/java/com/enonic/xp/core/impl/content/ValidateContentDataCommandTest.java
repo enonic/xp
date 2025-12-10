@@ -204,7 +204,7 @@ class ValidateContentDataCommandTest
         return CmsDescriptor.create().applicationKey( ApplicationKey.from( "myapp" ) ).form( config ).build();
     }
 
-    private SiteDescriptor createNestedSiteDescriptor()
+    private CmsDescriptor createNestedSiteDescriptor()
     {
         final Form config = Form.create()
             .addFormItem( FormItemSet.create()
@@ -213,27 +213,29 @@ class ValidateContentDataCommandTest
                                                 .inputType( InputTypeName.TEXT_LINE )
                                                 .label( "Nested Input" )
                                                 .name( "nestedInput" )
-                                                .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+                                                .inputTypeProperty( "regexp", "\\d+" )
                                                 .build() )
                               .build() )
             .build();
-        return SiteDescriptor.create().form( config ).build();
+        return CmsDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).form( config ).build();
     }
 
-    private SiteDescriptor createMultiOccurrenceSiteDescriptor()
+    private CmsDescriptor createMultiOccurrenceSiteDescriptor()
     {
-        final Form config = Form.create().addFormItem( Input.create()
-                                                           .inputType( InputTypeName.TEXT_LINE )
-                                                           .label( "Multi Input" )
-                                                           .name( "multiInput" )
-                                                           .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
-                                                           .minimumOccurrences( 0 )
-                                                           .maximumOccurrences( 5 )
-                                                           .build() ).build();
-        return SiteDescriptor.create().form( config ).build();
+        final Form config = Form.create()
+            .addFormItem( Input.create()
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .label( "Multi Input" )
+                              .name( "multiInput" )
+                              .inputTypeProperty( "regexp", "\\d+" )
+                              .minimumOccurrences( 0 )
+                              .maximumOccurrences( 5 )
+                              .build() )
+            .build();
+        return CmsDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).form( config ).build();
     }
 
-    private SiteDescriptor createNestedMultiOccurrenceSiteDescriptor()
+    private CmsDescriptor createNestedMultiOccurrenceSiteDescriptor()
     {
         final Form config = Form.create()
             .addFormItem( FormItemSet.create()
@@ -243,14 +245,14 @@ class ValidateContentDataCommandTest
                                                 .inputType( InputTypeName.TEXT_LINE )
                                                 .label( "Nested Input" )
                                                 .name( "nestedInput" )
-                                                .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+                                                .inputTypeProperty( "regexp", "\\d+" )
                                                 .build() )
                               .build() )
             .build();
-        return SiteDescriptor.create().form( config ).build();
+        return CmsDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).form( config ).build();
     }
 
-    private SiteDescriptor createThirdLevelNestedSiteDescriptor()
+    private CmsDescriptor createThirdLevelNestedSiteDescriptor()
     {
         final Form config = Form.create()
             .addFormItem( FormItemSet.create()
@@ -262,12 +264,12 @@ class ValidateContentDataCommandTest
                                                                   .inputType( InputTypeName.TEXT_LINE )
                                                                   .label( "Deep Input" )
                                                                   .name( "deepInput" )
-                                                                  .inputTypeProperty( InputTypeProperty.create( "regexp", "\\d+" ).build() )
+                                                                  .inputTypeProperty( "regexp", "\\d+" )
                                                                   .build() )
                                                 .build() )
                               .build() )
             .build();
-        return SiteDescriptor.create().form( config ).build();
+        return CmsDescriptor.create().applicationKey( ApplicationKey.from( "myapplication" ) ).form( config ).build();
     }
 
     @Test
@@ -310,19 +312,19 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createCmsDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
         // verify
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
         final var error = result.stream().findFirst().orElseThrow();
-        
+
         // Verify that the error is a DataValidationError with the field path
-        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        assertThat( error ).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
-        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "textInput-1" );
+        assertThat( dataError.getPropertyPath().toString() ).isEqualTo( "textInput-1" );
     }
 
     @Test
@@ -341,19 +343,19 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createNestedSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createNestedSiteDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
         // verify
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
         final var error = result.stream().findFirst().orElseThrow();
-        
+
         // Verify that the error is a DataValidationError with the nested field path
-        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        assertThat( error ).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
-        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "myItemSet.nestedInput" );
+        assertThat( dataError.getPropertyPath().toString() ).isEqualTo( "myItemSet.nestedInput" );
     }
 
     @Test
@@ -374,19 +376,19 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createMultiOccurrenceSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createMultiOccurrenceSiteDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
         // verify
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
         final var error = result.stream().findFirst().orElseThrow();
-        
+
         // Verify that the error is a DataValidationError with the field path including the array index
-        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        assertThat( error ).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
-        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "multiInput[1]" );
+        assertThat( dataError.getPropertyPath().toString() ).isEqualTo( "multiInput[1]" );
     }
 
     @Test
@@ -407,19 +409,20 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createNestedMultiOccurrenceSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) )
+            .thenReturn( createNestedMultiOccurrenceSiteDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
         // verify
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
         final var error = result.stream().findFirst().orElseThrow();
-        
+
         // Verify that the error is a DataValidationError with the nested field path including the array index
-        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        assertThat( error ).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
-        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "multiItemSet[1].nestedInput" );
+        assertThat( dataError.getPropertyPath().toString() ).isEqualTo( "multiItemSet[1].nestedInput" );
     }
 
     @Test
@@ -440,19 +443,20 @@ class ValidateContentDataCommandTest
         SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( siteConfigDataSet ).build();
         SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
 
-        Mockito.when( siteService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) ).thenReturn( createThirdLevelNestedSiteDescriptor() );
+        Mockito.when( cmsService.getDescriptor( Mockito.isA( ApplicationKey.class ) ) )
+            .thenReturn( createThirdLevelNestedSiteDescriptor() );
 
         // exercise
         final ValidationErrors result = executeValidation( rootDataSet, ContentTypeName.site() );
 
         // verify
-        assertThat(result.stream()).hasSize( 1 );
+        assertThat( result.stream() ).hasSize( 1 );
         final var error = result.stream().findFirst().orElseThrow();
-        
+
         // Verify that the error is a DataValidationError with the third level nested field path including the array index
-        assertThat(error).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
+        assertThat( error ).isInstanceOf( com.enonic.xp.content.DataValidationError.class );
         final var dataError = (com.enonic.xp.content.DataValidationError) error;
-        assertThat(dataError.getPropertyPath().toString()).isEqualTo( "outerSet.innerSet[1].deepInput" );
+        assertThat( dataError.getPropertyPath().toString() ).isEqualTo( "outerSet.innerSet[1].deepInput" );
     }
 
     private ValidationErrors executeValidation( final PropertyTree propertyTree, final ContentTypeName contentTypeName )

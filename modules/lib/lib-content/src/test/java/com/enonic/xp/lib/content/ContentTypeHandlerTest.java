@@ -14,12 +14,12 @@ import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
 import com.enonic.xp.schema.content.GetContentTypeParams;
+import com.enonic.xp.util.GenericValue;
 
 import static org.mockito.ArgumentMatchers.any;
 
@@ -142,7 +142,7 @@ class ContentTypeHandlerTest
             .label( "My text line" )
             .helpText( "Some help text" )
             .required( true )
-            .inputTypeConfig( GenericValue.object().put( "regexp", "\\b\\d{3}-\\d{2}-\\d{4}\\b" ).build() )
+            .inputTypeConfig( GenericValue.newObject().put( "regexp", "\\b\\d{3}-\\d{2}-\\d{4}\\b" ).build() )
             .build();
 
         Input myCustomInput = Input.create()
@@ -157,17 +157,17 @@ class ContentTypeHandlerTest
             .name( "myRadioButton" )
             .inputType( InputTypeName.RADIO_BUTTON )
             .label( "Radio button" )
-            .inputTypeProperty( "options", GenericValue.list()
-                .add( GenericValue.object()
+            .inputTypeProperty( "options", GenericValue.newList()
+                .add( GenericValue.newObject()
                           .put( "value", "one" )
-                          .put( "label", GenericValue.object().put( "text", "Value One" ).build() )
+                          .put( "label", GenericValue.newObject().put( "text", "Value One" ).build() )
                           .build() )
-                .add( GenericValue.object()
+                .add( GenericValue.newObject()
                           .put( "value", "two" )
-                          .put( "label", GenericValue.object().put( "text", "Value Two" ).build() )
+                          .put( "label", GenericValue.newObject().put( "text", "Value Two" ).build() )
                           .build() )
                 .build() )
-            .inputTypeProperty( "theme", GenericValue.list()
+            .inputTypeProperty( "theme", GenericValue.newList()
                 .add( GenericValue.stringValue( "dark" ) )
                 .add( GenericValue.stringValue( "light" ) )
                 .build() )
@@ -257,7 +257,7 @@ class ContentTypeHandlerTest
             .name( "nationality" )
             .inputType( InputTypeName.CONTENT_SELECTOR )
             .inputTypeProperty( "allowContentType",
-                                GenericValue.list().add( GenericValue.stringValue( "com.enonic.myapp:country" ) ).build() )
+                                GenericValue.newList().add( GenericValue.stringValue( "com.enonic.myapp:country" ) ).build() )
             .label( "Nationality" )
             .build();
 

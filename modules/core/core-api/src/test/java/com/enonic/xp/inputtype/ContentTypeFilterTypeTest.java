@@ -35,7 +35,7 @@ class ContentTypeFilterTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "name" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
@@ -44,13 +44,13 @@ class ContentTypeFilterTypeTest
     @Test
     void testValidate()
     {
-        this.type.validate( stringProperty( "name" ), GenericValue.object().build() );
+        this.type.validate( stringProperty( "name" ), GenericValue.newObject().build() );
     }
 
     @Test
     void testValidate_invalidType()
     {
         assertThrows( InputTypeValidationException.class,
-                      () -> this.type.validate( booleanProperty( true ), GenericValue.object().build() ) );
+                      () -> this.type.validate( booleanProperty( true ), GenericValue.newObject().build() ) );
     }
 }
