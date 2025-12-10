@@ -11,6 +11,7 @@ import com.google.common.io.LineProcessor;
 import com.enonic.xp.node.LoadNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.model.BranchDumpEntry;
 import com.enonic.xp.repo.impl.dump.model.VersionMeta;
@@ -54,18 +55,13 @@ public class BranchEntryProcessor
             return;
         }
 
-        final Node.Builder nodeBuilder = Node.create( nodeVersion ).nodeVersionId( meta.getVersion() ).timestamp( meta.getTimestamp().truncatedTo( ChronoUnit.MILLIS ) );
-        if ( !nodeVersion.getId().equals( Node.ROOT_UUID ) )
-        {
-            nodeBuilder.parentPath( meta.getNodePath().getParentPath() ).name( meta.getNodePath().getName() );
-        }
-
         try
         {
-            this.nodeService.loadNode( LoadNodeParams.create().
-                node( nodeBuilder.build() ).
-                nodeCommitId( meta.getNodeCommitId() ).
-                build() );
+            final Node node = NodeFactory.create( nodeVersion, meta.version(), meta.nodePath(),
+                                                  meta.timestamp().truncatedTo( ChronoUnit.MILLIS ) );
+
+            this.nodeService.loadNode(
+                LoadNodeParams.create().node( node ).nodeCommitId( meta.nodeCommitId() ).attributes( meta.attributes() ).build() );
 
             addBinary( nodeVersion, result );
 
@@ -74,7 +70,7 @@ public class BranchEntryProcessor
         catch ( Exception e )
         {
             final String message =
-                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.getNodePath(), e.getMessage() );
+                String.format( "Cannot load node with id %s, path %s: %s", nodeVersion.getId(), meta.nodePath(), e.getMessage() );
             result.error( EntryLoadError.error( message ) );
             LOG.error( message, e );
         }
@@ -84,11 +80,11 @@ public class BranchEntryProcessor
     {
         try
         {
-            return this.dumpReader.get( repositoryId, meta.getNodeVersionKey() );
+            return this.dumpReader.get( repositoryId, meta.nodeVersionKey() );
         }
         catch ( RepoLoadException e )
         {
-            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.getVersion(), e );
+            LOG.error( "Cannot load version, missing in existing blobStore, and not present in dump: {}", meta.version(), e );
             return null;
         }
     }

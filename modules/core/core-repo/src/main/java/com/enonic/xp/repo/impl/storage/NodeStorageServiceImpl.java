@@ -14,10 +14,10 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobKeys;
-import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCommitEntry;
 import com.enonic.xp.node.NodeCommitId;
@@ -27,11 +27,10 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.NodeVersionIds;
+import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersionMetadata;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.node.PushNodesListener;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
@@ -88,41 +87,24 @@ public class NodeStorageServiceImpl
             .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
             .nodePath( node.path() )
             .nodeCommitId( params.getNodeCommitId() )
+            .attributes( params.getVersionAttributes() )
             .timestamp( timestamp )
             .build();
 
-        this.versionService.store( nodeVersionMetadata, context );
-
-        this.branchService.store( NodeBranchEntry.create()
-                                      .nodeId( node.id() )
-                                      .nodeVersionId( nodeVersionId )
-                                      .nodeVersionKey( nodeVersionKey )
-                                      .nodePath( node.path() )
-                                      .timestamp( timestamp )
-                                      .build(), context );
         final Node newNode = Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build();
 
+        this.versionService.store( nodeVersionMetadata, context );
+        this.branchService.store( NodeBranchEntry.fromNodeVersionMetadata( nodeVersionMetadata ), context );
         this.indexDataService.store( newNode, context );
 
         return new NodeVersionData( newNode, nodeVersionMetadata );
     }
 
     @Override
-    public void push( final Collection<NodeBranchEntry> entries, final Branch target, final PushNodesListener pushListener,
-                      final InternalContext context )
-    {
-        final InternalContext targetContext = InternalContext.create( context ).skipConstraints( true ).branch( target ).build();
-
-        for ( final NodeBranchEntry entry : entries )
-        {
-            this.branchService.store( entry, targetContext );
-            pushListener.nodesPushed( 1 );
-        }
-
-        final Collection<NodeId> nodeIds =
-            entries.stream().map( NodeBranchEntry::getNodeId ).collect( Collectors.toList() );
-
-        this.indexDataService.push( IndexPushNodeParams.create().nodeIds( nodeIds ).targetBranch( target ).build(), context );
+    public void push( final NodeBranchEntry entry, final Branch origin,
+                      final InternalContext context ) {
+        this.branchService.push( entry, context );
+        this.indexDataService.push( entry.getNodeId(), origin, context );
     }
 
     @Override
@@ -130,26 +112,27 @@ public class NodeStorageServiceImpl
     {
         final NodeVersionKey nodeVersionKey = this.nodeVersionService.store( params.getNodeVersion(), context );
 
-        this.versionService.store( NodeVersionMetadata.create().
-            nodeId( params.getNodeId() ).
-            nodeVersionId( params.getNodeVersionId() ).
-            nodeVersionKey( nodeVersionKey ).
-            binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().getAttachedBinaries() ) ).
-            nodePath( params.getNodePath() ).
-            nodeCommitId( params.getNodeCommitId() ).
-            timestamp( params.getTimestamp() ).
-            build(), context );
+        this.versionService.store( NodeVersionMetadata.create()
+                                       .nodeId( params.getNodeId() )
+                                       .nodeVersionId( params.getNodeVersionId() )
+                                       .nodeVersionKey( nodeVersionKey )
+                                       .binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().getAttachedBinaries() ) )
+                                       .nodePath( params.getNodePath() )
+                                       .nodeCommitId( params.getNodeCommitId() )
+                                       .timestamp( params.getTimestamp() )
+                                       .attributes( params.getAttributes() )
+                                       .build(), context );
     }
 
     @Override
     public void storeCommit( final StoreNodeCommitParams params, final InternalContext context )
     {
-        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create().
-            nodeCommitId( params.getNodeCommitId() ).
-            message( params.getMessage() ).
-            committer( params.getCommitter() ).
-            timestamp( params.getTimestamp() ).
-            build();
+        final NodeCommitEntry nodeCommitEntry = NodeCommitEntry.create()
+            .nodeCommitId( params.getNodeCommitId() )
+            .message( params.getMessage() )
+            .committer( params.getCommitter() )
+            .timestamp( params.getTimestamp() )
+            .build();
         this.commitService.store( nodeCommitEntry, context );
     }
 
@@ -172,24 +155,54 @@ public class NodeStorageServiceImpl
     }
 
     @Override
-    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final RoutableNodeVersionIds routableNodeVersionIds,
-                                   final InternalContext context )
+    public NodeCommitEntry commit( final NodeCommitEntry nodeCommitEntry, final NodeVersionIds versionIds, final InternalContext context )
     {
         final NodeCommitId nodeCommitId = new NodeCommitId();
-        final NodeCommitEntry updatedCommitEntry = NodeCommitEntry.create( nodeCommitEntry ).
-            nodeCommitId( nodeCommitId ).
-            build();
+        final NodeCommitEntry updatedCommitEntry = NodeCommitEntry.create( nodeCommitEntry ).nodeCommitId( nodeCommitId ).build();
         this.commitService.store( updatedCommitEntry, context );
-        for ( RoutableNodeVersionId routableNodeVersionId : routableNodeVersionIds )
+
+        for ( final NodeVersionId versionId : versionIds )
         {
-            final NodeVersionMetadata existingVersion =
-                this.versionService.getVersion( routableNodeVersionId.getNodeVersionId(), context );
-            final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create( existingVersion ).
-                nodeCommitId( nodeCommitId ).
-                build();
+            final NodeVersionMetadata existingVersion = this.versionService.getVersion( versionId, context );
+
+            final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create()
+                .nodeVersionId( existingVersion.getNodeVersionId() )
+                .nodeVersionKey( existingVersion.getNodeVersionKey() )
+                .binaryBlobKeys( existingVersion.getBinaryBlobKeys() )
+                .nodeId( existingVersion.getNodeId() )
+                .nodePath( existingVersion.getNodePath() )
+                .timestamp( existingVersion.getTimestamp() )
+                .attributes( existingVersion.getAttributes() )
+                .nodeCommitId( nodeCommitId )
+                .build();
             this.versionService.store( updatedVersion, context );
         }
         return updatedCommitEntry;
+    }
+
+    @Override
+    public void addAttributes( final NodeVersionId versionId, Attributes value, final InternalContext context )
+    {
+        final NodeVersionMetadata existingVersion = this.versionService.getVersion( versionId, context );
+
+        final Attributes attributes = existingVersion.getAttributes();
+        final Attributes.Builder builder = Attributes.create();
+        if ( attributes != null )
+        {
+            builder.addAll( attributes.entrySet() );
+        }
+        final Attributes newAttrs = builder.addAll( value.entrySet() ).buildKeepingLast();
+        final NodeVersionMetadata updatedVersion = NodeVersionMetadata.create()
+            .nodeVersionId( existingVersion.getNodeVersionId() )
+            .nodeVersionKey( existingVersion.getNodeVersionKey() )
+            .binaryBlobKeys( existingVersion.getBinaryBlobKeys() )
+            .nodeId( existingVersion.getNodeId() )
+            .nodePath( existingVersion.getNodePath() )
+            .timestamp( existingVersion.getTimestamp() )
+            .attributes( newAttrs )
+            .nodeCommitId( existingVersion.getNodeCommitId() )
+            .build();
+        this.versionService.store( updatedVersion, context );
     }
 
     @Override
@@ -204,9 +217,7 @@ public class NodeStorageServiceImpl
 
         final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-        return canRead( nodeVersion.getPermissions(), context )
-            ? NodeFactory.create( nodeVersion, nodeBranchEntry )
-            : null;
+        return canRead( nodeVersion.getPermissions(), context ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
     }
 
     @Override
@@ -221,9 +232,7 @@ public class NodeStorageServiceImpl
 
         final NodeVersion nodeVersion = nodeVersionService.get( nodeBranchEntry.getNodeVersionKey(), context );
 
-        return canRead( nodeVersion.getPermissions(), context )
-            ? NodeFactory.create( nodeVersion, nodeBranchEntry )
-            : null;
+        return canRead( nodeVersion.getPermissions(), context ) ? NodeFactory.create( nodeVersion, nodeBranchEntry ) : null;
     }
 
     @Override
@@ -240,9 +249,8 @@ public class NodeStorageServiceImpl
     @Override
     public Nodes get( final NodePaths nodePaths, final InternalContext context )
     {
-        final Stream<NodeBranchEntry> stream = nodePaths.stream()
-            .map( nodePath -> this.branchService.get( nodePath, context ) )
-            .filter( Objects::nonNull );
+        final Stream<NodeBranchEntry> stream =
+            nodePaths.stream().map( nodePath -> this.branchService.get( nodePath, context ) ).filter( Objects::nonNull );
         return doReturnNodes( stream, context );
     }
 

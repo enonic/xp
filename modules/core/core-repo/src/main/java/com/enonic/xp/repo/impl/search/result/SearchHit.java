@@ -2,9 +2,7 @@ package com.enonic.xp.repo.impl.search.result;
 
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
-import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.index.IndexFieldNameNormalizer;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public class SearchHit
@@ -67,16 +65,6 @@ public class SearchHit
         return explanation;
     }
 
-    public ReturnValue getField( final String fieldName )
-    {
-        return doGetField( fieldName, false );
-    }
-
-    public ReturnValue getField( final String fieldName, final boolean failOnMissing )
-    {
-        return doGetField( fieldName, failOnMissing );
-    }
-
     public ReturnValues getReturnValues()
     {
         return returnValues;
@@ -90,20 +78,6 @@ public class SearchHit
     public SortValuesProperty getSortValues()
     {
         return sortValues;
-    }
-
-    private ReturnValue doGetField( final String fieldName, final boolean failOnMissing )
-    {
-        final String normalizedFieldName = IndexFieldNameNormalizer.normalize( fieldName );
-
-        final ReturnValue returnValue = returnValues.get( normalizedFieldName );
-
-        if ( failOnMissing && returnValue == null )
-        {
-            throw new RuntimeException( "Expected field " + normalizedFieldName + " in result not found" );
-        }
-
-        return returnValue;
     }
 
     @Override

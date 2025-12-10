@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.osgi.service.component.annotations.Activate;
@@ -21,11 +21,10 @@ import com.google.common.io.Files;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.server.ServerInfo;
+import com.enonic.xp.home.HomeDir;
 
 @Component(configurationPid = "com.enonic.xp.server.deploy", service = {DeployDirectoryWatcher.class})
 public final class DeployDirectoryWatcher
-    implements FileAlterationListener
 {
     private static final Logger LOGGER = LoggerFactory.getLogger( DeployDirectoryWatcher.class );
 
@@ -33,65 +32,33 @@ public final class DeployDirectoryWatcher
 
     private final Map<ApplicationKey, Stack<String>> pathsByApplicationKey = new ConcurrentHashMap<>();
 
-    private ApplicationService applicationService;
+    private final ApplicationService applicationService;
 
-    private FileAlterationMonitor monitor;
+    private final long interval;
 
-    private long interval;
+    private volatile FileAlterationMonitor monitor;
 
     @Activate
-    public void activate( final DeployConfig config )
-        throws Exception
+    public DeployDirectoryWatcher( @Reference final ApplicationService applicationService, final DeployConfig config )
     {
-        interval = config.interval();
+        this.applicationService = applicationService;
+        this.interval = config.interval();
     }
 
     public void deploy()
         throws Exception
     {
-        final FileAlterationObserver observer1 = addListenerDir( getDeployFolder() );
-        this.monitor = new FileAlterationMonitor( interval, observer1 );
+        final FileAlterationObserver observer = FileAlterationObserver.builder()
+            .setFile( HomeDir.get().toPath().resolve( "deploy" ).toFile() )
+            .setFileFilter( DeployDirectoryWatcher::isJarFile )
+            .get();
+        observer.addListener( new Listener() );
+        bootstrap( observer );
+        this.monitor = new FileAlterationMonitor( interval, observer );
         this.monitor.start();
     }
 
-    private FileAlterationObserver addListenerDir( final File dir )
-        throws Exception
-    {
-        final FileAlterationObserver observer = new FileAlterationObserver( dir, this::isJarFile );
-        observer.addListener( this );
-
-        installApps( dir );
-        return observer;
-    }
-
-    private void installApps( final File dir )
-        throws Exception
-    {
-        if ( !dir.exists() )
-        {
-            return;
-        }
-
-        final File[] files = dir.listFiles( this::isJarFile );
-        if ( files == null )
-        {
-            return;
-        }
-
-        for ( final File file : files )
-        {
-            try
-            {
-                installApplication( file );
-            }
-            catch ( Exception e )
-            {
-                LOGGER.error( "Failed to install local application [" + file.getName() + "]", e );
-            }
-        }
-    }
-
-    private boolean isJarFile( final File file )
+    private static boolean isJarFile( final File file )
     {
         return file.getName().endsWith( ".jar" ) && file.isFile();
     }
@@ -106,68 +73,73 @@ public final class DeployDirectoryWatcher
         }
     }
 
-    @Override
-    public void onStart( final FileAlterationObserver fileAlterationObserver )
-    {
-    }
-
-    @Override
-    public void onDirectoryCreate( final File file )
-    {
-    }
-
-    @Override
-    public void onDirectoryChange( final File file )
-    {
-    }
-
-    @Override
-    public void onDirectoryDelete( final File file )
-    {
-    }
-
-    @Override
-    public void onFileCreate( final File file )
-    {
-        try
+    private void bootstrap( FileAlterationObserver observer ) {
+        final File dir = observer.getDirectory();
+        if ( !dir.exists() )
         {
-            installApplication( file );
+            return;
         }
-        catch ( Exception e )
+
+        final File[] files = dir.listFiles( DeployDirectoryWatcher::isJarFile );
+        if ( files == null )
         {
-            LOGGER.error( "Failed to install local application", e );
+            return;
+        }
+
+        for ( final File file : files )
+        {
+            try
+            {
+                installApplication( file );
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to install local application [{}]", file.getName(), e );
+            }
         }
     }
 
-    @Override
-    public void onFileChange( final File file )
+    private class Listener
+        extends FileAlterationListenerAdaptor
     {
-        try
+        @Override
+        public void onFileCreate( final File file )
         {
-            installApplication( file );
+            try
+            {
+                installApplication( file );
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to install local application", e );
+            }
         }
-        catch ( Exception e )
-        {
-            LOGGER.error( "Failed to install local application", e );
-        }
-    }
 
-    @Override
-    public void onFileDelete( final File file )
-    {
-        try
+        @Override
+        public void onFileChange( final File file )
         {
-            uninstallApplication( file );
+            try
+            {
+                installApplication( file );
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to install local application", e );
+            }
         }
-        catch ( Exception e )
-        {
-            LOGGER.error( "Failed to uninstall local application", e );
-        }
-    }
 
-    @Override
-    public void onStop( final FileAlterationObserver fileAlterationObserver )
-    {
+        @Override
+        public void onFileDelete( final File file )
+        {
+            try
+            {
+                uninstallApplication( file );
+            }
+            catch ( Exception e )
+            {
+                LOGGER.error( "Failed to uninstall local application", e );
+            }
+        }
     }
 
     private void installApplication( final File file )
@@ -182,7 +154,7 @@ public final class DeployDirectoryWatcher
         //Stores a mapping fileName -> applicationKey. Needed for uninstallation
         this.applicationKeyByPath.put( path, applicationKey );
 
-        //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallatioon
+        //Updates the mapping applicationKey -> stack<fileName>. Needed in some particular case for uninstallation
         this.pathsByApplicationKey.compute( applicationKey, ( applicationKeyParam, fileNameStack ) -> {
             if ( fileNameStack == null )
             {
@@ -226,7 +198,7 @@ public final class DeployDirectoryWatcher
                         }
                         catch ( Exception e )
                         {
-                            LOGGER.warn( "Failed to reinstall local application [" + previousInstalledFile + "]", e );
+                            LOGGER.warn( "Failed to reinstall local application [{}]", previousInstalledFile, e );
                         }
                     } );
                 }
@@ -238,17 +210,5 @@ public final class DeployDirectoryWatcher
 
             return fileNameStack.isEmpty() ? null : fileNameStack;
         } );
-    }
-
-    @Reference
-    public void setApplicationService( final ApplicationService applicationService )
-    {
-        this.applicationService = applicationService;
-    }
-
-    private static File getDeployFolder()
-    {
-        final File homeDir = ServerInfo.get().getHomeDir();
-        return new File( homeDir, "deploy" );
     }
 }

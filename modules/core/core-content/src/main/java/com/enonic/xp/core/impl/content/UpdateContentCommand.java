@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -14,7 +15,6 @@ import com.enonic.xp.attachment.CreateAttachment;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.AttachmentValidationError;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentInheritType;
@@ -78,7 +78,7 @@ final class UpdateContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
     }
 
@@ -90,7 +90,11 @@ final class UpdateContentCommand
 
         editedContent = editContent( params.getEditor(), contentBeforeChange );
         editedContent = processContent( editedContent );
-        editedContent = editContentMetadata( editedContent );
+
+        final List<String> modifiedFields = ContentAttributesHelper.modifiedFields( contentBeforeChange, editedContent );
+
+        editedContent =
+            editContentMetadata( editedContent, modifiedFields.stream().anyMatch( ContentAttributesHelper.EDITORIAL_FIELDS::contains ) );
 
         if ( isContentTheSame().test( contentBeforeChange, editedContent ) )
         {
@@ -109,29 +113,32 @@ final class UpdateContentCommand
         final PatchNodeParams patchNodeParams = PatchNodeParamsFactory.create()
             .editedContent( editedContent )
             .createAttachments( params.getCreateAttachments() )
+            .versionAttributes( ContentAttributesHelper.updateVersionHistoryAttr( modifiedFields ) )
             .branches( Branches.from( ContextAccessor.current().getBranch() ) )
             .contentTypeService( this.contentTypeService )
             .mixinService( this.mixinService )
             .pageDescriptorService( this.pageDescriptorService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
-            .contentDataSerializer( this.translator.getContentDataSerializer() )
             .cmsService( this.cmsService )
             .build()
             .produce();
 
         final PatchNodeResult result = this.nodeService.patch( patchNodeParams );
 
-        return translator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
+        return ContentNodeTranslator.fromNode( result.getResult( ContextAccessor.current().getBranch() ) );
     }
 
-    private Content editContentMetadata( Content content )
+    private Content editContentMetadata( Content content, final boolean editModifier )
     {
         final PatchableContent patchableContent = new PatchableContent( content );
         patchableContent.inherit.setPatcher( c -> stopInherit( c.inherit.originalValue ) );
         patchableContent.attachments.setPatcher( c -> mergeExistingAndUpdatedAttachments( c.attachments.originalValue ) );
-        patchableContent.modifier.setValue( getCurrentUser().getKey() );
-        patchableContent.modifiedTime.setValue( Instant.now() );
+        if ( editModifier )
+        {
+            patchableContent.modifier.setValue( getCurrentUserKey() );
+            patchableContent.modifiedTime.setValue( Instant.now() );
+        }
         patchableContent.validationErrors.setPatcher( c -> validateContent( c.source ) );
         patchableContent.valid.setPatcher( c -> !c.validationErrors.getProducedValue().hasErrors() );
         return patchableContent.build();
@@ -279,7 +286,6 @@ final class UpdateContentCommand
         }
 
         validatePropertyTree( editedContent );
-        ContentPublishInfoPreconditions.check( editedContent.getPublishInfo() );
 
         if ( editedContent.getType().isImageMedia() )
         {

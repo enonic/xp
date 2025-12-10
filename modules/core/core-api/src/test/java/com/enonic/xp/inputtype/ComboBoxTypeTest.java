@@ -35,7 +35,7 @@ class ComboBoxTypeTest
     @Test
     void testCreateProperty()
     {
-        final Value value = this.type.createValue( ValueFactory.newString( "one" ), GenericValue.object().build() );
+        final Value value = this.type.createValue( ValueFactory.newString( "one" ), GenericValue.newObject().build() );
 
         assertNotNull( value );
         assertSame( ValueTypes.STRING, value.getType() );
@@ -64,15 +64,15 @@ class ComboBoxTypeTest
 
     private GenericValue newValidConfig()
     {
-        return GenericValue.object()
-            .put( "option", GenericValue.list()
-                .add( GenericValue.object()
+        return GenericValue.newObject()
+            .put( "options", GenericValue.newList()
+                .add( GenericValue.newObject()
                           .put( "value", "one" )
-                          .put( "label", GenericValue.object().put( "text", "Value One" ).build() )
+                          .put( "label", GenericValue.newObject().put( "text", "Value One" ).build() )
                           .build() )
-                .add( GenericValue.object()
+                .add( GenericValue.newObject()
                           .put( "value", "two" )
-                          .put( "label", GenericValue.object().put( "text", "Value Two" ).build() )
+                          .put( "label", GenericValue.newObject().put( "text", "Value Two" ).build() )
                           .build() )
                 .build() )
             .build();

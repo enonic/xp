@@ -26,11 +26,6 @@ public class FindNodesByMultiRepoQueryCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
-    {
-        return new Builder( source );
-    }
-
     public FindNodesByMultiRepoQueryResult execute()
     {
         final SearchTargets searchTargets = query.getSearchTargets();
@@ -59,11 +54,6 @@ public class FindNodesByMultiRepoQueryCommand
         private Builder()
         {
             super();
-        }
-
-        private Builder( final AbstractNodeCommand source )
-        {
-            super( source );
         }
 
         public Builder query( MultiRepoNodeQuery query )

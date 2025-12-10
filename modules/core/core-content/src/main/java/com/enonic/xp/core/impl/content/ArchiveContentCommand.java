@@ -9,14 +9,12 @@ import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.ArchiveContentException;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
-import com.enonic.xp.content.ContentAccessException;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UnpublishContentParams;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeParams;
@@ -29,11 +27,9 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.RoutableNodeVersionId;
-import com.enonic.xp.node.RoutableNodeVersionIds;
-import com.enonic.xp.security.User;
 
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_BY;
 import static com.enonic.xp.content.ContentPropertyNames.ARCHIVED_TIME;
@@ -71,7 +67,7 @@ final class ArchiveContentCommand
         }
         catch ( NodeAccessException e )
         {
-            throw new ContentAccessException( e );
+            throw ContentNodeHelper.toContentAccessException( e );
         }
     }
 
@@ -105,7 +101,6 @@ final class ArchiveContentCommand
         return UnpublishContentCommand.create()
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
-            .translator( translator )
             .eventPublisher( eventPublisher )
             .params( UnpublishContentParams.create()
                          .contentIds( ContentIds.create()
@@ -121,7 +116,7 @@ final class ArchiveContentCommand
     private NodeDataProcessor updateProperties( final ContentPath originalPath )
     {
         final Instant now = Instant.now();
-        final String archivedBy = getCurrentUser().getKey().toString();
+        final String archivedBy = getCurrentUserKey().toString();
 
         return ( data, nodePath ) -> {
             var toBeEdited = data.copy();
@@ -138,15 +133,14 @@ final class ArchiveContentCommand
 
     private void commit( final Nodes nodes )
     {
-        final RoutableNodeVersionIds routableNodeVersionIds = nodes.stream()
-            .map( n -> RoutableNodeVersionId.from( n.id(), n.getNodeVersionId() ) )
-            .collect( RoutableNodeVersionIds.collector() );
-
         final String commitEntryMessage = params.getMessage() == null
             ? ContentConstants.ARCHIVE_COMMIT_PREFIX
             : String.join( ContentConstants.ARCHIVE_COMMIT_PREFIX_DELIMITER, ContentConstants.ARCHIVE_COMMIT_PREFIX, params.getMessage() );
 
-        nodeService.commit( NodeCommitEntry.create().message( commitEntryMessage ).build(), routableNodeVersionIds );
+        nodeService.commit( CommitNodeParams.create()
+                                .nodeCommitEntry( NodeCommitEntry.create().message( commitEntryMessage ).build() )
+                                .nodeVersionIds( nodes.stream().map( Node::getNodeVersionId ).collect( NodeVersionIds.collector() ) )
+                                .build() );
     }
 
     private MoveNodeResult rename( final Node node )
@@ -177,6 +171,8 @@ final class ArchiveContentCommand
         }
         moveParams.processor( processors.build() );
 
+        moveParams.versionAttributes( ContentAttributesHelper.versionHistoryAttr( ContentAttributesHelper.ARCHIVE_ATTR ) );
+
         return nodeService.move( moveParams.build() );
     }
 
@@ -187,12 +183,6 @@ final class ArchiveContentCommand
             throw new ArchiveContentException( String.format( "content [%s] is archived already", node.id() ),
                                                ContentNodeHelper.translateNodePathToContentPath( node.path() ) );
         }
-    }
-
-    private User getCurrentUser()
-    {
-        final Context context = ContextAccessor.current();
-        return context.getAuthInfo().getUser() != null ? context.getAuthInfo().getUser() : User.ANONYMOUS;
     }
 
     public static class Builder

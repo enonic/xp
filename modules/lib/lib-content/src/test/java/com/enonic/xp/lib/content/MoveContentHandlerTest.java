@@ -13,7 +13,6 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.RenameContentParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
@@ -86,9 +85,9 @@ class MoveContentHandlerTest
 
     private void mockRename( final ContentId contentId, final String newName, final Content contentResult )
     {
-        final RenameContentParams renameParams =
-            RenameContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build();
-        when( this.contentService.rename( Mockito.eq( renameParams ) ) ).thenReturn( contentResult );
+        final MoveContentParams renameParams =
+            MoveContentParams.create().contentId( contentId ).newName( ContentName.from( newName ) ).build();
+        when( this.contentService.move( Mockito.eq( renameParams ) ) ).thenReturn( MoveContentsResult.create().addMoved( contentResult.getId() ).build() );
     }
 
     private void mockMove( final ContentId contentId, final String parentPath, final Content contentResult )

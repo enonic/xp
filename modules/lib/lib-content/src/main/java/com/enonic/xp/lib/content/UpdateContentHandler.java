@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.content;
 
-import java.time.Instant;
-import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -11,7 +9,6 @@ import com.enonic.xp.content.ContentEditor;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.EditableContent;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.convert.Converters;
@@ -105,13 +102,6 @@ public final class UpdateContentHandler
 
         updatePage( target, map );
 
-        final Object publishInfo = map.get( "publish" );
-
-        if ( publishInfo instanceof Map )
-        {
-            target.publishInfo = createContentPublishInfo( (Map) publishInfo );
-        }
-
         final Object workflowInfo = map.get( "workflow" );
         if ( workflowInfo instanceof Map )
         {
@@ -151,33 +141,6 @@ public final class UpdateContentHandler
                     .orElse( null );
             }
         }
-    }
-
-    private ContentPublishInfo createContentPublishInfo( final Map<String, Object> value )
-    {
-        if ( value == null )
-        {
-            return null;
-        }
-
-        return ContentPublishInfo.create().from( getInstant( value, "from" ) ).to( getInstant( value, "to" ) ).build();
-    }
-
-    private Instant getInstant( final Map<String, Object> valueMap, final String key )
-    {
-        final Object value = valueMap.get( key );
-        if ( value != null )
-        {
-            try
-            {
-                return Instant.parse( value.toString() );
-            }
-            catch ( DateTimeParseException e )
-            {
-                throw new IllegalArgumentException( key + " value could not be parsed to instant: [" + value + "]" );
-            }
-        }
-        return null;
     }
 
     @Override

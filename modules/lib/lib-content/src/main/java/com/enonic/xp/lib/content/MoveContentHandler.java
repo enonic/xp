@@ -1,17 +1,11 @@
 package com.enonic.xp.lib.content;
 
-import java.util.UUID;
-
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentAlreadyExistsException;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
-import com.enonic.xp.content.RenameContentParams;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.lib.content.mapper.ContentMapper;
 
 public final class MoveContentHandler
@@ -28,61 +22,36 @@ public final class MoveContentHandler
     }
 
     private Content executeMove()
-
     {
         final ContentId sourceId;
-        final ContentPath sourcePath;
         if ( this.source.startsWith( "/" ) )
         {
             // source is path
-            sourcePath = ContentPath.from( this.source );
-            final Content sourceContent = contentService.getByPath( sourcePath );
-            sourceId = sourceContent.getId();
+            sourceId = contentService.getByPath( ContentPath.from( this.source ) ).getId();
         }
         else
         {
             // source is key
             sourceId = ContentId.from( this.source );
-            final Content sourceContent = contentService.getById( sourceId );
-            sourcePath = sourceContent.getPath();
         }
 
         if ( target.endsWith( "/" ) )
         {
             // move as child of target path, keep same name
             // /a/b -> /c/d/ => /c/d/b
-            return move( sourceId, ContentPath.from( target ) );
+            return renmov( sourceId, null, ContentPath.from( target ) );
         }
         else if ( !target.startsWith( "/" ) )
         {
             // just rename, keep same parent path
             // /a/b -> c => /a/c
-            return rename( sourceId, ContentName.from( target ) );
+            return renmov( sourceId, ContentName.from( target ), null );
         }
         else
         {
             // rename+move to target path
             final ContentPath targetPath = ContentPath.from( target );
-            final ContentPath targetParent = targetPath.getParentPath();
-            if ( targetParent.equals( sourcePath.getParentPath() ) )
-            {
-                // just rename, target path has same parent as source
-                // /a/b -> /a/c => /a/c
-                return rename( sourceId, targetPath.getName() );
-            }
-
-            // /a/b -> /c/d => /c/d
-            if ( contentService.contentExists( targetPath ) )
-            {
-                final Context currentContext = ContextAccessor.current();
-                throw new ContentAlreadyExistsException( targetPath, currentContext.getRepositoryId(), currentContext.getBranch() );
-            }
-
-            // needs to be first renamed to temporary unique name to avoid clashing with siblings with same target name in source parent or with siblings with source name in target parent
-            rename( sourceId, uniqueName() );
-
-            move( sourceId, targetParent );
-            return rename( sourceId, targetPath.getName() );
+            return renmov( sourceId, targetPath.getName(), targetPath.getParentPath() );
         }
     }
 
@@ -91,25 +60,12 @@ public final class MoveContentHandler
         return new ContentMapper( content );
     }
 
-    private Content move( final ContentId sourceId, final ContentPath newPath )
+    private Content renmov( final ContentId sourceId, final ContentName newName, final ContentPath newPath )
     {
-        final MoveContentParams moveParams = MoveContentParams.create().
-            contentId( sourceId ).
-            parentContentPath( newPath ).
-            build();
+        final MoveContentParams moveParams =
+            MoveContentParams.create().contentId( sourceId ).parentContentPath( newPath ).newName( newName ).build();
         final MoveContentsResult result = contentService.move( moveParams );
         return contentService.getById( result.getMovedContents().first() );
-    }
-
-    private Content rename( final ContentId sourceId, final ContentName newName )
-    {
-        final RenameContentParams renameParams = RenameContentParams.create().contentId( sourceId ).newName( newName ).build();
-        return contentService.rename( renameParams );
-    }
-
-    private ContentName uniqueName()
-    {
-        return ContentName.from( UUID.randomUUID().toString() );
     }
 
     public void setSource( final String source )

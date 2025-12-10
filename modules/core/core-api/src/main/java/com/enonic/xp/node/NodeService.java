@@ -17,9 +17,7 @@ public interface NodeService
 
     MoveNodeResult move( MoveNodeParams params );
 
-    PushNodesResult push( NodeIds ids, Branch target );
-
-    PushNodesResult push( NodeIds ids, Branch target, PushNodesListener pushListener );
+    PushNodesResult push( PushNodeParams params );
 
     DeleteNodeResult delete( DeleteNodeParams deleteNodeParams );
 
@@ -33,7 +31,7 @@ public interface NodeService
 
     Nodes getByPaths( NodePaths paths );
 
-    Node duplicate( DuplicateNodeParams params );
+    DuplicateNodeResult duplicate( DuplicateNodeParams params );
 
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
@@ -71,7 +69,7 @@ public interface NodeService
 
     LoadNodeResult loadNode( LoadNodeParams params );
 
-    NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, RoutableNodeVersionIds routableNodeVersionIds );
+    NodeCommitEntry commit( CommitNodeParams params );
 
     NodeCommitEntry commit( NodeCommitEntry nodeCommitEntry, NodeIds nodeIds );
 
@@ -86,4 +84,6 @@ public interface NodeService
     void importNodeVersion( ImportNodeVersionParams params );
 
     void importNodeCommit( ImportNodeCommitParams params );
+
+    void applyVersionAttributes( ApplyVersionAttributesParams params );
 }

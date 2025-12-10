@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeVersionDiffResult;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
@@ -24,7 +23,7 @@ class NodeVersionDiffResultFactory
 
         for ( final SearchHit hit : result.getHits() )
         {
-            builder.add( NodeId.from( hit.getField( VersionIndexPath.NODE_ID.toString() ).getSingleValue() ) );
+            builder.add( NodeId.from( hit.getReturnValues().getStringValue( VersionIndexPath.NODE_ID ) ) );
         }
 
         return builder.build();

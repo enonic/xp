@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.google.common.collect.Multimap;
-
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repo.impl.StorageSource;
 
@@ -9,7 +7,7 @@ public class StoreRequest
 {
     private final StorageData data;
 
-    private final StorageSource settings;
+    private final StorageSource storage;
 
     private final boolean forceRefresh;
 
@@ -26,7 +24,7 @@ public class StoreRequest
     private StoreRequest( Builder builder )
     {
         this.data = builder.data;
-        this.settings = builder.settings;
+        this.storage = builder.storage;
         this.forceRefresh = builder.forceRefresh;
         this.timeout = builder.timeout;
         this.id = builder.id;
@@ -41,14 +39,14 @@ public class StoreRequest
         return new Builder();
     }
 
-    public Multimap<String, Object> getEntries()
+    public StorageData getData()
     {
-        return this.data.getValues();
+        return this.data;
     }
 
-    public StorageSource getSettings()
+    public StorageSource getStorage()
     {
-        return settings;
+        return storage;
     }
 
     public int getTimeout()
@@ -80,7 +78,7 @@ public class StoreRequest
     {
         private StorageData data;
 
-        private StorageSource settings;
+        private StorageSource storage;
 
         private boolean forceRefresh;
 
@@ -104,9 +102,9 @@ public class StoreRequest
             return this;
         }
 
-        public Builder settings( StorageSource settings )
+        public Builder storage( StorageSource settings )
         {
-            this.settings = settings;
+            this.storage = settings;
             return this;
         }
 
@@ -156,15 +154,7 @@ public class StoreRequest
     @Override
     public String toString()
     {
-        return "StoreRequest{" +
-            "data=" + data +
-            ", settings=" + settings +
-            ", forceRefresh=" + forceRefresh +
-            ", timeout=" + timeout +
-            ", id='" + id + '\'' +
-            ", path=" + path +
-            ", parent='" + parent + '\'' +
-            ", routing='" + routing + '\'' +
-            '}';
+        return "StoreRequest{" + "data=" + data + ", storage=" + storage + ", forceRefresh=" + forceRefresh + ", timeout=" + timeout +
+            ", id='" + id + '\'' + ", path=" + path + ", parent='" + parent + '\'' + ", routing='" + routing + '\'' + '}';
     }
 }

@@ -11,4 +11,9 @@ public class CommitIndexPath
     public static final IndexPath TIMESTAMP = IndexPath.from( "timestamp" );
 
     public static final IndexPath COMMITTER = IndexPath.from( "committer" );
+
+    public static IndexPath[] entryFields()
+    {
+        return new IndexPath[]{COMMIT_ID, MESSAGE, TIMESTAMP, COMMITTER};
+    }
 }

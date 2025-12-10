@@ -124,23 +124,6 @@ class NodeEventsTest
     }
 
     @Test
-    void testRenamed()
-    {
-        final Node sourceNode = createNode( "before", new NodePath( "/mynode1/child1" ), "myId" );
-        final Node targetNode = createNode( "after", new NodePath( "/mynode1/child1" ), "myId" );
-
-        Event event = NodeEvents.renamed( MoveNodeResult.MovedNode.create().node( targetNode ).previousPath( sourceNode.path() ).build(),
-                                          InternalContext.from( createContext( "draft" ) ) );
-
-        assertNotNull( event );
-        assertTrue( event.isDistributed() );
-        assertEquals( NodeEvents.NODE_RENAMED_EVENT, event.getType() );
-        assertEquals(
-            "[{id=myId, path=/mynode1/child1/before, branch=draft, repo=com.enonic.cms.myproject, newPath=/mynode1/child1/after}]",
-            event.getValue( EventConstants.NODES_FIELD ).get().toString() );
-    }
-
-    @Test
     void testSorted()
     {
         final Node sorted = createNode( "sorted", new NodePath( "/mynode1/child1" ), "myId" );

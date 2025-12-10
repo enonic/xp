@@ -12,7 +12,6 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.BranchNotFoundException;
-import com.enonic.xp.repository.RepositoryService;
 
 import static org.mockito.Mockito.when;
 
@@ -22,17 +21,12 @@ class ContentInitializerTest
     @Mock
     private NodeService nodeService;
 
-    @Mock
-    private RepositoryService repositoryService;
-
     @Mock(stubOnly = true)
     private IndexService indexService;
-
 
     @Test
     void testBranchNotFound()
     {
-        when( repositoryService.isInitialized( Mockito.any() ) ).thenReturn( true );
         when( nodeService.getByPath( Mockito.any() ) ).thenThrow( new BranchNotFoundException( Branch.from( "draft" ) ) );
 
         final ProjectName projectName = ProjectName.from( "my-project" );
@@ -40,7 +34,6 @@ class ContentInitializerTest
         Assertions.assertFalse( ContentInitializer.create()
                                     .setIndexService( indexService )
                                     .setNodeService( nodeService )
-                                    .setRepositoryService( repositoryService )
                                     .repositoryId( projectName.getRepoId() )
                                     .build()
                                     .isInitialized() );

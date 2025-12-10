@@ -17,6 +17,7 @@ import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
+import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
@@ -59,7 +60,9 @@ class RepositoryServiceActivatorTest
         when( indexServiceInternal.indicesExists( any() ) ).thenReturn( true );
 
         final Node mockNode = Node.create().id( NodeId.from( "1" ) ).parentPath( NodePath.ROOT ).build();
-        when( nodeStorageService.store( any(), any() ) ).thenReturn( new NodeVersionData( mockNode, mock( NodeVersionMetadata.class ) ) );
+        when( nodeStorageService.store( any(), any() ) ).thenReturn(
+            new NodeVersionData( mockNode, mock( NodeVersionMetadata.class ) ) );
+        when( repositoryEntryService.findRepositoryEntryIds() ).thenReturn( RepositoryIds.create().build() );
     }
 
     @Test

@@ -28,7 +28,7 @@ public class GetNodeByIdCommand
         return new Builder();
     }
 
-    public static Builder create( final AbstractNodeCommand source )
+    static Builder create( final AbstractNodeCommand source )
     {
         return new Builder( source );
     }

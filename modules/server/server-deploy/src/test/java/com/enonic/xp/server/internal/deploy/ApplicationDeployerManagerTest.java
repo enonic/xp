@@ -11,9 +11,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.home.HomeDirSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -32,15 +32,14 @@ class ApplicationDeployerManagerTest
 
     @BeforeEach
     void setup()
-        throws Exception
     {
+        HomeDirSupport.set( temporaryFolder );
         applicationService = mock( ApplicationService.class );
         final StoredApplicationsDeployer storedApplicationsDeployer = new StoredApplicationsDeployer( applicationService );
 
-        deployDirectoryWatcher = new DeployDirectoryWatcher();
         final DeployConfig deployConfig = mock( DeployConfig.class );
-        System.setProperty( "xp.home", temporaryFolder.toFile().getAbsolutePath() );
-        deployDirectoryWatcher.activate( deployConfig );
+        deployDirectoryWatcher = new DeployDirectoryWatcher(applicationService, deployConfig);
+
         applicationDeployerManager = new ApplicationDeployerManager( storedApplicationsDeployer, deployDirectoryWatcher );
     }
 
@@ -48,11 +47,9 @@ class ApplicationDeployerManagerTest
     void test_activate()
         throws Exception
     {
-        deployDirectoryWatcher.setApplicationService( applicationService );
-
         final BundleContext bundleContext = mock( BundleContext.class );
         applicationDeployerManager.activate( bundleContext );
-        verify( applicationService ).installAllStoredApplications( any() );
+        verify( applicationService ).installAllStoredApplications();
 
         var captor = ArgumentCaptor.forClass( Dictionary.class );
         verify( bundleContext ).registerService( same( Condition.class ), eq(Condition.INSTANCE), captor.capture());

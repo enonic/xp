@@ -8,9 +8,9 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
@@ -54,33 +54,6 @@ public class IndexDataServiceImpl
     }
 
     @Override
-    public ReturnValues get( final NodeIds nodeIds, final ReturnFields returnFields, final InternalContext context )
-    {
-        final GetByIdsRequest getByIdsRequest = new GetByIdsRequest( context.getSearchPreference() );
-
-        for ( final NodeId nodeId : nodeIds )
-        {
-            getByIdsRequest.add( createGetByIdRequest( nodeId, returnFields, context ) );
-        }
-
-        final List<GetResult> result = storageDao.getByIds( getByIdsRequest );
-
-        final ReturnValues.Builder allResultValues = ReturnValues.create();
-
-        for ( GetResult getResult : result )
-        {
-            final ReturnValues returnValues = getResult.getReturnValues();
-
-            for ( final String key : returnValues.getReturnValues().keySet() )
-            {
-                allResultValues.add( key, returnValues.get( key ).getValues() );
-            }
-        }
-
-        return allResultValues.build();
-    }
-
-    @Override
     public void delete( final Collection<NodeId> nodeIds, final InternalContext context )
     {
         this.storageDao.delete( DeleteRequests.create().
@@ -106,15 +79,16 @@ public class IndexDataServiceImpl
     }
 
     @Override
-    public void push( final IndexPushNodeParams pushNodeParams, final InternalContext context )
+    public void push( final NodeId nodeId, Branch origin, final InternalContext context )
     {
+        this.storageDao.refresh( SearchStorageName.from( context.getRepositoryId() ) );
         this.storageDao.copy( CopyRequest.create()
                                   .storageSettings( StorageSource.create()
                                                         .storageName( SearchStorageName.from( context.getRepositoryId() ) )
-                                                        .storageType( SearchStorageType.from( context.getBranch() ) )
+                                                        .storageType( SearchStorageType.from( origin ) )
                                                         .build() )
-                                  .nodeIds( pushNodeParams.getNodeIds() )
-                                  .targetBranch( pushNodeParams.getTargetBranch() )
+                                  .nodeIds( List.of( nodeId ) )
+                                  .targetBranch( context.getBranch() )
                                   .targetRepo( context.getRepositoryId() )
                                   .build() );
     }

@@ -13,13 +13,13 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
 
@@ -50,6 +50,7 @@ class InputValidatorTest
         data.addString( "textLine", "textLine" );
         data.addString( "color", "#12345" );
         data.addString( "comboBox", "value2" );
+        data.addString( "radioButton", "value1" );
         data.addBoolean( "checkbox", true );
         data.addString( "phone", "+4797773223" );
         data.addString( "tag", "myTag" );
@@ -196,14 +197,29 @@ class InputValidatorTest
                               .name( "comboBox" )
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeProperty( "option", GenericValue.list()
-                                  .add( GenericValue.object()
+                              .inputTypeProperty( "options", GenericValue.newList()
+                                  .add( GenericValue.newObject()
                                             .put( "value", "value1" )
-                                            .put( "label", GenericValue.object().put( "text", "label1" ).build() )
+                                            .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
                                             .build() )
-                                  .add( GenericValue.object()
+                                  .add( GenericValue.newObject()
                                             .put( "value", "value2" )
-                                            .put( "label", GenericValue.object().put( "text", "label2" ).build() )
+                                            .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
+                                            .build() )
+                                  .build() )
+                              .build() )
+            .addFormItem( Input.create()
+                              .name( "radioButton" )
+                              .label( "RadioButton" )
+                              .inputType( InputTypeName.RADIO_BUTTON )
+                              .inputTypeProperty( "options", GenericValue.newList()
+                                  .add( GenericValue.newObject()
+                                            .put( "value", "value1" )
+                                            .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
+                                            .build() )
+                                  .add( GenericValue.newObject()
+                                            .put( "value", "value2" )
+                                            .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
                                             .build() )
                                   .build() )
                               .build() )
@@ -229,16 +245,8 @@ class InputValidatorTest
             .addFormItem( Input.create().name( "time" ).label( "Time" ).inputType( InputTypeName.TIME ).build() )
             .addFormItem( Input.create().name( "geoPoint" ).label( "Geo point" ).inputType( InputTypeName.GEO_POINT ).build() )
             .addFormItem( Input.create().name( "htmlArea" ).label( "Html area" ).inputType( InputTypeName.HTML_AREA ).build() )
-            .addFormItem( Input.create()
-                              .name( "localDateTime" )
-                              .label( "Local datetime" )
-                              .inputType( InputTypeName.DATE_TIME )
-                              .build() )
-            .addFormItem( Input.create()
-                              .name( "dateTime" )
-                              .label( "Datetime" )
-                              .inputType( InputTypeName.INSTANT )
-                              .build() )
+            .addFormItem( Input.create().name( "localDateTime" ).label( "Local datetime" ).inputType( InputTypeName.DATE_TIME ).build() )
+            .addFormItem( Input.create().name( "dateTime" ).label( "Datetime" ).inputType( InputTypeName.INSTANT ).build() )
             .addFormItem( set )
             .build();
     }

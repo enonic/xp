@@ -36,7 +36,6 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.ContentVersion;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.Mixins;
@@ -133,7 +132,7 @@ public abstract class AbstractContentServiceTest
 
     private static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
 
-    private final ProjectName testprojectName = ProjectName.from( "test" + PROJECT_COUNTER.incrementAndGet() );
+    final ProjectName testprojectName = ProjectName.from( "test" + PROJECT_COUNTER.incrementAndGet() );
 
     public static final User TEST_DEFAULT_USER =
         User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "test-user" ) ).login( "test-user" ).build();
@@ -208,7 +207,7 @@ public abstract class AbstractContentServiceTest
         return ContextBuilder.create()
             .branch( ContentConstants.BRANCH_MASTER )
             .repositoryId( testprojectName.getRepoId() )
-            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( ContentInitializer.SUPER_USER ).build() )
+            .authInfo( ContentInitializer.SUPER_USER_AUTH )
             .build();
     }
 
@@ -385,13 +384,18 @@ public abstract class AbstractContentServiceTest
         return doCreateContent( parentPath, displayName, new PropertyTree(), Mixins.empty(), ContentTypeName.folder() );
     }
 
-    protected Content createContent( ContentPath parentPath, final ContentPublishInfo publishInfo )
+    protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom )
     {
-        final CreateContentParams.Builder builder =
-            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
-                                  ContentTypeName.folder() ).contentPublishInfo( publishInfo );
+        return createAndPublishContent( parentPath, publishFrom, null );
+    }
 
-        return doCreateContent( builder );
+    protected Content createAndPublishContent( final ContentPath parentPath, final Instant publishFrom, final Instant publishTo )
+    {
+        final CreateContentParams params =
+            createContentBuilder( parentPath, "This is my test content #" + UUID.randomUUID(), new PropertyTree(), Mixins.empty(),
+                                  ContentTypeName.folder() ).build();
+
+        return doCreateAndPublishContent( params, publishFrom, publishTo );
     }
 
     protected Content createContent( final ContentPath parentPath, final String displayName, final PropertyTree data )
@@ -426,6 +430,21 @@ public abstract class AbstractContentServiceTest
     {
         final CreateContentParams.Builder builder = createContentBuilder( parentPath, displayName, data, mixins, type );
         return doCreateContent( builder );
+    }
+
+    private Content doCreateAndPublishContent( final CreateContentParams params, final Instant publishFrom, final Instant publishTo )
+    {
+        final Context context = ContextAccessor.current();
+
+        return ContextBuilder.from( context ).branch( ContentConstants.BRANCH_DRAFT ).build().callWith( () -> {
+            final Content content = this.contentService.create( params );
+            this.contentService.publish( PushContentParams.create()
+                                             .publishFrom( publishFrom )
+                                             .publishTo( publishTo )
+                                             .contentIds( ContentIds.from( content.getId() ) )
+                                             .build() );
+            return content;
+        } );
     }
 
     private Content doCreateContent( final CreateContentParams.Builder builder )
@@ -516,15 +535,15 @@ public abstract class AbstractContentServiceTest
                               .name( "comboBox" )
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
-                              .inputTypeConfig( GenericValue.object()
-                                                    .put( "option", GenericValue.list()
-                                                        .add( GenericValue.object()
+                              .inputTypeConfig( GenericValue.newObject()
+                                                    .put( "options", GenericValue.newList()
+                                                        .add( GenericValue.newObject()
                                                                   .put( "value", "value1" )
-                                                                  .put( "label", GenericValue.object().put( "text", "label1" ).build() )
+                                                                  .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
                                                                   .build() )
-                                                        .add( GenericValue.object()
+                                                        .add( GenericValue.newObject()
                                                                   .put( "value", "value2" )
-                                                                  .put( "label", GenericValue.object().put( "text", "label2" ).build() )
+                                                                  .put( "label", GenericValue.newObject().put( "text", "label2" ).build() )
                                                                   .build() )
                                                         .build() )
                                                     .build() )
@@ -579,10 +598,10 @@ public abstract class AbstractContentServiceTest
 
             if ( lastModified != null )
             {
-                assertFalse( next.getModified().isAfter( lastModified ) );
+                assertFalse( next.getTimestamp().isAfter( lastModified ) );
             }
 
-            lastModified = next.getModified();
+            lastModified = next.getTimestamp();
         }
     }
 

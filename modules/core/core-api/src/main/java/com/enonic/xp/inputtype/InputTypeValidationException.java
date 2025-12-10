@@ -5,14 +5,23 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.ValueType;
 
 public final class InputTypeValidationException
     extends RuntimeException
 {
-    public InputTypeValidationException( final String message )
+    private final PropertyPath propertyPath;
+
+    private InputTypeValidationException( final String message, final PropertyPath propertyPath )
     {
         super( message );
+        this.propertyPath = Objects.requireNonNull( propertyPath );
+    }
+
+    public PropertyPath getPropertyPath()
+    {
+        return propertyPath;
     }
 
     public static InputTypeValidationException invalidType( final Property property, final ValueType... expectedTypes )
@@ -20,11 +29,11 @@ public final class InputTypeValidationException
         final String strList = Arrays.stream( expectedTypes ).map( Objects::toString ).
             collect( Collectors.joining( "," ) );
         throw new InputTypeValidationException(
-            String.format( "Invalid type in [%s]: [%s] instead of |%s]", property, property.getType(), strList ) );
+            String.format( "Invalid type in [%s]: [%s] instead of [%s]", property, property.getType(), strList ), property.getPath() );
     }
 
     public static InputTypeValidationException invalidValue( final Property property, final String message )
     {
-        return new InputTypeValidationException( String.format( "Invalid value in [%s]: %s", property, message ) );
+        return new InputTypeValidationException( String.format( "Invalid value in [%s]: %s", property, message ), property.getPath() );
     }
 }

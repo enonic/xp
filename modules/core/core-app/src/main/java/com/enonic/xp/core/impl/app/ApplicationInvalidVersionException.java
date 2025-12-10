@@ -2,14 +2,29 @@ package com.enonic.xp.core.impl.app;
 
 import org.osgi.framework.Version;
 
-import com.enonic.xp.app.Application;
-
 public class ApplicationInvalidVersionException
     extends RuntimeException
 {
-    public ApplicationInvalidVersionException( final Application application, final Version bundleVersion )
+    private final String appSystemVersionRange;
+
+    private final String systemVersion;
+
+    public ApplicationInvalidVersionException( final String appSystemVersionRange,
+                                               final Version systemVersion )
     {
-        super( String.format( "Cannot start application [%s]. Required system version range is [%s]. Current system version is [%s].",
-                              application.getKey(), application.getSystemVersion(), bundleVersion ) );
+        super( String.format( "Cannot start application. Required system version range is [%s]. Current system version is [%s].",
+                              appSystemVersionRange, systemVersion ) );
+        this.appSystemVersionRange = appSystemVersionRange;
+        this.systemVersion = systemVersion.toString();
+    }
+
+    public String getAppSystemVersionRange()
+    {
+        return appSystemVersionRange;
+    }
+
+    public String getSystemVersion()
+    {
+        return systemVersion;
     }
 }
