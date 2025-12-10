@@ -536,7 +536,7 @@ public abstract class AbstractContentServiceTest
                               .label( "Combobox" )
                               .inputType( InputTypeName.COMBO_BOX )
                               .inputTypeConfig( GenericValue.newObject()
-                                                    .put( "option", GenericValue.newList()
+                                                    .put( "options", GenericValue.newList()
                                                         .add( GenericValue.newObject()
                                                                   .put( "value", "value1" )
                                                                   .put( "label", GenericValue.newObject().put( "text", "label1" ).build() )
