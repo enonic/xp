@@ -80,7 +80,8 @@ var expected = {
                     'languages': []
                 }
             }
-        ]
+        ],
+        'allTextLanguages': []
     },
     '_permissions': [
         {

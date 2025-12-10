@@ -50,7 +50,8 @@ var expected = {
             'indexValueProcessors': [],
             'languages': []
         },
-        'configs': []
+        'configs': [],
+        'allTextLanguages': []
     },
     '_nodeType': 'default',
     'myString': 'modifiedValue',
