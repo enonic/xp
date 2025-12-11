@@ -126,6 +126,22 @@ class IndexConfigFactoryTest
         assertEquals( "no", config.getAllTextConfig().getLanguages().get( 1 ) );
     }
 
+    @Test
+    void allText_partial()
+    {
+        IndexConfigDocument config = create(
+            "{\n" +
+                "  \"allText\": {\n" +
+                "    \"enabled\": false\n" +
+                "  }\n" +
+                "}" );
+
+        assertEquals( false, config.getAllTextConfig().isEnabled() );
+        assertEquals( true, config.getAllTextConfig().isnGram() ); // should be default
+        assertEquals( false, config.getAllTextConfig().isFulltext() ); // should be default
+        assertEquals( 0, config.getAllTextConfig().getLanguages().size() );
+    }
+
     private IndexConfigDocument create( final String json )
     {
         final PropertyTree properties = PropertyTree.fromMap( JsonHelper.toMap( JsonHelper.from( json ) ) );

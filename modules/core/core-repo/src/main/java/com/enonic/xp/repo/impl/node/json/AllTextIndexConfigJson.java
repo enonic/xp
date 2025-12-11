@@ -30,9 +30,19 @@ final class AllTextIndexConfigJson
         {
             json.languages = new ArrayList<>( config.getLanguages() );
         }
-        json.enabled = config.isEnabled();
-        json.nGram = config.isnGram();
-        json.fulltext = config.isFulltext();
+        // Only serialize if different from defaults
+        if ( !config.isEnabled() )
+        {
+            json.enabled = config.isEnabled();
+        }
+        if ( !config.isnGram() )
+        {
+            json.nGram = config.isnGram();
+        }
+        if ( config.isFulltext() )
+        {
+            json.fulltext = config.isFulltext();
+        }
         return json;
     }
 
