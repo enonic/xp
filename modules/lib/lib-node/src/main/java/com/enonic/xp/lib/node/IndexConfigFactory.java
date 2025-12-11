@@ -9,6 +9,7 @@ import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
+import static com.enonic.xp.lib.node.NodePropertyConstants.ALL_TEXT_CONFIG;
 import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_ARRAY;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
@@ -47,6 +48,8 @@ public class IndexConfigFactory
         createDefaultSettings( builder );
 
         createPathConfigs( builder );
+
+        createAllTextConfig( builder );
 
         return builder.build();
     }
@@ -144,6 +147,41 @@ public class IndexConfigFactory
         catch ( Exception e )
         {
             throw new IllegalArgumentException( "Failed to parse alias [" + alias + "] from index config", e );
+        }
+    }
+
+    private void createAllTextConfig( final PatternIndexConfigDocument.Builder builder )
+    {
+        final PropertySet allTextConfig = this.propertySet.getSet( ALL_TEXT_CONFIG );
+
+        if ( allTextConfig == null )
+        {
+            return;
+        }
+
+        final Boolean enabled = allTextConfig.getBoolean( "enabled" );
+        final Boolean nGram = allTextConfig.getBoolean( "nGram" );
+        final Boolean fulltext = allTextConfig.getBoolean( "fulltext" );
+        final Iterable<String> languages = allTextConfig.getStrings( "languages" );
+
+        if ( enabled != null )
+        {
+            builder.allTextConfigEnabled( enabled );
+        }
+
+        if ( nGram != null )
+        {
+            builder.allTextConfignGram( nGram );
+        }
+
+        if ( fulltext != null )
+        {
+            builder.allTextConfigFulltext( fulltext );
+        }
+
+        for ( final String language : languages )
+        {
+            builder.addAllTextConfigLanguage( language );
         }
     }
 

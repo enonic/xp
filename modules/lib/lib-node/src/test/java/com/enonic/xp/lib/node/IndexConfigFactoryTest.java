@@ -95,6 +95,37 @@ class IndexConfigFactoryTest
         assertThrows(IllegalArgumentException.class, () -> create( "{ \"default\" : \"fisk\" }" ));
     }
 
+    @Test
+    void allText_default()
+    {
+        IndexConfigDocument config = create( "{}" );
+        assertEquals( true, config.getAllTextConfig().isEnabled() );
+        assertEquals( true, config.getAllTextConfig().isnGram() );
+        assertEquals( false, config.getAllTextConfig().isFulltext() );
+        assertEquals( 0, config.getAllTextConfig().getLanguages().size() );
+    }
+
+    @Test
+    void allText_custom()
+    {
+        IndexConfigDocument config = create(
+            "{\n" +
+                "  \"allText\": {\n" +
+                "    \"enabled\": false,\n" +
+                "    \"nGram\": false,\n" +
+                "    \"fulltext\": true,\n" +
+                "    \"languages\": [\"en\", \"no\"]\n" +
+                "  }\n" +
+                "}" );
+
+        assertEquals( false, config.getAllTextConfig().isEnabled() );
+        assertEquals( false, config.getAllTextConfig().isnGram() );
+        assertEquals( true, config.getAllTextConfig().isFulltext() );
+        assertEquals( 2, config.getAllTextConfig().getLanguages().size() );
+        assertEquals( "en", config.getAllTextConfig().getLanguages().get( 0 ) );
+        assertEquals( "no", config.getAllTextConfig().getLanguages().get( 1 ) );
+    }
+
     private IndexConfigDocument create( final String json )
     {
         final PropertyTree properties = PropertyTree.fromMap( JsonHelper.toMap( JsonHelper.from( json ) ) );

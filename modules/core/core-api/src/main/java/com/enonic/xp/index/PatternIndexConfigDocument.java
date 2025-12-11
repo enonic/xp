@@ -182,6 +182,24 @@ public final class PatternIndexConfigDocument
             return this;
         }
 
+        public Builder allTextConfigEnabled( final boolean enabled )
+        {
+            this.allTextIndexConfig.enabled( enabled );
+            return this;
+        }
+
+        public Builder allTextConfignGram( final boolean nGram )
+        {
+            this.allTextIndexConfig.nGram( nGram );
+            return this;
+        }
+
+        public Builder allTextConfigFulltext( final boolean fulltext )
+        {
+            this.allTextIndexConfig.fulltext( fulltext );
+            return this;
+        }
+
         public PatternIndexConfigDocument build()
         {
             return new PatternIndexConfigDocument( this );

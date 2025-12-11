@@ -21,7 +21,13 @@ var expectedJson = {
             "path": false,
             "indexValueProcessors": [],
             "languages": []
-        }, "configs": []
+        }, "configs": [],
+        "allText": {
+            "enabled": true,
+            "nGram": true,
+            "fulltext": false,
+            "languages": []
+        }
     },
     "_permissions": [{
         "principal": "role:system.admin",
