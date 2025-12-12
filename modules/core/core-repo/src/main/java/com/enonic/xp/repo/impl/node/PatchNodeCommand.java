@@ -93,13 +93,14 @@ public final class PatchNodeCommand
         }
 
         final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
+        final NodeVersionId originVersionId = activeNodeMap.get( originBranch );
 
         for ( Branch branch : this.branches )
         {
             Permission requiredPermission;
 
             if ( branch.equals( originBranch ) ||
-                !activeNodeMap.get( branch ).equals( persistedNode.getNodeVersionId() ) )
+                !activeNodeMap.get( branch ).equals( originVersionId ) )
             {
                 requiredPermission = Permission.MODIFY;
             }
