@@ -175,18 +175,21 @@ public class IndexConfigUpgrader
     private PatternIndexConfigDocument upgradeLanguageIndexConfig( final PatternIndexConfigDocument sourceDocument,
                                                                    final NodeVersion nodeVersion )
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( sourceDocument );
-
         final String language = nodeVersion.getData().getString( LANGUAGE );
+
         if ( language != null )
         {
+            final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( sourceDocument );
+            final AllTextIndexConfig.Builder allTextBuilder = AllTextIndexConfig.create( sourceDocument.getAllTextConfig() );
+
             final String normalizedLanguage = Locale.forLanguageTag( language ).getLanguage();
 
-            builder.allTextConfig( AllTextIndexConfig.create().addLanguage( normalizedLanguage ).build() );
+            builder.allTextConfig( allTextBuilder.addLanguage( normalizedLanguage ).build() );
             builder.add( LANGUAGE, IndexConfig.NGRAM );
 
             return builder.build();
         }
+
         return sourceDocument;
     }
 

@@ -15,7 +15,7 @@ class AllTextTypeFactory
     {
         final ImmutableList.Builder<IndexItem> allTextItems = ImmutableList.builder();
 
-        if ( allTextIndexConfig.isEnabled() )
+        if ( !allTextIndexConfig.isEnabled() )
         {
             return allTextItems.build();
         }

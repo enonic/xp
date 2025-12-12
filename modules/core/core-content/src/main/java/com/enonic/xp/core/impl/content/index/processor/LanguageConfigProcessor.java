@@ -26,7 +26,7 @@ public class LanguageConfigProcessor
 
         if ( !nullToEmpty( this.language ).isBlank() )
         {
-            allTextBuilder.addLanguage( this.language ).build();
+            configBuilder.allTextConfig( allTextBuilder.addLanguage( this.language ).build() );
             configBuilder.add( ContentPropertyNames.LANGUAGE, IndexConfig.NGRAM );
         }
 
