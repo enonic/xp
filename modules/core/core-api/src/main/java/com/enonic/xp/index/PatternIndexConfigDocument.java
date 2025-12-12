@@ -16,6 +16,8 @@ import com.enonic.xp.util.GlobPatternMatcher;
 public final class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
+    private static final PatternIndexConfigDocument EMPTY = PatternIndexConfigDocument.create().build();
+
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
     private final ImmutableMap<IndexPath, PathIndexConfig> pathIndexConfigMap;
@@ -51,7 +53,7 @@ public final class PatternIndexConfigDocument
 
     public static PatternIndexConfigDocument empty()
     {
-        return PatternIndexConfigDocument.create().build();
+        return EMPTY;
     }
 
     public SortedSet<PathIndexConfig> getPathIndexConfigs()
