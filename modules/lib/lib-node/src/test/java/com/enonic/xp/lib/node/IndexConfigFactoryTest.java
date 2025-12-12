@@ -101,7 +101,7 @@ class IndexConfigFactoryTest
         IndexConfigDocument config = create( "{}" );
         assertEquals( true, config.getAllTextConfig().isEnabled() );
         assertEquals( true, config.getAllTextConfig().isnGram() );
-        assertEquals( false, config.getAllTextConfig().isFulltext() );
+        assertEquals( true, config.getAllTextConfig().isFulltext() );
         assertEquals( 0, config.getAllTextConfig().getLanguages().size() );
     }
 
@@ -138,7 +138,7 @@ class IndexConfigFactoryTest
 
         assertEquals( false, config.getAllTextConfig().isEnabled() );
         assertEquals( true, config.getAllTextConfig().isnGram() ); // should be default
-        assertEquals( false, config.getAllTextConfig().isFulltext() ); // should be default
+        assertEquals( true, config.getAllTextConfig().isFulltext() ); // should be default
         assertEquals( 0, config.getAllTextConfig().getLanguages().size() );
     }
 

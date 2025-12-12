@@ -42,7 +42,7 @@ var expected = {
         'allText': {
             'enabled': true,
             'nGram': true,
-            'fulltext': false,
+            'fulltext': true,
             'languages': []
         }
     },
