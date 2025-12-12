@@ -46,6 +46,8 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.Attributes;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
@@ -94,6 +96,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.upgrade.UpgradeListener;
 import com.enonic.xp.util.BinaryReference;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.util.Version;
 
@@ -699,6 +702,68 @@ class DumpServiceImplTest
 
         final Node currentStoredNode = this.nodeService.getById( node.id() );
         assertEquals( currentNode.data(), currentStoredNode.data() );
+    }
+
+    @Test
+    void version_attributes_preserved_in_dump()
+    {
+        // Create a node with multiple versions
+        final Node node = createNode( NodePath.ROOT, "myNodeWithAttributes" );
+        final Node updatedNode = updateNode( node );
+        refresh();
+
+        // Get the version IDs
+        final NodeVersionQueryResult versions = this.nodeService.findVersions(
+            GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        assertEquals( 2, versions.getTotalHits() );
+
+        // Apply attributes to the first version
+        final NodeVersionId firstVersionId = versions.getNodeVersionMetadatas().get( 0 ).getNodeVersionId();
+        final Attributes testAttributes = Attributes.create()
+            .attribute( "testKey1", GenericValue.stringValue( "testValue1" ) )
+            .attribute( "testKey2", GenericValue.numberValue( 42 ) )
+            .attribute( "testKey3", GenericValue.booleanValue( true ) )
+            .build();
+
+        this.nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+            .nodeVersionId( firstVersionId )
+            .addAttributes( testAttributes )
+            .build() );
+
+        refresh();
+
+        // Verify attributes were applied
+        final NodeVersionQueryResult versionsWithAttrs = this.nodeService.findVersions(
+            GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        final NodeVersionMetadata versionMetadata = versionsWithAttrs.getNodeVersionMetadatas().stream()
+            .filter( v -> v.getNodeVersionId().equals( firstVersionId ) )
+            .findFirst()
+            .orElseThrow();
+        
+        assertEquals( "testValue1", versionMetadata.getAttributes().get( "testKey1" ).asString() );
+        assertEquals( 42, versionMetadata.getAttributes().get( "testKey2" ).asInteger() );
+        assertEquals( true, versionMetadata.getAttributes().get( "testKey3" ).asBoolean() );
+
+        // Dump and load with versions included
+        NodeHelper.runAsAdmin( () -> dumpDeleteAndLoad( true ) );
+
+        refresh();
+
+        // Verify attributes are preserved after dump/restore
+        final NodeVersionQueryResult versionsAfterLoad = this.nodeService.findVersions(
+            GetNodeVersionsParams.create().nodeId( node.id() ).build() );
+        assertEquals( 2, versionsAfterLoad.getTotalHits() );
+
+        final NodeVersionMetadata restoredVersionMetadata = versionsAfterLoad.getNodeVersionMetadatas().stream()
+            .filter( v -> v.getNodeVersionId().equals( firstVersionId ) )
+            .findFirst()
+            .orElseThrow();
+
+        // Verify all attributes were preserved
+        assertThat( restoredVersionMetadata.getAttributes() ).isNotNull();
+        assertEquals( "testValue1", restoredVersionMetadata.getAttributes().get( "testKey1" ).asString() );
+        assertEquals( 42, restoredVersionMetadata.getAttributes().get( "testKey2" ).asInteger() );
+        assertEquals( true, restoredVersionMetadata.getAttributes().get( "testKey3" ).asBoolean() );
     }
 
     @Test

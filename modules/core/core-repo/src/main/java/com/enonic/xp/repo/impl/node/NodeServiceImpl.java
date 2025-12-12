@@ -863,6 +863,7 @@ public class NodeServiceImpl
             .nodeVersionId( params.getNodeVersionId() )
             .nodeCommitId( params.getNodeCommitId() )
             .timestamp( params.getTimestamp() )
+            .attributes( params.getAttributes() )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .indexServiceInternal( this.indexServiceInternal )
