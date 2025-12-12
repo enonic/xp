@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
@@ -329,8 +330,29 @@ public final class XmlNodeParser
             return;
         }
 
-        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).
-            forEach( builder::addAllTextConfigLanguage );
+        final AllTextIndexConfig.Builder allTextBuilder = AllTextIndexConfig.create();
+
+        parseAllTextIndexConfigLanguages( root.getChild( "languages" ) ).forEach( allTextBuilder::addLanguage );
+
+        final Boolean enabled = root.getChildValueAs( "enabled", Boolean.class, null );
+        if ( enabled != null )
+        {
+            allTextBuilder.enabled( enabled );
+        }
+
+        final Boolean nGram = root.getChildValueAs( "nGram", Boolean.class, null );
+        if ( nGram != null )
+        {
+            allTextBuilder.nGram( nGram );
+        }
+
+        final Boolean fulltext = root.getChildValueAs( "fulltext", Boolean.class, null );
+        if ( fulltext != null )
+        {
+            allTextBuilder.fulltext( fulltext );
+        }
+
+        builder.allTextConfig( allTextBuilder.build() );
     }
 
     private List<String> parseAllTextIndexConfigLanguages( final DomElement languages )

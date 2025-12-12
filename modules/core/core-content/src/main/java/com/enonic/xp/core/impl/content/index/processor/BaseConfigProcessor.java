@@ -21,9 +21,11 @@ public class BaseConfigProcessor
     implements ContentIndexConfigProcessor
 {
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument builder )
     {
-        builder.analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
+        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( builder );
+
+        configBuilder.analyzer( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER ).
             add( CREATOR, IndexConfig.MINIMAL ).
             add( MODIFIER, IndexConfig.MINIMAL ).
             add( CREATED_TIME, IndexConfig.MINIMAL ).
@@ -35,6 +37,6 @@ public class BaseConfigProcessor
             add( ATTACHMENT, IndexConfig.MINIMAL ).
             defaultConfig( IndexConfig.BY_TYPE );
 
-        return builder;
+        return configBuilder.build();
     }
 }

@@ -42,31 +42,20 @@ class BaseConfigProcessorTest
     @Test
     void test_default_config()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
-
-        processor.processDocument( builder );
-
-        assertEquals( IndexConfig.BY_TYPE, builder.build().getDefaultConfig() );
+        assertEquals( IndexConfig.BY_TYPE, processor.processDocument( PatternIndexConfigDocument.empty() ).getDefaultConfig() );
     }
 
     @Test
     void test_default_analyzer()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
-
-        processor.processDocument( builder );
-
-        assertEquals( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER, builder.build().getAnalyzer() );
+        assertEquals( ContentConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER,
+                      processor.processDocument( PatternIndexConfigDocument.empty() ).getAnalyzer() );
     }
 
     @Test
     void test_index_configs()
     {
-        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create();
-
-        processor.processDocument( builder );
-
-        Set<PathIndexConfig> indexConfigs = builder.build().getPathIndexConfigs();
+        Set<PathIndexConfig> indexConfigs = processor.processDocument( PatternIndexConfigDocument.empty() ).getPathIndexConfigs();
 
         assertEquals( 9, indexConfigs.size() );
 

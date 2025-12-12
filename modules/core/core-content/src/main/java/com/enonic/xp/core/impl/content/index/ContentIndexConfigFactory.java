@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.core.impl.content.index.processor.AttachmentConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.BaseConfigProcessor;
+import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.ContentIndexConfigProcessors;
 import com.enonic.xp.core.impl.content.index.processor.DataConfigProcessor;
 import com.enonic.xp.core.impl.content.index.processor.LanguageConfigProcessor;
@@ -99,12 +100,14 @@ public class ContentIndexConfigFactory
 
     public IndexConfigDocument produce()
     {
-        final PatternIndexConfigDocument.Builder configDocumentBuilder = PatternIndexConfigDocument.create();
+        PatternIndexConfigDocument config = PatternIndexConfigDocument.empty();
 
-        indexConfigProcessors.forEach(
-            contentIndexConfigProcessor -> contentIndexConfigProcessor.processDocument( configDocumentBuilder ) );
+        for ( final ContentIndexConfigProcessor processor : indexConfigProcessors )
+        {
+            config = processor.processDocument( config );
+        }
 
-        return configDocumentBuilder.build();
+        return config;
     }
 
     public static Builder create()

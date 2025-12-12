@@ -53,25 +53,29 @@ public class PageRegionsConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
         if ( page == null )
         {
-            return builder;
+            return config;
         }
 
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, ImageComponentType.INSTANCE.toString(), ID ), IndexConfig.MINIMAL );
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ), IndexConfig.MINIMAL );
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ),
+        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( config );
+
+        configBuilder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, ImageComponentType.INSTANCE.toString(), ID ), IndexConfig.MINIMAL );
+        configBuilder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ), IndexConfig.MINIMAL );
+        configBuilder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, TextComponentType.INSTANCE.toString(), VALUE ),
                      TEXT_COMPONENT_INDEX_CONFIG );
 
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PartComponentType.INSTANCE.toString(), DESCRIPTOR ), IndexConfig.MINIMAL );
-        builder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, LayoutComponentType.INSTANCE.toString(), DESCRIPTOR ), IndexConfig.MINIMAL );
+        configBuilder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, PartComponentType.INSTANCE.toString(), DESCRIPTOR ),
+                           IndexConfig.MINIMAL );
+        configBuilder.add( String.join( ELEMENT_DIVIDER, COMPONENTS, LayoutComponentType.INSTANCE.toString(), DESCRIPTOR ),
+                           IndexConfig.MINIMAL );
 
-        processPageRegions( page.getRegions(), builder );
-        processPageFragment( page.getFragment(), builder );
+        processPageRegions( page.getRegions(), configBuilder );
+        processPageFragment( page.getFragment(), configBuilder );
 
-        return builder;
+        return configBuilder.build();
     }
 
     private void processPageRegions( final Regions regions, final PatternIndexConfigDocument.Builder builder )

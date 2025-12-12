@@ -88,6 +88,6 @@ class XDataConfigProcessorTest
 
         final XDataConfigProcessor configProcessor = new XDataConfigProcessor( xDatas );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 }

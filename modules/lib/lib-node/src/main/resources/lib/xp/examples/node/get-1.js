@@ -57,7 +57,13 @@ var expected = {
                     'languages': []
                 }
             }
-        ]
+        ],
+        'allText': {
+            'enabled': true,
+            'nGram': true,
+            'fulltext': true,
+            'languages': []
+        }
     },
     '_permissions': [
         {

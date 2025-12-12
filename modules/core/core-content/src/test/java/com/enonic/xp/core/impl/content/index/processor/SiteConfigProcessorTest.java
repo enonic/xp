@@ -133,6 +133,6 @@ class SiteConfigProcessorTest
 
         final SiteConfigProcessor configProcessor = new SiteConfigProcessor( getConfigForms( siteService, siteConfigs ) );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 }

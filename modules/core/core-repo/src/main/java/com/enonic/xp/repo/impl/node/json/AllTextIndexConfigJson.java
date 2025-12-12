@@ -14,12 +14,34 @@ final class AllTextIndexConfigJson
     @JsonProperty("languages")
     private List<String> languages = new ArrayList<>();
 
+    @JsonProperty("enabled")
+    private Boolean enabled;
+
+    @JsonProperty("nGram")
+    private Boolean nGram;
+
+    @JsonProperty("fulltext")
+    private Boolean fulltext;
+
     public static AllTextIndexConfigJson toJson( final AllTextIndexConfig config )
     {
         final AllTextIndexConfigJson json = new AllTextIndexConfigJson();
         if ( !config.getLanguages().isEmpty() )
         {
             json.languages = new ArrayList<>( config.getLanguages() );
+        }
+        // Only serialize if different from defaults
+        if ( !config.isEnabled() )
+        {
+            json.enabled = config.isEnabled();
+        }
+        if ( !config.isnGram() )
+        {
+            json.nGram = config.isnGram();
+        }
+        if ( !config.isFulltext() )
+        {
+            json.fulltext = config.isFulltext();
         }
         return json;
     }
@@ -34,6 +56,21 @@ final class AllTextIndexConfigJson
             {
                 builder.addLanguage( language );
             }
+        }
+
+        if ( this.enabled != null )
+        {
+            builder.enabled( this.enabled );
+        }
+
+        if ( this.nGram != null )
+        {
+            builder.nGram( this.nGram );
+        }
+
+        if ( this.fulltext != null )
+        {
+            builder.fulltext( this.fulltext );
         }
 
         return builder.build();

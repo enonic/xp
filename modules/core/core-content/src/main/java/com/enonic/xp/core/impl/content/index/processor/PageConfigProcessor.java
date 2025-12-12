@@ -38,21 +38,23 @@ public class PageConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument builder )
     {
         if ( page == null )
         {
             return builder;
         }
 
-        builder.add( COMPONENTS, IndexConfig.NONE ).
+        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( builder );
+
+        configBuilder.add( COMPONENTS, IndexConfig.NONE ).
             add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, DESCRIPTOR ), IndexConfig.MINIMAL ).
             add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, TEMPLATE ), IndexConfig.MINIMAL ).
             add( String.join( ELEMENT_DIVIDER, COMPONENTS, PAGE, CUSTOMIZED ), IndexConfig.MINIMAL );
 
-        applyConfigProcessors( builder );
+        applyConfigProcessors( configBuilder );
 
-        return builder;
+        return configBuilder.build();
     }
 
     static String getSanitizedAppName( final DescriptorKey descriptor )

@@ -12,12 +12,12 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 @PublicApi
 public final class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
 {
+    private static final PatternIndexConfigDocument EMPTY = PatternIndexConfigDocument.create().build();
+
     private final ImmutableSortedSet<PathIndexConfig> pathIndexConfigs;
 
     private final ImmutableMap<IndexPath, PathIndexConfig> pathIndexConfigMap;
@@ -49,6 +49,11 @@ public final class PatternIndexConfigDocument
     public static Builder create( final PatternIndexConfigDocument source )
     {
         return new Builder( source );
+    }
+
+    public static PatternIndexConfigDocument empty()
+    {
+        return EMPTY;
     }
 
     public SortedSet<PathIndexConfig> getPathIndexConfigs()
@@ -173,12 +178,9 @@ public final class PatternIndexConfigDocument
             return this;
         }
 
-        public Builder addAllTextConfigLanguage( final String language )
+        public Builder allTextConfig( AllTextIndexConfig allTextIndexConfig )
         {
-            if ( !nullToEmpty( language ).isBlank() )
-            {
-                this.allTextIndexConfig.addLanguage( language );
-            }
+            this.allTextIndexConfig = AllTextIndexConfig.create( allTextIndexConfig );
             return this;
         }
 

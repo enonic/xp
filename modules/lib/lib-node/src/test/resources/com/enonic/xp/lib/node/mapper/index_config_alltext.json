@@ -1,0 +1,23 @@
+{
+  "analyzer": null,
+  "default": {
+    "decideByType": true,
+    "enabled": true,
+    "nGram": false,
+    "fulltext": false,
+    "includeInAllText": false,
+    "path": false,
+    "indexValueProcessors": [],
+    "languages": []
+  },
+  "configs": [],
+  "allText": {
+    "enabled": false,
+    "nGram": false,
+    "fulltext": true,
+    "languages": [
+      "en",
+      "no"
+    ]
+  }
+}

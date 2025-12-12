@@ -174,6 +174,6 @@ class PageConfigProcessorTest
         final PageConfigProcessor configProcessor =
             new PageConfigProcessor( page, getPageConfigForm( pageDescriptorService, descriptorKey ) );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 }

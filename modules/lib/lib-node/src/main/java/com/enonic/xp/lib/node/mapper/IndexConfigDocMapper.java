@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessor;
@@ -12,6 +13,7 @@ import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
+import static com.enonic.xp.lib.node.NodePropertyConstants.ALL_TEXT_CONFIG;
 import static com.enonic.xp.lib.node.NodePropertyConstants.ANALYZER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_ARRAY;
 import static com.enonic.xp.lib.node.NodePropertyConstants.CONFIG_PATH;
@@ -65,6 +67,10 @@ class IndexConfigDocMapper
         }
 
         gen.end();
+
+        gen.map( ALL_TEXT_CONFIG );
+        serialize( gen, document.getAllTextConfig() );
+        gen.end();
     }
 
     private void serialize( final MapGenerator gen, final IndexConfig indexConfig )
@@ -96,5 +102,15 @@ class IndexConfigDocMapper
             gen.value( value );
         }
         gen.end();
+    }
+
+    private void serialize( final MapGenerator gen, final AllTextIndexConfig allTextConfig )
+    {
+        gen.value( "enabled", allTextConfig.isEnabled() );
+        gen.value( "nGram", allTextConfig.isnGram() );
+        gen.value( "fulltext", allTextConfig.isFulltext() );
+
+        final List<String> languages = allTextConfig.getLanguages();
+        serializeArray( gen, "languages", languages );
     }
 }

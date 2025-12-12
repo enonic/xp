@@ -186,7 +186,7 @@ public class NodeStoreDocumentFactory
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create().defaultConfig( indexConfig );
 
-        this.node.getIndexConfigDocument().getAllTextConfig().getLanguages().forEach( builder::addAllTextConfigLanguage );
+        builder.allTextConfig( this.node.getIndexConfigDocument().getAllTextConfig() );
 
         return builder.build();
     }
