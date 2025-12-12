@@ -99,7 +99,7 @@ public final class PatchNodeCommand
             Permission requiredPermission;
 
             if ( branch.equals( originBranch ) ||
-                !activeNodeMap.get( originBranch ).equals( persistedNode.getNodeVersionId() ) )
+                !activeNodeMap.get( branch ).equals( persistedNode.getNodeVersionId() ) )
             {
                 requiredPermission = Permission.MODIFY;
             }
