@@ -162,7 +162,7 @@ public final class PatchNodeCommand
 
         if ( patchedNode != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ), this.branches.first(),
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ), ContextAccessor.current().getBranch(),
                                           internalContext );
 
             return patchedNode;
