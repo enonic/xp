@@ -95,7 +95,7 @@
     <allTextIndexConfig>
       <enabled>true</enabled>
       <nGram>true</nGram>
-      <fulltext>false</fulltext>
+      <fulltext>true</fulltext>
       <languages>
         <language>en</language>
       </languages>
