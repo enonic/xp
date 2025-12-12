@@ -38,7 +38,8 @@ public final class PatternIndexConfigDocument
         this.pathIndexConfigMap = builder.pathIndexConfigs.stream()
             .collect( ImmutableMap.toImmutableMap( pic -> IndexPath.from( pic.getPath() ), Function.identity() ) );
         this.defaultConfig = builder.defaultConfig;
-        this.allTextConfig = builder.allTextIndexConfig.build();
+        this.allTextConfig = builder.allTextIndexConfig != null ? builder.allTextIndexConfig :
+            AllTextIndexConfig.create().enabled( true ).nGram( true ).fulltext( false ).build();
     }
 
     public static Builder create()
@@ -122,7 +123,7 @@ public final class PatternIndexConfigDocument
 
         private IndexConfig defaultConfig = IndexConfig.BY_TYPE;
 
-        private AllTextIndexConfig.Builder allTextIndexConfig = AllTextIndexConfig.create();
+        private AllTextIndexConfig allTextIndexConfig;
 
         private Builder()
         {
@@ -132,7 +133,7 @@ public final class PatternIndexConfigDocument
         {
             this.pathIndexConfigs = new TreeSet<>( source.pathIndexConfigs );
             this.defaultConfig = IndexConfig.create( source.defaultConfig ).build();
-            this.allTextIndexConfig = AllTextIndexConfig.create( source.allTextConfig );
+            this.allTextIndexConfig = source.allTextConfig;
         }
 
         public Builder add( final String path, final IndexConfig indexConfig )
@@ -175,28 +176,20 @@ public final class PatternIndexConfigDocument
 
         public Builder addAllTextConfigLanguage( final String language )
         {
+            if ( this.allTextIndexConfig == null )
+            {
+                this.allTextIndexConfig = AllTextIndexConfig.create().enabled( true ).nGram( true ).fulltext( false ).build();
+            }
             if ( !nullToEmpty( language ).isBlank() )
             {
-                this.allTextIndexConfig.addLanguage( language );
+                this.allTextIndexConfig = AllTextIndexConfig.create( this.allTextIndexConfig ).addLanguage( language ).build();
             }
             return this;
         }
 
-        public Builder allTextConfigEnabled( final boolean enabled )
+        public Builder allTextConfig( final AllTextIndexConfig allTextConfig )
         {
-            this.allTextIndexConfig.enabled( enabled );
-            return this;
-        }
-
-        public Builder allTextConfignGram( final boolean nGram )
-        {
-            this.allTextIndexConfig.nGram( nGram );
-            return this;
-        }
-
-        public Builder allTextConfigFulltext( final boolean fulltext )
-        {
-            this.allTextIndexConfig.fulltext( fulltext );
+            this.allTextIndexConfig = allTextIndexConfig;
             return this;
         }
 

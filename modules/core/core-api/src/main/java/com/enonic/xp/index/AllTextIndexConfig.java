@@ -79,11 +79,11 @@ public final class AllTextIndexConfig
     {
         private final ImmutableList.Builder<String> languages;
 
-        private boolean enabled = true;
+        private boolean enabled;
 
-        private boolean nGram = true;
+        private boolean nGram;
 
-        private boolean fulltext = false;
+        private boolean fulltext;
 
         private Builder()
         {

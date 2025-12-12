@@ -35,6 +35,7 @@ public class IndexConfigFactory
         {
             return PatternIndexConfigDocument.create().
                 defaultConfig( DEFAULT_CONFIG ).
+                allTextConfig( new AllTextConfigFactory( null ).create() ).
                 build();
         }
 
@@ -49,7 +50,7 @@ public class IndexConfigFactory
 
         createPathConfigs( builder );
 
-        createAllTextConfig( builder );
+        builder.allTextConfig( new AllTextConfigFactory( this.propertySet ).create() );
 
         return builder.build();
     }
@@ -147,41 +148,6 @@ public class IndexConfigFactory
         catch ( Exception e )
         {
             throw new IllegalArgumentException( "Failed to parse alias [" + alias + "] from index config", e );
-        }
-    }
-
-    private void createAllTextConfig( final PatternIndexConfigDocument.Builder builder )
-    {
-        final PropertySet allTextConfig = this.propertySet.getSet( ALL_TEXT_CONFIG );
-
-        if ( allTextConfig == null )
-        {
-            return;
-        }
-
-        final Boolean enabled = allTextConfig.getBoolean( "enabled" );
-        final Boolean nGram = allTextConfig.getBoolean( "nGram" );
-        final Boolean fulltext = allTextConfig.getBoolean( "fulltext" );
-        final Iterable<String> languages = allTextConfig.getStrings( "languages" );
-
-        if ( enabled != null )
-        {
-            builder.allTextConfigEnabled( enabled );
-        }
-
-        if ( nGram != null )
-        {
-            builder.allTextConfignGram( nGram );
-        }
-
-        if ( fulltext != null )
-        {
-            builder.allTextConfigFulltext( fulltext );
-        }
-
-        for ( final String language : languages )
-        {
-            builder.addAllTextConfigLanguage( language );
         }
     }
 

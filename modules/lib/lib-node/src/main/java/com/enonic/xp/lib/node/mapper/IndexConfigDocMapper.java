@@ -68,9 +68,13 @@ class IndexConfigDocMapper
 
         gen.end();
 
-        gen.map( ALL_TEXT_CONFIG );
-        serialize( gen, document.getAllTextConfig() );
-        gen.end();
+        final AllTextIndexConfig allTextConfig = document.getAllTextConfig();
+        if ( !isDefaultAllTextConfig( allTextConfig ) )
+        {
+            gen.map( ALL_TEXT_CONFIG );
+            serialize( gen, allTextConfig );
+            gen.end();
+        }
     }
 
     private void serialize( final MapGenerator gen, final IndexConfig indexConfig )
@@ -112,5 +116,11 @@ class IndexConfigDocMapper
 
         final List<String> languages = allTextConfig.getLanguages();
         serializeArray( gen, "languages", languages );
+    }
+
+    private boolean isDefaultAllTextConfig( final AllTextIndexConfig allTextConfig )
+    {
+        return allTextConfig.isEnabled() && allTextConfig.isnGram() && !allTextConfig.isFulltext() &&
+            allTextConfig.getLanguages().isEmpty();
     }
 }
