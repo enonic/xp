@@ -32,6 +32,7 @@ import com.enonic.xp.node.PatchNodeResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.repo.impl.NodeEvents;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.User;
@@ -340,5 +341,72 @@ class PatchNodeCommandTest
                                                                                                           } )
                                                                                                           .build() ) ) );
 
+    }
+
+    @Test
+    void modify_with_origin_branch_not_first()
+    {
+        final Branch branch1 = Branch.from( "branch1" );
+        final Branch branch2 = Branch.from( "branch2" );
+        final Branch branch3 = Branch.from( "branch3" );
+
+        repositoryService.createBranch( CreateBranchParams.from( branch1.toString() ) );
+        repositoryService.createBranch( CreateBranchParams.from( branch2.toString() ) );
+        repositoryService.createBranch( CreateBranchParams.from( branch3.toString() ) );
+
+        // Create node in branch1
+        final Node createdNode = ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch1 )
+            .build()
+            .callWith( () -> createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() ) );
+
+        // Push to branch2 and branch3
+        ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch1 )
+            .build()
+            .runWith( () -> {
+                pushNodes( branch2, createdNode.id() );
+                pushNodes( branch3, createdNode.id() );
+            } );
+
+        // Modify in branch2 to make versions different
+        ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch2 )
+            .build()
+            .runWith( () -> updateNode( UpdateNodeParams.create().id( createdNode.id() ).editor( editableNode -> {
+                editableNode.data.addString( "field", "value_in_branch2" );
+            } ).build() ) );
+
+        // Now patch from branch2 (origin) to branch1 and branch3
+        // branch2 is origin but not first in the list
+        final PatchNodeResult result = ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch2 )
+            .build()
+            .callWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                   .id( createdNode.id() )
+                                                   .addBranches( Branches.from( branch1, branch2, branch3 ) )
+                                                   .editor( toBeEdited -> {
+                                                       toBeEdited.data.addString( "patched", "from_branch2" );
+                                                   } )
+                                                   .build() ) );
+
+        // Verify that branch1 and branch3 got the patched version from branch2
+        final Node nodeInBranch1 = ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch1 )
+            .build()
+            .callWith( () -> getNodeById( createdNode.id() ) );
+
+        final Node nodeInBranch3 = ContextBuilder.from( ContextAccessor.current() )
+            .branch( branch3 )
+            .build()
+            .callWith( () -> getNodeById( createdNode.id() ) );
+
+        // Both should have the patched field
+        assertEquals( "from_branch2", nodeInBranch1.data().getString( "patched" ) );
+        assertEquals( "from_branch2", nodeInBranch3.data().getString( "patched" ) );
+
+        // And branch1 and branch3 should have the field from branch2 (because it was the origin)
+        assertEquals( "value_in_branch2", nodeInBranch1.data().getString( "field" ) );
+        assertEquals( "value_in_branch2", nodeInBranch3.data().getString( "field" ) );
     }
 }
