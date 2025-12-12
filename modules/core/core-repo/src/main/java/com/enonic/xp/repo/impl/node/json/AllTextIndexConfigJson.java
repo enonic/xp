@@ -39,7 +39,7 @@ final class AllTextIndexConfigJson
         {
             json.nGram = config.isnGram();
         }
-        if ( config.isFulltext() )
+        if ( !config.isFulltext() )
         {
             json.fulltext = config.isFulltext();
         }

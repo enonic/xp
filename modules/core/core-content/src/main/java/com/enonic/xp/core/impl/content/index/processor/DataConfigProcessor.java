@@ -17,8 +17,10 @@ public class DataConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( config );
+
         builder.add( DATA, IndexConfig.BY_TYPE );
 
         if ( this.dataForm != null && this.dataForm.size() > 0 )
@@ -27,6 +29,6 @@ public class DataConfigProcessor
             indexConfigVisitor.traverse( this.dataForm );
         }
 
-        return builder;
+        return builder.build();
     }
 }

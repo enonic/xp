@@ -93,6 +93,9 @@
       </pathIndexConfig>
     </pathIndexConfigs>
     <allTextIndexConfig>
+      <enabled>true</enabled>
+      <nGram>true</nGram>
+      <fulltext>false</fulltext>
       <languages>
         <language>en</language>
       </languages>

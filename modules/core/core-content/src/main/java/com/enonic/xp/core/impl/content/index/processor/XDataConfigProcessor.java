@@ -19,8 +19,10 @@ public class XDataConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
+        final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( config );
+
         builder.add( PropertyPath.from( EXTRA_DATA, "*" ), IndexConfig.BY_TYPE );
 
         if ( this.xDatas != null )
@@ -32,6 +34,6 @@ public class XDataConfigProcessor
             } );
         }
 
-        return builder;
+        return builder.build();
     }
 }

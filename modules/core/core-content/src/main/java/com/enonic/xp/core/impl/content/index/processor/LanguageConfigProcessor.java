@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
@@ -17,14 +18,18 @@ public class LanguageConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
+        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( config );
+
+        final AllTextIndexConfig.Builder allTextBuilder = AllTextIndexConfig.create( config.getAllTextConfig() );
+
         if ( !nullToEmpty( this.language ).isBlank() )
         {
-            builder.addAllTextConfigLanguage( this.language ).build();
-            builder.add( ContentPropertyNames.LANGUAGE, IndexConfig.NGRAM );
+            allTextBuilder.addLanguage( this.language ).build();
+            configBuilder.add( ContentPropertyNames.LANGUAGE, IndexConfig.NGRAM );
         }
 
-        return builder;
+        return configBuilder.build();
     }
 }

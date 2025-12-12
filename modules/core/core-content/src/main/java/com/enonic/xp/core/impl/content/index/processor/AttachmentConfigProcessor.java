@@ -16,11 +16,13 @@ public class AttachmentConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument builder )
     {
+        final PatternIndexConfigDocument.Builder configBuilder = PatternIndexConfigDocument.create( builder );
+
         if ( contentTypeName.isTextualMedia() )
         {
-            builder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
+            configBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
                 enabled( true ).
                 fulltext( true ).
                 includeInAllText( true ).
@@ -30,7 +32,7 @@ public class AttachmentConfigProcessor
         }
         else
         {
-            builder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
+            configBuilder.add( ATTACHMENT_TEXT_COMPONENT, IndexConfig.create().
                 enabled( true ).
                 fulltext( true ).
                 includeInAllText( false ).
@@ -39,6 +41,6 @@ public class AttachmentConfigProcessor
                 build() );
         }
 
-        return builder;
+        return configBuilder.build();
     }
 }

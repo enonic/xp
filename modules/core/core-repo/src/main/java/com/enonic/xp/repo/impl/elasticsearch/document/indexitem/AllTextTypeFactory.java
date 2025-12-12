@@ -15,11 +15,22 @@ class AllTextTypeFactory
     {
         final ImmutableList.Builder<IndexItem> allTextItems = ImmutableList.builder();
 
-        if ( ( indexConfig.isDecideByType() && propertyValue.isText() ) || indexConfig.isIncludeInAllText() )
+        if ( allTextIndexConfig.isEnabled() )
         {
-            allTextItems.add( new IndexItemAnalyzed( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
+            return allTextItems.build();
+        }
 
-            allTextItems.add( new IndexItemNgram( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
+        if ( ( ( indexConfig.isDecideByType() && propertyValue.isText() ) || indexConfig.isIncludeInAllText() ) )
+        {
+            if ( allTextIndexConfig.isFulltext() )
+            {
+                allTextItems.add( new IndexItemAnalyzed( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
+            }
+
+            if ( allTextIndexConfig.isnGram() )
+            {
+                allTextItems.add( new IndexItemNgram( NodeIndexPath.ALL_TEXT, propertyValue.asString() ) );
+            }
 
             allTextIndexConfig.getLanguages()
                 .stream()

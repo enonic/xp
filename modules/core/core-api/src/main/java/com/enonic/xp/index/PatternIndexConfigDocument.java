@@ -12,8 +12,6 @@ import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
 
-import static com.google.common.base.Strings.nullToEmpty;
-
 @PublicApi
 public final class PatternIndexConfigDocument
     extends AbstractIndexConfigDocument
@@ -49,6 +47,11 @@ public final class PatternIndexConfigDocument
     public static Builder create( final PatternIndexConfigDocument source )
     {
         return new Builder( source );
+    }
+
+    public static PatternIndexConfigDocument empty()
+    {
+        return PatternIndexConfigDocument.create().build();
     }
 
     public SortedSet<PathIndexConfig> getPathIndexConfigs()
@@ -173,30 +176,9 @@ public final class PatternIndexConfigDocument
             return this;
         }
 
-        public Builder addAllTextConfigLanguage( final String language )
+        public Builder allTextConfig( AllTextIndexConfig allTextIndexConfig )
         {
-            if ( !nullToEmpty( language ).isBlank() )
-            {
-                this.allTextIndexConfig.addLanguage( language );
-            }
-            return this;
-        }
-
-        public Builder allTextConfigEnabled( final boolean enabled )
-        {
-            this.allTextIndexConfig.enabled( enabled );
-            return this;
-        }
-
-        public Builder allTextConfignGram( final boolean nGram )
-        {
-            this.allTextIndexConfig.nGram( nGram );
-            return this;
-        }
-
-        public Builder allTextConfigFulltext( final boolean fulltext )
-        {
-            this.allTextIndexConfig.fulltext( fulltext );
+            this.allTextIndexConfig = AllTextIndexConfig.create( allTextIndexConfig );
             return this;
         }
 

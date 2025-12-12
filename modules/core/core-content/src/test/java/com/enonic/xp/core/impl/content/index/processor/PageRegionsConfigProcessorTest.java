@@ -294,7 +294,7 @@ class PageRegionsConfigProcessorTest
         final PageRegionsConfigProcessor configProcessor =
             new PageRegionsConfigProcessor( page, partDescriptorService, layoutDescriptorService );
 
-        return configProcessor.processDocument( PatternIndexConfigDocument.create() ).build();
+        return configProcessor.processDocument( PatternIndexConfigDocument.empty() );
     }
 
     private void processComponent( final ListIterator<Form> partForms, final ListIterator<Form> layoutForms, final Component component )

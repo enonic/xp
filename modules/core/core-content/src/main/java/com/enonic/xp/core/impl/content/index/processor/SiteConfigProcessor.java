@@ -21,17 +21,18 @@ public class SiteConfigProcessor
     }
 
     @Override
-    public PatternIndexConfigDocument.Builder processDocument( final PatternIndexConfigDocument.Builder builder )
+    public PatternIndexConfigDocument processDocument( final PatternIndexConfigDocument config )
     {
         if ( this.sizeConfigForms != null && !this.sizeConfigForms.isEmpty() )
         {
+            final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( config );
             sizeConfigForms.forEach( form -> {
                 final IndexConfigVisitor indexConfigVisitor =
                     new IndexConfigVisitor( String.join( PropertyPath.ELEMENT_DIVIDER, DATA, SITECONFIG, "config" ), builder );
                 indexConfigVisitor.traverse( form );
             } );
+            return builder.build();
         }
-
-        return builder;
+        return config;
     }
 }

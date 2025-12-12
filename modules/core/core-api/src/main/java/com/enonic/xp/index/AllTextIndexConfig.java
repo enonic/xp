@@ -83,7 +83,7 @@ public final class AllTextIndexConfig
 
         private boolean nGram = true;
 
-        private boolean fulltext = false;
+        private boolean fulltext = true;
 
         private Builder()
         {

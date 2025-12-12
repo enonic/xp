@@ -3,6 +3,7 @@ package com.enonic.xp.lib.node;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessor;
@@ -164,25 +165,29 @@ public class IndexConfigFactory
         final Boolean fulltext = allTextConfig.getBoolean( "fulltext" );
         final Iterable<String> languages = allTextConfig.getStrings( "languages" );
 
+        AllTextIndexConfig.Builder allTextBuilder = AllTextIndexConfig.create();
+
         if ( enabled != null )
         {
-            builder.allTextConfigEnabled( enabled );
+            allTextBuilder.enabled( enabled );
         }
 
         if ( nGram != null )
         {
-            builder.allTextConfignGram( nGram );
+            allTextBuilder.nGram( nGram );
         }
 
         if ( fulltext != null )
         {
-            builder.allTextConfigFulltext( fulltext );
+            allTextBuilder.fulltext( fulltext );
         }
 
         for ( final String language : languages )
         {
-            builder.addAllTextConfigLanguage( language );
+            allTextBuilder.addLanguage( language );
         }
+
+        builder.allTextConfig( allTextBuilder.build() );
     }
 
 }

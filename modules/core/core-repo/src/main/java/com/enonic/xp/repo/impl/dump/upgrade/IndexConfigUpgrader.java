@@ -16,10 +16,11 @@ import com.enonic.xp.blob.Segment;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.repo.impl.dump.blobstore.DumpBlobRecord;
 import com.enonic.xp.repo.impl.dump.serializer.json.BranchDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
@@ -181,7 +182,7 @@ public class IndexConfigUpgrader
         {
             final String normalizedLanguage = Locale.forLanguageTag( language ).getLanguage();
 
-            builder.addAllTextConfigLanguage( normalizedLanguage );
+            builder.allTextConfig( AllTextIndexConfig.create().addLanguage( normalizedLanguage ).build() );
             builder.add( LANGUAGE, IndexConfig.NGRAM );
 
             return builder.build();

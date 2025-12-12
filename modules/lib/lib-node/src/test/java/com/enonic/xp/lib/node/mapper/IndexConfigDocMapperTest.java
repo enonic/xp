@@ -2,6 +2,7 @@ package com.enonic.xp.lib.node.mapper;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -32,14 +33,16 @@ class IndexConfigDocMapperTest
     @Test
     void allText_custom()
     {
-        final IndexConfigDocument doc = PatternIndexConfigDocument.create().
-            defaultConfig( IndexConfig.BY_TYPE ).
-            allTextConfigEnabled( false ).
-            allTextConfignGram( false ).
-            allTextConfigFulltext( true ).
-            addAllTextConfigLanguage( "en" ).
-            addAllTextConfigLanguage( "no" ).
-            build();
+        final IndexConfigDocument doc = PatternIndexConfigDocument.create()
+            .defaultConfig( IndexConfig.BY_TYPE )
+            .allTextConfig( AllTextIndexConfig.create()
+                                .enabled( false )
+                                .nGram( false )
+                                .fulltext( true )
+                                .addLanguage( "en" )
+                                .addLanguage( "no" )
+                                .build() )
+            .build();
 
         JsonAssert.assertMapper( getClass(), "index_config_alltext.json", new IndexConfigDocMapper( doc ) );
     }

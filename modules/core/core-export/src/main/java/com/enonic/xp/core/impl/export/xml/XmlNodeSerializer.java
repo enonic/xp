@@ -10,6 +10,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueType;
 import com.enonic.xp.data.ValueTypes;
+import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexValueProcessor;
@@ -115,13 +116,22 @@ public final class XmlNodeSerializer
         this.builder.end();
 
         this.builder.start( "allTextIndexConfig" );
-        if ( !value.getAllTextConfig().getLanguages().isEmpty() )
+        serialize( value.getAllTextConfig() );
+        this.builder.end();
+    }
+
+    private void serialize( final AllTextIndexConfig value )
+    {
+        serializeValueElement( "enabled", value.isEnabled() );
+        serializeValueElement( "nGram", value.isnGram() );
+        serializeValueElement( "fulltext", value.isFulltext() );
+
+        if ( !value.getLanguages().isEmpty() )
         {
             this.builder.start( "languages" );
-            value.getAllTextConfig().getLanguages().forEach( language -> serializeValueElement( "language", language ) );
+            value.getLanguages().forEach( language -> serializeValueElement( "language", language ) );
             this.builder.end();
         }
-        this.builder.end();
     }
 
     private void serialize( final IndexConfig value )
