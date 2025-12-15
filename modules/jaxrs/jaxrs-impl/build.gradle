@@ -2,7 +2,6 @@ dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
     implementation libs.resteasy.jackson2
     implementation libs.resteasy.core
-    implementation(  )
     implementation project( ':core:core-internal' )
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
