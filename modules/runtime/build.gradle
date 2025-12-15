@@ -64,8 +64,8 @@ addBundle( libs.jackson.core, 8 )
 addBundle( libs.jackson.annotations, 8 )
 addBundle( libs.jackson.databind, 8 )
 addBundle( libs.jackson.datatype.jsr310, 8 )
-addBundle( libs.jackson.jakarta.base, 8 )
-addBundle( libs.jackson.jakarta.jsonprovider, 8 )
+//addBundle( libs.jackson.jakarta.base, 8 )
+// addBundle( libs.jackson.jakarta.jsonprovider, 8 )
 
 repackBundle( libs.tika.core, 8 ) {
     forceOptional = ["org.apache.xerces"]

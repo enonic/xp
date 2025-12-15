@@ -1,14 +1,15 @@
 dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
-    implementation libs.jackson.jakarta.jsonprovider
-    implementation libs.resteasy
+    implementation libs.resteasy.jackson2
+    implementation libs.resteasy.core
+    implementation(  )
     implementation project( ':core:core-internal' )
 
     testFixturesApi project( ':jaxrs:jaxrs-api' )
-    testFixturesImplementation libs.resteasy
+    testFixturesImplementation libs.resteasy.core
     testFixturesImplementation libs.junit.jupiter.api
     testFixturesImplementation libs.mockito.core
-    testFixturesImplementation libs.jackson.jakarta.jsonprovider
+    testFixturesImplementation libs.resteasy.jackson2
     testFixturesImplementation ( testFixtures( project( ':core:core-api' ) ) )
     testFixturesImplementation project( ':core:core-internal' )
 
