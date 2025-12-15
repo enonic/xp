@@ -99,9 +99,10 @@ public class PageValidator
             }
             catch ( final Exception e )
             {
+                final String descriptor = page.hasDescriptor() ? page.getDescriptor().toString() : page.getTemplate().toString();
                 validationErrorsBuilder.add( ValidationError.generalError(
                         ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.pageConfigInvalid" ) )
-                                                 .args( page.hasDescriptor() ? page.getDescriptor() : page.getTemplate() )
+                                                 .args( descriptor, "page" )
                                                  .build() );
             }
         }
@@ -156,7 +157,7 @@ public class PageValidator
             {
                 validationErrorsBuilder.add( ValidationError.generalError(
                         ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.partConfigInvalid" ) )
-                                                 .args( component.getDescriptor() )
+                                                 .args( component.getDescriptor(), component.getPath() )
                                                  .build() );
             }
         }
@@ -187,7 +188,7 @@ public class PageValidator
             {
                 validationErrorsBuilder.add( ValidationError.generalError(
                         ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.layoutConfigInvalid" ) )
-                                                 .args( component.getDescriptor() )
+                                                 .args( component.getDescriptor(), component.getPath() )
                                                  .build() );
             }
         }
