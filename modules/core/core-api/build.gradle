@@ -5,6 +5,7 @@ dependencies {
     }
     api libs.osgi.core
     api libs.osgi.service.component
+    api libs.jspecify
     compileOnlyApi libs.osgi.service.componentannotations
 
     implementation project( ':core:core-internal' )
