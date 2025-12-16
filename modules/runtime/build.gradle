@@ -30,6 +30,7 @@ addBundle( libs.jakarta.mail, 4 )
 addBundle( libs.jakarta.annotation, 4 )
 addBundle( libs.jakarta.validation, 4 )
 addBundle( libs.findbugs.jsr305, 4 )
+addBundle( libs.jspecify, 4 )
 
 // Core bundles
 addBundle( libs.osgi.service.component, 5 )
