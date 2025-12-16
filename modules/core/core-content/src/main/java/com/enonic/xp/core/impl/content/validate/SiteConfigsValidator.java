@@ -63,20 +63,10 @@ public class SiteConfigsValidator
                 catch ( final InputTypeValidationException e )
                 {
                     validationErrorsBuilder.add( ValidationError.dataError(
-                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigPropertyInvalid" ),
-                            e.getPropertyPath() )
+                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigPropertyInvalid" ), e.getPropertyPath() )
                                                      .i18n( "system.cms.validation.siteConfigPropertyInvalid" )
-                                                     .args( e.getPropertyPath(), siteConfig.getApplicationKey() )
-                        .message( e.getMessage() )
-                        .build() );
-                }
-                catch ( final Exception e )
-                {
-                    validationErrorsBuilder.add( ValidationError.generalError(
-                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ) )
-                        .args( siteConfig.getApplicationKey() )
-                        .message( e.getMessage() )
-                        .build() );
+                                                     .args( siteConfig.getApplicationKey(), e.getPropertyPath() )
+                                                     .build() );
                 }
 
             }

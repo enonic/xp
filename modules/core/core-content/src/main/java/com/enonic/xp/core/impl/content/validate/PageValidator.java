@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
@@ -97,12 +98,13 @@ public class PageValidator
                     .build()
                     .validate( page.getConfig() );
             }
-            catch ( final Exception e )
+            catch ( final InputTypeValidationException e )
             {
-                final String descriptor = page.hasDescriptor() ? page.getDescriptor().toString() : page.getTemplate().toString();
-                validationErrorsBuilder.add( ValidationError.generalError(
-                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.pageConfigInvalid" ) )
-                                                 .args( descriptor, "page" )
+                validationErrorsBuilder.add(
+                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.pageConfigInvalid" ),
+                                               e.getPropertyPath() )
+                        .i18n( "cms.validation.componentConfigPropertyInvalid" )
+                        .args( pageDescriptor.getKey(), "/", e.getPropertyPath() )
                                                  .build() );
             }
         }
@@ -153,11 +155,13 @@ public class PageValidator
                     .build()
                     .validate( component.getConfig() );
             }
-            catch ( final Exception e )
+            catch ( final InputTypeValidationException e )
             {
-                validationErrorsBuilder.add( ValidationError.generalError(
-                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.partConfigInvalid" ) )
-                                                 .args( component.getDescriptor(), component.getPath() )
+                validationErrorsBuilder.add(
+                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.partConfigInvalid" ),
+                                               e.getPropertyPath() )
+                        .i18n( "cms.validation.componentConfigPropertyInvalid" )
+                        .args( component.getDescriptor(), component.getPath(), e.getPropertyPath() )
                                                  .build() );
             }
         }
@@ -184,11 +188,13 @@ public class PageValidator
                     .build()
                     .validate( component.getConfig() );
             }
-            catch ( final Exception e )
+            catch ( final InputTypeValidationException e )
             {
-                validationErrorsBuilder.add( ValidationError.generalError(
-                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.layoutConfigInvalid" ) )
-                                                 .args( component.getDescriptor(), component.getPath() )
+                validationErrorsBuilder.add(
+                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.layoutConfigInvalid" ),
+                                               e.getPropertyPath() )
+                        .i18n( "cms.validation.componentConfigPropertyInvalid" )
+                        .args( component.getDescriptor(), component.getPath(), e.getPropertyPath() )
                                                  .build() );
             }
         }

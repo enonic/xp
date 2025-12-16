@@ -2,15 +2,19 @@ package com.enonic.xp.core.impl.content.validate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationErrors;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.inputtype.InputTypeValidationException;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
@@ -32,6 +36,8 @@ import com.enonic.xp.schema.content.ContentTypeName;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class PageValidatorTest
 {
@@ -642,6 +648,56 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+    }
+
+    @Test
+    void part_config_input_validation_exception_adds_error()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final PageDescriptor pageDescriptor = PageDescriptor.create()
+            .key( pageDescriptorKey )
+            .config( Form.create().build() )
+            .regions( RegionDescriptors.create().build() )
+            .build();
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( partDescriptorKey ).config( Form.create().build() ).build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( partDescriptor );
+
+        final PropertyTree partConfig = new PropertyTree();
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+        final Region region = Region.create().name( "main" ).add( partComponent ).build();
+        final Regions regions = Regions.create().add( region ).build();
+        final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        try (MockedStatic<InputValidator> inputValidatorMock = Mockito.mockStatic( InputValidator.class ))
+        {
+            final InputValidator.Builder builderMock = Mockito.mock( InputValidator.Builder.class, Mockito.RETURNS_SELF );
+            final InputValidator validatorMock = Mockito.mock( InputValidator.class );
+
+            inputValidatorMock.when( InputValidator::create ).thenReturn( builderMock );
+            Mockito.when( builderMock.build() ).thenReturn( validatorMock );
+
+            final Property mock = mock( Property.class );
+            when( mock.getPath() ).thenReturn( PropertyPath.from( "/property/path" ) );
+
+            Mockito.doThrow( InputTypeValidationException.invalidValue( mock, "boom" ) )
+                .when( validatorMock )
+                .validate( Mockito.any( PropertyTree.class ) );
+
+            final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+            validator.validate( params, validationErrorsBuilder );
+
+            final ValidationErrors validationErrors = validationErrorsBuilder.build();
+            assertTrue( validationErrors.hasErrors() );
+            assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+        }
     }
 
     @Test
