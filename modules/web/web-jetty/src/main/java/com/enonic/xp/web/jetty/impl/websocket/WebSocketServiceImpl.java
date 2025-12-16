@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
-import org.eclipse.jetty.ee10.servlet.ServletContextRequest;
-import org.eclipse.jetty.ee10.websocket.jakarta.server.JakartaWebSocketServerContainer;
-import org.eclipse.jetty.ee10.websocket.jakarta.server.config.ContainerDefaultConfigurator;
+import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee11.servlet.ServletContextRequest;
+import org.eclipse.jetty.ee11.websocket.jakarta.server.JakartaWebSocketServerContainer;
+import org.eclipse.jetty.ee11.websocket.jakarta.server.config.ContainerDefaultConfigurator;
 import org.eclipse.jetty.websocket.core.server.WebSocketMappings;
 import org.osgi.service.component.annotations.Component;
 

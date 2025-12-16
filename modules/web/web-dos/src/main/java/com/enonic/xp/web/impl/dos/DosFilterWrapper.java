@@ -2,7 +2,7 @@ package com.enonic.xp.web.impl.dos;
 
 import java.io.IOException;
 
-import org.eclipse.jetty.ee10.servlets.DoSFilter;
+import org.eclipse.jetty.ee11.servlets.DoSFilter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
