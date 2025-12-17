@@ -8,9 +8,7 @@ dependencies {
     implementation( libs.owaspsanitizer ) {
         exclude group: 'com.google.guava'
     }
-    compileOnly( libs.guava.guava ) {
-        exclude group: 'com.google.code.findbugs'
-    }
+    compileOnly libs.guava.guava
 
     testFixturesImplementation libs.mockito.core
     testImplementation libs.guava.guava
@@ -20,7 +18,7 @@ jar {
     bundle {
         bnd( 'Bundle-Name': 'Enonic XP Core - Internal',
          'Export-Package': 'com.enonic.xp.core.internal.*',
-         'Import-Package': 'jakarta.annotation.meta;resolution:=optional,*',
+         'Import-Package': 'jakarta.annotation.meta;resolution:=optional,javax.annotation;resolution:=optional,*',
          'Private-Package': 'org.jsoup.*;org.owasp.html.*;org.owasp.shim.*;-split-package:=merge-first')
     }
 }

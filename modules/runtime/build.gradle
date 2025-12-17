@@ -29,7 +29,6 @@ addBundle( libs.jakarta.activation, 4 )
 addBundle( libs.jakarta.mail, 4 )
 addBundle( libs.jakarta.annotation, 4 )
 addBundle( libs.jakarta.validation, 4 )
-addBundle( libs.findbugs.jsr305, 4 )
 addBundle( libs.jspecify, 4 )
 
 // Core bundles
@@ -94,7 +93,10 @@ repackTikaParserBundle( libs.tika.parser.xml, 8 )
 repackTikaParserBundle( libs.tika.parser.xmpcommons, 8 )
 repackTikaParserBundle( libs.tika.parser.zipcommons, 8 )
 
-addBundle( libs.hazelcast.hazelcast, 8 )
+repackBundle( libs.hazelcast.hazelcast, 8 ) {
+    // until they switch to jspecify
+    forceOptional = ["javax.annotation"]
+}
 addBundle( libs.jparsec, 8 )
 
 addBundle( project( ':repack:repack-elasticsearch' ), 9 )

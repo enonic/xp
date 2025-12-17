@@ -10,7 +10,7 @@ tika = "3.2.3"
 micrometer = "1.16.1"
 prometheus = "1.4.3"
 graalvm = "23.1.8"
-guava = "33.4.8-jre"
+guava = "33.5.0-jre"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -65,7 +65,6 @@ elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" 
 
 jna = { module = "net.java.dev.jna:jna", version = "4.1.0" }
 
-findbugs-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 jspecify = { module = "org.jspecify:jspecify", version = "1.0.0" }
 
 guava-guava = { module = "com.google.guava:guava", version.ref = "guava"  }
