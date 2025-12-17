@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -26,6 +28,7 @@ import com.google.common.math.DoubleMath;
  * It is serializable and can be constructed using static factory methods or builders for lists and objects.
  * Null values are not supported.
  */
+@NullMarked
 public final class GenericValue
     implements Serializable
 {
