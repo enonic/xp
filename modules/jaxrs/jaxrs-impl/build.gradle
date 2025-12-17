@@ -21,7 +21,7 @@ jar {
         bnd( 'Bundle-Name': 'Enonic XP JaxRs - Impl',
          'Export-Package': 'jakarta.ws.rs.*',
          'Import-Package': '*;resolution:=optional',
-         'Private-Package': 'org.jboss.resteasy.*;-split-package:=merge-first' + ',' +
+         'Private-Package': 'org.jboss.resteasy.*' + ',' +
              'org.reactivestreams.*' + ',' +
              'com.ibm.asyncutil.*' + ',' +
              'com.fasterxml.jackson.jakarta.rs.*' + ',' +
