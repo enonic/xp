@@ -2,8 +2,6 @@ dependencies {
     implementation project( ':jaxrs:jaxrs-api' )
     implementation project( ':core:core-internal' )
 
-    implementation libs.jackson.datatype.jsr310
-
     testImplementation( testFixtures( project(":jaxrs:jaxrs-impl") ) )
     testImplementation( testFixtures( project(":core:core-api") ) )
 }
