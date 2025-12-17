@@ -2,19 +2,16 @@ package com.enonic.xp.lib.export;
 
 import java.util.function.Function;
 
-import org.osgi.framework.Bundle;
-
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.vfs.VirtualFile;
-import com.enonic.xp.vfs.VirtualFiles;
 
 public class ImportHandler
     implements ScriptBean
@@ -119,9 +116,7 @@ public class ImportHandler
 
     private VirtualFile toVirtualFile( final ResourceKey resourceKey )
     {
-        final Bundle bundle =
-            context.getService( ApplicationService.class ).get().getInstalledApplication( resourceKey.getApplicationKey() ).getBundle();
-        return VirtualFiles.from( bundle, resourceKey.getPath() );
+        return context.getService( ResourceService.class ).get().getVirtualFile( resourceKey );
     }
 
     @Override

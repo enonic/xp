@@ -13,7 +13,7 @@ import org.osgi.util.tracker.BundleTracker;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.replicatedmap.ReplicatedMap;
 
-import com.enonic.xp.app.ApplicationBundleUtils;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 
 class MemberAttributesApplier
     extends BundleTracker<Boolean>
@@ -70,7 +70,7 @@ class MemberAttributesApplier
     {
         if ( ApplicationBundleUtils.isApplication( bundle ) )
         {
-            attributes.put( TASKS_ENABLED_ATTRIBUTE_PREFIX + bundle.getSymbolicName(), String.valueOf( true ) );
+            attributes.put( TASKS_ENABLED_ATTRIBUTE_PREFIX + ApplicationBundleUtils.getApplicationName( bundle ), String.valueOf( true ) );
             attributesReplicatedMap.put( uuid, Map.copyOf( attributes ) );
             return true;
         }
@@ -81,7 +81,7 @@ class MemberAttributesApplier
     @Override
     public void removedBundle( final Bundle bundle, final BundleEvent event, final Boolean object )
     {
-        final String removed = attributes.remove( TASKS_ENABLED_ATTRIBUTE_PREFIX + bundle.getSymbolicName() );
+        final String removed = attributes.remove( TASKS_ENABLED_ATTRIBUTE_PREFIX + ApplicationBundleUtils.getApplicationName( bundle ) );
 
         if ( removed != null )
         {

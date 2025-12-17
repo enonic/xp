@@ -40,7 +40,7 @@ public class ApiHandler
 {
     private static final Pattern URL_PATTERN = Pattern.compile( "^/api$" );
 
-    private static final ApplicationKey WELCOME_APP_KEY = ApplicationKey.from( "com.enonic.xp.app.welcome" );
+    private static final ApplicationKey WELCOME_APP_KEY = ApplicationKey.from( "com.enonic.xp.app.sdk" );
 
     private final ApplicationService applicationService;
 

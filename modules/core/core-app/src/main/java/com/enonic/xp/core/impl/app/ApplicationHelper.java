@@ -15,9 +15,11 @@ import org.osgi.framework.VersionRange;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.security.SystemConstants;
 
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_BUNDLE_TYPE;
@@ -38,6 +40,11 @@ public final class ApplicationHelper
     static boolean isApplication( final JarFile jarFile )
     {
         return hasApplicationHeader( jarFile ) || jarFile.getEntry( APPLICATION_XML ) != null || jarFile.getEntry( SITE_XML ) != null;
+    }
+
+    public static ApplicationKey getApplicationKey( final Bundle bundle )
+    {
+        return ApplicationKey.from( ApplicationBundleUtils.getApplicationName( bundle ) );
     }
 
     private static boolean hasApplicationHeader( final JarFile jarFile )

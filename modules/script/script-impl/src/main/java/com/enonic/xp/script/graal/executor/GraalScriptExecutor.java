@@ -19,7 +19,6 @@ import org.graalvm.polyglot.proxy.ProxyObject;
 
 import com.google.common.io.Files;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
@@ -62,8 +61,6 @@ public class GraalScriptExecutor
 
     private final ResourceService resourceService;
 
-    private final Application application;
-
     private final Map<String, Object> mocks = new ConcurrentHashMap<>();
 
     private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
@@ -72,32 +69,25 @@ public class GraalScriptExecutor
 
     private final JavascriptHelper<Value> javascriptHelper;
 
-    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ScriptSettings scriptSettings,
-                                final ServiceRegistry serviceRegistry, final ResourceService resourceService, final Application application,
-                                final RunMode runMode )
+    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
+                                final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
+                                final ResourceService resourceService, final ApplicationInfoBuilder application, final RunMode runMode )
     {
         this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
         this.resourceService = resourceService;
         this.serviceRegistry = serviceRegistry;
-        this.application = application;
+        this.classLoader = classLoader;
 
         final GraalScriptValueFactory scriptValueFactory =
             new GraalScriptValueFactory( contextFactory, new GraalJavascriptHelperFactory() );
         this.scriptValueFactory = scriptValueFactory;
         this.javascriptHelper = this.scriptValueFactory.getJavascriptHelper();
-        this.classLoader = application.getClassLoader();
         this.exportsCache = new ScriptExportsCache<>( runMode, resourceService::getResource, this::runDisposers );
         this.context = scriptValueFactory.getContext();
         final Map<String, Object> globalVariables = new HashMap<>( this.scriptSettings.getGlobalVariables() );
-        globalVariables.put( "app", ProxyObject.fromMap( buildAppInfo() ) );
+        globalVariables.put( "app", ProxyObject.fromMap( application.buildMap( HashMap::new ) ) );
         globalVariables.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
-    }
-
-    @Override
-    public Application getApplication()
-    {
-        return application;
     }
 
     @Override
@@ -289,13 +279,5 @@ public class GraalScriptExecutor
         {
             throw new ResourceError( script.getKey(), "Script execute failed: [" + script.getKey() + "]", e );
         }
-    }
-
-    private Map<String, Object> buildAppInfo()
-    {
-        final ApplicationInfoBuilder builder = new ApplicationInfoBuilder();
-        builder.application( this.application );
-        builder.mapSupplier( HashMap::new );
-        return builder.build();
     }
 }

@@ -1,6 +1,5 @@
 package com.enonic.xp.script.impl.function;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.bean.BeanContextImpl;
@@ -55,11 +54,6 @@ public final class ScriptFunctions
     public ResolveFunction getResolve()
     {
         return new ResolveFunction( this.script, this.executor );
-    }
-
-    public Application getApp()
-    {
-        return this.executor.getApplication();
     }
 
     public Object newBean( final String type )

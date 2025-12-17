@@ -4,7 +4,6 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.graal.util.GraalScriptLogger;
@@ -40,7 +39,7 @@ public final class GraalScriptFunctions
 
         this.scriptBeanFactory = new ScriptBeanFactoryImpl( executor.getClassLoader(), beanContext );
         this.converter = this.executor.getObjectConverter();
-        this.logger = new GraalScriptLogger( this.context, this.script, this.converter);
+        this.logger = new GraalScriptLogger( this.context, this.script, this.converter );
     }
 
     public ResourceKey getScript()
@@ -64,11 +63,6 @@ public final class GraalScriptFunctions
     public GraalResolveFunction getResolve()
     {
         return new GraalResolveFunction( context, this.script, this.executor );
-    }
-
-    public Application getApp()
-    {
-        return this.executor.getApplication();
     }
 
     public Object newBean( final String type )

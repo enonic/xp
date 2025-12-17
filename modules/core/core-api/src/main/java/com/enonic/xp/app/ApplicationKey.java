@@ -1,9 +1,8 @@
 package com.enonic.xp.app;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-
-import org.osgi.framework.Bundle;
 
 import com.google.common.base.Preconditions;
 
@@ -14,6 +13,7 @@ import com.enonic.xp.util.CharacterChecker;
 public final class ApplicationKey
     implements Serializable
 {
+    @Serial
     private static final long serialVersionUID = 0;
 
     public static final ApplicationKey SYSTEM = ApplicationKey.from( "system" );
@@ -61,15 +61,5 @@ public final class ApplicationKey
     public static ApplicationKey from( final String name )
     {
         return new ApplicationKey( name );
-    }
-
-    public static ApplicationKey from( final Bundle bundle )
-    {
-        return ApplicationKey.from( bundle.getSymbolicName() );
-    }
-
-    public static ApplicationKey from( final String name, final String preffix )
-    {
-        return new ApplicationKey( name != null ? name.replace( preffix, "." ) : "" );
     }
 }

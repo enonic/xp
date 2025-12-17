@@ -1,18 +1,14 @@
 package com.enonic.xp.portal.impl.filter;
 
 import java.net.URL;
-import java.util.Hashtable;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -23,8 +19,8 @@ import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
+import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -57,20 +53,12 @@ class FilterScriptImplTest
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();
 
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
-
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        when( bundle.getBundleContext() ).thenReturn( bundleContext );
-        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
-
         final Application application = Mockito.mock( Application.class );
-        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+        when( application.getVersion() ).thenReturn( Version.emptyVersion );
         when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         when( application.isStarted() ).thenReturn( true );
         when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
-
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         this.resourceService = Mockito.mock( ResourceService.class );
         when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -79,10 +67,8 @@ class FilterScriptImplTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
-
         final ScriptRuntimeFactory runtimeFactory =
-            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
+            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( resourceService, null, application );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();

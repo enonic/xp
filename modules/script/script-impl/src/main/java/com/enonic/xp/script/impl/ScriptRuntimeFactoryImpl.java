@@ -1,5 +1,6 @@
 package com.enonic.xp.script.impl;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -8,6 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.graalvm.polyglot.Engine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -21,13 +24,13 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.app.ApplicationNotFoundException;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutorImpl;
+import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
@@ -47,20 +50,19 @@ public class ScriptRuntimeFactoryImpl
 
     private final List<ScriptRuntimeImpl> list = new CopyOnWriteArrayList<>();
 
-    private final ApplicationService applicationService;
-
     private final ResourceService resourceService;
 
     private final ScriptAsyncService scriptAsyncService;
 
     private Engine engine;
 
+    private final BundleContext context;
+
     @Activate
-    public ScriptRuntimeFactoryImpl( @Reference final ApplicationService applicationService,
-                                     @Reference final ResourceService resourceService,
+    public ScriptRuntimeFactoryImpl( final BundleContext context, @Reference final ResourceService resourceService,
                                      @Reference final ScriptAsyncService scriptAsyncService )
     {
-        this.applicationService = applicationService;
+        this.context = context;
         this.resourceService = resourceService;
         this.scriptAsyncService = scriptAsyncService;
     }
@@ -136,7 +138,8 @@ public class ScriptRuntimeFactoryImpl
         }
     }
 
-    private class ScripExecutorFactory {
+    private class ScripExecutorFactory
+    {
         final ScriptSettings settings;
 
         ScripExecutorFactory( final ScriptSettings settings )
@@ -147,19 +150,16 @@ public class ScriptRuntimeFactoryImpl
         ScriptExecutor create( final ApplicationKey applicationKey )
         {
             LOG.debug( "Create Script Executor for {}", applicationKey );
-            final Application application = applicationService.getInstalledApplication( applicationKey );
 
-            if ( application == null || !application.isStarted() || application.getConfig() == null )
-            {
-                throw new ApplicationNotFoundException( applicationKey );
-            }
-            final Bundle bundle = application.getBundle();
-            final BundleContext bundleContext = Objects.requireNonNull( bundle.getBundleContext(),
-                                                                        String.format( "application bundle %s context must not be null",
-                                                                                       bundle.getBundleId() ) );
+            final AppBundleData appBundleData = getAppBundleData( applicationKey );
 
-            final String appScriptEngine = normalizeEngineName( Objects.requireNonNullElseGet( bundle.getHeaders().get( "X-Script-Engine" ),
-                                                                                               ScriptRuntimeFactoryImpl::defaultEngineName ) );
+            final String appScriptEngine = normalizeEngineName(
+                Objects.requireNonNullElseGet( appBundleData.bundle.getHeaders().get( "X-Script-Engine" ),
+                                               ScriptRuntimeFactoryImpl::defaultEngineName ) );
+
+            final ClassLoader appClassloader = appBundleData.appClassloader;
+            final BundleContext appBundleContext = appBundleData.bundle.getBundleContext();
+            final ApplicationInfoBuilder appInfo = appBundleData.appInfo;
 
             if ( GRAAL_JS_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
@@ -167,29 +167,72 @@ public class ScriptRuntimeFactoryImpl
                 {
                     if ( engine == null )
                     {
-                        final Engine.Builder builder = Engine.newBuilder();
-
-                        if ( Boolean.getBoolean( "xp.script-engine.nashorn-compat" ) )
-                        {
-                            builder.allowExperimentalOptions( true );
-                        }
-                        engine = Engine.newBuilder().build();
+                        engine =
+                            Engine.newBuilder().allowExperimentalOptions( Boolean.getBoolean( "xp.script-engine.nashorn-compat" ) ).build();
                     }
                 }
-                return new GraalScriptExecutor( new GraalJSContextFactory( application.getClassLoader(), engine ),
-                                                scriptAsyncService.getAsyncExecutor( application.getKey() ), settings,
-                                                new ServiceRegistryImpl( bundleContext ), resourceService, application, RunMode.get() );
+                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ),
+                                                scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
+                                                new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo, RunMode.get() );
             }
             else if ( NASHORN_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
-                return new ScriptExecutorImpl( scriptAsyncService.getAsyncExecutor( application.getKey() ), settings,
-                                               application.getClassLoader(), new ServiceRegistryImpl( bundleContext ), resourceService,
-                                               application, RunMode.get() );
+                return new ScriptExecutorImpl( scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
+                                               new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo, RunMode.get() );
             }
             else
             {
                 throw new IllegalArgumentException( "Unsupported script engine " + appScriptEngine );
             }
         }
+    }
+
+    private AppBundleData getAppBundleData( final ApplicationKey applicationKey )
+    {
+        ServiceReference<Application> appRef = null;
+        try
+        {
+            final Collection<ServiceReference<Application>> appRefs =
+                context.getServiceReferences( Application.class, "(name=" + applicationKey + ")" );
+            for ( ServiceReference<Application> ref : appRefs )
+            {
+                final Bundle aBundle = ref.getBundle();
+                if ( aBundle != null && aBundle.getState() == Bundle.ACTIVE )
+                {
+                    appRef = ref;
+                    break;
+                }
+            }
+        }
+        catch ( InvalidSyntaxException e )
+        {
+            throw new RuntimeException( e );
+        }
+
+        if ( appRef == null )
+        {
+            throw new ApplicationNotFoundException( applicationKey );
+        }
+        final Bundle bundle = appRef.getBundle();
+
+        final Application application = context.getService( appRef );
+        try
+        {
+            if ( application == null || application.getConfig() == null || !application.isStarted() )
+            {
+                throw new ApplicationNotFoundException( applicationKey );
+            }
+
+            return new AppBundleData( bundle, application.getClassLoader(),
+                                      new ApplicationInfoBuilder( applicationKey, application.getConfig(), application.getVersion() ) );
+        }
+        finally
+        {
+            context.ungetService( appRef );
+        }
+    }
+
+    private record AppBundleData(Bundle bundle, ClassLoader appClassloader, ApplicationInfoBuilder appInfo)
+    {
     }
 }

@@ -17,7 +17,7 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationBundleUtils;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.concurrent.SimpleExecutor;
 
@@ -50,12 +50,13 @@ public class ScriptAsyncServiceImpl
     @Override
     public Executor getAsyncExecutor( ApplicationKey applicationKey )
     {
-        return bundleTracker.getTracked().
-            entrySet().stream().
-            filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) ).
-            findAny().
-            map( Map.Entry::getValue ).
-            orElseThrow( () -> new NoSuchElementException( "No background executor found for app " + applicationKey ) );
+        return bundleTracker.getTracked()
+            .entrySet()
+            .stream()
+            .filter( bundleEntry -> applicationKey.getName().equals( ApplicationBundleUtils.getApplicationName( bundleEntry.getKey() ) ) )
+            .findAny()
+            .map( Map.Entry::getValue )
+            .orElseThrow( () -> new NoSuchElementException( "No background executor found for app " + applicationKey ) );
     }
 
     private static class Customizer
@@ -66,10 +67,10 @@ public class ScriptAsyncServiceImpl
         {
             if ( ApplicationBundleUtils.isApplication( bundle ) )
             {
-                final ApplicationKey applicationKey = ApplicationKey.from( bundle );
+                final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
                 final long id = bundle.getBundleId();
-                return new SimpleExecutor( Executors::newSingleThreadExecutor, "app-" + applicationKey + "-" + id,
-                                           e -> LOG.error( "Unhandled error in app background thread {}", applicationKey, e ) );
+                return new SimpleExecutor( Executors::newSingleThreadExecutor, "app-" + applicationName + "-" + id,
+                                           e -> LOG.error( "Unhandled error in app background thread {}", applicationName, e ) );
             }
             else
             {
@@ -86,10 +87,10 @@ public class ScriptAsyncServiceImpl
         @Override
         public void removedBundle( final Bundle bundle, final BundleEvent event, final SimpleExecutor object )
         {
-            final ApplicationKey applicationKey = ApplicationKey.from( bundle );
+            final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
             object.shutdownAndAwaitTermination( Duration.ZERO,
                                                 neverCommenced -> LOG.warn( "Some events were not processed by app background thread {}",
-                                                                            applicationKey ) );
+                                                                            applicationName ) );
         }
     }
 }

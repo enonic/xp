@@ -3,20 +3,16 @@ package com.enonic.xp.portal.impl.idprovider;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.idprovider.IdProviderDescriptor;
 import com.enonic.xp.idprovider.IdProviderDescriptorService;
@@ -30,12 +26,12 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderConfig;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.util.Version;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.impl.serializer.ResponseSerializationServiceImpl;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -88,22 +84,19 @@ class IdProviderControllerServiceImplTest
 
     private PortalScriptService setupPortalScriptService()
     {
-        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
-
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        when( bundle.getBundleContext() ).thenReturn( bundleContext );
-        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
-
         final Application application = Mockito.mock( Application.class );
-        when( application.getBundle() ).thenReturn( bundle );
-
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+        when( application.getVersion() ).thenReturn( Version.emptyVersion );
         when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         when( application.isStarted() ).thenReturn( true );
         when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "defaultapplication" ) ) ).thenReturn( application );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
+        final Application defaultapplication = Mockito.mock( Application.class );
+        when( defaultapplication.getKey() ).thenReturn( ApplicationKey.from( "defaultapplication" ) );
+        when( defaultapplication.getVersion() ).thenReturn( Version.emptyVersion );
+        when( defaultapplication.getClassLoader() ).thenReturn( getClass().getClassLoader() );
+        when( defaultapplication.isStarted() ).thenReturn( true );
+        when( defaultapplication.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
         ResourceService resourceService = Mockito.mock( ResourceService.class );
         when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -113,10 +106,8 @@ class IdProviderControllerServiceImplTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptAsyncService scriptAsyncService = Mockito.mock( ScriptAsyncService.class );
-
         final ScriptRuntimeFactory runtimeFactory =
-            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
+            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( resourceService, null, defaultapplication, application );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();
@@ -128,11 +119,11 @@ class IdProviderControllerServiceImplTest
     void executeMissingIdProvider()
         throws IOException
     {
-        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "missingidprovider" ) ).
-            functionName( "missingfunction" ).
-            build();
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .portalRequest( new PortalRequest() )
+            .idProviderKey( IdProviderKey.from( "missingidprovider" ) )
+            .functionName( "missingfunction" )
+            .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
@@ -141,11 +132,11 @@ class IdProviderControllerServiceImplTest
     void executeMissingFunction()
         throws IOException
     {
-        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "myemptyidprovider" ) ).
-            functionName( "missingfunction" ).
-            build();
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .portalRequest( new PortalRequest() )
+            .idProviderKey( IdProviderKey.from( "myemptyidprovider" ) )
+            .functionName( "missingfunction" )
+            .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
@@ -154,11 +145,11 @@ class IdProviderControllerServiceImplTest
     void executeIdProviderWithoutApplication()
         throws IOException
     {
-        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "myemptyidprovider" ) ).
-            functionName( "myfunction" ).
-            build();
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .portalRequest( new PortalRequest() )
+            .idProviderKey( IdProviderKey.from( "myemptyidprovider" ) )
+            .functionName( "myfunction" )
+            .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
@@ -167,11 +158,11 @@ class IdProviderControllerServiceImplTest
     void execute()
         throws IOException
     {
-        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            portalRequest( new PortalRequest() ).
-            idProviderKey( IdProviderKey.from( "myidprovider" ) ).
-            functionName( "myfunction" ).
-            build();
+        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
+            .portalRequest( new PortalRequest() )
+            .idProviderKey( IdProviderKey.from( "myidprovider" ) )
+            .functionName( "myfunction" )
+            .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
@@ -184,10 +175,8 @@ class IdProviderControllerServiceImplTest
         throws IOException
     {
         final HttpServletRequest httpServletRequest = createHttpServletRequest();
-        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            servletRequest( httpServletRequest ).
-            functionName( "myfunction" ).
-            build();
+        final IdProviderControllerExecutionParams executionParams =
+            IdProviderControllerExecutionParams.create().servletRequest( httpServletRequest ).functionName( "myfunction" ).build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
     }
@@ -206,10 +195,8 @@ class IdProviderControllerServiceImplTest
 
         VirtualHostHelper.setVirtualHost( httpServletRequest, virtualHost );
 
-        final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-            servletRequest( httpServletRequest ).
-            functionName( "myfunction" ).
-            build();
+        final IdProviderControllerExecutionParams executionParams =
+            IdProviderControllerExecutionParams.create().servletRequest( httpServletRequest ).functionName( "myfunction" ).build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNotNull( portalResponse );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );

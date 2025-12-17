@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.task.script;
 
 import java.net.URL;
-import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,12 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -26,13 +22,13 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskNotFoundException;
+import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,20 +56,12 @@ class NamedTaskFactoryImplTest
 
     private PortalScriptService setupPortalScriptService()
     {
-        final BundleContext bundleContext = mock( BundleContext.class );
-
-        final Bundle bundle = mock( Bundle.class );
-        when( bundle.getBundleContext() ).thenReturn( bundleContext );
-        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
-
         final Application application = mock( Application.class );
-        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+        when( application.getVersion() ).thenReturn( Version.emptyVersion );
         when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         when( application.isStarted() ).thenReturn( true );
         when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
-
-        final ApplicationService applicationService = mock( ApplicationService.class );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         ResourceService resourceService = mock( ResourceService.class );
         final Answer<Object> getResource = invocation -> {
@@ -84,10 +72,8 @@ class NamedTaskFactoryImplTest
         };
         when( resourceService.getResource( any() ) ).thenAnswer( getResource );
 
-        final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
-
         final ScriptRuntimeFactory runtimeFactory =
-            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
+            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( resourceService, null, application );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();

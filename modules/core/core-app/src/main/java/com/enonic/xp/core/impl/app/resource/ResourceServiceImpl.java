@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.resource.Resource;
@@ -24,6 +25,7 @@ import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.vfs.VirtualFile;
 
 @Component(immediate = true)
 public final class ResourceServiceImpl
@@ -97,6 +99,15 @@ public final class ResourceServiceImpl
         } );
 
         return entry != null ? (V) entry.value : null;
+    }
+
+    @Override
+    public VirtualFile getVirtualFile( final ResourceKey resourceKey )
+    {
+        return this.applicationFactoryService.findActiveApplication( resourceKey.getApplicationKey() )
+            .map( ApplicationAdaptor::getBundle )
+            .map( b -> (VirtualFile) new BundleResource( b, resourceKey.getPath() ) )
+            .orElseGet( () -> new NullResource( resourceKey.getPath() ) );
     }
 
     @Override

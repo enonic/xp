@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class ScriptRuntimeFactoryImplTest
 {
     @Mock(stubOnly = true)
-    ApplicationService applicationService;
+    BundleContext bundleContext;
 
     @Mock(stubOnly = true)
     ResourceService resourceService;
@@ -37,7 +37,7 @@ class ScriptRuntimeFactoryImplTest
     void invalidate()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService ) );
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
 
         final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
         when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );
@@ -53,7 +53,7 @@ class ScriptRuntimeFactoryImplTest
     void deactivate()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( applicationService, resourceService, scriptAsyncService ) );
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
 
         final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
         when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );

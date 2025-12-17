@@ -9,7 +9,7 @@ import java.time.Instant;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationDescriptor;
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.xml.parser.XmlApplicationParser;
 
@@ -34,7 +34,7 @@ final class ApplicationDescriptorBuilder
 
         ApplicationDescriptor.Builder appDescriptorBuilder = ApplicationDescriptor.create();
         final XmlApplicationParser parser = new XmlApplicationParser().
-            currentApplication( ApplicationKey.from( bundle ) ).
+            currentApplication( ApplicationHelper.getApplicationKey( bundle ) ).
             appDescriptorBuilder( appDescriptorBuilder ).
             source( xml );
         parser.parse();
@@ -50,7 +50,7 @@ final class ApplicationDescriptorBuilder
             }
             catch ( IOException e )
             {
-                throw new RuntimeException( "Unable to load application icon for " + bundle.getSymbolicName(), e );
+                throw new RuntimeException( "Unable to load application icon for " + ApplicationBundleUtils.getApplicationName( bundle ), e );
             }
         }
 

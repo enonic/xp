@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
@@ -60,8 +59,6 @@ public final class ScriptExecutorImpl
 
     private final ResourceService resourceService;
 
-    private final Application application;
-
     private final Map<String, Object> mocks = new ConcurrentHashMap<>();
 
     private final Map<ResourceKey, Runnable> disposers = new ConcurrentHashMap<>();
@@ -70,33 +67,24 @@ public final class ScriptExecutorImpl
 
     private final JavascriptHelper<Bindings> javascriptHelper;
 
-    public ScriptExecutorImpl( final Executor asyncExecutor, final ScriptSettings scriptSettings, final ClassLoader classLoader,
-                               final ServiceRegistry serviceRegistry, final ResourceService resourceService, final Application application,
-                               final RunMode runMode )
+    public ScriptExecutorImpl( final Executor asyncExecutor, final ClassLoader classLoader, final ScriptSettings scriptSettings,
+                               final ServiceRegistry serviceRegistry, final ResourceService resourceService,
+                               final ApplicationInfoBuilder appInfo, final RunMode runMode )
     {
         this.asyncExecutor = asyncExecutor;
-        this.engine = NashornHelper.getScriptEngine( classLoader );
         this.scriptSettings = scriptSettings;
         this.classLoader = classLoader;
         this.serviceRegistry = serviceRegistry;
         this.resourceService = resourceService;
-        this.application = application;
+        this.engine = NashornHelper.getScriptEngine( this.classLoader );
         this.javascriptHelper = new JavascriptHelperFactory( this.engine ).create();
         this.scriptValueFactory = new ScriptValueFactoryImpl( this.javascriptHelper );
         this.exportsCache = new ScriptExportsCache<>( runMode, resourceService::getResource, this::runDisposers );
 
         final Bindings global = new SimpleBindings();
         global.putAll( this.scriptSettings.getGlobalVariables() );
-        global.put( "app", buildAppInfo() );
+        global.put( "app", appInfo.buildMap( this.javascriptHelper::newJsObject ) );
         this.engine.setBindings( global, ScriptContext.GLOBAL_SCOPE );
-    }
-
-    private Map<String, Object> buildAppInfo()
-    {
-        final ApplicationInfoBuilder builder = new ApplicationInfoBuilder();
-        builder.application( this.application );
-        builder.mapSupplier( this.javascriptHelper::newJsObject );
-        return builder.build();
     }
 
     @Override
@@ -232,7 +220,7 @@ public final class ScriptExecutorImpl
     @Override
     public ClassLoader getClassLoader()
     {
-        return this.classLoader;
+        return classLoader;
     }
 
     @Override
@@ -245,12 +233,6 @@ public final class ScriptExecutorImpl
     public ResourceService getResourceService()
     {
         return resourceService;
-    }
-
-    @Override
-    public Application getApplication()
-    {
-        return this.application;
     }
 
     @Override

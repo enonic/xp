@@ -3,51 +3,28 @@ package com.enonic.xp.script.impl.function;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.enonic.xp.app.Application;
+import org.jspecify.annotations.NullMarked;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.util.Version;
 
-public final class ApplicationInfoBuilder
+@NullMarked
+public record ApplicationInfoBuilder(ApplicationKey appKey, Configuration appConfig, Version appVersion)
 {
-    private Application application;
-
-    private Supplier<Map<String, Object>> mapSupplier;
-
-    public ApplicationInfoBuilder application( final Application application )
-    {
-        this.application = application;
-        return this;
-    }
-
-    public ApplicationInfoBuilder mapSupplier( final Supplier<Map<String, Object>> mapSupplier )
-    {
-        this.mapSupplier = mapSupplier;
-        return this;
-    }
-
-    public Map<String, Object> build()
+    public Map<String, Object> buildMap( final Supplier<Map<String, Object>> mapSupplier )
     {
         final Map<String, Object> result = mapSupplier.get();
-        result.put( "name", toString( this.application.getKey() ) );
-        result.put( "version", toString( this.application.getVersion() ) );
-        result.put( "config", buildConfig() );
+        result.put( "name", appKey.toString() );
+        result.put( "version", appVersion.toString() );
+        result.put( "config", buildConfig( mapSupplier ) );
         return result;
     }
 
-    private Map<String, Object> buildConfig()
+    private Map<String, Object> buildConfig( final Supplier<Map<String, Object>> mapSupplier )
     {
         final Map<String, Object> result = mapSupplier.get();
-        final Configuration config = this.application.getConfig();
-
-        if ( config != null )
-        {
-            result.putAll( config.asMap() );
-        }
-
+        result.putAll( appConfig.asMap() );
         return result;
-    }
-
-    private String toString( final Object value )
-    {
-        return value != null ? value.toString() : "";
     }
 }

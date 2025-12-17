@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -27,6 +29,8 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.config.Configuration;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
+import com.enonic.xp.core.internal.Dictionaries;
 
 import static java.util.Objects.requireNonNull;
 
@@ -94,8 +98,8 @@ public class ApplicationRegistryImpl
 
     void registerApplication( final Bundle bundle )
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( bundle );
-        applications.put( applicationKey, requireNonNull( applicationFactoryService.getApplication( bundle ) ) );
+        applications.put( ApplicationHelper.getApplicationKey( bundle ),
+                          requireNonNull( applicationFactoryService.getApplication( bundle ) ) );
     }
 
     @Override
@@ -103,12 +107,17 @@ public class ApplicationRegistryImpl
     {
         requireNonNull( configuration, "configuration can't be null" );
 
-        final ApplicationKey applicationKey = ApplicationKey.from( bundle );
+        final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
 
         final ApplicationAdaptor application = applications.compute( applicationKey, ( key, existingApp ) -> {
 
             if ( existingApp != null )
             {
+                final ServiceRegistration<Application> reference = existingApp.getRegistration();
+                if ( reference != null )
+                {
+                    reference.unregister();
+                }
                 if ( existingApp.getConfig() == null )
                 {
                     // Normal applications get configured when their bundles get in STARTING/STARTED state,
@@ -117,6 +126,7 @@ public class ApplicationRegistryImpl
                     LOG.info( "Configuring application {} bundle {}", applicationKey, bundle.getBundleId() );
 
                     existingApp.setConfig( configuration );
+                    register( bundle, existingApp );
                 }
                 else
                 {
@@ -128,7 +138,7 @@ public class ApplicationRegistryImpl
                     applicationListenerHub.deactivated( existingApp );
 
                     existingApp.setConfig( configuration );
-
+                    register( bundle, existingApp );
                     callInvalidators( applicationKey );
                 }
 
@@ -141,12 +151,23 @@ public class ApplicationRegistryImpl
 
                 LOG.info( "Registering configured application {} bundle {}", applicationKey, bundle.getBundleId() );
                 final ApplicationAdaptor app = requireNonNull( applicationFactoryService.getApplication( bundle ),
-                                                                       () -> "Can't configure application " + applicationKey );
+                                                               () -> "Can't configure application " + applicationKey );
                 app.setConfig( configuration );
+                register( bundle, app );
+
                 return app;
             }
         } );
+
         applicationListenerHub.activated( application );
+    }
+
+    private static void register( final Bundle bundle, final ApplicationAdaptor application )
+    {
+        final ServiceRegistration<Application> registration = bundle.getBundleContext()
+            .registerService( Application.class, application, Dictionaries.copyOf(
+                Map.of( "bundleId", bundle.getBundleId(), "name", ApplicationBundleUtils.getApplicationName( bundle ) ) ) );
+        application.setRegistration( registration );
     }
 
     @Override
@@ -167,6 +188,11 @@ public class ApplicationRegistryImpl
                 applicationListenerHub.deactivated( existingApp );
             }
 
+            final ServiceRegistration<Application> reference = existingApp.getRegistration();
+            if ( reference != null )
+            {
+                reference.unregister();
+            }
             existingApp.setConfig( null );
 
             try
@@ -205,6 +231,11 @@ public class ApplicationRegistryImpl
                 applicationListenerHub.deactivated( existingApp );
             }
 
+            final ServiceRegistration<Application> reference = existingApp.getRegistration();
+            if ( reference != null )
+            {
+                reference.unregister();
+            }
             existingApp.setConfig( null );
 
             try

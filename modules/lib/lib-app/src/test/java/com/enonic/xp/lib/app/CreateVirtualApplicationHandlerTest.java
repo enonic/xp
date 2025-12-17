@@ -4,17 +4,15 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.util.Version;
 
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CreateVirtualApplicationHandlerTest
@@ -31,7 +29,6 @@ class CreateVirtualApplicationHandlerTest
 
             when( application.getKey() ).thenReturn( applicationKey );
             when( application.getDisplayName() ).thenReturn( "app display name" );
-            when( application.getBundle() ).thenReturn( mock( Bundle.class ) );
             when( application.getVendorName() ).thenReturn( "vendor name" );
             when( application.getVendorUrl() ).thenReturn( "https://vendor.url" );
             when( application.getUrl() ).thenReturn( "https://myapp.url" );
