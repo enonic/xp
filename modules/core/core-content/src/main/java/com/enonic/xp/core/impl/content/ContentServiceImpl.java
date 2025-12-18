@@ -89,6 +89,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDefaultValuesProcessor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -141,6 +142,8 @@ public class ContentServiceImpl
 
     private final PageDescriptorService pageDescriptorService;
 
+    private final PageTemplateService pageTemplateService;
+
     private final PartDescriptorService partDescriptorService;
 
     private final LayoutDescriptorService layoutDescriptorService;
@@ -151,6 +154,7 @@ public class ContentServiceImpl
 
     @Activate
     public ContentServiceImpl( @Reference final NodeService nodeService, @Reference final PageDescriptorService pageDescriptorService,
+                               @Reference final PageTemplateService pageTemplateService,
                                @Reference final PartDescriptorService partDescriptorService,
                                @Reference final LayoutDescriptorService layoutDescriptorService,
                                @Reference final SiteConfigService siteConfigService,
@@ -161,6 +165,7 @@ public class ContentServiceImpl
         this.config = config;
         this.nodeService = nodeService;
         this.pageDescriptorService = pageDescriptorService;
+        this.pageTemplateService = pageTemplateService;
         this.partDescriptorService = partDescriptorService;
         this.layoutDescriptorService = layoutDescriptorService;
         this.siteConfigService = siteConfigService;
@@ -187,7 +192,7 @@ public class ContentServiceImpl
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
             .xDataMappingService( this.xDataMappingService )
             .siteConfigService( this.siteConfigService )
-            .pageDescriptorService( this.pageDescriptorService )
+            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -235,7 +240,7 @@ public class ContentServiceImpl
             .formDefaultValuesProcessor( this.formDefaultValuesProcessor )
             .pageFormDefaultValuesProcessor( this.pageFormDefaultValuesProcessor )
             .xDataDefaultValuesProcessor( this.xDataDefaultValuesProcessor )
-            .pageDescriptorService( this.pageDescriptorService )
+            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
@@ -260,7 +265,7 @@ public class ContentServiceImpl
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .pageDescriptorService( this.pageDescriptorService )
+            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .xDataMappingService( this.xDataMappingService )
@@ -284,7 +289,7 @@ public class ContentServiceImpl
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .mediaInfoService( this.mediaInfoService )
-            .pageDescriptorService( this.pageDescriptorService )
+            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .siteService( this.siteService )
@@ -908,6 +913,7 @@ public class ContentServiceImpl
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
             .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )

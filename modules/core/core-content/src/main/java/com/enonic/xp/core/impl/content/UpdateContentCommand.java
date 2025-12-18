@@ -27,8 +27,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessUpdateResult;
-import com.enonic.xp.core.impl.content.validate.InputValidator;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeCommitEntry;
@@ -286,7 +284,10 @@ final class UpdateContentCommand
             } );
         }
 
-        validatePropertyTree( editedContent );
+        validateContentData( editedContent.getType(), editedContent.getData() );
+        validateMixins( editedContent.getAllExtraData() );
+        validatePage( editedContent.getPage() );
+        validateSiteConfigs( editedContent.getData() );
 
         if ( editedContent.getType().isImageMedia() )
         {
@@ -312,23 +313,23 @@ final class UpdateContentCommand
         }
     }
 
-    private void validatePropertyTree( final Content editedContent )
-    {
-        final ContentType contentType = getContentType( editedContent.getType() );
-
-        try
-        {
-            InputValidator.create()
-                .form( contentType.getForm() )
-                .inputTypeResolver( InputTypes.BUILTIN )
-                .build()
-                .validate( editedContent.getData() );
-        }
-        catch ( final Exception e )
-        {
-            throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
-        }
-    }
+//    private void validatePropertyTree( final Content editedContent )
+//    {
+//        final ContentType contentType = getContentType( editedContent.getType() );
+//
+//        try
+//        {
+//            InputValidator.create()
+//                .form( contentType.getForm() )
+//                .inputTypeResolver( InputTypes.BUILTIN )
+//                .build()
+//                .validate( editedContent.getData() );
+//        }
+//        catch ( final Exception e )
+//        {
+//            throw new IllegalArgumentException( "Invalid property for content: " + editedContent.getPath(), e );
+//        }
+//    }
 
     private void checkAccess( final Content contentBeforeChange, final Content editedContent )
     {

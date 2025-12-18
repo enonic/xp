@@ -1,14 +1,17 @@
 package com.enonic.xp.content;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.util.BinaryReference;
 
 public sealed class ValidationError
@@ -27,7 +30,7 @@ public sealed class ValidationError
         this.errorCode = errorCode;
         this.message = message;
         this.i18n = i18n;
-        this.args = Collections.unmodifiableList( args );
+        this.args = args;
     }
 
     public String getMessage()
@@ -73,6 +76,30 @@ public sealed class ValidationError
         return builder;
     }
 
+    public static Builder siteConfigError( final ValidationErrorCode errorCode, final PropertyPath propertyPath,
+                                           final ApplicationKey applicationKey )
+    {
+        Builder builder = dataError( errorCode, propertyPath );
+        builder.applicationKey = applicationKey;
+        return builder;
+    }
+
+    public static Builder mixinConfigError( final ValidationErrorCode errorCode, final PropertyPath propertyPath,
+                                            final XDataName mixinName )
+    {
+        Builder builder = dataError( errorCode, propertyPath );
+        builder.mixinName = mixinName;
+        return builder;
+    }
+
+    public static Builder componentConfigError( final ValidationErrorCode errorCode, final PropertyPath propertyPath,
+                                                final ApplicationKey applicationKey, final ComponentPath componentPath )
+    {
+        Builder builder = siteConfigError( errorCode, propertyPath, applicationKey );
+        builder.componentPath = componentPath;
+        return builder;
+    }
+
     @Override
     public boolean equals( final Object o )
     {
@@ -103,9 +130,15 @@ public sealed class ValidationError
 
         private PropertyPath propertyPath;
 
+        private final ImmutableList.Builder<Object> argsBuilder = ImmutableList.builder();
+
+        private ApplicationKey applicationKey;
+
+        private ComponentPath componentPath;
+
         private String i18n;
 
-        private Object[] args;
+        private XDataName mixinName;
 
         private String message;
 
@@ -123,7 +156,10 @@ public sealed class ValidationError
 
         public Builder args( final Object... args )
         {
-            this.args = args;
+            if ( args != null )
+            {
+                this.argsBuilder.addAll( ImmutableList.copyOf( args ) );
+            }
             return this;
         }
 
@@ -144,10 +180,12 @@ public sealed class ValidationError
         {
             Objects.requireNonNull( errorCode );
 
-            final String formattedMessage =
-                skipFormat || args == null || args.length == 0 || message == null ? message : MessageFormat.format( message, args );
+            final List<Object> args = this.argsBuilder.build();
 
-            final List<Object> argsList = args == null ? List.of() : Arrays.stream( args ).map( arg -> {
+            final String formattedMessage =
+                skipFormat || args.isEmpty() || message == null ? message : MessageFormat.format( message, args );
+
+            final List<Object> argsList = args.stream().map( arg -> {
                 if ( arg instanceof Number )
                 {
                     return arg;
@@ -165,6 +203,19 @@ public sealed class ValidationError
             if ( attachment != null )
             {
                 return new AttachmentValidationError( attachment, errorCode, formattedMessage, i18n, argsList );
+            }
+            else if ( mixinName != null )
+            {
+                return new MixinConfigValidationError( propertyPath, errorCode, formattedMessage, i18n, mixinName, argsList );
+            }
+            else if ( componentPath != null )
+            {
+                return new ComponentConfigValidationError( propertyPath, errorCode, formattedMessage, i18n, applicationKey, componentPath,
+                                                           argsList );
+            }
+            else if ( applicationKey != null )
+            {
+                return new SiteConfigValidationError( propertyPath, errorCode, formattedMessage, i18n, applicationKey, argsList );
             }
             else if ( propertyPath != null )
             {

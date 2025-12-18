@@ -8,14 +8,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
-import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateService;
+import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -27,7 +26,7 @@ import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 @Component
-public class PageValidator
+public final class PageValidator
     implements ContentValidator
 {
     private final PageDescriptorService pageDescriptorService;
@@ -87,24 +86,16 @@ public class PageValidator
         // Validate page config against descriptor
         if ( pageDescriptor != null )
         {
-            OccurrenceValidator.validate( pageDescriptor.getConfig(), page.getConfig().getRoot(), validationErrorsBuilder );
+            final ApplicationKey applicationKey = pageDescriptor.getApplicationKey();
 
-            try
-            {
-                InputValidator.create()
-                    .form( pageDescriptor.getConfig() )
-                    .inputTypeResolver( InputTypes.BUILTIN )
-                    .build()
-                    .validate( page.getConfig() );
-            }
-            catch ( final Exception e )
-            {
-                final String descriptor = page.hasDescriptor() ? page.getDescriptor().toString() : page.getTemplate().toString();
-                validationErrorsBuilder.add( ValidationError.generalError(
-                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.pageConfigInvalid" ) )
-                                                 .args( descriptor, "page" )
-                                                 .build() );
-            }
+            OccurrenceValidator.validate( pageDescriptor.getConfig(), page.getConfig().getRoot(),
+                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode,
+                                                                                                                           propertyPath,
+                                                                                                                           applicationKey,
+                                                                                                                           ComponentPath.from(
+                                                                                                                               "/" ) )
+                                              .i18n( i18nPrefix + ".component" )
+                                              .args( "/" ), validationErrorsBuilder );
         }
 
         // Validate component configs in regions
@@ -143,23 +134,13 @@ public class PageValidator
 
         if ( partDescriptor != null )
         {
-            OccurrenceValidator.validate( partDescriptor.getConfig(), component.getConfig().getRoot(), validationErrorsBuilder );
-
-            try
-            {
-                InputValidator.create()
-                    .form( partDescriptor.getConfig() )
-                    .inputTypeResolver( InputTypes.BUILTIN )
-                    .build()
-                    .validate( component.getConfig() );
-            }
-            catch ( final Exception e )
-            {
-                validationErrorsBuilder.add( ValidationError.generalError(
-                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.partConfigInvalid" ) )
-                                                 .args( component.getDescriptor(), component.getPath() )
-                                                 .build() );
-            }
+            OccurrenceValidator.validate( partDescriptor.getConfig(), component.getConfig().getRoot(),
+                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.componentConfigError( errorCode,
+                                                                                                                           propertyPath,
+                                                                                                                           partDescriptor.getApplicationKey(),
+                                                                                                                           component.getPath() )
+                                              .i18n( i18nPrefix + ".component" )
+                                              .args( component.getPath().toString() ), validationErrorsBuilder );
         }
     }
 
@@ -174,23 +155,13 @@ public class PageValidator
 
         if ( layoutDescriptor != null )
         {
-            OccurrenceValidator.validate( layoutDescriptor.getConfig(), component.getConfig().getRoot(), validationErrorsBuilder );
-
-            try
-            {
-                InputValidator.create()
-                    .form( layoutDescriptor.getConfig() )
-                    .inputTypeResolver( InputTypes.BUILTIN )
-                    .build()
-                    .validate( component.getConfig() );
-            }
-            catch ( final Exception e )
-            {
-                validationErrorsBuilder.add( ValidationError.generalError(
-                        ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.layoutConfigInvalid" ) )
-                                                 .args( component.getDescriptor(), component.getPath() )
-                                                 .build() );
-            }
+            OccurrenceValidator.validate( layoutDescriptor.getConfig(), component.getConfig().getRoot(),
+                                          ( errorCode, propertyPath, i18Prefix ) -> ValidationError.componentConfigError( errorCode,
+                                                                                                                          propertyPath,
+                                                                                                                          layoutDescriptor.getApplicationKey(),
+                                                                                                                          component.getPath() )
+                                              .i18n( i18Prefix + ".component" )
+                                              .args( component.getPath().toString() ), validationErrorsBuilder );
         }
 
         // Recursively validate nested regions in layout

@@ -32,41 +32,37 @@ public final class OccurrenceValidator
 {
     private static final String OPTION_SET_SELECTION_ARRAY_NAME = "_selected";
 
-    @Override
-    public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
+    public static void validate( final Form form, final PropertySet dataSet, ValidationErrorFactory errorFactory,
+                                 final ValidationErrors.Builder validationErrorsBuilder )
     {
-        validate( params.getContentType().getForm(), params.getData().getRoot(), validationErrorsBuilder );
-    }
-
-    public static void validate( final Form form, final PropertySet dataSet, final ValidationErrors.Builder validationErrorsBuilder )
-    {
-        validate( form, List.of( dataSet ), validationErrorsBuilder );
+        validate( form, List.of( dataSet ), errorFactory, validationErrorsBuilder );
     }
 
     private static void validate( final Iterable<FormItem> formItems, final List<PropertySet> parentDataSets,
-                                  final ValidationErrors.Builder validationErrorsBuilder )
+                                  final ValidationErrorFactory errorFactory, final ValidationErrors.Builder validationErrorsBuilder )
     {
         for ( FormItem formItem : formItems )
         {
-            validateOccurrences( formItem, parentDataSets, validationErrorsBuilder );
+            validateOccurrences( formItem, parentDataSets, errorFactory, validationErrorsBuilder );
 
             if ( formItem instanceof FormItemSet formItemSet )
             {
                 final List<PropertySet> dataSets = getDataSets( formItem.getName(), parentDataSets );
-                validate( formItemSet, dataSets, validationErrorsBuilder );
+                validate( formItemSet, dataSets, errorFactory, validationErrorsBuilder );
             }
             else if ( formItem instanceof FieldSet fieldSet )
             {
-                validate( fieldSet, parentDataSets, validationErrorsBuilder );
+                validate( fieldSet, parentDataSets, errorFactory, validationErrorsBuilder );
             }
             else if ( formItem instanceof FormOptionSet )
             {
-                validateFormOptionSetSelection( (FormOptionSet) formItem, parentDataSets, validationErrorsBuilder );
+                validateFormOptionSetSelection( (FormOptionSet) formItem, parentDataSets, errorFactory, validationErrorsBuilder );
             }
         }
     }
 
     private static void validateFormOptionSetSelection( final FormOptionSet formOptionSet, final List<PropertySet> parentDataSets,
+                                                        final ValidationErrorFactory errorFactory,
                                                         final ValidationErrors.Builder validationErrorsBuilder )
     {
         final List<PropertySet> propertySets = getDataSets( formOptionSet.getName(), parentDataSets );
@@ -89,9 +85,8 @@ public final class OccurrenceValidator
                 ( occurrences.getMaximum() != 0 && numberOfOptions > occurrences.getMaximum() ) )
             {
                 validationErrorsBuilder.add(
-                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.occurrencesInvalid" ),
-                                               propertySet.getProperty().getPath() )
-                        .i18n( "system.cms.validation.optionsetOccurrencesInvalid" )
+                    errorFactory.create( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ),
+                                         propertySet.getProperty().getPath(), "system.cms.validation.optionsetOccurrencesInvalid" )
                         .args( formOptionSet.getPath(), occurrences.getMinimum(), occurrences.getMaximum(), numberOfOptions )
                         .build() );
             }
@@ -102,18 +97,14 @@ public final class OccurrenceValidator
                 {
                     validate( option,
                               Optional.ofNullable( propertySet.getSet( option.getName() ) ).map( List::of ).orElse( List.of() ),
-                              validationErrorsBuilder );
+                              errorFactory, validationErrorsBuilder );
                 }
             }
         }
     }
 
-    private static boolean optionIsSelected( final FormOptionSetOption option, final List<Property> selectedItems )
-    {
-        return selectedItems.stream().anyMatch( elem -> elem.getString().equals( option.getName() ) );
-    }
-
     private static void validateOccurrences( final FormItem formItem, final List<PropertySet> parentDataSets,
+                                             final ValidationErrorFactory errorFactory,
                                              final ValidationErrors.Builder validationErrorsBuilder )
     {
         final Occurrences occurrences;
@@ -149,8 +140,8 @@ public final class OccurrenceValidator
             if ( occurrences.impliesRequired() && entryCount < minOccurrences )
             {
                 validationErrorsBuilder.add(
-                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ), path )
-                        .i18n( "system.cms.validation.minOccurrencesInvalid" )
+                    errorFactory.create( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ), path,
+                                         "system.cms.validation.minOccurrencesInvalid" )
                         .args( formItem.getPath(), minOccurrences, entryCount )
                         .build() );
             }
@@ -160,12 +151,24 @@ public final class OccurrenceValidator
             if ( maxOccurrences > 0 && entryCount > maxOccurrences )
             {
                 validationErrorsBuilder.add(
-                    ValidationError.dataError( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ), path )
-                        .i18n( "system.cms.validation.maxOccurrencesInvalid" )
-                        .args( formItem.getPath(), occurrences.getMaximum(), entryCount )
+                    errorFactory.create( ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.occurrencesInvalid" ), path,
+                                         "system.cms.validation.maxOccurrencesInvalid" )
+                        .args( formItem.getPath(), maxOccurrences, entryCount )
                         .build() );
             }
         }
+    }
+
+    private static boolean optionIsSelected( final FormOptionSetOption option, final List<Property> selectedItems )
+    {
+        return selectedItems.stream().anyMatch( elem -> elem.getString().equals( option.getName() ) );
+    }
+
+    @Override
+    public void validate( final ContentValidatorParams params, final ValidationErrors.Builder validationErrorsBuilder )
+    {
+        validate( params.getContentType().getForm(), params.getData().getRoot(),
+                  ( ( code, path, i18nPrefix ) -> ValidationError.dataError( code, path ).i18n( i18nPrefix ) ), validationErrorsBuilder );
     }
 
     private static List<PropertySet> getDataSets( final String name, final List<PropertySet> parentDataSets )
@@ -173,5 +176,11 @@ public final class OccurrenceValidator
         return parentDataSets.stream()
             .flatMap( parentDataSet -> StreamSupport.stream( parentDataSet.getSets( name ).spliterator(), false ) )
             .collect( Collectors.toList() );
+    }
+
+    @FunctionalInterface
+    public interface ValidationErrorFactory
+    {
+        ValidationError.Builder create( ValidationErrorCode code, PropertyPath path, String i18nPrefix );
     }
 }

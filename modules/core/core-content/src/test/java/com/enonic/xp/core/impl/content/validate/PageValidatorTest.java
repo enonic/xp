@@ -4,7 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ComponentConfigValidationError;
 import com.enonic.xp.content.ContentValidatorParams;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -35,6 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PageValidatorTest
 {
+    private static final String COMPONENT_MIN_OCCURRENCES_I18N = "system.cms.validation.minOccurrencesInvalid.component";
+
+    private static final String COMPONENT_MAX_OCCURRENCES_I18N = "system.cms.validation.maxOccurrencesInvalid.component";
+
+    private static final String COMPONENT_OPTIONSET_OCCURRENCES_I18N = "system.cms.validation.optionsetOccurrencesInvalid.component";
+
     private PageDescriptorService pageDescriptorService;
 
     private PageTemplateService pageTemplateService;
@@ -129,6 +138,7 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "title", "title", "/", 1, 0 );
     }
 
     @Test
@@ -172,6 +182,7 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "heading", "heading", partComponent.getPath().toString(), 1, 0 );
     }
 
     @Test
@@ -217,6 +228,7 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "columns", "columns", layoutComponent.getPath().toString(), 1, 0 );
     }
 
     @Test
@@ -274,6 +286,7 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "text", "text", partComponent.getPath().toString(), 1, 0 );
     }
 
     @Test
@@ -353,6 +366,7 @@ class PageValidatorTest
         final ValidationErrors validationErrors = validationErrorsBuilder.build();
         assertTrue( validationErrors.hasErrors() );
         assertThat( validationErrors.stream() ).hasSize( 1 );
+        assertMinOccurrenceError( validationErrors, "title", "title", "/", 1, 0 );
     }
 
     @Test
@@ -403,7 +417,7 @@ class PageValidatorTest
     }
 
     @Test
-    void page_descriptor_not_found_passes_validation()
+    void page_descriptor_not_found_passes_validation() //TODO: discuss
     {
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
 
@@ -570,65 +584,28 @@ class PageValidatorTest
     }
 
     @Test
-    void page_config_validation_exception_adds_error()
+    void part_component_with_exceeding_maximum_occurrence_fails_validation()
     {
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
-        final Form pageForm = Form.create()
-            .addFormItem( Input.create().name( "number" ).label( "Number" ).inputType( InputTypeName.LONG ).build() )
-            .build();
-        final PageDescriptor pageDescriptor =
-            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
-
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
-
-        final PropertyTree pageConfig = new PropertyTree();
-        // Add invalid value that will cause InputValidator to throw exception
-        pageConfig.addString( "number", "not-a-number" );
-
-        final Page page = Page.create().descriptor( pageDescriptorKey ).config( pageConfig ).build();
-
-        final ContentValidatorParams params = ContentValidatorParams.create()
-            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
-            .page( page )
-            .build();
-
-        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
-        validator.validate( params, validationErrorsBuilder );
-
-        final ValidationErrors validationErrors = validationErrorsBuilder.build();
-        assertTrue( validationErrors.hasErrors() );
-        assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
-    }
-
-    @Test
-    void part_config_validation_exception_adds_error()
-    {
-        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
-        final PageDescriptor pageDescriptor = PageDescriptor.create()
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create()
             .key( pageDescriptorKey )
             .config( Form.create().build() )
-            .regions( RegionDescriptors.create().build() )
-            .build();
-
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+            .regions( RegionDescriptors.create().build() ).build() );
 
         final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
         final Form partForm = Form.create()
-            .addFormItem( Input.create().name( "count" ).label( "Count" ).inputType( InputTypeName.LONG ).build() )
+            .addFormItem(
+                Input.create().name( "tagline" ).label( "Tagline" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 1 ).build() )
             .build();
         final PartDescriptor partDescriptor = PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build();
-
         Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( partDescriptor );
 
         final PropertyTree partConfig = new PropertyTree();
-        // Add invalid value that will cause InputValidator to throw exception
-        partConfig.addString( "count", "invalid-number" );
+        partConfig.setString( "tagline[0]", "First" );
+        partConfig.setString( "tagline[1]", "Second" );
 
         final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
-
-        final Region region = Region.create().name( "main" ).add( partComponent ).build();
-        final Regions regions = Regions.create().add( region ).build();
-
+        final Regions regions = Regions.create().add( Region.create().name( "main" ).add( partComponent ).build() ).build();
         final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
 
         final ContentValidatorParams params = ContentValidatorParams.create()
@@ -636,45 +613,39 @@ class PageValidatorTest
             .page( page )
             .build();
 
-        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
-        validator.validate( params, validationErrorsBuilder );
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
 
-        final ValidationErrors validationErrors = validationErrorsBuilder.build();
-        assertTrue( validationErrors.hasErrors() );
-        assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+        assertMaxOccurrenceError( builder.build(), "tagline", "tagline", partComponent.getPath().toString(), 1, 2 );
     }
 
     @Test
-    void layout_config_validation_exception_adds_error()
+    void part_component_option_set_selection_violation_adds_error()
     {
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
-        final PageDescriptor pageDescriptor = PageDescriptor.create()
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( PageDescriptor.create()
             .key( pageDescriptorKey )
             .config( Form.create().build() )
-            .regions( RegionDescriptors.create().build() )
+            .regions( RegionDescriptors.create().build() ).build() );
+
+        final DescriptorKey partDescriptorKey = DescriptorKey.from( "myapp:mypart" );
+        final Form partForm = Form.create()
+            .addFormItem( FormOptionSet.create()
+                              .name( "cta" )
+                              .multiselection( Occurrences.create( 1, 1 ) )
+                              .addOptionSetOption( FormOptionSetOption.create().name( "primary" ).build() )
+                              .addOptionSetOption( FormOptionSetOption.create().name( "secondary" ).build() )
+                              .build() )
             .build();
+        final PartDescriptor partDescriptor = PartDescriptor.create().key( partDescriptorKey ).config( partForm ).build();
+        Mockito.when( partDescriptorService.getByKey( partDescriptorKey ) ).thenReturn( partDescriptor );
 
-        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+        final PropertyTree partConfig = new PropertyTree();
+        partConfig.getRoot().addSet( "cta" ).addString( "_selected", "primary" );
+        partConfig.getRoot().getSet( "cta" ).addString( "_selected", "secondary" );
 
-        final DescriptorKey layoutDescriptorKey = DescriptorKey.from( "myapp:mylayout" );
-        final Form layoutForm = Form.create()
-            .addFormItem( Input.create().name( "columns" ).label( "Columns" ).inputType( InputTypeName.LONG ).build() )
-            .build();
-        final LayoutDescriptor layoutDescriptor =
-            LayoutDescriptor.create().key( layoutDescriptorKey ).config( layoutForm ).regions( RegionDescriptors.create().build() ).build();
-
-        Mockito.when( layoutDescriptorService.getByKey( layoutDescriptorKey ) ).thenReturn( layoutDescriptor );
-
-        final PropertyTree layoutConfig = new PropertyTree();
-        // Add invalid value that will cause InputValidator to throw exception
-        layoutConfig.addString( "columns", "not-a-number" );
-
-        final LayoutComponent layoutComponent =
-            LayoutComponent.create().descriptor( layoutDescriptorKey ).config( layoutConfig ).build();
-
-        final Region region = Region.create().name( "main" ).add( layoutComponent ).build();
-        final Regions regions = Regions.create().add( region ).build();
-
+        final PartComponent partComponent = PartComponent.create().descriptor( partDescriptorKey ).config( partConfig ).build();
+        final Regions regions = Regions.create().add( Region.create().name( "main" ).add( partComponent ).build() ).build();
         final Page page = Page.create().descriptor( pageDescriptorKey ).config( new PropertyTree() ).regions( regions ).build();
 
         final ContentValidatorParams params = ContentValidatorParams.create()
@@ -682,11 +653,49 @@ class PageValidatorTest
             .page( page )
             .build();
 
-        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
-        validator.validate( params, validationErrorsBuilder );
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
 
-        final ValidationErrors validationErrors = validationErrorsBuilder.build();
-        assertTrue( validationErrors.hasErrors() );
-        assertThat( validationErrors.stream() ).hasSizeGreaterThanOrEqualTo( 1 );
+        assertOptionSetOccurrenceError( builder.build(), "cta", "cta", partComponent.getPath().toString(), 1, 1, 2 );
+    }
+
+    private void assertMinOccurrenceError( final ValidationErrors validationErrors, final String expectedPropertyPath,
+                                           final String expectedTarget, final String expectedComponentPath, final int expectedMin,
+                                           final int actualCount )
+    {
+        final ValidationError error = validationErrors.stream().findFirst().orElseThrow();
+        assertThat( error ).isInstanceOf( ComponentConfigValidationError.class );
+        assertThat( error.getI18n() ).isEqualTo( COMPONENT_MIN_OCCURRENCES_I18N );
+        assertThat( error.getArgs() ).containsExactly( expectedComponentPath, expectedTarget, expectedMin, actualCount );
+
+        final ComponentConfigValidationError componentError = (ComponentConfigValidationError) error;
+        assertThat( componentError.getPropertyPath().toString() ).isEqualTo( expectedPropertyPath );
+        assertThat( componentError.getComponentPath().toString() ).isEqualTo( expectedComponentPath );
+        assertThat( componentError.getApplicationKey() ).isEqualTo( ApplicationKey.from( "myapp" ) );
+    }
+
+    private void assertMaxOccurrenceError( final ValidationErrors validationErrors, final String expectedPropertyPath,
+                                           final String expectedTarget, final String expectedComponentPath, final int expectedMax,
+                                           final int actualCount )
+    {
+        final ValidationError error = validationErrors.stream().findFirst().orElseThrow();
+        assertThat( error ).isInstanceOf( ComponentConfigValidationError.class );
+        assertThat( error.getI18n() ).isEqualTo( COMPONENT_MAX_OCCURRENCES_I18N );
+        assertThat( error.getArgs() ).containsExactly( expectedComponentPath, expectedTarget, expectedMax, actualCount );
+    }
+
+    private void assertOptionSetOccurrenceError( final ValidationErrors validationErrors, final String expectedPropertyPath,
+                                                 final String expectedTarget, final String expectedComponentPath, final int min,
+                                                 final int max, final int actual )
+    {
+        final ValidationError error = validationErrors.stream().findFirst().orElseThrow();
+        assertThat( error ).isInstanceOf( ComponentConfigValidationError.class );
+        assertThat( error.getI18n() ).isEqualTo( COMPONENT_OPTIONSET_OCCURRENCES_I18N );
+        assertThat( error.getArgs() ).containsExactly( expectedComponentPath, expectedTarget, min, max, actual );
+
+        final ComponentConfigValidationError componentError = (ComponentConfigValidationError) error;
+        assertThat( componentError.getPropertyPath().toString() ).isEqualTo( expectedPropertyPath );
+        assertThat( componentError.getComponentPath().toString() ).isEqualTo( expectedComponentPath );
+        assertThat( componentError.getApplicationKey() ).isEqualTo( ApplicationKey.from( "myapp" ) );
     }
 }
