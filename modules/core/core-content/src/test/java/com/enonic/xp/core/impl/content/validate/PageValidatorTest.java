@@ -685,6 +685,11 @@ class PageValidatorTest
         assertThat( error ).isInstanceOf( ComponentConfigValidationError.class );
         assertThat( error.getI18n() ).isEqualTo( COMPONENT_MAX_OCCURRENCES_I18N );
         assertThat( error.getArgs() ).containsExactly( expectedComponentPath, expectedTarget, expectedMax, actualCount );
+
+        final ComponentConfigValidationError componentError = (ComponentConfigValidationError) error;
+        assertThat( componentError.getPropertyPath().toString() ).isEqualTo( expectedPropertyPath );
+        assertThat( componentError.getComponentPath().toString() ).isEqualTo( expectedComponentPath );
+        assertThat( componentError.getApplicationKey() ).isEqualTo( ApplicationKey.from( "myapp" ) );
     }
 
     private void assertOptionSetOccurrenceError( final ValidationErrors validationErrors, final String expectedPropertyPath,
