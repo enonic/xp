@@ -42,6 +42,8 @@ public final class PatchNodeCommand
 
     private final PatchNodeResult.Builder results;
 
+    private record PatchedVersionData( Branch originBranch, NodeVersionData versionData ) {}
+
     private PatchNodeCommand( final Builder builder )
     {
         super( builder );
@@ -128,18 +130,18 @@ public final class PatchNodeCommand
     {
         final Map<Branch, NodeVersionId> activeNodeMap = getActiveNodes( this.branches );
 
-        final Map<NodeVersionId, NodeVersionData> patchedVersions = new HashMap<>(); // old version id -> new version data
+        final Map<NodeVersionId, PatchedVersionData> patchedVersions = new HashMap<>(); // old version id -> new version data with origin branch
 
         for ( Branch targetBranch : this.branches )
         {
-            final NodeVersionData nodeVersionData =
+            final PatchedVersionData patchedData =
                 Optional.ofNullable( activeNodeMap.get( targetBranch ) ).map( patchedVersions::get ).orElse( null );
 
-            final NodeVersionData updatedTargetNode = patchNodeInBranch( nodeVersionData, targetBranch );
+            final NodeVersionData updatedTargetNode = patchNodeInBranch( patchedData, targetBranch );
 
             if ( updatedTargetNode != null )
             {
-                patchedVersions.put( activeNodeMap.get( targetBranch ), updatedTargetNode );
+                patchedVersions.put( activeNodeMap.get( targetBranch ), new PatchedVersionData( targetBranch, updatedTargetNode ) );
                 results.nodeId( updatedTargetNode.node().id() );
             }
 
@@ -148,7 +150,7 @@ public final class PatchNodeCommand
 
     }
 
-    private NodeVersionData patchNodeInBranch( final NodeVersionData patchedNode, final Branch branch )
+    private NodeVersionData patchNodeInBranch( final PatchedVersionData patchedData, final Branch branch )
     {
         final Node persistedNode = getPersistedNode( branch );
 
@@ -160,12 +162,12 @@ public final class PatchNodeCommand
             return null;
         }
 
-        if ( patchedNode != null )
+        if ( patchedData != null )
         {
-            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedNode.metadata() ), this.branches.first(),
-                                          internalContext );
+            this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( patchedData.versionData().metadata() ),
+                                          patchedData.originBranch(), internalContext );
 
-            return patchedNode;
+            return patchedData.versionData();
         }
         else
         {

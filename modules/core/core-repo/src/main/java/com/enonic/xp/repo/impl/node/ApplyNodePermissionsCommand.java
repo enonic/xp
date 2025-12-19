@@ -49,9 +49,11 @@ public class ApplyNodePermissionsCommand
 
     private final ApplyNodePermissionsListener listener;
 
-    private final Map<NodeVersionId, NodeVersionData> appliedVersions; // old version id -> new version data
+    private final Map<NodeVersionId, AppliedVersionData> appliedVersions; // old version id -> new version data with origin branch
 
     private final Branches branches;
+
+    private record AppliedVersionData( Branch originBranch, NodeVersionData versionData ) {}
 
     private ApplyNodePermissionsCommand( final Builder builder )
     {
@@ -175,19 +177,19 @@ public class ApplyNodePermissionsCommand
             return;
         }
 
-        final NodeVersionData updatedSourceNode =
-            updatePermissionsInBranch( node.id(), appliedVersions.get( node.getNodeVersionId() ), branch, permissions );
+        final AppliedVersionData appliedData = appliedVersions.get( node.getNodeVersionId() );
+        final NodeVersionData updatedSourceNode = updatePermissionsInBranch( node.id(), appliedData, branch, permissions );
 
         if ( updatedSourceNode != null )
         {
-            appliedVersions.put( node.getNodeVersionId(), updatedSourceNode );
+            appliedVersions.put( node.getNodeVersionId(), new AppliedVersionData( branch, updatedSourceNode ) );
         }
 
         results.addResult( node.id(), branch, updatedSourceNode != null ? updatedSourceNode.metadata().getNodeVersionId() : null,
                            updatedSourceNode != null ? updatedSourceNode.node().getPermissions() : null );
     }
 
-    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final NodeVersionData updatedVersionData,
+    private NodeVersionData updatePermissionsInBranch( final NodeId nodeId, final AppliedVersionData appliedData,
                                                        final Branch branch, final AccessControlList permissions )
     {
         final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
@@ -203,10 +205,11 @@ public class ApplyNodePermissionsCommand
         }
 
         return NodeHelper.runAsAdmin( () -> {
-            if ( updatedVersionData != null )
+            if ( appliedData != null )
             {
-                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( updatedVersionData.metadata() ), this.branches.first(), targetContext );
-                return updatedVersionData;
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersionMetadata( appliedData.versionData().metadata() ),
+                                              appliedData.originBranch(), targetContext );
+                return appliedData.versionData();
             }
             else
             {

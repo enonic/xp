@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -30,6 +31,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.repo.impl.node.CreateRootNodeCommand;
 import com.enonic.xp.repo.impl.node.FindNodeVersionsCommand;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+import com.enonic.xp.repository.CreateBranchParams;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -547,5 +549,122 @@ class ApplyNodePermissionsCommandTest
             .authInfo( AuthenticationInfo.copyOf( authInfo ).principals( principal, PrincipalKey.ofGroup( USK, "group1" ) ).build() )
             .build()
             .runWith( runnable );
+    }
+
+    @Test
+    void apply_permissions_three_branches_with_shared_versions()
+    {
+        // Create a third branch
+        final Branch thirdBranch = Branch.from( "third-branch" );
+        ctxDefaultAdmin().callWith( () -> {
+            repositoryService.createBranch( CreateBranchParams.from( thirdBranch.getValue() ) );
+            return null;
+        } );
+
+        // Create node in draft
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        // Push to master and third branch - all three have the same NodeVersionId
+        pushNodes( WS_OTHER, createdNode.id() );
+        pushNodes( thirdBranch, createdNode.id() );
+
+        refresh();
+
+        final PrincipalKey newPrincipal = PrincipalKey.from( "user:my-provider:new-user" );
+
+        // Apply permissions from draft context to all three branches
+        // Since all branches share the same NodeVersionId, the permission change should be created once and reused
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                     .nodeId( createdNode.id() )
+                                                                                     .addBranches( Branches.from( WS_DEFAULT, WS_OTHER, thirdBranch ) )
+                                                                                     .addPermissions( AccessControlList.create()
+                                                                                                          .add( AccessControlEntry.create()
+                                                                                                                    .allow( READ, MODIFY )
+                                                                                                                    .principal( newPrincipal )
+                                                                                                                    .build() )
+                                                                                                          .build() )
+                                                                                     .build() );
+
+        assertEquals( 1, result.getResults().size() );
+
+        // All branches should have the same result (same NodeVersionId after applying permissions)
+        assertEquals( result.getResult( createdNode.id(), WS_DEFAULT ).nodeVersionId(),
+                      result.getResult( createdNode.id(), WS_OTHER ).nodeVersionId() );
+        assertEquals( result.getResult( createdNode.id(), WS_DEFAULT ).nodeVersionId(),
+                      result.getResult( createdNode.id(), thirdBranch ).nodeVersionId() );
+
+        // All should have the new permission
+        assertTrue( result.getResult( createdNode.id(), WS_DEFAULT ).permissions().isAllowedFor( newPrincipal, READ, MODIFY ) );
+    }
+
+    @Test
+    void apply_permissions_three_branches_cached_version_from_non_first_branch()
+    {
+        // This test covers the bug where cached applied versions used branches.first() as origin
+        // instead of the actual branch where the version was created
+
+        // Create third and fourth branches
+        final Branch thirdBranch = Branch.from( "third-branch-2" );
+        final Branch fourthBranch = Branch.from( "fourth-branch" );
+        ctxDefaultAdmin().callWith( () -> {
+            repositoryService.createBranch( CreateBranchParams.from( thirdBranch.getValue() ) );
+            repositoryService.createBranch( CreateBranchParams.from( fourthBranch.getValue() ) );
+            return null;
+        } );
+
+        // Create node in draft
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        // Push to master - draft and master have version A
+        pushNodes( WS_OTHER, createdNode.id() );
+
+        // Update in draft (add some data to create a new version)
+        updateNode( UpdateNodeParams.create().id( createdNode.id() ).editor( editableNode -> {
+            editableNode.data.addString( "version", "B" );
+        } ).build() );
+
+        // Push to third and fourth - third and fourth have version B (same as draft)
+        pushNodes( thirdBranch, createdNode.id() );
+        pushNodes( fourthBranch, createdNode.id() );
+
+        refresh();
+
+        // Now: master has version A, draft/third/fourth have version B
+        // Apply permissions with order: [master, draft, third, fourth]
+        // - master (version A) gets new permissions first, creates new version, cached with origin=master
+        // - draft (version B) gets new permissions, creates new version, cached with origin=draft
+        // - third (version B) finds cached version from draft, should push with origin=draft (not master!)
+        // - fourth (version B) same as third
+
+        final PrincipalKey newPrincipal = PrincipalKey.from( "user:my-provider:multi-branch-user" );
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                     .nodeId( createdNode.id() )
+                                                                                     .addBranches( Branches.from( WS_OTHER, WS_DEFAULT, thirdBranch, fourthBranch ) )
+                                                                                     .addPermissions( AccessControlList.create()
+                                                                                                          .add( AccessControlEntry.create()
+                                                                                                                    .allow( READ )
+                                                                                                                    .principal( newPrincipal )
+                                                                                                                    .build() )
+                                                                                                          .build() )
+                                                                                     .build() );
+
+        assertEquals( 1, result.getResults().size() );
+
+        // master had version A - different result
+        assertNotEquals( result.getResult( createdNode.id(), WS_OTHER ).nodeVersionId(),
+                         result.getResult( createdNode.id(), WS_DEFAULT ).nodeVersionId() );
+
+        // draft, third, fourth all had version B - same result
+        assertEquals( result.getResult( createdNode.id(), WS_DEFAULT ).nodeVersionId(),
+                      result.getResult( createdNode.id(), thirdBranch ).nodeVersionId() );
+        assertEquals( result.getResult( createdNode.id(), WS_DEFAULT ).nodeVersionId(),
+                      result.getResult( createdNode.id(), fourthBranch ).nodeVersionId() );
+
+        // All should have the new permission
+        assertTrue( result.getResult( createdNode.id(), WS_OTHER ).permissions().isAllowedFor( newPrincipal, READ ) );
+        assertTrue( result.getResult( createdNode.id(), WS_DEFAULT ).permissions().isAllowedFor( newPrincipal, READ ) );
+        assertTrue( result.getResult( createdNode.id(), thirdBranch ).permissions().isAllowedFor( newPrincipal, READ ) );
+        assertTrue( result.getResult( createdNode.id(), fourthBranch ).permissions().isAllowedFor( newPrincipal, READ ) );
     }
 }
