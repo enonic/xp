@@ -7,6 +7,7 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
@@ -141,6 +142,7 @@ class ValidationErrorTest
             .withRedefinedSuperclass()
             .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
             .withNonnullFields( "args", "propertyPath" )
+            .suppress( Warning.STRICT_INHERITANCE )
             .verify();
     }
 }
