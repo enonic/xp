@@ -183,7 +183,7 @@ public sealed class ValidationError
             final List<Object> args = this.argsBuilder.build();
 
             final String formattedMessage =
-                skipFormat || args.isEmpty() || message == null ? message : MessageFormat.format( message, args );
+                skipFormat || args.isEmpty() || message == null ? message : MessageFormat.format( message, args.toArray() );
 
             final List<Object> argsList = args.stream().map( arg -> {
                 if ( arg instanceof Number )
