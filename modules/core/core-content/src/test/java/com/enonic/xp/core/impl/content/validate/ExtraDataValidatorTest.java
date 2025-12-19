@@ -170,4 +170,163 @@ class ExtraDataValidatorTest
         assertThat( error.getI18n() ).isEqualTo( "system.cms.validation.optionsetOccurrencesInvalid.mixin" );
         assertThat( error.getArgs() ).containsExactly( mixinName.toString(), "colors", 1, 1, 2 );
     }
+
+    @Test
+    void extra_data_with_nested_itemset_missing_required_field_produces_error_with_correct_path()
+    {
+        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final Form form = Form.create()
+            .addFormItem( com.enonic.xp.form.FormItemSet.create()
+                              .name( "settings" )
+                              .addFormItem( Input.create()
+                                                .name( "nestedField" )
+                                                .label( "Nested Field" )
+                                                .inputType( InputTypeName.TEXT_LINE )
+                                                .required( true )
+                                                .build() )
+                              .build() )
+            .build();
+        final XData xData = Mockito.mock( XData.class );
+        Mockito.when( xData.getForm() ).thenReturn( form );
+        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+
+        final PropertyTree data = new PropertyTree();
+        data.addSet( "settings" );
+        final ExtraData extraData = new ExtraData( mixinName, data );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationErrors errors = builder.build();
+        assertThat( errors.hasErrors() ).isTrue();
+        assertThat( errors.stream() ).hasSize( 1 );
+
+        final MixinConfigValidationError mixinError = (MixinConfigValidationError) errors.stream().findFirst().orElseThrow();
+        assertThat( mixinError.getPropertyPath().toString() ).isEqualTo( "settings.nestedField" );
+        assertThat( mixinError.getMixinName() ).isEqualTo( mixinName );
+    }
+
+    @Test
+    void extra_data_with_array_field_exceeding_max_produces_error()
+    {
+        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final Form form = Form.create()
+            .addFormItem(
+                Input.create().name( "items" ).label( "Items" ).inputType( InputTypeName.TEXT_LINE ).maximumOccurrences( 2 ).build() )
+            .build();
+        final XData xData = Mockito.mock( XData.class );
+        Mockito.when( xData.getForm() ).thenReturn( form );
+        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "items[0]", "first" );
+        data.setString( "items[1]", "second" );
+        data.setString( "items[2]", "third" );
+        final ExtraData extraData = new ExtraData( mixinName, data );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationErrors errors = builder.build();
+        assertThat( errors.stream() ).hasSize( 1 );
+
+        final ValidationError error = errors.stream().findFirst().orElseThrow();
+        assertThat( error.getI18n() ).isEqualTo( "system.cms.validation.maxOccurrencesInvalid.mixin" );
+        assertThat( error.getArgs() ).containsExactly( mixinName.toString(), "items", 2, 3 );
+
+        final MixinConfigValidationError mixinError = (MixinConfigValidationError) error;
+        assertThat( mixinError.getPropertyPath().toString() ).isEqualTo( "items" );
+    }
+
+    @Test
+    void extra_data_with_nested_array_in_itemset_produces_error_with_correct_path()
+    {
+        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final Form form = Form.create()
+            .addFormItem( com.enonic.xp.form.FormItemSet.create()
+                              .name( "container" )
+                              .addFormItem( Input.create()
+                                                .name( "tags" )
+                                                .label( "Tags" )
+                                                .inputType( InputTypeName.TEXT_LINE )
+                                                .maximumOccurrences( 2 )
+                                                .build() )
+                              .build() )
+            .build();
+        final XData xData = Mockito.mock( XData.class );
+        Mockito.when( xData.getForm() ).thenReturn( form );
+        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "container.tags[0]", "tag1" );
+        data.setString( "container.tags[1]", "tag2" );
+        data.setString( "container.tags[2]", "tag3" );
+        final ExtraData extraData = new ExtraData( mixinName, data );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationError error = builder.build().stream().findFirst().orElseThrow();
+        final MixinConfigValidationError mixinError = (MixinConfigValidationError) error;
+        assertThat( mixinError.getPropertyPath().toString() ).isEqualTo( "container.tags" );
+        assertThat( mixinError.getMixinName() ).isEqualTo( mixinName );
+        assertThat( error.getArgs() ).containsExactly( mixinName.toString(), "container.tags", 2, 3 );
+    }
+
+    @Test
+    void extra_data_with_deeply_nested_structure_produces_error_with_correct_path()
+    {
+        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final Form form = Form.create()
+            .addFormItem( com.enonic.xp.form.FormItemSet.create()
+                              .name( "outer" )
+                              .addFormItem( com.enonic.xp.form.FormItemSet.create()
+                                                .name( "inner" )
+                                                .addFormItem( Input.create()
+                                                                  .name( "deepField" )
+                                                                  .label( "Deep Field" )
+                                                                  .inputType( InputTypeName.TEXT_LINE )
+                                                                  .required( true )
+                                                                  .build() )
+                                                .build() )
+                              .build() )
+            .build();
+        final XData xData = Mockito.mock( XData.class );
+        Mockito.when( xData.getForm() ).thenReturn( form );
+        Mockito.when( xDataService.getByName( mixinName ) ).thenReturn( xData );
+
+        final PropertyTree data = new PropertyTree();
+        data.addSet( "outer" ).addSet( "inner" );
+        final ExtraData extraData = new ExtraData( mixinName, data );
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .extraDatas( ExtraDatas.from( List.of( extraData ) ) )
+            .build();
+
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+        validator.validate( params, builder );
+
+        final ValidationErrors errors = builder.build();
+        assertThat( errors.hasErrors() ).isTrue();
+
+        final MixinConfigValidationError mixinError = (MixinConfigValidationError) errors.stream().findFirst().orElseThrow();
+        assertThat( mixinError.getPropertyPath().toString() ).isEqualTo( "outer.inner.deepField" );
+        assertThat( mixinError.getMixinName() ).isEqualTo( mixinName );
+    }
 }
