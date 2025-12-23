@@ -117,6 +117,7 @@ public class ApplicationRegistryImpl
                 if ( reference != null )
                 {
                     reference.unregister();
+                    existingApp.setRegistration( null );
                 }
                 if ( existingApp.getConfig() == null )
                 {
@@ -192,6 +193,7 @@ public class ApplicationRegistryImpl
             if ( reference != null )
             {
                 reference.unregister();
+                existingApp.setRegistration( null );
             }
             existingApp.setConfig( null );
 
@@ -235,6 +237,7 @@ public class ApplicationRegistryImpl
             if ( reference != null )
             {
                 reference.unregister();
+                existingApp.setRegistration( null );
             }
             existingApp.setConfig( null );
 
