@@ -3,14 +3,13 @@ package com.enonic.xp.lib.app;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.util.Version;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,7 +26,6 @@ class ListVirtualApplicationHandlerTest
 
             when( application1.getKey() ).thenReturn( ApplicationKey.from( "app1" ) );
             when( application1.getDisplayName() ).thenReturn( "app display name" );
-            when( application1.getBundle() ).thenReturn( mock( Bundle.class ) );
             when( application1.getVendorName() ).thenReturn( "vendor name" );
             when( application1.getVendorUrl() ).thenReturn( "https://vendor.url" );
             when( application1.getUrl() ).thenReturn( "https://myapp.url" );
@@ -48,7 +46,6 @@ class ListVirtualApplicationHandlerTest
 
             when( application2.getKey() ).thenReturn( ApplicationKey.from( "app2" ) );
             when( application2.getDisplayName() ).thenReturn( "app display name 2" );
-            when( application2.getBundle() ).thenReturn( mock( Bundle.class ) );
             when( application2.getVendorName() ).thenReturn( "vendor name 2" );
             when( application2.getVendorUrl() ).thenReturn( "https://vendor2.url" );
             when( application2.getUrl() ).thenReturn( "https://myapp2.url" );

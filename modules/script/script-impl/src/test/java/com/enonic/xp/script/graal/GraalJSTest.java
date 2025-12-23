@@ -6,13 +6,9 @@ import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Version;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -20,9 +16,11 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
+import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.util.Version;
 
 class GraalJSTest
 {
@@ -34,19 +32,8 @@ class GraalJSTest
 
         final BundleContext bundleContext = Mockito.mock( BundleContext.class );
 
-        final Bundle bundle = Mockito.mock( Bundle.class );
-        Mockito.when( bundle.getBundleContext() ).thenReturn( bundleContext );
-
-        final Application application = Mockito.mock( Application.class );
-        Mockito.when( application.getBundle() ).thenReturn( bundle );
-        Mockito.when( application.getKey() ).thenReturn( APPLICATION_KEY );
-        Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
-        Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
-        Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
-
-        final ApplicationService applicationService = Mockito.mock( ApplicationService.class );
-        Mockito.when( applicationService.getInstalledApplication( APPLICATION_KEY ) ).thenReturn( application );
+        final ApplicationInfoBuilder application =
+            new ApplicationInfoBuilder( APPLICATION_KEY, ConfigBuilder.create().build(), Version.emptyVersion );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -55,12 +42,11 @@ class GraalJSTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptSettings scriptSettings = ScriptSettings.create().
-            globalVariable( "xxx", "1243" ).build();
+        final ScriptSettings scriptSettings = ScriptSettings.create().globalVariable( "xxx", "1243" ).build();
 
         ScriptExecutor scriptExecutor =
-            new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), scriptSettings,
-                                     new ServiceRegistryImpl( bundleContext ), resourceService, application, RunMode.DEV );
+            new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
+                                     scriptSettings, new ServiceRegistryImpl( bundleContext ), resourceService, application, RunMode.DEV );
 
         ScriptExports scriptExports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:require-test.js" ) );
 

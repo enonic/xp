@@ -36,16 +36,7 @@ public final class ApplicationFactory
 
     public ApplicationImpl create( final Bundle bundle )
     {
-        return create( bundle, null );
-    }
-
-    ApplicationImpl create( final Bundle bundle, final Configuration config )
-    {
-        final ApplicationBuilder builder = new ApplicationBuilder();
-        builder.bundle( bundle );
-        builder.urlResolver( createUrlResolver( bundle, null ) );
-        builder.config( config );
-        return builder.build();
+        return new ApplicationImpl( bundle, createUrlResolver( bundle, null ), null );
     }
 
     ApplicationUrlResolver createUrlResolver( final Bundle bundle, final String source )
@@ -56,7 +47,7 @@ public final class ApplicationFactory
         }
 
         final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
-        final ApplicationKey appKey = ApplicationKey.from( bundle );
+        final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
         final NodeResourceApplicationUrlResolver nodeResourceApplicationResolver =
             new NodeResourceApplicationUrlResolver( appKey, nodeService );
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
@@ -92,7 +83,7 @@ public final class ApplicationFactory
                 {
                     throw new IllegalStateException( "virtual apps are disabled" );
                 }
-                return new NodeResourceApplicationUrlResolver( ApplicationKey.from( bundle ), nodeService );
+                return new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService );
             default:
                 throw new IllegalArgumentException( "invalid application resolver source: " + source );
         }
@@ -108,7 +99,7 @@ public final class ApplicationFactory
         }
         final List<URL> urls = getSearchPathUrls( sourcePaths );
         return new ClassLoaderApplicationUrlResolver( new URLClassLoader( urls.toArray( URL[]::new ), null ),
-                                                      ApplicationKey.from( bundle ) );
+                                                      ApplicationHelper.getApplicationKey( bundle ) );
     }
 
     private List<URL> getSearchPathUrls( final List<String> paths )

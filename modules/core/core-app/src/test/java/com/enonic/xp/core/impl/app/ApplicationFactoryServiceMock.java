@@ -29,7 +29,7 @@ public class ApplicationFactoryServiceMock
     @Override
     public ApplicationAdaptor getApplication( final Bundle bundle )
     {
-        return map.computeIfAbsent( bundle, b -> factory.create( b ) );
+        return map.computeIfAbsent( bundle, factory::create );
     }
 
     @Override
@@ -37,8 +37,8 @@ public class ApplicationFactoryServiceMock
     {
         return map.entrySet()
             .stream()
-            .filter( e -> e.getKey().getSymbolicName().equals( applicationKey.getName() ) )
-            .map( e -> e.getValue() )
+            .filter( e -> ApplicationHelper.getApplicationKey( e.getKey() ).equals( applicationKey ) )
+            .map( Map.Entry::getValue )
             .findAny();
     }
 
@@ -47,7 +47,7 @@ public class ApplicationFactoryServiceMock
     {
         return map.entrySet()
             .stream()
-            .filter( e -> e.getKey().getSymbolicName().equals( applicationKey.getName() ) )
+            .filter( e -> ApplicationHelper.getApplicationKey( e.getKey() ).equals( applicationKey ) )
             .map( Map.Entry::getValue )
             .map( ApplicationAdaptor::getUrlResolver )
             .findAny();

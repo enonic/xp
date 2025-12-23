@@ -1,17 +1,13 @@
 package com.enonic.xp.portal.impl.macro;
 
 import java.net.URL;
-import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -23,8 +19,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
+import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -42,29 +38,21 @@ class MacroProcessorScriptTest
     @BeforeEach
     void setup()
     {
-        this.macroContext = MacroContext.create().
-            request( new PortalRequest() ).
-            name( "macroName" ).
-            body( "body" ).
-            param( "firstParam", "firstParamValue" ).
-            param( "secondParam", "secondParamValue" ).
-            document( "<h1>document</h1>" ).
-            build();
-
-        final BundleContext bundleContext = mock( BundleContext.class );
-
-        final Bundle bundle = mock( Bundle.class );
-        when( bundle.getBundleContext() ).thenReturn( bundleContext );
-        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
+        this.macroContext = MacroContext.create()
+            .request( new PortalRequest() )
+            .name( "macroName" )
+            .body( "body" )
+            .param( "firstParam", "firstParamValue" )
+            .param( "secondParam", "secondParamValue" )
+            .document( "<h1>document</h1>" )
+            .build();
 
         final Application application = mock( Application.class );
-        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+        when( application.getVersion() ).thenReturn( Version.emptyVersion );
         when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
         when( application.isStarted() ).thenReturn( true );
-
-        final ApplicationService applicationService = mock( ApplicationService.class );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
 
         this.resourceService = mock( ResourceService.class );
         when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
@@ -74,10 +62,8 @@ class MacroProcessorScriptTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
-        final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
-
         final ScriptRuntimeFactory runtimeFactory =
-            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
+            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( resourceService, null, application );
 
         final PortalScriptServiceImpl scriptService = new PortalScriptServiceImpl( runtimeFactory );
         scriptService.initialize();

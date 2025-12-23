@@ -2,20 +2,16 @@ package com.enonic.xp.portal.impl.processor;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Hashtable;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -27,9 +23,9 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
+import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,27 +49,17 @@ class ResponseProcessorExecutorTest
         this.portalRequest = new PortalRequest();
         this.portalResponse = PortalResponse.create().build();
 
-        final BundleContext bundleContext = mock( BundleContext.class );
-
-        final Bundle bundle = mock( Bundle.class );
-        when( bundle.getBundleContext() ).thenReturn( bundleContext );
-        when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
-
         final Application application = mock( Application.class );
-        when( application.getBundle() ).thenReturn( bundle );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+        when( application.getVersion() ).thenReturn( Version.emptyVersion );
         when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         when( application.isStarted() ).thenReturn( true );
         when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
 
-        final ApplicationService applicationService = mock( ApplicationService.class );
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn( application );
-
         this.resourceService = mock( ResourceService.class );
 
-        final ScriptAsyncService scriptAsyncService = mock( ScriptAsyncService.class );
-
         final ScriptRuntimeFactory runtimeFactory =
-            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( applicationService, resourceService, scriptAsyncService );
+            ScriptFixturesFacade.getInstance().scriptRuntimeFactory( resourceService, null, application );
 
         final PortalScriptServiceImpl portalScriptService = new PortalScriptServiceImpl( runtimeFactory );
         portalScriptService.initialize();

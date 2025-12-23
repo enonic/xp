@@ -106,8 +106,8 @@ class ApplicationServiceImplTest
 
         virtualAppService = new VirtualAppService( nodeService );
 
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
-                                                   virtualAppService, auditLogSupport );
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
+                                                   auditLogSupport );
     }
 
     @Test
@@ -116,7 +116,7 @@ class ApplicationServiceImplTest
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.registerApplication( bundle );
 
-        final Application result = this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
+        final ApplicationAdaptor result = (ApplicationAdaptor) this.service.getInstalledApplication( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
         assertSame( bundle, result.getBundle() );
     }
@@ -127,7 +127,7 @@ class ApplicationServiceImplTest
         final Bundle bundle = deployAppBundle( "app1" );
         applicationRegistry.registerApplication( bundle );
 
-        final Application result = this.service.get( ApplicationKey.from( "app1" ) );
+        final ApplicationAdaptor result = (ApplicationAdaptor) this.service.get( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
         assertSame( bundle, result.getBundle() );
     }
@@ -139,10 +139,8 @@ class ApplicationServiceImplTest
         when( nodeService.nodeExists(
             new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
 
-
         final Application virtualApp = this.service.get( applicationKey );
 
-        assertNull( virtualApp.getBundle() );
         assertEquals( applicationKey, virtualApp.getKey() );
         assertNull( virtualApp.getUrl() );
         assertEquals( "app1", virtualApp.getDisplayName() );
@@ -181,7 +179,7 @@ class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result(NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
@@ -194,7 +192,7 @@ class ApplicationServiceImplTest
         final ApplicationKey appKey = ApplicationKey.from( "app1" );
 
         final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result(NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
+            .add( new DeleteNodeResult.Result( NodeId.from( "nodeId" ), NodeVersionId.from( "nodeVersionId" ) ) )
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
@@ -272,7 +270,7 @@ class ApplicationServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
 
-        assertThrows( ApplicationNotFoundException.class, () -> this.service.startApplication( applicationKey, true ));
+        assertThrows( ApplicationNotFoundException.class, () -> this.service.startApplication( applicationKey, true ) );
     }
 
     @Test
@@ -467,8 +465,7 @@ class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
-            node );
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
 
@@ -495,8 +492,7 @@ class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
-            node );
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
 
@@ -517,7 +513,6 @@ class ApplicationServiceImplTest
 
     @Test
     void install_stored_applications()
-        throws Exception
     {
         final String bundleName1 = "my-bundle1";
         final String bundleName2 = "my-bundle2";
@@ -572,7 +567,6 @@ class ApplicationServiceImplTest
 
     @Test
     void uninstall_local_application()
-        throws Exception
     {
         final Node applicationNode = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
@@ -603,8 +597,7 @@ class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
-            node );
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
 
@@ -638,8 +631,7 @@ class ApplicationServiceImplTest
 
         mockRepoCreateNode( node );
 
-        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
-            node );
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn( node );
 
         mockRepoGetNode( node, bundleName );
 
@@ -671,7 +663,6 @@ class ApplicationServiceImplTest
 
     @Test
     void install_global_when_local_installed()
-        throws Exception
     {
         final Node node = Node.create().id( NodeId.from( "myNode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
 
@@ -695,10 +686,12 @@ class ApplicationServiceImplTest
 
     @Test
     void deactivate()
+        throws Exception
     {
         final Bundle bundle1 = deployAppBundle( "app1" );
         final Bundle bundle2 = deployAppBundle( "app2" );
         final Bundle bundle3 = deploySystemAppBundle( "systemApp" );
+        bundle3.start();
 
         applicationRegistry.registerApplication( bundle1 );
         applicationRegistry.registerApplication( bundle2 );
@@ -710,10 +703,11 @@ class ApplicationServiceImplTest
 
     @Test
     void configuration_comes_first()
+        throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
-
+        bundle.start();
         applicationRegistry.configure( bundle, ConfigBuilder.create().add( "a", "b" ).build() );
 
         final Application app = service.getInstalledApplication( key );
@@ -723,10 +717,11 @@ class ApplicationServiceImplTest
 
     @Test
     void configuration_comes_last()
+        throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
-
+        bundle.start();
         applicationRegistry.registerApplication( bundle );
 
         final Application app = service.getInstalledApplication( key );
@@ -738,10 +733,11 @@ class ApplicationServiceImplTest
 
     @Test
     void configuration_comes_twice()
+        throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
-
+        bundle.start();
         applicationRegistry.registerApplication( bundle );
 
         final Application app = service.getInstalledApplication( key );
@@ -758,9 +754,11 @@ class ApplicationServiceImplTest
 
     @Test
     void configuration_comes_twice_invalidators_called()
+        throws Exception
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
         final Bundle bundle = deployAppBundle( "myapp" );
+        bundle.start();
 
         applicationRegistry.registerApplication( bundle );
 
@@ -791,8 +789,8 @@ class ApplicationServiceImplTest
             {
 
                 when( nodeService.nodeExists(
-                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
+                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn(
+                    true );
 
                 return Node.create()
                     .id( NodeId.from( createNodeParams.getName() ) )
@@ -806,7 +804,8 @@ class ApplicationServiceImplTest
                 return Node.create()
                     .id( NodeId.from( createNodeParams.getName() ) )
                     .name( createNodeParams.getName() )
-                    .parentPath( new NodePath( "/app1" ) ).build();
+                    .parentPath( new NodePath( "/app1" ) )
+                    .build();
             }
 
             return null;
@@ -865,8 +864,7 @@ class ApplicationServiceImplTest
 
     private void mockRepoCreateNode( final Node node )
     {
-        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn(
-            node );
+        when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn( node );
     }
 
     private void mockRepoGetNode( final Node applicationNode, final String appName )
@@ -910,7 +908,8 @@ class ApplicationServiceImplTest
     private Bundle deployAppBundle( final String key, final VersionRange systemVersionRange )
     {
         final InputStream in = newBundle( key, true ).setHeader( ApplicationManifestConstants.X_SYSTEM_VERSION,
-                                                           systemVersionRange != null ? systemVersionRange.toString() : null ).build();
+                                                                 systemVersionRange != null ? systemVersionRange.toString() : null )
+            .build();
 
         return deploy( key, in );
     }

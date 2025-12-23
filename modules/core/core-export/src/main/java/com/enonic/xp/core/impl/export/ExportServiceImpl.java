@@ -1,7 +1,7 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -38,7 +38,7 @@ public class ExportServiceImpl
 
     @Activate
     public ExportServiceImpl( @Reference final ExportConfigurationDynamic exportConfiguration, @Reference final NodeService nodeService,
-                              @Reference final InternalRepositoryService repositoryService)
+                              @Reference final InternalRepositoryService repositoryService )
     {
         this.xpVersion = VersionInfo.get().getVersion();
         this.nodeService = nodeService;
@@ -67,8 +67,8 @@ public class ExportServiceImpl
     @Override
     public NodeImportResult importNodes( final ImportNodesParams params )
     {
-        VirtualFile source = Optional.ofNullable( params.getSource() )
-            .orElseGet( () -> VirtualFiles.from( exportConfiguration.getExportsDir().resolve( params.getExportName() ) ) );
+        VirtualFile source = Objects.requireNonNullElseGet( params.getSource(), () -> VirtualFiles.from(
+            exportConfiguration.getExportsDir().resolve( params.getExportName() ) ) );
 
         final NodeImportResult result = NodeImporter.create()
             .nodeService( this.nodeService )

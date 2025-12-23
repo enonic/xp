@@ -1,4 +1,4 @@
-package com.enonic.xp.vfs;
+package com.enonic.xp.core.impl.app.resource;
 
 import org.junit.jupiter.api.Test;
 

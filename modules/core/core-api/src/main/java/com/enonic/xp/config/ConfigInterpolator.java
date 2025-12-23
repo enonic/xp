@@ -1,11 +1,11 @@
 package com.enonic.xp.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
-
-import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.core.internal.Interpolator;
 
@@ -17,7 +17,7 @@ public final class ConfigInterpolator
 
     private Properties systemProperties;
 
-    private BundleContext bundleContext;
+    private final List<Function<String, String>> additionalLookups = new CopyOnWriteArrayList<>();
 
     public ConfigInterpolator()
     {
@@ -25,21 +25,21 @@ public final class ConfigInterpolator
         this.systemProperties = System.getProperties();
     }
 
-    public ConfigInterpolator environment( final Map<String, String> map )
+    public ConfigInterpolator addLookup( final Function<String, String> lookup )
+    {
+        this.additionalLookups.add( lookup );
+        return this;
+    }
+
+    ConfigInterpolator environment( final Map<String, String> map )
     {
         this.environment = map;
         return this;
     }
 
-    public ConfigInterpolator systemProperties( final Properties properties )
+    ConfigInterpolator systemProperties( final Properties properties )
     {
         this.systemProperties = properties;
-        return this;
-    }
-
-    public ConfigInterpolator bundleContext( final BundleContext bundleContext )
-    {
-        this.bundleContext = bundleContext;
         return this;
     }
 
@@ -60,29 +60,22 @@ public final class ConfigInterpolator
             return value1;
         }
 
-        final String value2 = getFromBundleContext( key );
-        if ( value2 != null )
+        for ( Function<String, String> additionalLookup : additionalLookups )
         {
-            return value2;
+            final String value = additionalLookup.apply( key );
+            if ( value != null )
+            {
+                return value;
+            }
         }
 
-        final String value3 = getFromSystemProperties( key );
+        final String value3 = this.systemProperties != null ? this.systemProperties.getProperty( key ) : null;
         if ( value3 != null )
         {
             return value3;
         }
 
         return getFromEnvironment( key );
-    }
-
-    private String getFromBundleContext( final String key )
-    {
-        return this.bundleContext != null ? this.bundleContext.getProperty( key ) : null;
-    }
-
-    private String getFromSystemProperties( final String key )
-    {
-        return this.systemProperties != null ? this.systemProperties.getProperty( key ) : null;
     }
 
     private String getFromEnvironment( final String key )

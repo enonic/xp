@@ -15,9 +15,9 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.app.ApplicationBundleUtils;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -74,7 +74,7 @@ public class ApplicationFactoryServiceImpl
         return bundleTracker.getTracked()
             .entrySet()
             .stream()
-            .filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) )
+            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) )
             .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
             .findAny()
             .map( Map.Entry::getValue )
@@ -87,7 +87,7 @@ public class ApplicationFactoryServiceImpl
         final Optional<Map.Entry<Bundle, ApplicationAdaptor>> adaptorEntry = bundleTracker.getTracked()
             .entrySet()
             .stream()
-            .filter( bundleEntry -> applicationKey.equals( ApplicationKey.from( bundleEntry.getKey() ) ) )
+            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) )
             .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
             .findAny();
 
@@ -131,7 +131,8 @@ public class ApplicationFactoryServiceImpl
         {
             if ( ApplicationBundleUtils.isApplication( bundle ) )
             {
-                LOG.debug( "Creating new application instance from bundle {} {}", bundle.getSymbolicName(), bundle.getBundleId() );
+                LOG.debug( "Creating new application instance from bundle {} {}", ApplicationBundleUtils.getApplicationName( bundle ),
+                           bundle.getBundleId() );
                 return factory.create( bundle );
             }
             else

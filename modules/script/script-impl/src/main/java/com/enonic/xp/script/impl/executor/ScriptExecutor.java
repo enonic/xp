@@ -2,7 +2,6 @@ package com.enonic.xp.script.impl.executor;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
@@ -13,8 +12,6 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 
 public interface ScriptExecutor
 {
-    Application getApplication();
-
     ScriptExports executeMain( ResourceKey key );
 
     CompletableFuture<ScriptExports> executeMainAsync( ResourceKey key );

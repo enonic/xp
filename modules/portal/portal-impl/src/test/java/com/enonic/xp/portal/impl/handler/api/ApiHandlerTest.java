@@ -100,7 +100,7 @@ class ApiHandlerTest
         assertFalse( this.handler.canHandle( webRequest ) );
 
         Application welcomeApp = mock( Application.class );
-        when( applicationService.get( ApplicationKey.from( "com.enonic.xp.app.welcome" ) ) ).thenReturn( welcomeApp );
+        when( applicationService.get( ApplicationKey.from( "com.enonic.xp.app.sdk" ) ) ).thenReturn( welcomeApp );
         when( apiConfig.api_index_enabled() ).thenReturn( "on" );
         assertTrue( this.handler.canHandle( webRequest ) );
     }

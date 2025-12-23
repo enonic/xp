@@ -7,9 +7,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDirSupport;
@@ -27,8 +24,6 @@ class ImportHandlerTest
     @TempDir
     public static Path temporaryFolder;
 
-    ApplicationService applicationService;
-
     ExportService exportService;
 
     @BeforeAll
@@ -42,8 +37,6 @@ class ImportHandlerTest
         throws Exception
     {
         super.initialize();
-        this.applicationService = mock( ApplicationService.class );
-        addService( ApplicationService.class, applicationService );
         this.exportService = mock( ExportService.class );
         addService( ExportService.class, exportService );
     }
@@ -51,9 +44,6 @@ class ImportHandlerTest
     @Test
     void testExample()
     {
-        when( applicationService.getInstalledApplication( ApplicationKey.from( "myapplication" ) ) ).thenReturn(
-            mock( Application.class ) );
-
         final NodeImportResult result = NodeImportResult.create()
             .updated( new NodePath( "/updated" ) )
             .added( new NodePath( "/added" ) )

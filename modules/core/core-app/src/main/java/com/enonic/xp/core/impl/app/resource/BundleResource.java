@@ -1,4 +1,4 @@
-package com.enonic.xp.vfs;
+package com.enonic.xp.core.impl.app.resource;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -16,13 +16,15 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
+import com.enonic.xp.vfs.VirtualFile;
+import com.enonic.xp.vfs.VirtualFilePath;
+import com.enonic.xp.vfs.VirtualFilePaths;
+
 import static java.util.Objects.requireNonNullElse;
 
 final class BundleResource
     implements VirtualFile
 {
-    private static final String PATTERN = "*";
-
     private final Bundle bundle;
 
     private final String path;
@@ -58,11 +60,6 @@ final class BundleResource
     @Override
     public URL getUrl()
     {
-        return doGetUrl();
-    }
-
-    private URL doGetUrl()
-    {
         return this.bundle.getEntry( path );
     }
 
@@ -82,7 +79,7 @@ final class BundleResource
     public List<VirtualFile> getChildren()
     {
         final Iterator<URL> iterator =
-            requireNonNullElse( bundle.findEntries( path, PATTERN, false ), Collections.<URL>emptyEnumeration() ).asIterator();
+            requireNonNullElse( bundle.findEntries( path, "*", false ), Collections.<URL>emptyEnumeration() ).asIterator();
         return StreamSupport.stream( Spliterators.spliteratorUnknownSize( iterator, Spliterator.ORDERED ), false )
             .map( entry -> new BundleResource( this.bundle, entry.getPath() ) )
             .collect( Collectors.toList() );
@@ -122,6 +119,4 @@ final class BundleResource
 
         return new BundleResource( this.bundle, entryUrl.getPath() );
     }
-
-
 }

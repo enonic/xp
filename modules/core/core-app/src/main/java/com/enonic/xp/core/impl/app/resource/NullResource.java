@@ -1,11 +1,14 @@
-package com.enonic.xp.vfs;
+package com.enonic.xp.core.impl.app.resource;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
+
+import com.enonic.xp.vfs.VirtualFile;
+import com.enonic.xp.vfs.VirtualFilePath;
+import com.enonic.xp.vfs.VirtualFilePaths;
 
 final class NullResource
     implements VirtualFile
@@ -66,7 +69,7 @@ final class NullResource
     @Override
     public List<VirtualFile> getChildren()
     {
-        return new ArrayList<>();
+        return List.of();
     }
 
     @Override

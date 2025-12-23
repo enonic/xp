@@ -1,4 +1,4 @@
-package com.enonic.xp.app;
+package com.enonic.xp.core.internal;
 
 import org.osgi.framework.Bundle;
 
@@ -23,6 +23,11 @@ public final class ApplicationBundleUtils
         final String bundleType = getBundleType( bundle );
         return APPLICATION_BUNDLE_TYPE.equals( bundleType ) || SYSTEM_BUNDLE_TYPE.equals( bundleType ) ||
             bundle.getEntry( APPLICATION_XML ) != null || bundle.getEntry( SITE_XML ) != null;
+    }
+
+    public static String getApplicationName( final Bundle bundle )
+    {
+        return bundle.getSymbolicName();
     }
 
     public static boolean isSystemApplication( final Bundle bundle )

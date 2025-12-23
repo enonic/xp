@@ -42,7 +42,7 @@ public final class ExtraData
 
     public static ApplicationKey fromApplicationPrefix( final String applicationPrefixName )
     {
-        return ApplicationKey.from( applicationPrefixName, "-" );
+        return ApplicationKey.from( applicationPrefixName.replace( "-", "." ) );
     }
 
     public void setName( final XDataName name )

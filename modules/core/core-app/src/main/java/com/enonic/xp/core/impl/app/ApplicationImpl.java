@@ -5,15 +5,17 @@ import java.util.Set;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.VersionRange;
 
-import com.enonic.xp.app.ApplicationBundleUtils;
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
+import com.enonic.xp.util.Version;
 
-final class ApplicationImpl
+public final class ApplicationImpl
     implements ApplicationAdaptor
 {
     private final ApplicationKey key;
@@ -30,15 +32,15 @@ final class ApplicationImpl
 
     private final Set<String> capabilities;
 
-    ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader,
-                     final Configuration config )
+    private volatile ServiceRegistration<Application> reference;
+
+    public ApplicationImpl( final Bundle bundle, final ApplicationUrlResolver urlResolver, final ClassLoader classLoader )
     {
         this.bundle = bundle;
-        this.key = ApplicationKey.from( bundle );
+        this.key = ApplicationHelper.getApplicationKey( bundle );
         this.systemVersion = ApplicationHelper.parseVersionRange( getHeader( ApplicationManifestConstants.X_SYSTEM_VERSION, null ) );
         this.urlResolver = urlResolver;
-        this.classLoader = classLoader;
-        this.config = config;
+        this.classLoader = classLoader != null ? classLoader : new BundleClassLoader( this.bundle );
         this.capabilities = ApplicationHelper.getCapabilities( bundle );
     }
 
@@ -51,7 +53,7 @@ final class ApplicationImpl
     @Override
     public Version getVersion()
     {
-        return this.bundle.getVersion();
+        return Version.parseVersion( this.bundle.getVersion().toString() );
     }
 
     @Override
@@ -76,12 +78,6 @@ final class ApplicationImpl
     public String getMinSystemVersion()
     {
         return this.systemVersion != null ? this.systemVersion.getLeft().toString() : null;
-    }
-
-    @Override
-    public boolean includesSystemVersion( final Version version )
-    {
-        return this.systemVersion == null || this.systemVersion.isEmpty() || this.systemVersion.includes( version );
     }
 
     @Override
@@ -159,5 +155,17 @@ final class ApplicationImpl
     public boolean isSystem()
     {
         return ApplicationBundleUtils.isSystemApplication( this.bundle );
+    }
+
+    @Override
+    public ServiceRegistration<Application> getRegistration()
+    {
+        return reference;
+    }
+
+    @Override
+    public void setRegistration( final ServiceRegistration<Application> registration )
+    {
+        this.reference = registration;
     }
 }
