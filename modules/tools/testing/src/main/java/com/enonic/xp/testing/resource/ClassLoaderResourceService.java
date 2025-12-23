@@ -76,7 +76,7 @@ public final class ClassLoaderResourceService
             @Override
             public boolean isFolder()
             {
-                return url != null && !url.getPath().endsWith( "/" );
+                return url != null && url.getPath().endsWith( "/" );
             }
 
             @Override
