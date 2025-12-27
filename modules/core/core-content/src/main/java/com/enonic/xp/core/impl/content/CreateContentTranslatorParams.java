@@ -408,6 +408,11 @@ public class CreateContentTranslatorParams
             return createAttachments;
         }
 
+        public Page getPage()
+        {
+            return page;
+        }
+
         private void validate()
         {
             Objects.requireNonNull( parent, "parentPath cannot be null" );

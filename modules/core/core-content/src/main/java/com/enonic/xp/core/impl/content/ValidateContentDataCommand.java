@@ -11,6 +11,7 @@ import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -37,8 +38,7 @@ final class ValidateContentDataCommand
             .name( builder.contentName )
             .displayName( builder.displayName )
             .data( builder.data )
-            .extraDatas( builder.extraDatas )
-            .createAttachments( builder.createAttachments );
+            .extraDatas( builder.extraDatas ).createAttachments( builder.createAttachments ).page( builder.page );
         contentTypeName = builder.contentTypeName;
         resultBuilder = Objects.requireNonNullElseGet( builder.validationErrorsBuilder, ValidationErrors::create );
     }
@@ -86,6 +86,8 @@ final class ValidateContentDataCommand
         private String displayName;
 
         private CreateAttachments createAttachments;
+
+        private Page page;
 
         private Builder()
         {
@@ -148,6 +150,12 @@ final class ValidateContentDataCommand
         public Builder createAttachments( final CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        public Builder page( final Page page )
+        {
+            this.page = page;
             return this;
         }
 

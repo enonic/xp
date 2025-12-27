@@ -27,24 +27,42 @@ import com.enonic.xp.content.ExtraDatas;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
+import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.core.internal.HexCoder;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.inputtype.InputTypes;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplate;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectRole;
+import com.enonic.xp.region.Component;
+import com.enonic.xp.region.LayoutComponent;
+import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.LayoutDescriptorService;
+import com.enonic.xp.region.PartComponent;
+import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.PartDescriptorService;
+import com.enonic.xp.region.Region;
+import com.enonic.xp.region.Regions;
+import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.xdata.XData;
 import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigService;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
+import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.site.XDataMappingService;
 import com.enonic.xp.site.XDataOption;
@@ -78,6 +96,8 @@ class AbstractCreatingOrUpdatingContentCommand
 
     final SiteConfigService siteConfigService;
 
+    final PageTemplateService pageTemplateService;
+
     final boolean allowUnsafeAttachmentNames;
 
     AbstractCreatingOrUpdatingContentCommand( final Builder<?> builder )
@@ -93,6 +113,7 @@ class AbstractCreatingOrUpdatingContentCommand
         this.layoutDescriptorService = builder.layoutDescriptorService;
         this.xDataMappingService = builder.xDataMappingService;
         this.siteConfigService = builder.siteConfigService;
+        this.pageTemplateService = builder.pageTemplateService;
     }
 
     ExtraDatas mergeExtraData( final ContentTypeName type, final PropertyTree data, final ContentPath parent, final ExtraDatas extraDatas )
@@ -163,6 +184,131 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
+    void validateContentData( ContentTypeName contentTypeName, final PropertyTree data )
+    {
+        if ( contentTypeName.isUnstructured() )
+        {
+            return;
+        }
+
+        ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( contentTypeName ) );
+        if ( contentType != null )
+        {
+            validateForm( contentType.getForm(), data, "Incorrect content property" );
+        }
+    }
+
+    void validateMixins( final ExtraDatas extraDatas )
+    {
+        for ( ExtraData extraData : extraDatas )
+        {
+            XData xData = xDataService.getByName( extraData.getName() );
+            if ( xData != null )
+            {
+                validateForm( xData.getForm(), extraData.getData(), "Incorrect mixin property" );
+            }
+        }
+    }
+
+    void validateSiteConfigs( final PropertyTree siteConfigsData )
+    {
+        SiteConfigs siteConfigs = SiteConfigsDataSerializer.fromData( siteConfigsData.getRoot() );
+
+        for ( SiteConfig siteConfig : siteConfigs )
+        {
+            SiteDescriptor descriptor = siteService.getDescriptor( siteConfig.getApplicationKey() );
+            if ( descriptor != null )
+            {
+                validateForm( descriptor.getForm(), siteConfig.getConfig(), "Incorrect site config property" );
+            }
+        }
+    }
+
+    void validatePage( final Page page )
+    {
+        if ( page == null )
+        {
+            return;
+        }
+
+        PageDescriptor descriptor = getPageDescriptor( page );
+        if ( descriptor != null )
+        {
+            validateForm( descriptor.getConfig(), page.getConfig(), "Incorrect page property" );
+        }
+
+        if ( page.hasRegions() )
+        {
+            validateRegions( page.getRegions() );
+        }
+    }
+
+    private void validateRegions( final Regions regions )
+    {
+        for ( Region region : regions )
+        {
+            for ( Component component : region.getComponents() )
+            {
+                if ( component instanceof PartComponent part )
+                {
+                    PartDescriptor d = partDescriptorService.getByKey( part.getDescriptor() );
+                    if ( d != null )
+                    {
+                        validateForm( d.getConfig(), part.getConfig(), "Incorrect part component property" );
+                    }
+                }
+                else if ( component instanceof LayoutComponent layout )
+                {
+                    LayoutDescriptor d = layoutDescriptorService.getByKey( layout.getDescriptor() );
+                    if ( d != null )
+                    {
+                        validateForm( d.getConfig(), layout.getConfig(), "Incorrect layout component property" );
+                        if ( layout.hasRegions() )
+                        {
+                            validateRegions( layout.getRegions() );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void validateForm( Form form, PropertyTree data, String errorMessage )
+    {
+        if ( form == null || data == null )
+        {
+            return;
+        }
+        try
+        {
+            InputValidator.create().form( form ).inputTypeResolver( InputTypes.BUILTIN ).build().validate( data );
+        }
+        catch ( Exception e )
+        {
+            throw new IllegalArgumentException( errorMessage, e );
+        }
+    }
+
+    private PageDescriptor getPageDescriptor( final Page page )
+    {
+        if ( page.hasDescriptor() )
+        {
+            return pageDescriptorService.getByKey( page.getDescriptor() );
+        }
+
+        if ( page.hasTemplate() )
+        {
+            final PageTemplate pageTemplate = pageTemplateService.getByKey( page.getTemplate() );
+
+            if ( pageTemplate != null && pageTemplate.getPage() != null && pageTemplate.getPage().hasDescriptor() )
+            {
+                return pageDescriptorService.getByKey( pageTemplate.getPage().getDescriptor() );
+            }
+        }
+
+        return null;
+    }
+
     void validateCreateAttachments( final CreateAttachments createAttachments )
     {
         if ( !allowUnsafeAttachmentNames && createAttachments != null )
@@ -223,6 +369,8 @@ class AbstractCreatingOrUpdatingContentCommand
 
         private PageDescriptorService pageDescriptorService;
 
+        private PageTemplateService pageTemplateService;
+
         private PartDescriptorService partDescriptorService;
 
         private LayoutDescriptorService layoutDescriptorService;
@@ -247,6 +395,7 @@ class AbstractCreatingOrUpdatingContentCommand
             this.layoutDescriptorService = source.layoutDescriptorService;
             this.xDataMappingService = source.xDataMappingService;
             this.siteConfigService = source.siteConfigService;
+            this.pageTemplateService = source.pageTemplateService;
         }
 
         @SuppressWarnings("unchecked")
@@ -287,6 +436,12 @@ class AbstractCreatingOrUpdatingContentCommand
         B pageDescriptorService( final PageDescriptorService pageDescriptorService )
         {
             this.pageDescriptorService = pageDescriptorService;
+            return (B) this;
+        }
+
+        B pageTemplateService( final PageTemplateService pageTemplateService )
+        {
+            this.pageTemplateService = pageTemplateService;
             return (B) this;
         }
 

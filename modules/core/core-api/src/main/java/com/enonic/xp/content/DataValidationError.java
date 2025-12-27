@@ -5,8 +5,9 @@ import java.util.Objects;
 
 import com.enonic.xp.data.PropertyPath;
 
-public final class DataValidationError
+public sealed class DataValidationError
     extends ValidationError
+    permits SiteConfigValidationError, MixinConfigValidationError, ComponentConfigValidationError
 {
     private final PropertyPath propertyPath;
 

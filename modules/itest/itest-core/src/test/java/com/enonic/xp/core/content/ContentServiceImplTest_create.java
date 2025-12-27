@@ -15,7 +15,6 @@ import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.content.ContentDataValidationException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
@@ -276,7 +275,7 @@ class ContentServiceImplTest_create
             .requireValid( true )
             .build();
 
-        assertThrows( ContentDataValidationException.class, () -> this.contentService.create( createContentParams ) );
+        assertThrows( IllegalArgumentException.class, () -> this.contentService.create( createContentParams ) );
     }
 
     @Test

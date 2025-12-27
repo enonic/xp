@@ -12,7 +12,7 @@ import com.enonic.xp.content.ValidationErrors;
 import static com.google.common.base.Strings.nullToEmpty;
 
 @Component
-public class ContentNameValidator
+public final class ContentNameValidator
     implements ContentValidator
 {
     @Override

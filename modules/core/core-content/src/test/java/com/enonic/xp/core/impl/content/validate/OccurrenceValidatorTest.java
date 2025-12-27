@@ -6,21 +6,28 @@ import java.util.List;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ComponentConfigValidationError;
 import com.enonic.xp.content.DataValidationError;
+import com.enonic.xp.content.MixinConfigValidationError;
+import com.enonic.xp.content.SiteConfigValidationError;
 import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.form.FieldSet;
+import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.FormOptionSetOption;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.region.ComponentPath;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.xdata.XDataName;
 
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,8 +41,10 @@ class OccurrenceValidatorTest
 {
     private ValidationErrors validate( final PropertyTree content, final ContentType contentType )
     {
-        ValidationErrors.Builder validationResultsBuilder = ValidationErrors.create();
-        OccurrenceValidator.validate( contentType.getForm(), content.getRoot(), validationResultsBuilder );
+        final ValidationErrors.Builder validationResultsBuilder = ValidationErrors.create();
+        OccurrenceValidator.validate( contentType.getForm(), content.getRoot(),
+                                      ( errorCode, propertyPath, i18n ) -> ValidationError.dataError( errorCode, propertyPath )
+                                          .i18n( i18n ), validationResultsBuilder );
         return validationResultsBuilder.build();
     }
 
@@ -1029,5 +1038,69 @@ class OccurrenceValidatorTest
 
         final ValidationErrors validationResults = validate( content, contentType );
         assertFalse( validationResults.hasErrors() );
+    }
+
+    @Test
+    void shouldCreateSiteConfigValidationError()
+    {
+        final Form form = createSingleFieldForm();
+        final PropertyTree content = new PropertyTree();
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+
+        OccurrenceValidator.validate( form, content.getRoot(),
+                                      ( errorCode, path, i18n ) -> ValidationError.siteConfigError( errorCode, path, appKey ), builder );
+
+        final SiteConfigValidationError error = (SiteConfigValidationError) builder.build().stream().findFirst().orElseThrow();
+        assertThat( error.getPropertyPath().toString() ).isEqualTo( "field" );
+        assertThat( error.getApplicationKey() ).isEqualTo( appKey );
+    }
+
+    @Test
+    void shouldCreateComponentConfigValidationError()
+    {
+        final Form form = createSingleFieldForm();
+        final PropertyTree content = new PropertyTree();
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+        final ComponentPath componentPath = ComponentPath.from( "/region/0" );
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+
+        OccurrenceValidator.validate( form, content.getRoot(),
+                                      ( errorCode, path, i18n ) -> ValidationError.componentConfigError( errorCode, path, appKey,
+                                                                                                         componentPath ), builder );
+
+        final ComponentConfigValidationError error = (ComponentConfigValidationError) builder.build().stream().findFirst().orElseThrow();
+        assertThat( error.getPropertyPath().toString() ).isEqualTo( "field" );
+        assertThat( error.getApplicationKey() ).isEqualTo( appKey );
+        assertThat( error.getComponentPath() ).isEqualTo( componentPath );
+    }
+
+    @Test
+    void shouldCreateMixinConfigValidationError()
+    {
+        final Form form = createSingleFieldForm();
+        final PropertyTree content = new PropertyTree();
+        final XDataName mixinName = XDataName.from( ApplicationKey.from( "app1" ), "myMixin" );
+        final ValidationErrors.Builder builder = ValidationErrors.create();
+
+        OccurrenceValidator.validate( form, content.getRoot(),
+                                      ( errorCode, path, i18n ) -> ValidationError.mixinConfigError( errorCode, path, mixinName ),
+                                      builder );
+
+        final MixinConfigValidationError error = (MixinConfigValidationError) builder.build().stream().findFirst().orElseThrow();
+        assertThat( error.getPropertyPath().toString() ).isEqualTo( "field" );
+        assertThat( error.getMixinName() ).isEqualTo( mixinName );
+    }
+
+    private Form createSingleFieldForm()
+    {
+        return Form.create()
+            .addFormItem( Input.create()
+                              .name( "field" )
+                              .label( "Field" )
+                              .inputType( InputTypeName.TEXT_LINE )
+                              .occurrences( Occurrences.create( 1, 1 ) )
+                              .build() )
+            .build();
     }
 }

@@ -81,6 +81,7 @@ import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.inputtype.InputTypeProperty;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -171,6 +172,8 @@ public abstract class AbstractContentServiceTest
     protected ContentAuditLogFilterService contentAuditLogFilterService;
 
     protected PageDescriptorService pageDescriptorService;
+
+    protected PageTemplateService pageTemplateService;
 
     protected EventPublisher eventPublisher;
 
@@ -298,6 +301,7 @@ public abstract class AbstractContentServiceTest
         contentTypeService = new ContentTypeServiceImpl( resourceService, null, mixinService );
 
         this.pageDescriptorService = mock( PageDescriptorService.class );
+        this.pageTemplateService = mock( PageTemplateService.class );
         PartDescriptorService partDescriptorService = mock( PartDescriptorService.class );
         LayoutDescriptorService layoutDescriptorService = mock( LayoutDescriptorService.class );
         auditLogService = mock( AuditLogService.class );

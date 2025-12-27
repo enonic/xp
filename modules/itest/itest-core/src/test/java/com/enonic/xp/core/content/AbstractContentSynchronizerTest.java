@@ -50,6 +50,7 @@ import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptorService;
+import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -96,6 +97,8 @@ public abstract class AbstractContentSynchronizerTest
     protected MediaInfoServiceImpl mediaInfoService;
 
     protected PageDescriptorService pageDescriptorService;
+
+    protected PageTemplateService pageTemplateService;
 
     protected PartDescriptorService partDescriptorService;
 
@@ -307,6 +310,7 @@ public abstract class AbstractContentSynchronizerTest
         when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         pageDescriptorService = mock( PageDescriptorService.class );
+        pageTemplateService = mock( PageTemplateService.class );
         partDescriptorService = mock( PartDescriptorService.class );
         layoutDescriptorService = mock( LayoutDescriptorService.class );
 
