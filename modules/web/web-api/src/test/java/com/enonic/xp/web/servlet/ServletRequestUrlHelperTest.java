@@ -96,6 +96,30 @@ class ServletRequestUrlHelperTest
     }
 
     @Test
+    void rewriteUri_vhost_trivial()
+    {
+        final VirtualHost vhost = mock( VirtualHost.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
+
+        when( vhost.getTarget() ).thenReturn( "/" );
+        when( vhost.getSource() ).thenReturn( "/" );
+
+        final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" );
+        assertEquals( "/path/to/page", rewritingResult.getRewrittenUri() );
+        assertFalse( rewritingResult.isOutOfScope() );
+
+        when( vhost.getTarget() ).thenReturn( "/root/to/site" );
+        final UriRewritingResult rewritingResult2 = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" );
+        assertEquals( "/path/to/page", rewritingResult2.getRewrittenUri() );
+        assertTrue( rewritingResult2.isOutOfScope() );
+
+        when( vhost.getTarget() ).thenReturn( "/path/to" );
+        final UriRewritingResult rewritingResult3 = ServletRequestUrlHelper.rewriteUri( req, "/path/to/page" );
+        assertEquals( "/page", rewritingResult3.getRewrittenUri() );
+        assertFalse( rewritingResult3.isOutOfScope() );
+    }
+
+    @Test
     void contentDispositionAttachment_filename_with_comma()
     {
         final String fileName = "Prisliste for pakker, stykk- og partigods nasjonalt 01.12.2015.pdf";
@@ -164,6 +188,20 @@ class ServletRequestUrlHelperTest
         rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/site/default/draft/enonic" );
         assertEquals( "/no", rewritingResult.getRewrittenUri() );
         assertFalse( rewritingResult.isOutOfScope() );
+    }
+
+    @Test
+    void rewriteUri_vhost_outOfScope_short()
+    {
+        final VirtualHost vhost = mock( VirtualHost.class );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( vhost );
+
+        when( vhost.getTarget() ).thenReturn( "/site/default/draft/enonic" );
+        when( vhost.getSource() ).thenReturn( "/no" );
+
+        UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( req, "/site/default" );
+        assertEquals( "/site/default", rewritingResult.getRewrittenUri() );
+        assertTrue( rewritingResult.isOutOfScope() );
     }
 
     @Test
