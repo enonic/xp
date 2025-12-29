@@ -29,6 +29,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static com.enonic.xp.core.impl.content.ContentNodeHelper.translateNodePathToContentPath;
@@ -141,13 +142,15 @@ final class MoveContentCommand
             final ContentTypeName type = ContentTypeName.from( data.getProperty( ContentPropertyNames.TYPE ).getString() );
             final ExtraDatas extraData = data.hasProperty( ContentPropertyNames.EXTRA_DATA ) ? contentDataSerializer.fromExtraData(
                 data.getProperty( ContentPropertyNames.EXTRA_DATA ).getSet() ) : null;
+            final Page page = data.hasProperty( ContentPropertyNames.PAGE ) ? contentDataSerializer.fromPageData(
+                data.getProperty( ContentPropertyNames.PAGE ).getSet() ) : null;
 
             final ValidationErrors validationErrors = ValidateContentDataCommand.create()
                 .data( contentData )
                 .extraDatas( extraData )
                 .contentTypeName( type )
                 .contentName( ContentName.from( nodePath.getName().toString() ) )
-                .displayName( displayName )
+                .displayName( displayName ).page( page )
                 .contentTypeService( contentTypeService )
                 .contentValidators( contentValidators )
                 .build()

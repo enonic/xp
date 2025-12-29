@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.attachment.CreateAttachments;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.page.Page;
 import com.enonic.xp.schema.content.ContentType;
 
 public final class ContentValidatorParams
@@ -24,6 +25,8 @@ public final class ContentValidatorParams
 
     private final CreateAttachments createAttachments;
 
+    private final Page page;
+
     private ContentValidatorParams( Builder builder )
     {
         contentId = builder.contentId;
@@ -33,6 +36,7 @@ public final class ContentValidatorParams
         name = builder.name;
         displayName = builder.displayName;
         createAttachments = Objects.requireNonNullElse( builder.createAttachments, CreateAttachments.empty() );
+        page = builder.page;
     }
 
     public ContentId getContentId()
@@ -70,6 +74,11 @@ public final class ContentValidatorParams
         return createAttachments;
     }
 
+    public Page getPage()
+    {
+        return page;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -90,6 +99,8 @@ public final class ContentValidatorParams
         private ExtraDatas extraDatas;
 
         private CreateAttachments createAttachments;
+
+        private Page page;
 
         private Builder()
         {
@@ -134,6 +145,12 @@ public final class ContentValidatorParams
         public Builder createAttachments( CreateAttachments createAttachments )
         {
             this.createAttachments = createAttachments;
+            return this;
+        }
+
+        public Builder page( Page page )
+        {
+            this.page = page;
             return this;
         }
 

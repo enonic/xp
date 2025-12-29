@@ -21,10 +21,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateParams;
 import com.enonic.xp.core.impl.content.processor.ProcessCreateResult;
-import com.enonic.xp.core.impl.content.validate.InputValidator;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.form.FormDefaultValuesProcessor;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.media.MediaInfo;
 import com.enonic.xp.name.NamePrettyfier;
 import com.enonic.xp.node.CreateNodeParams;
@@ -134,7 +132,10 @@ final class CreateContentCommand
     private void validateBlockingChecks( final CreateContentParams params )
     {
         validateParentChildRelations( params.getParent(), params.getType() );
-        validatePropertyTree( params );
+        validateContentData( params.getType(), params.getData() );
+        validateSiteConfigs( params.getData() );
+        validatePage( params.getPage() );
+        validateMixins( params.getExtraDatas() );
         validateCreateAttachments( params.getCreateAttachments() );
         validateImageAttachment( params );
     }
@@ -156,27 +157,6 @@ final class CreateContentCommand
         if ( contentType.isAbstract() )
         {
             throw new IllegalArgumentException( "Cannot create content with an abstract type [" + params.getType() + "]" );
-        }
-    }
-
-    private void validatePropertyTree( final CreateContentParams params )
-    {
-        if ( !params.getType().isUnstructured() )
-        {
-            final ContentType contentType = contentTypeService.getByName( new GetContentTypeParams().contentTypeName( params.getType() ) );
-
-            try
-            {
-                InputValidator.create()
-                    .form( contentType.getForm() )
-                    .inputTypeResolver( InputTypes.BUILTIN )
-                    .build()
-                    .validate( params.getData() );
-            }
-            catch ( final Exception e )
-            {
-                throw new IllegalArgumentException( "Incorrect content property", e );
-            }
         }
     }
 
@@ -307,7 +287,7 @@ final class CreateContentCommand
             .contentTypeName( builder.getType() )
             .contentName( builder.getName() )
             .displayName( builder.getDisplayName() )
-            .createAttachments( builder.getCreateAttachments() )
+            .createAttachments( builder.getCreateAttachments() ).page( builder.getPage() )
             .contentValidators( this.contentValidators )
             .contentTypeService( this.contentTypeService )
             .build()

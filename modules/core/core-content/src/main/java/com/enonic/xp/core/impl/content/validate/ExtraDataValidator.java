@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ExtraData;
+import com.enonic.xp.content.ValidationError;
 import com.enonic.xp.content.ValidationErrors;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.schema.xdata.XData;
@@ -16,7 +17,7 @@ import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.schema.xdata.XDataService;
 
 @Component
-public class ExtraDataValidator
+public final class ExtraDataValidator
     implements ContentValidator
 {
     private static final Logger LOG = LoggerFactory.getLogger( ExtraDataValidator.class );
@@ -44,10 +45,11 @@ public class ExtraDataValidator
             }
 
             final Form mixinForm = xData.getForm();
-            if ( extraData.getData().getRoot().getPropertySize() > 0 )
-            {
-                OccurrenceValidator.validate( mixinForm, extraData.getData().getRoot(), validationErrorsBuilder );
-            }
+            OccurrenceValidator.validate( mixinForm, extraData.getData().getRoot(),
+                                          ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.mixinConfigError( errorCode,
+                                                                                                                       propertyPath, name )
+                                              .i18n( i18nPrefix + ".mixin" )
+                                              .args( name ), validationErrorsBuilder );
         }
     }
 

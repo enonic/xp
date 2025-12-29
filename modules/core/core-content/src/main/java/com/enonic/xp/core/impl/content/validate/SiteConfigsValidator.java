@@ -8,10 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentValidator;
 import com.enonic.xp.content.ContentValidatorParams;
 import com.enonic.xp.content.ValidationError;
-import com.enonic.xp.content.ValidationErrorCode;
 import com.enonic.xp.content.ValidationErrors;
-import com.enonic.xp.inputtype.InputTypeValidationException;
-import com.enonic.xp.inputtype.InputTypes;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -20,7 +17,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 
 @Component
-public class SiteConfigsValidator
+public final class SiteConfigsValidator
     implements ContentValidator
 {
     private final SiteService siteService;
@@ -50,35 +47,12 @@ public class SiteConfigsValidator
 
             if ( siteDescriptor != null )
             {
-                OccurrenceValidator.validate( siteDescriptor.getForm(), siteConfig.getConfig().getRoot(), validationErrorsBuilder );
-
-                try
-                {
-                    InputValidator.create()
-                        .form( siteDescriptor.getForm() )
-                        .inputTypeResolver( InputTypes.BUILTIN )
-                        .build()
-                        .validate( siteConfig.getConfig() );
-                }
-                catch ( final InputTypeValidationException e )
-                {
-                    validationErrorsBuilder.add( ValidationError.dataError(
-                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigPropertyInvalid" ),
-                            e.getPropertyPath() )
-                                                     .i18n( "system.cms.validation.siteConfigPropertyInvalid" )
-                                                     .args( e.getPropertyPath(), siteConfig.getApplicationKey() )
-                        .message( e.getMessage() )
-                        .build() );
-                }
-                catch ( final Exception e )
-                {
-                    validationErrorsBuilder.add( ValidationError.generalError(
-                            ValidationErrorCode.from( ApplicationKey.SYSTEM, "cms.validation.siteConfigInvalid" ) )
-                        .args( siteConfig.getApplicationKey() )
-                        .message( e.getMessage() )
-                        .build() );
-                }
-
+                OccurrenceValidator.validate( siteDescriptor.getForm(), siteConfig.getConfig().getRoot(),
+                                              ( errorCode, propertyPath, i18nPrefix ) -> ValidationError.siteConfigError( errorCode,
+                                                                                                                          propertyPath,
+                                                                                                                          applicationKey )
+                                                  .i18n( i18nPrefix + ".siteConfig" )
+                                                  .args( applicationKey ), validationErrorsBuilder );
             }
         }
     }
