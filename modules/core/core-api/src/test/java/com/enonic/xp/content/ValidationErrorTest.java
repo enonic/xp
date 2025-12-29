@@ -11,6 +11,8 @@ import nl.jqno.equalsverifier.Warning;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyPath;
+import com.enonic.xp.region.ComponentPath;
+import com.enonic.xp.schema.xdata.XDataName;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -142,6 +144,28 @@ class ValidationErrorTest
             .withRedefinedSuperclass()
             .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
             .withNonnullFields( "args", "propertyPath" ).suppress( Warning.STRICT_INHERITANCE )
+            .verify();
+
+        EqualsVerifier.forClass( SiteConfigValidationError.class )
+            .withRedefinedSuperclass()
+            .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
+            .withPrefabValues( ApplicationKey.class, ApplicationKey.from( "app1" ), ApplicationKey.from( "app2" ) )
+            .withNonnullFields( "args", "propertyPath", "applicationKey" )
+            .verify();
+
+        EqualsVerifier.forClass( MixinConfigValidationError.class )
+            .withRedefinedSuperclass()
+            .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
+            .withPrefabValues( XDataName.class, XDataName.from( "app1:name1" ), XDataName.from( "app2:name2" ) )
+            .withNonnullFields( "args", "propertyPath", "mixinName" )
+            .verify();
+
+        EqualsVerifier.forClass( ComponentConfigValidationError.class )
+            .withRedefinedSuperclass()
+            .withPrefabValues( PropertyPath.class, PropertyPath.from( "red" ), PropertyPath.from( "blue" ) )
+            .withPrefabValues( ApplicationKey.class, ApplicationKey.from( "app1" ), ApplicationKey.from( "app2" ) )
+            .withPrefabValues( ComponentPath.class, ComponentPath.from( "main/0" ), ComponentPath.from( "aside/1" ) )
+            .withNonnullFields( "args", "propertyPath", "applicationKey", "componentPath" )
             .verify();
     }
 }
