@@ -9,7 +9,7 @@ hazelcast = "5.6.0"
 tika = "3.2.3"
 micrometer = "1.16.1"
 prometheus = "1.4.3"
-graalvm = "23.1.8"
+graalvm = "25.0.1"
 guava = "33.5.0-jre"
 
 [libraries]
