@@ -72,4 +72,32 @@ class TaskProgressHandlerTest
         }
     }
 
+    @Test
+    void testReportProgressWithoutInfo()
+    {
+        taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
+        runFunction( "/test/progress-test.js", "reportProgressWithoutInfo" );
+
+        final List<TaskProgress> progress = taskService.progressHistory;
+        assertEquals( 10, progress.size() );
+        assertEquals( 0, progress.get( 0 ).getCurrent() );
+        assertEquals( 10, progress.get( 0 ).getTotal() );
+        assertEquals( "", progress.get( 0 ).getInfo() );
+        assertEquals( 9, progress.get( 9 ).getCurrent() );
+        assertEquals( 10, progress.get( 9 ).getTotal() );
+    }
+
+    @Test
+    void testReportProgressInfoOnly()
+    {
+        taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
+        runFunction( "/test/progress-test.js", "reportProgressInfoOnly" );
+
+        final List<TaskProgress> progress = taskService.progressHistory;
+        assertEquals( 3, progress.size() );
+        assertEquals( "Step 1", progress.get( 0 ).getInfo() );
+        assertEquals( "Step 2", progress.get( 1 ).getInfo() );
+        assertEquals( "Step 3", progress.get( 2 ).getInfo() );
+    }
+
 }
