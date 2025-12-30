@@ -129,8 +129,8 @@ tasks.register('javadoc', Javadoc) { t ->
     title = "Enonic XP API ${version}"
 
     options.with {
-        links "https://docs.oracle.com/en/java/javase/21/docs/api/"
-        links "https://www.javadoc.io/doc/com.google.guava/guava/${libs.versions.guava.get()}/"
+        links "https://docs.oracle.com/en/java/javase/25/docs/api/"
+        links "https://guava.dev/releases/${libs.versions.guava.get()}/api/docs/"
         quiet()
         addStringOption('Xdoclint:all,-missing', '-quiet')
         encoding('UTF-8')
