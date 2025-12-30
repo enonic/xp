@@ -96,21 +96,7 @@ public final class LocalTaskManagerImpl
             .filter( TaskInfo::isRunning )
             .collect( Collectors.toUnmodifiableList() );
     }
-
-    /**
-     * Updates the progress information for the task with the given {@code taskId}.
-     * <p>
-     * If no task exists for the given {@code taskId}, this method does nothing.
-     * </p>
-     *
-     * @param taskId  the identifier of the task to update; must not be {@code null}. If no task is found, the call is ignored.
-     * @param current the current progress value; may be {@code null}. The numeric progress is updated only when both
-     *                {@code current} and {@code total} are non-{@code null}. Otherwise, the existing numeric progress is kept.
-     * @param total   the total progress value; may be {@code null}. The numeric progress is updated only when both
-     *                {@code current} and {@code total} are non-{@code null}. Otherwise, the existing numeric progress is kept.
-     * @param message the progress message; may be {@code null}. When non-{@code null}, the progress message is updated;
-     *                when {@code null}, the message remains empty.
-     */
+    
     private void updateProgress( final TaskId taskId, final Integer current, final Integer total, final String message )
     {
         final TaskInfoHolder ctx = tasks.get( taskId );
