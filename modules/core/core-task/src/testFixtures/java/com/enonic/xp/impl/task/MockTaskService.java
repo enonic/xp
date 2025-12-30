@@ -66,7 +66,7 @@ public class MockTaskService
     }
 
     @Override
-    public void progress( final Integer current, final Integer total, final String message )
+    public void progress( final Integer current, final Integer total, final String info )
     {
         final TaskProgress.Builder builder = TaskProgress.create();
         if ( current != null )
@@ -77,9 +77,9 @@ public class MockTaskService
         {
             builder.total( total );
         }
-        if ( message != null )
+        if ( info != null )
         {
-            builder.info( message );
+            builder.info( info );
         }
 
         progressHistory.add( builder.build() );
