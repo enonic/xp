@@ -66,8 +66,22 @@ public class MockTaskService
     }
 
     @Override
-    public void progress( final int current, final int total, final String message )
+    public void progress( final Integer current, final Integer total, final String message )
     {
-        progressHistory.add( TaskProgress.create().current( current ).total( total ).info( message ).build() );
+        final TaskProgress.Builder builder = TaskProgress.create();
+        if ( current != null )
+        {
+            builder.current( current );
+        }
+        if ( total != null )
+        {
+            builder.total( total );
+        }
+        if ( message != null )
+        {
+            builder.info( message );
+        }
+
+        progressHistory.add( builder.build() );
     }
 }

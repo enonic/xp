@@ -7,7 +7,7 @@ public interface ProgressReporter
 {
     void progress( int current, int total );
 
-    void progress( int current, int total, String message );
+    void progress( Integer current, Integer total, String message );
 
     void info( String message );
 }

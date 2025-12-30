@@ -34,14 +34,7 @@ public final class TaskProgressHandler
         {
             throw new RuntimeException( "The reportProgress function must be called from within a task." );
         }
-        if ( current != null && total != null )
-        {
-            progressReporter.progress( current.intValue(), total.intValue(), info );
-        }
-        else if ( info != null )
-        {
-            progressReporter.info( info );
-        }
+        progressReporter.progress( current != null ? current.intValue() : null, total != null ? total.intValue() : null, info );
     }
 
 }

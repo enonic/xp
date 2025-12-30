@@ -96,7 +96,7 @@ public final class LocalTaskManagerImpl
             .filter( TaskInfo::isRunning )
             .collect( Collectors.toUnmodifiableList() );
     }
-    
+
     private void updateProgress( final TaskId taskId, final Integer current, final Integer total, final String message )
     {
         final TaskInfoHolder ctx = tasks.get( taskId );
@@ -107,9 +107,13 @@ public final class LocalTaskManagerImpl
         final TaskInfo taskInfo = ctx.getTaskInfo();
         final TaskProgress.Builder updatedProgress = taskInfo.getProgress().copy();
 
-        if ( current != null && total != null )
+        if ( current != null )
         {
-            updatedProgress.current( current ).total( total );
+            updatedProgress.current( current );
+        }
+        if ( total != null )
+        {
+            updatedProgress.total( total );
         }
         if ( message != null )
         {
@@ -234,7 +238,7 @@ public final class LocalTaskManagerImpl
         }
 
         @Override
-        public void progress( final int current, final int total, final String message )
+        public void progress( final Integer current, final Integer total, final String message )
         {
             updateProgress( taskId, current, total, message );
         }
