@@ -8,4 +8,10 @@ public interface ProgressReporter
     void progress( int current, int total );
 
     void info( String message );
+
+    default void progress( int current, int total, String message )
+    {
+        info( message );
+        progress( current, total );
+    }
 }

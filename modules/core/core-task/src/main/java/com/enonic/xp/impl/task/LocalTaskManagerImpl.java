@@ -131,6 +131,23 @@ public final class LocalTaskManagerImpl
         eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
     }
 
+    private void updateProgress( final TaskId taskId, final int current, final int total, final String message )
+    {
+        final TaskInfoHolder ctx = tasks.get( taskId );
+        if ( ctx == null )
+        {
+            return;
+        }
+        final TaskInfo taskInfo = ctx.getTaskInfo();
+        final TaskProgress updatedProgress = taskInfo.getProgress().copy().current( current ).total( total ).info( message ).build();
+
+        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
+        final TaskInfoHolder updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
+        tasks.put( taskId, updatedCtx );
+
+        eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
+    }
+
     private void updateState( final TaskId taskId, final TaskState newState )
     {
         final TaskInfoHolder ctx = tasks.get( taskId );
@@ -245,6 +262,12 @@ public final class LocalTaskManagerImpl
         public void info( final String message )
         {
             updateProgress( taskId, message );
+        }
+
+        @Override
+        public void progress( final int current, final int total, final String message )
+        {
+            updateProgress( taskId, current, total, message );
         }
     }
 

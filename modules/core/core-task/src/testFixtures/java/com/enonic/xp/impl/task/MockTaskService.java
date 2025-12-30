@@ -64,4 +64,10 @@ public class MockTaskService
     {
         progressHistory.add( TaskProgress.create().info( message ).build() );
     }
+
+    @Override
+    public void progress( final int current, final int total, final String message )
+    {
+        progressHistory.add( TaskProgress.create().current( current ).total( total ).info( message ).build() );
+    }
 }

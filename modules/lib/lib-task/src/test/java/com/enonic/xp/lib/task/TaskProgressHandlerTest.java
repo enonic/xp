@@ -35,11 +35,11 @@ class TaskProgressHandlerTest
         runScript( "/lib/xp/examples/task/progress.js" );
 
         final List<TaskProgress> progress = taskService.progressHistory;
-        assertEquals( 22, progress.size() );
+        assertEquals( 12, progress.size() );
         assertEquals( "Initializing task", progress.get( 0 ).getInfo() );
         assertEquals( "Processing item 1", progress.get( 1 ).getInfo() );
-        assertEquals( 1, progress.get( 4 ).getCurrent() );
-        assertEquals( 10, progress.get( 4 ).getTotal() );
+        assertEquals( 0, progress.get( 1 ).getCurrent() );
+        assertEquals( 10, progress.get( 1 ).getTotal() );
         assertEquals( "Task completed", progress.get( progress.size() - 1 ).getInfo() );
     }
 
@@ -50,11 +50,11 @@ class TaskProgressHandlerTest
         runFunction( "/test/progress-test.js", "reportProgress" );
 
         final List<TaskProgress> progress = taskService.progressHistory;
-        assertEquals( 22, progress.size() );
+        assertEquals( 12, progress.size() );
         assertEquals( "Starting task", progress.get( 0 ).getInfo() );
         assertEquals( "Step 0", progress.get( 1 ).getInfo() );
-        assertEquals( 1, progress.get( 4 ).getCurrent() );
-        assertEquals( 10, progress.get( 4 ).getTotal() );
+        assertEquals( 0, progress.get( 1 ).getCurrent() );
+        assertEquals( 10, progress.get( 1 ).getTotal() );
         assertEquals( "Work completed", progress.get( progress.size() - 1 ).getInfo() );
     }
 
