@@ -97,7 +97,7 @@ public final class LocalTaskManagerImpl
             .collect( Collectors.toUnmodifiableList() );
     }
 
-    private void updateProgress( final TaskId taskId, final int current, final int total )
+    private void updateProgress( final TaskId taskId, final Integer current, final Integer total, final String message )
     {
         final TaskInfoHolder ctx = tasks.get( taskId );
         if ( ctx == null )
@@ -105,26 +105,18 @@ public final class LocalTaskManagerImpl
             return;
         }
         final TaskInfo taskInfo = ctx.getTaskInfo();
-        final TaskProgress updatedProgress = taskInfo.getProgress().copy().current( current ).total( total ).build();
+        final TaskProgress.Builder updatedProgress = taskInfo.getProgress().copy();
 
-        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
-        final TaskInfoHolder updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
-        tasks.put( taskId, updatedCtx );
-
-        eventPublisher.publish( TaskEvents.updated( updatedInfo ) );
-    }
-
-    private void updateProgress( final TaskId taskId, final String message )
-    {
-        final TaskInfoHolder ctx = tasks.get( taskId );
-        if ( ctx == null )
+        if ( current != null && total != null )
         {
-            return;
+            updatedProgress.current( current ).total( total );
         }
-        final TaskInfo taskInfo = ctx.getTaskInfo();
-        final TaskProgress updatedProgress = taskInfo.getProgress().copy().info( message ).build();
+        if ( message != null )
+        {
+            updatedProgress.info( message );
+        }
 
-        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress ).build();
+        final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress.build() ).build();
         final TaskInfoHolder updatedCtx = ctx.copy().taskInfo( updatedInfo ).build();
         tasks.put( taskId, updatedCtx );
 
@@ -231,20 +223,26 @@ public final class LocalTaskManagerImpl
         @Override
         public void failed( final String message )
         {
-            updateProgress( taskId, message );
+            updateProgress( taskId, null, null, message );
             updateState( taskId, TaskState.FAILED );
         }
 
         @Override
         public void progress( final int current, final int total )
         {
-            updateProgress( taskId, current, total );
+            updateProgress( taskId, current, total, null );
+        }
+
+        @Override
+        public void progress( final int current, final int total, final String message )
+        {
+            updateProgress( taskId, current, total, message );
         }
 
         @Override
         public void info( final String message )
         {
-            updateProgress( taskId, message );
+            updateProgress( taskId, null, null, message );
         }
     }
 
