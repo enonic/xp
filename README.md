@@ -13,7 +13,7 @@ please read our docs here: https://developer.enonic.com/start.
 
 Before trying to build the project, you need to verify that the following software are installed:
 
-*    [JDK 25](https://adoptium.net/temurin/releases?version=25) or [GraalVM Java 25](https://www.graalvm.org/downloads/).   
+*    [JDK 25](https://adoptium.net/temurin/releases?version=25) or [GraalVM 25](https://www.graalvm.org/downloads/).   
 *    [Git](https://git-scm.com/downloads) installed on system.
 
 Build all code and run all tests, including integration tests:
@@ -39,7 +39,7 @@ Jsdoc output is located in the `modules/lib/build/distributions` directory.
 This project is just the runtime of the Enonic XP platform. To run the system properly,
 please see the xp-distro project that bundles the necessary part together: (https://github.com/enonic/xp-distro)
 
-Note that [GraalVM Java 25](https://www.graalvm.org/downloads/) is required to run the platform.
+Note that [GraalVM 25](https://www.graalvm.org/downloads/) is required to run the platform.
 
 ## Documentation
 
