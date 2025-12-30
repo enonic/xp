@@ -109,7 +109,7 @@ public final class LocalTaskManagerImpl
      * @param total   the total progress value; may be {@code null}. The numeric progress is updated only when both
      *                {@code current} and {@code total} are non-{@code null}. Otherwise, the existing numeric progress is kept.
      * @param message the progress message; may be {@code null}. When non-{@code null}, the progress message is updated;
-     *                when {@code null}, the existing message is preserved.
+     *                when {@code null}, the message remains empty.
      */
     private void updateProgress( final TaskId taskId, final Integer current, final Integer total, final String message )
     {
