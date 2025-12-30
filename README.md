@@ -13,10 +13,10 @@ please read our docs here: https://developer.enonic.com/start.
 
 Before trying to build the project, you need to verify that the following software are installed:
 
-*    [JDK 21](https://adoptium.net/temurin/archive/?version=21) for building and [GraalVM Java 21](https://www.graalvm.org/downloads/) for running.   
+*    [JDK 25](https://adoptium.net/temurin/releases?version=25) or [GraalVM Java 25](https://www.graalvm.org/downloads/).   
 *    [Git](https://git-scm.com/downloads) installed on system.
 
-Build all code and run all tests including integration tests:
+Build all code and run all tests, including integration tests:
 
     .\gradlew build
 
@@ -36,8 +36,10 @@ Jsdoc output is located in the `modules/lib/build/distributions` directory.
 
 ## Running
 
-This project is just the runtime of the Enonic XP platform.  In order to run the system properly,
+This project is just the runtime of the Enonic XP platform. To run the system properly,
 please see the xp-distro project that bundles the necessary part together: (https://github.com/enonic/xp-distro)
+
+Note that [GraalVM Java 25](https://www.graalvm.org/downloads/) is required to run the platform.
 
 ## Documentation
 
