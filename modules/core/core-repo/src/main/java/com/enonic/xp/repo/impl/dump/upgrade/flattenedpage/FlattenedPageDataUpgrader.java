@@ -249,17 +249,22 @@ public class FlattenedPageDataUpgrader
 
     public static String getTargetType( final String sourceComponentType )
     {
-        switch ( sourceComponentType )
+        if ( sourceComponentType == null )
         {
-            case SRC_TYPE_VALUE.LAYOUT:
+            return null;
+        }
+        
+        switch ( sourceComponentType.toLowerCase() )
+        {
+            case "layoutcomponent":
                 return TGT_TYPE_VALUE.LAYOUT;
-            case SRC_TYPE_VALUE.IMAGE:
+            case "imagecomponent":
                 return TGT_TYPE_VALUE.IMAGE;
-            case SRC_TYPE_VALUE.PART:
+            case "partcomponent":
                 return TGT_TYPE_VALUE.PART;
-            case SRC_TYPE_VALUE.TEXT:
+            case "textcomponent":
                 return TGT_TYPE_VALUE.TEXT;
-            case SRC_TYPE_VALUE.FRAGMENT:
+            case "fragmentcomponent":
                 return TGT_TYPE_VALUE.FRAGMENT;
         }
         return null;
