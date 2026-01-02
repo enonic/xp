@@ -91,7 +91,7 @@ var expected = {
             },
         'configs': [
                 {
-                    'path': 'displayName',
+                    'path': 'displayname',
                     'config': {
                         'decideByType': false,
                         'enabled': true,
