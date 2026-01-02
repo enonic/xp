@@ -84,7 +84,7 @@ public final class PageValidator
         }
 
         // Validate page config against descriptor
-        if ( pageDescriptor != null )
+        if ( pageDescriptor != null && page.getConfig() != null )
         {
             final ApplicationKey applicationKey = pageDescriptor.getApplicationKey();
 
