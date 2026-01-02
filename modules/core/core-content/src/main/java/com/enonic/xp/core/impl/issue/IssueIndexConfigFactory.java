@@ -1,9 +1,9 @@
 package com.enonic.xp.core.impl.issue;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 
 import static com.enonic.xp.issue.IssuePropertyNames.APPROVERS;
@@ -35,8 +35,8 @@ class IssueIndexConfigFactory
             add( STATUS, IndexConfig.MINIMAL ).
             add( DESCRIPTION, IndexConfig.FULLTEXT ).
             add( APPROVERS, IndexConfig.MINIMAL ).
-            add( PUBLISH_REQUEST, IndexConfig.MINIMAL ).
-            add( PropertyPath.from( PUBLISH_REQUEST, PublishRequestPropertyNames.EXCLUDE_IDS ), IndexConfig.NONE ).
+            add( PUBLISH_REQUEST, IndexConfig.MINIMAL ).add( IndexPath.from( PUBLISH_REQUEST, PublishRequestPropertyNames.EXCLUDE_IDS ),
+                                                             IndexConfig.NONE ).
             defaultConfig( IndexConfig.BY_TYPE );
 
         return configDocumentBuilder.build();

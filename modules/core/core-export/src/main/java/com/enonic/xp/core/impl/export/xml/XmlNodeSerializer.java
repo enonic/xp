@@ -171,7 +171,7 @@ public final class XmlNodeSerializer
         serialize( value.getIndexConfig() );
         this.builder.end();
 
-        serializeValueElement( "path", value.getPath() );
+        serializeValueElement( "path", value.getIndexPath() );
         this.builder.end();
     }
 

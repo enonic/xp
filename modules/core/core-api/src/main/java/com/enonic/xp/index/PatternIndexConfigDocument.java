@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 
 import com.enonic.xp.annotation.PublicApi;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.util.GlobPatternMatcher;
 
 @PublicApi
@@ -36,7 +35,7 @@ public final class PatternIndexConfigDocument
         super( builder );
         this.pathIndexConfigs = ImmutableSortedSet.copyOf( builder.pathIndexConfigs );
         this.pathIndexConfigMap = builder.pathIndexConfigs.stream()
-            .collect( ImmutableMap.toImmutableMap( pic -> IndexPath.from( pic.getPath() ), Function.identity() ) );
+            .collect( ImmutableMap.toImmutableMap( pic -> pic.getIndexPath(), Function.identity() ) );
         this.defaultConfig = builder.defaultConfig;
         this.allTextConfig = builder.allTextIndexConfig.build();
     }
@@ -74,7 +73,7 @@ public final class PatternIndexConfigDocument
         final String path = indexPath.toString();
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
-            if ( GlobPatternMatcher.match( pathIndexConfig.getPath().toString(), path, "." ) )
+            if ( GlobPatternMatcher.match( pathIndexConfig.getIndexPath().toString(), path, "." ) )
             {
                 return pathIndexConfig.getIndexConfig();
             }
@@ -142,15 +141,14 @@ public final class PatternIndexConfigDocument
 
         public Builder add( final String path, final IndexConfig indexConfig )
         {
-            add( PathIndexConfig.create().
-                path( PropertyPath.from( path ) ).
+            add( PathIndexConfig.create().path( IndexPath.from( path ) ).
                 indexConfig( indexConfig ).
                 build() );
 
             return this;
         }
 
-        public Builder add( final PropertyPath path, final IndexConfig indexConfig )
+        public Builder add( final IndexPath path, final IndexConfig indexConfig )
         {
             add( PathIndexConfig.create().
                 path( path ).

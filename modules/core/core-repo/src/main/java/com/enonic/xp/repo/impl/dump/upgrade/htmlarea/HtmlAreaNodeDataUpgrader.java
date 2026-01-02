@@ -13,13 +13,13 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.Property;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.PropertyVisitor;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.dump.DumpUpgradeStepResult;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessor;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -98,11 +98,10 @@ public class HtmlAreaNodeDataUpgrader
     {
         final List<Pattern> htmlAreaPatterns = indexConfigDocument.getPathIndexConfigs().
             stream().
-            filter( this::hasHtmlStripperProcessor ).
-            map( PathIndexConfig::getPath ).
-            map( PropertyPath::toString ).
-            map( HtmlAreaNodeDataUpgrader::toPattern ).
-            collect( Collectors.toList() );
+            filter( this::hasHtmlStripperProcessor ).map( PathIndexConfig::getIndexPath )
+            .map( IndexPath::toString )
+            .map( HtmlAreaNodeDataUpgrader::toPattern )
+            .toList();
 
         final PropertyVisitor propertyVisitor = new PropertyVisitor()
         {

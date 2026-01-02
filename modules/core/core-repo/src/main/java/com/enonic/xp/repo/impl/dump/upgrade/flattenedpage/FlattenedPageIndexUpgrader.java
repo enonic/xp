@@ -3,12 +3,12 @@ package com.enonic.xp.repo.impl.dump.upgrade.flattenedpage;
 import java.util.List;
 import java.util.Objects;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
-import com.enonic.xp.descriptor.DescriptorKey;
 
 import static com.enonic.xp.content.ContentPropertyNames.PAGE;
 import static com.enonic.xp.data.PropertyPath.ELEMENT_DIVIDER;
@@ -23,13 +23,13 @@ import static com.enonic.xp.repo.impl.dump.upgrade.flattenedpage.FlattenedPageTa
 public class FlattenedPageIndexUpgrader
 {
     private static final List<PathIndexConfig> BASE_CONFIGS =
-        List.of( PathIndexConfig.create().indexConfig( IndexConfig.NONE ).path( PropertyPath.from( TGT_COMPONENTS_KEY ) ).build(),
+        List.of( PathIndexConfig.create().indexConfig( IndexConfig.NONE ).path( IndexPath.from( TGT_COMPONENTS_KEY ) ).build(),
                  PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
-                     PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_DESCRIPTOR_KEY ) ) ).build(),
+                     IndexPath.from( TGT_COMPONENTS_KEY, PAGE, TGT_DESCRIPTOR_KEY ) ).build(),
                  PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
-                     PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_TEMPLATE_KEY ) ) ).build(),
+                     IndexPath.from( TGT_COMPONENTS_KEY, PAGE, TGT_TEMPLATE_KEY ) ).build(),
                  PathIndexConfig.create().indexConfig( IndexConfig.MINIMAL ).path(
-                     PropertyPath.from( String.join( ELEMENT_DIVIDER, TGT_COMPONENTS_KEY, PAGE, TGT_CUSTOMIZED_KEY ) ) ).build() );
+                     IndexPath.from( TGT_COMPONENTS_KEY, PAGE, TGT_CUSTOMIZED_KEY ) ).build() );
 
     private final DescriptorKey descriptorKey;
 
@@ -71,8 +71,8 @@ public class FlattenedPageIndexUpgrader
     {
         result = PatternIndexConfigDocument.create( sourceIndexConfigDocument );
 
-        sourceIndexConfigDocument.getPathIndexConfigs().stream().
-            filter( pathIndexConfig -> pathIndexConfig.getPath().toString().startsWith( SRC_PAGE_KEY ) ).
+        sourceIndexConfigDocument.getPathIndexConfigs().stream().filter(
+            pathIndexConfig -> pathIndexConfig.getIndexPath().toString().startsWith( SRC_PAGE_KEY ) ).
             forEach( result::remove );
 
         return result.build();
@@ -100,7 +100,7 @@ public class FlattenedPageIndexUpgrader
 
     private PathIndexConfig upgradeConfigPath( final PathIndexConfig source )
     {
-        final String sourcePath = source.getPath().toString();
+        final String sourcePath = source.getIndexPath().toString();
 
         if ( this.descriptorKey != null )
         {
@@ -111,7 +111,7 @@ public class FlattenedPageIndexUpgrader
                                  getSanitizedComponentName( this.descriptorKey ) );
                 final String newPath = sourcePath.replace( String.join( ELEMENT_DIVIDER, PAGE, TGT_CONFIG_KEY ), newPathPrefix );
 
-                return PathIndexConfig.create().indexConfig( source.getIndexConfig() ).path( PropertyPath.from( newPath ) ).build();
+                return PathIndexConfig.create().indexConfig( source.getIndexConfig() ).path( IndexPath.from( newPath ) ).build();
             }
         }
 
