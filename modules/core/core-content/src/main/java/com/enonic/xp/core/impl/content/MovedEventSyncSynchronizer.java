@@ -12,11 +12,11 @@ import com.enonic.xp.content.ContentService;
 
 abstract class MovedEventSyncSynchronizer
 {
-    protected final ContentService contentService;
+    protected final InternalContentService contentService;
 
     protected final List<ContentToSync> contents;
 
-    MovedEventSyncSynchronizer( final Builder builder )
+    MovedEventSyncSynchronizer( final Builder<?> builder )
     {
         this.contentService = builder.contentService;
         this.contents = builder.contents.build();
@@ -29,13 +29,13 @@ abstract class MovedEventSyncSynchronizer
 
     abstract void execute();
 
-    abstract static class Builder<T extends Builder>
+    abstract static class Builder<T extends Builder<T>>
     {
         private final ImmutableList.Builder<ContentToSync> contents = ImmutableList.builder();
 
-        private ContentService contentService;
+        private InternalContentService contentService;
 
-        T contentService( final ContentService contentService )
+        T contentService( final InternalContentService contentService )
         {
             this.contentService = contentService;
             return (T) this;
@@ -45,11 +45,6 @@ abstract class MovedEventSyncSynchronizer
         {
             this.contents.addAll( contents );
             return (T) this;
-        }
-
-        void validate()
-        {
-            Objects.requireNonNull( contentService );
         }
 
         abstract MovedEventSyncSynchronizer build();

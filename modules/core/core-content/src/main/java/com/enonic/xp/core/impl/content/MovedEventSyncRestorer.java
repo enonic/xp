@@ -40,9 +40,8 @@ final class MovedEventSyncRestorer
                 .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, content.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
                 .build();
 
-            final ContentPath targetParentPath = targetContextToRestore.callWith( () -> contentService.contentExists( sourceParent.getId() )
-                ? contentService.getById( sourceParent.getId() ).getPath()
-                : ContentPath.ROOT );
+            final ContentPath targetParentPath = targetContextToRestore.callWith(
+                () -> contentService.getByIdOptional( sourceParent.getId() ).map( Content::getPath ).orElse( ContentPath.ROOT ) );
 
             content.getTargetContext()
                 .runWith( () -> contentService.restore( RestoreContentParams.create()
@@ -75,7 +74,6 @@ final class MovedEventSyncRestorer
         @Override
         MovedEventSyncRestorer build()
         {
-            validate();
             return new MovedEventSyncRestorer( this );
         }
     }

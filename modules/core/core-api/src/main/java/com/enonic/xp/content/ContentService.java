@@ -1,5 +1,8 @@
 package com.enonic.xp.content;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;

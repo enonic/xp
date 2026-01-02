@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -496,6 +498,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @NonNull
     public Content getByPath( final ContentPath path )
     {
         return Tracer.trace( "content.getByPath", trace -> trace.put( "path", path ), () -> doGetByPath( path ),
@@ -915,7 +918,8 @@ public class ContentServiceImpl
             .xDataService( this.xDataService )
             .contentProcessors( this.contentProcessors )
             .contentValidators( this.contentValidators )
-            .pageDescriptorService( this.pageDescriptorService ).pageTemplateService( this.pageTemplateService )
+            .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( this.pageTemplateService )
             .partDescriptorService( this.partDescriptorService )
             .layoutDescriptorService( this.layoutDescriptorService )
             .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )

@@ -44,10 +44,10 @@ public final class ParentContentSynchronizer
 {
     private static final Logger LOG = LoggerFactory.getLogger( ParentContentSynchronizer.class );
 
-    private final ContentService contentService;
+    private final InternalContentService contentService;
 
     @Activate
-    public ParentContentSynchronizer( @Reference final ContentService contentService )
+    public ParentContentSynchronizer( @Reference final InternalContentService contentService )
     {
         this.contentService = contentService;
     }
@@ -128,7 +128,6 @@ public final class ParentContentSynchronizer
             final FindContentByParentResult result = currentContentToSync.getSourceContext()
                 .callWith( () -> contentService.findByParent( FindContentByParentParams.create()
                                                                   .parentId( currentContentToSync.getId() )
-                                                                  .recursive( false )
                                                                   .childOrder( currentContentToSync.getSourceContent().getChildOrder() )
                                                                   .size( -1 )
                                                                   .build() ) );
@@ -291,12 +290,7 @@ public final class ParentContentSynchronizer
                     createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
                 }
 
-                final FindContentByParentResult result = contentService.findByParent( FindContentByParentParams.create()
-                                                                                          .parentId( currentContent.getId() )
-                                                                                          .recursive( false )
-                                                                                          .childOrder( currentContent.getChildOrder() )
-                                                                                          .size( -1 )
-                                                                                          .build() );
+                final FindContentByParentResult result = contentService.findDirectByParent( currentContent.getPath(), currentContent.getChildOrder() );
 
                 for ( final Content content : result.getContents() )
                 {
@@ -327,7 +321,7 @@ public final class ParentContentSynchronizer
     private Context getActualContext( final ContentId contentId, final Collection<Context> contexts )
     {
         return contexts.stream()
-            .filter( context -> context.callWith( () -> contentService.contentExists( contentId ) ) )
+            .filter( context -> context.callWith( () -> contentService.getByIdOptional( contentId ).isPresent() ) )
             .findAny()
             .orElse( null );
     }
@@ -339,7 +333,7 @@ public final class ParentContentSynchronizer
 
         return availableTargetContexts.values()
             .stream()
-            .filter( context -> context.callWith( () -> contentService.contentExists( parentId ) ) )
+            .filter( context -> context.callWith( () -> contentService.getByIdOptional( parentId ).isPresent() ) )
             .findAny()
             .orElse( availableTargetContexts.get( (NodePath) sourceContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) );
     }

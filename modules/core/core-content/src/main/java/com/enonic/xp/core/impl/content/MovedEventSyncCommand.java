@@ -90,9 +90,9 @@ final class MovedEventSyncCommand
                         content.getSourceContext().callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ) );
                     final Content sourceRoot = content.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
 
-                    final ContentPath targetParentPath = contentService.contentExists( sourceParent.getId() )
-                        ? contentService.getById( sourceParent.getId() ).getPath()
-                        : sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null;
+                    final ContentPath targetParentPath = contentService.getByIdOptional( sourceParent.getId() )
+                        .map( Content::getPath )
+                        .orElseGet( () -> sourceRoot.getId().equals( sourceParent.getId() ) ? ContentPath.ROOT : null );
 
                     if ( targetParentPath == null )
                     {

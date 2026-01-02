@@ -11,7 +11,7 @@ import com.enonic.xp.content.ContentService;
 
 public abstract class AbstractContentEventSyncCommand
 {
-    final ContentService contentService;
+    final InternalContentService contentService;
 
     final List<ContentToSync> contentToSync;
 
@@ -44,7 +44,7 @@ public abstract class AbstractContentEventSyncCommand
         if ( targetContent == null || targetContent.getInherit().contains( ContentInheritType.NAME ) )
         {
             newName = name.toString();
-            while ( contentService.contentExists( ContentPath.from( newParentPath, newName ) ) )
+            while ( contentService.getByPathOptional( ContentPath.from( newParentPath, newName ) ).isPresent() )
             {
                 newName = NameValueResolver.name( newName );
             }
@@ -61,10 +61,9 @@ public abstract class AbstractContentEventSyncCommand
     {
         protected List<ContentToSync> contentToSync;
 
-        private ContentService contentService;
+        private InternalContentService contentService;
 
-        @SuppressWarnings("unchecked")
-        public B contentService( final ContentService contentService )
+        public B contentService( final InternalContentService contentService )
         {
             this.contentService = contentService;
             return (B) this;

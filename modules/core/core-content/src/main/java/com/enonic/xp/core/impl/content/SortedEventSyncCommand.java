@@ -2,13 +2,13 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.SortContentParams;
 
 final class SortedEventSyncCommand
@@ -47,32 +47,24 @@ final class SortedEventSyncCommand
                 }
                 if ( content.getSourceContent().getChildOrder().isManualOrder() )
                 {
-                    final List<ContentToSync> childrenToSync = contentService.findByParent(
-                            FindContentByParentParams.create().parentId( content.getTargetContent().getId() ).size( -1 ).build() )
-                        .getContents()
+                    final List<ContentToSync> childrenToSync = contentService.getByIds( contentService.findDirectByParent( content.getTargetContent().getPath(),
+                                                                                                                           content.getTargetContent().getChildOrder() ).getContentIds() )
                         .stream()
-                        .map( currContent -> {
-                            final Content sourceContent = content.getSourceContext()
-                                .callWith( () -> contentService.contentExists( currContent.getId() ) ? contentService.getById(
-                                    currContent.getId() ) : null );
-
-                            return sourceContent != null ? ContentToSync.create()
+                        .map( currContent -> content.getSourceContext()
+                            .callWith( () -> contentService.getByIdOptional( currContent.getId() ) )
+                            .map( v -> ContentToSync.create()
                                 .sourceContext( content.getSourceContext() )
                                 .targetContext( content.getTargetContext() )
-                                .sourceContent( sourceContent )
+                                .sourceContent( v )
                                 .targetContent( currContent )
-                                .build() : null;
-                        } )
-                        .filter( Objects::nonNull )
+                                .build() ) )
+                        .filter( Optional::isPresent )
+                        .map( Optional::get )
                         .collect( Collectors.toList() );
 
                     if ( !childrenToSync.isEmpty() )
                     {
-                        UpdatedEventSyncCommand.create()
-                            .contentService( contentService )
-                            .contentToSync( childrenToSync )
-                            .build()
-                            .sync();
+                        UpdatedEventSyncCommand.create().contentService( contentService ).contentToSync( childrenToSync ).build().sync();
                     }
                 }
             }

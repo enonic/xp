@@ -97,12 +97,9 @@ final class MovedEventSyncArchiver
     private Map<Content, Context> getAllArchived( final List<ContentToSync> contentToSync )
     {
         final Stream<Map.Entry<Content, Context>> childrenStream = contentToSync.stream()
-            .map( content -> content.getTargetContext()
-                .callWith( () -> this.contentService.findByParent(
-                        FindContentByParentParams.create().parentId( content.getSourceContent().getId() ).recursive( true ).size( -1 ).build() )
-                    .getContents()
-                    .stream().map( child -> Maps.immutableEntry( child, content.getTargetContext() ) ) ) )
-            .flatMap( s -> s );
+            .flatMap( content -> content.getTargetContext()
+                .callWith( () -> contentService.getByIds( contentService.findByParent( content.getTargetContent().getPath() ).getContentIds() )
+                    .stream().map( child -> Maps.immutableEntry( child, content.getTargetContext() ) ) ) );
 
         final Stream<Map.Entry<Content, Context>> parentStream =
             contentToSync.stream().map( c -> Maps.immutableEntry( c.getTargetContent(), c.getTargetContext() ) );
@@ -126,7 +123,6 @@ final class MovedEventSyncArchiver
         @Override
         MovedEventSyncArchiver build()
         {
-            validate();
             return new MovedEventSyncArchiver( this );
         }
     }

@@ -63,8 +63,7 @@ public class ImportContentFactory
             .manualOrderValue( params.getContent().getManualOrderValue() )
             .permissions( params.getContent().getPermissions() )
             .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
-            .
-            build();
+            .build();
     }
 
 
