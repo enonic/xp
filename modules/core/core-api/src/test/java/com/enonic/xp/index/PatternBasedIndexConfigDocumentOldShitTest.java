@@ -2,8 +2,6 @@ package com.enonic.xp.index;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.data.PropertyPath;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PatternBasedIndexConfigDocumentOldShitTest
@@ -11,12 +9,12 @@ class PatternBasedIndexConfigDocumentOldShitTest
     @Test
     void test_best_matching_pattern_used()
     {
-        final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().
-            add( PropertyPath.from( "data" ), IndexConfig.BY_TYPE ).
-            add( PropertyPath.from( "data.secret.show" ), IndexConfig.FULLTEXT ).
-            add( PropertyPath.from( "data.secret" ), IndexConfig.NONE ).
-            add( PropertyPath.from( "displayName" ), IndexConfig.FULLTEXT ).
-            add( PropertyPath.from( "creator" ), IndexConfig.MINIMAL ).
+        final PatternIndexConfigDocument config = PatternIndexConfigDocument.create().add( IndexPath.from( "data" ), IndexConfig.BY_TYPE )
+            .add( IndexPath.from( "data.secret.show" ), IndexConfig.FULLTEXT )
+            .add( IndexPath.from( "data.secret" ), IndexConfig.NONE )
+            .add( IndexPath.from( "displayName" ), IndexConfig.FULLTEXT )
+            .add( IndexPath.from( "creator" ), IndexConfig.MINIMAL )
+            .
             defaultConfig( IndexConfig.MINIMAL ).
             build();
 
