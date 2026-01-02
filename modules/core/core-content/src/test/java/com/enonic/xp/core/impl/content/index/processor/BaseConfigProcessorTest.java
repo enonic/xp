@@ -7,8 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentConstants;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -60,24 +60,23 @@ class BaseConfigProcessorTest
         assertEquals( 9, indexConfigs.size() );
 
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( CREATOR ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+            PathIndexConfig.create().path( IndexPath.from( CREATOR ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( MODIFIER ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+            PathIndexConfig.create().path( IndexPath.from( MODIFIER ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( CREATED_TIME ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+            PathIndexConfig.create().path( IndexPath.from( CREATED_TIME ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( MODIFIED_TIME ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+            PathIndexConfig.create().path( IndexPath.from( MODIFIED_TIME ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( OWNER ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
-        assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( DATA, SITECONFIG, APPLICATION_KEY ) ).indexConfig(
+            PathIndexConfig.create().path( IndexPath.from( OWNER ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+        assertTrue( indexConfigs.contains( PathIndexConfig.create().path( IndexPath.from( DATA, SITECONFIG, APPLICATION_KEY ) ).indexConfig(
                 IndexConfig.MINIMAL ).build() ) );
         assertTrue(
-            indexConfigs.contains( PathIndexConfig.create().path( PropertyPath.from( SITE ) ).indexConfig( IndexConfig.NONE ).build() ) );
+            indexConfigs.contains( PathIndexConfig.create().path( IndexPath.from( SITE ) ).indexConfig( IndexConfig.NONE ).build() ) );
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( TYPE ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+            PathIndexConfig.create().path( IndexPath.from( TYPE ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
         assertTrue( indexConfigs.contains(
-            PathIndexConfig.create().path( PropertyPath.from( ATTACHMENT ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
+            PathIndexConfig.create().path( IndexPath.from( ATTACHMENT ) ).indexConfig( IndexConfig.MINIMAL ).build() ) );
 
     }
 

@@ -19,7 +19,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "page.region.**.PartComponent.config.*"
+      "path": "page.region.**.partcomponent.config.*"
     },
     {
       "indexConfig": {
@@ -29,7 +29,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "page.region.**.LayoutComponent.config.*"
+      "path": "page.region.**.layoutcomponent.config.*"
     },
     {
       "indexConfig": {
@@ -42,7 +42,7 @@
         ],
         "nGram": true
       },
-      "path": "page.region.**.TextComponent.text"
+      "path": "page.region.**.textcomponent.text"
     },
     {
       "indexConfig": {
@@ -52,7 +52,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "page.region.**.TextComponent.*"
+      "path": "page.region.**.textcomponent.*"
     },
     {
       "indexConfig": {
@@ -62,7 +62,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "page.region.**.PartComponent.*"
+      "path": "page.region.**.partcomponent.*"
     },
     {
       "indexConfig": {
@@ -72,7 +72,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "page.region.**.LayoutComponent.*"
+      "path": "page.region.**.layoutcomponent.*"
     },
     {
       "indexConfig": {
@@ -82,7 +82,7 @@
         "includeInAllText": false,
         "nGram": false
       },
-      "path": "page.region.**.FragmentComponent.*"
+      "path": "page.region.**.fragmentcomponent.*"
     },
     {
       "indexConfig": {
@@ -95,7 +95,7 @@
         ],
         "nGram": false
       },
-      "path": "page.region.component.LayoutComponent.region.component.PartComponent.config.htmlarea3"
+      "path": "page.region.component.layoutcomponent.region.component.partcomponent.config.htmlarea3"
     },
     {
       "indexConfig": {
@@ -108,7 +108,7 @@
         ],
         "nGram": false
       },
-      "path": "page.region.component.LayoutComponent.config.htmlarea2"
+      "path": "page.region.component.layoutcomponent.config.htmlarea2"
     },
     {
       "indexConfig": {
