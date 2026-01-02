@@ -14,9 +14,8 @@ class PatternBasedIndexConfigDocumentOldShitTest
             .add( IndexPath.from( "data.secret" ), IndexConfig.NONE )
             .add( IndexPath.from( "displayName" ), IndexConfig.FULLTEXT )
             .add( IndexPath.from( "creator" ), IndexConfig.MINIMAL )
-            .
-            defaultConfig( IndexConfig.MINIMAL ).
-            build();
+            .defaultConfig( IndexConfig.MINIMAL )
+            .build();
 
         assertEquals( IndexConfig.NONE, config.getConfigForPath( IndexPath.from( "data.secret.dummy" ) ) );
         assertEquals( IndexConfig.FULLTEXT, config.getConfigForPath( IndexPath.from( "data.secret.show" ) ) );
