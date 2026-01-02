@@ -63,8 +63,8 @@ public final class PathIndexConfig
             return EQUAL;
         }
 
-        final int thisElementCount = this.path.getPath().split( "\\." ).length;
-        final int thatElementCount = o.path.getPath().split( "\\." ).length;
+        final int thisElementCount = countPathElements( this.path.getPath() );
+        final int thatElementCount = countPathElements( o.path.getPath() );
 
         if ( thisElementCount < thatElementCount )
         {
@@ -76,6 +76,24 @@ public final class PathIndexConfig
         }
 
         return COMPARATOR.compare( this, o );
+    }
+
+    private static int countPathElements( final String path )
+    {
+        if ( path.isEmpty() )
+        {
+            return 1; // empty string split by "\\." returns array of length 1
+        }
+
+        int count = 1;
+        for ( int i = 0; i < path.length(); i++ )
+        {
+            if ( path.charAt( i ) == '.' )
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
