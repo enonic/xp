@@ -587,6 +587,33 @@ class PageValidatorTest
     }
 
     @Test
+    void page_with_descriptor_and_null_config_passes_validation()
+    {
+        final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
+        final Form pageForm = Form.create()
+            .addFormItem( Input.create().name( "title" ).label( "Title" ).inputType( InputTypeName.TEXT_LINE ).required( true ).build() )
+            .build();
+        final PageDescriptor pageDescriptor =
+            PageDescriptor.create().key( pageDescriptorKey ).config( pageForm ).regions( RegionDescriptors.create().build() ).build();
+
+        Mockito.when( pageDescriptorService.getByKey( pageDescriptorKey ) ).thenReturn( pageDescriptor );
+
+        // Page with descriptor but null config - should not throw NPE
+        final Page page = Page.create().descriptor( pageDescriptorKey ).build();
+
+        final ContentValidatorParams params = ContentValidatorParams.create()
+            .contentType( ContentType.create().superType( ContentTypeName.structured() ).name( "myapp:mytype" ).build() )
+            .page( page )
+            .build();
+
+        final ValidationErrors.Builder validationErrorsBuilder = ValidationErrors.create();
+        validator.validate( params, validationErrorsBuilder );
+
+        final ValidationErrors validationErrors = validationErrorsBuilder.build();
+        assertFalse( validationErrors.hasErrors() );
+    }
+
+    @Test
     void part_component_with_exceeding_maximum_occurrence_fails_validation()
     {
         final DescriptorKey pageDescriptorKey = DescriptorKey.from( "myapp:mypage" );
