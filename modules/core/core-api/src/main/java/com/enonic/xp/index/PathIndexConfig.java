@@ -82,7 +82,7 @@ public final class PathIndexConfig
     {
         if ( path.isEmpty() )
         {
-            return 0;
+            return 1; // empty string split by "\\." returns array of length 1
         }
 
         int count = 1;
