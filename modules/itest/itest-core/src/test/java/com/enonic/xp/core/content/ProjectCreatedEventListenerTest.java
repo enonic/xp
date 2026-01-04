@@ -17,7 +17,7 @@ class ProjectCreatedEventListenerTest
     @BeforeEach
     void setUp()
     {
-        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
+        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( internalContentService );
         listener = new ProjectCreatedEventListener( this.projectService, new MockTaskService(), synchronizer );
     }
 

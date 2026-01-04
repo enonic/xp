@@ -86,7 +86,7 @@ class ParentContentSynchronizerTest
     @BeforeEach
     void setUp()
     {
-        synchronizer = new ParentContentSynchronizer( this.contentService );
+        synchronizer = new ParentContentSynchronizer( this.internalContentService );
 
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,
@@ -255,9 +255,8 @@ class ParentContentSynchronizerTest
         syncCreated( sourceContent.getId() );
 
         final Content updatedContent = projectContext.callWith(
-            () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor( ( edit -> {
-                edit.data.addString( "a", "b" );
-            } ) ) ) );
+            () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() ).editor(
+                edit -> edit.data.addString( "a", "b" ) ) ) );
 
         sync( sourceContent.getId(), nonRelatedProject.getName(), layer.getName() );
 
@@ -446,9 +445,7 @@ class ParentContentSynchronizerTest
             {
                 final UpdateContentParams updateContentParams = new UpdateContentParams();
                 updateContentParams.contentId( targetContent.getId() )
-                    .editor( edit -> {
-                        edit.displayName = "new display name";
-                    } )
+                    .editor( edit -> edit.displayName = "new display name" )
                     .createAttachments( CreateAttachments.from(
                         CreateAttachment.create().byteSource( loadImage( "darth-small.jpg" ) ).name( AttachmentNames.THUMBNAIL )
                                                                     .mimeType( "image/jpeg" )
@@ -478,9 +475,7 @@ class ParentContentSynchronizerTest
             {
                 final UpdateContentParams updateContentParams = new UpdateContentParams();
                 updateContentParams.contentId( targetContent.getId() )
-                    .editor( edit -> {
-                        edit.displayName = "new display name";
-                    } )
+                    .editor( edit -> edit.displayName = "new display name" )
                     .createAttachments( CreateAttachments.from(
                         CreateAttachment.create().byteSource( loadImage( "darth-small.jpg" ) ).name( AttachmentNames.THUMBNAIL )
                                                                     .mimeType( "image/jpeg" )
@@ -501,9 +496,7 @@ class ParentContentSynchronizerTest
             {
                 final UpdateContentParams updateContentParams = new UpdateContentParams();
                 updateContentParams.contentId( targetContent.getId() )
-                    .editor( edit -> {
-                        edit.displayName = "new display name";
-                    } )
+                    .editor( edit -> edit.displayName = "new display name" )
                     .createAttachments( CreateAttachments.from(
                         CreateAttachment.create().byteSource( loadImage( "cat-small.jpg" ) ).name( AttachmentNames.THUMBNAIL )
                                                                     .mimeType( "image/jpeg" )
@@ -529,30 +522,26 @@ class ParentContentSynchronizerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "content1" ) );
         syncCreated( sourceContent.getId() );
 
-        projectContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                       .createAttachments( CreateAttachments.create()
-                                                               .add( CreateAttachment.create()
-                                                                         .name( AttachmentNames.THUMBNAIL )
-                                                                         .byteSource( ByteSource.wrap( "this is image".getBytes() ) )
-                                                                         .mimeType( "image/png" )
-                                                                         .text( "This is the image" )
-                                                                         .build() )
-                                                               .build() )
-                                       .editor( edit -> {
-                                       } ) );
-        } );
+        projectContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                   .createAttachments( CreateAttachments.create()
+                                                           .add( CreateAttachment.create()
+                                                                     .name( AttachmentNames.THUMBNAIL )
+                                                                     .byteSource( ByteSource.wrap( "this is image".getBytes() ) )
+                                                                     .mimeType( "image/png" )
+                                                                     .text( "This is the image" )
+                                                                     .build() )
+                                                           .build() )
+                                   .editor( _ -> {
+                                   } ) ) );
 
         final Content targetContentWithThumbnail = syncUpdated( sourceContent.getId() );
 
         assertNotNull( targetContentWithThumbnail.getAttachments().byName( AttachmentNames.THUMBNAIL ) );
 
-        projectContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
-                                       .removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) )
-                                       .editor( edit -> {
-                                       } ) );
-        } );
+        projectContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( sourceContent.getId() )
+                                   .removeAttachments( BinaryReferences.from( AttachmentNames.THUMBNAIL ) )
+                                   .editor( _ -> {
+                                   } ) ) );
 
         final Content targetContentWithoutThumbnail = syncUpdated( sourceContent.getId() );
 

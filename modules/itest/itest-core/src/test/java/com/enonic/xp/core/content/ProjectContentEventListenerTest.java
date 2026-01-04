@@ -99,7 +99,7 @@ class ProjectContentEventListenerTest
     @BeforeEach
     void setUp()
     {
-        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( contentService );
+        final ParentContentSynchronizer synchronizer = new ParentContentSynchronizer( internalContentService );
         listener = new ProjectContentEventListener( this.projectService, synchronizer, Runnable::run );
 
         syncContentService =
@@ -322,38 +322,35 @@ class ProjectContentEventListenerTest
         final Content sourceContent = projectContext.callWith( () -> createContent( ContentPath.ROOT, "name" ) );
         projectContext.callWith( () -> pushNodes( ContentConstants.BRANCH_MASTER, NodeId.from( sourceContent.getId() ) ) );
 
-        projectContext.callWith( () -> {
-            return contentService.patch( PatchContentParams.create()
-                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                             .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data1".getBytes() ) )
-                                                                               .name( "MyImage1.gif" )
-                                                                               .build() )
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "data2".getBytes() ) )
-                                                                               .name( "MyImage2.gif" )
-                                                                               .build() )
-                                                                     .build() )
-                                             .contentId( sourceContent.getId() )
-                                             .patcher( ( edit -> {
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create()
+                                         .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                         .createAttachments( CreateAttachments.create()
+                                                                 .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                           .byteSource( ByteSource.wrap( "data1".getBytes() ) )
+                                                                           .name( "MyImage1.gif" )
+                                                                           .build() )
+                                                                 .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                           .byteSource( ByteSource.wrap( "data2".getBytes() ) )
+                                                                           .name( "MyImage2.gif" )
+                                                                           .build() )
+                                                                 .build() )
+                                         .contentId( sourceContent.getId() )
+                                         .patcher( edit -> {
 
-                                                 final Attachment a1 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 1" )
-                                                     .name( "MyImage1.gif" )
-                                                     .build();
-                                                 final Attachment a2 = Attachment.create()
-                                                     .mimeType( "image/gif" )
-                                                     .label( "My Image 2" )
-                                                     .name( "MyImage2.gif" )
-                                                     .build();
+                                             final Attachment a1 = Attachment.create()
+                                                 .mimeType( "image/gif" )
+                                                 .label( "My Image 1" )
+                                                 .name( "MyImage1.gif" )
+                                                 .build();
+                                             final Attachment a2 = Attachment.create()
+                                                 .mimeType( "image/gif" )
+                                                 .label( "My Image 2" )
+                                                 .name( "MyImage2.gif" )
+                                                 .build();
 
-                                                 edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
-                                             } ) )
-                                             .build() );
-
-        } );
+                                             edit.attachments.setValue( Attachments.create().add( a1 ).add( a2 ).build() );
+                                         } )
+                                         .build() ) );
 
         handleEvents();
 
@@ -364,13 +361,13 @@ class ProjectContentEventListenerTest
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         Attachments attachments3 = targetContent.getAttachments();
-        assertTrue( attachments3.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments3.byName( "MyImage1.gif" ) );
         Attachments attachments2 = targetContent.getAttachments();
-        assertTrue( attachments2.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments2.byName( "MyImage1.gif" ) );
         Attachments attachments1 = contentInMaster.getAttachments();
-        assertTrue( attachments1.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments1.byName( "MyImage2.gif" ) );
         Attachments attachments = contentInMaster.getAttachments();
-        assertTrue( attachments.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments.byName( "MyImage2.gif" ) );
     }
 
     @Test
@@ -421,41 +418,38 @@ class ProjectContentEventListenerTest
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         Attachments attachments9 = targetContent.getAttachments();
-        assertTrue( attachments9.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments9.byName( "MyImage1.gif" ) );
         Attachments attachments8 = contentInMaster.getAttachments();
-        assertTrue( attachments8.byName( "MyImage1.gif" ) != null );
+        assertNotNull( attachments8.byName( "MyImage1.gif" ) );
         Attachments attachments7 = targetContent.getAttachments();
-        assertTrue( attachments7.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments7.byName( "MyImage2.gif" ) );
         Attachments attachments6 = contentInMaster.getAttachments();
-        assertTrue( attachments6.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments6.byName( "MyImage2.gif" ) );
 
         //remove attachment
-        projectContext.callWith( () -> {
-            return contentService.patch( PatchContentParams.create()
-                                             .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
-                                             .contentId( sourceContent.getId() )
-                                             .createAttachments( CreateAttachments.create()
-                                                                     .add( CreateAttachment.create().mimeType( "image/gif" )
-                                                                               .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
-                                                                               .name( "MyImage3.gif" )
-                                                                               .build() )
-                                                                     .build() )
-                                             .patcher( ( edit -> {
-                                                 final Attachment a2 = Attachment.create().mimeType( "image/gif" )
-                                                     .label( "My Image 2" )
-                                                     .name( "MyImage2.gif" )
-                                                     .build();
+        projectContext.callWith( () -> contentService.patch( PatchContentParams.create()
+                                         .branches( Branches.from( ContentConstants.BRANCH_DRAFT, ContentConstants.BRANCH_MASTER ) )
+                                         .contentId( sourceContent.getId() )
+                                         .createAttachments( CreateAttachments.create()
+                                                                 .add( CreateAttachment.create().mimeType( "image/gif" )
+                                                                           .byteSource( ByteSource.wrap( "new-data".getBytes() ) )
+                                                                           .name( "MyImage3.gif" )
+                                                                           .build() )
+                                                                 .build() )
+                                         .patcher( ( edit -> {
+                                             final Attachment a2 = Attachment.create().mimeType( "image/gif" )
+                                                 .label( "My Image 2" )
+                                                 .name( "MyImage2.gif" )
+                                                 .build();
 
-                                                 final Attachment a3 = Attachment.create().mimeType( "image/gif" )
-                                                     .label( "My Image 3" )
-                                                     .name( "MyImage3.gif" )
-                                                     .build();
+                                             final Attachment a3 = Attachment.create().mimeType( "image/gif" )
+                                                 .label( "My Image 3" )
+                                                 .name( "MyImage3.gif" )
+                                                 .build();
 
-                                                 edit.attachments.setValue( Attachments.create().add( a2 ).add( a3 ).build() );
-                                             } ) )
-                                             .build() );
-
-        } );
+                                             edit.attachments.setValue( Attachments.create().add( a2 ).add( a3 ).build() );
+                                         } ) )
+                                         .build() ) );
 
         handleEvents();
 
@@ -466,17 +460,17 @@ class ProjectContentEventListenerTest
             .callWith( () -> contentService.getById( sourceContent.getId() ) );
 
         Attachments attachments5 = targetContent.getAttachments();
-        assertFalse( attachments5.byName( "MyImage1.gif" ) != null );
+        assertNull( attachments5.byName( "MyImage1.gif" ) );
         Attachments attachments4 = contentInMaster.getAttachments();
-        assertFalse( attachments4.byName( "MyImage1.gif" ) != null );
+        assertNull( attachments4.byName( "MyImage1.gif" ) );
         Attachments attachments3 = targetContent.getAttachments();
-        assertTrue( attachments3.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments3.byName( "MyImage2.gif" ) );
         Attachments attachments2 = contentInMaster.getAttachments();
-        assertTrue( attachments2.byName( "MyImage2.gif" ) != null );
+        assertNotNull( attachments2.byName( "MyImage2.gif" ) );
         Attachments attachments1 = targetContent.getAttachments();
-        assertTrue( attachments1.byName( "MyImage3.gif" ) != null );
+        assertNotNull( attachments1.byName( "MyImage3.gif" ) );
         Attachments attachments = contentInMaster.getAttachments();
-        assertTrue( attachments.byName( "MyImage3.gif" ) != null );
+        assertNotNull( attachments.byName( "MyImage3.gif" ) );
     }
 
     @Test
@@ -1130,15 +1124,11 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        childLayerContext.runWith( () -> {
-            contentService.move(
-                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() );
-        } );
+        childLayerContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName1" ) ).build() ) );
 
-        secondChildLayerContext.runWith( () -> {
-            contentService.move(
-                MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() );
-        } );
+        secondChildLayerContext.runWith( () -> contentService.move(
+            MoveContentParams.create().contentId( sourceContent.getId() ).newName( ContentName.from( "newName2" ) ).build() ) );
 
         mixedChildLayerContext.runWith( () -> {
             syncContentService.syncProject( ProjectSyncParams.create().targetProject( mixedChildLayer.getName() ).build() );
@@ -1147,9 +1137,7 @@ class ProjectContentEventListenerTest
 
         handleEvents();
 
-        mixedChildLayerContext.runWith( () -> {
-            contentService.delete( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() );
-        } );
+        mixedChildLayerContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( ContentPath.from( "/newName1" ) ).build() ) );
 
         handleEvents();
 

@@ -79,34 +79,30 @@ final class DeletedEventSyncCommand
 
     private boolean removedInSource( final ContentToSync contentToSync )
     {
-        return contentToSync.getSourceContext().callWith( () -> contentService.getByIdOptional( contentToSync.getTargetContent().getId() ).isEmpty() );
+        return contentToSync.getSourceContext()
+            .callWith( () -> contentService.getByIdOptional( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
     private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return this.contentService.findByParent( contentToSync.getTargetContent().getPath() ).getContentIds().stream().allMatch( idsToRemove::contains );
+        return this.contentService.findAllByParent( contentToSync.getTargetContent().getPath() ).stream().allMatch( idsToRemove::contains );
     }
 
     private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return getInboundDependencies( contentToSync.getTargetContent().getId() ).stream().allMatch( idsToRemove::contains );
-    }
-
-    private ContentIds getInboundDependencies( final ContentId contentId )
-    {
-        return this.contentService.find( ContentQuery.create()
-                                             .queryFilter( BooleanFilter.create()
-                                                               .must( IdFilter.create()
-                                                                          .fieldName( ContentIndexPath.REFERENCES.getPath() )
-                                                                          .value( contentId.toString() )
-                                                                          .build() )
-                                                               .mustNot( IdFilter.create()
-                                                                             .fieldName( ContentIndexPath.ID.getPath() )
-                                                                             .value( contentId.toString() )
-                                                                             .build() )
-                                                               .build() )
-                                             .size( -1 )
-                                             .build() ).getContentIds();
+        final ContentId contentId = contentToSync.getTargetContent().getId();
+        final ContentQuery query = ContentQuery.create()
+            .queryFilter( BooleanFilter.create()
+                              .must( IdFilter.create()
+                                         .fieldName( ContentIndexPath.REFERENCES.getPath() )
+                                         .value( contentId.toString() )
+                                         .build() )
+                              .mustNot( IdFilter.create().fieldName( ContentIndexPath.ID.getPath() ).value( contentId.toString() ).build() )
+                              .build() )
+            .size( -1 )
+            .build();
+        final ContentIds inboundDependencies = this.contentService.find( query ).getContentIds();
+        return inboundDependencies.stream().allMatch( idsToRemove::contains );
     }
 
     public static class Builder

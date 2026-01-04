@@ -47,16 +47,16 @@ final class SortedEventSyncCommand
                 }
                 if ( content.getSourceContent().getChildOrder().isManualOrder() )
                 {
-                    final List<ContentToSync> childrenToSync = contentService.getByIds( contentService.findDirectByParent( content.getTargetContent().getPath(),
-                                                                                                                           content.getTargetContent().getChildOrder() ).getContentIds() )
+                    final List<ContentToSync> childrenToSync = contentService.getByIds(
+                            contentService.findAllChildren( content.getTargetContent().getPath() ) )
                         .stream()
-                        .map( currContent -> content.getSourceContext()
-                            .callWith( () -> contentService.getByIdOptional( currContent.getId() ) )
-                            .map( v -> ContentToSync.create()
+                        .map( targetContent -> content.getSourceContext()
+                            .callWith( () -> contentService.getByIdOptional( targetContent.getId() ) )
+                            .map( sourceContent -> ContentToSync.create()
                                 .sourceContext( content.getSourceContext() )
                                 .targetContext( content.getTargetContext() )
-                                .sourceContent( v )
-                                .targetContent( currContent )
+                                .sourceContent( sourceContent )
+                                .targetContent( targetContent )
                                 .build() ) )
                         .filter( Optional::isPresent )
                         .map( Optional::get )

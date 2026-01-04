@@ -32,6 +32,7 @@ import com.enonic.xp.core.impl.content.ContentAuditLogFilterService;
 import com.enonic.xp.core.impl.content.ContentAuditLogSupportImpl;
 import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.InternalContentService;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
 import com.enonic.xp.core.impl.content.XDataMappingServiceImpl;
 import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
@@ -50,7 +51,6 @@ import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
@@ -94,11 +94,11 @@ public abstract class AbstractContentSynchronizerTest
 
     protected ContentServiceImpl contentService;
 
+    protected InternalContentService internalContentService;
+
     protected MediaInfoServiceImpl mediaInfoService;
 
     protected PageDescriptorService pageDescriptorService;
-
-    protected PageTemplateService pageTemplateService;
 
     protected PartDescriptorService partDescriptorService;
 
@@ -310,7 +310,6 @@ public abstract class AbstractContentSynchronizerTest
         when( mixinService.inlineFormItems( any() ) ).then( returnsFirstArg() );
 
         pageDescriptorService = mock( PageDescriptorService.class );
-        pageTemplateService = mock( PageTemplateService.class );
         partDescriptorService = mock( PartDescriptorService.class );
         layoutDescriptorService = mock( LayoutDescriptorService.class );
 
@@ -333,8 +332,8 @@ public abstract class AbstractContentSynchronizerTest
         siteConfigService = new SiteConfigServiceImpl( nodeService, projectService, contentTypeService, eventPublisher );
 
         final ContentConfig config = mock( ContentConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        contentService = new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService,
-                                    siteConfigService,
+        contentService =
+            new ContentServiceImpl( nodeService, pageDescriptorService, partDescriptorService, layoutDescriptorService, siteConfigService,
                                     ( form, data ) -> {
                                     }, ( page ) -> {
             }, ( extraDatas ) -> {
@@ -346,6 +345,10 @@ public abstract class AbstractContentSynchronizerTest
         contentService.setxDataService( xDataService );
         contentService.setXDataMappingService( xDataMappingService );
         contentService.setContentAuditLogSupport( contentAuditLogSupport );
+
+        internalContentService =
+            new InternalContentService( nodeService, contentTypeService, eventPublisher, xDataService, siteService, pageDescriptorService,
+                                        partDescriptorService, layoutDescriptorService, config );
     }
 
     protected Content createContent( final ContentPath parent )

@@ -41,7 +41,7 @@ class SyncContentServiceImplTest
     @BeforeEach
     void setUp()
     {
-        synchronizer = new ParentContentSynchronizer( contentService );
+        synchronizer = new ParentContentSynchronizer( internalContentService );
 
         syncContentService =
             new SyncContentServiceImpl( contentTypeService, nodeService, eventPublisher, projectService, contentService, synchronizer,

@@ -79,7 +79,7 @@ final class MovedEventSyncCommand
 
         final List<ContentToSync> rootsToSync = contents.stream()
             .filter( content -> !paths.contains( content.getSourceContent().getParentPath() ) )
-            .collect( Collectors.toList() );
+            .toList();
 
         for ( ContentToSync content : rootsToSync )
         {
