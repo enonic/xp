@@ -69,6 +69,17 @@ public class MockTaskService
     @Override
     public void progress( final Integer current, final Integer total, final String info )
     {
+        addProgress( current, total, info );
+    }
+
+    @Override
+    public void progress( final ProgressReportParams params )
+    {
+        addProgress( params.getCurrent(), params.getTotal(), params.getInfo() );
+    }
+
+    private void addProgress( final Integer current, final Integer total, final String info )
+    {
         final TaskProgress.Builder builder = TaskProgress.create();
         if ( current != null )
         {
@@ -81,26 +92,6 @@ public class MockTaskService
         if ( info != null )
         {
             builder.info( info );
-        }
-
-        progressHistory.add( builder.build() );
-    }
-
-    @Override
-    public void progress( final ProgressReportParams params )
-    {
-        final TaskProgress.Builder builder = TaskProgress.create();
-        if ( params.getCurrent() != null )
-        {
-            builder.current( params.getCurrent() );
-        }
-        if ( params.getTotal() != null )
-        {
-            builder.total( params.getTotal() );
-        }
-        if ( params.getInfo() != null )
-        {
-            builder.info( params.getInfo() );
         }
 
         progressHistory.add( builder.build() );
