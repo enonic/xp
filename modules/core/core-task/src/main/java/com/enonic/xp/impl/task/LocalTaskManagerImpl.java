@@ -30,6 +30,7 @@ import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.trace.Tracer;
 
 @Component(immediate = true)
@@ -241,6 +242,12 @@ public final class LocalTaskManagerImpl
         public void progress( final Integer current, final Integer total, final String message )
         {
             updateProgress( taskId, current, total, message );
+        }
+
+        @Override
+        public void progress( final ProgressReportParams params )
+        {
+            updateProgress( taskId, params.getCurrent(), params.getTotal(), params.getInfo() );
         }
 
         @Override

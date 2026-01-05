@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
@@ -80,6 +81,26 @@ public class MockTaskService
         if ( info != null )
         {
             builder.info( info );
+        }
+
+        progressHistory.add( builder.build() );
+    }
+
+    @Override
+    public void progress( final ProgressReportParams params )
+    {
+        final TaskProgress.Builder builder = TaskProgress.create();
+        if ( params.getCurrent() != null )
+        {
+            builder.current( params.getCurrent() );
+        }
+        if ( params.getTotal() != null )
+        {
+            builder.total( params.getTotal() );
+        }
+        if ( params.getInfo() != null )
+        {
+            builder.info( params.getInfo() );
         }
 
         progressHistory.add( builder.build() );
