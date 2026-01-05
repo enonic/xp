@@ -211,7 +211,7 @@ class ContentServiceImplTest_restore
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
+        final ContentId importedId = archiveContext().callWith( () -> this.internalContentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )
                                                                                                              .targetPath(
                                                                                                                  content.getPath() )
@@ -233,7 +233,7 @@ class ContentServiceImplTest_restore
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        final ContentId importedId = archiveContext().callWith( () -> this.contentService.importContent( ImportContentParams.create()
+        final ContentId importedId = archiveContext().callWith( () -> this.internalContentService.importContent( ImportContentParams.create()
                                                                                                              .importContent( content )
                                                                                                              .targetPath( content.getPath() )
                                                                                                              .inherit( EnumSet.allOf(

@@ -58,8 +58,6 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
-import com.enonic.xp.content.ImportContentParams;
-import com.enonic.xp.content.ImportContentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
@@ -880,20 +878,6 @@ public class ContentServiceImpl
             trace.put( "contentId", contentId );
             trace.put( "versionId", versionId );
         }, command::execute, ( trace, content ) -> trace.put( "path", content.getPath().toString() ) );
-    }
-
-    @Override
-    public ImportContentResult importContent( final ImportContentParams params )
-    {
-        verifyDraftBranch();
-
-        return ImportContentCommand.create()
-            .params( params )
-            .nodeService( nodeService )
-            .contentTypeService( contentTypeService )
-            .eventPublisher( eventPublisher )
-            .build()
-            .execute();
     }
 
     @Override

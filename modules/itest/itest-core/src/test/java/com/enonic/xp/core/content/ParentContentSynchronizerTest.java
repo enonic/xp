@@ -105,8 +105,7 @@ class ParentContentSynchronizerTest
                                .syncEventType( ContentSyncEventType.UPDATED )
                                .build() );
 
-        return layerContext.callWith( () -> contentService.contentExists( contentId ) ? contentService.getById( contentId ) : null );
-
+        return layerContext.callWith( () -> internalContentService.getByIdOptional( contentId ).orElseThrow() );
     }
 
 

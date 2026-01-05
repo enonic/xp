@@ -1,8 +1,5 @@
 package com.enonic.xp.content;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.NullMarked;
-
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.annotation.PublicApi;
@@ -44,8 +41,6 @@ public interface ContentService
     SortContentResult sort( SortContentParams params );
 
     ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
-
-    ImportContentResult importContent( ImportContentParams params );
 
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 

@@ -125,7 +125,7 @@ class ContentServiceImplTest_archive
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        this.contentService.importContent( ImportContentParams.create()
+        this.internalContentService.importContent( ImportContentParams.create()
                                                .importContent( content )
                                                .targetPath( content.getPath() )
                                                .inherit( EnumSet.allOf( ContentInheritType.class ) )
@@ -143,7 +143,7 @@ class ContentServiceImplTest_archive
         final Content content = createContent( ContentPath.ROOT, "content" );
         this.contentService.delete( DeleteContentParams.create().contentPath( content.getPath() ).build() );
 
-        this.contentService.importContent( ImportContentParams.create()
+        this.internalContentService.importContent( ImportContentParams.create()
                                                .importContent( content )
                                                .targetPath( content.getPath() )
                                                .inherit( EnumSet.allOf( ContentInheritType.class ) )
