@@ -60,15 +60,12 @@ public final class ParentContentSynchronizer
         {
             for ( Map.Entry<NodePath, Context> entry : sourceContexts.entrySet() )
             {
-                final Context sourceContext = entry.getValue();
-                final Context targetContext = targetContexts.get( entry.getKey() );
-                final Content rootContent = sourceContext.callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+                final Context sourceCtx = entry.getValue();
+                final Context targetCtx = targetContexts.get( entry.getKey() );
+                final Content rootContent = sourceCtx.callWith( () -> contentService.getByPath( ContentPath.ROOT ).orElseThrow() );
 
-                final List<ContentToSync> contentsToSync = List.of( ContentToSync.create()
-                                                                        .sourceContent( rootContent )
-                                                                        .sourceContext( sourceContext )
-                                                                        .targetContext( targetContext )
-                                                                        .build() );
+                final List<ContentToSync> contentsToSync =
+                    List.of( ContentToSync.create().sourceContent( rootContent ).sourceCtx( sourceCtx ).targetCtx( targetCtx ).build() );
                 doSyncWithChildren( contentsToSync );
             }
         }
@@ -109,7 +106,8 @@ public final class ParentContentSynchronizer
         final List<ContentToSync> contentsToSync =
             sourceContents.stream().filter( sourceContent -> sourceContent.getSourceContent() != null ).filter( sourceContent -> {
 
-                final Content root = sourceContent.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+                final Content root =
+                    sourceContent.getSourceCtx().callWith( () -> contentService.getByPath( ContentPath.ROOT ).orElseThrow() );
 
                 return !root.getId().equals( sourceContent.getSourceContent().getId() );
 
@@ -121,13 +119,13 @@ public final class ParentContentSynchronizer
         }
 
         sourceContents.stream().filter( contentToSync -> contentToSync.getSourceContent() != null ).forEach( currentContentToSync -> {
-            final ContentIds result = currentContentToSync.getSourceContext()
+            final ContentIds result = currentContentToSync.getSourceCtx()
                 .callWith( () -> contentService.findAllChildren( currentContentToSync.getSourceContent().getPath() ) );
 
             if ( !result.isEmpty() )
             {
-                final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceContext().getRepositoryId() );
-                final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetContext().getRepositoryId() );
+                final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceCtx().getRepositoryId() );
+                final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetCtx().getRepositoryId() );
 
                 doSyncWithChildren( createContentsToSync( result, sourceContexts, targetContexts ) );
             }
@@ -140,13 +138,15 @@ public final class ParentContentSynchronizer
             }
             else
             {
-                final Content root = sourceContent.getSourceContext().callWith( () -> contentService.getByPath( ContentPath.ROOT ) );
+                final Content root =
+                    sourceContent.getSourceCtx().callWith( () -> contentService.getByPath( ContentPath.ROOT ).orElseThrow() );
 
                 if ( root.getId().equals( sourceContent.getSourceContent().getId() ) )
                 {
                     cleanDeletedContents( ContentToSync.create( sourceContent )
-                                              .targetContent( sourceContent.getTargetContext()
-                                                                  .callWith( () -> contentService.getByPath( ContentPath.ROOT ) ) )
+                                              .targetContent( sourceContent.getTargetCtx()
+                                                                  .callWith(
+                                                                      () -> contentService.getByPath( ContentPath.ROOT ).orElseThrow() ) )
                                               .build() );
                 }
             }
@@ -186,25 +186,25 @@ public final class ParentContentSynchronizer
                                                       final Map<NodePath, Context> targetContexts )
     {
         final List<ContentToSync> result = contentIds.stream().map( contentId -> {
-            Context actualSourceContext = getActualContext( contentId, sourceContexts.values() );
-            Context actualTargetContext = getActualContext( contentId, targetContexts.values() );
+            Context actualSourceCtx = getActualContext( contentId, sourceContexts.values() );
+            Context actualTargetCtx = getActualContext( contentId, targetContexts.values() );
 
             final Content sourceContent =
-                actualSourceContext != null ? actualSourceContext.callWith( () -> this.contentService.getById( contentId ) ) : null;
+                actualSourceCtx != null ? actualSourceCtx.callWith( () -> this.contentService.getById( contentId ).orElseThrow() ) : null;
 
             final Content targetContent =
-                actualTargetContext != null ? actualTargetContext.callWith( () -> this.contentService.getById( contentId ) ) : null;
+                actualTargetCtx != null ? actualTargetCtx.callWith( () -> this.contentService.getById( contentId ).orElseThrow() ) : null;
 
-            if ( actualSourceContext != null )
+            if ( actualSourceCtx != null )
             {
-                if ( actualTargetContext == null )
+                if ( actualTargetCtx == null )
                 {
-                    actualTargetContext = getTargetContextByParent( actualSourceContext, targetContexts, sourceContent );
+                    actualTargetCtx = getTargetContextByParent( actualSourceCtx, targetContexts, sourceContent );
                 }
             }
-            else if ( actualTargetContext != null )
+            else if ( actualTargetCtx != null )
             {
-                actualSourceContext = sourceContexts.get( (NodePath) actualTargetContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) );
+                actualSourceCtx = sourceContexts.get( (NodePath) actualTargetCtx.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) );
             }
             else
             {
@@ -212,7 +212,7 @@ public final class ParentContentSynchronizer
             }
 
             if ( targetContent != null && ( targetContent.getOriginProject() == null ||
-                !actualSourceContext.getRepositoryId().equals( targetContent.getOriginProject().getRepoId() ) ) )
+                !actualSourceCtx.getRepositoryId().equals( targetContent.getOriginProject().getRepoId() ) ) )
             {
                 return null; // do not sync contents without origin parent or from other source
             }
@@ -220,8 +220,8 @@ public final class ParentContentSynchronizer
             return ContentToSync.create()
                 .sourceContent( sourceContent )
                 .targetContent( targetContent )
-                .sourceContext( actualSourceContext )
-                .targetContext( actualTargetContext )
+                .sourceCtx( actualSourceCtx )
+                .targetCtx( actualTargetCtx )
                 .build();
 
         } ).filter( Objects::nonNull ).collect( Collectors.toList() );
@@ -257,7 +257,7 @@ public final class ParentContentSynchronizer
 
     private void cleanDeletedContents( final ContentToSync contentToSync )
     {
-        contentToSync.getTargetContext().runWith( () -> {
+        contentToSync.getTargetCtx().runWith( () -> {
             final Queue<Content> queue = new ArrayDeque<>( Set.of( contentToSync.getTargetContent() ) );
 
             while ( !queue.isEmpty() )
@@ -266,23 +266,19 @@ public final class ParentContentSynchronizer
 
                 final ProjectName originProject = currentContent.getOriginProject();
 
-                if ( originProject != null )
+                if ( originProject != null && contentToSync.getSourceCtx().getRepositoryId().equals( originProject.getRepoId() ) )
                 {
-                    final Context sourceContext = contentToSync.getSourceContext();
-                    if ( sourceContext.getRepositoryId().equals( originProject.getRepoId() ) )
-                    {
-                        final Context actualSourceContext =
-                            getActualContext( currentContent.getId(), initContexts( sourceContext.getRepositoryId() ).values() );
+                    final Context actualSourceCtx =
+                        getActualContext( currentContent.getId(), initContexts( contentToSync.getSourceCtx().getRepositoryId() ).values() );
 
-                        final List<ContentToSync> contents = List.of( ContentToSync.create()
-                                                                          .targetContent( currentContent )
-                                                                          .sourceContext( actualSourceContext != null
-                                                                                              ? actualSourceContext
-                                                                                              : sourceContext )
-                                                                          .targetContext( contentToSync.getTargetContext() )
-                                                                          .build() );
-                        createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
-                    }
+                    final List<ContentToSync> contents = List.of( ContentToSync.create()
+                                                                      .targetContent( currentContent )
+                                                                      .sourceCtx( actualSourceCtx != null
+                                                                                      ? actualSourceCtx
+                                                                                      : contentToSync.getSourceCtx() )
+                                                                      .targetCtx( contentToSync.getTargetCtx() )
+                                                                      .build() );
+                    createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
                 }
 
                 contentService.getByIds( contentService.findAllChildren( currentContent.getPath() ) ).forEach( queue::offer );
@@ -311,7 +307,7 @@ public final class ParentContentSynchronizer
     private Context getActualContext( final ContentId contentId, final Collection<Context> contexts )
     {
         return contexts.stream()
-            .filter( context -> context.callWith( () -> contentService.getByIdOptional( contentId ).isPresent() ) )
+            .filter( context -> context.callWith( () -> contentService.getById( contentId ).isPresent() ) )
             .findAny()
             .orElse( null );
     }
@@ -319,11 +315,12 @@ public final class ParentContentSynchronizer
     private Context getTargetContextByParent( final Context sourceContext, final Map<NodePath, Context> availableTargetContexts,
                                               final Content sourceContent )
     {
-        final ContentId parentId = sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ).getId() );
+        final ContentId parentId =
+            sourceContext.callWith( () -> contentService.getByPath( sourceContent.getParentPath() ).orElseThrow().getId() );
 
         return availableTargetContexts.values()
             .stream()
-            .filter( context -> context.callWith( () -> contentService.getByIdOptional( parentId ).isPresent() ) )
+            .filter( context -> context.callWith( () -> contentService.getById( parentId ).isPresent() ) )
             .findAny()
             .orElseGet( () -> availableTargetContexts.get( (NodePath) sourceContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) ) );
     }

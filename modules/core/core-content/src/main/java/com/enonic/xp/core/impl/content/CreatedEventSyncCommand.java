@@ -44,22 +44,21 @@ final class CreatedEventSyncCommand
     {
         try
         {
-            content.getSourceContext().runWith( () -> {
-                contentService.getByPathOptional( content.getSourceContent().getParentPath() )
+            content.getSourceCtx()
+                .runWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() )
                     .map( Content::getId )
-                    .ifPresent( parentId -> content.getTargetContext().runWith( () -> {
+                    .ifPresent( parentId -> content.getTargetCtx().runWith( () -> {
                         if ( content.getSourceContent().getParentPath().isRoot() )
                         {
                             contentService.importContent( createImportParams( content, ContentPath.ROOT ) );
                         }
                         else
                         {
-                            contentService.getByIdOptional( parentId )
+                            contentService.getById( parentId )
                                 .map( Content::getPath )
                                 .ifPresent( path -> contentService.importContent( createImportParams( content, path ) ) );
                         }
-                    } ) );
-            } );
+                    } ) ) );
 
         }
         catch ( ContentAlreadyExistsException e )
@@ -76,7 +75,7 @@ final class CreatedEventSyncCommand
         for ( Attachment attachment : sourceContent.getAttachments() )
         {
             final ByteSource binary =
-                content.getSourceContext().callWith( () -> contentService.getBinary( content.getId(), attachment.getBinaryReference() ) );
+                content.getSourceCtx().callWith( () -> contentService.getBinary( content.getId(), attachment.getBinaryReference() ) );
             attachments.add( CreateAttachment.create()
                                  .name( attachment.getName() )
                                  .label( attachment.getLabel() )
@@ -97,7 +96,7 @@ final class CreatedEventSyncCommand
             .targetPath( targetPath )
             .attachments( attachments.build() )
             .inherit( inheritTypes )
-            .originProject( ProjectName.from( content.getSourceContext().getRepositoryId() ) )
+            .originProject( ProjectName.from( content.getSourceCtx().getRepositoryId() ) )
             .build();
     }
 

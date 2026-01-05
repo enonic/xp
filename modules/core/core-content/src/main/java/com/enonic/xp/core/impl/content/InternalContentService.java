@@ -18,7 +18,6 @@ import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentValidator;
@@ -34,7 +33,6 @@ import com.enonic.xp.content.PatchContentParams;
 import com.enonic.xp.content.PatchContentResult;
 import com.enonic.xp.content.SortContentParams;
 import com.enonic.xp.content.SortContentResult;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeIndexPath;
@@ -200,17 +198,7 @@ public class InternalContentService
             .execute();
     }
 
-
-    public Content getByPath( final ContentPath path )
-    {
-        return getByPathOptional( path ).orElseThrow( ContentNotFoundException.create()
-                                                          .contentPath( path )
-                                                          .repositoryId( ContextAccessor.current().getRepositoryId() )
-                                                          .branch( ContextAccessor.current().getBranch() )
-                                                          .contentRoot( ContentNodeHelper.getContentRoot() )::build );
-    }
-
-    public Optional<Content> getByPathOptional( final ContentPath path )
+    public Optional<Content> getByPath( final ContentPath path )
     {
         return Optional.ofNullable( GetContentByPathCommand.create( path )
                                         .nodeService( this.nodeService )
@@ -218,15 +206,6 @@ public class InternalContentService
                                         .eventPublisher( this.eventPublisher )
                                         .build()
                                         .execute() );
-    }
-
-    public Content getById( final ContentId contentId )
-    {
-        return getByIdOptional( contentId ).orElseThrow( ContentNotFoundException.create()
-                                                             .contentId( contentId )
-                                                             .repositoryId( ContextAccessor.current().getRepositoryId() )
-                                                             .branch( ContextAccessor.current().getBranch() )
-                                                             .contentRoot( ContentNodeHelper.getContentRoot() )::build );
     }
 
     public Contents getByIds( final ContentIds contentIds )
@@ -239,8 +218,7 @@ public class InternalContentService
             .execute();
     }
 
-
-    public Optional<Content> getByIdOptional( final ContentId contentId )
+    public Optional<Content> getById( final ContentId contentId )
     {
         return Optional.ofNullable( GetContentByIdCommand.create( contentId )
                                         .nodeService( this.nodeService )

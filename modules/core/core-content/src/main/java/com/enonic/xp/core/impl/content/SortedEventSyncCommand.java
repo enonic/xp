@@ -32,35 +32,38 @@ final class SortedEventSyncCommand
 
     private void doSync( final ContentToSync content )
     {
-        content.getTargetContext().runWith( () -> {
-            if ( isToSyncSort( content.getTargetContent() ) )
+        final Content targetContent = content.getTargetContent();
+        final Content sourceContent = content.getSourceContent();
+
+        content.getTargetCtx().runWith( () -> {
+            if ( isToSyncSort( targetContent ) )
             {
-                if ( needToSort( content.getSourceContent(), content.getTargetContent() ) )
+                if ( needToSort( sourceContent, targetContent ) )
                 {
                     final SortContentParams sortParams = SortContentParams.create()
-                        .childOrder( content.getSourceContent().getChildOrder() )
-                        .contentId( content.getSourceContent().getId() )
+                        .childOrder( sourceContent.getChildOrder() )
+                        .contentId( sourceContent.getId() )
                         .stopInherit( false )
                         .build();
 
                     contentService.sort( sortParams );
                 }
-                if ( content.getSourceContent().getChildOrder().isManualOrder() )
+                if ( sourceContent.getChildOrder().isManualOrder() )
                 {
-                    final List<ContentToSync> childrenToSync = contentService.getByIds(
-                            contentService.findAllChildren( content.getTargetContent().getPath() ) )
-                        .stream()
-                        .map( targetContent -> content.getSourceContext()
-                            .callWith( () -> contentService.getByIdOptional( targetContent.getId() ) )
-                            .map( sourceContent -> ContentToSync.create()
-                                .sourceContext( content.getSourceContext() )
-                                .targetContext( content.getTargetContext() )
-                                .sourceContent( sourceContent )
-                                .targetContent( targetContent )
-                                .build() ) )
-                        .filter( Optional::isPresent )
-                        .map( Optional::get )
-                        .collect( Collectors.toList() );
+                    final List<ContentToSync> childrenToSync =
+                        contentService.getByIds( contentService.findAllChildren( targetContent.getPath() ) )
+                            .stream()
+                            .map( childTargetContent -> content.getSourceCtx()
+                                .callWith( () -> contentService.getById( childTargetContent.getId() ) )
+                                .map( childSourceContent -> ContentToSync.create()
+                                    .sourceCtx( content.getSourceCtx() )
+                                    .targetCtx( content.getTargetCtx() )
+                                    .sourceContent( childSourceContent )
+                                    .targetContent( childTargetContent )
+                                    .build() ) )
+                            .filter( Optional::isPresent )
+                            .map( Optional::get )
+                            .collect( Collectors.toList() );
 
                     if ( !childrenToSync.isEmpty() )
                     {

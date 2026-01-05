@@ -36,10 +36,9 @@ final class MovedEventSyncArchiver
     @Override
     protected void execute()
     {
-        getRoots().forEach( content -> content.getTargetContext()
+        getRoots().forEach( content -> content.getTargetCtx()
             .runWith( () -> contentService.archive(
                 ArchiveContentParams.create().contentId( content.getTargetContent().getId() ).stopInherit( false ).build() ) ) );
-
     }
 
     private Set<ContentToSync> getRoots()
@@ -92,13 +91,13 @@ final class MovedEventSyncArchiver
     private Map<Content, Context> getAllArchived( final List<ContentToSync> contentToSync )
     {
         final Stream<Map.Entry<Content, Context>> parentStream =
-            contentToSync.stream().map( c -> Maps.immutableEntry( c.getTargetContent(), c.getTargetContext() ) );
+            contentToSync.stream().map( c -> Maps.immutableEntry( c.getTargetContent(), c.getTargetCtx() ) );
 
         final Stream<Map.Entry<Content, Context>> childrenStream = contentToSync.stream()
-            .flatMap( c -> c.getTargetContext()
+            .flatMap( c -> c.getTargetCtx()
                 .callWith( () -> contentService.getByIds( contentService.findAllByParent( c.getTargetContent().getPath() ) )
                     .stream()
-                    .map( child -> Maps.immutableEntry( child, c.getTargetContext() ) ) ) );
+                    .map( child -> Maps.immutableEntry( child, c.getTargetCtx() ) ) ) );
 
         return Stream.concat( parentStream, childrenStream )
             .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( a, _ ) -> a ) );

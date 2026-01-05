@@ -7,7 +7,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 
 public abstract class AbstractContentEventSyncCommand
 {
@@ -44,7 +43,7 @@ public abstract class AbstractContentEventSyncCommand
         if ( targetContent == null || targetContent.getInherit().contains( ContentInheritType.NAME ) )
         {
             newName = name.toString();
-            while ( contentService.getByPathOptional( ContentPath.from( newParentPath, newName ) ).isPresent() )
+            while ( contentService.getByPath( ContentPath.from( newParentPath, newName ) ).isPresent() )
             {
                 newName = NameValueResolver.name( newName );
             }

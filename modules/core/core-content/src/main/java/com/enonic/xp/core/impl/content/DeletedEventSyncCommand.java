@@ -38,19 +38,21 @@ final class DeletedEventSyncCommand
 
         final Set<ContentToSync> roots = getRoots( contentToSync );
 
-        roots.forEach( content -> content.getTargetContext().runWith( () -> {
-
-            if ( isToSyncDelete( content.getTargetContent() ) )
-            {
-                if ( needToDelete( content, fullIds ) )
+        for ( ContentToSync content : roots )
+        {
+            content.getTargetCtx().runWith( () -> {
+                if ( isToSyncDelete( content.getTargetContent() ) )
                 {
-                    final DeleteContentParams deleteParams =
-                        DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
+                    if ( needToDelete( content, fullIds ) )
+                    {
+                        final DeleteContentParams deleteParams =
+                            DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
 
-                    contentService.delete( deleteParams );
+                        contentService.delete( deleteParams );
+                    }
                 }
-            }
-        } ) );
+            } );
+        }
     }
 
     private Set<ContentToSync> getRoots( final List<ContentToSync> contents )
@@ -79,8 +81,7 @@ final class DeletedEventSyncCommand
 
     private boolean removedInSource( final ContentToSync contentToSync )
     {
-        return contentToSync.getSourceContext()
-            .callWith( () -> contentService.getByIdOptional( contentToSync.getTargetContent().getId() ).isEmpty() );
+        return contentToSync.getSourceCtx().callWith( () -> contentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
     private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )

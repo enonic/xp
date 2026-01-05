@@ -1,6 +1,7 @@
 package com.enonic.xp.core.content;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,15 +114,12 @@ class SyncContentServiceImplTest
 
         syncCreated( source.getId() );
 
-        layerContext.runWith( () -> {
-            contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
-                edit.workflowInfo = WorkflowInfo.ready();
-                edit.data = new PropertyTree();
-            } ) );
-        } );
+        layerContext.runWith( () -> contentService.update( new UpdateContentParams().contentId( source.getId() ).editor( edit -> {
+            edit.workflowInfo = WorkflowInfo.ready();
+            edit.data = new PropertyTree();
+        } ) ) );
 
-        projectContext.runWith(
-            () -> contentService.delete( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
+        projectContext.runWith( () -> contentService.delete( DeleteContentParams.create().contentPath( source.getPath() ).build() ) );
 
         assertThrows( IllegalArgumentException.class, () -> syncContentService.resetInheritance( ResetContentInheritParams.create()
                                                                                                      .contentId( source.getId() )
@@ -138,16 +136,20 @@ class SyncContentServiceImplTest
         final Content missedChild = projectContext.callWith( () -> createContent( missedParent.getPath() ) );
 
         layerContext.runWith( () -> {
-            assertFalse( contentService.contentExists( missedParent.getId() ) );
-            assertFalse( contentService.contentExists( missedChild.getId() ) );
+            final ContentId id1 = missedParent.getId();
+            assertFalse( internalContentService.getById( id1 ).isPresent() );
+            final ContentId id = missedChild.getId();
+            assertFalse( internalContentService.getById( id ).isPresent() );
         } );
 
         projectContext.runWith( () -> syncContentService.syncProject(
             ProjectSyncParams.create().targetProject( ProjectName.from( layerContext.getRepositoryId() ) ).build() ) );
 
         layerContext.runWith( () -> {
-            assertTrue( contentService.contentExists( missedParent.getId() ) );
-            assertTrue( contentService.contentExists( missedChild.getId() ) );
+            final ContentId id1 = missedParent.getId();
+            assertTrue( internalContentService.getById( id1 ).isPresent() );
+            final ContentId id = missedChild.getId();
+            assertTrue( internalContentService.getById( id ).isPresent() );
         } );
 
     }
@@ -159,16 +161,20 @@ class SyncContentServiceImplTest
         final Content missedContent2 = secondProjectContext.callWith( () -> createContent( ContentPath.ROOT ) );
 
         layerContext.runWith( () -> {
-            assertFalse( contentService.contentExists( missedContent1.getId() ) );
-            assertFalse( contentService.contentExists( missedContent2.getId() ) );
+            final ContentId id1 = missedContent1.getId();
+            assertFalse( internalContentService.getById( id1 ).isPresent() );
+            final ContentId id = missedContent2.getId();
+            assertFalse( internalContentService.getById( id ).isPresent() );
         } );
 
         projectContext.runWith( () -> syncContentService.syncProject(
             ProjectSyncParams.create().targetProject( ProjectName.from( layerContext.getRepositoryId() ) ).build() ) );
 
         layerContext.runWith( () -> {
-            assertTrue( contentService.contentExists( missedContent1.getId() ) );
-            assertTrue( contentService.contentExists( missedContent2.getId() ) );
+            final ContentId id1 = missedContent1.getId();
+            assertTrue( internalContentService.getById( id1 ).isPresent() );
+            final ContentId id = missedContent2.getId();
+            assertTrue( internalContentService.getById( id ).isPresent() );
         } );
 
     }
@@ -195,12 +201,14 @@ class SyncContentServiceImplTest
         } );
 
         layerArchiveContext.runWith( () -> {
-            assertTrue( contentService.contentExists( sourceContent1.getId() ) );
-            assertTrue( contentService.contentExists( sourceContent2.getId() ) );
+            final ContentId id1 = sourceContent1.getId();
+            assertTrue( internalContentService.getById( id1 ).isPresent() );
+            final ContentId id = sourceContent2.getId();
+            assertTrue( internalContentService.getById( id ).isPresent() );
         } );
     }
 
-    private Content syncCreated( final ContentId contentId )
+    private Optional<Content> syncCreated( final ContentId contentId )
     {
         synchronizer.sync( ContentEventsSyncParams.create()
                                .addContentId( contentId )
@@ -209,6 +217,6 @@ class SyncContentServiceImplTest
                                .syncEventType( ContentSyncEventType.CREATED )
                                .build() );
 
-        return layerContext.callWith( () -> contentService.getById( contentId ) );
+        return layerContext.callWith( () -> internalContentService.getById( contentId ) );
     }
 }

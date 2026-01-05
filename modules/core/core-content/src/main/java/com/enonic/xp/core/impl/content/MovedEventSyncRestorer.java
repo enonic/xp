@@ -33,17 +33,17 @@ final class MovedEventSyncRestorer
 
         getRoots( contentToSync ).forEach( content -> {
 
-            final Content sourceParent =
-                content.getSourceContext().callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ) );
+            final Content sourceParent = content.getSourceCtx()
+                .callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ).orElseThrow() );
 
-            final Context targetContextToRestore = ContextBuilder.from( content.getTargetContext() )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, content.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
+            final Context targetContextToRestore = ContextBuilder.from( content.getTargetCtx() )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, content.getSourceCtx().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
                 .build();
 
             final ContentPath targetParentPath = targetContextToRestore.callWith(
-                () -> contentService.getByIdOptional( sourceParent.getId() ).map( Content::getPath ).orElse( ContentPath.ROOT ) );
+                () -> contentService.getById( sourceParent.getId() ).map( Content::getPath ).orElse( ContentPath.ROOT ) );
 
-            content.getTargetContext()
+            content.getTargetCtx()
                 .runWith( () -> contentService.restore( RestoreContentParams.create()
                                                             .contentId( content.getTargetContent().getId() )
                                                             .path( targetParentPath )
