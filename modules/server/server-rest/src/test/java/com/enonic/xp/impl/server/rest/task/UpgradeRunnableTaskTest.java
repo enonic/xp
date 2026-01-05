@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -58,11 +60,12 @@ class UpgradeRunnableTaskTest
 
         task.run( TaskId.from( "taskId" ), progressReporter );
 
-        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
-        verify( progressReporter, times( 1 ) ).progress( ProgressReportParams.create( progressReporterCaptor.capture() ).build() );
+        final ArgumentCaptor<ProgressReportParams> progressReporterCaptor = ArgumentCaptor.forClass( ProgressReportParams.class );
+        verify( progressReporter, times( 2 ) ).progress( progressReporterCaptor.capture() );
 
-        final String result = progressReporterCaptor.getValue();
-        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "upgrade_result.json" ), jsonTestHelper.stringToJson( result ) );
+        final List<ProgressReportParams> result = progressReporterCaptor.getAllValues();
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "upgrade_result.json" ),
+                                         jsonTestHelper.stringToJson( result.get( 1 ).getMessage() ) );
     }
 
 }

@@ -103,11 +103,12 @@ class LoadRunnableTaskTest
 
         task.run( taskId, progressReporter );
 
-        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
-        verify( progressReporter, times( 1 ) ).progress( ProgressReportParams.create( progressReporterCaptor.capture() ).build() );
+        final ArgumentCaptor<ProgressReportParams> progressReporterCaptor = ArgumentCaptor.forClass( ProgressReportParams.class );
+        verify( progressReporter, times( 1 ) ).progress( progressReporterCaptor.capture() );
 
-        final String result = progressReporterCaptor.getValue();
-        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "load_system_result.json" ), jsonTestHelper.stringToJson( result ) );
+        final ProgressReportParams result = progressReporterCaptor.getValue();
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "load_system_result.json" ),
+                                         jsonTestHelper.stringToJson( result.getMessage() ) );
 
     }
 }
