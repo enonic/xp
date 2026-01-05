@@ -11,7 +11,7 @@ public interface ProgressReporter
      * Updates the progress of the task.
      *
      * @param current current progress value. If null, current value is unmodified
-     * @param total   total items awaiting to progress through. Initially if null, total is unknown. If total was set before, null means
+     * @param total   total items to be processed. Initially if null, total is unknown. If total was set before, null means
      *                unchanged. Total can change during progress
      * @param message a string shown in task status. If null, current status message is not modified
      */
