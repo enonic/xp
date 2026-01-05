@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.server.rest.task.listener;
 
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.upgrade.UpgradeListener;
 
@@ -26,7 +27,7 @@ public class UpgradeListenerImpl
     @Override
     public void upgraded()
     {
-        this.progressReporter.progress( ++current, total );
+        this.progressReporter.progress( ProgressReportParams.create( ++current, total ).build() );
     }
 
     @Override
@@ -34,13 +35,13 @@ public class UpgradeListenerImpl
     {
         if ( total == 0 )
         {
-            this.progressReporter.progress( 1, 1 );
+            this.progressReporter.progress( ProgressReportParams.create( 1, 1 ).build() );
             return;
         }
 
         if ( current < total )
         {
-            this.progressReporter.progress( total, total );
+            this.progressReporter.progress( ProgressReportParams.create( total, total ).build() );
         }
     }
 }

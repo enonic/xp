@@ -26,6 +26,7 @@ import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskManager;
 import com.enonic.xp.impl.task.event.TaskEvents;
 import com.enonic.xp.security.User;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskProgress;
@@ -97,7 +98,7 @@ public final class LocalTaskManagerImpl
             .collect( Collectors.toUnmodifiableList() );
     }
 
-    private void updateProgress( final TaskId taskId, final Integer current, final Integer total, final String info )
+    private void updateProgress( final TaskId taskId, final ProgressReportParams params )
     {
         final TaskInfoHolder ctx = tasks.get( taskId );
         if ( ctx == null )
@@ -107,17 +108,17 @@ public final class LocalTaskManagerImpl
         final TaskInfo taskInfo = ctx.getTaskInfo();
         final TaskProgress.Builder updatedProgress = taskInfo.getProgress().copy();
 
-        if ( current != null )
+        if ( params.getCurrent() != null )
         {
-            updatedProgress.current( current );
+            updatedProgress.current( params.getCurrent() );
         }
-        if ( total != null )
+        if ( params.getTotal() != null )
         {
-            updatedProgress.total( total );
+            updatedProgress.total( params.getTotal() );
         }
-        if ( info != null )
+        if ( params.getMessage() != null )
         {
-            updatedProgress.info( info );
+            updatedProgress.info( params.getMessage() );
         }
 
         final TaskInfo updatedInfo = taskInfo.copy().progress( updatedProgress.build() ).build();
@@ -227,26 +228,28 @@ public final class LocalTaskManagerImpl
         @Override
         public void failed( final String message )
         {
-            updateProgress( taskId, null, null, message );
+            updateProgress( taskId, ProgressReportParams.create( message ).build() );
             updateState( taskId, TaskState.FAILED );
         }
 
         @Override
+        public void progress( final ProgressReportParams params )
+        {
+            updateProgress( taskId, params );
+        }
+
+        @Deprecated
+        @Override
         public void progress( final int current, final int total )
         {
-            updateProgress( taskId, current, total, null );
+            updateProgress( taskId, ProgressReportParams.create( current, total ).build() );
         }
 
-        @Override
-        public void progress( final Integer current, final Integer total, final String message )
-        {
-            updateProgress( taskId, current, total, message );
-        }
-
+        @Deprecated
         @Override
         public void info( final String message )
         {
-            updateProgress( taskId, null, null, message );
+            updateProgress( taskId, ProgressReportParams.create( message ).build() );
         }
     }
 

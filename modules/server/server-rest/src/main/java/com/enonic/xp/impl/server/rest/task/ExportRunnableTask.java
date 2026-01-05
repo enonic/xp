@@ -11,6 +11,7 @@ import com.enonic.xp.impl.server.rest.model.NodeExportResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.ExportListenerImpl;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -62,7 +63,7 @@ public class ExportRunnableTask
                 .nodeExportListener( new ExportListenerImpl( progressReporter ) )
                 .build() ) );
 
-        progressReporter.info( NodeExportResultJson.from( result ).toString() );
+        progressReporter.progress( ProgressReportParams.create( NodeExportResultJson.from( result ).toString() ).build() );
     }
 
     private Context getContext( final Branch branch, final RepositoryId repositoryId )

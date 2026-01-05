@@ -19,6 +19,7 @@ import com.enonic.xp.impl.server.rest.model.SystemDumpRequestJson;
 import com.enonic.xp.impl.server.rest.task.listener.SystemDumpListenerImpl;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -95,7 +96,7 @@ class DumpRunnableTaskTest
         task.run( TaskId.from( "taskId" ), progressReporter );
 
         final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
-        verify( progressReporter, Mockito.times( 1 ) ).info( progressReporterCaptor.capture() );
+        verify( progressReporter, Mockito.times( 1 ) ).progress( ProgressReportParams.create( progressReporterCaptor.capture() ).build() );
 
         final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "dump_result.json" ), jsonTestHelper.stringToJson( result ) );

@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest.task.listener;
 
 import com.enonic.xp.export.NodeImportListener;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 
 public class ImportListenerImpl
@@ -21,7 +22,7 @@ public class ImportListenerImpl
     public void nodeImported( final long count )
     {
         current = Math.addExact( current, count );
-        progressReporter.progress( Math.toIntExact( current ), total );
+        progressReporter.progress( ProgressReportParams.create( Math.toIntExact( current ), total ).build() );
     }
 
     @Override

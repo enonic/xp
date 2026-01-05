@@ -15,6 +15,7 @@ import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.util.BinaryReference;
@@ -76,7 +77,7 @@ class ImportRunnableTaskTest
         task.run( TaskId.from( "taskId" ), progressReporter );
 
         final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
-        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
+        verify( progressReporter, times( 1 ) ).progress( ProgressReportParams.create( progressReporterCaptor.capture() ).build() );
 
         final String result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "importNodes_result.json" ), jsonTestHelper.stringToJson( result ) );
