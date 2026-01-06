@@ -24,8 +24,7 @@ class SimpleExecutorTest
     void testExecute()
     {
         final AtomicReference<Throwable> unexpectedThrowable = new AtomicReference<>();
-        final SimpleExecutor simpleExecutor =
-            new SimpleExecutor( Executors::newSingleThreadExecutor, "test-thread", unexpectedThrowable::set );
+        final SimpleExecutor simpleExecutor = SimpleExecutor.ofSingle( "test-thread", unexpectedThrowable::set );
         try
         {
             final Phaser phaser = new Phaser( 2 );
@@ -56,8 +55,7 @@ class SimpleExecutorTest
         final Phaser phaser = new Phaser( 2 );
         final Phaser locker = new Phaser( 1 );
 
-        final SimpleExecutor simpleExecutor =
-            new SimpleExecutor( Executors::newSingleThreadExecutor, "test-thread", unexpectedThrowable::set );
+        final SimpleExecutor simpleExecutor = SimpleExecutor.ofSingle( "test-thread", unexpectedThrowable::set );
 
         final Thread thread = new Thread( () -> {
 
@@ -84,8 +82,7 @@ class SimpleExecutorTest
     {
         final AtomicReference<Throwable> unexpectedThrowable = new AtomicReference<>();
         final AtomicBoolean unexpectedExecution = new AtomicBoolean();
-        final SimpleExecutor simpleExecutor =
-            new SimpleExecutor( Executors::newSingleThreadExecutor, "test-thread", unexpectedThrowable::set );
+        final SimpleExecutor simpleExecutor = SimpleExecutor.ofSingle( "test-thread", unexpectedThrowable::set );
         try
         {
             AtomicReference<List<Runnable>> neverCommencedCollector = new AtomicReference<>();
@@ -122,8 +119,7 @@ class SimpleExecutorTest
 
         final Phaser phaser = new Phaser( 2 );
 
-        final SimpleExecutor simpleExecutor =
-            new SimpleExecutor( Executors::newSingleThreadExecutor, "test-thread", mock.andThen( e -> phaser.arriveAndAwaitAdvance() ) );
+        final SimpleExecutor simpleExecutor = SimpleExecutor.ofSingle( "test-thread", mock.andThen( e -> phaser.arriveAndAwaitAdvance() ) );
         try
         {
             final RuntimeException intendedException = new RuntimeException( "Intended Exception" );

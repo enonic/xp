@@ -69,8 +69,8 @@ public class ScriptAsyncServiceImpl
             {
                 final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
                 final long id = bundle.getBundleId();
-                return new SimpleExecutor( Executors::newSingleThreadExecutor, "app-" + applicationName + "-" + id,
-                                           e -> LOG.error( "Unhandled error in app background thread {}", applicationName, e ) );
+                return SimpleExecutor.ofSingle( "app-" + applicationName + "-" + id,
+                                                e -> LOG.error( "Unhandled error in app background thread {}", applicationName, e ) );
             }
             else
             {

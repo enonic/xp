@@ -20,8 +20,7 @@ public class TraceEventDispatcherExecutorImpl
 
     public TraceEventDispatcherExecutorImpl()
     {
-        simpleExecutor = new SimpleExecutor( Executors::newSingleThreadExecutor, "trace-event-dispatcher-thread",
-                                             e -> LOG.error( "Trace event dispatch failed", e ) );
+        simpleExecutor = SimpleExecutor.ofSingle( "trace-event-dispatcher-thread", e -> LOG.error( "Trace event dispatch failed", e ) );
     }
 
     @Deactivate
