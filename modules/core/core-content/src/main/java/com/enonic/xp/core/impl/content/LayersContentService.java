@@ -49,7 +49,7 @@ import com.enonic.xp.schema.xdata.XDataService;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.util.BinaryReference;
 
-@Component(configurationPid = "com.enonic.xp.content")
+@Component(configurationPid = "com.enonic.xp.content", service = LayersContentService.class )
 @NullMarked
 public class LayersContentService
 {
