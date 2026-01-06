@@ -27,6 +27,8 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateMetadataParams;
+import com.enonic.xp.content.UpdateMetadataResult;
 
 interface ContentAuditLogSupport
 {
@@ -39,6 +41,8 @@ interface ContentAuditLogSupport
     void update( UpdateMediaParams params, Content content );
 
     void patch( PatchContentParams params, PatchContentResult result );
+
+    void updateMetadata( UpdateMetadataParams params, UpdateMetadataResult result );
 
     void delete( DeleteContentParams params, DeleteContentsResult contents );
 

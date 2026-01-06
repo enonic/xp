@@ -32,6 +32,8 @@ public interface ContentService
 
     PatchContentResult patch( PatchContentParams params );
 
+    UpdateMetadataResult updateMetadata( UpdateMetadataParams params );
+
     DuplicateContentsResult duplicate( DuplicateContentParams params );
 
     ArchiveContentsResult archive( ArchiveContentParams params );

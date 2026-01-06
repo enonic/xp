@@ -50,6 +50,8 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateMetadataParams;
+import com.enonic.xp.content.UpdateMetadataResult;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -209,6 +211,49 @@ public class ContentAuditLogSupportImpl
         } );
 
         log( "system.content.patch", data, params.getContentId(), rootContext );
+    }
+
+    @Override
+    public void updateMetadata( final UpdateMetadataParams params, final UpdateMetadataResult result )
+    {
+        final Context context = ContextBuilder.copyOf( ContextAccessor.current() ).build();
+
+        executor.execute( () -> doUpdateMetadata( params, result, context ) );
+    }
+
+    private void doUpdateMetadata( final UpdateMetadataParams params, final UpdateMetadataResult result, final Context rootContext )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        final PropertySet resultSet = data.addSet( "result" );
+
+        final PrincipalKey modifier =
+            rootContext.getAuthInfo().getUser() != null ? rootContext.getAuthInfo().getUser().getKey() : PrincipalKey.ofAnonymous();
+
+        paramsSet.addString( "contentId", safeToString( params.getContentId() ) );
+        paramsSet.addString( "modifier", safeToString( modifier ) );
+        paramsSet.addStrings( "branches", params.getBranches().stream().map( Branch::toString ).collect( Collectors.toList() ) );
+        if ( params.getLanguage() != null )
+        {
+            paramsSet.addString( "language", params.getLanguage().toLanguageTag() );
+        }
+        if ( params.getOwner() != null )
+        {
+            paramsSet.addString( "owner", safeToString( params.getOwner() ) );
+        }
+
+        result.getResults().forEach( ( branchResult ) -> {
+            final Branch branch = branchResult.branch();
+            final Content content = branchResult.content();
+
+            final PropertySet branchSet = resultSet.addSet( branch.toString() );
+            if ( content != null )
+            {
+                addContent( branchSet, content );
+            }
+        } );
+
+        log( "system.content.updateMetadata", data, params.getContentId(), rootContext );
     }
 
     @Override

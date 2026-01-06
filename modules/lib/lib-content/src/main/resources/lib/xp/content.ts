@@ -902,6 +902,72 @@ export function patch(params: PatchContentParams): PatchContentResult {
     return __.toNativeObject(bean.execute());
 }
 
+export interface UpdateMetadataParams {
+    key: string;
+    language?: string;
+    owner?: string;
+    branches?: string[];
+}
+
+export interface UpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    contentId: string;
+    results: BranchUpdateMetadataResult<Data, Type>[];
+}
+
+export interface BranchUpdateMetadataResult<Data extends Record<string, unknown> = Record<string, unknown>, Type extends string = string> {
+    branch: string;
+    content: Content<Data, Type> | null;
+}
+
+interface UpdateMetadataHandler {
+    setKey(value: string): void;
+
+    setLanguage(value?: string): void;
+
+    setOwner(value?: string): void;
+
+    setBranches(value: string[]): void;
+
+    execute(): UpdateMetadataResult;
+}
+
+/**
+ * This function updates metadata (language and owner) for a content.
+ *
+ * @example-ref examples/content/updateMetadata.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id to the content.
+ * @param {string} [params.language] Language code to set for the content.
+ * @param {string} [params.owner] Owner principal key to set for the content.
+ * @param {string[]} [params.branches=[]] List of branches to update the content in. If not specified, the context's branch is used.
+ *
+ * @returns {object} Updated content metadata result as JSON.
+ */
+export function updateMetadata(params: UpdateMetadataParams): UpdateMetadataResult {
+    checkRequired(params, 'key');
+
+    const {
+        key,
+        language,
+        owner,
+        branches = [],
+    } = params ?? {};
+
+    const bean: UpdateMetadataHandler = __.newBean<UpdateMetadataHandler>('com.enonic.xp.lib.content.UpdateMetadataHandler');
+
+    bean.setKey(key);
+    if (language != null) {
+        bean.setLanguage(language);
+    }
+    if (owner != null) {
+        bean.setOwner(owner);
+    }
+    bean.setBranches(branches);
+
+    return __.toNativeObject(bean.execute());
+}
+
 export interface PublishContentParams {
     keys: string[];
     schedule?: Schedule;

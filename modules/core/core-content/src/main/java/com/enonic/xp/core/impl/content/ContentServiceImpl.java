@@ -74,6 +74,8 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.content.UpdateMediaParams;
+import com.enonic.xp.content.UpdateMetadataParams;
+import com.enonic.xp.content.UpdateMetadataResult;
 import com.enonic.xp.content.XDataDefaultValuesProcessor;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -923,6 +925,32 @@ public class ContentServiceImpl
             .execute();
 
         contentAuditLogSupport.patch( params, result );
+
+        return result;
+    }
+
+    @Override
+    public UpdateMetadataResult updateMetadata( final UpdateMetadataParams params )
+    {
+        requireAdminRole();
+
+        final UpdateMetadataResult result = UpdateMetadataCommand.create( params )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .siteService( this.siteService )
+            .xDataService( this.xDataService )
+            .contentProcessors( this.contentProcessors )
+            .contentValidators( this.contentValidators )
+            .pageDescriptorService( this.pageDescriptorService )
+            .pageTemplateService( this.pageTemplateService )
+            .partDescriptorService( this.partDescriptorService )
+            .layoutDescriptorService( this.layoutDescriptorService )
+            .allowUnsafeAttachmentNames( config.attachments_allowUnsafeNames() )
+            .build()
+            .execute();
+
+        contentAuditLogSupport.updateMetadata( params, result );
 
         return result;
     }
