@@ -52,6 +52,7 @@ class ExportRunnableTaskTest
             .exportName( params.getExportName() )
             .includeVersions( params.isIncludeVersions() )
             .exportWithIds( params.isExportWithIds() )
+            .archive( params.isArchive() )
             .build();
     }
 
@@ -65,7 +66,7 @@ class ExportRunnableTaskTest
 
         when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
 
-        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true ) );
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, false ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
 
@@ -77,6 +78,30 @@ class ExportRunnableTaskTest
         final ProgressReportParams result = progressReporterCaptor.getValue();
         jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "exportNodes_result.json" ),
                                          jsonTestHelper.stringToJson( result.getMessage() ) );
+    }
+
+    @Test
+    void exportNodesWithArchive()
+    {
+        final NodeExportResult nodeExportResult = NodeExportResult.create()
+            .addNodePath( new NodePath( "/node/path" ) )
+            .addBinary( new NodePath( "/binary" ), BinaryReference.from( "binaryRef" ) )
+            .build();
+
+        when( this.exportService.exportNodes( any( ExportNodesParams.class ) ) ).thenReturn( nodeExportResult );
+
+        final ExportRunnableTask task = createTask( new ExportNodesRequestJson( "a:b:c", "export", true, true, true ) );
+
+        ProgressReporter progressReporter = mock( ProgressReporter.class );
+
+        task.run( TaskId.from( "taskId" ), progressReporter );
+
+        // Verify that exportNodes was called with archive=true
+        final ArgumentCaptor<ExportNodesParams> paramsCaptor = ArgumentCaptor.forClass( ExportNodesParams.class );
+        verify( exportService, times( 1 ) ).exportNodes( paramsCaptor.capture() );
+
+        final ExportNodesParams params = paramsCaptor.getValue();
+        org.junit.jupiter.api.Assertions.assertTrue( params.isArchive(), "Archive parameter should be true" );
     }
 
 }
