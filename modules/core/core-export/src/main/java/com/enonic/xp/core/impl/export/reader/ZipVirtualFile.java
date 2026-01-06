@@ -45,6 +45,14 @@ public class ZipVirtualFile
         this.zipFilePath = zipFilePath;
     }
 
+    /**
+     * Creates a VirtualFile from a zip archive.
+     * Note: The ZipFile takes ownership of the SeekableByteChannel and will close it when the ZipFile is closed.
+     *
+     * @param zipPath path to the zip file
+     * @return VirtualFile representing the root of the zip archive
+     * @throws IOException if an I/O error occurs
+     */
     public static VirtualFile from( final Path zipPath )
         throws IOException
     {
@@ -156,8 +164,7 @@ public class ZipVirtualFile
             {
                 final String relativeName = name.substring( prefix.length() );
                 // Only immediate children (no additional slashes)
-                if ( !relativeName.isEmpty() && relativeName.indexOf( '/' ) == ( relativeName.endsWith( "/" ) ? relativeName.length() - 1 :
-                                                                                   -1 ) )
+                if ( isImmediateChild( relativeName ) )
                 {
                     children.add( new ZipVirtualFile( zipFile, basePath, name.endsWith( "/" ) ? name.substring( 0, name.length() - 1 ) : name,
                                                       zipFilePath ) );
@@ -166,6 +173,23 @@ public class ZipVirtualFile
         }
 
         return children;
+    }
+
+    /**
+     * Checks if the relative name represents an immediate child (no subdirectories).
+     * A trailing slash is allowed for directory entries.
+     */
+    private boolean isImmediateChild( final String relativeName )
+    {
+        if ( relativeName.isEmpty() )
+        {
+            return false;
+        }
+
+        final int slashIndex = relativeName.indexOf( '/' );
+        // No slash means it's a file in this directory
+        // Slash at the end means it's a directory in this directory
+        return slashIndex == -1 || ( relativeName.endsWith( "/" ) && slashIndex == relativeName.length() - 1 );
     }
 
     @Override
