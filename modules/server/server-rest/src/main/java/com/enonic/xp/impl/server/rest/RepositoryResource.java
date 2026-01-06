@@ -69,6 +69,7 @@ public final class RepositoryResource
             .exportName( params.getExportName() )
             .importWithIds( params.isImportWithIds() )
             .importWithPermissions( params.isImportWithPermissions() )
+            .archive( params.isArchive() )
             .xslSource( params.getXslSource() )
             .xslParams( params.getXslParams() )
             .exportService( exportService )

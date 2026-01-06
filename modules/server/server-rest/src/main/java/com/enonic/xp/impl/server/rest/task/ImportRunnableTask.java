@@ -35,6 +35,8 @@ public class ImportRunnableTask
 
     private final boolean importWithPermissions;
 
+    private final boolean archive;
+
     private final String xslSource;
 
     private final Map<String, Object> xslParams;
@@ -49,6 +51,7 @@ public class ImportRunnableTask
         this.exportName = builder.exportName;
         this.importWithIds = builder.importWithIds;
         this.importWithPermissions = builder.importWithPermissions;
+        this.archive = builder.archive;
         this.xslSource = builder.xslSource;
         this.xslParams = builder.xslParams;
 
@@ -69,6 +72,7 @@ public class ImportRunnableTask
                 .targetNodePath( nodePath )
                 .includeNodeIds( importWithIds )
                 .includePermissions( importWithPermissions )
+                .archive( archive )
                 .xsltFileName( emptyToNull( xslSource ) )
                 .xsltParams( xslParams )
                 .nodeImportListener( new ImportListenerImpl( progressReporter ) );
@@ -100,6 +104,8 @@ public class ImportRunnableTask
         private boolean importWithIds;
 
         private boolean importWithPermissions;
+
+        private boolean archive;
 
         private String xslSource;
 
@@ -140,6 +146,12 @@ public class ImportRunnableTask
         public Builder importWithPermissions( boolean importWithPermissions )
         {
             this.importWithPermissions = importWithPermissions;
+            return this;
+        }
+
+        public Builder archive( boolean archive )
+        {
+            this.archive = archive;
             return this;
         }
 

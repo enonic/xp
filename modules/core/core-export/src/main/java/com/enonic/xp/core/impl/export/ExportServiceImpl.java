@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.export;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.osgi.service.component.annotations.Activate;
@@ -88,10 +87,10 @@ public class ExportServiceImpl
         if ( source == null )
         {
             final Path exportPath = exportConfiguration.getExportsDir().resolve( params.getExportName() );
-            final Path zipPath = exportConfiguration.getExportsDir().resolve( params.getExportName() + ".zip" );
 
-            if ( Files.exists( zipPath ) )
+            if ( params.isArchive() )
             {
+                final Path zipPath = exportConfiguration.getExportsDir().resolve( params.getExportName() + ".zip" );
                 try
                 {
                     source = ZipVirtualFile.from( zipPath );
