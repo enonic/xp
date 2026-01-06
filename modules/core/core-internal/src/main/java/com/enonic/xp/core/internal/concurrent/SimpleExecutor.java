@@ -11,9 +11,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
- * A "one size fits all" {@link Executor} for OSGi services.
+ * A "one size fits all" {@link Executor} for OSGi services
  */
+@NullMarked
 public final class SimpleExecutor
     implements Executor
 {
@@ -25,12 +28,12 @@ public final class SimpleExecutor
     }
 
     /**
-     * Constructs {@linkplain SimpleExecutor} with customized thread naming pattern and uncaughtExceptionHandler.
+     * Constructs {@linkplain SimpleExecutor} with customized thread naming pattern and uncaught exception handler.
      *
-     * @param executorServiceSupplier  function to be executed to construct {@link ExecutorService}.
-     *                                 Usually one of {@link java.util.concurrent.Executors} methods.
+     * @param executorServiceSupplier  function to be executed to construct {@link ExecutorService}
+     *                                 Usually one of {@link java.util.concurrent.Executors} methods
      * @param namePattern              Example {@code "my-service-%d"}
-     * @param uncaughtExceptionHandler should be used primarily for logging of uncaught Exceptions. Can't be null.
+     * @param uncaughtExceptionHandler should be used primarily for logging of uncaught Exceptions
      */
     public SimpleExecutor( final Function<ThreadFactory, ExecutorService> executorServiceSupplier, final String namePattern,
                            final Consumer<Throwable> uncaughtExceptionHandler )
@@ -38,11 +41,34 @@ public final class SimpleExecutor
         this( executorServiceSupplier.apply( new ThreadFactoryImpl( namePattern, uncaughtExceptionHandler ) ) );
     }
 
-    public static SimpleExecutor ofVirtual( String name, final Consumer<Throwable> uncaughtExceptionHandler )
+    /**
+     * Constructs {@linkplain SimpleExecutor} with virtual threads with customized name and uncaught exception handler.
+     *
+     * @param namePrefix               prefix for virtual thread names.
+     * @param uncaughtExceptionHandler should be used primarily for logging of uncaught Exceptions
+     * @return constructed {@link SimpleExecutor} configured with a new-virtual-thread-per-task executor
+     */
+    public static SimpleExecutor ofVirtual( final String namePrefix, final Consumer<Throwable> uncaughtExceptionHandler )
     {
         Objects.requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
-        return new SimpleExecutor( Executors.newSingleThreadExecutor(
-            Thread.ofVirtual().name( name, 0 ).uncaughtExceptionHandler( ( _, e ) -> uncaughtExceptionHandler.accept( e ) ).factory() ) );
+        return new SimpleExecutor( Executors.newThreadPerTaskExecutor( Thread.ofVirtual()
+                                                                           .name( namePrefix, 0 )
+                                                                           .uncaughtExceptionHandler( ( _, e ) -> uncaughtExceptionHandler.accept( e ) )
+                                                                           .factory() ) );
+    }
+
+    /**
+     * Creates a {@link SimpleExecutor} using a single-threaded executor with a customized thread name and
+     * uncaught exception handler.
+     *
+     * @param name the name pattern for threads created by the executor
+     * @param uncaughtExceptionHandler should be used primarily for logging of uncaught Exceptions
+     * @return a {@link SimpleExecutor} configured with a single-threaded executor
+     */
+    public static SimpleExecutor ofSingle( final String name, final Consumer<Throwable> uncaughtExceptionHandler )
+    {
+        Objects.requireNonNull( uncaughtExceptionHandler, "uncaughtExceptionHandler is required" );
+        return new SimpleExecutor( Executors.newSingleThreadExecutor( new ThreadFactoryImpl( name, uncaughtExceptionHandler ) ) );
     }
 
     /**
