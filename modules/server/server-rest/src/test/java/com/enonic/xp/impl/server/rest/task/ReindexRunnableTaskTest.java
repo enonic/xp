@@ -16,6 +16,7 @@ import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.support.JsonTestHelper;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -77,11 +78,12 @@ class ReindexRunnableTaskTest
 
         task.run( taskId, progressReporter );
 
-        final ArgumentCaptor<String> progressReporterCaptor = ArgumentCaptor.forClass( String.class );
-        verify( progressReporter, times( 1 ) ).info( progressReporterCaptor.capture() );
+        final ArgumentCaptor<ProgressReportParams> progressReporterCaptor = ArgumentCaptor.forClass( ProgressReportParams.class );
+        verify( progressReporter, times( 1 ) ).progress( progressReporterCaptor.capture() );
 
-        final String result = progressReporterCaptor.getValue();
-        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "reindex_result.json" ), jsonTestHelper.stringToJson( result ) );
+        final ProgressReportParams result = progressReporterCaptor.getValue();
+        jsonTestHelper.assertJsonEquals( jsonTestHelper.loadTestJson( "reindex_result.json" ),
+                                         jsonTestHelper.stringToJson( result.getMessage() ) );
     }
 
 }

@@ -10,6 +10,7 @@ import com.enonic.xp.app.system.listener.VacuumListenerImpl;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskProgressReporterContext;
@@ -64,7 +65,8 @@ public class VacuumTaskHandler
 
         try
         {
-            progressReporter.info( MAPPER.writeValueAsString( MAPPER.createObjectNode().putPOJO( "taskResults", result.getResults() ) ) );
+            progressReporter.progress( ProgressReportParams.create(
+                MAPPER.writeValueAsString( MAPPER.createObjectNode().putPOJO( "taskResults", result.getResults() ) ) ).build() );
         }
         catch ( JsonProcessingException e )
         {

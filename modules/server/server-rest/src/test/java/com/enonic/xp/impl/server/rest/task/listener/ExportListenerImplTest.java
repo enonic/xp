@@ -3,8 +3,10 @@ package com.enonic.xp.impl.server.rest.task.listener;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
@@ -22,8 +24,10 @@ class ExportListenerImplTest
         listener.nodeExported( 2 );
 
         final InOrder inOrder = inOrder( progressReporter );
-        inOrder.verify( progressReporter ).progress( 1, Integer.MAX_VALUE );
-        inOrder.verify( progressReporter ).progress( 3, Integer.MAX_VALUE );
+
+        inOrder.verify( progressReporter ).progress( refEq( ProgressReportParams.create( 1, Integer.MAX_VALUE ).build() ) );
+        inOrder.verify( progressReporter ).progress( refEq( ProgressReportParams.create( 3, Integer.MAX_VALUE ).build() ) );
+
         inOrder.verifyNoMoreInteractions();
     }
 }

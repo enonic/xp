@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content.index.processor;
 
 import com.enonic.xp.core.impl.content.index.IndexConfigVisitor;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.schema.xdata.XDatas;
 
@@ -23,7 +23,7 @@ public class XDataConfigProcessor
     {
         final PatternIndexConfigDocument.Builder builder = PatternIndexConfigDocument.create( config );
 
-        builder.add( PropertyPath.from( EXTRA_DATA, "*" ), IndexConfig.BY_TYPE );
+        builder.add( IndexPath.from( EXTRA_DATA, "*" ), IndexConfig.BY_TYPE );
 
         if ( this.xDatas != null )
         {

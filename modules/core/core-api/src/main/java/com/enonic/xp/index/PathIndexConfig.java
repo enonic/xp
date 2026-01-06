@@ -1,6 +1,7 @@
 package com.enonic.xp.index;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 import com.enonic.xp.annotation.PublicApi;
 import com.enonic.xp.data.PropertyPath;
@@ -10,11 +11,11 @@ public final class PathIndexConfig
     implements Comparable<PathIndexConfig>
 {
     public static final Comparator<PathIndexConfig> COMPARATOR =
-        Comparator.comparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.path.toString() ).
-            thenComparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.indexConfig ).
-            reversed();
+        Comparator.comparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.path.toString() )
+            .thenComparing( ( PathIndexConfig pathIndexConfig ) -> pathIndexConfig.indexConfig )
+            .reversed();
 
-    private final PropertyPath path;
+    private final IndexPath path;
 
     private final IndexConfig indexConfig;
 
@@ -29,9 +30,15 @@ public final class PathIndexConfig
         return testPath.startsWith( path.toString() );
     }
 
-    public PropertyPath getPath()
+    public IndexPath getIndexPath()
     {
         return path;
+    }
+
+    @Deprecated
+    public PropertyPath getPath()
+    {
+        return PropertyPath.from( path.getPath() );
     }
 
     public IndexConfig getIndexConfig()
@@ -42,34 +49,6 @@ public final class PathIndexConfig
     public static Builder create()
     {
         return new Builder();
-    }
-
-    public static final class Builder
-    {
-        private PropertyPath path;
-
-        private IndexConfig indexConfig;
-
-        private Builder()
-        {
-        }
-
-        public Builder path( PropertyPath path )
-        {
-            this.path = path;
-            return this;
-        }
-
-        public Builder indexConfig( IndexConfig indexConfig )
-        {
-            this.indexConfig = indexConfig;
-            return this;
-        }
-
-        public PathIndexConfig build()
-        {
-            return new PathIndexConfig( this );
-        }
     }
 
     @Override
@@ -84,8 +63,8 @@ public final class PathIndexConfig
             return EQUAL;
         }
 
-        final int thisElementCount = this.path.elementCount();
-        final int thatElementCount = o.path.elementCount();
+        final int thisElementCount = countPathElements( this.path.getPath() );
+        final int thatElementCount = countPathElements( o.path.getPath() );
 
         if ( thisElementCount < thatElementCount )
         {
@@ -97,6 +76,24 @@ public final class PathIndexConfig
         }
 
         return COMPARATOR.compare( this, o );
+    }
+
+    private static int countPathElements( final String path )
+    {
+        if ( path.isEmpty() )
+        {
+            return 1; // empty string split by "\\." returns array of length 1
+        }
+
+        int count = 1;
+        for ( int i = 0; i < path.length(); i++ )
+        {
+            if ( path.charAt( i ) == '.' )
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
@@ -113,11 +110,39 @@ public final class PathIndexConfig
 
         final PathIndexConfig that = (PathIndexConfig) o;
 
-        if ( indexConfig != null ? !indexConfig.equals( that.indexConfig ) : that.indexConfig != null )
+        if ( !Objects.equals( indexConfig, that.indexConfig ) )
         {
             return false;
         }
-        return path != null ? path.equals( that.path ) : that.path == null;
+        return Objects.equals( path, that.path );
+    }
+
+    public static final class Builder
+    {
+        private IndexPath path;
+
+        private IndexConfig indexConfig;
+
+        private Builder()
+        {
+        }
+
+        public Builder path( IndexPath path )
+        {
+            this.path = path;
+            return this;
+        }
+
+        public Builder indexConfig( IndexConfig indexConfig )
+        {
+            this.indexConfig = indexConfig;
+            return this;
+        }
+
+        public PathIndexConfig build()
+        {
+            return new PathIndexConfig( this );
+        }
     }
 
     @Override

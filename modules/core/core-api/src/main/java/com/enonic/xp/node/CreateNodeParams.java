@@ -201,6 +201,7 @@ public final class CreateNodeParams
             this.manualOrderValue = createNodeParams.manualOrderValue;
             this.nodeType = createNodeParams.nodeType;
             this.binaryAttachments.addAll( createNodeParams.binaryAttachments );
+            this.versionAttributes = createNodeParams.versionAttributes;
             this.refresh = createNodeParams.refresh;
         }
 

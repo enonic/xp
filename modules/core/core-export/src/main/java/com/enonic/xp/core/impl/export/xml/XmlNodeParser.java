@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.AllTextIndexConfig;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexConfigDocument;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.IndexValueProcessors;
 import com.enonic.xp.index.PathIndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
@@ -318,7 +318,7 @@ public final class XmlNodeParser
     private PathIndexConfig parsePathIndexConfig( final DomElement root )
     {
         final PathIndexConfig.Builder builder = PathIndexConfig.create();
-        builder.path( PropertyPath.from( root.getChildValue( "path" ) ) );
+        builder.path( IndexPath.from( root.getChildValue( "path" ) ) );
         builder.indexConfig( parseIndexConfig( root.getChild( "indexConfig" ) ) );
         return builder.build();
     }

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItemSet;
@@ -56,26 +55,22 @@ class PageConfigProcessorTest
         assertEquals( 4, result.getPathIndexConfigs().size() );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS ) ).
                 indexConfig( IndexConfig.NONE ).
                 build() ) );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).
                 indexConfig( IndexConfig.MINIMAL ).
                 build() ) );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS, PAGE, CUSTOMIZED ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS, PAGE, CUSTOMIZED ) ).
                 indexConfig( IndexConfig.MINIMAL ).
                 build() ) );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS, PAGE, TEMPLATE ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS, PAGE, TEMPLATE ) ).
                 indexConfig( IndexConfig.MINIMAL ).
                 build() ) );
 
@@ -99,26 +94,22 @@ class PageConfigProcessorTest
         assertEquals( 5, result.getPathIndexConfigs().size() );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS ) ).
                 indexConfig( IndexConfig.NONE ).
                 build() ) );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS, PAGE, DESCRIPTOR ) ).
                 indexConfig( IndexConfig.MINIMAL ).
                 build() ) );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS, PAGE, CUSTOMIZED ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS, PAGE, CUSTOMIZED ) ).
                 indexConfig( IndexConfig.MINIMAL ).
                 build() ) );
 
         assertTrue( result.getPathIndexConfigs().
-            contains( PathIndexConfig.create().
-                path( PropertyPath.from( COMPONENTS, PAGE, TEMPLATE ) ).
+            contains( PathIndexConfig.create().path( IndexPath.from( COMPONENTS, PAGE, TEMPLATE ) ).
                 indexConfig( IndexConfig.MINIMAL ).
                 build() ) );
 
@@ -144,7 +135,7 @@ class PageConfigProcessorTest
         assertEquals( 6, result.getPathIndexConfigs().size() );
         assertTrue( result.getPathIndexConfigs()
                         .contains( PathIndexConfig.create()
-                                       .path( PropertyPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(),
+                                       .path( IndexPath.from( COMPONENTS, PAGE, CONFIG, descriptorKey.getApplicationKey().toString(),
                                                                  descriptorKey.getName() ) )
                                        .indexConfig( IndexConfig.BY_TYPE )
                                        .build() ) );

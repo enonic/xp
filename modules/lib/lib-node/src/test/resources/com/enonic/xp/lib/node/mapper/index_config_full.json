@@ -131,7 +131,7 @@
       }
     },
     {
-      "path": "byType",
+      "path": "bytype",
       "config": {
         "decideByType": true,
         "enabled": true,

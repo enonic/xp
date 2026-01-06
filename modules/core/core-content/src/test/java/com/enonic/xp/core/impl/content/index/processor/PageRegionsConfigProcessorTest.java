@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.data.PropertyPath;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -190,7 +189,7 @@ class PageRegionsConfigProcessorTest
 
         assertTrue( result.getPathIndexConfigs()
                         .contains( PathIndexConfig.create()
-                                       .path( PropertyPath.from( COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ) )
+                                       .path( IndexPath.from( COMPONENTS, FragmentComponentType.INSTANCE.toString(), ID ) )
                                        .indexConfig( IndexConfig.MINIMAL )
                                        .build() ) );
 

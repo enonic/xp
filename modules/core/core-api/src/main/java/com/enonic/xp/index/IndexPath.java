@@ -9,6 +9,8 @@ import com.enonic.xp.data.PropertyPath;
 @PublicApi
 public final class IndexPath
 {
+    private static final String DELIMITER = ".";
+
     private final String path;
 
     private IndexPath( final String path )
@@ -23,7 +25,13 @@ public final class IndexPath
 
     public static IndexPath from( final PropertyPath path )
     {
-        return IndexPath.from( path.pathElements().stream().map( PropertyPath.Element::getName ).collect( Collectors.joining( "." ) ) );
+        return IndexPath.from(
+            path.pathElements().stream().map( PropertyPath.Element::getName ).collect( Collectors.joining( DELIMITER ) ) );
+    }
+
+    public static IndexPath from( final String... elements )
+    {
+        return IndexPath.from( String.join( DELIMITER, elements ) );
     }
 
     public String getPath()

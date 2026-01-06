@@ -59,7 +59,7 @@ class IndexConfigDocMapper
         for ( final PathIndexConfig pathIndexConfig : pathIndexConfigs )
         {
             gen.map();
-            gen.value( CONFIG_PATH, pathIndexConfig.getPath().toString() );
+            gen.value( CONFIG_PATH, pathIndexConfig.getIndexPath().toString() );
             gen.map( CONFIG_SETTINGS );
             serialize( gen, pathIndexConfig.getIndexConfig() );
             gen.end();

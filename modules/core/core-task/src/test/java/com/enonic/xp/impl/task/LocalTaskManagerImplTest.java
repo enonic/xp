@@ -22,6 +22,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
@@ -78,8 +79,7 @@ class LocalTaskManagerImplTest
         final RunnableTask runnableTask = ( id, progressReporter ) -> {
             for ( int i = 0; i < 5; i++ )
             {
-                progressReporter.progress( 1, 10 );
-                progressReporter.info( "Step " + i );
+                progressReporter.progress( ProgressReportParams.create( 1, 10 ).message( "Step " + i ).build() );
             }
         };
 
@@ -102,9 +102,9 @@ class LocalTaskManagerImplTest
         assertEquals( 1, taskMan.getAllTasks().size() );
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertNotNull( taskMan.getTaskInfo( describedTask.getTaskId() ) );
-        assertEquals( 13, eventsPublished.size() );
+        assertEquals( 8, eventsPublished.size() );
         assertEquals( "task.submitted , task.updated , task.updated , task.updated , task.updated , task.updated , " +
-                          "task.updated , task.updated , task.updated , task.updated , task.updated , task.updated , task.finished",
+                          "task.updated , task.finished",
                       eventTypes() );
     }
 
