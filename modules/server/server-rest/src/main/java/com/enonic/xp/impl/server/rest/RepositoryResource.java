@@ -49,6 +49,7 @@ public final class RepositoryResource
             .exportName( params.getExportName() )
             .includeVersions( params.isIncludeVersions() )
             .exportWithIds( params.isExportWithIds() )
+            .archive( params.isArchive() )
             .exportService( exportService )
             .build();
         final TaskId taskId = taskService.submitLocalTask(
