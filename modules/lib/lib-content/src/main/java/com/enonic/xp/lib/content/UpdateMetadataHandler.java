@@ -51,15 +51,7 @@ public final class UpdateMetadataHandler
             params.branches( branches.stream().map( Branch::from ).collect( Branches.collector() ) );
         }
 
-        final UpdateMetadataResult result;
-        try
-        {
-            result = this.contentService.updateMetadata( params.build() );
-        }
-        catch ( Exception e )
-        {
-            throw new RuntimeException( e );
-        }
+        final UpdateMetadataResult result = this.contentService.updateMetadata( params.build() );
 
         return new UpdateMetadataResultMapper( result );
     }
