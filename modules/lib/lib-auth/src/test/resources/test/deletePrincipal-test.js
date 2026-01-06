@@ -20,6 +20,6 @@ exports.deletePrincipalWithoutKey = function () {
     try {
         auth.deletePrincipal();
     } catch(e) {
-        t.assertEquals("Parameter 'principalKey' is required", e);
+        t.assertEquals("Parameter 'principalKey' is required", e.message);
     }
 };

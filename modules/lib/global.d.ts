@@ -16,7 +16,7 @@ declare global {
      * @global
      * @namespace
      */
-    declare const app: App;
+    const app: App;
 
     /**
      * Logging functions.
@@ -40,10 +40,10 @@ declare global {
      * @global
      * @namespace
      */
-    declare const log: Log;
+    const log: Log;
 
     /**
-     * Javascript to Java bridge functions.
+     * JavaScript to Java bridge functions.
      *
      * @example
      * var bean = __.newBean('com.enonic.xp.MyJavaUtils');
@@ -54,7 +54,7 @@ declare global {
      * @global
      * @namespace
      */
-    declare const __: DoubleUnderscore;
+    const __: DoubleUnderscore;
 
     /**
      * This globally available function will load a JavaScript file and return the exports as objects.
@@ -76,7 +76,7 @@ declare global {
      * @returns {object} Exports from loaded javascript.
      * @global
      */
-    declare const require: XpRequire;
+    const require: XpRequire;
 
     /**
      * Resolves a path to another file. Can use relative or absolute path.
@@ -93,7 +93,7 @@ declare global {
      * @returns {*} Reference to an object.
      * @global
      */
-    declare const resolve: Resolve;
+    const resolve: Resolve;
 }
 
 // Making sure the file is a module

@@ -10,6 +10,6 @@ exports.testInvalidParams = function () {
     try {
         repo.duplicate({});
     } catch (e) {
-        assert.assertEquals(`Parameter 'nodeId' is required`, e);
+        assert.assertEquals(`Parameter 'nodeId' is required`, e.message);
     }
 };
