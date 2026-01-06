@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -8,6 +10,8 @@ import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.resource.MockResource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +21,13 @@ import static org.mockito.Mockito.when;
 class PortalUrlServiceImpl_assetUrlTest
     extends AbstractPortalUrlServiceImplTest
 {
+
+    @BeforeAll
+    static void beforeAll()
+    {
+        RunModeSupport.set( RunMode.PROD );
+    }
+
     @Test
     void createUrl()
     {

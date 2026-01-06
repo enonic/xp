@@ -29,6 +29,6 @@ public class GraalJsScriptFixturesFacade
         return new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), application.getClassLoader(),
                                         scriptSettings, serviceRegistry, resourceService,
                                         new ApplicationInfoBuilder( application.getKey(), application.getConfig(),
-                                                                    application.getVersion() ), RunMode.DEV );
+                                                                    application.getVersion() ) );
     }
 }

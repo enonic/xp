@@ -173,12 +173,12 @@ public class ScriptRuntimeFactoryImpl
                 }
                 return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ),
                                                 scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
-                                                new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo, RunMode.get() );
+                                                new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo );
             }
             else if ( NASHORN_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
                 return new ScriptExecutorImpl( scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
-                                               new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo, RunMode.get() );
+                                               new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo );
             }
             else
             {

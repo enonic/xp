@@ -71,7 +71,7 @@ public final class JettyActivator
         this.jettySessionStoreConfigurator.configure( server );
         new HttpConfigurator().configure( this.config, server );
         new RequestLogConfigurator().configure( this.config, server );
-        new ErrorHandlerConfigurator().configure( RunMode.get(), server );
+        new ErrorHandlerConfigurator().configure( server );
 
         final ContextHandlerCollection contexts = new ContextHandlerCollection();
         ServletContextHandler xpServletContextHandler = null;

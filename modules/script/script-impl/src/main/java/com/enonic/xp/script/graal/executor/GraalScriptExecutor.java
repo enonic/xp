@@ -71,7 +71,7 @@ public class GraalScriptExecutor
 
     public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
                                 final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
-                                final ResourceService resourceService, final ApplicationInfoBuilder application, final RunMode runMode )
+                                final ResourceService resourceService, final ApplicationInfoBuilder application )
     {
         this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
@@ -83,7 +83,7 @@ public class GraalScriptExecutor
             new GraalScriptValueFactory( contextFactory, new GraalJavascriptHelperFactory() );
         this.scriptValueFactory = scriptValueFactory;
         this.javascriptHelper = this.scriptValueFactory.getJavascriptHelper();
-        this.exportsCache = new ScriptExportsCache<>( runMode, resourceService::getResource, this::runDisposers );
+        this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, this::runDisposers );
         this.context = scriptValueFactory.getContext();
         final Map<String, Object> globalVariables = new HashMap<>( this.scriptSettings.getGlobalVariables() );
         globalVariables.put( "app", ProxyObject.fromMap( application.buildMap( HashMap::new ) ) );
@@ -93,14 +93,20 @@ public class GraalScriptExecutor
     @Override
     public ScriptExports executeMain( final ResourceKey key )
     {
-        exportsCache.expireCacheIfNeeded();
+        if ( RunMode.isDev() )
+        {
+            exportsCache.expireCacheIfNeeded();
+        }
         return doExecuteMain( key );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
-        exportsCache.expireCacheIfNeeded();
+        if ( RunMode.isDev() )
+        {
+            exportsCache.expireCacheIfNeeded();
+        }
         return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
     }
 

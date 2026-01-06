@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.handler.api;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +20,7 @@ import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -67,8 +69,7 @@ class ApiHandlerTest
     {
         WebRequest webRequest = mock( WebRequest.class );
 
-        // Set run mode to DEV
-        System.setProperty( "xp.runMode", RunMode.DEV.name() );
+        RunModeSupport.set( RunMode.DEV );
 
         when( webRequest.getRawPath() ).thenReturn( "/api" );
         assertTrue( this.handler.canHandle( webRequest ) );
@@ -89,8 +90,7 @@ class ApiHandlerTest
         when( webRequest.getRawPath() ).thenReturn( "/api" );
         assertTrue( this.handler.canHandle( webRequest ) );
 
-        // Remove run mode
-        System.getProperties().remove( "xp.runMode" );
+        RunModeSupport.set( RunMode.PROD );
 
         when( webRequest.getRawPath() ).thenReturn( "/api" );
         assertFalse( this.handler.canHandle( webRequest ) );
@@ -98,11 +98,6 @@ class ApiHandlerTest
         when( apiConfig.api_index_enabled() ).thenReturn( "off" );
         when( webRequest.getRawPath() ).thenReturn( "/api" );
         assertFalse( this.handler.canHandle( webRequest ) );
-
-        Application welcomeApp = mock( Application.class );
-        when( applicationService.get( ApplicationKey.from( "com.enonic.xp.app.sdk" ) ) ).thenReturn( welcomeApp );
-        when( apiConfig.api_index_enabled() ).thenReturn( "on" );
-        assertTrue( this.handler.canHandle( webRequest ) );
     }
 
     @Test

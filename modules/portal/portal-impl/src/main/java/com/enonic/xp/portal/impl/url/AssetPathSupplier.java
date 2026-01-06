@@ -45,7 +45,7 @@ final class AssetPathSupplier
         }
 
         final String fingerprint =
-            RunMode.get() == RunMode.DEV ? String.valueOf( stableTime() ) : HexCoder.toHex( resource.getTimestamp() );
+            RunMode.isDev() ? String.valueOf( stableTime() ) : HexCoder.toHex( resource.getTimestamp() );
 
         UrlBuilderHelper.appendPart( url, applicationKey + ":" + fingerprint );
         UrlBuilderHelper.appendAndEncodePathParts( url, path );
