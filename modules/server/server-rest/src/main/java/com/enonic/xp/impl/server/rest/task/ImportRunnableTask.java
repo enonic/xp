@@ -13,6 +13,7 @@ import com.enonic.xp.impl.server.rest.model.NodeImportResultJson;
 import com.enonic.xp.impl.server.rest.task.listener.ImportListenerImpl;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
@@ -75,7 +76,7 @@ public class ImportRunnableTask
             return this.exportService.importNodes( builder.build() );
         } );
 
-        progressReporter.info( NodeImportResultJson.from( result ).toString() );
+        progressReporter.progress( ProgressReportParams.create( NodeImportResultJson.from( result ).toString() ).build() );
     }
 
     private Context getContext()
