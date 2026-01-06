@@ -7,17 +7,16 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.content.ContentService;
 
 public abstract class AbstractContentEventSyncCommand
 {
-    final ContentService contentService;
+    final LayersContentService layersContentService;
 
     final List<ContentToSync> contentToSync;
 
     AbstractContentEventSyncCommand( final Builder<?> builder )
     {
-        this.contentService = builder.contentService;
+        this.layersContentService = builder.layersContentService;
         this.contentToSync = builder.contentToSync;
     }
 
@@ -44,7 +43,7 @@ public abstract class AbstractContentEventSyncCommand
         if ( targetContent == null || targetContent.getInherit().contains( ContentInheritType.NAME ) )
         {
             newName = name.toString();
-            while ( contentService.contentExists( ContentPath.from( newParentPath, newName ) ) )
+            while ( layersContentService.getByPath( ContentPath.from( newParentPath, newName ) ).isPresent() )
             {
                 newName = NameValueResolver.name( newName );
             }
@@ -61,12 +60,11 @@ public abstract class AbstractContentEventSyncCommand
     {
         protected List<ContentToSync> contentToSync;
 
-        private ContentService contentService;
+        private LayersContentService layersContentService;
 
-        @SuppressWarnings("unchecked")
-        public B contentService( final ContentService contentService )
+        public B contentService( final LayersContentService layersContentService )
         {
-            this.contentService = contentService;
+            this.layersContentService = layersContentService;
             return (B) this;
         }
 
@@ -78,7 +76,7 @@ public abstract class AbstractContentEventSyncCommand
 
         void validate()
         {
-            Objects.requireNonNull( contentService );
+            Objects.requireNonNull( layersContentService );
             Objects.requireNonNull( contentToSync, "contentToSync cannot be null" );
         }
 

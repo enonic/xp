@@ -33,23 +33,19 @@ final class MovedEventSyncRestorer
 
         getRoots( contentToSync ).forEach( content -> {
 
-            final Content sourceParent =
-                content.getSourceContext().callWith( () -> contentService.getByPath( content.getSourceContent().getParentPath() ) );
+            final Content sourceParent = content.getSourceCtx()
+                .callWith( () -> layersContentService.getByPath( content.getSourceContent().getParentPath() ).orElseThrow() );
 
-            final Context targetContextToRestore = ContextBuilder.from( content.getTargetContext() )
-                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, content.getSourceContext().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
+            final Context targetContextToRestore = ContextBuilder.from( content.getTargetCtx() )
+                .attribute( CONTENT_ROOT_PATH_ATTRIBUTE, content.getSourceCtx().getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
                 .build();
 
-            final ContentPath targetParentPath = targetContextToRestore.callWith( () -> contentService.contentExists( sourceParent.getId() )
-                ? contentService.getById( sourceParent.getId() ).getPath()
-                : ContentPath.ROOT );
+            final ContentPath targetParentPath = targetContextToRestore.callWith(
+                () -> layersContentService.getById( sourceParent.getId() ).map( Content::getPath ).orElse( ContentPath.ROOT ) );
 
-            content.getTargetContext()
-                .runWith( () -> contentService.restore( RestoreContentParams.create()
-                                                            .contentId( content.getTargetContent().getId() )
-                                                            .path( targetParentPath )
-                                                            .stopInherit( false )
-                                                            .build() ) );
+            content.getTargetCtx()
+                .runWith( () -> layersContentService.restore(
+                    RestoreContentParams.create().contentId( content.getTargetContent().getId() ).path( targetParentPath ).build() ) );
         } );
 
     }
@@ -75,7 +71,6 @@ final class MovedEventSyncRestorer
         @Override
         MovedEventSyncRestorer build()
         {
-            validate();
             return new MovedEventSyncRestorer( this );
         }
     }

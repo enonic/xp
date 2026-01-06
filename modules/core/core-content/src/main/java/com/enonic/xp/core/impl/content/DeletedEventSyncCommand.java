@@ -14,7 +14,6 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.DeleteContentParams;
-import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.IdFilter;
 
@@ -39,19 +38,21 @@ final class DeletedEventSyncCommand
 
         final Set<ContentToSync> roots = getRoots( contentToSync );
 
-        roots.forEach( content -> content.getTargetContext().runWith( () -> {
-
-            if ( isToSyncDelete( content.getTargetContent() ) )
-            {
-                if ( needToDelete( content, fullIds ) )
+        for ( ContentToSync content : roots )
+        {
+            content.getTargetCtx().runWith( () -> {
+                if ( isToSyncDelete( content.getTargetContent() ) )
                 {
-                    final DeleteContentParams deleteParams =
-                        DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
+                    if ( needToDelete( content, fullIds ) )
+                    {
+                        final DeleteContentParams deleteParams =
+                            DeleteContentParams.create().contentPath( content.getTargetContent().getPath() ).build();
 
-                    contentService.delete( deleteParams );
+                        layersContentService.delete( deleteParams );
+                    }
                 }
-            }
-        } ) );
+            } );
+        }
     }
 
     private Set<ContentToSync> getRoots( final List<ContentToSync> contents )
@@ -80,40 +81,32 @@ final class DeletedEventSyncCommand
 
     private boolean removedInSource( final ContentToSync contentToSync )
     {
-        return contentToSync.getSourceContext().callWith( () -> !contentService.contentExists( contentToSync.getTargetContent().getId() ) );
+        return contentToSync.getSourceCtx()
+            .callWith( () -> layersContentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
     private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return getAllChildren( contentToSync.getTargetContent().getId() ).stream().allMatch( idsToRemove::contains );
+        return this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath() )
+            .stream()
+            .allMatch( idsToRemove::contains );
     }
 
     private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return getInboundDependencies( contentToSync.getTargetContent().getId() ).stream().allMatch( idsToRemove::contains );
-    }
-
-    private ContentIds getInboundDependencies( final ContentId contentId )
-    {
-        return this.contentService.find( ContentQuery.create()
-                                             .queryFilter( BooleanFilter.create()
-                                                               .must( IdFilter.create()
-                                                                          .fieldName( ContentIndexPath.REFERENCES.getPath() )
-                                                                          .value( contentId.toString() )
-                                                                          .build() )
-                                                               .mustNot( IdFilter.create()
-                                                                             .fieldName( ContentIndexPath.ID.getPath() )
-                                                                             .value( contentId.toString() )
-                                                                             .build() )
-                                                               .build() )
-                                             .size( -1 )
-                                             .build() ).getContentIds();
-    }
-
-    private ContentIds getAllChildren( final ContentId contentId )
-    {
-        return this.contentService.findIdsByParent( FindContentByParentParams.create().parentId( contentId ).recursive( true ).build() )
-            .getContentIds();
+        final ContentId contentId = contentToSync.getTargetContent().getId();
+        final ContentQuery query = ContentQuery.create()
+            .queryFilter( BooleanFilter.create()
+                              .must( IdFilter.create()
+                                         .fieldName( ContentIndexPath.REFERENCES.getPath() )
+                                         .value( contentId.toString() )
+                                         .build() )
+                              .mustNot( IdFilter.create().fieldName( ContentIndexPath.ID.getPath() ).value( contentId.toString() ).build() )
+                              .build() )
+            .size( -1 )
+            .build();
+        final ContentIds inboundDependencies = this.layersContentService.find( query ).getContentIds();
+        return inboundDependencies.stream().allMatch( idsToRemove::contains );
     }
 
     public static class Builder

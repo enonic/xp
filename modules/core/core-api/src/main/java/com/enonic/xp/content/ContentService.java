@@ -42,8 +42,6 @@ public interface ContentService
 
     ApplyContentPermissionsResult applyPermissions( ApplyContentPermissionsParams params );
 
-    ImportContentResult importContent( ImportContentParams params );
-
     CompareContentResults resolvePublishDependencies( ResolvePublishDependenciesParams params );
 
     ContentIds resolveRequiredDependencies( ResolveRequiredDependenciesParams params );

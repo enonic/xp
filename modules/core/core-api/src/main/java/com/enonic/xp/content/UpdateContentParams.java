@@ -21,8 +21,6 @@ public final class UpdateContentParams
 
     private boolean requireValid;
 
-    private boolean stopInherit = true;
-
     public UpdateContentParams editor( final ContentEditor editor )
     {
         this.editor = editor;
@@ -59,12 +57,6 @@ public final class UpdateContentParams
         return this;
     }
 
-    public UpdateContentParams stopInherit( final boolean stopInherit )
-    {
-        this.stopInherit = stopInherit;
-        return this;
-    }
-
     public void validate()
     {
         Objects.requireNonNull( contentId, "contentId is required" );
@@ -98,10 +90,5 @@ public final class UpdateContentParams
     public boolean isClearAttachments()
     {
         return clearAttachments;
-    }
-
-    public boolean stopInherit()
-    {
-        return stopInherit;
     }
 }

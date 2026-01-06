@@ -200,7 +200,7 @@ public final class CreateNodeParams
             this.insertManualStrategy = createNodeParams.insertManualStrategy;
             this.manualOrderValue = createNodeParams.manualOrderValue;
             this.nodeType = createNodeParams.nodeType;
-            createNodeParams.binaryAttachments.stream().forEach( binaryAttachments::add );
+            this.binaryAttachments.addAll( createNodeParams.binaryAttachments );
             this.versionAttributes = createNodeParams.versionAttributes;
             this.refresh = createNodeParams.refresh;
         }
@@ -288,7 +288,7 @@ public final class CreateNodeParams
             this.binaryAttachments = BinaryAttachments.create();
             if ( binaryAttachments != null )
             {
-                binaryAttachments.stream().forEach( this.binaryAttachments::add );
+                this.binaryAttachments.addAll( binaryAttachments );
             }
             return this;
         }

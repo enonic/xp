@@ -38,10 +38,13 @@ final class RestoreContentCommand
 {
     private final RestoreContentParams params;
 
+    private final boolean stopInherit;
+
     private RestoreContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
+        this.stopInherit = builder.stopInherit;
     }
 
     public static Builder create( final RestoreContentParams params )
@@ -131,7 +134,7 @@ final class RestoreContentCommand
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties() );
-        if ( this.params.stopInherit() )
+        if ( stopInherit )
         {
             processors.add( InheritedContentDataProcessor.ALL );
         }
@@ -215,6 +218,8 @@ final class RestoreContentCommand
     {
         private final RestoreContentParams params;
 
+        private boolean stopInherit = true;
+
         private Builder( final RestoreContentParams params )
         {
             this.params = params;
@@ -225,6 +230,12 @@ final class RestoreContentCommand
         {
             super.validate();
             Objects.requireNonNull( params, "params cannot be null" );
+        }
+
+        public Builder stopInherit( final boolean stopInherit )
+        {
+            this.stopInherit = stopInherit;
+            return this;
         }
 
         RestoreContentCommand build()

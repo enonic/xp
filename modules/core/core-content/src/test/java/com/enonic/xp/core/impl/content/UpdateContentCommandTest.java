@@ -146,9 +146,8 @@ class UpdateContentCommandTest
         Content existingContent =
             Content.create( createContent( new PropertyTree() ) ).setInherit( EnumSet.of( ContentInheritType.CONTENT ) ).build();
 
-        UpdateContentParams params = new UpdateContentParams().stopInherit( true )
-            .contentId( existingContent.getId() )
-            .editor( edit -> edit.language = Locale.CANADA );
+        UpdateContentParams params =
+            new UpdateContentParams().contentId( existingContent.getId() ).editor( edit -> edit.language = Locale.CANADA );
 
         UpdateContentCommand command = createCommand( params );
 
@@ -184,7 +183,9 @@ class UpdateContentCommandTest
             .id( ContentId.from( "mycontent" ) )
             .name( "myContentName" )
             .creator( PrincipalKey.ofAnonymous() )
-            .type( ContentTypeName.site() ).parentPath( ContentPath.ROOT ).data( data )
+            .type( ContentTypeName.site() )
+            .parentPath( ContentPath.ROOT )
+            .data( data )
             .build();
 
         final UpdateContentParams params =
@@ -271,10 +272,8 @@ class UpdateContentCommandTest
         final Content existingContent =
             Content.create( createContent( new PropertyTree() ) ).setInherit( EnumSet.of( ContentInheritType.CONTENT ) ).build();
 
-        final UpdateContentParams params =
-            new UpdateContentParams().stopInherit( true ).contentId( existingContent.getId() ).requireValid( true )
-
-                .editor( edit -> edit.language = Locale.CANADA );
+        final UpdateContentParams params = new UpdateContentParams().contentId( existingContent.getId() ).requireValid( true )
+            .editor( edit -> edit.language = Locale.CANADA );
 
         final UpdateContentCommand command = UpdateContentCommand.create( createCommand( params ) )
             .params( params )

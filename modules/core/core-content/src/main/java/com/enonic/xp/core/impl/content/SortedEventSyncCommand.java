@@ -2,13 +2,13 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentInheritType;
-import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.SortContentParams;
 
 final class SortedEventSyncCommand
@@ -32,44 +32,40 @@ final class SortedEventSyncCommand
 
     private void doSync( final ContentToSync content )
     {
-        content.getTargetContext().runWith( () -> {
-            if ( isToSyncSort( content.getTargetContent() ) )
+        final Content targetContent = content.getTargetContent();
+        final Content sourceContent = content.getSourceContent();
+
+        content.getTargetCtx().runWith( () -> {
+            if ( isToSyncSort( targetContent ) )
             {
-                if ( needToSort( content.getSourceContent(), content.getTargetContent() ) )
+                if ( needToSort( sourceContent, targetContent ) )
                 {
-                    final SortContentParams sortParams = SortContentParams.create()
-                        .childOrder( content.getSourceContent().getChildOrder() )
-                        .contentId( content.getSourceContent().getId() )
-                        .stopInherit( false )
-                        .build();
+                    final SortContentParams sortParams =
+                        SortContentParams.create().childOrder( sourceContent.getChildOrder() ).contentId( sourceContent.getId() ).build();
 
-                    contentService.sort( sortParams );
+                    layersContentService.sort( sortParams );
                 }
-                if ( content.getSourceContent().getChildOrder().isManualOrder() )
+                if ( sourceContent.getChildOrder().isManualOrder() )
                 {
-                    final List<ContentToSync> childrenToSync = contentService.findByParent(
-                            FindContentByParentParams.create().parentId( content.getTargetContent().getId() ).size( -1 ).build() )
-                        .getContents()
-                        .stream()
-                        .map( currContent -> {
-                            final Content sourceContent = content.getSourceContext()
-                                .callWith( () -> contentService.contentExists( currContent.getId() ) ? contentService.getById(
-                                    currContent.getId() ) : null );
-
-                            return sourceContent != null ? ContentToSync.create()
-                                .sourceContext( content.getSourceContext() )
-                                .targetContext( content.getTargetContext() )
-                                .sourceContent( sourceContent )
-                                .targetContent( currContent )
-                                .build() : null;
-                        } )
-                        .filter( Objects::nonNull )
-                        .collect( Collectors.toList() );
+                    final List<ContentToSync> childrenToSync =
+                        layersContentService.getByIds( layersContentService.findAllChildren( targetContent.getPath() ) )
+                            .stream()
+                            .map( childTargetContent -> content.getSourceCtx()
+                                .callWith( () -> layersContentService.getById( childTargetContent.getId() ) )
+                                .map( childSourceContent -> ContentToSync.create()
+                                    .sourceCtx( content.getSourceCtx() )
+                                    .targetCtx( content.getTargetCtx() )
+                                    .sourceContent( childSourceContent )
+                                    .targetContent( childTargetContent )
+                                    .build() ) )
+                            .filter( Optional::isPresent )
+                            .map( Optional::get )
+                            .collect( Collectors.toList() );
 
                     if ( !childrenToSync.isEmpty() )
                     {
                         UpdatedEventSyncCommand.create()
-                            .contentService( contentService )
+                            .contentService( layersContentService )
                             .contentToSync( childrenToSync )
                             .build()
                             .sync();

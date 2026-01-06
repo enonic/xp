@@ -18,15 +18,12 @@ public final class SortContentParams
 
     private final ImmutableList<ReorderChildContentParams> reorderChildContents;
 
-    private final boolean stopInherit;
-
     private SortContentParams( Builder builder )
     {
         this.contentId = builder.contentId;
         this.childOrder = builder.childOrder;
         this.manualOrderSeed = builder.manualOrderSeed;
         this.reorderChildContents = builder.reorderChildContents.build();
-        stopInherit = builder.stopInherit;
     }
 
     public ContentId getContentId()
@@ -49,16 +46,10 @@ public final class SortContentParams
         return reorderChildContents;
     }
 
-    public boolean stopInherit()
-    {
-        return stopInherit;
-    }
-
     public static Builder create()
     {
         return new Builder();
     }
-
 
     public static final class Builder
     {
@@ -69,8 +60,6 @@ public final class SortContentParams
         private ChildOrder manualOrderSeed;
 
         private final ImmutableList.Builder<ReorderChildContentParams> reorderChildContents = ImmutableList.builder();
-
-        private boolean stopInherit = true;
 
         private Builder()
         {
@@ -97,13 +86,6 @@ public final class SortContentParams
         public Builder addManualOrder( final ReorderChildContentParams reorderChildParams )
         {
             this.reorderChildContents.add( reorderChildParams );
-            return this;
-        }
-
-
-        public Builder stopInherit( final boolean stopInherit )
-        {
-            this.stopInherit = stopInherit;
             return this;
         }
 
